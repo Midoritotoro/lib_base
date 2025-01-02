@@ -12,10 +12,11 @@ option(LIB_BASE_INSTALL "Генерация цели для установки �
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 message(${LIB_BASE_INSTALL_CMAKE_DIR})
+
+set(EXPORT_DECL "")
+set(LIBTYPE "Shared")
    
 set(PRIVATE_SOURCES 
-    src/utility/Round.h
-
     src/concurrent/common/CommonConfig.h
 
     src/concurrent/common/CommonGuards.h
@@ -44,7 +45,15 @@ set(PRIVATE_SOURCES
     src/concurrent/winapi/WinapiSemaphore.h
 
 	src/AutoRunUtils.cpp
+    src/AutoRunUtils.h
 
+    src/utility/Math.cpp
+    src/utility/Math.h
+
+    src/utility/TFunctions.cpp
+    src/utility/TFunctions.h
+
+    src/OverflowCheck.h
     src/utility/Accumulate.h
 
 	src/Time.cpp
@@ -64,16 +73,15 @@ set(PUBLIC_HEADERS
     include/base/ProcessorDetection.h
 )
 
-add_library(lib_base) # Инициализируется позже
-add_library(lib_base::lib_base ALIAS lib_base)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
+include(CheckCSourceCompiles)
 
-if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(lib_base PUBLIC LIBBASE_STATIC_DEFINE)
-endif()
+
+add_library(lib_base ${PRIVATE_SOURCES}) #  ${PUBLIC_HEADERS}
+add_library(lib_base::lib_base ALIAS lib_base)
 
 set_target_properties(
     lib_base PROPERTIES
@@ -91,11 +99,43 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GN
     set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
-target_sources(lib_base PRIVATE ${PRIVATE_SOURCES}) #  ${PUBLIC_HEADERS}
-
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)
+    target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)
+    set(LIBTYPE "STATIC")
 endif()
+
+message(${LIBTYPE})
+
+if(WIN32)
+    if(NOT LIBTYPE STREQUAL "STATIC")
+        set(EXPORT_DECL "__declspec(dllexport)")
+    endif()
+else()
+    check_c_source_compiles("int foo() __attribute__((visibility(\"protected\")));
+                             int main() {return 0;}" HAVE_GCC_PROTECTED_VISIBILITY)
+    if(HAVE_GCC_PROTECTED_VISIBILITY)
+        if(NOT LIBTYPE STREQUAL "STATIC")
+            set(EXPORT_DECL "__attribute__((visibility(\"protected\")))")
+        endif()
+    else()
+        check_c_source_compiles("int foo() __attribute__((visibility(\"default\")));
+                                 int main() {return 0;}" HAVE_GCC_DEFAULT_VISIBILITY)
+        if(HAVE_GCC_DEFAULT_VISIBILITY)
+            if(NOT LIBTYPE STREQUAL "STATIC")
+                set(EXPORT_DECL "__attribute__((visibility(\"default\")))")
+            endif()
+        endif()
+    endif()
+
+    if(HAVE_GCC_PROTECTED_VISIBILITY OR HAVE_GCC_DEFAULT_VISIBILITY)
+        check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_SWITCH)
+        if(HAVE_VISIBILITY_HIDDEN_SWITCH)
+            set(CXX_FLAGS ${CXX_FLAGS} -fvisibility=hidden)
+        endif()
+    endif()
+endif()
+
+target_compile_definitions(lib_base PRIVATE "LIB_BASE=${EXPORT_DECL}")
 
 target_include_directories(lib_base
     PUBLIC
@@ -110,6 +150,7 @@ if (WIN32)
     PUBLIC
         user32.dll
         kernel32.dll
+        shlwapi.dll
     )
 endif()
 

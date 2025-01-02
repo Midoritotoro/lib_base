@@ -25,7 +25,7 @@ namespace core {
 
 		template <typename ExtendedEnum,
 			typename Enum = typename core::extended_flags<ExtendedEnum>::type>
-		LIB_BASE always_inline [[nodiscard]] 
+		LIB_BASE always_inline [[nodiscard]]
 			constexpr auto extendedFlagConvert(ExtendedEnum value) 
 		{
 			return static_cast<Enum>(value);

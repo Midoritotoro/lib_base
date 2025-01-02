@@ -1,50 +1,39 @@
 #pragma once 
 
-enum VISIT {
-    preorder,
-    postorder,
-    endorder,
-    leaf
-};
-
-struct node_t {
-    char* key;
-    struct node_t* llink, * rlink;
-};
+#include "base/Utility.h"
 
 
-typedef void (*cmp_fn_t)(const void*, VISIT, int);
-struct node_t;
+namespace core::utility {
+    [[nodiscard]] void* TFind(
+        const void* vkey,
+        void* const* vrootp,
+        int (*compar)(const void*,
+            const void*));
 
-[[nodiscard]] void* tfind(
-    const void* vkey,
-    void* const* vrootp,
-    int (*compar)(const void*,
-        const void*));
+    [[nodiscard]] void* TSearch(
+        const void* vkey,
+        void** vrootp,
+        int (*compar)(const void*,
+            const void*));
 
-[[nodiscard]] void* tsearch(
-    const void* vkey,
-    void** vrootp,
-    int (*compar)(const void*,
-        const void*));
+    void TRecurse(
+        const node_t* root,
+        cmp_fn_t action, int level);
 
-void trecurse(
-    const node_t* root,
-    cmp_fn_t action, int level);
+    void TWalk(
+        const void* vroot,
+        cmp_fn_t action);
 
-void twalk(
-    const void* vroot,
-    cmp_fn_t action);
+    int CmpSmallest(
+        const void* a,
+        const void* b);
 
-int cmp_smallest(
-    const void* a,
-    const void* b);
+    void TDestroyRecurse(
+        node_t* root,
+        void (*free_action)(void*));
 
+    void TDestroy(
+        void* root,
+        void (*freenode)(void*));
 
-void tdestroy_recurse(
-    node_t* root,
-    void (*free_action)(void*));
-
-void tdestroy(
-    void* root,
-    void (*freenode)(void*));
+} // namespace core::utility

@@ -1,8 +1,10 @@
 #pragma once 
 
+
+#include "base/Utility.h"
+
 #include <ranges>
 #include <__msvc_iter_core.hpp>
-
 
 
 namespace core::utility {

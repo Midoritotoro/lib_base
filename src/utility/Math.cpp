@@ -1,7 +1,11 @@
 #include "Math.h"
 
+#include "base/Utility.h"
 
-namespace FFmpeg {
+#include <cfenv>
+#include <cmath>
+
+namespace core::utility {
     int64_t GCD(
         int64_t a,
         int64_t b)
@@ -68,4 +72,24 @@ namespace FFmpeg {
 
         return b_exact;
     }
-} // namespace FFmpeg
+
+    double SafeRound(double value) {
+        if (std::isnan(value))
+            return -1;
+
+        if (const auto result = std::round(value); !std::isnan(result)) {
+            return result;
+        }
+        const auto errors = std::fetestexcept(FE_ALL_EXCEPT);
+        if (const auto result = std::round(value); !std::isnan(result)) {
+            return result;
+        }
+
+        std::feclearexcept(FE_ALL_EXCEPT);
+        if (const auto result = std::round(value); !std::isnan(result)) {
+            return result;
+        }
+
+        return value;
+    }
+} // namespace core::utility

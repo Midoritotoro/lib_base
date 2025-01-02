@@ -1,4 +1,4 @@
-#include "base/AutoRunUtils.h"
+﻿#include "AutoRunUtils.h"
 
 #ifdef _WIN32
 
@@ -25,7 +25,7 @@ bool IsWindowsGreaterThen(int version)
         dwlConditionMask) != FALSE;
 }
 
-bool SetAutoRunKey(LPWSTR path)
+bool SetAutoRunKey(LPWSTR path, LPWSTR key)
 {
     LPCWSTR lpSubKey = TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
     LONG result = 0;
@@ -41,7 +41,7 @@ bool SetAutoRunKey(LPWSTR path)
         RegCloseKey(hKey);
         return FALSE;
     }
-    result = RegSetValueEx(hKey, TEXT(PROJECT_NAME), 0, REG_SZ, (PBYTE)(path), ((LPBYTE)(path), (lstrlen(path) * sizeof(TCHAR) + 1)));
+    result = RegSetValueEx(hKey, key, 0, REG_SZ, (PBYTE)(path), ((LPBYTE)(path), (lstrlen(path) * sizeof(TCHAR) + 1)));
     if (result != ERROR_SUCCESS){
         RegCloseKey(hKey);
         return FALSE;
@@ -52,7 +52,7 @@ bool SetAutoRunKey(LPWSTR path)
 
 #endif // _WIN32
 
-bool addToAutoRun()
+bool addToAutoRun(LPWSTR key)
 {
 #ifdef _WIN32
     TCHAR szExeName[MAX_PATH];
@@ -65,7 +65,7 @@ bool addToAutoRun()
         return FALSE;
 
     _tcscat_s(szExeName, stringSize, fileName);
-    return SetAutoRunKey(szExeName);
+    return SetAutoRunKey(szExeName, key);
 #endif // _WIN32
     return FALSE;
 }

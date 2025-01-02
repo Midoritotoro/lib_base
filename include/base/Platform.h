@@ -3,24 +3,24 @@
 #include <cstdint>
 #include <cassert>
 
+
+#if defined(_WIN32)
+#if !defined(_UNICODE)
+#define _UNICODE
+#endif
+#if !defined(UNICODE)
+#define UNICODE
+#endif
+#endif
+
 #include "Windows.h"
 #include "ProcessorDetection.h"
 
-
-#ifndef LIB_BASE
-#if defined _WIN32
-#if !defined LIB_BASE_STATIC
-#define LIB_BASE __declspec(dllexport)
-#else
+#ifdef LIB_BASE_STATIC
+#if defined(LIB_BASE)
+#undef LIB_BASE
+#endif
 #define LIB_BASE
-#endif
-#else
-#if __GNUC__ >= 4
-#define LIB_BASE __attribute__ ((visibility ("default")))
-#else
-#define LIB_BASE
-#endif
-#endif
 #endif
 
 #if defined (_WIN32)
