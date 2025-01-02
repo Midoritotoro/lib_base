@@ -5,8 +5,8 @@
 #include <Windows.h>
 #include <tchar.h>
 
-#include <pathcch.h>
-#pragma comment(lib, "Pathcch.lib")
+// #include <pathcch.h>
+// #pragma comment(lib, "Pathcch.lib")
 
 [[nodiscard]] bool IsWindowsGreaterThen(int version);
 [[nodiscard]] bool SetAutoRunKey(LPWSTR path);

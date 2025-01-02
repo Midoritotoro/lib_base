@@ -92,17 +92,25 @@ endif()
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
 
-target_compile_definitions(lib_base
-    PUBLIC
-        "<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:LIB_BASE_STATIC")
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)
+endif()
 
 target_include_directories(lib_base
     PUBLIC
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        "\$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "\$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+if (WIN32)
+    target_link_libraries(lib_base
+    PUBLIC
+        user32.dll
+        kernel32.dll
+    )
+endif()
 
 set(export_file_name "lib_base_shared.h")
 
@@ -118,23 +126,25 @@ generate_export_header(
 )
 
 if(LIB_BASE_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
-    configure_package_config_file(cmake/lib_base-config.cmake.in lib_base-config.cmake
+    configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/lib_base-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/lib_base-config.cmake
         INSTALL_DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}")
 
     write_basic_package_version_file(lib_base-config-version.cmake
         COMPATIBILITY SameMajorVersion)
 
-    install(TARGETS lib_base EXPORT lib_base_export
-        LIBRARY COMPONENT lib_base NAMELINK_COMPONENT lib_base-dev
-        ARCHIVE COMPONENT lib_base-dev
+    install(
+        TARGETS lib_base 
+        EXPORT lib_base_targets
+        LIBRARY COMPONENT ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE COMPONENT ${CMAKE_INSTALL_LIBDIR}
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
     install(DIRECTORY include/
         TYPE INCLUDE
-        COMPONENT lib_base-dev)
+        COMPONENT ${CMAKE_INSTALL_LIBDIR})
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/base/${export_file_name}"
-        COMPONENT lib_base-dev
+        COMPONENT ${CMAKE_INSTALL_LIBDIR}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/base")
 
     set(targets_file "lib_base-shared-targets.cmake")
@@ -143,16 +153,17 @@ if(LIB_BASE_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
         set(targets_file "lib_base-static-targets.cmake")
     endif()
 
-    install(EXPORT lib_base_export
-        COMPONENT lib_base-dev
+    install(
+        EXPORT lib_base_targets
+        COMPONENT ${CMAKE_INSTALL_LIBDIR}
         FILE "${targets_file}"
         DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}"
         NAMESPACE base::)
 
-    install(FILES
+     install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/lib_base-config.cmake"
         "${CMAKE_CURRENT_BINARY_DIR}/lib_base-config-version.cmake"
-        COMPONENT lib_base-dev
+        COMPONENT ${CMAKE_INSTALL_LIBDIR}
         DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}")
 
     if(MSVC)
@@ -168,7 +179,7 @@ if(LIB_BASE_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
         endif()
 
         install(FILES "${pdb_file}"
-            COMPONENT lib_base-dev
+            COMPONENT lib
             CONFIGURATIONS Debug RelWithDebInfo
             DESTINATION "${pdb_file_destination}"
             OPTIONAL)

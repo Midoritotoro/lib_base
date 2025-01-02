@@ -130,7 +130,7 @@ namespace Time {
 		return details::adjustTime();
 	}
 
-	QString formattedUnixTime(int64_t unixTime) {
+	std::string formattedUnixTime(int64_t unixTime) {
 		char buffer[20];
 		strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&unixTime));
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <QString>
+#include <string>
 
 namespace Time {
 	using time = std::int64_t;
@@ -27,7 +27,7 @@ namespace Time {
 
 	bool adjustTime();
 
-	[[nodiscard]] QString formattedUnixTime(int64_t unixTime);
+	[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
 
 	[[nodiscard]] int minutes(int64_t unixTime);
 	[[nodiscard]] int hours(int64_t unixTime);

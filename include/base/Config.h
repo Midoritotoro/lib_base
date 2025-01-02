@@ -1,12 +1,11 @@
 #pragma once
 
-#include <qendian.h>
+#include <cstdint>
 #include <cassert>
 
 #include "Windows.h"
-
-#include "TFunctions.h"
 #include "ProcessorDetection.h"
+
 
 #if defined (_WIN32)
 #define aligned_free(ptr)                   _aligned_free(ptr)
@@ -57,5 +56,5 @@ typedef int64_t tick_t;
 #define unreachable()                       ((void)0)
 #endif
 
-#define always_inline __forceinline
+#define always_inline						__forceinline
 #define unused(x)                           ((void)(x))
