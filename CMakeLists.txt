@@ -58,10 +58,10 @@ set(PUBLIC_HEADERS
     include/base/Flags.h
     include/base/Time.h
 
-    include/base/AutoRunUtils.h
-    include/base/Config.h
+    include/base/Platform.h
 
     include/base/Windows.h
+    include/base/ProcessorDetection.h
 )
 
 add_library(lib_base) # Инициализируется позже
@@ -83,6 +83,7 @@ set_target_properties(
     SOVERSION "${PROJECT_VERSION_MAJOR}"
     EXPORT_NAME lib_base
     OUTPUT_NAME lib_base
+    PUBLIC_HEADER "${PUBLIC_HEADERS}"
 )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -90,7 +91,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GN
     set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
-target_sources(lib_base PRIVATE ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
+target_sources(lib_base PRIVATE ${PRIVATE_SOURCES}) #  ${PUBLIC_HEADERS}
 
 if(NOT BUILD_SHARED_LIBS)
   target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)

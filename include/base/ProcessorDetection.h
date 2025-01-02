@@ -348,13 +348,13 @@
 */
 
 #if defined __SIZEOF_POINTER__
-#  define QT_POINTER_SIZE           __SIZEOF_POINTER__
+#  define POINTER_SIZE           __SIZEOF_POINTER__
 #elif defined(__LP64__) || defined(_LP64)
-#  define QT_POINTER_SIZE           8
+#  define POINTER_SIZE           8
 #elif defined(PROCESSOR_WORDSIZE)
-#  define QT_POINTER_SIZE           PROCESSOR_WORDSIZE
+#  define POINTER_SIZE           PROCESSOR_WORDSIZE
 #else
-#  define QT_POINTER_SIZE           4
+#  define POINTER_SIZE           4
 #endif
 
 /*
@@ -365,6 +365,6 @@
    Falls back to QT_POINTER_SIZE if not set explicitly for the platform.
 */
 #ifndef PROCESSOR_WORDSIZE
-#  define PROCESSOR_WORDSIZE        QT_POINTER_SIZE
+#  define PROCESSOR_WORDSIZE        POINTER_SIZE
 #endif
 

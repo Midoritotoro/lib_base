@@ -7,6 +7,22 @@
 #include "ProcessorDetection.h"
 
 
+#ifndef LIB_BASE
+#if defined _WIN32
+#if !defined LIB_BASE_STATIC
+#define LIB_BASE __declspec(dllexport)
+#else
+#define LIB_BASE
+#endif
+#else
+#if __GNUC__ >= 4
+#define LIB_BASE __attribute__ ((visibility ("default")))
+#else
+#define LIB_BASE
+#endif
+#endif
+#endif
+
 #if defined (_WIN32)
 #define aligned_free(ptr)                   _aligned_free(ptr)
 #else
@@ -20,7 +36,7 @@
 #elif (1000 % CLOCK_FREQ) == 0
 #define TICK_FROM_MS(ms)  ((ms)  / (INT64_C(1000) / CLOCK_FREQ))
 #define MS_FROM_TICK(vtk) ((vtk) * (INT64_C(1000) / CLOCK_FREQ))
-#else /* rounded overflowing conversion */
+#else /* ќкругленное переполненное преобразование */
 #define TICK_FROM_MS(ms)  (CLOCK_FREQ * (ms) / 1000)
 #define MS_FROM_TICK(vtk) ((vtk) * 1000 / CLOCK_FREQ)
 #endif /* CLOCK_FREQ / 1000 */

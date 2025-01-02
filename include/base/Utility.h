@@ -10,9 +10,6 @@
 #include "utility/Round.h"
 #include <iostream>
 
-#ifdef LIB_BASE_STATIC
-#endif
-
 #if _has_include(gsl/gsl)
 /**
  *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
