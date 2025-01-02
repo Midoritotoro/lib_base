@@ -1,0 +1,35 @@
+@PACKAGE_INIT@
+
+macro(import_targets type)
+    if(NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib_base-${type}-targets.cmake")
+        set(${CMAKE_FIND_PACKAGE_NAME}_NOT_FOUND_MESSAGE
+            "lib_base ${type} библиотеки запрошены, но не найдены")
+        set(${CMAKE_FIND_PACKAGE_NAME}_FOUND OFF)
+        return()
+    endif()
+
+    include("${CMAKE_CURRENT_LIST_DIR}/lib_base-${type}-targets.cmake")
+endmacro()
+
+if(NOT TARGET lib_base::lib_base)
+    set(type "")
+
+    if(DEFINED MYLIB_SHARED_LIBS)
+        if(MYLIB_SHARED_LIBS)
+            set(type "shared")
+        else()
+            set(type "static")
+        endif()
+    elseif(BUILD_SHARED_LIBS AND
+           EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib_base-shared-targets.cmake")
+        set(type "shared")
+    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib_base-static-targets.cmake")
+        set(type "static")
+    else()
+        set(type "shared")
+    endif()
+
+    import_targets(${type})
+    check_required_components(lib_base)
+    message("-- Ќайдена ${type} lib_base (version ${${CMAKE_FIND_PACKAGE_NAME}_VERSION})")
+endif()
