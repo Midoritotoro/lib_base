@@ -24,10 +24,10 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-
-
-# configure_package_config_file("${package}-config.cmake.in" ${CMAKE_CURRENT_BINARY_DIR}/lib_base-config.cmake
-#    INSTALL_DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}")
+configure_file(
+    "cmake/${package}-config.cmake.in" 
+    "${CMAKE_CURRENT_BINARY_DIR}/lib_base/lib_baseConfig.cmake"
+    COPYONLY)
 
 write_basic_package_version_file("${package}ConfigVersion.cmake"
     COMPATIBILITY SameMajorVersion)
@@ -39,10 +39,12 @@ set(
 
 set_property(CACHE "LIB_BASE_INSTALL_CMAKEDIR" PROPERTY TYPE PATH)
 mark_as_advanced("LIB_BASE_INSTALL_CMAKEDIR")
+message(CMAKE_INSTALL_INCLUDEDIR:${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/base/${export_file_name}"
-    COMPONENT ${CMAKE_INSTALL_LIBDIR}
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/base")
+#install(
+#    FILES "${CMAKE_CURRENT_BINARY_DIR}/include/base/${export_file_name}"
+ #   COMPONENT ${CMAKE_INSTALL_LIBDIR}
+ #   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/base")
 
 set(targets_file "lib_base-shared-targets.cmake")
 

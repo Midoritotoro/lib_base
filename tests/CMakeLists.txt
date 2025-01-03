@@ -9,8 +9,6 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-
 add_executable(lib_base_test test.cpp)
 target_link_libraries(
     lib_base_test PRIVATE

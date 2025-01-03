@@ -26,7 +26,6 @@ option(LIB_BASE_ENABLE_QT "Включить вспомогательный ин�
 option(BUILD_SHARED_LIBS "Сборка динамической библиотеки" OFF)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
-message(${LIB_BASE_INSTALL_CMAKE_DIR})
 
    
 set(PRIVATE_SOURCES 
@@ -126,7 +125,7 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
     endif()
 endif()
 
-message("LIBTYPE: " ${LIBTYPE})
+# message("LIBTYPE: " ${LIBTYPE})
 
 target_include_directories(lib_base
     PUBLIC
@@ -148,17 +147,16 @@ if (WIN32)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   set_target_properties(${PROJECT_NAME} PROPERTIES
-       MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+  # set_target_properties(${PROJECT_NAME} PROPERTIES
+  #     MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
 
-    target_link_options(${PROJECT_NAME}
-    INTERFACE
-       ${linkOptions}
-   )
+  #  target_link_options(${PROJECT_NAME}
+  #  INTERFACE
+  #     ${linkOptions}
+  # )
 endif()
 
 if(PROJECT_IS_TOP_LEVEL)# AND LIB_BASE_BUILD_TESTS)
-    message(addtests)
     enable_testing()
     add_subdirectory(tests)
 endif()
