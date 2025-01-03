@@ -55,17 +55,17 @@ set(PRIVATE_SOURCES
     src/concurrent/winapi/WinapiSemaphore.cpp
     src/concurrent/winapi/WinapiSemaphore.h
 
- #   src/utility/Math.cpp
-  #  src/utility/Math.h
+   src/utility/Math.cpp
+    src/utility/Math.h
 
- #   src/utility/TFunctions.cpp
-  #  src/utility/TFunctions.h
+   src/utility/TFunctions.cpp
+   src/utility/TFunctions.h
 
-  #  src/AutoRunUtils.cpp
-  #  src/AutoRunUtils.h
+   src/AutoRunUtils.cpp
+   src/AutoRunUtils.h
 
-   # src/Time.h
-	#src/Time.cpp
+   src/Time.h
+   src/Time.cpp
 )
 
 
@@ -118,7 +118,7 @@ set_target_properties(
     OUTPUT_NAME lib_base
 )
 
-target_compile_features(lib_base PUBLIC cxx_std_17)
+target_compile_features(lib_base PUBLIC cxx_std_23)
 
 if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIES)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")

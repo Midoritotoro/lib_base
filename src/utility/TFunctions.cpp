@@ -8,6 +8,13 @@
 
 namespace base {
     namespace {
+        static struct
+        {
+            const void** tab;
+            size_t count;
+        } list = { NULL, 0 };
+        static const void* smallest;
+
         int CmpSmallest(
             const void* a,
             const void* b)
@@ -21,13 +28,6 @@ namespace base {
             abort();
         }
     } // namespace 
-
-    static struct
-    {
-        const void** tab;
-        size_t count;
-    } list = { NULL, 0 };
-    static const void* smallest;
 
 
     [[nodiscard]] void* TFind(
