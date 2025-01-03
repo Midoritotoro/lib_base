@@ -9,8 +9,6 @@
 #endif
 #endif
 
-#include "Assert.h"
-
 #include "Windows.h"
 #include "ProcessorDetection.h"
 

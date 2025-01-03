@@ -57,7 +57,8 @@ set(PRIVATE_SOURCES
 )
 
 
-set(PUBLIC_HEADERS
+set(PUBLIC_HEADERS 
+    include/base/Base.h
     include/base/Assert.h
 
     include/base/Utility.h

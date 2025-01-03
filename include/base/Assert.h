@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "base/Platform.h"
+
 #include <cstdio>
 #include <cstdlib>
 
@@ -12,7 +14,7 @@
 #define AssertUnlikelyHelper(x) (!!(x))
 #endif
 
-static inline void fail(
+LIB_BASE static inline void fail(
 	const char* message,
 	const char* file,
 	int line)
@@ -26,7 +28,7 @@ static inline void fail(
 	::std::abort();
 }
 
-static inline constexpr [[nodiscard]] 
+LIB_BASE static inline constexpr [[nodiscard]]
 	const char* extract_basename(
 		const char* path,
 		size_t size)
