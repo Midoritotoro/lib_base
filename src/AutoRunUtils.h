@@ -1,18 +1,19 @@
 #pragma once
 
-#ifdef _WIN32
 
 #include "base/Platform.h"
+
+#ifdef _WIN32
 
 #include <PathCch.h>
 #include <tchar.h>
 
-LIB_BASE [[nodiscard]] bool IsWindowsGreaterThen(int version);
-LIB_BASE [[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
+namespace base {
+	[[nodiscard]] bool IsWindowsGreaterThen(int version);
+	[[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
 
-#define MINIMUM_WINDOWS_VERSION NTDDI_WIN10
-#define IS_MINIMUM_WINDOWS_VERSION IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
+	[[nodiscard]] bool addToAutoRun(LPWSTR key);
+} // namespace base
 
 #endif // _WIN32
 
-LIB_BASE [[nodiscard]] bool addToAutoRun(LPWSTR key);

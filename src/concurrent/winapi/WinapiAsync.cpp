@@ -4,10 +4,10 @@
 
 #include <concrt.h>
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 	void async_plain(void (*callable)(void*), void *argument) {
 		Concurrency::CurrentScheduler::ScheduleTask(callable, argument);
 	}
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
 #endif // USE_WINAPI

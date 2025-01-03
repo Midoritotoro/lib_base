@@ -5,15 +5,14 @@
 #include "CommonQueue.h"
 #include <atomic>
 
-#include <qDebug>
 
 #ifndef USE_COMMON_QUEUE
 #define USE_COMMON_QUEUE
 #endif // !USE_COMMON_QUEUE
 
 
-namespace concurrent::details {
-	extern concurrent::queue* MainQueue;
+namespace base::concurrent::details {
+	extern base::concurrent::queue* MainQueue;
 	extern std::atomic<int> MainQueueCounter;
 
 	class main_queue_pointer {
@@ -22,13 +21,13 @@ namespace concurrent::details {
 			grab();
 		}
 
-		void create(concurrent::main_queue_processor processor);
+		void create(base::concurrent::main_queue_processor processor);
 
 		explicit operator bool() const {
 			return _pointer != nullptr;
 		}
 
-		concurrent::queue* operator->() const {
+		base::concurrent::queue* operator->() const {
 			return _pointer;
 		}
 
@@ -40,13 +39,13 @@ namespace concurrent::details {
 		void grab();
 		void ungrab();
 
-		concurrent::queue* _pointer = nullptr;
+		base::concurrent::queue* _pointer = nullptr;
 
 	};
 
-} // namespace crl::details
+} // namespace base::concurrent::details
 
-namespace concurrent {
+namespace base::concurrent {
 	void init_main_queue(main_queue_processor processor);
 	inline void wrap_main_queue(main_queue_wrapper wrapper) {
 		
@@ -63,4 +62,4 @@ namespace concurrent {
 		if (const auto main = details::main_queue_pointer())
 			main->sync(std::forward<Callable>(callable));
 	}
-} // namespace concurrent
+} // namespace base::concurrent

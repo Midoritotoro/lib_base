@@ -7,7 +7,7 @@
 #include <exception>
 #include <Windows.h>
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 
 class dll {
 public:
@@ -53,6 +53,6 @@ private:
 	own_policy _policy = own_policy::use_existing;
 };
 
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
 #endif // USE_WINAPI

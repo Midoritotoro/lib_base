@@ -3,14 +3,14 @@
 #include "CommonConfig.h"
 #include <utility>
 
-namespace concurrent {
+namespace base::concurrent {
 
 using main_queue_processor = void(*)(void (*callable)(void*), void *argument);
 using main_queue_wrapper = void(*)(void (*callable)(void*), void *argument);
 
-} // namespace concurrent
+} // namespace base::concurrent
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 
 using true_t = char;
 struct false_t {
@@ -70,4 +70,4 @@ finalizer<Callable> finally(Callable &&callable) {
 	};
 }
 
-} // namespace concurrent::details
+} // namespace base::concurrent::details

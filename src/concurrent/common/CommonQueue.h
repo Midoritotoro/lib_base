@@ -11,7 +11,7 @@
 #define USE_COMMON_QUEUE
 #endif // !USE_COMMON_QUEUE
 
-namespace concurrent {
+namespace base::concurrent {
 	namespace details {
 		class main_queue_pointer;
 	} // namespace details
@@ -54,4 +54,4 @@ private:
 	std::atomic_flag _queued = ATOMIC_FLAG_INIT;
 };
 
-} // namespace concurrent
+} // namespace base::concurrent

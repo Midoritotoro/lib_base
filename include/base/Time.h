@@ -1,7 +1,8 @@
 #pragma once
 
-#include <cstdint>
+#include "Platform.h"
 #include <string>
+
 
 namespace Time {
 	using time = std::int64_t;
@@ -12,24 +13,24 @@ namespace Time {
 		using innerTime = std::int64_t;
 		using innerProfile = std::int64_t;
 
-		void init();
+		LIB_BASE void init();
 
-		[[nodiscard]] innerTime currentValue();
-		[[nodiscard]] time convert(innerTime value);
+		LIB_BASE [[nodiscard]] innerTime currentValue();
+		LIB_BASE [[nodiscard]] time convert(innerTime value);
 
-		[[nodiscard]] innerProfile currentProfileValue();
-		[[nodiscard]] profileTime convertProfile(innerProfile);
+		LIB_BASE [[nodiscard]] innerProfile currentProfileValue();
+		LIB_BASE [[nodiscard]] profileTime convertProfile(innerProfile);
 
 	} // namespace details
 
-	[[nodiscard]] time now();
-	[[nodiscard]] profileTime profile();
+	LIB_BASE [[nodiscard]] time now();
+	LIB_BASE [[nodiscard]] profileTime profile();
 
-	bool adjustTime();
+	LIB_BASE bool adjustTime();
 
-	[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
+	LIB_BASE [[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
 
-	[[nodiscard]] int minutes(int64_t unixTime);
-	[[nodiscard]] int hours(int64_t unixTime);
-	[[nodiscard]] int seconds(int64_t unixTime);
+	LIB_BASE [[nodiscard]] int minutes(int64_t unixTime);
+	LIB_BASE [[nodiscard]] int hours(int64_t unixTime);
+	LIB_BASE [[nodiscard]] int seconds(int64_t unixTime);
 } // namespace Time

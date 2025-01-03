@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include "WinapiDll.h"
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 	namespace {
 		PSLIST_HEADER UnwrapList(void *wrapped) {
 			return static_cast<PSLIST_HEADER>(wrapped);
@@ -86,6 +86,6 @@ namespace concurrent::details {
 		*_alive = false;
 	}
 
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
 #endif // USE_WINAPI_LIST

@@ -6,7 +6,22 @@
 #include <search.h>
 
 
-namespace core::utility {
+namespace base {
+    namespace {
+        int CmpSmallest(
+            const void* a,
+            const void* b)
+        {
+            if (a == b)
+                return 0;
+            if (a == smallest)
+                return -1;
+            if (b == smallest)
+                return +1;
+            abort();
+        }
+    } // namespace 
+
     static struct
     {
         const void** tab;
@@ -97,31 +112,12 @@ namespace core::utility {
         }
     }
 
-    /**
-     *Обходит узлы дерева
-     *\param vroot - Дерево
-     *\param action - Узел дерева для обхода
-     */
     void TWalk(
         const void* vroot,
         cmp_fn_t action)
     {
         if (vroot != NULL && action != NULL)
             TRecurse((const node_t*)vroot, action, 0);
-    }
-
-
-    int CmpSmallest(
-        const void* a,
-        const void* b)
-    {
-        if (a == b)
-            return 0;
-        if (a == smallest)
-            return -1;
-        if (b == smallest)
-            return +1;
-        abort();
     }
 
     void TDestroyRecurse(
@@ -144,4 +140,4 @@ namespace core::utility {
         if (root != NULL)
             TDestroyRecurse(root, freefct);
     }
-} // core::utility
+} // namespace base

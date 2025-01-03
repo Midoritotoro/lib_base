@@ -3,7 +3,7 @@
 #include "CommonConfig.h"
 #include <memory>
 
-namespace concurrent {
+namespace base::concurrent {
 	template <typename T, typename Enable>
 	struct guard_traits;
 
@@ -36,4 +36,4 @@ namespace concurrent {
 			return (guard.lock() != nullptr);
 		}
 	};
-} // namespace concurrent
+} // namespace base::concurrent

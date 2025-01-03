@@ -53,14 +53,13 @@ set(PRIVATE_SOURCES
     src/utility/TFunctions.cpp
     src/utility/TFunctions.h
 
-    src/OverflowCheck.h
-    src/utility/Accumulate.h
-
 	src/Time.cpp
 )
 
 
 set(PUBLIC_HEADERS
+    include/base/Assert.h
+
     include/base/Utility.h
     include/base/Concurrent.h
 
@@ -68,6 +67,7 @@ set(PUBLIC_HEADERS
     include/base/Time.h
 
     include/base/Platform.h
+    include/base/OverflowCheck.h
 
     include/base/Windows.h
     include/base/ProcessorDetection.h
@@ -80,7 +80,7 @@ include(GenerateExportHeader)
 include(CheckCSourceCompiles)
 
 
-add_library(lib_base ${PRIVATE_SOURCES}) #  ${PUBLIC_HEADERS}
+add_library(lib_base ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 set_target_properties(

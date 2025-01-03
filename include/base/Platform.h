@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <cassert>
-
-
 #if defined(_WIN32)
 #if !defined(_UNICODE)
 #define _UNICODE
@@ -13,8 +9,12 @@
 #endif
 #endif
 
+#include "Assert.h"
+
 #include "Windows.h"
 #include "ProcessorDetection.h"
+
+#include <cstdint>
 
 #ifdef LIB_BASE_STATIC
 #if defined(LIB_BASE)
@@ -59,16 +59,16 @@ typedef int64_t tick_t;
 #endif /* CLOCK_FREQ / 10000000 */
 
 #if defined (__GNUC__) || defined (__clang__)
-#define likely(p)                           __builtin_expect((p), 1)
-#define unlikely(p)                         __builtin_expect((p), 0)
+#define likely(p)                           __builtin_expect(!!(p), 1)
+#define unlikely(p)                         __builtin_expect(!!(p), 0)
 #define unreachable()                       __builtin_unreachable()
 #elif defined(_MSC_VER)
-#define likely(p)                           (p)
-#define unlikely(p)                         (p)
+#define likely(p)                           (!!(p))
+#define unlikely(p)                         (!!(p))
 #define unreachable()                       (__assume(0))
 #else
-#define likely(p)                           (p)
-#define unlikely(p)                         (p)
+#define likely(p)                           (!!(p))
+#define unlikely(p)                         (!!(p))
 #define unreachable()                       ((void)0)
 #endif
 

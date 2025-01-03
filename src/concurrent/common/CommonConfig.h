@@ -1,5 +1,7 @@
 #pragma once
 
+#include "base/Platform.h"
+
 #if defined _MSC_VER || defined __MINGW32__
 #define USE_WINAPI_TIME
 #endif // !_MSC_VER && !__MINGW32__

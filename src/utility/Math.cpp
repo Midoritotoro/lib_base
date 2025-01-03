@@ -5,7 +5,7 @@
 #include <cfenv>
 #include <cmath>
 
-namespace core::utility {
+namespace base {
     int64_t GCD(
         int64_t a,
         int64_t b)
@@ -19,11 +19,11 @@ namespace core::utility {
         return a;
     }
 
-    int LCM(int a, int b) {
+    int64_t LCM(int64_t a, int64_t b) {
         return a * b / GCD(a, b);
     }
 
-    bool UReduce(
+    bool UnsignedReduce(
         unsigned* pi_dst_nom, unsigned* pi_dst_den,
         uint64_t i_nom, uint64_t i_den, uint64_t i_max)
     {
@@ -92,4 +92,4 @@ namespace core::utility {
 
         return value;
     }
-} // namespace core::utility
+} // namespace base

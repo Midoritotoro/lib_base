@@ -2,7 +2,7 @@
 
 #include "../winapi/WinapiSemaphore.h"
 
-namespace concurrent {
+namespace base::concurrent {
 
 template <typename Callable>
 inline void sync(Callable &&callable) {
@@ -16,4 +16,4 @@ inline void sync(Callable &&callable) {
 	waiter.acquire();
 }
 
-} // namespace concurrent
+} // namespace base::concurrent

@@ -9,11 +9,11 @@
 
 #include <type_traits>
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 	void async_plain(void (*callable)(void*), void *argument);
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
-namespace concurrent {
+namespace base::concurrent {
 	template <
 		typename Callable,
 		typename Return = decltype(std::declval<Callable>()())>
@@ -40,6 +40,6 @@ namespace concurrent {
 			}, static_cast<void*>(copy));
 		}
 	}
-} // namespace concurrent
+} // namespace base::concurrent
 
 #endif // USE_WINAPI

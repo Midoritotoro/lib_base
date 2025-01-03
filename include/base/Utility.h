@@ -1,9 +1,16 @@
 #pragma once
 
 #include "Platform.h"
+
+#if defined(_MSC_VER) && !defined(__llvm__) && !defined(__INTEL_COMPILER) \
+	&& !defined(__GNUC__) && !defined(__clang__)
+#include <__msvc_iter_core.hpp>
+#endif
+
+#include <ranges>
 #include <iostream>
 
-#if _has_include(gsl/gsl)
+#if __has_include(<gsl/gsl>)
 /**
  *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
  *\param name - "Имя" области видимости
@@ -19,7 +26,33 @@
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
 
 
-namespace core::utility {
+namespace base {
+	using namespace std::ranges;
+
+	template <typename F, typename Type, typename Type2>
+	concept indirectly_binary_invocable =
+		std::indirectly_readable<Type> &&
+		std::indirectly_readable<Type2> &&
+		std::copy_constructible<F>;
+
+	struct plus
+	{
+		template<typename T, typename U>
+		constexpr auto operator()(T&& t, U&& u) const -> decltype((T&&)t + (U&&)u) {
+			return (T&&)t + (U&&)u;
+		}
+		using is_transparent = void;
+	};
+
+	struct identity
+	{
+		template<typename T>
+		constexpr T&& operator()(T&& t) const noexcept {
+			return (T&&)t;
+		}
+		using is_transparent = void;
+	};
+
 	struct rational_t {
 		unsigned num, den;
 	};
@@ -42,9 +75,11 @@ namespace core::utility {
 		int64_t a,
 		int64_t b);
 
-	LIB_BASE [[nodiscard]] int LCM(int a, int b);
+	LIB_BASE [[nodiscard]] int64_t LCM(
+		int64_t a, 
+		int64_t b);
 
-	LIB_BASE bool UReduce(
+	LIB_BASE bool UnsignedReduce(
 		unsigned* pi_dst_nom, unsigned* pi_dst_den,
 		uint64_t i_nom, uint64_t i_den, uint64_t i_max);
 
@@ -66,13 +101,14 @@ namespace core::utility {
         const node_t* root,
         cmp_fn_t action, int level);
 
+    /**
+     *Обходит узлы дерева
+     *\param vroot - Дерево
+     *\param action - Узел дерева для обхода
+     */
     LIB_BASE void TWalk(
         const void* vroot,
         cmp_fn_t action);
-
-    LIB_BASE int CmpSmallest(
-        const void* a,
-        const void* b);
 
     LIB_BASE void TDestroyRecurse(
         node_t* root,
@@ -81,4 +117,68 @@ namespace core::utility {
     LIB_BASE void TDestroy(
         void* root,
         void (*freenode)(void*));
-} // namespace core::utility
+
+	template<typename I, typename S, typename T,
+		typename Op = plus, typename P = identity>
+		requires std::input_iterator<I>&&
+	std::sentinel_for<S, I>&&
+		indirectly_binary_invocable<Op, T*, std::projected<I, P>>&&
+		std::assignable_from<T&, std::indirect_result_t<Op&,
+		T*, std::projected<I, P>>>
+
+		LIB_BASE always_inline [[nodiscard]] T accumulate(
+			I first,
+			S last,
+			T init,
+			Op op = Op{},
+			P proj = P{})
+	{
+		for (; first != last; ++first)
+			init = std::invoke(op, init, std::invoke(proj, *first));
+		return init;
+	}
+
+	template<typename Rng, typename T, typename Op = plus, typename P = identity>
+		requires input_range<Rng>&&
+	indirectly_binary_invocable<Op, T*,
+		std::projected<iterator_t<Rng>, P>>&&
+		std::assignable_from<T&, std::indirect_result_t<Op&, T*,
+		std::projected<iterator_t<Rng>, P>>>
+
+		LIB_BASE always_inline [[nodiscard]] T accumulate(
+			Rng&& rng,
+			T init,
+			Op op = Op{},
+			P proj = P{})
+	{
+		return (*this)(std::ranges::begin(rng), std::ranges::end(rng),
+			std::move(init), std::move(op), std::move(proj));
+	}
+
+	template <typename T>
+	LIB_BASE always_inline void accumulateMax(T& a, const T& b) {
+		if (a < b)
+			a = b;
+	}
+
+	template <typename T>
+	LIB_BASE always_inline void accumulateMin(T& a, const T& b) {
+		if (a > b)
+			a = b;
+	}
+
+	template <typename T>
+	LIB_BASE always_inline [[nodiscard]] T&& take(T& value) {
+		return std::exchange(value, T{});
+	}
+
+#ifdef _WIN32
+	LIB_BASE [[nodiscard]] bool IsWindowsGreaterThen(int version);
+	LIB_BASE [[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
+
+	#define MINIMUM_WINDOWS_VERSION NTDDI_WIN10
+	#define IS_MINIMUM_WINDOWS_VERSION IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
+
+	LIB_BASE [[nodiscard]] bool addToAutoRun(LPWSTR key);
+#endif // _WIN32
+} // namespace base

@@ -3,7 +3,7 @@
 #include "base/Utility.h"
 
 
-namespace core::utility {
+namespace base {
     [[nodiscard]] void* TFind(
         const void* vkey,
         void* const* vrootp,
@@ -24,10 +24,6 @@ namespace core::utility {
         const void* vroot,
         cmp_fn_t action);
 
-    int CmpSmallest(
-        const void* a,
-        const void* b);
-
     void TDestroyRecurse(
         node_t* root,
         void (*free_action)(void*));
@@ -36,4 +32,4 @@ namespace core::utility {
         void* root,
         void (*freenode)(void*));
 
-} // namespace core::utility
+} // namespace base

@@ -8,7 +8,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace concurrent {
+namespace base::concurrent {
 namespace details {
 
 template <typename T>
@@ -109,4 +109,4 @@ inline void invokeSync(Guard &&object, Callable &&callable) {
 		std::forward<Callable>(callable)));
 }
 
-} // namespace concurrent
+} // namespace base::concurrent

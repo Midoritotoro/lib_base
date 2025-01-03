@@ -7,7 +7,7 @@
 #include <Windows.h>
 #include <memory>
 
-namespace concurrent {
+namespace base::concurrent {
 
 class semaphore {
 public:
@@ -41,6 +41,6 @@ private:
 
 };
 
-} // namespace concurrent
+} // namespace base::concurrent
 
 #endif // USE_WINAPI

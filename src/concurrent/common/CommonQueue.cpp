@@ -5,7 +5,7 @@
 #include "../winapi/WinapiAsync.h"
 
 
-namespace concurrent {
+namespace base::concurrent {
 	queue::queue() = default;
 	queue::queue(main_queue_processor processor)
 		: _main_processor(processor) 
@@ -35,6 +35,6 @@ namespace concurrent {
 	void queue::ProcessCallback(void *that) {
 		static_cast<queue*>(that)->process();
 	}
-} // namespace concurrent
+} // namespace base::concurrent
 
 #endif // USE_COMMON_QUEUE

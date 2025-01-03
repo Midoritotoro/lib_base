@@ -6,13 +6,13 @@
 
 namespace {
 
-concurrent::queue *Queue/* = nullptr*/;
+base::concurrent::queue *Queue/* = nullptr*/;
 std::atomic<int> Counter/* = 0*/;
-concurrent::details::main_queue_pointer Lifetime;
+base::concurrent::details::main_queue_pointer Lifetime;
 
 } // namespace
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 
 void main_queue_pointer::grab() {
 	auto counter = Counter.load(std::memory_order_acquire);
@@ -44,14 +44,14 @@ void main_queue_pointer::create(main_queue_processor processor) {
 	_pointer = Queue;
 }
 
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
-namespace concurrent {
+namespace base::concurrent {
 
 void init_main_queue(main_queue_processor processor) {
 	Lifetime.create(processor);
 }
 
-} // namespace concurrent
+} // namespace base::concurrent
 
 #endif // USE_COMMON_QUEUE

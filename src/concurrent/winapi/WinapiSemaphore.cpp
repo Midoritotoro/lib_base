@@ -1,9 +1,9 @@
 #include "WinapiSemaphore.h"
-#include <gsl/gsl>
+
 
 #ifdef USE_WINAPI
 
-namespace concurrent {
+namespace base::concurrent {
 	auto semaphore::implementation::create() -> pointer {
 		auto result = CreateSemaphore(nullptr, 0, 1, nullptr);
 		Expects(result);
@@ -23,6 +23,6 @@ namespace concurrent {
 	void semaphore::release() {
 		ReleaseSemaphore(_handle.get(), 1, nullptr);
 	}
-} // namespace concurrent
+} // namespace base::concurrent
 
 #endif // USE_WINAPI

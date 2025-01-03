@@ -7,7 +7,7 @@
 #include "../common/CommonUtils.h"
 #include "WinapiSemaphore.h"
 
-namespace concurrent::details {
+namespace base::concurrent::details {
 
 class list {
 public:
@@ -89,6 +89,6 @@ private:
 	bool *_alive = nullptr;
 };
 
-} // namespace concurrent::details
+} // namespace base::concurrent::details
 
 #endif // USE_WINAPI_LIST

@@ -1,20 +1,9 @@
 #include "base/Time.h"
 
 #include <atomic>
-#include <ctime>
-
 #include <limits>
-#include <type_traits>
 
-#include <cassert>
-#include <iostream>
-
-#include <Windows.h>
-
-
-#ifdef max
-	#undef max
-#endif // max
+#include "Windows.h"
 
 
 namespace Time {
