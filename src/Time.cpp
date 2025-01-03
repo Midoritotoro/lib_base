@@ -1,22 +1,22 @@
 #include "Time.h"
+#include "base/Time.h"
 
 #include <atomic>
 #include <limits>
 
-#include "base/Windows.h"
 
 namespace Time {
 	namespace details {
 		namespace {
 
-			time LastAdjustmentTime;
+			time_t LastAdjustmentTime;
 			std::time_t LastAdjustmentUnixtime;
 
 			using seconds_type = std::uint32_t;
 			std::atomic<seconds_type> AdjustSeconds;
 
-			innerTime StartValue;
-			innerProfile StartProfileValue;
+			innerTime_t StartValue;
+			innerProfile_t StartProfileValue;
 
 			double Frequency;
 			double ProfileFrequency;
@@ -42,7 +42,7 @@ namespace Time {
 				const auto unixtime = ::time(nullptr);
 
 				const auto real = (unixtime - LastAdjustmentUnixtime);
-				const auto seconds = (time(real) * 1000 - delta) / 1000;
+				const auto seconds = (time_t(real) * 1000 - delta) / 1000;
 
 				LastAdjustmentUnixtime = unixtime;
 				LastAdjustmentTime = now;
@@ -55,7 +55,7 @@ namespace Time {
 				static constexpr auto maxTime = std::numeric_limits<seconds_type>::max();
 
 				while (true) {
-					if (time(current) + seconds > time(maxTime))
+					if (time_t(current) + seconds > time_t(maxTime))
 						return false;
 
 					const auto next = current + seconds_type(seconds);
@@ -65,11 +65,11 @@ namespace Time {
 				return false;
 			}
 
-			time computeAdjustment() {
-				return time(AdjustSeconds.load()) * 1000;
+			time_t computeAdjustment() {
+				return time_t (AdjustSeconds.load()) * 1000;
 			}
 
-			profileTime computeProfileAdjustment() {
+			profileTime_t computeProfileAdjustment() {
 				return computeAdjustment() * 1000;
 			}
 		} // namespace 
@@ -81,34 +81,34 @@ namespace Time {
 			ProfileFrequency = 1000000. / double(value.QuadPart);
 		}
 
-		innerTime currentValue() {
+		innerTime_t currentValue() {
 			LARGE_INTEGER value;
 			QueryPerformanceCounter(&value);
 			return value.QuadPart;
 		}
 
-		time convert(innerTime value) {
-			return time(value * Frequency);
+		time_t convert(innerTime_t value) {
+			return time_t(value * Frequency);
 		}
 
-		innerProfile currentProfileValue() {
+		innerProfile_t currentProfileValue() {
 			LARGE_INTEGER value;
 			QueryPerformanceCounter(&value);
 			return value.QuadPart;
 		}
 
-		profileTime convertProfile(innerProfile value) {
-			return profileTime(value * ProfileFrequency);
+		profileTime_t convertProfile(innerProfile_t value) {
+			return profileTime_t(value * ProfileFrequency);
 		}
 
 	} // namespace details
 
-	time now() {
+	time_t now() {
 		const auto elapsed = details::currentValue() - details::StartValue;
 		return details::convert(elapsed) + details::computeAdjustment();
 	}
 
-	profileTime profile() {
+	profileTime_t profile() {
 		const auto elapsed = details::currentProfileValue()
 			- details::StartProfileValue;
 		return details::convertProfile(elapsed)

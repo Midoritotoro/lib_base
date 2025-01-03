@@ -1,30 +1,29 @@
 #pragma once
 
-#include "base/Time.h"
 #include <string>
+#include <ctime>
 
-
-namespace Time {
-	using time = std::int64_t;
-	using profileTime = std::int64_t;
+namespace base::Time {
+	using time_t = std::int64_t;
+	using profileTime_t = std::int64_t;
 
 	namespace details {
 
-		using innerTime = std::int64_t;
-		using innerProfile = std::int64_t;
+		using innerTime_t = std::int64_t;
+		using innerProfile_t = std::int64_t;
 
 		void init();
 
-		[[nodiscard]] innerTime currentValue();
-		[[nodiscard]] time convert(innerTime value);
+		[[nodiscard]] innerTime_t currentValue();
+		[[nodiscard]] time_t convert(innerTime_t value);
 
-		[[nodiscard]] innerProfile currentProfileValue();
-		[[nodiscard]] profileTime convertProfile(innerProfile);
+		[[nodiscard]] innerProfile_t currentProfileValue();
+		[[nodiscard]] profileTime_t convertProfile(innerProfile_t);
 
 	} // namespace details
 
-	[[nodiscard]] time now();
-	[[nodiscard]] profileTime profile();
+	[[nodiscard]] time_t now();
+	[[nodiscard]] profileTime_t profile();
 
 	bool adjustTime();
 

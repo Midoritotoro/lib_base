@@ -5,10 +5,16 @@ project ("lib_base"
     DESCRIPTION "..."
     LANGUAGES CXX)
 
-string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
-    isTopLevel)
+set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
+       /INCREMENTAL:NO)
 
-option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${isTopLevel})
+option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" OFF)
+option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
+option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
+option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
+option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
+
+option(BUILD_SHARED_LIBS "Сборка динамической библиотеки" OFF)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 message(${LIB_BASE_INSTALL_CMAKE_DIR})
@@ -18,7 +24,6 @@ set(LIBTYPE "Shared")
    
 set(PRIVATE_SOURCES 
     src/concurrent/common/CommonConfig.h
-
     src/concurrent/common/CommonGuards.h
 
     src/concurrent/common/CommonAsync.cpp
@@ -30,7 +35,6 @@ set(PRIVATE_SOURCES
     src/concurrent/common/CommonQueue.h
 
     src/concurrent/common/CommonSync.h
-
     src/concurrent/common/CommonUtils.h
 
     src/concurrent/winapi/WinapiAsync.cpp
@@ -44,15 +48,16 @@ set(PRIVATE_SOURCES
     src/concurrent/winapi/WinapiSemaphore.cpp
     src/concurrent/winapi/WinapiSemaphore.h
 
-	src/AutoRunUtils.cpp
-    src/AutoRunUtils.h
-
     src/utility/Math.cpp
     src/utility/Math.h
 
     src/utility/TFunctions.cpp
     src/utility/TFunctions.h
 
+    src/AutoRunUtils.cpp
+    src/AutoRunUtils.h
+
+    src/Time.h
 	src/Time.cpp
 )
 
@@ -81,8 +86,10 @@ include(GenerateExportHeader)
 include(CheckCSourceCompiles)
 
 
-add_library(lib_base ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
+add_library(lib_base ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
+
+target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
 set_target_properties(
     lib_base PROPERTIES
@@ -105,7 +112,13 @@ if(NOT BUILD_SHARED_LIBS)
     set(LIBTYPE "STATIC")
 endif()
 
-message(${LIBTYPE})
+if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIES)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    endif()
+endif()
+
+message("LIBTYPE: " ${LIBTYPE})
 
 if(WIN32)
     if(NOT LIBTYPE STREQUAL "STATIC")
@@ -155,11 +168,31 @@ if (WIN32)
     )
 endif()
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+   set_target_properties(${PROJECT_NAME} PROPERTIES
+       MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+
+    target_link_options(${PROJECT_NAME}
+    INTERFACE
+       ${linkOptions}
+    )
+endif()
+
 set(export_file_name "lib_base_shared.h")
 
 if(NOT BUILD_SHARED_LIBS)
     set(export_file_name "lib_base_static.h")
 endif()
+
+if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 
 generate_export_header(
     lib_base
