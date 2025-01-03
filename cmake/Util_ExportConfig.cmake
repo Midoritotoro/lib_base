@@ -1,0 +1,40 @@
+set(EXPORT_DECL "")
+set(LIBTYPE "Shared")
+
+include(CheckCSourceCompiles)
+
+if(NOT BUILD_SHARED_LIBS)
+    target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)
+    set(LIBTYPE "STATIC")
+endif()
+
+if(WIN32)
+    if(NOT LIBTYPE STREQUAL "STATIC")
+        set(EXPORT_DECL "__declspec(dllexport)")
+    endif()
+else()
+    check_c_source_compiles("int foo() __attribute__((visibility(\"protected\")));
+                             int main() {return 0;}" HAVE_GCC_PROTECTED_VISIBILITY)
+    if(HAVE_GCC_PROTECTED_VISIBILITY)
+        if(NOT LIBTYPE STREQUAL "STATIC")
+            set(EXPORT_DECL "__attribute__((visibility(\"protected\")))")
+        endif()
+    else()
+        check_c_source_compiles("int foo() __attribute__((visibility(\"default\")));
+                                 int main() {return 0;}" HAVE_GCC_DEFAULT_VISIBILITY)
+        if(HAVE_GCC_DEFAULT_VISIBILITY)
+            if(NOT LIBTYPE STREQUAL "STATIC")
+                set(EXPORT_DECL "__attribute__((visibility(\"default\")))")
+            endif()
+        endif()
+    endif()
+
+    if(HAVE_GCC_PROTECTED_VISIBILITY OR HAVE_GCC_DEFAULT_VISIBILITY)
+        check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_SWITCH)
+        if(HAVE_VISIBILITY_HIDDEN_SWITCH)
+            set(CXX_FLAGS ${CXX_FLAGS} -fvisibility=hidden)
+        endif()
+    endif()
+endif()
+
+target_compile_definitions(lib_base PUBLIC "LIB_BASE=${EXPORT_DECL}")

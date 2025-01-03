@@ -10,6 +10,8 @@
 #include <ranges>
 #include <iostream>
 
+#include <cstdlib>
+
 #if __has_include(<gsl/gsl>)
 /**
  *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время

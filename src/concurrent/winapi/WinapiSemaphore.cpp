@@ -1,5 +1,5 @@
 #include "WinapiSemaphore.h"
-
+#include "base/Assert.h"
 
 #ifdef USE_WINAPI
 

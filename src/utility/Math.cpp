@@ -5,6 +5,7 @@
 #include <cfenv>
 #include <cmath>
 
+
 namespace base {
     int64_t GCD(
         int64_t a,

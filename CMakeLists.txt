@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.16...3.21)
+﻿cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
 
 project ("lib_base"
     VERSION 1.0.0
@@ -8,19 +8,26 @@ project ("lib_base"
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
 
-option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" OFF)
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+if (NOT DEFINED CMAKE_INSTALL_BINDIR)
+  set(CMAKE_INSTALL_BINDIR "bin")
+endif()
+if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
+  set(CMAKE_INSTALL_INCLUDEDIR "include")
+endif()
+
+option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
 option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
 option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
-
 option(BUILD_SHARED_LIBS "Сборка динамической библиотеки" OFF)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 message(${LIB_BASE_INSTALL_CMAKE_DIR})
 
-set(EXPORT_DECL "")
-set(LIBTYPE "Shared")
    
 set(PRIVATE_SOURCES 
     src/concurrent/common/CommonConfig.h
@@ -48,17 +55,17 @@ set(PRIVATE_SOURCES
     src/concurrent/winapi/WinapiSemaphore.cpp
     src/concurrent/winapi/WinapiSemaphore.h
 
-    src/utility/Math.cpp
-    src/utility/Math.h
+ #   src/utility/Math.cpp
+  #  src/utility/Math.h
 
-    src/utility/TFunctions.cpp
-    src/utility/TFunctions.h
+ #   src/utility/TFunctions.cpp
+  #  src/utility/TFunctions.h
 
-    src/AutoRunUtils.cpp
-    src/AutoRunUtils.h
+  #  src/AutoRunUtils.cpp
+  #  src/AutoRunUtils.h
 
-    src/Time.h
-	src/Time.cpp
+   # src/Time.h
+	#src/Time.cpp
 )
 
 
@@ -80,26 +87,20 @@ set(PUBLIC_HEADERS
 )
 
 
-include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
-include(CheckCSourceCompiles)
-
 
 add_library(lib_base ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
+include(cmake/Util_ExportConfig.cmake)
+
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
-set_target_properties(
-    lib_base PROPERTIES
-    CXX_STANDARD 23
-    CMAKE_CXX_STANDARD_REQUIRED ON
-    VERSION "${PROJECT_VERSION}"
-    SOVERSION "${PROJECT_VERSION_MAJOR}"
-    EXPORT_NAME lib_base
-    OUTPUT_NAME lib_base
-    PUBLIC_HEADER "${PUBLIC_HEADERS}"
+generate_export_header(
+    lib_base
+    BASE_NAME lib_base
+    EXPORT_FILE_NAME export/lib_base/lib_base.h
 )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -107,10 +108,17 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GN
     set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
-if(NOT BUILD_SHARED_LIBS)
-    target_compile_definitions(lib_base PUBLIC LIB_BASE_STATIC)
-    set(LIBTYPE "STATIC")
-endif()
+set_target_properties(
+    lib_base PROPERTIES
+    CMAKE_CXX_STANDARD 23
+    CMAKE_CXX_STANDARD_REQUIRED ON
+    VERSION "${PROJECT_VERSION}"
+    SOVERSION "${PROJECT_VERSION_MAJOR}"
+    EXPORT_NAME lib_base
+    OUTPUT_NAME lib_base
+)
+
+target_compile_features(lib_base PUBLIC cxx_std_17)
 
 if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIES)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -120,44 +128,15 @@ endif()
 
 message("LIBTYPE: " ${LIBTYPE})
 
-if(WIN32)
-    if(NOT LIBTYPE STREQUAL "STATIC")
-        set(EXPORT_DECL "__declspec(dllexport)")
-    endif()
-else()
-    check_c_source_compiles("int foo() __attribute__((visibility(\"protected\")));
-                             int main() {return 0;}" HAVE_GCC_PROTECTED_VISIBILITY)
-    if(HAVE_GCC_PROTECTED_VISIBILITY)
-        if(NOT LIBTYPE STREQUAL "STATIC")
-            set(EXPORT_DECL "__attribute__((visibility(\"protected\")))")
-        endif()
-    else()
-        check_c_source_compiles("int foo() __attribute__((visibility(\"default\")));
-                                 int main() {return 0;}" HAVE_GCC_DEFAULT_VISIBILITY)
-        if(HAVE_GCC_DEFAULT_VISIBILITY)
-            if(NOT LIBTYPE STREQUAL "STATIC")
-                set(EXPORT_DECL "__attribute__((visibility(\"default\")))")
-            endif()
-        endif()
-    endif()
-
-    if(HAVE_GCC_PROTECTED_VISIBILITY OR HAVE_GCC_DEFAULT_VISIBILITY)
-        check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_SWITCH)
-        if(HAVE_VISIBILITY_HIDDEN_SWITCH)
-            set(CXX_FLAGS ${CXX_FLAGS} -fvisibility=hidden)
-        endif()
-    endif()
-endif()
-
-target_compile_definitions(lib_base PRIVATE "LIB_BASE=${EXPORT_DECL}")
+target_include_directories(lib_base
+    PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+)
 
 target_include_directories(lib_base
     PUBLIC
-        "\$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "\$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "\$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-    PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/src")
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
 
 if (WIN32)
     target_link_libraries(lib_base
@@ -175,16 +154,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_link_options(${PROJECT_NAME}
     INTERFACE
        ${linkOptions}
-    )
+   )
 endif()
 
-set(export_file_name "lib_base_shared.h")
-
-if(NOT BUILD_SHARED_LIBS)
-    set(export_file_name "lib_base_static.h")
-endif()
-
-if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)
+if(PROJECT_IS_TOP_LEVEL)# AND LIB_BASE_BUILD_TESTS)
+    message(addtests)
     enable_testing()
     add_subdirectory(tests)
 endif()
@@ -194,70 +168,6 @@ if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_EXAMPLES)
 endif()
 
 
-generate_export_header(
-    lib_base
-    BASE_NAME lib_base
-    EXPORT_FILE_NAME export/${export_file_name}
-    CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
-)
-
 if(LIB_BASE_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
-    configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/lib_base-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/lib_base-config.cmake
-        INSTALL_DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}")
-
-    write_basic_package_version_file(lib_base-config-version.cmake
-        COMPATIBILITY SameMajorVersion)
-
-    install(
-        TARGETS lib_base 
-        EXPORT lib_base_targets
-        LIBRARY COMPONENT ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE COMPONENT ${CMAKE_INSTALL_LIBDIR}
-        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-
-    install(DIRECTORY include/
-        TYPE INCLUDE
-        COMPONENT ${CMAKE_INSTALL_LIBDIR})
-
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/base/${export_file_name}"
-        COMPONENT ${CMAKE_INSTALL_LIBDIR}
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/base")
-
-    set(targets_file "lib_base-shared-targets.cmake")
-
-    if(NOT BUILD_SHARED_LIBS)
-        set(targets_file "lib_base-static-targets.cmake")
-    endif()
-
-    install(
-        EXPORT lib_base_targets
-        COMPONENT ${CMAKE_INSTALL_LIBDIR}
-        FILE "${targets_file}"
-        DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}"
-        NAMESPACE base::)
-
-     install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/lib_base-config.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/lib_base-config-version.cmake"
-        COMPONENT ${CMAKE_INSTALL_LIBDIR}
-        DESTINATION "${LIB_BASE_INSTALL_CMAKE_DIR}")
-
-    if(MSVC)
-        set(pdb_file "")
-        set(pdb_file_destination "")
-
-        if(BUILD_SHARED_LIBS)
-            set(pdb_file "$<TARGET_PDB_FILE:lib_base>")
-            set(pdb_file_destination "${CMAKE_INSTALL_BINDIR}")
-        else()
-            set(pdb_file "$<TARGET_FILE_DIR:lib_base>/$<TARGET_FILE_PREFIX:lib_base>$<TARGET_FILE_BASE_NAME:lib_base>.pdb")
-            set(pdb_file_destination "${CMAKE_INSTALL_LIBDIR}")
-        endif()
-
-        install(FILES "${pdb_file}"
-            COMPONENT lib
-            CONFIGURATIONS Debug RelWithDebInfo
-            DESTINATION "${pdb_file_destination}"
-            OPTIONAL)
-    endif()
+    include(cmake/Util_InstallRules.cmake)
 endif()

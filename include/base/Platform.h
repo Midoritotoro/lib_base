@@ -12,6 +12,8 @@
 #include "Windows.h"
 #include "ProcessorDetection.h"
 
+#include <lib_base/lib_base.h>
+
 #include <cstdint>
 
 
@@ -64,11 +66,11 @@ typedef int64_t tick_t;
 #elif defined(_MSC_VER)
 #define likely(p)                           (!!(p))
 #define unlikely(p)                         (!!(p))
-#define unreachable()                       (__assume(0))
+//#define unreachable()                       (__assume(0))
 #else
 #define likely(p)                           (!!(p))
 #define unlikely(p)                         (!!(p))
-#define unreachable()                       ((void)0)
+//#define unreachable()                       ((void)0)
 #endif
 
 #define always_inline						__forceinline
