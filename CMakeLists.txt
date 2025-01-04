@@ -29,31 +29,6 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 
    
 set(PRIVATE_SOURCES 
-    src/concurrent/common/CommonConfig.h
-    src/concurrent/common/CommonGuards.h
-
-    src/concurrent/common/CommonAsync.cpp
-    src/concurrent/common/CommonAsync.h
-
-    src/concurrent/common/CommonAsyncGuarded.h
-
-    src/concurrent/common/CommonQueue.cpp
-    src/concurrent/common/CommonQueue.h
-
-    src/concurrent/common/CommonSync.h
-    src/concurrent/common/CommonUtils.h
-
-    src/concurrent/winapi/WinapiAsync.cpp
-    src/concurrent/winapi/WinapiAsync.h
-
-    src/concurrent/winapi/WinapiDll.h
-
-    src/concurrent/winapi/WinapiList.cpp
-    src/concurrent/winapi/WinapiList.h
-
-    src/concurrent/winapi/WinapiSemaphore.cpp
-    src/concurrent/winapi/WinapiSemaphore.h
-
    src/utility/Math.cpp
     src/utility/Math.h
 
@@ -83,6 +58,31 @@ set(PUBLIC_HEADERS
 
     include/base/Windows.h
     include/base/ProcessorDetection.h
+
+    include/base/concurrent/common/CommonConfig.h
+    include/base/concurrent/common/CommonGuards.h
+
+    include/base/concurrent/common/CommonAsync.cpp
+    include/base/concurrent/common/CommonAsync.h
+
+    include/base/concurrent/common/CommonAsyncGuarded.h
+
+    include/base/concurrent/common/CommonQueue.cpp
+    include/base/concurrent/common/CommonQueue.h
+
+    include/base/concurrent/common/CommonSync.h
+    include/base/concurrent/common/CommonUtils.h
+
+    include/base/concurrent/winapi/WinapiAsync.cpp
+    include/base/concurrent/winapi/WinapiAsync.h
+
+    include/base/concurrent/winapi/WinapiDll.h
+
+    include/base/concurrent/winapi/WinapiList.cpp
+    include/base/concurrent/winapi/WinapiList.h
+
+    include/base/concurrent/winapi/WinapiSemaphore.cpp
+    include/base/concurrent/winapi/WinapiSemaphore.h
 )
 
 

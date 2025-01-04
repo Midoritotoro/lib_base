@@ -24,11 +24,6 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-configure_file(
-    "cmake/${package}-config.cmake.in" 
-    "${CMAKE_CURRENT_BINARY_DIR}/lib_base/lib_baseConfig.cmake"
-    COPYONLY)
-
 write_basic_package_version_file("${package}ConfigVersion.cmake"
     COMPATIBILITY SameMajorVersion)
 
@@ -39,18 +34,10 @@ set(
 
 set_property(CACHE "LIB_BASE_INSTALL_CMAKEDIR" PROPERTY TYPE PATH)
 mark_as_advanced("LIB_BASE_INSTALL_CMAKEDIR")
+
 message(CMAKE_INSTALL_INCLUDEDIR:${CMAKE_INSTALL_INCLUDEDIR})
-
-#install(
-#    FILES "${CMAKE_CURRENT_BINARY_DIR}/include/base/${export_file_name}"
- #   COMPONENT ${CMAKE_INSTALL_LIBDIR}
- #   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/base")
-
-set(targets_file "lib_base-shared-targets.cmake")
-
-if(NOT BUILD_SHARED_LIBS)
-    set(targets_file "lib_base-static-targets.cmake")
-endif()
+message(LIB_BASE_INSTALL_CMAKEDIR:${LIB_BASE_INSTALL_CMAKEDIR})
+message(PROJECT_BINARY_DIR:${PROJECT_BINARY_DIR})
 
 install(
 FILES "cmake/Util_InstallConfig.cmake"
@@ -59,13 +46,11 @@ RENAME "${package}Config.cmake"
 COMPONENT lib_baseDevelopment
 )
 
-
 install(
     FILES "${PROJECT_BINARY_DIR}/${package}ConfigVersion.cmake"
     DESTINATION "${LIB_BASE_INSTALL_CMAKEDIR}"
     COMPONENT lib_baseDevelopment
 )
-
 
 install(
     EXPORT lib_baseTargets
@@ -73,6 +58,13 @@ install(
     DESTINATION "${LIB_BASE_INSTALL_CMAKEDIR}"
     COMPONENT lib_baseDevelopment
 )
+
+message("${CMAKE_CURRENT_BINARY_DIR}/lib_base")
+
+configure_file(
+    "cmake/${package}Config.cmake" 
+    "${CMAKE_CURRENT_BINARY_DIR}/lib_baseConfig.cmake"
+    COPYONLY)
 
 if(MSVC)
     set(pdb_file "")
