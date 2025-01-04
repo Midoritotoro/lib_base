@@ -1,9 +1,9 @@
-#include "WinapiList.h"
+#include "base/concurrent/win/WinapiList.h"
 
 #ifdef USE_WINAPI_LIST
 
-#include <Windows.h>
-#include "WinapiDll.h"
+#include "base/Windows.h"
+#include "base/concurrent/win/WinapiDll.h"
 
 namespace base::concurrent::details {
 	namespace {

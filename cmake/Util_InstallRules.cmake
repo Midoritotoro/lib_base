@@ -4,28 +4,11 @@ include(GNUInstallDirs)
 set(package lib_base)
 
 install(
-    DIRECTORY 
-    include/
-    "${PROJECT_BINARY_DIR}/export/"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    COMPONENT lib_baseDevelopment
-)
-
-install(
     TARGETS lib_base 
     EXPORT lib_baseTargets
-      RUNTIME #
-    COMPONENT lib_baseRuntime
-    LIBRARY #
-    COMPONENT lib_baseRuntime
-    NAMELINK_COMPONENT 
-    ARCHIVE #
-    COMPONENT lib_baseDevelopment
-    INCLUDES #
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-write_basic_package_version_file("${package}ConfigVersion.cmake"
-    COMPATIBILITY SameMajorVersion)
+message(conf:${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake)
 
 set(
     "LIB_BASE_INSTALL_CMAKEDIR" "${CMAKE_INSTALL_LIBDIR}/cmake/${package}"
@@ -39,32 +22,38 @@ message(CMAKE_INSTALL_INCLUDEDIR:${CMAKE_INSTALL_INCLUDEDIR})
 message(LIB_BASE_INSTALL_CMAKEDIR:${LIB_BASE_INSTALL_CMAKEDIR})
 message(PROJECT_BINARY_DIR:${PROJECT_BINARY_DIR})
 
-install(
-FILES "cmake/Util_InstallConfig.cmake"
-DESTINATION "${LIB_BASE_INSTALL_CMAKEDIR}"
-RENAME "${package}Config.cmake"
-COMPONENT lib_baseDevelopment
-)
-
-install(
-    FILES "${PROJECT_BINARY_DIR}/${package}ConfigVersion.cmake"
-    DESTINATION "${LIB_BASE_INSTALL_CMAKEDIR}"
-    COMPONENT lib_baseDevelopment
-)
 
 install(
     EXPORT lib_baseTargets
-    NAMESPACE base::
-    DESTINATION "${LIB_BASE_INSTALL_CMAKEDIR}"
-    COMPONENT lib_baseDevelopment
+    FILE lib_baseTargets.cmake
+    DESTINATION lib/cmake/${package}
 )
-
 message("${CMAKE_CURRENT_BINARY_DIR}/lib_base")
 
-configure_file(
-    "cmake/${package}Config.cmake" 
-    "${CMAKE_CURRENT_BINARY_DIR}/lib_baseConfig.cmake"
-    COPYONLY)
+configure_package_config_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${package}Config.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake"
+  INSTALL_DESTINATION "lib/cmake/${package}"
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+  write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/${package}ConfigVersion.cmake"
+        VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION}"
+        COMPATIBILITY AnyNewerVersion)
+
+install(
+    FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/${package}ConfigVersion.cmake
+      DESTINATION lib/cmake/${package}
+  )
+
+
+export(
+    EXPORT lib_baseTargets
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake"
+)
 
 if(MSVC)
     set(pdb_file "")

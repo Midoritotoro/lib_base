@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../common/CommonConfig.h"
+#include "base/concurrent/common/CommonConfig.h"
 
 #ifdef USE_WINAPI
 
-#include <Windows.h>
+#include "base/Windows.h"
 #include <memory>
 
 namespace base::concurrent {

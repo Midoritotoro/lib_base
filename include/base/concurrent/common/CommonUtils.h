@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommonConfig.h"
+#include "base/concurrent/common/CommonConfig.h"
 #include <utility>
 
 namespace base::concurrent {

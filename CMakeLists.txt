@@ -23,23 +23,30 @@ option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использов
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
 option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
-option(BUILD_SHARED_LIBS "Сборка динамической библиотеки" OFF)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
+set(BUILD_SHARED_LIBS OFF)
 
    
 set(PRIVATE_SOURCES 
-   src/utility/Math.cpp
+    src/utility/Math.cpp
     src/utility/Math.h
 
-   src/utility/TFunctions.cpp
-   src/utility/TFunctions.h
+    src/utility/TFunctions.cpp
+    src/utility/TFunctions.h
 
-   src/AutoRunUtils.cpp
-   src/AutoRunUtils.h
+    src/AutoRunUtils.cpp
+    src/AutoRunUtils.h
 
-   src/Time.h
-   src/Time.cpp
+    src/Time.h
+    src/Time.cpp
+
+    src/concurrent/common/CommonAsync.cpp
+    src/concurrent/common/CommonQueue.cpp
+
+    src/concurrent/win/WinapiAsync.cpp
+    src/concurrent/win/WinapiList.cpp
+    src/concurrent/win/WinapiSemaphore.cpp
 )
 
 
@@ -62,27 +69,21 @@ set(PUBLIC_HEADERS
     include/base/concurrent/common/CommonConfig.h
     include/base/concurrent/common/CommonGuards.h
 
-    include/base/concurrent/common/CommonAsync.cpp
     include/base/concurrent/common/CommonAsync.h
 
     include/base/concurrent/common/CommonAsyncGuarded.h
 
-    include/base/concurrent/common/CommonQueue.cpp
     include/base/concurrent/common/CommonQueue.h
 
     include/base/concurrent/common/CommonSync.h
     include/base/concurrent/common/CommonUtils.h
 
-    include/base/concurrent/winapi/WinapiAsync.cpp
-    include/base/concurrent/winapi/WinapiAsync.h
+    include/base/concurrent/win/WinapiAsync.h
 
-    include/base/concurrent/winapi/WinapiDll.h
+    include/base/concurrent/win/WinapiDll.h
 
-    include/base/concurrent/winapi/WinapiList.cpp
-    include/base/concurrent/winapi/WinapiList.h
-
-    include/base/concurrent/winapi/WinapiSemaphore.cpp
-    include/base/concurrent/winapi/WinapiSemaphore.h
+    include/base/concurrent/win/WinapiList.h
+    include/base/concurrent/win/WinapiSemaphore.h
 )
 
 
@@ -125,7 +126,17 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
     endif()
 endif()
 
-# message("LIBTYPE: " ${LIBTYPE})
+message("LIBTYPE: " ${LIBTYPE})
+
+target_include_directories(lib_base
+    PUBLIC
+         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+)
+
+target_include_directories(lib_base
+    PUBLIC
+        "$<INSTALL_INTERFACE:include>"
+)
 
 target_include_directories(lib_base
     PUBLIC
@@ -147,13 +158,13 @@ if (WIN32)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  # set_target_properties(${PROJECT_NAME} PROPERTIES
-  #     MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+   set_target_properties(${PROJECT_NAME} PROPERTIES
+       MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
 
-  #  target_link_options(${PROJECT_NAME}
-  #  INTERFACE
-  #     ${linkOptions}
-  # )
+    target_link_options(${PROJECT_NAME}
+    INTERFACE
+       ${linkOptions}
+   )
 endif()
 
 if(PROJECT_IS_TOP_LEVEL)# AND LIB_BASE_BUILD_TESTS)

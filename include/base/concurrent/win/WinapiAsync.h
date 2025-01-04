@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../common/CommonConfig.h"
+#include "base/concurrent/common/CommonConfig.h"
 
 #ifdef USE_WINAPI
 
-#include "../common/CommonUtils.h"
-#include "../common/CommonSync.h"
+#include "base/concurrent/common/CommonUtils.h"
+#include "base/concurrent/common/CommonSync.h"
 
 #include <type_traits>
 

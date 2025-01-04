@@ -1,9 +1,9 @@
 #pragma once
 
-#include "CommonConfig.h"
-#include "CommonGuards.h"
+#include "base/concurrent/common/CommonConfig.h"
+#include "base/concurrent/common/CommonGuards.h"
 
-#include "CommonAsync.h"
+#include "base/concurrent/common/CommonAsync.h"
 
 #include <memory>
 #include <type_traits>
