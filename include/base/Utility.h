@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Platform.h"
+#include <base/Platform.h>
 
 #if defined(_MSC_VER) && !defined(__llvm__) && !defined(__INTEL_COMPILER) \
 	&& !defined(__GNUC__) && !defined(__clang__)
