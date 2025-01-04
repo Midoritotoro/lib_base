@@ -1,24 +1,30 @@
-#include "TextRenderer.h"
+#include <src/qt/text/TextRenderer.h>
 
-#include "TextBidiAlgorithm.h"
-#include "TextBlock.h"
+#include <src/qt/text/TextBidiAlgorithm.h>
+#include <base/qt/style/StyleCore.h>
 
-#include "TextStackEngine.h"
-#include "TextWord.h"
-
-#include "../style/StyleCore.h"
 #include <QPainterPath>
+#include <base/qt/style/StyleFont.h>
 
-#include "TextClickHandlers.h"
-#include "String.h"
+#include <base/qt/text/String.h>
+#include <src/qt/text/BlockParser.h>
 
-#include "TextDrawUtility.h"
-#include "../style/StyleFont.h"
+#include <src/qt/text/TextWord.h>
+#include <base/qt/text/TextClickHandlers.h>
+
+#include <src/qt/text/TextUtility.h>
+#include <src/qt/text/WordParser.h>
+
+#include <src/qt/text/TextDrawUtility.h>
+#include <src/qt/text/Types.h>
+
+#include <base/qt/common/BasicClickHandlers.h>
+#include <base/Utility.h>
 
 #include <cmath>
 
 
-namespace text {
+namespace base::qt::text {
 namespace {
 	const QString kQEllipsis = u"..."_q;
 	constexpr auto kMaxItemLength = 4096;
@@ -1536,4 +1542,4 @@ void Renderer::fillParagraphBg(int paddingBottom) {
 	}
 	_quoteLineTop = _y + _lineHeight + paddingBottom;
 }
-} // namespace text
+} // namespace base::qt::text

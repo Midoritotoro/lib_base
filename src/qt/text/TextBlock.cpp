@@ -1,8 +1,8 @@
-#include "TextBlock.h"
-
+#include <src/qt/text/TextBlock.h>
 #include <private/qfontengine_p.h>
 
-namespace text {
+
+namespace base::qt::text {
 	style::font WithFlags(
 		const style::font& font,
 		TextBlockFlags flags,
@@ -214,4 +214,4 @@ namespace text {
 			? static_cast<const SkipBlock*>(block)->height()
 			: font->height;
 	}
-} // namespace text
+} // namespace base::qt::text

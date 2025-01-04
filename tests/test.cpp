@@ -1,11 +1,13 @@
 #include <base/Utility.h>
-#include <base/Concurrent.h>
+#include <base/qt/Timer.h>
 
+#include <QApplication>
 
-int main() {
-	int variable = 10, secondVariable = 20;
-	base::accumulateMax(variable, secondVariable);
+int main(int argc, char* argv[]) {
+	QApplication application(argc, argv);
 
-	std::cout << base::take(variable);
-	return 0;
+	base::Timer timer;
+	timer.callOnce();
+
+	return application.exec();
 }

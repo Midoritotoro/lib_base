@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../ClickHandler.h"
-#include "Types.h"
+#include <base/qt/common/ClickHandler.h>
+#include <src/qt/text/Types.h>
 
 
-namespace text {
+namespace base::qt::text {
 	static constexpr TextSelection AllTextSelection = { 0, 0xFFFF };
 	using EntitiesInText = QVector<EntityInText>;
 
@@ -101,4 +101,4 @@ namespace text {
 			const EntityLinkData&,
 			const EntityLinkData&) = default;
 	};
-} // namespace text
+} // namespace base::qt::text

@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../style/StyleTypes.h"
-#include "../style/StyleFont.h"
+#include <base/qt/style/StyleTypes.h>
+#include <base/qt/style/StyleFont.h>
 
-#include "../../core/Time.h"
+#include <base/Time.h>
 
-#include "../../core/Types.h"
-#include "Types.h"
+#include <base/qt/common/Types.h>
+#include <src/qt/text/Types.h>
 
 
-namespace text {
+namespace base::qt::text {
 	using Blocks = std::vector<Block>;
 
 	[[nodiscard]] style::font WithFlags(
@@ -163,4 +163,4 @@ namespace text {
 		return (flags & TextBlockFlag::Pre) || (flags & TextBlockFlag::Code);
 	}
 
-} // namespace Ui::Text
+} // namespace base::qt::text

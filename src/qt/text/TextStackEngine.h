@@ -1,11 +1,10 @@
 #pragma once 
 
-#include "String.h"
+#include <base/qt/text/String.h>
 #include <private/qfontengine_p.h>
 
 
-namespace text {
-
+namespace base::qt::text {
 	class StackEngine final {
 	public:
 		explicit StackEngine(
@@ -60,5 +59,4 @@ namespace text {
 		mutable std::vector<Block>::const_iterator _bCached;
 
 	};
-
-} // namespace Ui::Text
+} // namespace base::qt::text

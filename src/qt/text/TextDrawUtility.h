@@ -1,9 +1,9 @@
 #pragma once 
 
-#include "Types.h"
+#include <src/qt/text/Types.h>
 
 
-namespace text {
+namespace base::qt::text {
 	[[nodiscard]] GeometryDescriptor SimpleGeometry(
 		int availableWidth,
 		int elisionLines,
@@ -19,4 +19,4 @@ namespace text {
 		const QuotePaintCache& cache,
 		const style::QuoteStyle& st,
 		SkipBlockPaintParts parts);
-} // namespace text
+} // namespace base::qt::text

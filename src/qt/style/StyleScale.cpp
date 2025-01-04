@@ -1,9 +1,8 @@
-#include "StyleScale.h"
-
+#include <base/qt/style/StyleScale.h>
 #include <algorithm>
 
 
-namespace style {
+namespace base::qt::style {
 	namespace {
 		auto devicePixelRatioValue = 1;
 		auto scaleValue = kScaleDefault;
@@ -24,4 +23,4 @@ namespace style {
 	void SetScale(int scale) {
 		scaleValue = scale;
 	}
-}
+} // namespace base::qt::style

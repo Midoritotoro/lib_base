@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Types.h"
+#include <src/qt/text/Types.h>
 #include <cmath>
 
 
-namespace text {
+namespace base::qt::text {
 	using Words = std::vector<Word>;
 
 	class Word final {
@@ -46,4 +46,4 @@ namespace text {
 	};
 
 	[[nodiscard]] uint16 CountPosition(Words::const_iterator iterator);
-} // namespace text
+} // namespace base::qt::text

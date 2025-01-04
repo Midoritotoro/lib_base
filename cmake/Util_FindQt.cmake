@@ -23,7 +23,7 @@ function(find_qt)
     endif()
 
     target_compile_definitions(lib_base
-        PRIVATE
+        PUBLIC
             LIB_BASE_ENABLE_QT
     )
 endfunction()

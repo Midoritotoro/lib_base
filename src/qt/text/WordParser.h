@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Types.h"
-#include "TextStackEngine.h"
+#include <src/qt/text/Types.h>
+#include <src/qt/text/TextStackEngine.h>
 
 
-namespace text {
+namespace base::qt::text {
 	class WordParser {
 	public:
 		explicit WordParser(not_null<String*> string);
@@ -111,4 +111,4 @@ namespace text {
 		int _newItem = -1;
 		int _itemEnd = 0;
 	};
-} // namespace text
+} // namespace base::qt::text

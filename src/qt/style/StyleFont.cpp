@@ -1,23 +1,22 @@
-#include "StyleFont.h"
+#include <base/qt/style/StyleFont.h>
+
+#include <base/qt/common/Types.h>
+#include <base/Utility.h>
+
+#include <base/qt/style/StyleCore.h>
 
 #include <QMap>
 #include <QVector>
 
-#include <map>
 #include <QResource>
-
-#include "../../core/Types.h"
-#include "../../core/CoreUtility.h"
-
-#include "StyleCore.h"
 #include <QDir>
 
 
 void style_InitFontsResource() {
-	Q_INIT_RESOURCE(fonts);
+	Q_INIT_RESOURCE(fonts); ////////////// ?
 }
 
-namespace style {
+namespace base::qt::style {
 	namespace {
 		QString Custom;
 	} // namespace
@@ -34,10 +33,10 @@ namespace style {
 	QString CustomFont() {
 		return Custom;
 	}
-} // namespace style
+} // namespace  base::qt::style
 
 
-namespace style::internal {
+namespace base::qt::style::internal {
 	struct ResolvedFont {
 		ResolvedFont(FontResolveResult result, FontVariants* modified);
 
@@ -567,7 +566,7 @@ namespace style::internal {
 	FontData* OwnedFont::get() const {
 		return _font.get();
 	}
-} // namespace style::internal
+} // namespace base::qt::style::internal
 
 namespace style {
 	const FontResolveResult* FindAdjustResult(const QFont& font) {
@@ -578,4 +577,4 @@ namespace style {
 			? &internal::FontsByKey[i->second]->result
 			: nullptr;
 	}
-} // namespace style
+} // namespace base::qt::style

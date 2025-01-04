@@ -1,12 +1,12 @@
-#include "TextDrawUtility.h"
+#include <src/qt/text/TextDrawUtility.h>
 
-#include "../style/StyleCore.h"
-#include "../style/StyleFont.h"
+#include <base/qt/style/StyleCore.h>
+#include <base/qt/style/StyleFont.h>
 
 #include <QPainterPath>
 
 
-namespace text {
+namespace base::qt::text {
 	GeometryDescriptor SimpleGeometry(
 		int availableWidth,
 		int elisionLines,
@@ -342,4 +342,4 @@ namespace text {
 		}
 		painter.fillRect(x + outline, y, width - outline, height, cache.bg);
 	}
-} // namespace text
+} // namespace base::qt::text

@@ -15,6 +15,12 @@
 #include <base/BaseExport.h>
 
 #include <cstdint>
+#include <span>
+
+#if !__has_include(<gsl/gsl>)
+template <typename T>
+struct not_null {};
+#endif
 
 
 #ifdef LIB_BASE_STATIC
@@ -66,11 +72,11 @@ typedef int64_t tick_t;
 #elif defined(_MSC_VER)
 #define likely(p)                           (!!(p))
 #define unlikely(p)                         (!!(p))
-//#define unreachable()                       (__assume(0))
+#define unreachable()                       (__assume(0))
 #else
 #define likely(p)                           (!!(p))
 #define unlikely(p)                         (!!(p))
-//#define unreachable()                       ((void)0)
+#define unreachable()                       ((void)0)
 #endif
 
 #define always_inline						__forceinline

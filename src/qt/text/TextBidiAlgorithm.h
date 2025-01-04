@@ -1,11 +1,12 @@
 #pragma once
 
-#include "String.h"
+#include <base/qt/text/String.h>
 
 #include <private/qunicodetables_p.h>
 #include <private/qtextengine_p.h>
 
-namespace text {
+
+namespace base::qt::text {
 
 	enum { BidiDebugEnabled = false };
 
@@ -1022,4 +1023,4 @@ namespace text {
 		}
 	};
 
-} // namespace Ui::Text
+} // namespace base::qt::text

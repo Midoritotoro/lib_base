@@ -1,13 +1,12 @@
-#include "WordParser.h"
+#include <src/qt/text/WordParser.h>
 
-#include "String.h"
-#include "TextBidiAlgorithm.h"
+#include <base/qt/text/String.h>
+#include <src/qt/text/TextBidiAlgorithm.h>
 
-#include "TextWord.h"
+#include <src/qt/text/TextWord.h>
 
 
-namespace text {
-
+namespace base::qt::text {
 	glyph_t WordParser::LineBreakHelper::currentGlyph() const {
 		Q_ASSERT(currentPosition > 0);
 		Q_ASSERT(logClusters[currentPosition - 1] < glyphs.numGlyphs);
@@ -358,5 +357,4 @@ namespace text {
 	{
 		return attributes[index].whiteSpace && (_tText[index] != QChar::Nbsp);
 	}
-
-} // namespace Ui::Text
+} // namespace base::qt::text

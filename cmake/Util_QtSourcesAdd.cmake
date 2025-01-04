@@ -1,7 +1,6 @@
 include(cmake/FindQt)
 
-function(addQtSources)
+macro(addQtSources)
     find_qt()
-
-
-endfunction()
+    add_subdirectory(${LIB_BASE_TOP_LEVEL_DIR}/src/qt) 
+endmacro()

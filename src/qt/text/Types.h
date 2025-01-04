@@ -1,12 +1,12 @@
 #pragma once 
 
-#include "../../core/Types.h"
-#include "../../core/Flags.h"
+#include <base/qt/common/Types.h>
+#include <base/Flags.h>
 
-#include "../../core/Time.h"
+#include <base/Time.h>
 
-#include "../style/StyleFont.h"
-#include "../ClickHandler.h"
+#include <base/qt/style/StyleFont.h>
+#include <base/qt/common/ClickHandler.h>
 
 #include <private/qfixed_p.h>
 #include <private/qfontengine_p.h>
@@ -19,7 +19,7 @@ class PreClickHandler;
 class BlockquoteClickHandler;
 
 
-namespace text {
+namespace base::qt::text {
 	namespace {
 		[[nodiscard]] QImage imageFromColor(
 			const QColor& color,
@@ -322,4 +322,4 @@ namespace text {
 	class AbstractBlock;
 	class StackEngine;
 	class BidiAlgorithm;
-} // namespace text
+} // namespace base::qt::text

@@ -1,10 +1,10 @@
-#include "StyleWidgets.h"
+#include <base/qt/style/StyleWidgets.h>
 
 #include <QFile>
 #include <QString>
 
 
-namespace style {
+namespace base::qt::style {
 	namespace {
 		QString _sliderStyle = "";
 		QString _scrollAreaStyle = "";
@@ -86,4 +86,4 @@ namespace style {
 			.borderRadius = 10
 		};
 	}
-} // namespace style
+} // namespace base::qt::style

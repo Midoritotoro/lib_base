@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Types.h"
-#include "TextEntities.h"
+#include <src/qt/text/Types.h>
+#include <src/qt/text/TextEntities.h>
 
 #include <QString>
 #include <QMimeData>
@@ -10,7 +10,7 @@
 #include <QClipboard>
 
 
-namespace text {
+namespace base::qt::text {
 	const auto kTagBold = u"**"_q;
 	const auto kTagItalic = u"__"_q;
 
@@ -168,4 +168,4 @@ namespace text {
 		const TextForMimeData& text,
 		QClipboard::Mode mode = QClipboard::Clipboard);
 
-} // namespace string
+} // namespace base::qt::text

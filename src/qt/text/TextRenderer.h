@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Types.h"
-#include "TextBlock.h"
+#include <src/qt/text/Types.h>
+#include <src/qt/text/TextBlock.h>
 
 #include <private/qtextengine_p.h>
 
@@ -11,7 +11,7 @@ struct QScriptLine;
 struct QScriptItem;
 
 
-namespace text {
+namespace base::qt::text {
 	inline constexpr auto kQuoteCollapsedLines = 3;
 
 	struct FixedRange {
@@ -224,4 +224,4 @@ namespace text {
 
 		bool _elisionMiddle = false;
 	};
-} // namespace text
+} // namespace base::qt::text

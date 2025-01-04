@@ -1,7 +1,7 @@
-#include "Timer.h"
+#include <base/qt/common/Timer.h>
 
 
-namespace core {
+namespace base::qt::common {
 	namespace {
 		[[nodiscard]] QObject* TimersAdjuster() {
 			static QObject adjuster;
@@ -143,4 +143,4 @@ namespace core {
 			onstack();
 		}
 	}
-} // namespace core 
+} // namespace base::qt::common 

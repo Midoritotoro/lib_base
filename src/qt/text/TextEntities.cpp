@@ -1,11 +1,10 @@
-#include "TextEntities.h"
+#include <src/qt/text/TextEntities.h>
 
-#include "String.h"
-#include <ranges>
+#include <base/qt/text/String.h>
+#include <base/Utility.h>
 
 
-namespace text {
-
+namespace base::qt::text {
 	bool TextWithEntities::empty() const {
 		return text.isEmpty();
 	}
@@ -191,4 +190,4 @@ namespace text {
 		return (i == monospace.end()) ? textLength : i->offset();
 	}
 
-} // namespace text
+} // namespace base::qt::text

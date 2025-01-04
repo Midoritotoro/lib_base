@@ -1,15 +1,15 @@
 #pragma once
 
-#include "TextBlock.h"
-#include "TextEntities.h"
+#include <src/qt/text/TextBlock.h>
+#include <src/qt/text/TextEntities.h>
 
-#include "../style/StyleCore.h"
-#include "Types.h"
+#include <base/qt/style/StyleCore.h>
+#include <src/qt/text/Types.h>
 
 #include <any>
 
 
-namespace text {
+namespace base::qt::text {
 	class String;
 	struct QuoteDetails;
 
@@ -119,4 +119,4 @@ namespace text {
 		bool _allowDiacritic = false; // did we add last char to the current block
 
 	};
-} // namespace text
+} // namespace base::qt::text

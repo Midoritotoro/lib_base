@@ -1,164 +1,166 @@
-#include "ClickHandler.h"
-
-#include "text/TextEntities.h"
+#include <base/qt/common/ClickHandler.h>
+#include <src/qt/text/TextEntities.h>
 
 #include <QPointer>
-#include "../core/CoreConcurrent.h"
+#include <base/Concurrent.h>
 
 
-namespace {
 
-	ClickHandlerPtr& ClickHandlerActive() {
-		static auto result = ClickHandlerPtr();
-		return result;
+namespace base::qt::common {
+	namespace {
+
+		ClickHandlerPtr& ClickHandlerActive() {
+			static auto result = ClickHandlerPtr();
+			return result;
+		}
+
+		ClickHandlerPtr& ClickHandlerPressed() {
+			static auto result = ClickHandlerPtr();
+			return result;
+		}
+
+	} // namespace
+
+	ClickHandlerHost* ClickHandler::_activeHost = nullptr;
+	ClickHandlerHost* ClickHandler::_pressedHost = nullptr;
+
+	ClickHandlerHost::~ClickHandlerHost() {
+		ClickHandler::hostDestroyed(this);
 	}
 
-	ClickHandlerPtr& ClickHandlerPressed() {
-		static auto result = ClickHandlerPtr();
-		return result;
-	}
+	bool ClickHandler::setActive(
+		const ClickHandlerPtr& p,
+		ClickHandlerHost* host) {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
 
-} // namespace
+		if (active == p) {
+			return false;
+		}
 
-ClickHandlerHost* ClickHandler::_activeHost = nullptr;
-ClickHandlerHost* ClickHandler::_pressedHost = nullptr;
-
-ClickHandlerHost::~ClickHandlerHost() {
-	ClickHandler::hostDestroyed(this);
-}
-
-bool ClickHandler::setActive(
-	const ClickHandlerPtr& p,
-	ClickHandlerHost* host) {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
-
-	if (active == p) {
-		return false;
-	}
-
-	if (active) {
-		const auto emitClickHandlerActiveChanged = false
-			|| !pressed
-			|| (pressed == active);
-		const auto wasactive = std::exchange(active, {});
-		if (_activeHost) {
-			if (emitClickHandlerActiveChanged) {
-				_activeHost->clickHandlerActiveChanged(wasactive, false);
+		if (active) {
+			const auto emitClickHandlerActiveChanged = false
+				|| !pressed
+				|| (pressed == active);
+			const auto wasactive = std::exchange(active, {});
+			if (_activeHost) {
+				if (emitClickHandlerActiveChanged) {
+					_activeHost->clickHandlerActiveChanged(wasactive, false);
+				}
+				_activeHost = nullptr;
 			}
-			_activeHost = nullptr;
+		}
+		if (p) {
+			active = p;
+			if ((_activeHost = host)) {
+				bool emitClickHandlerActiveChanged = (!pressed || pressed == active);
+				if (emitClickHandlerActiveChanged) {
+					_activeHost->clickHandlerActiveChanged(active, true);
+				}
+			}
+		}
+		return true;
+	}
+
+	bool ClickHandler::clearActive(ClickHandlerHost* host) {
+		if (host && _activeHost != host) {
+			return false;
+		}
+		return setActive(ClickHandlerPtr(), host);
+	}
+
+	void ClickHandler::pressed() {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
+
+		unpressed();
+		if (!active) {
+			return;
+		}
+		pressed = active;
+		if ((_pressedHost = _activeHost)) {
+			_pressedHost->clickHandlerPressedChanged(pressed, true);
 		}
 	}
-	if (p) {
-		active = p;
-		if ((_activeHost = host)) {
-			bool emitClickHandlerActiveChanged = (!pressed || pressed == active);
-			if (emitClickHandlerActiveChanged) {
+
+	ClickHandlerPtr ClickHandler::unpressed() {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
+
+		if (pressed) {
+			const auto activated = (active == pressed);
+			const auto waspressed = std::exchange(pressed, {});
+			if (_pressedHost) {
+				_pressedHost->clickHandlerPressedChanged(waspressed, false);
+				_pressedHost = nullptr;
+			}
+
+			if (activated) {
+				return active;
+			}
+			else if (active && _activeHost) {
 				_activeHost->clickHandlerActiveChanged(active, true);
 			}
 		}
+		return ClickHandlerPtr();
 	}
-	return true;
-}
 
-bool ClickHandler::clearActive(ClickHandlerHost* host) {
-	if (host && _activeHost != host) {
-		return false;
+	ClickHandlerPtr ClickHandler::getActive() {
+		return ClickHandlerActive();
 	}
-	return setActive(ClickHandlerPtr(), host);
-}
 
-void ClickHandler::pressed() {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
-
-	unpressed();
-	if (!active) {
-		return;
+	ClickHandlerPtr ClickHandler::getPressed() {
+		return ClickHandlerPressed();
 	}
-	pressed = active;
-	if ((_pressedHost = _activeHost)) {
-		_pressedHost->clickHandlerPressedChanged(pressed, true);
+
+	bool ClickHandler::showAsActive(const ClickHandlerPtr& p) {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
+
+		return p && (p == active) && (!pressed || (p == pressed));
 	}
-}
 
-ClickHandlerPtr ClickHandler::unpressed() {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
+	bool ClickHandler::showAsPressed(const ClickHandlerPtr& p) {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
 
-	if (pressed) {
-		const auto activated = (active == pressed);
-		const auto waspressed = std::exchange(pressed, {});
-		if (_pressedHost) {
-			_pressedHost->clickHandlerPressedChanged(waspressed, false);
+		return p && (p == active) && (p == pressed);
+	}
+
+	void ClickHandler::hostDestroyed(ClickHandlerHost* host) {
+		auto& active = ClickHandlerActive();
+		auto& pressed = ClickHandlerPressed();
+
+		if (_activeHost == host) {
+			active = nullptr;
+			_activeHost = nullptr;
+		}
+		if (_pressedHost == host) {
+			pressed = nullptr;
 			_pressedHost = nullptr;
 		}
-
-		if (activated) {
-			return active;
-		}
-		else if (active && _activeHost) {
-			_activeHost->clickHandlerActiveChanged(active, true);
-		}
 	}
-	return ClickHandlerPtr();
-}
 
-ClickHandlerPtr ClickHandler::getActive() {
-	return ClickHandlerActive();
-}
-
-ClickHandlerPtr ClickHandler::getPressed() {
-	return ClickHandlerPressed();
-}
-
-bool ClickHandler::showAsActive(const ClickHandlerPtr& p) {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
-
-	return p && (p == active) && (!pressed || (p == pressed));
-}
-
-bool ClickHandler::showAsPressed(const ClickHandlerPtr& p) {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
-
-	return p && (p == active) && (p == pressed);
-}
-
-void ClickHandler::hostDestroyed(ClickHandlerHost* host) {
-	auto& active = ClickHandlerActive();
-	auto& pressed = ClickHandlerPressed();
-
-	if (_activeHost == host) {
-		active = nullptr;
-		_activeHost = nullptr;
+	auto ClickHandler::getTextEntity() const -> TextEntity {
+		return { text::EntityType::Invalid };
 	}
-	if (_pressedHost == host) {
-		pressed = nullptr;
-		_pressedHost = nullptr;
+
+	void ActivateClickHandler(
+		not_null<QWidget*> guard,
+		ClickHandlerPtr handler,
+		ClickContext context)
+	{
+		//concurrent::on_main(guard, [=, weak = std::weak_ptr<ClickHandler>(handler)] {
+			//if (const auto strong = weak.lock())
+		handler->onClick(context);
+		//});
 	}
-}
 
-auto ClickHandler::getTextEntity() const -> TextEntity {
-	return { text::EntityType::Invalid };
-}
-
-void ActivateClickHandler(
-	not_null<QWidget*> guard,
-	ClickHandlerPtr handler,
-	ClickContext context) 
-{
-	//concurrent::on_main(guard, [=, weak = std::weak_ptr<ClickHandler>(handler)] {
-		//if (const auto strong = weak.lock())
-	handler->onClick(context);
-	//});
-}
-
-void ActivateClickHandler(
-	not_null<QWidget*> guard,
-	ClickHandlerPtr handler,
-	Qt::MouseButton button) 
-{
-	ActivateClickHandler(guard, handler, ClickContext{ button });
-}
+	void ActivateClickHandler(
+		not_null<QWidget*> guard,
+		ClickHandlerPtr handler,
+		Qt::MouseButton button)
+	{
+		ActivateClickHandler(guard, handler, ClickContext{ button });
+	}
+} // namespace base::qt::common

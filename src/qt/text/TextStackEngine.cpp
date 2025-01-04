@@ -1,7 +1,8 @@
-#include "TextStackEngine.h"
-#include "TextBlock.h"
+#include <src/qt/text/TextStackEngine.h>
+#include <src/qt/text/TextBlock.h>
 
-namespace text {
+
+namespace base::qt::text {
 	namespace {
 		constexpr auto kMaxItemLength = 4096;
 	} // namespace
@@ -202,4 +203,4 @@ namespace text {
 		return int(adjustBlock(_offset + position) - begin(_tBlocks));
 	}
 
-} // namespace text
+} // namespace base::qt::text

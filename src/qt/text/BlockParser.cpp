@@ -1,19 +1,20 @@
-#include "BlockParser.h"
+#include <src/qt/text/BlockParser.h>
 
-#include "String.h"
 #include <QUrl>
+
 #include <private/qfixed_p.h>
 
 #include <ranges>
 #include <algorithm>
 
-#include "../BasicClickHandlers.h"
-#include "TextClickHandlers.h"
+#include <base/qt/common/BasicClickHandlers.h>
+#include <base/qt/text/String.h>
 
-#include "TextUtility.h"
+#include <src/qt/text/TextClickHandlers.h>
+#include <src/qt/text/TextUtility.h>
 
 
-namespace text {
+namespace base::qt::text {
 	namespace {
 
 		constexpr auto kStringLinkIndexShift = uint16(0x8000);
@@ -806,4 +807,4 @@ namespace text {
 			: EntityLinkShown::Partial;
 	}
 
-} // namespace Ui::Text
+} // namespace base::qt::text

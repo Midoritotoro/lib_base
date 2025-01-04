@@ -62,71 +62,71 @@ set(QT_PRIVATE_SOURCES
 )
 
 set(QT_PUBLIC_HEADERS 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/InvokeQueued.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/StyleWidgets.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/InvokeQueued.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/BasicClickHandlers.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/EnhancedSlider.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ScrollArea.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/ClickHandler.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/WidgetsHider.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/FlatLabel.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/FlatButton.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/Types.h
+        
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/Timer.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/common/MainQueueProcessor.cpp
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/AbstractFlatButton.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/BasicClickHandlers.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/style/StyleWidgets.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ClickHandler.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/WidgetsHider.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/style/StyleFont.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/style/StyleTypes.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/StyleFont.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/StyleTypes.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/style/StyleScale.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/style/StyleCore.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/Types.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/String.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/EnhancedSlider.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/ScrollArea.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/StyleScale.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/StyleCore.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/FlatLabel.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/FlatButton.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/MainQueueProcessor.cpp
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/AbstractFlatButton.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/PopupMenu.h
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/Separator.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/PopupMenu.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/ui/Separator.h
 
-    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/Timer.h
-     ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/TextClickHandlers.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/text/String.h
+    ${LIB_BASE_TOP_LEVEL_DIR}/include/qt/text/TextClickHandlers.h
 )
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-add_library(BaseQtUtility ${PUBLIC_HEADERS})
-add_library(BaseQtUtility::BaseQtUtility ALIAS BaseQtUtility)
+add_library(lib_base_qt ${PUBLIC_HEADERS})
 
-target_sources(BaseQtUtility PRIVATE ${PRIVATE_SOURCES})
+target_sources(lib_base_qt PRIVATE ${PRIVATE_SOURCES})
 
 set_target_properties(
-    BaseQtUtility PROPERTIES
+    lib_base_qt PROPERTIES
     CMAKE_CXX_STANDARD 23
     CMAKE_CXX_STANDARD_REQUIRED ON
     EXPORT_NAME BaseQtUtility
     OUTPUT_NAME BaseQtUtility
 )
 
-target_include_directories(BaseQtUtility
+target_include_directories(lib_base_qt
     PUBLIC
          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
-target_include_directories(BaseQtUtility
+target_include_directories(lib_base_qt
     PUBLIC
         "$<INSTALL_INTERFACE:include>"
 )
 
-target_include_directories(BaseQtUtility
+target_include_directories(lib_base_qt
     PUBLIC
         "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
 
-target_include_directories(BaseQtUtility
+target_include_directories(lib_base_qt
     PUBLIC
         "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )

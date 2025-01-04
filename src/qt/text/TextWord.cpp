@@ -1,6 +1,7 @@
-#include "TextWord.h"
+#include <src/qt/text/TextWord.h>
 
-namespace text {
+
+namespace base::qt::text {
 	Word::Word(
 		uint16 position,
 		bool unfinished,
@@ -56,4 +57,4 @@ namespace text {
 	[[nodiscard]] inline uint16 CountPosition(Words::const_iterator i) {
 		return i->position();
 	}
-} // namespace text
+} // namespace base::qt::text

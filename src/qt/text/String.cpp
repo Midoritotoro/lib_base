@@ -1,25 +1,22 @@
-#include "String.h"
+#include <base/qt/text/String.h>
 
-#include "TextClickHandlers.h"
-#include "TextRenderer.h"
+#include <src/qt/text/TextRenderer.h>
+#include <src/qt/text/BlockParser.h>
 
-#include "BlockParser.h"
-#include "TextWord.h"
+#include <src/qt/text/TextWord.h>
+#include <base/qt/text/TextClickHandlers.h>
 
-#include "TextWord.h"
-#include "../../core/CoreUtility.h"
+#include <src/qt/text/TextUtility.h>
+#include <src/qt/text/WordParser.h>
 
-#include "../BasicClickHandlers.h"
-#include "TextClickHandlers.h"
+#include <src/qt/text/TextDrawUtility.h>
+#include <src/qt/text/Types.h>
 
-#include "TextUtility.h"
-#include "WordParser.h"
-
-#include "TextDrawUtility.h"
-#include "Types.h"
+#include <base/qt/common/BasicClickHandlers.h>
+#include <base/Utility.h>
 
 
-namespace text {
+namespace base::qt::text {
 	String::String(int32 minResizeWidth) :
 		_minResizeWidth(minResizeWidth)
 	{}
@@ -110,13 +107,6 @@ namespace text {
 
 	void String::setLink(uint16 index, const ClickHandlerPtr& link) {
 		const auto extended = _extended.get();
-		// 
-		// 
-		// 
-		// 
-		// 
-		// 
-		// 
 		// () << "extended == nullptr: " << (extended == nullptr);
 
 		if (extended && index > 0 && index <= extended->links.size())
@@ -1238,4 +1228,4 @@ namespace text {
 		return withElided(false);
 	}
 
-} // namespace text
+} // namespace base::qt::text

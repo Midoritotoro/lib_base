@@ -1,25 +1,13 @@
-#include "StyleCore.h"
-
-#include "../../media/ffmpeg/video/FrameGenerator.h"
-#include <QMimeDataBase>
+#include <base/qt/style/StyleCore.h>
 
 #include <QPainterPath>
 #include <QPainter>
 
-#include <QFile>
-#include <QDir>
-
-#include <QCoreApplication>
-#include "StyleFont.h"
-
-#include "StyleWidgets.h"
-#include "../../media/images/ImagesBlur.h"
-
-#include "../../core/CoreUtility.h"
-#include <QMediaMetaData>
+#include <base/qt/style/StyleFont.h>
+#include <base/qt/style/StyleWidgets.h>
 
 
-namespace style {
+namespace base::qt::style {
 	namespace {
 		bool rightToLeft = false;
 	} // namespace
@@ -135,4 +123,4 @@ namespace style {
 	void RegisterStyles() {
 		initStyles();
 	}
-} // namespace style
+} // namespace base::qt::style
