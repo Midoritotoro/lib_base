@@ -8,7 +8,7 @@ install(
     EXPORT lib_baseTargets
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-message(conf:${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake)
+#message(conf:${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake)
 
 set(
     "LIB_BASE_INSTALL_CMAKEDIR" "${CMAKE_INSTALL_LIBDIR}/cmake/${package}"
@@ -18,9 +18,9 @@ set(
 set_property(CACHE "LIB_BASE_INSTALL_CMAKEDIR" PROPERTY TYPE PATH)
 mark_as_advanced("LIB_BASE_INSTALL_CMAKEDIR")
 
-message(CMAKE_INSTALL_INCLUDEDIR:${CMAKE_INSTALL_INCLUDEDIR})
-message(LIB_BASE_INSTALL_CMAKEDIR:${LIB_BASE_INSTALL_CMAKEDIR})
-message(PROJECT_BINARY_DIR:${PROJECT_BINARY_DIR})
+# message(CMAKE_INSTALL_INCLUDEDIR:${CMAKE_INSTALL_INCLUDEDIR})
+# message(LIB_BASE_INSTALL_CMAKEDIR:${LIB_BASE_INSTALL_CMAKEDIR})
+# message(PROJECT_BINARY_DIR:${PROJECT_BINARY_DIR})
 
 
 install(
@@ -28,7 +28,7 @@ install(
     FILE lib_baseTargets.cmake
     DESTINATION lib/cmake/${package}
 )
-message("${CMAKE_CURRENT_BINARY_DIR}/lib_base")
+# message("${CMAKE_CURRENT_BINARY_DIR}/lib_base")
 
 configure_package_config_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${package}Config.cmake.in

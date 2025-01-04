@@ -9,8 +9,8 @@
 #include <QFontMetrics>
 #include <QPixmapCache>
 
-#include <base/qt/StyleScale.h>
-#include <base/qt/StyleWidgets.h>
+#include <base/qt/style/StyleScale.h>
+#include <base/qt/style/StyleWidgets.h>
 
 
 namespace base::qt::style {

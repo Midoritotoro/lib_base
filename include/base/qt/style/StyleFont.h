@@ -3,14 +3,13 @@
 #include <QFont>
 #include <QFontMetrics>
 
-#include <base/qt/Types.h>
+#include <base/qt/common/Types.h>
 #include <base/Flags.h>
 
-#include <base/qt/StyleTypes.h>
+#include <base/qt/style/StyleTypes.h>
 
 #include <QMap>
 #include <cmath>
-
 
 #include <QFontInfo>
 #include <QFontDatabase>

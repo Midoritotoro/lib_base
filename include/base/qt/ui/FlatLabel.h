@@ -1,14 +1,13 @@
 ﻿#pragma once
 
-#include <base/qt/StyleCore.h>
-#include <base/qt/Timer.h>
+#include <base/qt/style/StyleCore.h>
+#include <base/qt/common/Timer.h>
 
-#include <base/qt/InvokeQueued.h>
-#include <base/qt/BasicClickHandlers.h>
+#include <base/qt/common/InvokeQueued.h>
+#include <base/qt/common/BasicClickHandlers.h>
 
-#include <base/qt/String.h>
-#include <base/qt/PopupMenu.h>
-
+#include <base/qt/text/String.h>
+#include <base/qt/ui/PopupMenu.h>
 
 
 namespace base::qt::ui {

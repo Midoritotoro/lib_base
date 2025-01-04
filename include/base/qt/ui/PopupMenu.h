@@ -1,12 +1,11 @@
 #pragma once
 
+#include <base/qt/common/Timer.h>
 
-#include <base/qt/Timer.h>
+#include <base/qt/style/StyleFont.h>
+#include <base/qt/style/StyleWidgets.h>
 
-#include <base/qt/StyleFont.h>
-#include <base/qt/StyleWidgets.h>
-
-#include <base/qt/FlatButton.h>
+#include <base/qt/ui/FlatButton.h>
 
 #include <QWidget>
 #include <QAction>

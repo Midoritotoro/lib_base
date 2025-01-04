@@ -22,9 +22,8 @@ option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
 option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
+option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
 
-
-option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
@@ -120,7 +119,7 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
     endif()
 endif()
 
-message("LIBTYPE: " ${LIBTYPE})
+# message("LIBTYPE: " ${LIBTYPE})
 
 target_include_directories(lib_base
     PUBLIC
@@ -161,9 +160,14 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
    )
 endif()
 
-if(LIB_BASE_FIND_QT)
-    include(cmake/Util_QtSourcesAdd.cmake)
-    addQtSources()
+if(LIB_BASE_ENABLE_QT)
+    message("enable qt is on")
+    add_subdirectory(src/qt) 
+
+    add_library(lib_baseQt INTERFACE)
+    target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
+
+    add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
 endif()
 
 if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)

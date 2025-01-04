@@ -11,6 +11,7 @@
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 
+
 namespace base::qt::ui {
     class WidgetsHider : public QObject
     {

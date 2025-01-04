@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/qt/StyleFont.h>
+#include <base/qt/style/StyleFont.h>
 
 
 namespace base::qt::style {

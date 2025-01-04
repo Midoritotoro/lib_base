@@ -1,8 +1,11 @@
 function(find_qt)
-    if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGETS Qt6::WidgetsPrivate)
+    if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGET Qt6::WidgetsPrivate)
+        message("Qt was found in parent project")
+
         get_target_property(QT6_INCLUDE 
             Qt6::Core 
             Qt6::Widgets 
+            Qt6::WidgetsPrivate
             INTERFACE_INCLUDE_DIRECTORIES)
 
         target_include_directories(lib_base

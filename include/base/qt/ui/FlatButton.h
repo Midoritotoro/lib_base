@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/qt/AbstractFlatButton.h>
+#include <base/qt/ui/AbstractFlatButton.h>
 
 
 namespace base::qt::ui {

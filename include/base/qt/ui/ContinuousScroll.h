@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/qt/ScrollArea.h>
+#include <base/qt/ui/ScrollArea.h>
 
 
 namespace base::qt::ui {

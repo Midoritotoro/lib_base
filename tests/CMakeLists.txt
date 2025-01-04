@@ -17,6 +17,7 @@ add_executable(lib_base_test test.cpp)
 target_link_libraries(
     lib_base_test PRIVATE
     lib_base::lib_base
+    lib_base::lib_baseQt
     Qt6::Core
     Qt6::Widgets
 )

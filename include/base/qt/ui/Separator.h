@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/qt/StyleWidgets.h>
+#include <base/qt/style/StyleWidgets.h>
 #include <QWidget>
 
 namespace base::qt::ui {

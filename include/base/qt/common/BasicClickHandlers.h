@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/qt/ClickHandler.h>
+#include <base/qt/common/ClickHandler.h>
 
 
 namespace base::qt::common {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <base/qt/StyleCore.h>
-#include <base/qt/Types.h>
+#include <base/qt/style/StyleCore.h>
+#include <base/qt/common/Types.h>
 
 #include <QAbstractButton>
 #include <QStyleOptionComplex>

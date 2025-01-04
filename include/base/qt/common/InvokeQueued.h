@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/qt/Types.h>
+#include <base/qt/common/Types.h>
 #include <QEvent>
 
 namespace base::qt::common {
