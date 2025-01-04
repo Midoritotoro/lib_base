@@ -73,33 +73,33 @@ namespace base {
 
     typedef void (*cmp_fn_t)(const void*, VISIT, int);
 
-	LIB_BASE [[nodiscard]] int64_t GCD(
+	[[nodiscard]] int64_t GCD(
 		int64_t a,
 		int64_t b);
 
-	LIB_BASE [[nodiscard]] int64_t LCM(
+	[[nodiscard]] int64_t LCM(
 		int64_t a, 
 		int64_t b);
 
-	LIB_BASE bool UnsignedReduce(
+	bool UnsignedReduce(
 		unsigned* pi_dst_nom, unsigned* pi_dst_den,
 		uint64_t i_nom, uint64_t i_den, uint64_t i_max);
 
-	LIB_BASE [[nodiscard]] double SafeRound(double value);
+	[[nodiscard]] double SafeRound(double value);
 
-    LIB_BASE [[nodiscard]] void* TFind(
+    [[nodiscard]] void* TFind(
         const void* vkey,
         void* const* vrootp,
         int (*compar)(const void*,
             const void*));
 
-    LIB_BASE [[nodiscard]] void* TSearch(
+    [[nodiscard]] void* TSearch(
         const void* vkey,
         void** vrootp,
         int (*compar)(const void*,
             const void*));
 
-    LIB_BASE void TRecurse(
+    void TRecurse(
         const node_t* root,
         cmp_fn_t action, int level);
 
@@ -108,15 +108,15 @@ namespace base {
      *\param vroot - Дерево
      *\param action - Узел дерева для обхода
      */
-    LIB_BASE void TWalk(
+    void TWalk(
         const void* vroot,
         cmp_fn_t action);
 
-    LIB_BASE void TDestroyRecurse(
+    void TDestroyRecurse(
         node_t* root,
         void (*free_action)(void*));
 
-    LIB_BASE void TDestroy(
+    void TDestroy(
         void* root,
         void (*freenode)(void*));
 
@@ -128,7 +128,7 @@ namespace base {
 		std::assignable_from<T&, std::indirect_result_t<Op&,
 		T*, std::projected<I, P>>>
 
-		LIB_BASE always_inline [[nodiscard]] T accumulate(
+		always_inline [[nodiscard]] T accumulate(
 			I first,
 			S last,
 			T init,
@@ -147,7 +147,7 @@ namespace base {
 		std::assignable_from<T&, std::indirect_result_t<Op&, T*,
 		std::projected<iterator_t<Rng>, P>>>
 
-		LIB_BASE always_inline [[nodiscard]] T accumulate(
+		always_inline [[nodiscard]] T accumulate(
 			Rng&& rng,
 			T init,
 			Op op = Op{},
@@ -158,29 +158,29 @@ namespace base {
 	}
 
 	template <typename T>
-	LIB_BASE always_inline void accumulateMax(T& a, const T& b) {
+	always_inline void accumulateMax(T& a, const T& b) {
 		if (a < b)
 			a = b;
 	}
 
 	template <typename T>
-	LIB_BASE always_inline void accumulateMin(T& a, const T& b) {
+	always_inline void accumulateMin(T& a, const T& b) {
 		if (a > b)
 			a = b;
 	}
 
 	template <typename T>
-	LIB_BASE always_inline [[nodiscard]] T&& take(T& value) {
+	always_inline [[nodiscard]] T&& take(T& value) {
 		return std::exchange(value, T{});
 	}
 
 #ifdef _WIN32
-	LIB_BASE [[nodiscard]] bool IsWindowsGreaterThen(int version);
-	LIB_BASE [[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
+	[[nodiscard]] bool IsWindowsGreaterThen(int version);
+	[[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
 
 	#define MINIMUM_WINDOWS_VERSION NTDDI_WIN10
 	#define IS_MINIMUM_WINDOWS_VERSION IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
 
-	LIB_BASE [[nodiscard]] bool addToAutoRun(LPWSTR key);
+	[[nodiscard]] bool addToAutoRun(LPWSTR key);
 #endif // _WIN32
 } // namespace base

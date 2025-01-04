@@ -1,7 +1,9 @@
-﻿#include "AutoRunUtils.h"
-#include "base/Utility.h"
+﻿#include <base/Utility.h>
 
 #ifdef _WIN32
+
+#include <PathCch.h>
+#include <tchar.h>
 
 namespace base {
     bool IsWindowsGreaterThen(int version)

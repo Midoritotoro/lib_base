@@ -14,7 +14,7 @@ namespace base {
      * \retval true, если сумма вызывает переполнение
      */
 
-    LIB_BASE always_inline static 
+    always_inline static 
         [[nodiscard]] bool UnsignedAddOverflow(
             unsigned a,
             unsigned b,
@@ -28,7 +28,7 @@ namespace base {
 #endif
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool UnsignedLongAddOverflow(
             unsigned long a,
             unsigned long b,
@@ -42,7 +42,7 @@ namespace base {
 #endif
     }
 
-     LIB_BASE always_inline static [[nodiscard]]
+      always_inline static [[nodiscard]]
          bool UnsignedLongLongAddOverflow(
             unsigned long long a,
             unsigned long long b,
@@ -71,7 +71,7 @@ namespace base {
 #include <numeric>
 #endif
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool UnsignedMultiplyOverflow(
             unsigned a,
             unsigned b,
@@ -85,7 +85,7 @@ namespace base {
 #endif
     }
 
-    LIB_BASE always_inline static [[nodiscard]] 
+    always_inline static [[nodiscard]] 
         bool UnsignedLongMultiplyOverflow(
             unsigned long a,
             unsigned long b,
@@ -99,7 +99,7 @@ namespace base {
 #endif
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool UnsignedLongLongMultiplyOverflow(
             unsigned long long a,
             unsigned long long b,
@@ -113,7 +113,7 @@ namespace base {
 #endif
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool MultiplyOverflow(
             unsigned a,
             unsigned b,
@@ -122,7 +122,7 @@ namespace base {
         return UnsignedMultiplyOverflow(a, b, res);
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool MultiplyOverflow(
             unsigned long a,
             unsigned long b,
@@ -131,7 +131,7 @@ namespace base {
         return UnsignedLongMultiplyOverflow(a, b, res);
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool MultiplyOverflow(
             unsigned long long a,
             unsigned long long b,
@@ -140,7 +140,7 @@ namespace base {
         return UnsignedLongLongMultiplyOverflow(a, b, res);
     }
 
-    LIB_BASE always_inline static [[nodiscard]] 
+    always_inline static [[nodiscard]] 
         bool AdditionOverflow(
             unsigned a,
             unsigned b,
@@ -149,7 +149,7 @@ namespace base {
         return UnsignedAddOverflow(a, b, res);
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
         bool AdditionOverflow(
             unsigned long a,
             unsigned long b,
@@ -158,7 +158,7 @@ namespace base {
         return UnsignedLongAddOverflow(a, b, res);
     }
 
-    LIB_BASE always_inline static [[nodiscard]]
+    always_inline static [[nodiscard]]
             bool AdditionOverflow(
                 unsigned long long a,
                 unsigned long long b,
@@ -167,7 +167,7 @@ namespace base {
         return UnsignedLongLongAddOverflow(a, b, res);
     }
 
-    LIB_BASE inline [[nodiscard]] 
+    inline [[nodiscard]] 
         void* MemoryAllocate(size_t count, size_t size)
     {
         return MultiplyOverflow(count, size, &size)

@@ -12,7 +12,7 @@
 #include <base/Windows.h>
 #include <base/ProcessorDetection.h>
 
-#include <lib_base/lib_base.h>
+#include <base/BaseExport.h>
 
 #include <cstdint>
 

@@ -15,24 +15,24 @@ namespace Time {
 		using innerTime_t = std::int64_t;
 		using innerProfile_t = std::int64_t;
 
-		LIB_BASE void init();
+		void init();
 
-		LIB_BASE [[nodiscard]] innerTime_t currentValue();
-		LIB_BASE [[nodiscard]] time_t convert(innerTime_t value);
+		[[nodiscard]] innerTime_t currentValue();
+		[[nodiscard]] time_t convert(innerTime_t value);
 
-		LIB_BASE [[nodiscard]] innerProfile_t currentProfileValue();
-		LIB_BASE [[nodiscard]] profileTime_t convertProfile(innerProfile_t);
+		[[nodiscard]] innerProfile_t currentProfileValue();
+		[[nodiscard]] profileTime_t convertProfile(innerProfile_t);
 
 	} // namespace details
 
-	LIB_BASE [[nodiscard]] time_t now();
-	LIB_BASE [[nodiscard]] profileTime_t profile();
+	[[nodiscard]] time_t now();
+	[[nodiscard]] profileTime_t profile();
 
-	LIB_BASE bool adjustTime();
+	bool adjustTime();
 
-	LIB_BASE [[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
+	[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
 
-	LIB_BASE [[nodiscard]] int minutes(int64_t unixTime);
-	LIB_BASE [[nodiscard]] int hours(int64_t unixTime);
-	LIB_BASE [[nodiscard]] int seconds(int64_t unixTime);
+	[[nodiscard]] int minutes(int64_t unixTime);
+	[[nodiscard]] int hours(int64_t unixTime);
+	[[nodiscard]] int seconds(int64_t unixTime);
 } // namespace Time

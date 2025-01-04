@@ -14,7 +14,7 @@
 #define AssertUnlikelyHelper(x) (!!(x))
 #endif
 
-LIB_BASE static inline void fail(
+static inline void fail(
 	const char* message,
 	const char* file,
 	int line)
@@ -28,7 +28,7 @@ LIB_BASE static inline void fail(
 	::std::abort();
 }
 
-LIB_BASE static inline constexpr [[nodiscard]]
+static inline constexpr [[nodiscard]]
 	const char* extract_basename(
 		const char* path,
 		size_t size)

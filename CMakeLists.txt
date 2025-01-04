@@ -30,15 +30,9 @@ set(BUILD_SHARED_LIBS OFF)
    
 set(PRIVATE_SOURCES 
     src/utility/Math.cpp
-    src/utility/Math.h
-
     src/utility/TFunctions.cpp
-    src/utility/TFunctions.h
 
     src/AutoRunUtils.cpp
-    src/AutoRunUtils.h
-
-    src/Time.h
     src/Time.cpp
 
     src/concurrent/common/CommonAsync.cpp
@@ -84,6 +78,8 @@ set(PUBLIC_HEADERS
 
     include/base/concurrent/win/WinapiList.h
     include/base/concurrent/win/WinapiSemaphore.h
+
+    include/base/BaseExport.h
 )
 
 
@@ -96,12 +92,6 @@ add_library(lib_base::lib_base ALIAS lib_base)
 include(cmake/Util_ExportConfig.cmake)
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
-
-generate_export_header(
-    lib_base
-    BASE_NAME lib_base
-    EXPORT_FILE_NAME export/lib_base/lib_base.h
-)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)

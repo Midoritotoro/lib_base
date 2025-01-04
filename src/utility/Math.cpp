@@ -1,5 +1,3 @@
-#include <base/Math.h>
-
 #include <base/Utility.h>
 
 #include <cfenv>

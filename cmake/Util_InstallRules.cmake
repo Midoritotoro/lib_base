@@ -49,7 +49,6 @@ install(
       DESTINATION lib/cmake/${package}
   )
 
-
 export(
     EXPORT lib_baseTargets
     FILE "${CMAKE_CURRENT_BINARY_DIR}/${package}Config.cmake"
