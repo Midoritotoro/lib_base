@@ -58,6 +58,11 @@ set(QT_PRIVATE_SOURCES
 
 	${PROJECT_SOURCE_DIR}/src/qt/ui/ScrollArea.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/EnhancedSlider.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBlur.cpp
+
+	${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBuffer.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesPrepare.cpp
 )
 
 set(QT_PUBLIC_HEADERS 
@@ -97,6 +102,11 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/text/TextUtility.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/ContinuousScroll.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBlur.h
+
+	${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBuffer.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesPrepare.h
 )
 
 include(CMakePackageConfigHelpers)

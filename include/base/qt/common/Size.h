@@ -56,7 +56,7 @@ namespace base::qt::common {
 		return QFontMetrics(font).height();
 	}
 
-	[[nodiscard]] inline QSize screenResolution() {
+	[[nodiscard]] inline QSize ScreenResolution() {
 		return QApplication::primaryScreen()->availableGeometry().size();
 	}
 } // namespace core::utility

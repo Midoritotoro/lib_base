@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QPaintEvent>
 
+#include <base/qt/images/ImagesPrepare.h>
 #include <QColor>
 
 
