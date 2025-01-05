@@ -21,16 +21,16 @@ namespace base::qt::text {
 		constexpr auto kMaxDiacAfterSymbol = 2;
 
 		namespace details {
-			std::shared_ptr<ClickHandler> createLinkHandler(const EntityLinkData& data) {
+			std::shared_ptr<common::ClickHandler> createLinkHandler(const EntityLinkData& data) {
 				switch (data.type) {
 				case EntityType::CustomUrl:
 					return !data.data.isEmpty()
-						? std::make_shared<UrlClickHandler>(data.data, false)
+						? std::make_shared<common::UrlClickHandler>(data.data, false)
 						: nullptr;
 				case EntityType::Email:
 				case EntityType::Url:
 					return !data.data.isEmpty()
-						? std::make_shared<UrlClickHandler>(
+						? std::make_shared<common::UrlClickHandler>(
 							data.data,
 							data.shown == EntityLinkShown::Full)
 						: nullptr;
@@ -39,17 +39,17 @@ namespace base::qt::text {
 			}
 		} // namespace details
 
-		std::shared_ptr<ClickHandler> createLinkHandler(const EntityLinkData& data) {
+		std::shared_ptr<common::ClickHandler> createLinkHandler(const EntityLinkData& data) {
 			switch (data.type) {
 				case EntityType::Url:
 					return (!data.data.isEmpty()
-						&& UrlClickHandler::IsSuspicious(data.data))
-						? std::make_shared<HiddenUrlClickHandler>(data.data)
+						&& common::UrlClickHandler::IsSuspicious(data.data))
+						? std::make_shared<common::HiddenUrlClickHandler>(data.data)
 						: details::createLinkHandler(data);
 
 				case EntityType::CustomUrl:
 					return !data.data.isEmpty()
-						? std::make_shared<HiddenUrlClickHandler>(data.data)
+						? std::make_shared<common::HiddenUrlClickHandler>(data.data)
 						: details::createLinkHandler(data);
 					return details::createLinkHandler(data);
 			}

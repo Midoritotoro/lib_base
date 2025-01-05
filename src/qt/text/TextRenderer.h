@@ -87,7 +87,7 @@ namespace base::qt::text {
 		void applyBlockProperties(
 			QTextEngine& e,
 			not_null<const AbstractBlock*> block);
-		[[nodiscard]] ClickHandlerPtr lookupLink(
+		[[nodiscard]] common::ClickHandlerPtr lookupLink(
 			const AbstractBlock* block) const;
 
 		void fillRectsFromRanges();
@@ -184,7 +184,7 @@ namespace base::qt::text {
 		bool _quotePreValid = false;
 		bool _quoteBlockquoteValid = false;
 
-	    ClickHandlerPtr _quoteExpandLink;
+		common::ClickHandlerPtr _quoteExpandLink;
 		bool _quoteExpandLinkLookup = false;
 
 		int _startLeft = 0;

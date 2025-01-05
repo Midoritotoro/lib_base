@@ -1,16 +1,14 @@
 #pragma once
 
-#include <base/qt/common/Types.h>
 #include <text/Types.h>
-
 #include <QVariant>
-#include <memory>
+
 
 namespace base::qt::text {
 	enum class EntityType : uchar;
 }
 
-//namespace base::qt::common {
+namespace base::qt::common {
 	struct ClickContext {
 		Qt::MouseButton button = Qt::LeftButton;
 		QVariant other;
@@ -103,4 +101,4 @@ namespace base::qt::text {
 		not_null<QWidget*> guard,
 		ClickHandlerPtr handler,
 		Qt::MouseButton button);
-//} // namespace base::qt::common
+} // namespace base::qt::common

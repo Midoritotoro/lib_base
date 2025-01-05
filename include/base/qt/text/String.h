@@ -97,7 +97,7 @@ namespace base::qt::text {
 		}
 
 		[[nodiscard]] bool hasLinks() const;
-		void setLink(uint16 index, const ClickHandlerPtr& lnk);
+		void setLink(uint16 index, const common::ClickHandlerPtr& lnk);
 
 		[[nodiscard]] bool hasCollapsedBlockquots() const;
 		[[nodiscard]] bool blockquoteCollapsed(int index) const;

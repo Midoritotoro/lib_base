@@ -1,11 +1,14 @@
 #include <base/qt/common/ClickHandler.h>
+
 #include <text/TextEntities.h>
 
-#include <QPointer>
 #include <base/Concurrent.h>
+#include <base/qt/common/Types.h>
+
+#include <QPointer>
 
 
-//namespace base::qt::common {
+namespace base::qt::common {
 	namespace {
 		ClickHandlerPtr& ClickHandlerActive() {
 			static auto result = ClickHandlerPtr();
@@ -139,7 +142,7 @@
 	}
 
 	auto ClickHandler::getTextEntity() const -> TextEntity {
-		return { base::qt::text::EntityType::Invalid };
+		return { text::EntityType::Invalid };
 	}
 
 	void ActivateClickHandler(
@@ -160,4 +163,4 @@
 	{
 		ActivateClickHandler(guard, handler, ClickContext{ button });
 	}
-//} // namespace base::qt::common
+} // namespace base::qt::common

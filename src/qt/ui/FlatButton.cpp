@@ -161,11 +161,11 @@ namespace base::qt::ui {
     {
         painter.setFont(font());
 
-       /* if (images::IsRgbNull(textColor().rgb()) == false) {
+       if (images::IsRgbNull(textColor().rgb()) == false) {
             painter.setPen(textColor());
             painter.drawText(option.rect, Qt::AlignCenter, this->text());
             return;
-        }*/
+        }
 
         const auto inverseColor = buttonStyle() == Qt::ToolButtonTextOnly
             && (option.state & (QStyle::State_Sunken | QStyle::State_On));

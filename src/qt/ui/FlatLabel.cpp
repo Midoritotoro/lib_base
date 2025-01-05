@@ -24,7 +24,7 @@
 namespace base::qt::ui {
 	FlatLabel::FlatLabel(QWidget* parent) :
 		QWidget(parent)
-		, ClickHandlerHost()
+		, common::ClickHandlerHost()
 	{
 		init();
 
@@ -170,7 +170,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLink(
 		quint16 index,
-		const ClickHandlerPtr& lnk)
+		const common::ClickHandlerPtr& lnk)
 	{
 		_text.setLink(index, lnk);
 		textUpdated();
@@ -178,11 +178,11 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLinksTrusted() {
 		static const auto TrustedLinksFilter = [](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
-				if (const auto url = dynamic_cast<UrlClickHandler*>(link.get())) {
-					url->UrlClickHandler::onClick({ button });
+				if (const auto url = dynamic_cast<common::UrlClickHandler*>(link.get())) {
+					url->common::UrlClickHandler::onClick({ button });
 					return false;
 				}
 				return true;
@@ -196,7 +196,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void()> handler) {
 		setClickHandlerFilter([=](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
 				if (button != Qt::LeftButton)
@@ -209,7 +209,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void(QString url)> handler) {
 		setClickHandlerFilter([=](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button) {
 				if (button != Qt::LeftButton) {
 					return true;
@@ -411,10 +411,10 @@ namespace base::qt::ui {
 		if (button != Qt::LeftButton)
 			return state;
 
-		ClickHandler::pressed();
+		common::ClickHandler::pressed();
 		_dragAction = NoDrag;
 
-		if (ClickHandler::getPressed()) {
+		if (common::ClickHandler::getPressed()) {
 			_dragStartPosition = mapFromGlobal(_lastMousePos);
 			_dragAction = PrepareDrag;
 		}
@@ -464,7 +464,7 @@ namespace base::qt::ui {
 		_lastMousePos = p;
 		const auto state = dragActionUpdate();
 
-		auto activated = ClickHandler::unpressed();
+		auto activated = common::ClickHandler::unpressed();
 
 		if (_dragAction == Dragging)
 			activated = nullptr;
@@ -482,7 +482,7 @@ namespace base::qt::ui {
 			const auto guard = window();
 			if (!_clickHandlerFilter
 				|| _clickHandlerFilter(activated, button))
-				ActivateClickHandler(guard, activated, button);
+				common::ActivateClickHandler(guard, activated, button);
 			//});
 		}
 
@@ -496,7 +496,7 @@ namespace base::qt::ui {
 	}
 
 	void FlatLabel::updateHover(const text::TextState& state) {
-		const auto linkChanged = ClickHandler::setActive(state.link, this);
+		const auto linkChanged = common::ClickHandler::setActive(state.link, this);
 
 		if (!_selectable) {
 			refreshCursor(state.uponSymbol);
@@ -529,7 +529,7 @@ namespace base::qt::ui {
 				}
 			}
 
-			if (ClickHandler::getPressed())
+			if (common::ClickHandler::getPressed())
 				cur = style::cursorPointer;
 			else if (_dragAction == Selecting)
 				cur = style::cursorText;
@@ -683,7 +683,7 @@ namespace base::qt::ui {
 			if (_dragSymbol < _selection.from || _dragSymbol >= _selection.to)
 				uponSelected = false;
 
-		const auto pressedHandler = ClickHandler::getPressed();
+		const auto pressedHandler = common::ClickHandler::getPressed();
 		const auto selectedText = [&] {
 			if (uponSelected)
 				return _text.toTextForMimeData(_selection);
@@ -698,7 +698,7 @@ namespace base::qt::ui {
 			drag->setMimeData(mimeData.release());
 			drag->exec(Qt::CopyAction);
 
-			ClickHandler::unpressed();
+			common::ClickHandler::unpressed();
 		}
 	}
 
@@ -821,7 +821,7 @@ namespace base::qt::ui {
 		const auto needTextCursor = _selectable && uponSymbol;
 		auto newCursor = needTextCursor ? style::cursorText : style::cursorDefault;
 
-		if (ClickHandler::getActive())
+		if (common::ClickHandler::getActive())
 			newCursor = style::cursorPointer;
 
 		if (newCursor != _cursor) {

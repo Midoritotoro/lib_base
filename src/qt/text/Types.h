@@ -6,7 +6,7 @@
 #include <base/Time.h>
 
 #include <base/qt/style/StyleFont.h>
-#include <base/qt/common/ClickHandler.h>
+//#include <base/qt/common/ClickHandler.h>
 
 #include <private/qfixed_p.h>
 #include <private/qfontengine_p.h>
@@ -16,11 +16,15 @@
 
 #include <span>
 
+namespace base::qt::text {
+	class PreClickHandler;
+	class BlockquoteClickHandler;
+}
 
-class PreClickHandler;
-class BlockquoteClickHandler;
-class ClickHandler;
-
+namespace base::qt::common {
+	class ClickHandler;
+	using ClickHandlerPtr = std::shared_ptr<ClickHandler>;
+}
 
 namespace base::qt::text {
 	namespace {
@@ -271,7 +275,7 @@ namespace base::qt::text {
 	};
 
 	struct ExtendedData {
-		std::vector <std::shared_ptr<ClickHandler>> links;
+		std::vector<common::ClickHandlerPtr> links;
 		std::unique_ptr<QuotesData> quotes;
 		std::vector<Modification> modifications;
 	};
@@ -299,7 +303,7 @@ namespace base::qt::text {
 	};
 
 	struct TextState {
-		std::shared_ptr<ClickHandler> link;
+		common::ClickHandlerPtr link;
 		bool uponSymbol = false;
 		bool afterSymbol = false;
 		uint16 symbol = 0;

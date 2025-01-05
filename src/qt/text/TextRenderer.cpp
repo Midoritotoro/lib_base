@@ -1159,7 +1159,7 @@ void Renderer::applyBlockProperties(
 				? false
 				: (underline == 1)
 				? ((_palette && _palette->linkAlwaysActive)
-					|| ClickHandler::showAsActive(_t->_extended
+					|| common::ClickHandler::showAsActive(_t->_extended
 						? _t->_extended->links[index - 1]
 						: nullptr))
 				: true;
@@ -1182,7 +1182,7 @@ void Renderer::applyBlockProperties(
 		_background = {};
 		if (isMono
 			&& block->linkIndex()) {
-			const auto pressed = ClickHandler::showAsPressed(_t->_extended
+			const auto pressed = common::ClickHandler::showAsPressed(_t->_extended
 				? _t->_extended->links[block->linkIndex() - 1]
 				: nullptr);
 			_background.selectActiveBlock = pressed;
@@ -1231,8 +1231,8 @@ void Renderer::applyBlockProperties(
 	}
 }
 
-ClickHandlerPtr Renderer::lookupLink(const AbstractBlock* block) const {
-	const auto spoilerLink = ClickHandlerPtr();
+common::ClickHandlerPtr Renderer::lookupLink(const AbstractBlock* block) const {
+	const auto spoilerLink = common::ClickHandlerPtr();
 	return (spoilerLink || !block->linkIndex() || !_t->_extended)
 		? spoilerLink
 		: _t->_extended->links[block->linkIndex() - 1];
