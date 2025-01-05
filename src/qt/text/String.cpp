@@ -1,16 +1,16 @@
 #include <base/qt/text/String.h>
 
-#include <src/qt/text/TextRenderer.h>
-#include <src/qt/text/BlockParser.h>
+#include <text/TextRenderer.h>
+#include <text/BlockParser.h>
 
-#include <src/qt/text/TextWord.h>
+#include <text/TextWord.h>
 #include <base/qt/text/TextClickHandlers.h>
 
-#include <src/qt/text/TextUtility.h>
-#include <src/qt/text/WordParser.h>
+#include <base/qt/text/TextUtility.h>
+#include <text/WordParser.h>
 
-#include <src/qt/text/TextDrawUtility.h>
-#include <src/qt/text/Types.h>
+#include <text/TextDrawUtility.h>
+#include <text/Types.h>
 
 #include <base/qt/common/BasicClickHandlers.h>
 #include <base/Utility.h>
@@ -105,7 +105,7 @@ namespace base::qt::text {
 		return _extended && !_extended->links.empty();
 	}
 
-	void String::setLink(uint16 index, const ClickHandlerPtr& link) {
+	void String::setLink(uint16 index, const common::ClickHandlerPtr& link) {
 		const auto extended = _extended.get();
 		// () << "extended == nullptr: " << (extended == nullptr);
 
@@ -232,7 +232,7 @@ namespace base::qt::text {
 		if (const auto quotes = _extended ? _extended->quotes.get() : nullptr) {
 			for (const auto& quote : quotes->list) {
 				if (quote.pre) {
-					core::utility::accumulateMax(result, quote.maxWidth);
+					base::accumulateMax(result, quote.maxWidth);
 				}
 			}
 		}
@@ -614,8 +614,8 @@ namespace base::qt::text {
 
 			auto w__f_rbearing = word.f_rbearing();
 
-			core::utility::accumulateMax(maxWidth, width);
-			core::utility::accumulateMax(qmaxwidth, width);
+			base::accumulateMax(maxWidth, width);
+			base::accumulateMax(qmaxwidth, width);
 
 			width += last_rBearing + (last_rPadding + word.f_width() - w__f_rbearing);
 
@@ -635,8 +635,8 @@ namespace base::qt::text {
 					? _blocks.back().unsafe<SkipBlock>().height()
 					: lineHeight;
 			
-			core::utility::accumulateMax(maxWidth, width);
-			core::utility::accumulateMax(qmaxwidth, width);
+			base::accumulateMax(maxWidth, width);
+			base::accumulateMax(qmaxwidth, width);
 		}
 		_maxWidth = maxWidth.ceil().toInt();
 		if (quote) {

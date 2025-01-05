@@ -8,7 +8,7 @@
 
 #include <QString>
 
-#include <src/qt/text/TextEntities.h>
+#include <text/TextEntities.h>
 #include <base/Utility.h>
 
 

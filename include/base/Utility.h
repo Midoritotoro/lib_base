@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <base/Platform.h>
 
@@ -11,18 +11,18 @@
 #include <iostream>
 
 #include <cstdlib>
+#include <gsl/gsl>
 
-#if __has_include(<gsl/gsl>)
-/**
- *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
- *\param name - "Имя" области видимости
-*/
 #define measureExecutionTime(name) \
 		 const auto ms = Time::now(); \
 		 const auto timer = gsl::finally([] { \
 			std::cout << name << " completed for: " \
 			<< Time::now() - ms << " ms" << '\n'; });
-#endif
+
+/**
+ *РџРѕСЃР»Рµ РІС‹С…РѕРґР° РёР· С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РѕРїСЂРµРґРµР»СЏРµС‚ Р·Р°С‚СЂР°С‡РµРЅРЅРѕРµ РЅР° РІС‹РїРѕР»РЅРµРЅРёРµ СЌС‚РѕРіРѕ Р±Р»РѕРєР° РєРѕРґР° РІСЂРµРјСЏ
+ *\param name - "РРјСЏ" РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+*/
 
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
@@ -104,9 +104,9 @@ namespace base {
         cmp_fn_t action, int level);
 
     /**
-     *Обходит узлы дерева
-     *\param vroot - Дерево
-     *\param action - Узел дерева для обхода
+     *РћР±С…РѕРґРёС‚ СѓР·Р»С‹ РґРµСЂРµРІР°
+     *\param vroot - Р”РµСЂРµРІРѕ
+     *\param action - РЈР·РµР» РґРµСЂРµРІР° РґР»СЏ РѕР±С…РѕРґР°
      */
     void TWalk(
         const void* vroot,

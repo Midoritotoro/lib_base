@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <src/qt/text/Types.h>
+#include <text/Types.h>
 
 
 namespace base::qt::text {

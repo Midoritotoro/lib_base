@@ -1,5 +1,5 @@
 #include <base/qt/common/ClickHandler.h>
-#include <src/qt/text/TextEntities.h>
+#include <text/TextEntities.h>
 
 #include <QPointer>
 #include <base/Concurrent.h>

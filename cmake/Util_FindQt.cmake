@@ -8,7 +8,7 @@ function(find_qt)
             Qt6::WidgetsPrivate
             INTERFACE_INCLUDE_DIRECTORIES)
 
-        target_include_directories(lib_base
+        target_include_directories(lib_base_qt
             PUBLIC
                 ${QT6_INCLUDE}
         )
@@ -23,9 +23,16 @@ function(find_qt)
                 check the integrity of the linkage of Qt in the project,
                 or remove the -DLIB_BASE_ENABLE_QT option.")
         endif()
+
+         target_link_libraries(lib_base_qt
+            PUBLIC
+                Qt6::Core 
+                Qt6::Widgets 
+                Qt6::WidgetsPrivate
+        )
     endif()
 
-    target_compile_definitions(lib_base
+    target_compile_definitions(lib_base_qt
         PUBLIC
             LIB_BASE_ENABLE_QT
     )

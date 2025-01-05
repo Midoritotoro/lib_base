@@ -1,7 +1,9 @@
 #pragma once
 
-#include <src/qt/text/Types.h>
-#include <src/qt/text/TextBlock.h>
+#include <text/Types.h>
+#include <text/TextBlock.h>
+
+#include <base/qt/text/TextClickHandlers.h>
 
 #include <private/qtextengine_p.h>
 
@@ -53,7 +55,7 @@ namespace base::qt::text {
 		static constexpr auto kSpoilersRectsSize = 512;
 		struct BidiControl;
 
-		[[nodiscard]] Time::time now() const;
+		[[nodiscard]] Time::time_t now() const;
 
 		void initParagraphBidi();
 		void initNextParagraph(
@@ -85,7 +87,7 @@ namespace base::qt::text {
 		void applyBlockProperties(
 			QTextEngine& e,
 			not_null<const AbstractBlock*> block);
-		[[nodiscard]] ClickHandlerPtr lookupLink(
+		[[nodiscard]] common::ClickHandlerPtr lookupLink(
 			const AbstractBlock* block) const;
 
 		void fillRectsFromRanges();
@@ -146,7 +148,7 @@ namespace base::qt::text {
 		HighlightInfoRequest* _highlight = nullptr;
 		const QChar* _str = nullptr;
 
-		mutable Time::time _cachedNow = 0;
+		mutable Time::time_t _cachedNow = 0;
 		double _spoilerOpacity = 0.;
 
 		QVarLengthArray<FixedRange> _highlightRanges;
@@ -182,7 +184,7 @@ namespace base::qt::text {
 		bool _quotePreValid = false;
 		bool _quoteBlockquoteValid = false;
 
-		ClickHandlerPtr _quoteExpandLink;
+		common::ClickHandlerPtr _quoteExpandLink;
 		bool _quoteExpandLinkLookup = false;
 
 		int _startLeft = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <src/qt/text/Types.h>
-#include <src/qt/text/TextEntities.h>
+#include <text/Types.h>
+#include <text/TextEntities.h>
 
 #include <QString>
 #include <QMimeData>

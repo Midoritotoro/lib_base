@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #if defined(_WIN32)
 #if !defined(_UNICODE)
@@ -16,12 +16,6 @@
 
 #include <cstdint>
 #include <span>
-
-#if !__has_include(<gsl/gsl>)
-template <typename T>
-struct not_null {};
-#endif
-
 
 #ifdef LIB_BASE_STATIC
 #if defined(LIB_BASE)
@@ -43,7 +37,7 @@ struct not_null {};
 #elif (1000 % CLOCK_FREQ) == 0
 #define TICK_FROM_MS(ms)  ((ms)  / (INT64_C(1000) / CLOCK_FREQ))
 #define MS_FROM_TICK(vtk) ((vtk) * (INT64_C(1000) / CLOCK_FREQ))
-#else /* Округленное переполненное преобразование */
+#else /* РћРєСЂСѓРіР»РµРЅРЅРѕРµ РїРµСЂРµРїРѕР»РЅРµРЅРЅРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ */
 #define TICK_FROM_MS(ms)  (CLOCK_FREQ * (ms) / 1000)
 #define MS_FROM_TICK(vtk) ((vtk) * 1000 / CLOCK_FREQ)
 #endif /* CLOCK_FREQ / 1000 */
@@ -51,8 +45,8 @@ struct not_null {};
 typedef int64_t msftime_t;
 typedef int64_t tick_t;
 
-#define MSFTIME_FROM_SEC(sec)       (INT64_C(10000000) * (sec))  /* Секунды в msftime_t */
-#define MSFTIME_FROM_MS(sec)        (INT64_C(10000) * (sec))     /* Миллисекунды в msftime_t */
+#define MSFTIME_FROM_SEC(sec)       (INT64_C(10000000) * (sec))  /* РЎРµРєСѓРЅРґС‹ РІ msftime_t */
+#define MSFTIME_FROM_MS(sec)        (INT64_C(10000) * (sec))     /* РњРёР»Р»РёСЃРµРєСѓРЅРґС‹ РІ msftime_t */
 
 #if (CLOCK_FREQ % 10000000) == 0
 #define TICK_FROM_MSFTIME(msft) ((msft) * (CLOCK_FREQ / INT64_C(10000000))

@@ -4,7 +4,7 @@
 #include <limits>
 
 
-namespace Time {
+namespace base::Time{
 	namespace details {
 		namespace {
 
@@ -136,4 +136,4 @@ namespace Time {
 	int seconds(int64_t unixTime) {
 		return localtime(&unixTime)->tm_sec;
 	}
-} // namespace Time
+} // namespace base::Time

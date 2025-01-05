@@ -3,11 +3,8 @@
 #include <QString>
 #include <cstdint>
 
-
-#if __has_include(<gsl/gsl>)
-	#include <gsl/gsl>
-	using gsl::not_null;
-#endif() 
+#include <gsl/gsl>
+using gsl::not_null;
 
 template <typename Signature>
 using Fn = std::function<Signature>;

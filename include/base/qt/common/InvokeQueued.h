@@ -31,6 +31,6 @@ namespace base::qt::common {
 	{
 		QCoreApplication::postEvent(
 			const_cast<QObject*>(context),
-			new core::InvokeQueuedEvent(std::forward<Lambda>(lambda)));
+			new InvokeQueuedEvent(std::forward<Lambda>(lambda)));
 	}
 } // namespace base::qt::common

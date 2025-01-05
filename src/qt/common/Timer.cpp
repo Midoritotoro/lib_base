@@ -29,8 +29,8 @@ namespace base::qt::common {
 			Qt::QueuedConnection);
 	}
 
-	Qt::TimerType Timer::DefaultType(Time::time timeout) {
-		constexpr auto kThreshold = Time::time(240);
+	Qt::TimerType Timer::DefaultType(Time::time_t timeout) {
+		constexpr auto kThreshold = Time::time_t(240);
 		return (timeout > kThreshold) ? Qt::CoarseTimer : Qt::PreciseTimer;
 	}
 
@@ -38,19 +38,19 @@ namespace base::qt::common {
 		_callback = std::move(callback);
 	}
 
-	void Timer::callOnce(Time::time timeout) {
+	void Timer::callOnce(Time::time_t timeout) {
 		callOnce(timeout, DefaultType(timeout));
 	}
 
-	void Timer::callOnce(Time::time timeout, Qt::TimerType type) {
+	void Timer::callOnce(Time::time_t timeout, Qt::TimerType type) {
 		start(timeout, type, Repeat::SingleShot);
 	}
 
-	void Timer::callEach(Time::time timeout) {
+	void Timer::callEach(Time::time_t timeout) {
 		callEach(timeout, DefaultType(timeout));
 	}
 
-	void Timer::callEach(Time::time timeout, Qt::TimerType type) {
+	void Timer::callEach(Time::time_t timeout, Qt::TimerType type) {
 		start(timeout, type, Repeat::Interval);
 	}
 
@@ -58,12 +58,12 @@ namespace base::qt::common {
 		return (_timerId != 0);
 	}
 
-	Time::time Timer::remainingTime() const noexcept {
+	Time::time_t Timer::remainingTime() const noexcept {
 		if (!isActive()) {
 			return -1;
 		}
 		const auto now = Time::now();
-		return (_next > now) ? (_next - now) : Time::time(0);
+		return (_next > now) ? (_next - now) : Time::time_t(0);
 	}
 
 	void Timer::setRepeat(Timer::Repeat repeat) {
@@ -74,7 +74,7 @@ namespace base::qt::common {
 		return static_cast<Timer::Repeat>(_repeat);
 	}
 
-	void Timer::start(Time::time timeout, Qt::TimerType type, Repeat repeat) {
+	void Timer::start(Time::time_t timeout, Qt::TimerType type, Repeat repeat) {
 		cancel();
 
 		_type = type;
@@ -115,7 +115,7 @@ namespace base::qt::common {
 		}
 	}
 
-	void Timer::setTimeout(Time::time timeout) {
+	void Timer::setTimeout(Time::time_t timeout) {
 		if (timeout <= 0 || timeout >= std::numeric_limits<int>::max())
 			return;
 

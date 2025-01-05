@@ -1,4 +1,4 @@
-#include <src/qt/text/TextWord.h>
+#include <text/TextWord.h>
 
 
 namespace base::qt::text {

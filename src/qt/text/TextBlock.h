@@ -6,7 +6,7 @@
 #include <base/Time.h>
 
 #include <base/qt/common/Types.h>
-#include <src/qt/text/Types.h>
+#include <text/Types.h>
 
 
 namespace base::qt::text {

@@ -27,8 +27,9 @@ option(LIB_BASE_ENABLE_QT "Включить вспомогательный ин�
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
-
+set(LIB_BASE_ENABLE_QT ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
+
 
    
 set(PRIVATE_SOURCES 
@@ -93,6 +94,9 @@ add_library(lib_base ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
+include(cmake/Util_FindGSL.cmake)
+
+find_ms_gsl(lib_base)
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
@@ -118,6 +122,16 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
         set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     endif()
 endif()
+
+if(LIB_BASE_ENABLE_QT)
+    add_subdirectory(src/qt) 
+
+    add_library(lib_baseQt INTERFACE)
+    target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
+
+    add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
+endif()
+
 
 # message("LIBTYPE: " ${LIBTYPE})
 
@@ -158,16 +172,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     INTERFACE
        ${linkOptions}
    )
-endif()
-
-if(LIB_BASE_ENABLE_QT)
-    message("enable qt is on")
-    add_subdirectory(src/qt) 
-
-    add_library(lib_baseQt INTERFACE)
-    target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
-
-    add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
 endif()
 
 if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)

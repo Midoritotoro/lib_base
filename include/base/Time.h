@@ -6,7 +6,7 @@
 #include <ctime>
 
 
-namespace Time {
+namespace base::Time {
 	using time_t = std::int64_t;
 	using profileTime_t = std::int64_t;
 
@@ -35,4 +35,4 @@ namespace Time {
 	[[nodiscard]] int minutes(int64_t unixTime);
 	[[nodiscard]] int hours(int64_t unixTime);
 	[[nodiscard]] int seconds(int64_t unixTime);
-} // namespace Time
+} // namespace base::Time

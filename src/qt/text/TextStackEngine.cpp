@@ -1,5 +1,5 @@
-#include <src/qt/text/TextStackEngine.h>
-#include <src/qt/text/TextBlock.h>
+#include <text/TextStackEngine.h>
+#include <text/TextBlock.h>
 
 
 namespace base::qt::text {

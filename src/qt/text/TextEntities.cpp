@@ -1,4 +1,4 @@
-#include <src/qt/text/TextEntities.h>
+#include <text/TextEntities.h>
 
 #include <base/qt/text/String.h>
 #include <base/Utility.h>

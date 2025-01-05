@@ -1,9 +1,16 @@
 #pragma once 
 
-namespace base::qt::text {
-	class BlockParser;
-	class TextBlock;
+#include <text/TextBlock.h>
+#include <text/BlockParser.h>
 
+#include <base/qt/style/StyleFont.h>
+#include <base/qt/common/BasicClickHandlers.h>
+
+#include <text/Types.h>
+#include <text/TextWord.h>
+
+
+namespace base::qt::text {
 	inline constexpr auto kQFixedMax = (INT_MAX / 256);
 
 	inline const TextParseOptions kDefaultTextOptions = {
@@ -90,7 +97,7 @@ namespace base::qt::text {
 		}
 
 		[[nodiscard]] bool hasLinks() const;
-		void setLink(uint16 index, const ClickHandlerPtr& lnk);
+		void setLink(uint16 index, const common::ClickHandlerPtr& lnk);
 
 		[[nodiscard]] bool hasCollapsedBlockquots() const;
 		[[nodiscard]] bool blockquoteCollapsed(int index) const;

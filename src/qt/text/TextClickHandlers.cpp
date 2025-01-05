@@ -1,12 +1,12 @@
 #include <base/qt/text/TextClickHandlers.h>
 #include <base/qt/text/String.h>
 
-#include <src/qt/text/TextUtility.h>
+#include <base/qt/text/TextUtility.h>
 
 
 namespace base::qt::text {
 	PreClickHandler::PreClickHandler(
-		not_null<text::String*> text,
+		not_null<String*> text,
 		uint16 offset,
 		uint16 length)
 		: _text(text)
@@ -18,11 +18,11 @@ namespace base::qt::text {
 		return _text;
 	}
 
-	void PreClickHandler::setText(not_null<text::String*> text) {
+	void PreClickHandler::setText(not_null<String*> text) {
 		_text = text;
 	}
 
-	void PreClickHandler::onClick(ClickContext context) const {
+	void PreClickHandler::onClick(common::ClickContext context) const {
 		if (context.button != Qt::LeftButton)
 			return;
 
@@ -36,7 +36,7 @@ namespace base::qt::text {
 		if (!text.expanded.endsWith('\n'))
 			text.expanded.append('\n');
 
-		text::SetClipboardText(std::move(text));
+		SetClipboardText(std::move(text));
 	}
 
 	BlockquoteClickHandler::BlockquoteClickHandler(
@@ -54,7 +54,7 @@ namespace base::qt::text {
 		_text = text;
 	}
 
-	void BlockquoteClickHandler::onClick(ClickContext context) const {
+	void BlockquoteClickHandler::onClick(common::ClickContext context) const {
 		if (context.button != Qt::LeftButton)
 			return;
 

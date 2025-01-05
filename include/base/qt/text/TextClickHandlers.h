@@ -4,34 +4,34 @@
 #include <base/qt/common/ClickHandler.h>
 
 
-namespace base::qt::common {
-	class PreClickHandler final : public ClickHandler {
+namespace base::qt::text {
+	class PreClickHandler final : public common::ClickHandler {
 	public:
-		PreClickHandler(not_null<text::String*> text, uint16 offset, uint16 length);
+		PreClickHandler(not_null<String*> text, uint16 offset, uint16 length);
 
-		[[nodiscard]] not_null<text::String*> text() const;
-		void setText(not_null<text::String*> text);
+		[[nodiscard]] not_null<String*> text() const;
+		void setText(not_null<String*> text);
 
-		void onClick(ClickContext context) const override;
+		void onClick(common::ClickContext context) const override;
 
 	private:
-		not_null<text::String*> _text;
+		not_null<String*> _text;
 
 		uint16 _offset = 0;
 		uint16 _length = 0;
 	};
 
-	class BlockquoteClickHandler final : public ClickHandler {
+	class BlockquoteClickHandler final : public common::ClickHandler {
 	public:
-		BlockquoteClickHandler(not_null<text::String*> text, int quoteIndex);
+		BlockquoteClickHandler(not_null<String*> text, int quoteIndex);
 
-		[[nodiscard]] not_null<text::String*> text() const;
-		void setText(not_null<text::String*> text);
+		[[nodiscard]] not_null<String*> text() const;
+		void setText(not_null<String*> text);
 
-		void onClick(ClickContext context) const override;
+		void onClick(common::ClickContext context) const override;
 
 	private:
-		not_null<text::String*> _text;
+		not_null<String*> _text;
 		uint16 _quoteIndex = 0;
 	};
-} // namespace base::qt::common
+} // namespace base::qt::text

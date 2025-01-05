@@ -322,8 +322,8 @@ namespace base::qt::style::internal {
 				.font = font,
 				.ascent = metrics.ascent,
 				.height = metrics.height,
-				.iascent = int(core::utility::SafeRound(metrics.ascent)),
-				.iheight = int(core::utility::SafeRound(metrics.height)),
+				.iascent = int(base::SafeRound(metrics.ascent)),
+				.iheight = int(base::SafeRound(metrics.height)),
 				.requestedFamily = index,
 				.requestedSize = size,
 				.requestedFlags = flags,
@@ -379,8 +379,8 @@ namespace base::qt::style::internal {
 
 		_modified[int(_flags)] = Font(this);
 
-		height = int(core::utility::SafeRound(result.height));
-		ascent = int(core::utility::SafeRound(result.ascent));
+		height = int(base::SafeRound(result.height));
+		ascent = int(base::SafeRound(result.ascent));
 
 		descent = height - ascent;
 
@@ -568,7 +568,7 @@ namespace base::qt::style::internal {
 	}
 } // namespace base::qt::style::internal
 
-namespace style {
+namespace base::qt::style {
 	const FontResolveResult* FindAdjustResult(const QFont& font) {
 		const auto key = internal::QtFontKey(font);
 		const auto i = internal::QtFontsKeys.find(key);

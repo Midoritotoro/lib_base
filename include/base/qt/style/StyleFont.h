@@ -230,7 +230,7 @@ namespace base::qt::style::internal{
 	};
 } // namespace base::qt::style::internal
 
-namespace style {
+namespace base::qt::style{
 	struct TextStyle {
 		font _font;
 		int lineHeight = 14;

@@ -12,7 +12,7 @@
 #include <QMouseEvent>
 #include <QDrag>
 
-#include <src/qt/text/TextEntities.h>
+#include <text/TextEntities.h>
 #include <base/qt/style/StyleTypes.h>
 
 #include <QPainterPath>
@@ -168,7 +168,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLink(
 		quint16 index,
-		const ClickHandlerPtr& lnk)
+		const common::ClickHandlerPtr& lnk)
 	{
 		_text.setLink(index, lnk);
 		textUpdated();
@@ -176,11 +176,11 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLinksTrusted() {
 		static const auto TrustedLinksFilter = [](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
-				if (const auto url = dynamic_cast<UrlClickHandler*>(link.get())) {
-					url->UrlClickHandler::onClick({ button });
+				if (const auto url = dynamic_cast<common::UrlClickHandler*>(link.get())) {
+					url->common::UrlClickHandler::onClick({ button });
 					return false;
 				}
 				return true;
@@ -194,7 +194,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void()> handler) {
 		setClickHandlerFilter([=](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
 				if (button != Qt::LeftButton)
@@ -207,7 +207,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void(QString url)> handler) {
 		setClickHandlerFilter([=](
-			const ClickHandlerPtr& link,
+			const common::ClickHandlerPtr& link,
 			Qt::MouseButton button) {
 				if (button != Qt::LeftButton) {
 					return true;
@@ -395,7 +395,7 @@ namespace base::qt::ui {
 
 		if (_dragAction == PrepareDrag && (map - _dragStartPosition).manhattanLength() >= QApplication::startDragDistance()) {
 			_dragAction = Dragging;
-			core::InvokeQueued(this, [=] { executeDrag(); });
+			common::InvokeQueued(this, [=] { executeDrag(); });
 		}
 
 		return state;
@@ -409,10 +409,10 @@ namespace base::qt::ui {
 		if (button != Qt::LeftButton)
 			return state;
 
-		ClickHandler::pressed();
+		common::ClickHandler::pressed();
 		_dragAction = NoDrag;
 
-		if (ClickHandler::getPressed()) {
+		if (common::ClickHandler::getPressed()) {
 			_dragStartPosition = mapFromGlobal(_lastMousePos);
 			_dragAction = PrepareDrag;
 		}

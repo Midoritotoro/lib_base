@@ -1,22 +1,22 @@
-#include <src/qt/text/TextRenderer.h>
+#include <text/TextRenderer.h>
 
-#include <src/qt/text/TextBidiAlgorithm.h>
+#include <text/TextBidiAlgorithm.h>
 #include <base/qt/style/StyleCore.h>
 
 #include <QPainterPath>
 #include <base/qt/style/StyleFont.h>
 
 #include <base/qt/text/String.h>
-#include <src/qt/text/BlockParser.h>
+#include <text/BlockParser.h>
 
-#include <src/qt/text/TextWord.h>
+#include <text/TextWord.h>
 #include <base/qt/text/TextClickHandlers.h>
 
-#include <src/qt/text/TextUtility.h>
-#include <src/qt/text/WordParser.h>
+#include <base/qt/text/TextUtility.h>
+#include <text/WordParser.h>
 
-#include <src/qt/text/TextDrawUtility.h>
-#include <src/qt/text/Types.h>
+#include <text/TextDrawUtility.h>
+#include <text/Types.h>
 
 #include <base/qt/common/BasicClickHandlers.h>
 #include <base/Utility.h>
@@ -367,7 +367,7 @@ void Renderer::enumerate() {
 	}
 }
 
-Time::time Renderer::now() const {
+Time::time_t Renderer::now() const {
 	if (!_cachedNow)
 		_cachedNow = Time::now();
 
@@ -1159,7 +1159,7 @@ void Renderer::applyBlockProperties(
 				? false
 				: (underline == 1)
 				? ((_palette && _palette->linkAlwaysActive)
-					|| ClickHandler::showAsActive(_t->_extended
+					|| common::ClickHandler::showAsActive(_t->_extended
 						? _t->_extended->links[index - 1]
 						: nullptr))
 				: true;
@@ -1182,7 +1182,7 @@ void Renderer::applyBlockProperties(
 		_background = {};
 		if (isMono
 			&& block->linkIndex()) {
-			const auto pressed = ClickHandler::showAsPressed(_t->_extended
+			const auto pressed = common::ClickHandler::showAsPressed(_t->_extended
 				? _t->_extended->links[block->linkIndex() - 1]
 				: nullptr);
 			_background.selectActiveBlock = pressed;
@@ -1231,8 +1231,8 @@ void Renderer::applyBlockProperties(
 	}
 }
 
-ClickHandlerPtr Renderer::lookupLink(const AbstractBlock* block) const {
-	const auto spoilerLink = ClickHandlerPtr();
+common::ClickHandlerPtr Renderer::lookupLink(const AbstractBlock* block) const {
+	const auto spoilerLink = common::ClickHandlerPtr();
 	return (spoilerLink || !block->linkIndex() || !_t->_extended)
 		? spoilerLink
 		: _t->_extended->links[block->linkIndex() - 1];

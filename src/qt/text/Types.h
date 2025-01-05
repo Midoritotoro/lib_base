@@ -8,11 +8,15 @@
 #include <base/qt/style/StyleFont.h>
 #include <base/qt/common/ClickHandler.h>
 
+#include <base/qt/common/BasicClickHandlers.h>
+
 #include <private/qfixed_p.h>
 #include <private/qfontengine_p.h>
 
 #include <QImage>
 #include <ranges>
+
+#include <span>
 
 
 class PreClickHandler;
@@ -217,8 +221,8 @@ namespace base::qt::text {
 
 		QuotePaintCache* pre = new QuotePaintCache();
 		QuotePaintCache* blockquote = new QuotePaintCache();
-		std::span<SpecialColor> colors = {};
-		Time::time now = 0;
+		gsl::span<SpecialColor> colors = {};
+		Time::time_t now = 0;
 
 		bool paused = false;
 		bool pausedEmoji = false;
@@ -268,7 +272,7 @@ namespace base::qt::text {
 	};
 
 	struct ExtendedData {
-		std::vector<ClickHandlerPtr> links;
+		std::vector <common::ClickHandlerPtr> links;
 		std::unique_ptr<QuotesData> quotes;
 		std::vector<Modification> modifications;
 	};
@@ -296,7 +300,7 @@ namespace base::qt::text {
 	};
 
 	struct TextState {
-		ClickHandlerPtr link;
+		common::ClickHandlerPtr link;
 		bool uponSymbol = false;
 		bool afterSymbol = false;
 		uint16 symbol = 0;
