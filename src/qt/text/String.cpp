@@ -15,6 +15,11 @@
 #include <base/qt/common/BasicClickHandlers.h>
 #include <base/Utility.h>
 
+#include <text/TextBlock.h>
+
+#include <base/qt/style/StyleFont.h>
+#include <text/Types.h>
+
 
 namespace base::qt::text {
 	String::String(int32 minResizeWidth) :

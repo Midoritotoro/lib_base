@@ -53,9 +53,9 @@ namespace base::qt::style {
 
 			.borderRadius = 10,
 
-			.maximumWidth = style::maximumMessageWidth,
+		/*  .maximumWidth = style::maximumMessageWidth,
 			.maximumHeight = style::maximumTextHeight,
-
+			*/
 			.minimumWidth = style::minimumMessageWidth,
 			.minimumHeight = style::minimumMessageHeight,
 		};

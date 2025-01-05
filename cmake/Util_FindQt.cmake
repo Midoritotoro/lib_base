@@ -2,15 +2,15 @@ function(find_qt)
     if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGET Qt6::WidgetsPrivate)
         message("Qt was found in parent project")
 
-        get_target_property(QT6_INCLUDE 
-            Qt6::Core 
-            Qt6::Widgets 
-            Qt6::WidgetsPrivate
-            INTERFACE_INCLUDE_DIRECTORIES)
+       get_target_property(QT6_INCLUDE 
+           Qt6::Core 
+           Qt6::Widgets 
+           Qt6::WidgetsPrivate
+           INTERFACE_INCLUDE_DIRECTORIES)
 
         target_include_directories(lib_base_qt
-            PUBLIC
-                ${QT6_INCLUDE}
+           PUBLIC
+               ${QT6_INCLUDE}
         )
     else()
         message(STATUS "Can't find Qt in the parent project, trying to find it using find_package")
@@ -24,12 +24,12 @@ function(find_qt)
                 or remove the -DLIB_BASE_ENABLE_QT option.")
         endif()
 
-         target_link_libraries(lib_base_qt
+        target_link_libraries(lib_base_qt
             PUBLIC
                 Qt6::Core 
                 Qt6::Widgets 
                 Qt6::WidgetsPrivate
-        )
+            )
     endif()
 
     target_compile_definitions(lib_base_qt

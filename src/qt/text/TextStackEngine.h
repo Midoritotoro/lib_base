@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/qt/text/String.h>
 #include <private/qfontengine_p.h>
+#include <text/Types.h>
 
 
 namespace base::qt::text {

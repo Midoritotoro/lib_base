@@ -19,6 +19,7 @@
 #include <base/Concurrent.h>
 
 #include <base/qt/text/TextUtility.h>
+#include <base/qt/common/Size.h>
 
 
 namespace base::qt::ui {
@@ -131,14 +132,6 @@ namespace base::qt::ui {
 		return _alignment;
 	}
 
-	void FlatLabel::setContextMenu(not_null<PopupMenu*> menu) {
-		_contextMenu = menu;
-	}
-
-	PopupMenu* FlatLabel::contextMenu() const noexcept {
-		return _contextMenu;
-	}
-
 	void FlatLabel::setCornerRoundMode(style::CornersRoundMode cornersRoundMode) {
 		_cornersRoundMode = cornersRoundMode;
 	}
@@ -148,10 +141,45 @@ namespace base::qt::ui {
 	}
 
 	void FlatLabel::setStyle(const style::FlatLabel* style, bool repaint) {
+		if (style == nullptr)
+			return;
+
 		_st = style;
 
-		_text.setMaximumWidth(textMaxWidth());
-		_text.setMinimumHeight(_st->minimumHeight);
+		const auto parentWidget = qobject_cast<QWidget*>(parent());
+
+		if (const auto maxWidth = textMaxWidth(); maxWidth)
+			_text.setMaximumWidth(maxWidth);
+
+		if (style->minimumHeight)
+			_text.setMinimumHeight(style->minimumHeight);
+
+		if (!style->maximumHeight || !style->maximumWidth) {
+			auto _style = *_st;
+
+			if (!style->maximumHeight)
+				_style.maximumHeight = parentWidget
+					? parentWidget->height()
+					: 0
+					? parentWidget->height()
+					: common::ScreenResolution().height();
+
+			if (!style->maximumWidth) {
+				_style.maximumWidth = parentWidget
+					? parentWidget->width()
+					: 0
+					? parentWidget->width()
+					: common::ScreenResolution().width();
+
+
+				if (_style.maximumWidth)
+					_text.setMaximumWidth(_style.maximumWidth
+						- _st->margin.left()
+						- _st->margin.right());
+			}
+
+			_st = new style::FlatLabel(_style);
+		}
 
 		if (repaint == false || _text.toQString().isEmpty())
 			return;
@@ -225,18 +253,22 @@ namespace base::qt::ui {
 		painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 		painter.setOpacity(_opacity);
 
-		style::RoundCorners(painter, size(), _st->borderRadius, _cornersRoundMode);
-		painter.fillRect(QRect(0, 0, _st->maximumWidth, height()), _st->colorBg);
+		const auto textWidth = textMaxWidth() && _text.maxWidth()
+			? qMin(textMaxWidth(), _text.maxWidth()
+				+ _st->margin.left() + _st->margin.right())
+					: _textWidth && _text.maxWidth()
+			? qMin(_textWidth, _text.maxWidth() 
+				+ _st->margin.left() + _st->margin.right())
+					: width()
+						- _st->margin.left()
+						- _st->margin.right();
+
+		const auto recountedSize = QSize(textWidth, height());
+		style::RoundCorners(painter, recountedSize, _st->borderRadius, _cornersRoundMode);
+
+		painter.fillRect(QRect(QPoint(), recountedSize), _st->colorBg);
 
 		painter.setPen(Qt::white);
-
-		const auto textWidth = _st->maximumWidth
-			? textMaxWidth()
-			: _textWidth
-			? _textWidth
-			: width()
-			- _st->margin.left()
-			- _st->margin.right();
 
 		const auto textLeft = _textWidth
 			? ((_alignment & Qt::AlignLeft)
@@ -253,7 +285,8 @@ namespace base::qt::ui {
 			: _selection;
 
 		const auto heightExceeded = _st->maximumHeight < _fullTextHeight
-			|| textWidth < textMaxWidth();
+			|| textMaxWidth() ? textWidth < textMaxWidth() : textWidth;
+
 		const auto renderElided = _breakEverywhere || heightExceeded;
 
 		const auto lineHeight = _text.style()
@@ -276,8 +309,8 @@ namespace base::qt::ui {
 			.selection = selection,
 			.elisionHeight = elisionHeight,
 			.elisionBreakEverywhere = renderElided && _breakEverywhere,
-			});
-	}
+		});
+	} 
 
 	void FlatLabel::mouseMoveEvent(QMouseEvent* event) {
 		_lastMousePos = event->globalPos();
@@ -642,7 +675,8 @@ namespace base::qt::ui {
 
 		auto state = text::TextState();
 
-		const auto heightExceeded = (_st->maximumHeight < _fullTextHeight || textWidth < _text.maxWidth());
+		const auto heightExceeded = (_st->maximumHeight < _fullTextHeight
+			|| textWidth < _text.maxWidth());
 		const auto renderElided = _breakEverywhere || heightExceeded;
 
 		if (renderElided) {
@@ -717,14 +751,17 @@ namespace base::qt::ui {
 					&& (state.symbol >= _selection.from)
 					&& (state.symbol < _selection.to)));
 
-		_contextMenu = new PopupMenu(this);
+		_contextMenu = std::make_unique<PopupMenu>(parent() ?
+			qobject_cast<QWidget*>(parent())
+			: this);
 
 		auto request = ContextMenuRequest({
-			.menu = _contextMenu,
+			.menu = _contextMenu.get(),
 			.selection = _selectable ? _selection : text::TextSelection(),
+			.link = common::ClickHandler::getActive(),
 			.uponSelection = uponSelection,
 			.fullSelection = _selectable && _text.isFullSelection(_selection)
-			});
+		});
 
 		_contextMenuHook
 			? _contextMenuHook(request)
@@ -831,8 +868,8 @@ namespace base::qt::ui {
 	}
 
 	void FlatLabel::textUpdated() {
+		refreshSize();
 		update();
 		setMouseTracking(_selectable || hasLinks());
-		refreshSize();
 	}
 } // namespace base::qt::ui

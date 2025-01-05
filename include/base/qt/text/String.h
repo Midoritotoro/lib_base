@@ -1,12 +1,8 @@
 #pragma once 
 
-#include <text/TextBlock.h>
 #include <text/BlockParser.h>
+#include <text/WordParser.h>
 
-#include <base/qt/style/StyleFont.h>
-#include <base/qt/common/BasicClickHandlers.h>
-
-#include <text/Types.h>
 #include <text/TextWord.h>
 
 

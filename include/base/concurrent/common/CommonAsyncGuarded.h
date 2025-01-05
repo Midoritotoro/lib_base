@@ -92,7 +92,7 @@ template <
 	typename = std::enable_if_t<
 		sizeof(GuardTraits) != details::dependent_zero<GuardTraits>>>
 inline void invokeAsync(Guard &&object, Callable &&callable) {
-	return on_main(guard(
+	return invokeAsync(guard(
 		std::forward<Guard>(object),
 		std::forward<Callable>(callable)));
 }
@@ -104,7 +104,7 @@ template <
 	typename = std::enable_if_t<
 		sizeof(GuardTraits) != details::dependent_zero<GuardTraits>>>
 inline void invokeSync(Guard &&object, Callable &&callable) {
-	return on_main_sync(guard(
+	return invokeSync(guard(
 		std::forward<Guard>(object),
 		std::forward<Callable>(callable)));
 }

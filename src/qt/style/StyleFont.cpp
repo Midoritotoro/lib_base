@@ -13,7 +13,8 @@
 
 
 void style_InitFontsResource() {
-	Q_INIT_RESOURCE(fonts); ////////////// ?
+	// TODO
+	//Q_INIT_RESOURCE(fonts); ////////////// ?
 }
 
 namespace base::qt::style {

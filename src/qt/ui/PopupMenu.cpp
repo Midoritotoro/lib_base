@@ -1,8 +1,20 @@
 #include <base/qt/ui/PopupMenu.h>
 
-#include <QMenu>
 #include <base/qt/ui/Separator.h>
+#include <base/Utility.h>
 
+#include <QApplication>
+
+bool InFocusChain(not_null<const QWidget*> widget) {
+	if (const auto top = widget->window()) {
+		if (auto focused = top->focusWidget()) {
+			return !widget->isHidden()
+				&& (focused == widget
+					|| widget->isAncestorOf(focused));
+		}
+	}
+	return false;
+}
 
 namespace base::qt::ui {
 	PopupMenu::PopupMenu(QWidget* parent) :
@@ -13,6 +25,11 @@ namespace base::qt::ui {
 
 		setAttribute(Qt::WA_TranslucentBackground);
 		setAttribute(Qt::WA_NoSystemBackground);
+	}
+
+	PopupMenu::~PopupMenu() {
+		for (const auto& action : base::take(_actions))
+			delete action;
 	}
 
 	QSize PopupMenu::sizeHint() const {
@@ -78,11 +95,11 @@ namespace base::qt::ui {
 	}
 
 	void PopupMenu::popup(const QPoint& point) {
-		/*show();
+		show();
 		raise();
 
 		updateGeometry();
-		move(point);*/
+		move(point);
 
 		qDebug() << "popup: " << pos() << size() << isHidden();
 
@@ -98,7 +115,7 @@ namespace base::qt::ui {
 		painter.setOpacity(_opacity);
 
 		//if (const auto fill = rect().intersected(event->rect()); fill.isNull() == false)
-		painter.drawRect(rect());
+			painter.drawRect(rect());
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {

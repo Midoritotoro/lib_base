@@ -19,6 +19,7 @@ namespace base::qt::ui {
 		using Actions = std::vector<Action*>;
 
 		PopupMenu(QWidget* parent = nullptr);
+		~PopupMenu();
 
 		[[nodiscard]] QSize sizeHint() const override;
 		[[nodiscard]] QSize minimumSizeHint() const override;

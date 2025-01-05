@@ -9,6 +9,7 @@
 #include <base/qt/text/String.h>
 #include <base/qt/ui/PopupMenu.h>
 
+#include <base/qt/common/UniqueQPtr.h>
 
 namespace base::qt::ui {
 	namespace {
@@ -65,9 +66,6 @@ namespace base::qt::ui {
 
 		void setTextAlignment(Qt::Alignment alignment);
 		[[nodiscard]] Qt::Alignment alignment() const noexcept;
-
-		void setContextMenu(not_null<PopupMenu*> menu);
-		[[nodiscard]] PopupMenu* contextMenu() const noexcept;
 
 		void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
 		[[nodiscard]] style::CornersRoundMode cornerRoundMode() const noexcept;
@@ -165,7 +163,7 @@ namespace base::qt::ui {
 		text::TextSelection _selection, _savedSelection;
 		text::TextSelection::Type _selectionType = text::TextSelection::Type::Letters;
 
-		PopupMenu* _contextMenu = nullptr;
+		std::unique_ptr<PopupMenu> _contextMenu = nullptr;
 
 		Fn<void(ContextMenuRequest)> _contextMenuHook = nullptr;
 		style::CornersRoundMode _cornersRoundMode;

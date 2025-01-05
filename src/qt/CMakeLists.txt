@@ -1,7 +1,11 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
+set(LIB_BASE_QT_ENABLE_FONTS ON)
+
 set(QT_PRIVATE_SOURCES 
+    ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc
     ${PROJECT_SOURCE_DIR}/src/qt/ui/PopupMenu.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/Separator.cpp
@@ -66,6 +70,7 @@ set(QT_PRIVATE_SOURCES
 )
 
 set(QT_PUBLIC_HEADERS 
+    ${PROJECT_SOURCE_DIR}/include/base/qt/common/UniqueQPtr.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/Size.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/InvokeQueued.h
@@ -133,7 +138,7 @@ find_qt()
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})
 
 target_include_directories(lib_base_qt
-    PRIVATE
+    PUBLIC
          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
