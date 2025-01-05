@@ -5,10 +5,8 @@
 #include <base/Concurrent.h>
 
 
-
 namespace base::qt::common {
 	namespace {
-
 		ClickHandlerPtr& ClickHandlerActive() {
 			static auto result = ClickHandlerPtr();
 			return result;
@@ -18,7 +16,6 @@ namespace base::qt::common {
 			static auto result = ClickHandlerPtr();
 			return result;
 		}
-
 	} // namespace
 
 	ClickHandlerHost* ClickHandler::_activeHost = nullptr;

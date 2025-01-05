@@ -1,22 +1,23 @@
 #pragma once
 
 #include <base/qt/common/Types.h>
+#include <text/Types.h>
+
 #include <QVariant>
 
+
+namespace base::qt::text {
+	enum class EntityType : uchar;
+}
 
 namespace base::qt::common {
 	class ClickHandler;
 	using ClickHandlerPtr = std::shared_ptr<ClickHandler>;
 
-
 	struct ClickContext {
 		Qt::MouseButton button = Qt::LeftButton;
 		QVariant other;
 	};
-
-	namespace text {
-		enum class EntityType : uchar;
-	}
 
 	class ClickHandlerHost {
 	protected:
@@ -62,7 +63,7 @@ namespace base::qt::common {
 
 		// Entities in text support.
 		struct TextEntity {
-			text::EntityType type = text::EntityType();
+			base::qt::text::EntityType type = base::qt::text::EntityType();
 			QString data;
 		};
 		virtual TextEntity getTextEntity() const;

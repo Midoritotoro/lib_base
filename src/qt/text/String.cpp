@@ -361,7 +361,7 @@ namespace base::qt::text {
 			};
 		const auto clickHandlerFinishCallback = [&](
 			QStringView inText,
-			const ClickHandlerPtr& handler,
+			const common::ClickHandlerPtr& handler,
 			EntityType type) {
 				if (!handler || (!composeExpanded && !composeEntities))
 					return;
@@ -382,7 +382,7 @@ namespace base::qt::text {
 				if (composeExpanded) {
 					const auto sameAsTextLink = customTextLink
 						&& (entity.data
-							== UrlClickHandler::EncodeForOpening(full.toString()));
+							== common::UrlClickHandler::EncodeForOpening(full.toString()));
 					if (customTextLink && !internalLink && !sameAsTextLink) {
 						const auto& url = entity.data;
 						result.expanded.append(QLatin1String(" (")).append(url).append(')');
@@ -570,8 +570,8 @@ namespace base::qt::text {
 				const auto changed = (qindex != index);
 				const auto hidden = !qlinesleft;
 
-				core::utility::accumulateMax(maxWidth, width);
-				core::utility::accumulateMax(qmaxwidth, width);
+				base::accumulateMax(maxWidth, width);
+				base::accumulateMax(qmaxwidth, width);
 
 				if (changed) {
 					_minHeight += qpadding.bottom();
