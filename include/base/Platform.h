@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <span>
 
+
 #ifdef LIB_BASE_STATIC
 #if defined(LIB_BASE)
 #undef LIB_BASE
@@ -73,5 +74,13 @@ typedef int64_t tick_t;
 #define unreachable()                       ((void)0)
 #endif
 
+
+#if defined(__GNUC__) || defined(__clang__)
+#define always_inline inline __attribute__((always_inline))
+#elif defined(_MSC_VER)
 #define always_inline						__forceinline
+#else
+#define always_inline inline
+#endif
+
 #define unused(x)                           ((void)(x))

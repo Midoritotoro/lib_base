@@ -73,7 +73,9 @@ namespace base::qt::style {
 			.maximumHeight = 210,
 
 			.minimumWidth = 64,
-			.minimumHeight = 30
+			.minimumHeight = 30,
+
+			.actionHeight = 30
 		};
 
 		defaultFlatButtonStyle = new FlatButton{
@@ -85,5 +87,16 @@ namespace base::qt::style {
 
 			.borderRadius = 10
 		};
+
+		defaultActionStyle = new style::MenuAction{
+			.margin = style::margins{ 0, 0, 0, 0 },
+			.colorBg = style::color(24, 37, 51),
+
+			.textStyle = style::defaultTextStyle,
+			.textPalette = &style::defaultTextPalette,
+
+			.borderRadius = 0
+		};
+
 	}
 } // namespace base::qt::style

@@ -5,7 +5,6 @@ option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
 set(LIB_BASE_QT_ENABLE_FONTS ON)
 
 set(QT_PRIVATE_SOURCES 
-    ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc
     ${PROJECT_SOURCE_DIR}/src/qt/ui/PopupMenu.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/Separator.cpp
@@ -67,6 +66,11 @@ set(QT_PRIVATE_SOURCES
 
 	${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBuffer.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesPrepare.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/Animation.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationBase.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationManager.cpp
 )
 
 set(QT_PUBLIC_HEADERS 
@@ -112,6 +116,11 @@ set(QT_PUBLIC_HEADERS
 
 	${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBuffer.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesPrepare.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/Animation.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationBase.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationManager.h
 )
 
 include(CMakePackageConfigHelpers)
@@ -136,6 +145,14 @@ find_ms_gsl(lib_base_qt)
 find_qt()
 
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})
+
+if(LIB_BASE_QT_ENABLE_FONTS)
+    target_sources(lib_base_qt PUBLIC ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc)
+    target_compile_definitions(lib_base_qt
+        PUBLIC
+            LIB_BASE_QT_ENABLE_FONTS
+    )
+endif()
 
 target_include_directories(lib_base_qt
     PUBLIC

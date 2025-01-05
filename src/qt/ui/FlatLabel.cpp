@@ -511,12 +511,12 @@ namespace base::qt::ui {
 		_selectionType = text::TextSelection::Type::Letters;
 
 		if (activated) {
-			//	concurrent::on_main(this, [=] {
-			const auto guard = window();
-			if (!_clickHandlerFilter
-				|| _clickHandlerFilter(activated, button))
-				common::ActivateClickHandler(guard, activated, button);
-			//});
+			concurrent::invokeAsync([=] {
+				const auto guard = window();
+				if (!_clickHandlerFilter
+					|| _clickHandlerFilter(activated, button))
+					common::ActivateClickHandler(guard, activated, button);
+				});
 		}
 
 		if (QGuiApplication::clipboard()->supportsSelection()
@@ -751,12 +751,13 @@ namespace base::qt::ui {
 					&& (state.symbol >= _selection.from)
 					&& (state.symbol < _selection.to)));
 
-		_contextMenu = std::make_unique<PopupMenu>(parent() ?
+		delete base::take(_contextMenu);
+		_contextMenu = new PopupMenu(parent() ?
 			qobject_cast<QWidget*>(parent())
 			: this);
 
 		auto request = ContextMenuRequest({
-			.menu = _contextMenu.get(),
+			.menu = _contextMenu,
 			.selection = _selectable ? _selection : text::TextSelection(),
 			.link = common::ClickHandler::getActive(),
 			.uponSelection = uponSelection,

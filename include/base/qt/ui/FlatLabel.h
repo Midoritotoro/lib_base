@@ -163,7 +163,7 @@ namespace base::qt::ui {
 		text::TextSelection _selection, _savedSelection;
 		text::TextSelection::Type _selectionType = text::TextSelection::Type::Letters;
 
-		std::unique_ptr<PopupMenu> _contextMenu = nullptr;
+		PopupMenu* _contextMenu = nullptr;
 
 		Fn<void(ContextMenuRequest)> _contextMenuHook = nullptr;
 		style::CornersRoundMode _cornersRoundMode;

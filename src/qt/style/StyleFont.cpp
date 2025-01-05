@@ -13,8 +13,9 @@
 
 
 void style_InitFontsResource() {
-	// TODO
-	//Q_INIT_RESOURCE(fonts); ////////////// ?
+#if defined(LIB_BASE_QT_ENABLE_FONTS)
+	Q_INIT_RESOURCE(fonts);
+#endif
 }
 
 namespace base::qt::style {

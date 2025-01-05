@@ -5,21 +5,16 @@
 
 #include <QApplication>
 
-bool InFocusChain(not_null<const QWidget*> widget) {
-	if (const auto top = widget->window()) {
-		if (auto focused = top->focusWidget()) {
-			return !widget->isHidden()
-				&& (focused == widget
-					|| widget->isAncestorOf(focused));
-		}
-	}
-	return false;
-}
 
 namespace base::qt::ui {
-	PopupMenu::PopupMenu(QWidget* parent) :
+	PopupMenu::PopupMenu(
+		QWidget* parent,
+		const style::PopupMenu* menuStyle,
+		const style::MenuAction* actionStyle
+	) :
 		QWidget(parent)
-		, _st(style::defaultPopupMenuStyle)
+		, _st(menuStyle)
+		, _actionSt(actionStyle)
 	{
 		setAttribute(Qt::WA_OpaquePaintEvent, false);
 
@@ -95,14 +90,13 @@ namespace base::qt::ui {
 	}
 
 	void PopupMenu::popup(const QPoint& point) {
+		updateGeometry();
+		move(mapFromGlobal(point));
+
 		show();
 		raise();
 
-		updateGeometry();
-		move(point);
-
-		qDebug() << "popup: " << pos() << size() << isHidden();
-
+		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
 
 	void PopupMenu::paintEvent(QPaintEvent* event) {
@@ -114,8 +108,8 @@ namespace base::qt::ui {
 
 		painter.setOpacity(_opacity);
 
-		//if (const auto fill = rect().intersected(event->rect()); fill.isNull() == false)
-			painter.drawRect(rect());
+		if (const auto fill = rect().intersected(event->rect()); fill.isNull() == false)
+			painter.drawRect(fill);
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {
@@ -139,15 +133,10 @@ namespace base::qt::ui {
 			+ _st->margin.top()
 			+ _st->margin.bottom();
 
-		const auto actionHeight = (_st->maximumHeight
-			/ _actions.size() != 0 ? _actions.size() : 1)
-			- _st->margin.top()
-			- _st->margin.bottom();
-
 		resize(fullWidth, fullHeight);
 
 		for (auto index = 0; index < _actions.size(); ++index) {
-			_actions[index]->resize(_st->maximumWidth, actionHeight);
+			_actions[index]->resize(_st->maximumWidth, _st->actionHeight);
 			index != 0
 				? _actions[index]->move(_actions[index]->rect().bottomLeft())
 				: _actions[index]->move(0, _st->margin.top());

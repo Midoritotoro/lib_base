@@ -150,10 +150,10 @@ namespace base::qt::common {
 		ClickHandlerPtr handler,
 		ClickContext context)
 	{
-		concurrent::invokeAsync(guard, [=, weak = std::weak_ptr<ClickHandler>(handler)] {
-			if (const auto strong = weak.lock())
+		//concurrent::invokeAsync(guard, [=, weak = std::weak_ptr<ClickHandler>(handler)] {
+		//	if (const auto strong = weak.lock())
 				handler->onClick(context);
-			});
+		//	});
 	}
 
 	void ActivateClickHandler(

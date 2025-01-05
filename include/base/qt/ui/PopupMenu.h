@@ -18,7 +18,10 @@ namespace base::qt::ui {
 		using Action = FlatButton;
 		using Actions = std::vector<Action*>;
 
-		PopupMenu(QWidget* parent = nullptr);
+		PopupMenu(
+			QWidget* parent = nullptr,
+			const style::PopupMenu* menuStyle = style::defaultPopupMenuStyle,
+			const style::MenuAction* actionStyle = style::defaultActionStyle);
 		~PopupMenu();
 
 		[[nodiscard]] QSize sizeHint() const override;
@@ -54,6 +57,8 @@ namespace base::qt::ui {
 		void updateGeometry();
 
 		const style::PopupMenu* _st = nullptr;
+		const style::MenuAction* _actionSt = nullptr;
+
 		Actions _actions;
 
 		float _opacity = 1.f;

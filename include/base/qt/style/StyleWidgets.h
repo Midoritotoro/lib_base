@@ -32,6 +32,11 @@ namespace base::qt::style {
 	[[nodiscard]] QString SliderStyle();
 	[[nodiscard]] QString ScrollAreaStyle();
 
+	//struct StyleBase {
+	//	virtual ~StyleBase() = default;
+	//	virtual bool isEqual(const StyleBase* other) const = 0;
+	//};
+
 	struct FlatLabel {
 		margins margin = { 0, 0, 0, 0 };
 		color colorBg;
@@ -83,11 +88,15 @@ namespace base::qt::style {
 
 		int minimumWidth = 0;
 		int minimumHeight = 0;
+
+		int actionHeight = 0;
 	};
 
+	using MenuAction = FlatButton;
 
 	inline const FlatLabel* defaultFlatLabelStyle = nullptr;
 	inline const PopupMenu* defaultPopupMenuStyle = nullptr;
 
 	inline const FlatButton* defaultFlatButtonStyle = nullptr;
+	inline const MenuAction* defaultActionStyle = nullptr;
 } // namespace base::qt::style
