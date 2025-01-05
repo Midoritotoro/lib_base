@@ -4,20 +4,20 @@
 #include <text/Types.h>
 
 #include <QVariant>
-
+#include <memory>
 
 namespace base::qt::text {
 	enum class EntityType : uchar;
 }
 
-namespace base::qt::common {
-	class ClickHandler;
-	using ClickHandlerPtr = std::shared_ptr<ClickHandler>;
-
+//namespace base::qt::common {
 	struct ClickContext {
 		Qt::MouseButton button = Qt::LeftButton;
 		QVariant other;
 	};
+
+	class ClickHandler;
+	using ClickHandlerPtr = std::shared_ptr<ClickHandler>;
 
 	class ClickHandlerHost {
 	protected:
@@ -28,7 +28,6 @@ namespace base::qt::common {
 
 		virtual ~ClickHandlerHost() = 0;
 		friend class ClickHandler;
-
 	};
 
 	class ClickHandler {
@@ -104,4 +103,4 @@ namespace base::qt::common {
 		not_null<QWidget*> guard,
 		ClickHandlerPtr handler,
 		Qt::MouseButton button);
-} // namespace base::qt::common
+//} // namespace base::qt::common

@@ -12,7 +12,7 @@
 #include <base/Utility.h>
 
 
-namespace base::qt::common {
+//namespace base::qt::common {
 	namespace {
 		namespace details {
 			enum CutResult {
@@ -192,7 +192,7 @@ namespace base::qt::common {
 	}
 
 	auto UrlClickHandler::getTextEntity() const -> TextEntity {
-		const auto type = isEmail() ? text::EntityType::Email : text::EntityType::Url;
+		const auto type = isEmail() ? base::qt::text::EntityType::Email : base::qt::text::EntityType::Url;
 		return { type, _originalUrl };
 	}
 
@@ -222,6 +222,6 @@ namespace base::qt::common {
 	}
 
 	auto HiddenUrlClickHandler::getTextEntity() const -> TextEntity {
-		return { text::EntityType::CustomUrl, url() };
+		return { base::qt::text::EntityType::CustomUrl, url() };
 	}
-} // namespace base::qt::common
+//} // namespace base::qt::common

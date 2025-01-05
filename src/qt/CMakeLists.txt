@@ -61,6 +61,8 @@ set(QT_PRIVATE_SOURCES
 )
 
 set(QT_PUBLIC_HEADERS 
+    ${PROJECT_SOURCE_DIR}/include/base/qt/common/Size.h
+
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/InvokeQueued.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/BasicClickHandlers.h
 

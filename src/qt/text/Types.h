@@ -8,8 +8,6 @@
 #include <base/qt/style/StyleFont.h>
 #include <base/qt/common/ClickHandler.h>
 
-#include <base/qt/common/BasicClickHandlers.h>
-
 #include <private/qfixed_p.h>
 #include <private/qfontengine_p.h>
 
@@ -21,6 +19,7 @@
 
 class PreClickHandler;
 class BlockquoteClickHandler;
+class ClickHandler;
 
 
 namespace base::qt::text {
@@ -272,7 +271,7 @@ namespace base::qt::text {
 	};
 
 	struct ExtendedData {
-		std::vector <common::ClickHandlerPtr> links;
+		std::vector <std::shared_ptr<ClickHandler>> links;
 		std::unique_ptr<QuotesData> quotes;
 		std::vector<Modification> modifications;
 	};
@@ -300,7 +299,7 @@ namespace base::qt::text {
 	};
 
 	struct TextState {
-		common::ClickHandlerPtr link;
+		std::shared_ptr<ClickHandler> link;
 		bool uponSymbol = false;
 		bool afterSymbol = false;
 		uint16 symbol = 0;

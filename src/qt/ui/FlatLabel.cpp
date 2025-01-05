@@ -18,6 +18,8 @@
 #include <QPainterPath>
 #include <base/Concurrent.h>
 
+#include <base/qt/text/TextUtility.h>
+
 
 namespace base::qt::ui {
 	FlatLabel::FlatLabel(QWidget* parent) :
@@ -168,7 +170,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLink(
 		quint16 index,
-		const common::ClickHandlerPtr& lnk)
+		const ClickHandlerPtr& lnk)
 	{
 		_text.setLink(index, lnk);
 		textUpdated();
@@ -176,11 +178,11 @@ namespace base::qt::ui {
 
 	void FlatLabel::setLinksTrusted() {
 		static const auto TrustedLinksFilter = [](
-			const common::ClickHandlerPtr& link,
+			const ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
-				if (const auto url = dynamic_cast<common::UrlClickHandler*>(link.get())) {
-					url->common::UrlClickHandler::onClick({ button });
+				if (const auto url = dynamic_cast<UrlClickHandler*>(link.get())) {
+					url->UrlClickHandler::onClick({ button });
 					return false;
 				}
 				return true;
@@ -194,7 +196,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void()> handler) {
 		setClickHandlerFilter([=](
-			const common::ClickHandlerPtr& link,
+			const ClickHandlerPtr& link,
 			Qt::MouseButton button)
 			{
 				if (button != Qt::LeftButton)
@@ -207,7 +209,7 @@ namespace base::qt::ui {
 
 	void FlatLabel::overrideLinkClickHandler(Fn<void(QString url)> handler) {
 		setClickHandlerFilter([=](
-			const common::ClickHandlerPtr& link,
+			const ClickHandlerPtr& link,
 			Qt::MouseButton button) {
 				if (button != Qt::LeftButton) {
 					return true;
@@ -409,10 +411,10 @@ namespace base::qt::ui {
 		if (button != Qt::LeftButton)
 			return state;
 
-		common::ClickHandler::pressed();
+		ClickHandler::pressed();
 		_dragAction = NoDrag;
 
-		if (common::ClickHandler::getPressed()) {
+		if (ClickHandler::getPressed()) {
 			_dragStartPosition = mapFromGlobal(_lastMousePos);
 			_dragAction = PrepareDrag;
 		}

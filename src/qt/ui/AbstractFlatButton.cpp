@@ -1,7 +1,9 @@
 #include <base/qt/ui/AbstractFlatButton.h>
 
-#include <cmath>
 #include <base/Utility.h>
+#include <base/qt/common/Size.h>
+
+#include <cmath>
 
 
 namespace base::qt::style {
@@ -260,7 +262,7 @@ namespace base::qt::ui {
             return _sizeHint;
 
         const auto iconRect = QRect(QPoint(), iconSize());
-        const auto textSize = core::utility::TextSize(text(), font());
+        const auto textSize = base::qt::common::TextSize(text(), font());
 
         auto width = 0;
         auto height = 0;
@@ -350,7 +352,7 @@ namespace base::qt::ui {
         if (_buttonStyle == Qt::ToolButtonIconOnly)
             return QRect{};
 
-        const auto textSize = core::utility::TextSize(text(), font());
+        const auto textSize = base::qt::common::TextSize(text(), font());
         auto textRect = QRect(QPoint(), textSize);
 
         switch (_buttonStyle) {

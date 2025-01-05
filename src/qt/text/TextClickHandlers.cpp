@@ -4,9 +4,9 @@
 #include <base/qt/text/TextUtility.h>
 
 
-namespace base::qt::text {
+//namespace base::qt::text {
 	PreClickHandler::PreClickHandler(
-		not_null<String*> text,
+		not_null<base::qt::text::String*> text,
 		uint16 offset,
 		uint16 length)
 		: _text(text)
@@ -14,15 +14,15 @@ namespace base::qt::text {
 		, _length(length)
 	{}
 
-	not_null<text::String*> PreClickHandler::text() const {
+	not_null<base::qt::text::String*> PreClickHandler::text() const {
 		return _text;
 	}
 
-	void PreClickHandler::setText(not_null<String*> text) {
+	void PreClickHandler::setText(not_null<base::qt::text::String*> text) {
 		_text = text;
 	}
 
-	void PreClickHandler::onClick(common::ClickContext context) const {
+	void PreClickHandler::onClick(ClickContext context) const {
 		if (context.button != Qt::LeftButton)
 			return;
 
@@ -40,21 +40,21 @@ namespace base::qt::text {
 	}
 
 	BlockquoteClickHandler::BlockquoteClickHandler(
-		not_null<text::String*> text,
+		not_null<base::qt::text::String*> text,
 		int quoteIndex)
 		: _text(text)
 		, _quoteIndex(quoteIndex)
 	{}
 
-	not_null<text::String*> BlockquoteClickHandler::text() const {
+	not_null<base::qt::text::String*> BlockquoteClickHandler::text() const {
 		return _text;
 	}
 
-	void BlockquoteClickHandler::setText(not_null<text::String*> text) {
+	void BlockquoteClickHandler::setText(not_null<base::qt::text::String*> text) {
 		_text = text;
 	}
 
-	void BlockquoteClickHandler::onClick(common::ClickContext context) const {
+	void BlockquoteClickHandler::onClick(ClickContext context) const {
 		if (context.button != Qt::LeftButton)
 			return;
 
@@ -62,4 +62,4 @@ namespace base::qt::text {
 			_quoteIndex,
 			!_text->blockquoteExpanded(_quoteIndex));
 	}
-} // namespace base::qt::text
+//} // namespace base::qt::text

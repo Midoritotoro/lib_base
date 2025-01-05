@@ -5,7 +5,7 @@
 #include <base/Concurrent.h>
 
 
-namespace base::qt::common {
+//namespace base::qt::common {
 	namespace {
 		ClickHandlerPtr& ClickHandlerActive() {
 			static auto result = ClickHandlerPtr();
@@ -139,7 +139,7 @@ namespace base::qt::common {
 	}
 
 	auto ClickHandler::getTextEntity() const -> TextEntity {
-		return { text::EntityType::Invalid };
+		return { base::qt::text::EntityType::Invalid };
 	}
 
 	void ActivateClickHandler(
@@ -160,4 +160,4 @@ namespace base::qt::common {
 	{
 		ActivateClickHandler(guard, handler, ClickContext{ button });
 	}
-} // namespace base::qt::common
+//} // namespace base::qt::common

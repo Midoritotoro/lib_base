@@ -105,7 +105,7 @@ namespace base::qt::text {
 		return _extended && !_extended->links.empty();
 	}
 
-	void String::setLink(uint16 index, const common::ClickHandlerPtr& link) {
+	void String::setLink(uint16 index, const ClickHandlerPtr& link) {
 		const auto extended = _extended.get();
 		// () << "extended == nullptr: " << (extended == nullptr);
 
@@ -361,7 +361,7 @@ namespace base::qt::text {
 			};
 		const auto clickHandlerFinishCallback = [&](
 			QStringView inText,
-			const common::ClickHandlerPtr& handler,
+			const ClickHandlerPtr& handler,
 			EntityType type) {
 				if (!handler || (!composeExpanded && !composeEntities))
 					return;
@@ -382,7 +382,7 @@ namespace base::qt::text {
 				if (composeExpanded) {
 					const auto sameAsTextLink = customTextLink
 						&& (entity.data
-							== common::UrlClickHandler::EncodeForOpening(full.toString()));
+							== UrlClickHandler::EncodeForOpening(full.toString()));
 					if (customTextLink && !internalLink && !sameAsTextLink) {
 						const auto& url = entity.data;
 						result.expanded.append(QLatin1String(" (")).append(url).append(')');

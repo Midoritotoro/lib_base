@@ -4,7 +4,7 @@
 #include <QString>
 
 
-namespace base::qt::common {
+//namespace base::qt::common {
 	class TextClickHandler : public ClickHandler {
 	public:
 		TextClickHandler(bool fullDisplayed = true)
@@ -97,4 +97,4 @@ namespace base::qt::common {
 
 		TextEntity getTextEntity() const override;
 	};
-} // namespace base::qt::common
+//} // namespace base::qt::common

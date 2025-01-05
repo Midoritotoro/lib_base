@@ -26,14 +26,14 @@ namespace base::qt::ui {
 
 	class FlatLabel :
 		public QWidget,
-		public common::ClickHandlerHost
+		public ClickHandlerHost
 	{
 		Q_OBJECT
 	public:
 		struct ContextMenuRequest {
 			PopupMenu* menu;
 			text::TextSelection selection;
-			common::ClickHandlerPtr link;
+			ClickHandlerPtr link;
 			bool uponSelection = false;
 			bool fullSelection = false;
 		};
@@ -79,10 +79,10 @@ namespace base::qt::ui {
 
 		void setLink(
 			quint16 index,
-			const common::ClickHandlerPtr& lnk);
+			const ClickHandlerPtr& lnk);
 		void setLinksTrusted();
 
-		using ClickHandlerFilter = Fn<bool(const common::ClickHandlerPtr&, Qt::MouseButton)>;
+		using ClickHandlerFilter = Fn<bool(const ClickHandlerPtr&, Qt::MouseButton)>;
 		void setClickHandlerFilter(ClickHandlerFilter&& filter);
 
 		void overrideLinkClickHandler(Fn<void()> handler);

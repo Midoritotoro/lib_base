@@ -7,7 +7,8 @@ int main(int argc, char* argv[]) {
 	QApplication application(argc, argv);
 
 	base::qt::common::Timer timer;
-	timer.callOnce(;
+	timer.setCallback([=] { printf("printed with timeout "); });
+	timer.callOnce(10000);
 
 	return application.exec();
 }
