@@ -30,8 +30,8 @@ namespace base::qt::ui::animations {
 			.to = to,
 			.duration = duration,
 			.updateTimeout = std::clamp(updateTimeout, 
-				kMinimumAnimationUpdateTimeout,
-				kMaximumAnimationUpdateTimeout)
+				MinimumAnimationUpdateTimeout(),
+				MaximumAnimationUpdateTimeout())
 		};
 
 		_animationManager.start(this);
@@ -49,8 +49,8 @@ namespace base::qt::ui::animations {
 			.to = animation.to,
 			.duration = animation.duration,
 			.updateTimeout = std::clamp(animation.updateTimeout,
-				kMinimumAnimationUpdateTimeout,
-				kMaximumAnimationUpdateTimeout)
+				MinimumAnimationUpdateTimeout(),
+				MaximumAnimationUpdateTimeout())
 		};
 
 		_animationManager.start(this);

@@ -1,8 +1,8 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
-set(QT_ENABLE_FONTS ON)
+option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
+set(LIB_BASE_QT_ENABLE_FONTS ON)
 
 set(QT_PRIVATE_SOURCES 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/PopupMenu.cpp
@@ -146,7 +146,7 @@ find_qt()
 
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})
 
-if(QT_ENABLE_FONTS)
+if(LIB_BASE_QT_ENABLE_FONTS)
     target_sources(lib_base_qt PUBLIC ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc)
     target_compile_definitions(lib_base_qt
         PUBLIC

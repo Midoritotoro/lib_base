@@ -9,6 +9,22 @@
 
 
 namespace base::qt::ui::animations {
+	inline const OpacityAnimation defaultOpacityShowAnimation = OpacityAnimation {
+		.from = 0,
+		.to = 1,
+
+		.duration = kDefaultAnimationDuration,
+		.updateTimeout = MinimumAnimationUpdateTimeout()
+	};
+
+	inline const OpacityAnimation defaultOpacityHideAnimation = OpacityAnimation{
+		.from = 1,
+		.to = 0,
+
+		.duration = kDefaultAnimationDuration,
+		.updateTimeout = MinimumAnimationUpdateTimeout()
+	};
+
 	class Animation: public AnimationBase {
 	public: 
 		Animation() = default;
@@ -20,8 +36,8 @@ namespace base::qt::ui::animations {
 		void start(
 			float from,
 			float to,
-			Time::time_t duration,
-			Time::time_t updateTimeout);
+			Time::time_t duration = kDefaultAnimationDuration,
+			Time::time_t updateTimeout = MinimumAnimationUpdateTimeout());
 		void start(const OpacityAnimation& animation);
 
 		void stop();
@@ -33,7 +49,5 @@ namespace base::qt::ui::animations {
 	private: 
 		AnimationType _animationType;
 		AnimationManager _animationManager;
-
-		float _currentOpacity;
 	};
 } // namespace base::qt::ui::animations

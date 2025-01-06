@@ -9,6 +9,7 @@
 #include <QScreen>
 
 #include <gsl/gsl>
+#include "Windows.h"
 
 
 namespace base::qt::common {
@@ -57,6 +58,31 @@ namespace base::qt::common {
 	}
 
 	[[nodiscard]] inline QSize ScreenResolution() {
-		return QApplication::primaryScreen()->availableGeometry().size();
+#ifdef _WIN32
+		return QSize(
+			GetSystemMetrics(SM_CXSCREEN),
+			GetSystemMetrics(SM_CYSCREEN)
+		);
+#endif
+		return QSize(0, 0);
+	}
+
+	/**
+	* Частота обновления текущего экрана
+	* \retval -1, если не удается получить частоту обновления
+	*/
+	[[nodiscard]] inline int ScreenRefreshRate() {
+#ifdef _WIN32
+		auto dm = DEVMODE();
+
+		ZeroMemory(&dm, sizeof(dm));
+		dm.dmSize = sizeof(dm);
+		dm.dmDriverExtra = 0;
+
+		if (EnumDisplaySettingsEx(nullptr, ENUM_CURRENT_SETTINGS, &dm, 0))
+			return dm.dmDisplayFrequency;
+		return -1;
+#endif
+		return -1;
 	}
 } // namespace core::utility

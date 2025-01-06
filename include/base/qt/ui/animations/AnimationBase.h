@@ -1,12 +1,21 @@
 #pragma once 
 
 #include <base/Time.h>
+#include <base/qt/common/Size.h>
+
 #include <base/qt/common/Types.h>
 
 
 namespace base::qt::ui::animations {
-	inline constexpr auto kMinimumAnimationUpdateTimeout = Time::time_t(10);
-	inline constexpr auto kMaximumAnimationUpdateTimeout = Time::time_t(100);
+	inline constexpr auto kDefaultAnimationDuration = Time::time_t(1000);
+
+	[[nodiscard]] always_inline Time::time_t MinimumAnimationUpdateTimeout() {
+		return Time::time_t(1000) / common::ScreenRefreshRate();
+	}
+
+	[[nodiscard]] always_inline Time::time_t MaximumAnimationUpdateTimeout() {
+		return Time::time_t(100);
+	}
 
 	enum AnimationType : uchar {
 		Default
@@ -35,8 +44,8 @@ namespace base::qt::ui::animations {
 		OpacityAnimation _animationProgress;
 
 		Time::time_t _animationStart;
-		friend class AnimationManager;
-
 		float _currentOpacity;
+
+		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations

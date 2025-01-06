@@ -21,7 +21,7 @@ function(find_qt)
         if (NOT Qt6_FOUND)
             message(FATAL_ERROR "Can't find Qt using find_package, 
                 check the integrity of the linkage of Qt in the project,
-                or remove the -DENABLE_QT option.")
+                or remove the -DLIB_BASE_ENABLE_QT option.")
         endif()
 
         target_link_libraries(lib_base_qt

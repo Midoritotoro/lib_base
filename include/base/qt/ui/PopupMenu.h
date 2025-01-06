@@ -61,8 +61,7 @@ namespace base::qt::ui {
 		const style::MenuAction* _actionSt = nullptr;
 
 		Actions _actions;
-	//	animations::Animation _animation;
-		
+		animations::Animation _animation;
 
 		float _opacity = 1.f;
 	};

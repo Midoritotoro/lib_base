@@ -21,5 +21,8 @@ namespace base::qt::ui::animations {
 		common::Timer _timer;
 
 		Time::time_t _animationDurationProgress;
+		int _iterations = 0;
+
+		float _opacityStep;
 	};
 } // namespace base::qt::ui::animations
