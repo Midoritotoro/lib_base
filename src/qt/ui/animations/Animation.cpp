@@ -1,6 +1,8 @@
 #include <base/qt/ui/animations/Animation.h>
 #include <base/Assert.h>
 
+#include <base/Concurrent.h>
+
 
 namespace base::qt::ui::animations {
 	AnimationType Animation::animationType() const noexcept {
@@ -21,8 +23,9 @@ namespace base::qt::ui::animations {
 		Expects(from != to);
 
 		_animationStart = Time::now();
+		_currentOpacity = from;
 
-		_animationProgress = AnimationProgress{
+		_animationProgress = OpacityAnimation{
 			.from = from,
 			.to = to,
 			.duration = duration,
@@ -34,7 +37,46 @@ namespace base::qt::ui::animations {
 		_animationManager.start(this);
 	}
 
+	void Animation::start(const OpacityAnimation& animation) {
+		Expects(animation.duration != 0);
+		Expects(animation.from != animation.to);
+
+		_animationStart = Time::now();	
+		_currentOpacity = animation.from;
+
+		_animationProgress = OpacityAnimation{
+			.from = animation.from,
+			.to = animation.to,
+			.duration = animation.duration,
+			.updateTimeout = std::clamp(animation.updateTimeout,
+				kMinimumAnimationUpdateTimeout,
+				kMaximumAnimationUpdateTimeout)
+		};
+
+		_animationManager.start(this);
+	}
+
+
 	void Animation::stop() {
 		_animationManager.stop();
+	}
+
+	void Animation::restart() {
+		if (animating() == false)
+			return start(_animationProgress);
+
+		stop();
+		start(_animationProgress);
+	}
+
+	void Animation::restartAfterFinished() {
+		concurrent::invokeAsync([=] {
+			while (_animationManager.animating());
+			restart();
+		});
+	}
+
+	bool Animation::animating() const noexcept {
+		return _animationManager.animating();
 	}
 } // namespace base::qt::ui::animations

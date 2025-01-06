@@ -13,7 +13,7 @@ namespace base::qt::ui::animations {
 	};
 
 
-	struct AnimationProgress {
+	struct OpacityAnimation {
 		float from;
 		float to;
 
@@ -28,11 +28,15 @@ namespace base::qt::ui::animations {
 
 		void setAnimationCallback(Fn<void()> callback);
 		void call();
+
+		[[nodiscard]] float opacity() const noexcept;
 	protected:
 		Fn<void()> _animationCallback;
-		AnimationProgress _animationProgress;
+		OpacityAnimation _animationProgress;
 
 		Time::time_t _animationStart;
 		friend class AnimationManager;
+
+		float _currentOpacity;
 	};
 } // namespace base::qt::ui::animations

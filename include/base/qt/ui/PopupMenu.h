@@ -6,6 +6,7 @@
 #include <base/qt/style/StyleWidgets.h>
 
 #include <base/qt/ui/FlatButton.h>
+#include <base/qt/ui/animations/Animation.h>
 
 #include <QWidget>
 #include <QAction>
@@ -60,6 +61,8 @@ namespace base::qt::ui {
 		const style::MenuAction* _actionSt = nullptr;
 
 		Actions _actions;
+	//	animations::Animation _animation;
+		
 
 		float _opacity = 1.f;
 	};

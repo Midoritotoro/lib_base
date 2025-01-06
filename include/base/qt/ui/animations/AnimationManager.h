@@ -12,6 +12,8 @@ namespace base::qt::ui::animations {
 
 		void start(AnimationBase* animation);
 		void stop();
+
+		[[nodiscard]] bool animating() const noexcept;
 	private:
 		void update();
 

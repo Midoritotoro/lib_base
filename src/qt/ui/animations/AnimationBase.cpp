@@ -11,4 +11,8 @@ namespace base::qt::ui::animations {
 	void AnimationBase::call() {
 		return _animationCallback();
 	}
+
+	float AnimationBase::opacity() const noexcept {
+		return _currentOpacity;
+	}
 } // namespace base::qt::ui::animations

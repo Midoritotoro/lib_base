@@ -20,6 +20,11 @@ namespace base::qt::ui {
 
 		setAttribute(Qt::WA_TranslucentBackground);
 		setAttribute(Qt::WA_NoSystemBackground);
+
+	//	_animation.setAnimationType(animations::AnimationType::Default);
+	//	_animation.setAnimationCallback([this] {
+		//	update();
+		//	});
 	}
 
 	PopupMenu::~PopupMenu() {
@@ -96,20 +101,29 @@ namespace base::qt::ui {
 		show();
 		raise();
 
+	//	if (_animation.animating())
+	//		_animation.restart();
+	//	else
+	//		_animation.start(
+	//			0,
+	//			1,
+	//			2500,
+		//		10
+	//		);
+
 		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
 
 	void PopupMenu::paintEvent(QPaintEvent* event) {
+		
 		auto painter = QPainter(this);
 		painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 
 		painter.setPen(Qt::NoPen);
 		painter.setBrush(_st->colorBg);
 
-		painter.setOpacity(_opacity);
-
-		if (const auto fill = rect().intersected(event->rect()); fill.isNull() == false)
-			painter.drawRect(fill);
+	//	painter.setOpacity(_animation.opacity());
+		painter.drawRect(rect());
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {

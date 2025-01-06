@@ -28,9 +28,7 @@ option(ENABLE_QT "Включить вспомогательный интерфе
 set(LINK_OPTIONS ${linkOptions})
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT ON)
-set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
-
+set(ENABLE_QT ON)
 
    
 set(PRIVATE_SOURCES 

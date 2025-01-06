@@ -22,9 +22,18 @@ namespace base::qt::ui::animations {
 			float to,
 			Time::time_t duration,
 			Time::time_t updateTimeout);
+		void start(const OpacityAnimation& animation);
+
 		void stop();
+
+		void restart();
+		void restartAfterFinished();
+
+		[[nodiscard]] bool animating() const noexcept;
 	private: 
 		AnimationType _animationType;
 		AnimationManager _animationManager;
+
+		float _currentOpacity;
 	};
 } // namespace base::qt::ui::animations
