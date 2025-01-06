@@ -18,13 +18,14 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include")
 endif()
 
-option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
-option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
+option(BUILD_TESTS "Сборка тестов библиотеки" ON)
+option(BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
-option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
-option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
+option(LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
+option(ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
 
 
+set(LINK_OPTIONS ${linkOptions})
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
@@ -123,7 +124,7 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
     endif()
 endif()
 
-if(LIB_BASE_ENABLE_QT)
+if(ENABLE_QT)
     add_subdirectory(src/qt) 
 
     add_library(lib_baseQt INTERFACE)
@@ -170,16 +171,16 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
     target_link_options(${PROJECT_NAME}
     INTERFACE
-       ${linkOptions}
+       ${LINK_OPTIONS}
    )
 endif()
 
-if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)
+if(PROJECT_IS_TOP_LEVEL AND BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_EXAMPLES)
+if(PROJECT_IS_TOP_LEVEL AND BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 

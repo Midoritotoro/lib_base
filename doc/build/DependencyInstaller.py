@@ -16,6 +16,9 @@ scriptPath = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(scriptPath + '/..')
 
 
+CMakeBuildOptions = []
+
+
 def finish(code):
     global executePath
     os.chdir(executePath)
@@ -27,6 +30,14 @@ def error(text):
 
 def nativeToolsError():
     error('Make sure to run from Native Tools Command Prompt.')
+
+def checkCmakeBuildOptions(txt_file: str):
+    with open(txt_file, 'r', encoding='utf-8') as options_file:
+        line = options_file.read()
+        CMakeBuildOptions.append(line.splitlines())
+
+checkCmakeBuildOptions("CMakeBuildOptions.txt")
+# print(CMakeBuildOptions)
 
 win = (sys.platform == 'win32')
 mac = (sys.platform == 'darwin')
@@ -62,8 +73,61 @@ keysLoc = 'cache_keys'
 
 rootDir = os.getcwd()
 libsDir = os.path.realpath(os.path.join(rootDir, libsLoc))
-thirdPartyDir = os.path.realpath(os.path.join(rootDir, 'ThirdParty'))
 usedPrefix = os.path.realpath(os.path.join(libsDir, 'local'))
+
+class _Getch:
+    """Gets a single character from standard input.  Does not echo to the screen."""
+    def __init__(self):
+        try:
+            self.impl = _GetchWindows()
+        except ImportError:
+            self.impl = _GetchUnix()
+
+    def __call__(self): return self.impl()
+
+class _GetchUnix:
+    def __init__(self):
+        import tty, sys
+
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
+    def __call__(self):
+        import msvcrt
+        return msvcrt.getch().decode('ascii')
+
+getch = _Getch()
+
+
+print('Path to installing libraries')
+print('(d)efault, (c)ustom, (q)uit?: ')
+
+ch = getch()
+
+while True:
+    if ch == 'q':
+        finish(0)
+    elif ch == 'c':
+        libsDir = input("Enter path: ")
+        if os.path.exists(libsDir) == False:
+            print("Enter the correct existing path")
+            continue
+        print("Libs path: ", libsDir)
+        break
+    elif ch == 'd':
+        break
 
 optionsList = [
     'qt6',
@@ -86,8 +150,6 @@ for arg in sys.argv[1:]:
 
 if not os.path.isdir(os.path.join(libsDir, keysLoc)):
     pathlib.Path(os.path.join(libsDir, keysLoc)).mkdir(parents=True, exist_ok=True)
-if not os.path.isdir(os.path.join(thirdPartyDir, keysLoc)):
-    pathlib.Path(os.path.join(thirdPartyDir, keysLoc)).mkdir(parents=True, exist_ok=True)
 
 pathPrefixes = [
     'ThirdParty\\msys64\\mingw64\\bin',
@@ -107,7 +169,6 @@ environment = {
     'USED_PREFIX': usedPrefix,
     'ROOT_DIR': rootDir,
     'LIBS_DIR': libsDir,
-    'THIRDPARTY_DIR': thirdPartyDir,
     'PATH_PREFIX': pathPrefix,
 }
 if (win32):
@@ -187,8 +248,6 @@ def computeCacheKey(stage):
         pathlist = glob.glob(os.path.join(libsDir, pattern))
         items = [pattern]
         if len(pathlist) == 0:
-            pathlist = glob.glob(os.path.join(thirdPartyDir, pattern))
-        if len(pathlist) == 0:
             error('Nothing found: ' + pattern)
         for path in pathlist:
             if not os.path.exists(path):
@@ -257,8 +316,6 @@ def filterByPlatform(commands):
                 inscope = True
             if mac and 'mac' in scopes:
                 inscope = True
-            # if linux and 'linux' in scopes:
-            #     inscope = True
             if 'release' in scopes:
                 if 'skip-release' in options:
                     inscope = False
@@ -280,8 +337,6 @@ def filterByPlatform(commands):
 def stage(name, commands, location = 'Libraries'):
     if location == 'Libraries':
         directory = libsDir
-    elif location == 'ThirdParty':
-        directory = thirdPartyDir
     else:
         error('Unknown location: ' + location)
     [commands, dependencies, version] = filterByPlatform(commands)
@@ -333,41 +388,6 @@ def run(commands):
         error('Bad command: ' + commands)
     else:
         return subprocess.run("set -e\n" + commands, shell=True, env=modifiedEnv).returncode == 0
-
-class _Getch:
-    """Gets a single character from standard input.  Does not echo to the screen."""
-    def __init__(self):
-        try:
-            self.impl = _GetchWindows()
-        except ImportError:
-            self.impl = _GetchUnix()
-
-    def __call__(self): return self.impl()
-
-class _GetchUnix:
-    def __init__(self):
-        import tty, sys
-
-    def __call__(self):
-        import sys, tty, termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
-class _GetchWindows:
-    def __init__(self):
-        import msvcrt
-
-    def __call__(self):
-        import msvcrt
-        return msvcrt.getch().decode('ascii')
-
-getch = _Getch()
 
 def runStages():
     onlyStages = []
@@ -461,12 +481,12 @@ if customRunCommand:
     finish(0)
 
 
+stage('vcpkg', """
+win:
+    git clone https://github.com/Microsoft/vcpkg.git""")
+
 # qt = '6.7'
-
-
 # branch = '6.7.0' + ('-lts-lgpl' if qt < '6.3' else '')
-
-# print('git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_6.7')
 
 # stage('qt_' + qt, """
 #     git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_6.7
@@ -610,8 +630,14 @@ if customRunCommand:
 # """)
 
 
-stage('ms-gsl' """
-    git clone https://github.com/microsoft/GSL
+stage('ms-gsl', f"""
+win:
+    cd vcpkg
+    bootstrap-vcpkg.sh
+    vcpkg integrate install
+    vcpkg install ms-gsl
+    cd packages
+    move ms-gsl {libsDir}
 """)
 
 if win:
