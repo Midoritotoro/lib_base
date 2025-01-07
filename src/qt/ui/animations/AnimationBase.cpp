@@ -12,6 +12,10 @@ namespace base::qt::ui::animations {
 		return _animationCallback();
 	}
 
+	AnimationType AnimationBase::animationType() const noexcept {
+		return _animationType;
+	}
+
 	float AnimationBase::opacity() const noexcept {
 		return _opacity;
 	}

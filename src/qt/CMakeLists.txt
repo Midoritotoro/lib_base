@@ -67,10 +67,13 @@ set(QT_PRIVATE_SOURCES
 	${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBuffer.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesPrepare.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/Animation.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationBase.cpp
-
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationManager.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/OpacityAnimation.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/HorizontalGrowthAnimation.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/VerticalGrowthAnimation.cpp
 )
 
 set(QT_PUBLIC_HEADERS 
@@ -117,11 +120,13 @@ set(QT_PUBLIC_HEADERS
 	${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBuffer.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesPrepare.h
 
-    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/Animation.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationBase.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/OpacityAnimation.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationManager.h
-    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationWrapper.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/HorizontalGrowthAnimation.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/VerticalGrowthAnimation.h
 )
 
 include(CMakePackageConfigHelpers)

@@ -64,13 +64,9 @@ namespace base::qt::common {
 			GetSystemMetrics(SM_CYSCREEN)
 		);
 #endif
-		return QSize(0, 0);
+		return QApplication::primaryScreen()->availableGeometry().size();
 	}
 
-	/**
-	* Частота обновления текущего экрана
-	* \retval -1, если не удается получить частоту обновления
-	*/
 	[[nodiscard]] inline int ScreenRefreshRate() {
 #ifdef _WIN32
 		auto dm = DEVMODE();
@@ -83,6 +79,6 @@ namespace base::qt::common {
 			return dm.dmDisplayFrequency;
 		return -1;
 #endif
-		return -1;
+		return QApplication::primaryScreen()->refreshRate();
 	}
 } // namespace core::utility

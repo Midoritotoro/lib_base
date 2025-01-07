@@ -74,7 +74,9 @@ namespace base {
 		Wrapper() = delete;
 		virtual ~Wrapper() {};
 
-		template <typename Cmd, Cmd cmd, typename ... Args>
+		template <typename Cmd,
+			Cmd cmd, 
+			typename ... Args>
 		std::result_of<Func(Args...)>::type
 			call(Args&& ... args)
 		{

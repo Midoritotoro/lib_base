@@ -5,21 +5,34 @@
 
 
 namespace base::qt::ui::animations {
+	class HorizontalGrowthAnimation;
+	class VerticalGrowthAnimation;
+	class OpacityAnimation;
+
 	class AnimationManager {
 	public:
 		AnimationManager() = default;
 		AnimationManager& operator=(const AnimationManager& other) = default;
 
-		void start(AnimationBase* animation);
+		void start(not_null<AnimationBase*> animation);
 		void stop();
 
 		[[nodiscard]] bool animating() const noexcept;
 	private:
 		void update();
 
-		AnimationBase* _animation = nullptr;
-		common::Timer _timer;
+		union {
+			HorizontalGrowthAnimation* _horizontal;
+			VerticalGrowthAnimation* _vertical;
+			OpacityAnimation* _opacity;
+		} _animation;
 
-		float _opacityStep;
+		union {
+			float _opacity;
+			int _rect;
+		} _step;
+
+		AnimationType _currentAnimationType;
+		common::Timer _timer;
 	};
 } // namespace base::qt::ui::animations

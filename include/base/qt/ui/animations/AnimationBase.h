@@ -23,49 +23,22 @@ namespace base::qt::ui::animations {
 		VerticalGrowth = 0x04
 	};
 
-	struct OpacityAnimation {
-		float from;
-		float to;
-
-		Time::time_t duration;
-		Time::time_t updateTimeout;
-	};
-
-	struct HorizontalGrowthAnimation {
-		QRect rect;
-
-		Time::time_t duration;
-		Time::time_t updateTimeout;
-	};
-
-	struct VerticalGrowthAnimation {
-		QRect rect;
-
-		Time::time_t duration;
-		Time::time_t updateTimeout;
-	};
-
-	using AnimationsVariant = std::variant<OpacityAnimation,
-		HorizontalGrowthAnimation,
-		VerticalGrowthAnimation>;
-
 	class AnimationBase {
 	public:
-		AnimationBase() = default;
-		AnimationBase& operator=(const AnimationBase& other) = default;
-
 		void setAnimationCallback(Fn<void()> callback);
 		void call();
 
+		[[nodiscard]] AnimationType animationType() const noexcept;
 		[[nodiscard]] float opacity() const noexcept;
 	protected:
 		Fn<void()> _animationCallback;
 
-		AnimationsVariant _animation;
+		Time::time_t _duration;
+		Time::time_t _updateTimeout;
 
-		Time::time_t _animationStart;
 		float _opacity;
 
+		AnimationType _animationType;
 		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations
