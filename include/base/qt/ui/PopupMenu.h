@@ -44,17 +44,21 @@ namespace base::qt::ui {
 			bool repaint = true);
 		[[nodiscard]] const style::PopupMenu* style() const noexcept;
 
+		void setDeleteOnHide(bool deleteOnHide);
+		[[nodiscard]] bool deleteOnHide() const noexcept;
+
 		[[nodiscard]] bool empty() const noexcept;
 
 		void popup(const QPoint& point);
 		void addSeparator();
 	protected:
 		void paintEvent(QPaintEvent* event) override;
+		void hideEvent(QHideEvent* event) override;
 
 		void focusOutEvent(QFocusEvent* event) override;
-		void focusInEvent(QFocusEvent* event) override;
-
 		bool event(QEvent* _event) override;
+
+		void mousePressEvent(QMouseEvent* event) override;
 	private:
 		void updateGeometry();
 
@@ -65,5 +69,6 @@ namespace base::qt::ui {
 		animations::VerticalGrowthAnimation _animation;
 
 		float _opacity = 1.f;
+		bool _deleteOnHide;
 	};
 } // namespace base::qt::ui

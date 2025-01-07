@@ -1,10 +1,10 @@
 #pragma once 
 
-#include <base/qt/common/Timer.h>
 #include <base/qt/ui/animations/AnimationBase.h>
 
 
 namespace base::qt::ui::animations {
+	class CombinedGrowthAnimation;
 	class HorizontalGrowthAnimation;
 	class VerticalGrowthAnimation;
 	class OpacityAnimation;
@@ -22,6 +22,7 @@ namespace base::qt::ui::animations {
 		void update();
 
 		union {
+			CombinedGrowthAnimation* _combined;
 			HorizontalGrowthAnimation* _horizontal;
 			VerticalGrowthAnimation* _vertical;
 			OpacityAnimation* _opacity;

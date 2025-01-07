@@ -4,16 +4,16 @@
 #include <base/qt/ui/animations/HorizontalGrowthAnimation.h>
 
 #include <base/qt/ui/animations/VerticalGrowthAnimation.h>
+#include <base/qt/ui/animations/CombinedGrowthAnimation.h>
 
 #include <qDebug>
 
 
 namespace base::qt::ui::animations {
-	namespace {
-	}
 	void AnimationManager::start(not_null<AnimationBase*> animation) {
 		_currentAnimationType = animation->_animationType;
 		_iterations = 0;
+
 
 		switch (_currentAnimationType) {
 			case AnimationType::Opacity:
@@ -31,6 +31,11 @@ namespace base::qt::ui::animations {
 				_iterations = _animation._horizontal->_duration
 					/ _animation._horizontal->_updateTimeout;
 				break;
+			case AnimationType::CombinedGrowth:
+				_animation._combined = static_cast<CombinedGrowthAnimation*>(animation.get());
+				_iterations = _animation._combined->_duration
+					/ _animation._combined->_updateTimeout;
+				break;
 			default:
 				unreachable();
 		}
@@ -44,13 +49,16 @@ namespace base::qt::ui::animations {
 			update();
 		});
 
-		//const auto hide = (_animation._opacity->_opacityFrom
-		//		> _animation._opacity->_opacityTo);
-
 		switch (_currentAnimationType) {
-			case AnimationType::Opacity:
-				_step._opacity = (_animation._opacity->_opacityTo
+		case AnimationType::Opacity: {
+				const auto hide = (_animation._opacity->_opacityFrom
+						> _animation._opacity->_opacityTo);
+
+				const auto opacityStep = (_animation._opacity->_opacityTo
 					- _animation._opacity->_opacityFrom) / _iterations;
+
+				_step._opacity = hide ? -opacityStep : opacityStep;
+			}
 				break;
 			case AnimationType::HorizontalGrowth:
 				_step._rect = _animation._horizontal->_rect.width() / _iterations;

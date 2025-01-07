@@ -74,6 +74,8 @@ set(QT_PRIVATE_SOURCES
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/HorizontalGrowthAnimation.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/VerticalGrowthAnimation.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/CombinedGrowthAnimation.cpp
 )
 
 set(QT_PUBLIC_HEADERS 
@@ -127,6 +129,8 @@ set(QT_PUBLIC_HEADERS
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/HorizontalGrowthAnimation.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/VerticalGrowthAnimation.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/CombinedGrowthAnimation.h
 )
 
 include(CMakePackageConfigHelpers)

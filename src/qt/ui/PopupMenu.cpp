@@ -4,6 +4,7 @@
 #include <base/Utility.h>
 
 #include <QApplication>
+#include <QMouseEvent>
 
 
 namespace base::qt::ui {
@@ -20,6 +21,8 @@ namespace base::qt::ui {
 
 		setAttribute(Qt::WA_TranslucentBackground);
 		setAttribute(Qt::WA_NoSystemBackground);
+
+		setDeleteOnHide(true);
 
 		_animation.setAnimationCallback([this] {
 			update();
@@ -54,6 +57,7 @@ namespace base::qt::ui {
 
 		connect(action, &QAbstractButton::clicked, callback);
 		_actions.push_back(action);
+		addSeparator();
 	}
 
 	PopupMenu::Action* PopupMenu::action(int index) const {
@@ -78,6 +82,15 @@ namespace base::qt::ui {
 		return _st;
 	}
 
+	void PopupMenu::setDeleteOnHide(bool deleteOnHide) {
+		_deleteOnHide = deleteOnHide;
+	}
+
+	bool PopupMenu::deleteOnHide() const noexcept {
+		return _deleteOnHide;
+	}
+
+
 	bool PopupMenu::empty() const noexcept {
 		return _actions.empty();
 	}
@@ -90,7 +103,7 @@ namespace base::qt::ui {
 				.padding = { 5, 5, 5, 5 },
 				.colorFg = Qt::white
 			},
-			_st);
+		_st);
 	}
 
 	void PopupMenu::popup(const QPoint& point) {
@@ -124,16 +137,21 @@ namespace base::qt::ui {
 		//	_actions[index]->setOpacity(_animation.opacity());
 	}
 
-	void PopupMenu::focusOutEvent(QFocusEvent* event) {
-
+	void PopupMenu::hideEvent(QHideEvent* event) {
+		if (_deleteOnHide)
+			deleteLater();
 	}
 
-	void PopupMenu::focusInEvent(QFocusEvent* event) {
-
+	void PopupMenu::focusOutEvent(QFocusEvent* event) {
+		hide();
 	}
 
 	bool PopupMenu::event(QEvent* _event) {
 		return QWidget::event(_event);
+	}
+
+	void PopupMenu::mousePressEvent(QMouseEvent* event) {
+		qDebug() << "menu press event";
 	}
 
 	void PopupMenu::updateGeometry() {

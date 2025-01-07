@@ -20,7 +20,8 @@ namespace base::qt::ui::animations {
 	enum class AnimationType : uchar {
 		Opacity = 0x01,
 		HorizontalGrowth = 0x02,
-		VerticalGrowth = 0x04
+		VerticalGrowth = 0x04,
+		CombinedGrowth = 0x08
 	};
 
 	class AnimationBase {
