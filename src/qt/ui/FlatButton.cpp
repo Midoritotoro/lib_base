@@ -17,13 +17,15 @@ namespace base::qt::ui {
         setColor(palette().color(QPalette::Base));
         setToolButtonStyle(Qt::ToolButtonTextOnly);
 
+        setStyle(style::defaultFlatButtonStyle);
+
         setFitToText(false);
         setIconSize({ 38, 38 });
 
         setAttribute(Qt::WA_Hover);
         setMouseTracking(true);
 
-        setCheckable(false);
+        setCheckable(true);
         setChecked(false);
 
         setAutoRaise(false);
@@ -49,12 +51,14 @@ namespace base::qt::ui {
 
         auto maskPainter = QPainter(&buttonMask);
         maskPainter.setRenderHint(QPainter::Antialiasing);
-
+   
         maskPainter.setPen(Qt::NoPen);
         maskPainter.setBrush(style::flatButton::buttonColor(_option.palette, state));
 
-        const auto radius = std::min(_option.rect.width(), _option.rect.height()) / 2;
-        maskPainter.drawRoundedRect(_option.rect, radius, radius);
+        if (style() && style()->borderRadius != 0)
+            style::RoundCorners(maskPainter, size(), style()->borderRadius);
+
+        maskPainter.drawRect(rect());
 
         maskPainter.setCompositionMode(QPainter::CompositionMode_Source);
         maskPainter.setBrush(Qt::transparent);
@@ -253,12 +257,6 @@ namespace base::qt::ui {
     }
 
     void FlatButton::mousePressEvent(QMouseEvent* event) {
-        if (event->button() != Qt::LeftButton
-            && popupMode() != AbstractFlatButton::InstantPopup
-            || !menuButtonRect(iconRect()).contains(event->pos())
-            )
-            return QAbstractButton::mousePressEvent(event);
-
         setDown(true);
         update();
 

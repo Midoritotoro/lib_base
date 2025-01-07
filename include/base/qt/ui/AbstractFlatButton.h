@@ -77,6 +77,9 @@ namespace base::qt::ui {
 		void setIconSize(const QSize& size);
 		void setIcon(const QIcon& _icon);
 
+		void setBadgeValue(const QVariant& value);
+		[[nodiscard]] QVariant badgeValue() const;
+
 		void setAutoRaise(bool on);
 		[[nodiscard]] bool autoRaise() const;
 
@@ -124,6 +127,8 @@ namespace base::qt::ui {
 		QString _text;
 
 		mutable QSize _sizeHint;
+
+		QVariant _badgeValue;
 
 		QMenu* _menu = nullptr;
 		Qt::ToolButtonStyle _buttonStyle;

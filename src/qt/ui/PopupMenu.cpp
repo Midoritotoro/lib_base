@@ -63,8 +63,8 @@ namespace base::qt::ui {
 
 		auto action = new Action(this);
 
+		action->setStyle(_actionSt);
 		action->setText(title);
-		action->setColor(_st->colorBg);
 
 		connect(action, &QAbstractButton::clicked, callback);
 		_actions.push_back(action);

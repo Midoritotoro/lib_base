@@ -213,6 +213,18 @@ namespace base::qt::ui {
         //    - style::flatButton::badgeSize.height()));
     }
 
+    void AbstractFlatButton::setBadgeValue(const QVariant& value) {
+        if (_badgeValue == value)
+            return;
+
+        _badgeValue = value;
+        update();
+    }
+
+    QVariant AbstractFlatButton::badgeValue() const {
+        return _badgeValue;
+    }
+
     void AbstractFlatButton::setAutoRaise(bool on) {
         _autoRaise = on;
     }
