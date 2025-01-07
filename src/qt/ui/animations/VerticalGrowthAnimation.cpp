@@ -47,7 +47,7 @@ namespace base::qt::ui::animations {
 		return _animationManager.animating();
 	}
 
-	QRect VerticalGrowthAnimation::rect() const noexcept {
+	QRectF VerticalGrowthAnimation::rect() const noexcept {
 		return _rect;
 	}
 } // namespace base::qt::ui::animations

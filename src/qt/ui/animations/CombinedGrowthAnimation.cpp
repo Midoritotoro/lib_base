@@ -50,7 +50,7 @@ namespace base::qt::ui::animations {
 		return _animationManager.animating();
 	}
 
-	QRect CombinedGrowthAnimation::rect() const noexcept {
+	QRectF CombinedGrowthAnimation::rect() const noexcept {
 		return _rect;
 	}
 } // namespace base::qt::ui::animations

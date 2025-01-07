@@ -32,10 +32,10 @@ namespace base::qt::ui::animations {
 
 		union {
 			float _opacity;
-			int _rect;
+			double _rect;
 			struct {
-				int _vertical;
-				int _horizontal;
+				double _vertical;
+				double _horizontal;
 			} _combined;
 		} _step;
 

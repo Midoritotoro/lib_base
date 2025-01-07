@@ -26,10 +26,10 @@ namespace base::qt::ui::animations {
 		void restartAfterFinished();
 
 		[[nodiscard]] bool animating() const noexcept;
-		[[nodiscard]] QRect rect() const noexcept;
+		[[nodiscard]] QRectF rect() const noexcept;
 	private:
-		int _targetWidth;
-		mutable QRect _rect;
+		double _targetWidth = 0;
+		mutable QRectF _rect;
 
 		Direction _direction;
 

@@ -5,15 +5,16 @@
 
 
 namespace base::qt::ui::animations {
-	enum DirectionFlag {
-		LeftToRight,
-		RightToLeft,
-		TopToBottom,
-		BottomToTop
+	enum class DirectionFlag : uint8 {
+		LeftToRight = 0x01,
+		RightToLeft = 0x02,
+		TopToBottom = 0x04,
+		BottomToTop = 0x08
 	};
 
 	Q_DECLARE_FLAGS(Direction, DirectionFlag)
 	Q_DECLARE_OPERATORS_FOR_FLAGS(Direction)
+
 
 	class CombinedGrowthAnimation : public AnimationBase {
 	public:
@@ -40,12 +41,12 @@ namespace base::qt::ui::animations {
 		void restartAfterFinished();
 
 		[[nodiscard]] bool animating() const noexcept;
-		[[nodiscard]] QRect rect() const noexcept;
+		[[nodiscard]] QRectF rect() const noexcept;
 	private:
-		int _targetWidth;
-		int _targetHeight;
+		double _targetWidth = 0;
+		double _targetHeight = 0;
 
-		mutable QRect _rect;
+		mutable QRectF _rect;
 
 		Direction _direction;
 		Corner _startCorner;

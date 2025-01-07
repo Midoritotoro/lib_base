@@ -60,9 +60,7 @@ namespace base::qt::ui::animations {
 		}
 
 		_timer.setCallback([this] {
-			if ((_iterations <= 0) || (_currentAnimationType == AnimationType::Opacity
-				&& _animation._opacity->_opacity < 0 
-				|| _animation._opacity->_opacity > 1))
+			if (_iterations <= 1)
 				stop();
 
 			update();
@@ -81,6 +79,7 @@ namespace base::qt::ui::animations {
 
 	void AnimationManager::update() {
 		qDebug() << _iterations;
+		--_iterations;
 		switch (_currentAnimationType) {
 			case AnimationType::Opacity:
 				_animation._opacity->_opacity += _step._opacity;
@@ -106,24 +105,24 @@ namespace base::qt::ui::animations {
 				_animation._vertical->call();
 				break;
 			case AnimationType::CombinedGrowth: {
-				int x = _animation._combined->_rect.x();
-				int y = _animation._combined->_rect.y();
+				float x = _animation._combined->_rect.x();
+				float y = _animation._combined->_rect.y();
 
-				int width = _animation._combined->_rect.width();
-				int height = _animation._combined->_rect.height();
+				float width = _animation._combined->_rect.width();
+				float height = _animation._combined->_rect.height();
 
-				if (_animation._combined->_direction == DirectionFlag::LeftToRight)
+				if (_animation._combined->_direction & DirectionFlag::LeftToRight)
 					width += _step._combined._horizontal;
-				else
+				else if (_animation._combined->_direction & DirectionFlag::RightToLeft)
 					width -= _step._combined._horizontal;
 
-				if (_animation._combined->_direction == DirectionFlag::TopToBottom)
+				if (_animation._combined->_direction & DirectionFlag::TopToBottom)
 					height += _step._combined._vertical;
-				else
+				else if (_animation._combined->_direction & DirectionFlag::BottomToTop)
 					height -= _step._combined._vertical;
 
 
-				if (_animation._combined->_startCorner  == CombinedGrowthAnimation::Corner::LeftTop) {
+				if (_animation._combined->_startCorner == CombinedGrowthAnimation::Corner::LeftTop) {
 				}
 				else if (_animation._combined->_startCorner == CombinedGrowthAnimation::Corner::LeftBottom) {
 					y -= height - _animation._combined->_rect.height();
@@ -137,7 +136,7 @@ namespace base::qt::ui::animations {
 					y -= height - _animation._combined->_rect.height();
 				}
 
-				qDebug() << "x: " << x << "y: " << y;
+				qDebug() << "x: " << x << "y: " << y << "width: " << width << "height: " << height;
 
 				_animation._combined->_rect.setRect(x, y, width, height);
 			}
@@ -146,26 +145,24 @@ namespace base::qt::ui::animations {
 			default:
 				unreachable();
 		}
-
-		--_iterations;
 	}
 
 	void AnimationManager::adjustCombined(not_null<CombinedGrowthAnimation*> animation)
 	{
 		switch (animation->_startCorner) {
-		case CombinedGrowthAnimation::Corner::LeftTop:
-			_animation._combined->_rect.setSize(QSize(0, 0));
-			break;
-		case CombinedGrowthAnimation::Corner::LeftBottom:
-			_animation._combined->_rect.setWidth(0);
-			break;
-		case CombinedGrowthAnimation::Corner::RightTop:
-			_animation._combined->_rect.setHeight(0);
-			break;
-		case CombinedGrowthAnimation::Corner::RightBottom:
-			break;
-		default:
-			unreachable();
+			case CombinedGrowthAnimation::Corner::LeftTop:
+				animation->_rect.setSize(QSize(0, 0));
+				break;
+			case CombinedGrowthAnimation::Corner::LeftBottom:
+				animation->_rect.setWidth(0);
+				break;
+			case CombinedGrowthAnimation::Corner::RightTop:
+				animation->_rect.setHeight(0);
+				break;
+			case CombinedGrowthAnimation::Corner::RightBottom:
+				break;
+			default:
+				unreachable();
 		}
 	}
 } // namespace base::qt::ui::animations

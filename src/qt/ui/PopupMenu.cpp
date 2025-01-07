@@ -117,8 +117,9 @@ namespace base::qt::ui {
 			_animation.restart();
 		else
 			_animation.start(rect(),
-				animations::DirectionFlag::LeftToRight
-				| animations::DirectionFlag::TopToBottom);
+				animations::DirectionFlag::TopToBottom |
+				animations::DirectionFlag::LeftToRight,
+				animations::CombinedGrowthAnimation::Corner::LeftTop, 100);
 
 		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
