@@ -13,30 +13,6 @@ namespace base::qt::ui::animations {
 		_animationType = type;
 	}
 
-	void Animation::start(
-		float from,
-		float to,
-		Time::time_t duration,
-		Time::time_t updateTimeout)
-	{
-		Expects(duration != 0);
-		Expects(from != to);
-
-		_animationStart = Time::now();
-		_opacity = from;
-
-		_opacityAnimation = OpacityAnimation{
-			.from = from,
-			.to = to,
-			.duration = duration,
-			.updateTimeout = std::clamp(updateTimeout, 
-				MinimumAnimationUpdateTimeout(),
-				MaximumAnimationUpdateTimeout())
-		};
-
-		_animationManager.start(this);
-	}
-
 	void Animation::start(const OpacityAnimation& animation) {
 		Expects(animation.duration != 0);
 		Expects(animation.from != animation.to);
@@ -44,7 +20,7 @@ namespace base::qt::ui::animations {
 		_animationStart = Time::now();	
 		_opacity = animation.from;
 
-		_opacityAnimation = OpacityAnimation{
+		_animation = OpacityAnimation{
 			.from = animation.from,
 			.to = animation.to,
 			.duration = animation.duration,
@@ -56,17 +32,24 @@ namespace base::qt::ui::animations {
 		_animationManager.start(this);
 	}
 
+	void Animation::start(const HorizontalGrowthAnimation& animation) {
+
+	}
+
+	void Animation::start(const VerticalGrowthAnimation& animation) {
+
+	}
 
 	void Animation::stop() {
 		_animationManager.stop();
 	}
 
 	void Animation::restart() {
-		if (animating() == false)
-			return start(_opacityAnimation);
+		/*if (animating() == false)
+			return start(std::get<VerticalGrowthAnimation>(_animation));
 
 		stop();
-		start(_opacityAnimation);
+		start(_animation);*/
 	}
 
 	void Animation::restartAfterFinished() {

@@ -9,21 +9,21 @@
 
 
 namespace base::qt::ui::animations {
-	inline const OpacityAnimation defaultOpacityShowAnimation = OpacityAnimation {
-		.from = 0,
-		.to = 1,
+	//inline const OpacityAnimation defaultOpacityShowAnimation = OpacityAnimation {
+	//	.from = 0,
+	//	.to = 1,
 
-		.duration = kDefaultAnimationDuration,
-		.updateTimeout = MinimumAnimationUpdateTimeout()
-	};
+	//	.duration = kDefaultAnimationDuration,
+	//	.updateTimeout = MinimumAnimationUpdateTimeout()
+	//};
 
-	inline const OpacityAnimation defaultOpacityHideAnimation = OpacityAnimation{
-		.from = 1,
-		.to = 0,
+	//inline const OpacityAnimation defaultOpacityHideAnimation = OpacityAnimation{
+	//	.from = 1,
+	//	.to = 0,
 
-		.duration = kDefaultAnimationDuration,
-		.updateTimeout = MinimumAnimationUpdateTimeout()
-	};
+	//	.duration = kDefaultAnimationDuration,
+	//	.updateTimeout = MinimumAnimationUpdateTimeout()
+	//};
 
 	class Animation: public AnimationBase {
 	public: 
@@ -33,12 +33,9 @@ namespace base::qt::ui::animations {
 		[[nodiscard]] AnimationType animationType() const noexcept;
 		void setAnimationType(AnimationType type);
 
-		void start(
-			float from,
-			float to,
-			Time::time_t duration = kDefaultAnimationDuration,
-			Time::time_t updateTimeout = MinimumAnimationUpdateTimeout());
 		void start(const OpacityAnimation& animation);
+		void start(const HorizontalGrowthAnimation& animation);
+		void start(const VerticalGrowthAnimation& animation);
 
 		void stop();
 

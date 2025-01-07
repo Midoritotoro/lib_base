@@ -121,6 +121,7 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationBase.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationManager.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationWrapper.h
 )
 
 include(CMakePackageConfigHelpers)

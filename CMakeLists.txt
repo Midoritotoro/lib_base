@@ -84,6 +84,7 @@ set(PUBLIC_HEADERS
     include/base/concurrent/win/WinapiSemaphore.h
 
     include/base/BaseExport.h
+    include/base/TypeWrapper.h
 )
 
 

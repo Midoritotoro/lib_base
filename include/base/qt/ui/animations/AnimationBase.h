@@ -17,10 +17,11 @@ namespace base::qt::ui::animations {
 		return Time::time_t(100);
 	}
 
-	enum AnimationType : uchar {
-		Default
+	enum class AnimationType : uchar {
+		Opacity = 0x01,
+		HorizontalGrowth = 0x02,
+		VerticalGrowth = 0x04
 	};
-
 
 	struct OpacityAnimation {
 		float from;
@@ -29,6 +30,24 @@ namespace base::qt::ui::animations {
 		Time::time_t duration;
 		Time::time_t updateTimeout;
 	};
+
+	struct HorizontalGrowthAnimation {
+		QRect rect;
+
+		Time::time_t duration;
+		Time::time_t updateTimeout;
+	};
+
+	struct VerticalGrowthAnimation {
+		QRect rect;
+
+		Time::time_t duration;
+		Time::time_t updateTimeout;
+	};
+
+	using AnimationsVariant = std::variant<OpacityAnimation,
+		HorizontalGrowthAnimation,
+		VerticalGrowthAnimation>;
 
 	class AnimationBase {
 	public:
@@ -41,7 +60,8 @@ namespace base::qt::ui::animations {
 		[[nodiscard]] float opacity() const noexcept;
 	protected:
 		Fn<void()> _animationCallback;
-		OpacityAnimation _opacityAnimation;
+
+		AnimationsVariant _animation;
 
 		Time::time_t _animationStart;
 		float _opacity;

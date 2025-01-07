@@ -5,7 +5,9 @@
 namespace base::qt::ui::animations {
 	void AnimationManager::start(AnimationBase* animation) {
 		Expects(animation != nullptr);
+
 		_animation = animation;
+		_opacityStep = 0;
 
 		_timer.setCallback([=] {
 			if (_animation->_opacity < 0 || _animation->opacity() > 1)
@@ -14,7 +16,7 @@ namespace base::qt::ui::animations {
 			update();
 		});
 
-		const auto iterations = _animation->_opacityAnimation.duration
+		/*const auto iterations = _animation->_opacityAnimation.duration
 			/ _animation->_opacityAnimation.updateTimeout;
 
 		const auto hide = (_animation->_opacityAnimation.from
@@ -23,7 +25,7 @@ namespace base::qt::ui::animations {
 		_opacityStep = (_animation->_opacityAnimation.to
 			- _animation->_opacityAnimation.from) / iterations;
 
-		_timer.callEach(_animation->_opacityAnimation.updateTimeout);
+		_timer.callEach(_animation->_opacityAnimation.updateTimeout);*/
 	}
 
 	void AnimationManager::stop() {

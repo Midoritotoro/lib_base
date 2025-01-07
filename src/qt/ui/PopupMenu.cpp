@@ -21,7 +21,6 @@ namespace base::qt::ui {
 		setAttribute(Qt::WA_TranslucentBackground);
 		setAttribute(Qt::WA_NoSystemBackground);
 
-		_animation.setAnimationType(animations::AnimationType::Default);
 		_animation.setAnimationCallback([this] {
 			update();
 			});
@@ -101,10 +100,10 @@ namespace base::qt::ui {
 		show();
 		raise();
 
-		if (_animation.animating())
-			_animation.restart();
-		else
-			_animation.start(0, 1, 100);
+		//if (_animation.animating())
+		//	_animation.restart();
+		//else
+		//	_animation.start(0, 1, 100);
 
 		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
