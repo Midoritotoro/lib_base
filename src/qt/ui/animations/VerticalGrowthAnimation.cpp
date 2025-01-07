@@ -19,6 +19,9 @@ namespace base::qt::ui::animations {
 		_duration = duration;
 		_direction = direction;
 
+		_rect = rect;
+		_targetHeight = _rect.height();
+
 		_updateTimeout = std::clamp(updateTimeout,
 			MinimumAnimationUpdateTimeout(),
 			MaximumAnimationUpdateTimeout());
@@ -35,11 +38,16 @@ namespace base::qt::ui::animations {
 
 	void VerticalGrowthAnimation::restartAfterFinished() {
 		concurrent::invokeAsync([=] {
-			while (_animationManager.animating());
+			while (animating());
 			restart();
 		});
 	}
 
 	bool VerticalGrowthAnimation::animating() const noexcept {
+		return _animationManager.animating();
+	}
+
+	QRect VerticalGrowthAnimation::rect() const noexcept {
+		return _rect;
 	}
 } // namespace base::qt::ui::animations

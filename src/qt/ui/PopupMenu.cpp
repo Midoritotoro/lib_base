@@ -23,7 +23,7 @@ namespace base::qt::ui {
 
 		_animation.setAnimationCallback([this] {
 			update();
-			});
+		});
 	}
 
 	PopupMenu::~PopupMenu() {
@@ -100,10 +100,10 @@ namespace base::qt::ui {
 		show();
 		raise();
 
-		//if (_animation.animating())
-		//	_animation.restart();
-		//else
-		//	_animation.start(0, 1, 100);
+		if (_animation.animating())
+			_animation.restart();
+		else
+			_animation.start(rect(), animations::VerticalGrowthAnimation::Direction::TopToBottom, 100, 1);
 
 		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
@@ -115,12 +115,13 @@ namespace base::qt::ui {
 		painter.setPen(Qt::NoPen);
 		painter.setBrush(_st->colorBg);
 
-		qDebug() << "_animation.opacity(): " << _animation.opacity();
-		painter.setOpacity(_animation.opacity());
-		painter.drawRect(rect());
+		//painter.setOpacity(_animation.opacity());
+		painter.drawRect(_animation.rect());
 
-		for (auto index = 0; index < _actions.size(); ++index)
-			_actions[index]->setOpacity(_animation.opacity());
+		qDebug() << _animation.rect();
+
+		//for (auto index = 0; index < _actions.size(); ++index)
+		//	_actions[index]->setOpacity(_animation.opacity());
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {

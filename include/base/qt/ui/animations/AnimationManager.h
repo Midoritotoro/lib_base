@@ -34,5 +34,7 @@ namespace base::qt::ui::animations {
 
 		AnimationType _currentAnimationType;
 		common::Timer _timer;
+
+		int _iterations;
 	};
 } // namespace base::qt::ui::animations

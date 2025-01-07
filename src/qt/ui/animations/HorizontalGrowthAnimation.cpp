@@ -16,6 +16,9 @@ namespace base::qt::ui::animations {
 		Expects(duration != 0);
 		Expects(rect.isEmpty() == false);
 
+		_rect = rect;
+		_targetWidth = _rect.width();
+
 		_duration = duration;
 		_direction = direction;
 
@@ -35,11 +38,16 @@ namespace base::qt::ui::animations {
 
 	void HorizontalGrowthAnimation::restartAfterFinished() {
 		concurrent::invokeAsync([=] {
-			while (_animationManager.animating());
+			while (animating());
 			restart();
 		});
 	}
 
 	bool HorizontalGrowthAnimation::animating() const noexcept {
+		return _animationManager.animating();
+	}
+
+	QRect HorizontalGrowthAnimation::rect() const noexcept {
+		return _rect;
 	}
 } // namespace base::qt::ui::animations

@@ -36,7 +36,7 @@ namespace base::qt::ui::animations {
 		Time::time_t _duration;
 		Time::time_t _updateTimeout;
 
-		float _opacity;
+		float _opacity = 1.f;
 
 		AnimationType _animationType;
 		friend class AnimationManager;

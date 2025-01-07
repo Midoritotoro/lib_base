@@ -27,11 +27,14 @@ namespace base::qt::ui::animations {
 		void restartAfterFinished();
 
 		[[nodiscard]] bool animating() const noexcept;
+		[[nodiscard]] QRect rect() const noexcept;
 	private:
-		QRect _rect;
+		int _targetHeight;
+		mutable QRect _rect;
 
 		Direction _direction;
 		AnimationManager _animationManager;
+
 		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations
