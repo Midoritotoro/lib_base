@@ -5,6 +5,7 @@
 namespace base::qt::ui::animations {
 	CombinedGrowthAnimation::CombinedGrowthAnimation() {
 		_animationType = AnimationType::CombinedGrowth;
+		_animationManager = new AnimationManager();
 	}
 
 	void CombinedGrowthAnimation::start(
@@ -18,7 +19,6 @@ namespace base::qt::ui::animations {
 		Expects(rect.isEmpty() == false);
 
 		_rect = rect;
-		_targetWidth = _rect.width();
 
 		_direction = direction;
 
@@ -29,11 +29,11 @@ namespace base::qt::ui::animations {
 			MinimumAnimationUpdateTimeout(),
 			MaximumAnimationUpdateTimeout());
 
-		_animationManager.start(this);
+		_animationManager->start(this);
 	}
 
 	void CombinedGrowthAnimation::stop() {
-		_animationManager.stop();
+		_animationManager->stop();
 	}
 
 	void CombinedGrowthAnimation::restart() {
@@ -47,7 +47,7 @@ namespace base::qt::ui::animations {
 	}
 
 	bool CombinedGrowthAnimation::animating() const noexcept {
-		return _animationManager.animating();
+		return _animationManager->animating();
 	}
 
 	QRectF CombinedGrowthAnimation::rect() const noexcept {

@@ -22,16 +22,27 @@ namespace base::qt::ui {
 		setAttribute(Qt::WA_TranslucentBackground);
 		setAttribute(Qt::WA_NoSystemBackground);
 
+		setWindowFlags(Qt::WindowFlags(Qt::FramelessWindowHint)
+			| Qt::BypassWindowManagerHint 
+			| Qt::Popup
+			| Qt::NoDropShadowWindowHint);
+		setMouseTracking(true);
+
 		setDeleteOnHide(true);
+		installEventFilter(this);
 
 		_animation.setAnimationCallback([this] {
 			update();
 		});
+
+		_opacityAnimation.setAnimationCallback([this] {
+			update();
+			});
 	}
 
 	PopupMenu::~PopupMenu() {
-		for (const auto& action : base::take(_actions))
-			delete action;
+		for (auto& action : _actions)
+			delete base::take(action);
 	}
 
 	QSize PopupMenu::sizeHint() const {
@@ -57,7 +68,8 @@ namespace base::qt::ui {
 
 		connect(action, &QAbstractButton::clicked, callback);
 		_actions.push_back(action);
-		addSeparator();
+
+		// addSeparator();
 	}
 
 	PopupMenu::Action* PopupMenu::action(int index) const {
@@ -90,15 +102,25 @@ namespace base::qt::ui {
 		return _deleteOnHide;
 	}
 
-
 	bool PopupMenu::empty() const noexcept {
 		return _actions.empty();
+	}
+
+	void PopupMenu::hideMenu(bool animated) {
+		if (_animation.animating())
+			_animation.stop();
+
+		if (_opacityAnimation.animating())
+			return _opacityAnimation.restartAfterFinished();
+
+		_opacityAnimation.start(_opacity, 0, 100);
 	}
 
 	void PopupMenu::addSeparator() {
 		const auto separator = new Separator(this,
 			new style::Separator{
-				.width = width() - _st->margin.left()
+				.width = width() 
+					- _st->margin.left()
 					- _st->margin.right(),
 				.padding = { 5, 5, 5, 5 },
 				.colorFg = Qt::white
@@ -116,12 +138,12 @@ namespace base::qt::ui {
 		if (_animation.animating())
 			_animation.restart();
 		else
-			_animation.start(rect(),
+			_animation.start(
+				rect(),
 				animations::DirectionFlag::TopToBottom |
 				animations::DirectionFlag::LeftToRight,
-				animations::CombinedGrowthAnimation::Corner::LeftTop, 100);
-
-		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
+				animations::CombinedGrowthAnimation::Corner::LeftTop,
+				100);
 	}
 
 	void PopupMenu::paintEvent(QPaintEvent* event) {
@@ -131,13 +153,13 @@ namespace base::qt::ui {
 		painter.setPen(Qt::NoPen);
 		painter.setBrush(_st->colorBg);
 
-		//painter.setOpacity(_animation.opacity());
+		if (_opacityAnimation.animating()) {
+			painter.setOpacity(_opacityAnimation.opacity());
+			for (auto index = 0; index < _actions.size(); ++index)
+				_actions[index]->setOpacity(_opacityAnimation.opacity());
+		}
+
 		painter.drawRect(_animation.rect());
-
-		qDebug() << _animation.rect();
-
-		//for (auto index = 0; index < _actions.size(); ++index)
-		//	_actions[index]->setOpacity(_animation.opacity());
 	}
 
 	void PopupMenu::hideEvent(QHideEvent* event) {
@@ -146,15 +168,11 @@ namespace base::qt::ui {
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {
-		hide();
+		hideMenu();
 	}
 
 	bool PopupMenu::event(QEvent* _event) {
 		return QWidget::event(_event);
-	}
-
-	void PopupMenu::mousePressEvent(QMouseEvent* event) {
-		qDebug() << "menu press event";
 	}
 
 	void PopupMenu::updateGeometry() {

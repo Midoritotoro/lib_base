@@ -7,6 +7,7 @@
 namespace base::qt::ui::animations {
 	OpacityAnimation::OpacityAnimation() {
 		_animationType = AnimationType::Opacity;
+		_animationManager = new AnimationManager();
 	}
 
 	void OpacityAnimation::start(
@@ -27,29 +28,31 @@ namespace base::qt::ui::animations {
 			MinimumAnimationUpdateTimeout(),
 			MaximumAnimationUpdateTimeout());
 
-		_animationManager.start(this);
+		_animationManager->start(this);
 	}
 
 	void OpacityAnimation::stop() {
-		_animationManager.stop();
+		_animationManager->stop();
 	}
 
 	void OpacityAnimation::restart() {
-		/*if (animating() == false)
-			return start(std::get<VerticalGrowthAnimation>(_animation));
+		_opacity = _opacityFrom;
+
+		if (animating() == false)
+			return _animationManager->start(this);
 
 		stop();
-		start(_animation);*/
+		_animationManager->start(this);
 	}
 
 	void OpacityAnimation::restartAfterFinished() {
 		concurrent::invokeAsync([=] {
-			while (_animationManager.animating());
+			while (animating());
 			restart();
 		});
 	}
 
 	bool OpacityAnimation::animating() const noexcept {
-		return _animationManager.animating();
+		return _animationManager->animating();
 	}
 } // namespace base::qt::ui::animations

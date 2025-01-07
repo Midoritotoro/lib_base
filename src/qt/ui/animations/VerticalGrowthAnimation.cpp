@@ -5,6 +5,7 @@
 namespace base::qt::ui::animations {
 	VerticalGrowthAnimation::VerticalGrowthAnimation() {
 		_animationType = AnimationType::VerticalGrowth;
+		_animationManager = new AnimationManager();
 	}
 
 	void VerticalGrowthAnimation::start(
@@ -26,11 +27,11 @@ namespace base::qt::ui::animations {
 			MinimumAnimationUpdateTimeout(),
 			MaximumAnimationUpdateTimeout());
 
-		_animationManager.start(this);
+		_animationManager->start(this);
 	}
 
 	void VerticalGrowthAnimation::stop() {
-		_animationManager.stop();
+		_animationManager->stop();
 	}
 
 	void VerticalGrowthAnimation::restart() {
@@ -44,7 +45,7 @@ namespace base::qt::ui::animations {
 	}
 
 	bool VerticalGrowthAnimation::animating() const noexcept {
-		return _animationManager.animating();
+		return _animationManager->animating();
 	}
 
 	QRectF VerticalGrowthAnimation::rect() const noexcept {

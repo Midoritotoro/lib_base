@@ -33,7 +33,7 @@ namespace base::qt::ui::animations {
 
 		Direction _direction;
 
-		AnimationManager _animationManager;
+		AnimationManager* _animationManager = nullptr;
 		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations

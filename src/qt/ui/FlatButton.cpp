@@ -262,21 +262,21 @@ namespace base::qt::ui {
     bool FlatButton::event(QEvent* _event)
     {
         switch (_event->type()) {
-        case QEvent::HoverLeave:
-        case QEvent::HoverEnter:
-        case QEvent::HoverMove:
-            updateHoverControl(static_cast<const QHoverEvent*>(_event)->pos());
-            break;
-        case QEvent::PaletteChange:
-            update();
-            break;
-        case QEvent::LocaleChange:
-        case QEvent::StyleChange:
-        case QEvent::LanguageChange:
-        case QEvent::FontChange:
-        default:
-            break;
-        }
+            case QEvent::HoverLeave:
+            case QEvent::HoverEnter:
+            case QEvent::HoverMove:
+                updateHoverControl(static_cast<const QHoverEvent*>(_event)->pos());
+                break;
+            case QEvent::PaletteChange:
+                update();
+                break;
+            case QEvent::LocaleChange:
+            case QEvent::StyleChange:
+            case QEvent::LanguageChange:
+            case QEvent::FontChange:
+            default:
+                break;
+            }
         return QAbstractButton::event(_event);
     }
 

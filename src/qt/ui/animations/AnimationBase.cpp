@@ -9,7 +9,9 @@ namespace base::qt::ui::animations {
 	}
 
 	void AnimationBase::call() {
-		return _animationCallback();
+		(_animationCallback != nullptr) ?
+			_animationCallback()
+			: unused(_animationCallback);
 	}
 
 	AnimationType AnimationBase::animationType() const noexcept {

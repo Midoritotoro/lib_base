@@ -16,7 +16,9 @@ namespace base::qt::ui::animations {
 			/ animation->_updateTimeout;
 
 		switch (_currentAnimationType) {
-		case AnimationType::Opacity: {
+			case AnimationType::Opacity: {
+				_animation._opacity = static_cast<OpacityAnimation*>(animation.get());
+
 				const auto hide = (_animation._opacity->_opacityFrom
 					> _animation._opacity->_opacityTo);
 
@@ -24,7 +26,6 @@ namespace base::qt::ui::animations {
 					- _animation._opacity->_opacityFrom) / _iterations;
 
 				_step._opacity = hide ? -opacityStep : opacityStep;
-				_animation._opacity = static_cast<OpacityAnimation*>(animation.get());
 			}
 				break;
 
@@ -78,8 +79,8 @@ namespace base::qt::ui::animations {
 	}
 
 	void AnimationManager::update() {
-		qDebug() << _iterations;
 		--_iterations;
+
 		switch (_currentAnimationType) {
 			case AnimationType::Opacity:
 				_animation._opacity->_opacity += _step._opacity;
@@ -121,7 +122,6 @@ namespace base::qt::ui::animations {
 				else if (_animation._combined->_direction & DirectionFlag::BottomToTop)
 					height -= _step._combined._vertical;
 
-
 				if (_animation._combined->_startCorner == CombinedGrowthAnimation::Corner::LeftTop) {
 				}
 				else if (_animation._combined->_startCorner == CombinedGrowthAnimation::Corner::LeftBottom) {
@@ -135,8 +135,6 @@ namespace base::qt::ui::animations {
 					x -= width - _animation._combined->_rect.width();
 					y -= height - _animation._combined->_rect.height();
 				}
-
-				qDebug() << "x: " << x << "y: " << y << "width: " << width << "height: " << height;
 
 				_animation._combined->_rect.setRect(x, y, width, height);
 			}

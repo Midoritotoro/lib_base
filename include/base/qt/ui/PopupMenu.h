@@ -35,7 +35,6 @@ namespace base::qt::ui {
 			const QString& title,
 			Fn<void()> callback,
 			const style::icon* icon = nullptr);
-
 		[[nodiscard]] Action* action(int index) const;
 
 		void setOpacity(float opacity);
@@ -50,8 +49,9 @@ namespace base::qt::ui {
 		[[nodiscard]] bool deleteOnHide() const noexcept;
 
 		[[nodiscard]] bool empty() const noexcept;
-
 		void popup(const QPoint& point);
+
+		void hideMenu(bool animated = true);
 		void addSeparator();
 	protected:
 		void paintEvent(QPaintEvent* event) override;
@@ -59,8 +59,6 @@ namespace base::qt::ui {
 
 		void focusOutEvent(QFocusEvent* event) override;
 		bool event(QEvent* _event) override;
-
-		void mousePressEvent(QMouseEvent* event) override;
 	private:
 		void updateGeometry();
 
@@ -68,7 +66,9 @@ namespace base::qt::ui {
 		const style::MenuAction* _actionSt = nullptr;
 
 		Actions _actions;
+
 		animations::CombinedGrowthAnimation _animation;
+		animations::OpacityAnimation _opacityAnimation;
 
 		float _opacity = 1.f;
 		bool _deleteOnHide;

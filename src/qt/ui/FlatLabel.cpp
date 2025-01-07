@@ -751,7 +751,9 @@ namespace base::qt::ui {
 					&& (state.symbol >= _selection.from)
 					&& (state.symbol < _selection.to)));
 
-		delete base::take(_contextMenu);
+		/*if (_contextMenu)
+			delete base::take(_contextMenu);*/
+
 		_contextMenu = new PopupMenu(parent() ?
 			qobject_cast<QWidget*>(parent())
 			: this);

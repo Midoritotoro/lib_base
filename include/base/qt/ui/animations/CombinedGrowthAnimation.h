@@ -43,15 +43,12 @@ namespace base::qt::ui::animations {
 		[[nodiscard]] bool animating() const noexcept;
 		[[nodiscard]] QRectF rect() const noexcept;
 	private:
-		double _targetWidth = 0;
-		double _targetHeight = 0;
-
 		mutable QRectF _rect;
 
 		Direction _direction;
 		Corner _startCorner;
 
-		AnimationManager _animationManager;
+		AnimationManager* _animationManager = nullptr;
 		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations

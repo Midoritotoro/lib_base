@@ -71,8 +71,10 @@ namespace base::qt::ui {
 		void setTextColor(const QColor& color = QColor(0, 0, 0));
 		[[nodiscard]] QColor textColor() const noexcept;
 
-		void setBorderRadius(int borderRadius);
-		[[nodiscard]] int borderRadius() const noexcept;
+		void setStyle(
+			const style::FlatButton* style,
+			bool repaint = true);
+		[[nodiscard]] const style::FlatButton* style() const noexcept;
 
 		void setOpacity(float opacity);
 		[[nodiscard]] float opacity() const noexcept;
@@ -129,6 +131,8 @@ namespace base::qt::ui {
 		[[nodiscard]] QRect menuButtonRect(const QRect& iconRect) const noexcept;
 		[[nodiscard]] QRect badgeRect(const QRect& iconRect) const noexcept;
 	private:
+		const style::FlatButton* _st = nullptr;
+
 		QColor _color;
 		QColor _textColor;
 

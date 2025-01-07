@@ -25,7 +25,7 @@ namespace base::qt::ui::animations {
 		float _opacityFrom = 1.f;
 		float _opacityTo = 1.f;
 
-		AnimationManager _animationManager;
+		AnimationManager* _animationManager = nullptr;
 		friend class AnimationManager;
 	};
 } // namespace base::qt::ui::animations

@@ -32,7 +32,7 @@ namespace base::qt::ui::animations {
 		mutable QRectF _rect;
 
 		Direction _direction;
-		AnimationManager _animationManager;
+		AnimationManager* _animationManager = nullptr;
 
 		friend class AnimationManager;
 	};

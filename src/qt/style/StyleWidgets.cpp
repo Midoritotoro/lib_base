@@ -36,7 +36,6 @@ namespace base::qt::style {
 	void initStyles() {
 		loadStyles();
 
-
 		defaultTextStyle = new TextStyle{
 		   ._font = font(13, 0, 0),
 		   .lineHeight = 14,

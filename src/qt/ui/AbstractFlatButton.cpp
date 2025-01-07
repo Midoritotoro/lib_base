@@ -165,9 +165,16 @@ namespace base::qt::ui {
         return _textColor;
     }
 
-    void AbstractFlatButton::setBorderRadius(int borderRadius) {
-        _borderRadius = borderRadius;
+    void AbstractFlatButton::setStyle(
+        const style::FlatButton* style,
+        bool repaint) 
+    {
+        _st = style;
         update();
+    }
+
+    const style::FlatButton* AbstractFlatButton::style() const noexcept {
+        return _st;
     }
 
     void AbstractFlatButton::setOpacity(float opacity) {
@@ -177,10 +184,6 @@ namespace base::qt::ui {
 
     float AbstractFlatButton::opacity() const noexcept {
         return _opacity;
-    }
-
-    int AbstractFlatButton::borderRadius() const noexcept {
-        return _borderRadius;
     }
 
     void AbstractFlatButton::setIconSize(const QSize& size) {

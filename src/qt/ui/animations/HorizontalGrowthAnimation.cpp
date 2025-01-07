@@ -26,11 +26,11 @@ namespace base::qt::ui::animations {
 			MinimumAnimationUpdateTimeout(),
 			MaximumAnimationUpdateTimeout());
 
-		_animationManager.start(this);
+		_animationManager->start(this);
 	}
 
 	void HorizontalGrowthAnimation::stop() {
-		_animationManager.stop();
+		_animationManager->stop();
 	}
 
 	void HorizontalGrowthAnimation::restart() {
@@ -44,7 +44,7 @@ namespace base::qt::ui::animations {
 	}
 
 	bool HorizontalGrowthAnimation::animating() const noexcept {
-		return _animationManager.animating();
+		return _animationManager->animating();
 	}
 
 	QRectF HorizontalGrowthAnimation::rect() const noexcept {
