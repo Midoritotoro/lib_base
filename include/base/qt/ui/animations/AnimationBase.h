@@ -7,7 +7,7 @@
 
 
 namespace base::qt::ui::animations {
-	inline constexpr auto kDefaultAnimationDuration = Time::time_t(1000);
+	inline constexpr auto kDefaultAnimationDuration = Time::time_t(500);
 
 	[[nodiscard]] always_inline Time::time_t MinimumAnimationUpdateTimeout() {
 		return Time::time_t(1000) / common::ScreenRefreshRate();
@@ -41,10 +41,10 @@ namespace base::qt::ui::animations {
 		[[nodiscard]] float opacity() const noexcept;
 	protected:
 		Fn<void()> _animationCallback;
-		OpacityAnimation _animationProgress;
+		OpacityAnimation _opacityAnimation;
 
 		Time::time_t _animationStart;
-		float _currentOpacity;
+		float _opacity;
 
 		friend class AnimationManager;
 	};

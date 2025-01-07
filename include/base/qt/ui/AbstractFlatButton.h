@@ -74,6 +74,9 @@ namespace base::qt::ui {
 		void setBorderRadius(int borderRadius);
 		[[nodiscard]] int borderRadius() const noexcept;
 
+		void setOpacity(float opacity);
+		[[nodiscard]] float opacity() const noexcept;
+
 		void setIconSize(const QSize& size);
 		void setIcon(const QIcon& _icon);
 
@@ -143,5 +146,6 @@ namespace base::qt::ui {
 		bool _fitToText;
 
 		int _borderRadius = 0;
+		float _opacity = 1.f;
 	};
 } // namespace base::qt::ui

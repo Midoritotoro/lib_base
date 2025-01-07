@@ -23,9 +23,9 @@ namespace base::qt::ui::animations {
 		Expects(from != to);
 
 		_animationStart = Time::now();
-		_currentOpacity = from;
+		_opacity = from;
 
-		_animationProgress = OpacityAnimation{
+		_opacityAnimation = OpacityAnimation{
 			.from = from,
 			.to = to,
 			.duration = duration,
@@ -42,9 +42,9 @@ namespace base::qt::ui::animations {
 		Expects(animation.from != animation.to);
 
 		_animationStart = Time::now();	
-		_currentOpacity = animation.from;
+		_opacity = animation.from;
 
-		_animationProgress = OpacityAnimation{
+		_opacityAnimation = OpacityAnimation{
 			.from = animation.from,
 			.to = animation.to,
 			.duration = animation.duration,
@@ -63,10 +63,10 @@ namespace base::qt::ui::animations {
 
 	void Animation::restart() {
 		if (animating() == false)
-			return start(_animationProgress);
+			return start(_opacityAnimation);
 
 		stop();
-		start(_animationProgress);
+		start(_opacityAnimation);
 	}
 
 	void Animation::restartAfterFinished() {

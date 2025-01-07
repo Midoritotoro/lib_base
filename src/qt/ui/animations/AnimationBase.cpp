@@ -13,6 +13,6 @@ namespace base::qt::ui::animations {
 	}
 
 	float AnimationBase::opacity() const noexcept {
-		return _currentOpacity;
+		return _opacity;
 	}
 } // namespace base::qt::ui::animations

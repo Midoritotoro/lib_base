@@ -184,6 +184,7 @@ namespace base::qt::ui {
         const auto fill = rect().intersected(event->rect());
         auto painter = QPainter(this);
 
+        painter.setOpacity(opacity());
         painter.setBrush(color());
         painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing | QPainter::Antialiasing);
 

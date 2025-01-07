@@ -101,16 +101,15 @@ namespace base::qt::ui {
 		show();
 		raise();
 
-			if (_animation.animating())
-				_animation.restart();
-			else
-				_animation.start(animations::defaultOpacityShowAnimation);
+		if (_animation.animating())
+			_animation.restart();
+		else
+			_animation.start(0, 1, 100);
 
 		qDebug() << "popup: " << pos() << size() << isHidden() << parent();
 	}
 
 	void PopupMenu::paintEvent(QPaintEvent* event) {
-
 		auto painter = QPainter(this);
 		painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 
@@ -120,6 +119,9 @@ namespace base::qt::ui {
 		qDebug() << "_animation.opacity(): " << _animation.opacity();
 		painter.setOpacity(_animation.opacity());
 		painter.drawRect(rect());
+
+		for (auto index = 0; index < _actions.size(); ++index)
+			_actions[index]->setOpacity(_animation.opacity());
 	}
 
 	void PopupMenu::focusOutEvent(QFocusEvent* event) {

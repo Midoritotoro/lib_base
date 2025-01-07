@@ -170,6 +170,15 @@ namespace base::qt::ui {
         update();
     }
 
+    void AbstractFlatButton::setOpacity(float opacity) {
+        _opacity = opacity;
+        update();
+    }
+
+    float AbstractFlatButton::opacity() const noexcept {
+        return _opacity;
+    }
+
     int AbstractFlatButton::borderRadius() const noexcept {
         return _borderRadius;
     }

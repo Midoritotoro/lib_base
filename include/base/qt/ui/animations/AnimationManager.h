@@ -17,11 +17,8 @@ namespace base::qt::ui::animations {
 	private:
 		void update();
 
-		AnimationBase* _currentAnimation;
+		AnimationBase* _animation = nullptr;
 		common::Timer _timer;
-
-		Time::time_t _animationDurationProgress;
-		int _iterations = 0;
 
 		float _opacityStep;
 	};

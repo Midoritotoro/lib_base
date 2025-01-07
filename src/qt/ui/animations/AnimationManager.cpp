@@ -4,28 +4,26 @@
 
 namespace base::qt::ui::animations {
 	void AnimationManager::start(AnimationBase* animation) {
-		_currentAnimation = animation;
-		_animationDurationProgress = _currentAnimation->_animationProgress.duration;
+		Expects(animation != nullptr);
+		_animation = animation;
 
-		_timer.setCallback([=] { 
-			_animationDurationProgress -= _currentAnimation->_animationProgress.updateTimeout;
-
-			if (_animationDurationProgress <= 0)
-				_timer.cancel();
+		_timer.setCallback([=] {
+			if (_animation->_opacity < 0 || _animation->opacity() > 1)
+				stop();
 
 			update();
 		});
 
-		_iterations = _currentAnimation->_animationProgress.duration
-			/ _currentAnimation->_animationProgress.updateTimeout;
+		const auto iterations = _animation->_opacityAnimation.duration
+			/ _animation->_opacityAnimation.updateTimeout;
 
-		const auto hide = (_currentAnimation->_animationProgress.from 
-			> _currentAnimation->_animationProgress.to);
+		const auto hide = (_animation->_opacityAnimation.from
+			> _animation->_opacityAnimation.to);
 
-		_opacityStep = (_currentAnimation->_animationProgress.to
-			- _currentAnimation->_animationProgress.from) / _iterations;
+		_opacityStep = (_animation->_opacityAnimation.to
+			- _animation->_opacityAnimation.from) / iterations;
 
-		_timer.callEach(_currentAnimation->_animationProgress.updateTimeout);
+		_timer.callEach(_animation->_opacityAnimation.updateTimeout);
 	}
 
 	void AnimationManager::stop() {
@@ -33,14 +31,13 @@ namespace base::qt::ui::animations {
 	}
 
 	bool AnimationManager::animating() const noexcept {
-		return _timer.isActive() && _animationDurationProgress > 0;
+		return _timer.isActive() 
+			&& _animation->_opacity > 0
+			&& _animation->opacity() < 1;
 	}
 
 	void AnimationManager::update() {
-		_currentAnimation->_currentOpacity += _opacityStep;
-
-		qDebug() << "_opacityStep: " << _opacityStep;
-
-		_currentAnimation->call();
+		_animation->_opacity += _opacityStep;
+		_animation->call();
 	}
 } // namespace base::qt::ui::animations
