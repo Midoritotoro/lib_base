@@ -9,6 +9,7 @@ namespace base::qt::ui::animations {
 
 	void CombinedGrowthAnimation::start(
 		QRect rect,
+		Direction direction,
 		Corner start,
 		Time::time_t duration,
 		Time::time_t updateTimeout)
@@ -18,6 +19,8 @@ namespace base::qt::ui::animations {
 
 		_rect = rect;
 		_targetWidth = _rect.width();
+
+		_direction = direction;
 
 		_duration = duration;
 		_startCorner = start;

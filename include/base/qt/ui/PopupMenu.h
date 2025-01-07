@@ -9,6 +9,8 @@
 #include <base/qt/ui/animations/OpacityAnimation.h>
 #include <base/qt/ui/animations/VerticalGrowthAnimation.h>
 
+#include <base/qt/ui/animations/CombinedGrowthAnimation.h>
+
 #include <QWidget>
 #include <QAction>
 
@@ -66,7 +68,7 @@ namespace base::qt::ui {
 		const style::MenuAction* _actionSt = nullptr;
 
 		Actions _actions;
-		animations::VerticalGrowthAnimation _animation;
+		animations::CombinedGrowthAnimation _animation;
 
 		float _opacity = 1.f;
 		bool _deleteOnHide;

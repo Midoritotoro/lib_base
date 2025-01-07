@@ -1,9 +1,20 @@
 #pragma once 
 
 #include <base/qt/ui/animations/AnimationManager.h>
+#include <QFlags>
 
 
 namespace base::qt::ui::animations {
+	enum DirectionFlag {
+		LeftToRight,
+		RightToLeft,
+		TopToBottom,
+		BottomToTop
+	};
+
+	Q_DECLARE_FLAGS(Direction, DirectionFlag)
+	Q_DECLARE_OPERATORS_FOR_FLAGS(Direction)
+
 	class CombinedGrowthAnimation : public AnimationBase {
 	public:
 		enum class Corner : uchar {
@@ -18,6 +29,7 @@ namespace base::qt::ui::animations {
 
 		void start(
 			QRect rect,
+			Direction direction,
 			Corner start = Corner::LeftTop,
 			Time::time_t duration = kDefaultAnimationDuration,
 			Time::time_t updateTimeout = MinimumAnimationUpdateTimeout());
@@ -35,6 +47,7 @@ namespace base::qt::ui::animations {
 
 		mutable QRect _rect;
 
+		Direction _direction;
 		Corner _startCorner;
 
 		AnimationManager _animationManager;

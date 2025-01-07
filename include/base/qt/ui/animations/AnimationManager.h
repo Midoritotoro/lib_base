@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/qt/ui/animations/AnimationBase.h>
+#include <base/qt/common/Timer.h>
 
 
 namespace base::qt::ui::animations {
@@ -20,6 +21,7 @@ namespace base::qt::ui::animations {
 		[[nodiscard]] bool animating() const noexcept;
 	private:
 		void update();
+		void adjustCombined(not_null<CombinedGrowthAnimation*> animation);
 
 		union {
 			CombinedGrowthAnimation* _combined;
@@ -31,6 +33,10 @@ namespace base::qt::ui::animations {
 		union {
 			float _opacity;
 			int _rect;
+			struct {
+				int _vertical;
+				int _horizontal;
+			} _combined;
 		} _step;
 
 		AnimationType _currentAnimationType;

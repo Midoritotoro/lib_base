@@ -146,8 +146,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
 			constexpr auto operator|(Enum a, Flags<Enum> b) noexcept
 	{
@@ -155,8 +155,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
 			constexpr auto operator&(Enum a, Flags<Enum> b) noexcept
 	{
@@ -164,8 +164,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
 			constexpr auto operator^(Enum a, Flags<Enum> b) noexcept
 	{
@@ -341,8 +341,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
 			constexpr auto operator!(Enum a) noexcept
 	{
@@ -350,8 +350,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
 			constexpr auto operator~(Enum a) noexcept
 	{
@@ -359,8 +359,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t<is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
 			constexpr auto operator|(Enum a, Enum b) noexcept
 	{
@@ -368,8 +368,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t < is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
 			constexpr auto operator|(Enum a, details::flags_zero_helper) noexcept
 	{
@@ -377,8 +377,8 @@ namespace base {
 	}
 
 	template <typename Enum,
-		typename = std::enable_if_t<std::is_enum<Enum>::value>,
-		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
+		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
 			constexpr auto operator|(details::flags_zero_helper, Enum b) noexcept
 	{

@@ -755,7 +755,7 @@ namespace base::qt::ui {
 		_contextMenu = new PopupMenu(parent() ?
 			qobject_cast<QWidget*>(parent())
 			: this);
-
+		
 		auto request = ContextMenuRequest({
 			.menu = _contextMenu,
 			.selection = _selectable ? _selection : text::TextSelection(),
