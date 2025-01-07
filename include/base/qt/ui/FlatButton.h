@@ -8,14 +8,10 @@ namespace base::qt::ui {
 		Q_OBJECT
 	public:
 		FlatButton(QWidget* parent = nullptr);
-	Q_SIGNALS:
-		void menuRequested();
 	protected:
 		bool event(QEvent* _event) override;
 		void mousePressEvent(QMouseEvent* _event) override;
 		void paintEvent(QPaintEvent*) override;
-
-		virtual void showMenu(not_null<QMenu*> _menu);
 	private:
 		void drawBackground(
 			QPainter& _painter,

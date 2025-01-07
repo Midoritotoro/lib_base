@@ -133,7 +133,6 @@ namespace base::qt::ui {
         return _fitToText;
     }
 
-
     void AbstractFlatButton::setText(const QString& text) {
         if (_text == text)
             return;
@@ -148,6 +147,15 @@ namespace base::qt::ui {
         return _text;
     }
 
+    void AbstractFlatButton::setTextColor(const QColor& color) {
+        _textColor = color;
+        update();
+    }
+
+    QColor AbstractFlatButton::textColor() const noexcept {
+        return _textColor;
+    }
+
     void AbstractFlatButton::setColor(const QColor& color) {
         _color = color;
         update();
@@ -157,19 +165,19 @@ namespace base::qt::ui {
         return _color;
     }
 
-    void AbstractFlatButton::setTextColor(const QColor& color) {
-        _textColor = color;
-    }
-
-    QColor AbstractFlatButton::textColor() const noexcept {
-        return _textColor;
-    }
-
     void AbstractFlatButton::setStyle(
         const style::FlatButton* style,
-        bool repaint) 
+        bool repaint)
     {
+        if (_st == style)
+            return;
+
         _st = style;
+
+        if (repaint == false)
+            return;
+
+        updateGeometry();
         update();
     }
 
@@ -205,68 +213,12 @@ namespace base::qt::ui {
         //    - style::flatButton::badgeSize.height()));
     }
 
-    void AbstractFlatButton::setBadgeValue(const QVariant& value) {
-        if (_badgeValue == value)
-            return;
-
-        _badgeValue = value;
-        update();
-    }
-
-    QVariant AbstractFlatButton::badgeValue() const {
-        return _badgeValue;
-    }
-
-    void AbstractFlatButton::setButtonStyle(Qt::ToolButtonStyle style) {
-        if (_buttonStyle == style)
-            return;
-
-        _buttonStyle = style;
-        _sizeHint = QSize();
-
-        updateGeometry();
-        update();
-    }
-
-    Qt::ToolButtonStyle AbstractFlatButton::buttonStyle() const {
-        return _buttonStyle;
-    }
-
-    void AbstractFlatButton::setPopupMode(PopupMode mode) {
-        if (_popupMode == mode)
-            return;
-
-        _popupMode = mode;
-        _sizeHint = QSize();
-
-        update();
-    }
-
-    AbstractFlatButton::PopupMode AbstractFlatButton::popupMode() const {
-        return _popupMode;
-    }
-
     void AbstractFlatButton::setAutoRaise(bool on) {
         _autoRaise = on;
     }
 
     bool AbstractFlatButton::autoRaise() const {
         return _autoRaise;
-    }
-
-    void AbstractFlatButton::setMenu(not_null<QMenu*> menu) {
-        if (_menu == menu.get())
-            return;
-
-        _menu = menu;
-        _sizeHint = QSize();
-
-        updateGeometry();
-        update();
-    }
-
-    QMenu* AbstractFlatButton::menu() const {
-        return _menu;
     }
 
     QSize AbstractFlatButton::sizeHint() const {
@@ -283,9 +235,6 @@ namespace base::qt::ui {
 
         switch (_buttonStyle) {
         case Qt::ToolButtonIconOnly:
-            if (_popupMode == MenuButtonPopup && _menu)
-                tempRect |= menuButtonRect(iconRect);
-
             tempRect |= badgeRect(iconRect);
 
             width = tempRect.width();
@@ -299,18 +248,9 @@ namespace base::qt::ui {
                 + style::flatButton::iconMargins.right()) / 2.;
 
             height = textSize.height() + style::flatButton::badgeSize.height() / 2.;
-
-            if (_popupMode == MenuButtonPopup && _menu) {
-                width += style::flatButton::menuButtonSize.width() / 2. + 2;
-                height = std::max(height, style::flatButton::menuButtonSize.height() + 2);
-            }
-
             break;
 
         case Qt::ToolButtonTextUnderIcon:
-            if (_popupMode == MenuButtonPopup && _menu)
-                tempRect |= menuButtonRect(iconRect);
-
             tempRect |= badgeRect(iconRect);
             width = std::max(textSize.width(), tempRect.width());
 
@@ -318,12 +258,11 @@ namespace base::qt::ui {
             break;
 
         case Qt::ToolButtonTextBesideIcon:
-            width = iconRect.width() + style::flatButton::spacing(textSize) + textSize.width();
+            width = iconRect.width() + 
+                style::flatButton::spacing(textSize) + textSize.width();
 
-            if (_popupMode == MenuButtonPopup && _menu)
-                width += (style::flatButton::spacing() + menuButtonRect(iconRect).width());
-
-            height = std::max(iconRect.height(), textSize.height()) + style::flatButton::badgeSize.height() / 2;
+            height = std::max(iconRect.height(), textSize.height())
+                + style::flatButton::badgeSize.height() / 2;
             break;
         }
 
@@ -340,6 +279,23 @@ namespace base::qt::ui {
 
     QSize AbstractFlatButton::minimumSizeHint() const {
         return sizeHint();
+    }
+
+    void AbstractFlatButton::setToolButtonStyle(Qt::ToolButtonStyle style) {
+        _buttonStyle = style;
+    }
+
+    Qt::ToolButtonStyle AbstractFlatButton::buttonStyle() const noexcept {
+        return _buttonStyle;
+    }
+
+    bool AbstractFlatButton::hasIcon() const noexcept {
+        return icon().isNull() == false 
+            && iconSize().isNull() == false;
+    }
+
+    bool AbstractFlatButton::hasText() const noexcept {
+        return _text.isEmpty() == false;
     }
 
     QRect AbstractFlatButton::iconRect() const noexcept
@@ -401,22 +357,5 @@ namespace base::qt::ui {
 
         badgeRect.moveCenter(iconRect.center() + center);
         return badgeRect;
-    }
-
-    QRect AbstractFlatButton::menuButtonRect(const QRect& iconRect) const noexcept {
-        auto menuButtonRect = QRect(QPoint(), style::flatButton::menuButtonSize);
-
-        if (_buttonStyle == Qt::ToolButtonTextOnly) {
-            menuButtonRect.moveBottomRight(rect().bottomRight());
-            return menuButtonRect;
-        }
-
-        const int _rect = iconRect.width() / 2 + style::flatButton::borderWidth / 2;
-        const auto center = QPoint(
-            _rect * qFastCos(style::flatButton::menuButtonAngle),
-            _rect * qFastSin(style::flatButton::menuButtonAngle));
-
-        menuButtonRect.moveCenter(iconRect.center() + center);
-        return menuButtonRect;
     }
 } // namespace base::qt::ui

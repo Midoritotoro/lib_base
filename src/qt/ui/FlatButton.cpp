@@ -14,14 +14,10 @@ namespace base::qt::ui {
     FlatButton::FlatButton(QWidget* parent) :
         AbstractFlatButton(parent)
     {
-        setBorderRadius(10);
         setColor(palette().color(QPalette::Base));
-
-        setTextColor(Qt::white);
-        setPopupMode(AbstractFlatButton::InstantPopup);
+        setToolButtonStyle(Qt::ToolButtonTextOnly);
 
         setFitToText(false);
-        setButtonStyle(Qt::ToolButtonStyle::ToolButtonTextOnly);
         setIconSize({ 38, 38 });
 
         setAttribute(Qt::WA_Hover);
@@ -31,7 +27,7 @@ namespace base::qt::ui {
         setChecked(false);
 
         setAutoRaise(false);
-        setCursor(Qt::PointingHandCursor);
+        setCursor(style::cursorPointer);
     }
 
     void FlatButton::drawBackground(QPainter& _painter, const QStyleOptionComplex& _option, const QRect& _iconRect)
@@ -57,25 +53,22 @@ namespace base::qt::ui {
         maskPainter.setPen(Qt::NoPen);
         maskPainter.setBrush(style::flatButton::buttonColor(_option.palette, state));
 
-        if (buttonStyle() == Qt::ToolButtonTextOnly) {
-            const auto radius = std::min(_option.rect.width(), _option.rect.height()) / 2;
-            maskPainter.drawRoundedRect(_option.rect, radius, radius);
-        }
-        else
-            maskPainter.drawEllipse(_iconRect);
+        const auto radius = std::min(_option.rect.width(), _option.rect.height()) / 2;
+        maskPainter.drawRoundedRect(_option.rect, radius, radius);
 
         maskPainter.setCompositionMode(QPainter::CompositionMode_Source);
         maskPainter.setBrush(Qt::transparent);
 
         if (style::flatButton::hasBadge(badgeValue()))
             maskPainter.drawEllipse(badgeRect(_iconRect).marginsAdded(style::flatButton::borderMargins));
-        if (popupMode() != InstantPopup)
-            maskPainter.drawEllipse(menuButtonRect(_iconRect).marginsAdded(style::flatButton::borderMargins));
 
         _painter.drawPixmap(0, 0, buttonMask);
     }
 
-    void FlatButton::drawBadge(QPainter& _painter, const QStyleOptionComplex& _option) {
+    void FlatButton::drawBadge(
+        QPainter& _painter,
+        const QStyleOptionComplex& _option)
+    {
         if (!badgeValue().isValid())
             return;
 
@@ -115,16 +108,20 @@ namespace base::qt::ui {
         _painter.setBrush(brush);
         _painter.drawEllipse(_option.rect);
 
-        if (!text.isEmpty()) {
-            _painter.setBrush(Qt::NoBrush);
-            _painter.setPen(_option.palette.color(QPalette::HighlightedText));
+        if (text.isEmpty())
+            return;
+        
+        _painter.setBrush(Qt::NoBrush);
+        _painter.setPen(_option.palette.color(QPalette::HighlightedText));
 
-            _painter.setFont(style::flatButton::badgeFont());
-            _painter.drawText(_option.rect, Qt::AlignCenter, text);
-        }
+        _painter.setFont(style::flatButton::badgeFont());
+        _painter.drawText(_option.rect, Qt::AlignCenter, text);
     }
 
-    void FlatButton::drawIcon(QPainter& painter, const QIcon& icon, const QStyleOption& option)
+    void FlatButton::drawIcon(
+        QPainter& painter,
+        const QIcon& icon, 
+        const QStyleOption& option)
     {
         const auto iconRect = option.rect;
 
@@ -144,12 +141,8 @@ namespace base::qt::ui {
         const auto last = _hoverControl;
         _hoverControl = QStyle::SC_None;
 
-        if (rect().contains(pos)) {
+        if (rect().contains(pos))
             _hoverControl |= QStyle::SC_ToolButton;
-
-            if (popupMode() != InstantPopup && menuButtonRect(iconRect()).contains(pos))
-                _hoverControl |= QStyle::SC_ToolButtonMenu;
-        }
 
         if (_hoverControl != last)
             update();
@@ -168,8 +161,7 @@ namespace base::qt::ui {
             return;
         }
 
-        const auto inverseColor = buttonStyle() == Qt::ToolButtonTextOnly
-            && (option.state & (QStyle::State_Sunken | QStyle::State_On));
+        const auto inverseColor = (option.state & (QStyle::State_Sunken | QStyle::State_On));
 
         const auto pen = option.palette.color(
             inverseColor
@@ -186,7 +178,10 @@ namespace base::qt::ui {
 
         painter.setOpacity(opacity());
         painter.setBrush(color());
-        painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing | QPainter::Antialiasing);
+        painter.setRenderHints(
+            QPainter::SmoothPixmapTransform 
+            | QPainter::TextAntialiasing 
+            | QPainter::Antialiasing);
 
         auto option = QStyleOptionComplex();
         option.initFrom(this);
@@ -225,17 +220,6 @@ namespace base::qt::ui {
         option.rect = badgeRect(_iconRect);
         drawBadge(painter, option);
 
-        if (popupMode() == AbstractFlatButton::MenuButtonPopup) {
-            option.rect = menuButtonRect(_iconRect);
-            option.state &= ~QStyle::State_On;
-
-            isDown() && (option.activeSubControls & QStyle::SC_ToolButtonMenu)
-                ? option.state |= QStyle::State_Sunken
-                : option.state &= ~(QStyle::State_Sunken);
-
-            // Отрисовка меню ...
-        }
-
         if (buttonStyle() != Qt::ToolButtonIconOnly) {
             fitToText()
                 ? option.rect = _textRect
@@ -245,18 +229,6 @@ namespace base::qt::ui {
 
             drawText(painter, option, text());
         }
-    }
-
-    void FlatButton::showMenu(not_null<QMenu*> menu) {
-        if (menu == nullptr)
-            return;
-
-        const auto menuSize = menu->sizeHint();
-        const auto point = QPoint(
-            width() / 2. - menuSize.width() / 2.,
-            -menuSize.height());
-
-        menu->exec(mapToGlobal(point));
     }
 
     bool FlatButton::event(QEvent* _event)
@@ -289,11 +261,6 @@ namespace base::qt::ui {
 
         setDown(true);
         update();
-
-        if (menu())
-            showMenu(menu());
-        else if (popupMode() == AbstractFlatButton::MenuButtonPopup)
-            emit menuRequested();
 
         setDown(false);
         update();
