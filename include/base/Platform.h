@@ -76,11 +76,11 @@ typedef int64_t tick_t;
 
 
 #if defined(__GNUC__) || defined(__clang__)
-#define always_inline inline __attribute__((always_inline))
+#define always_inline						inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
 #define always_inline						__forceinline
 #else
-#define always_inline inline
+#define always_inline						inline
 #endif
 
 #define unused(x)                           ((void)(x))

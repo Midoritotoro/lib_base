@@ -23,16 +23,20 @@ namespace base {
 
 		using flags_zero_helper = void(base::details::flags_zero_helper_struct::*)();
 
-		template <typename ExtendedEnum,
-			typename Enum = typename base::extended_flags<ExtendedEnum>::type>
+		template <
+			typename ExtendedEnum,
+			typename Enum = typename 
+				base::extended_flags<ExtendedEnum>::type>
 		always_inline [[nodiscard]]
 			constexpr auto extendedFlagConvert(ExtendedEnum value) 
 		{
 			return static_cast<Enum>(value);
 		}
 
-		template <typename ExtendedEnum,
-			typename Enum = typename base::extended_flags<ExtendedEnum>::type>
+		template <
+			typename ExtendedEnum,
+			typename Enum = typename 
+				base::extended_flags<ExtendedEnum>::type>
 		always_inline [[nodiscard]] 
 			constexpr auto extendedFlagsConvert(ExtendedEnum value)
 		{
@@ -145,7 +149,8 @@ namespace base {
 		return Flags<Enum>(value);
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
@@ -154,7 +159,8 @@ namespace base {
 		return b | a;
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
@@ -163,7 +169,8 @@ namespace base {
 		return b & a;
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
@@ -172,7 +179,8 @@ namespace base {
 		return b ^ a;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator|(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -180,7 +188,8 @@ namespace base {
 		return a | details::extendedFlagsConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]]
 		constexpr auto operator|(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -188,7 +197,8 @@ namespace base {
 		return b | a;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = extended_flags_t<ExtendedEnum>>
 		always_inline [[nodiscard]]
 			constexpr auto operator&(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -196,7 +206,8 @@ namespace base {
 		return a & details::extendedFlagsConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator&(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -204,7 +215,8 @@ namespace base {
 		return b & a;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = extended_flags_t<ExtendedEnum>>
 		always_inline [[nodiscard]] 
 			constexpr auto operator^(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -212,7 +224,8 @@ namespace base {
 		return a ^ details::extendedFlagsConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator^(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -220,7 +233,8 @@ namespace base {
 		return b ^ a;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto& operator&=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b)
@@ -228,7 +242,8 @@ namespace base {
 		return (a &= details::extendedFlagsConvert(b));
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto& operator|=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b)
@@ -236,7 +251,8 @@ namespace base {
 		return (a |= details::extendedFlagsConvert(b));
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto& operator^=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b)
@@ -244,7 +260,8 @@ namespace base {
 		return (a ^= details::extendedFlagsConvert(b));
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator==(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -252,7 +269,8 @@ namespace base {
 		return a == details::extendedFlagsConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator==(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -260,7 +278,8 @@ namespace base {
 		return (b == a);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator!=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -268,7 +287,8 @@ namespace base {
 		return !(a == b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator!=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -276,7 +296,8 @@ namespace base {
 		return !(a == b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator<(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -284,7 +305,8 @@ namespace base {
 		return a < details::extendedFlagsConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator<(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -292,7 +314,8 @@ namespace base {
 		return details::extendedFlagsConvert(a) < b;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator>(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -300,7 +323,8 @@ namespace base {
 		return (b < a);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator>(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -308,7 +332,8 @@ namespace base {
 		return (b < a);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator<=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -316,7 +341,8 @@ namespace base {
 		return !(b < a);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator<=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -324,7 +350,8 @@ namespace base {
 		return !(b < a);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator>=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b)
@@ -332,7 +359,8 @@ namespace base {
 		return !(a < b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator>=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b)
@@ -340,7 +368,8 @@ namespace base {
 		return !(a < b);
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
@@ -349,7 +378,8 @@ namespace base {
 		return !makeFlags(a);
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
@@ -358,7 +388,8 @@ namespace base {
 		return ~makeFlags(a);
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]] 
@@ -367,7 +398,8 @@ namespace base {
 		return makeFlags(a) | b;
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t < is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
@@ -376,7 +408,8 @@ namespace base {
 		return makeFlags(a);
 	}
 
-	template <typename Enum,
+	template <
+		typename Enum,
 		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
 		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
 		always_inline [[nodiscard]]
@@ -385,7 +418,8 @@ namespace base {
 		return makeFlags(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]]
 		constexpr auto operator|(ExtendedEnum a, ExtendedEnum b)
@@ -393,7 +427,8 @@ namespace base {
 		return details::extendedFlagsConvert(a) | b;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator|(ExtendedEnum a, typename extended_flags<ExtendedEnum>::type b)
@@ -401,7 +436,8 @@ namespace base {
 		return details::extendedFlagsConvert(a) | b;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator|(typename extended_flags<ExtendedEnum>::type a, ExtendedEnum b)
@@ -409,7 +445,8 @@ namespace base {
 		return b | a;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator|(details::flags_zero_helper, ExtendedEnum b)
@@ -417,7 +454,8 @@ namespace base {
 		return 0 | details::extendedFlagConvert(b);
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator|(ExtendedEnum a, details::flags_zero_helper)
@@ -425,7 +463,8 @@ namespace base {
 		return details::extendedFlagConvert(a) | 0;
 	}
 
-	template <typename ExtendedEnum,
+	template <
+		typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
 	always_inline [[nodiscard]] 
 		constexpr auto operator~(ExtendedEnum b)
@@ -435,7 +474,8 @@ namespace base {
 
 } // namespace base
 
-template <typename Enum,
+template <
+	typename Enum,
 	typename = std::enable_if_t<std::is_enum<Enum>::value>,
 	typename = std::enable_if_t < is_flag_type(Enum{}) >>
 	always_inline [[nodiscard]] 
@@ -444,7 +484,8 @@ template <typename Enum,
 	return !base::makeFlags(a);
 }
 
-template <typename Enum,
+template <
+	typename Enum,
 	typename = std::enable_if_t<std::is_enum<Enum>::value>,
 	typename = std::enable_if_t < is_flag_type(Enum{}) >>
 	always_inline [[nodiscard]] 
@@ -453,7 +494,8 @@ template <typename Enum,
 	return ~base::makeFlags(a);
 }
 
-template <typename Enum,
+template <
+	typename Enum,
 	typename = std::enable_if_t<std::is_enum<Enum>::value>,
 	typename = std::enable_if_t < is_flag_type(Enum{}) >>
 	always_inline [[nodiscard]]
@@ -462,7 +504,8 @@ template <typename Enum,
 	return base::makeFlags(a) | b;
 }
 
-template <typename Enum,
+template <
+	typename Enum,
 	typename = std::enable_if_t<std::is_enum<Enum>::value>,
 	typename = std::enable_if_t < is_flag_type(Enum{}) >>
 	always_inline [[nodiscard]] 
@@ -471,7 +514,8 @@ template <typename Enum,
 	return base::makeFlags(a);
 }
 
-template <typename Enum,
+template <
+	typename Enum,
 	typename = std::enable_if_t<std::is_enum<Enum>::value>,
 	typename = std::enable_if_t < is_flag_type(Enum{}) >>
 	always_inline [[nodiscard]] 
@@ -480,7 +524,8 @@ template <typename Enum,
 	return base::makeFlags(b);
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator|(ExtendedEnum a, ExtendedEnum b)
@@ -488,7 +533,8 @@ always_inline [[nodiscard]]
 	return base::details::extendedFlagsConvert(a) | b;
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator|(ExtendedEnum a, typename base::extended_flags<ExtendedEnum>::type b)
@@ -496,7 +542,8 @@ always_inline [[nodiscard]]
 	return base::details::extendedFlagsConvert(a) | b;
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator|(typename base::extended_flags<ExtendedEnum>::type a, ExtendedEnum b)
@@ -504,7 +551,8 @@ always_inline [[nodiscard]]
 	return b | a;
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator|(base::details::flags_zero_helper, ExtendedEnum b)
@@ -512,7 +560,8 @@ always_inline [[nodiscard]]
 	return 0 | base::details::extendedFlagConvert(b);
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator|(ExtendedEnum a, base::details::flags_zero_helper)
@@ -520,7 +569,8 @@ always_inline [[nodiscard]]
 	return base::details::extendedFlagConvert(a) | 0;
 }
 
-template <typename ExtendedEnum,
+template <
+	typename ExtendedEnum,
 	typename = typename base::extended_flags<ExtendedEnum>::type>
 always_inline [[nodiscard]]
 	constexpr auto operator~(ExtendedEnum b)

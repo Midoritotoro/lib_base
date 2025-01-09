@@ -80,6 +80,7 @@ set(QT_PRIVATE_SOURCES
 
 set(QT_PUBLIC_HEADERS 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/BaseWidget.h   
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/Utility.h   
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/UniqueQPtr.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/common/Size.h
