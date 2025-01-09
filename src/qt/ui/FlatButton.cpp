@@ -148,8 +148,7 @@ namespace base::qt::ui {
         if (rect().contains(pos))
             _hoverControl |= QStyle::SC_ToolButton;
 
-        if (_hoverControl != last)
-            update();
+        update();
     }
 
     void FlatButton::drawText(

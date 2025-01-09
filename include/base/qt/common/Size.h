@@ -44,10 +44,12 @@ namespace base::qt::common {
 		const QSize& second,
 		int maxDifference)
 	{
-		const auto widthDifference = qMax(first.width(), second.width())
+		const auto widthDifference = qMax(
+			first.width(), second.width())
 			- qMin(first.width(), second.width());
 
-		const auto heightDifference = qMax(first.height(), second.height())
+		const auto heightDifference = qMax(
+			first.height(), second.height())
 			- qMin(first.height(), second.height());
 
 		return (widthDifference + heightDifference) <= maxDifference;
@@ -58,27 +60,10 @@ namespace base::qt::common {
 	}
 
 	[[nodiscard]] inline QSize ScreenResolution() {
-#ifdef _WIN32
-		return QSize(
-			GetSystemMetrics(SM_CXSCREEN),
-			GetSystemMetrics(SM_CYSCREEN)
-		);
-#endif
 		return QApplication::primaryScreen()->availableGeometry().size();
 	}
 
 	[[nodiscard]] inline int ScreenRefreshRate() {
-#ifdef _WIN32
-		auto dm = DEVMODE();
-
-		ZeroMemory(&dm, sizeof(dm));
-		dm.dmSize = sizeof(dm);
-		dm.dmDriverExtra = 0;
-
-		if (EnumDisplaySettingsEx(nullptr, ENUM_CURRENT_SETTINGS, &dm, 0))
-			return dm.dmDisplayFrequency;
-		return -1;
-#endif
 		return QApplication::primaryScreen()->refreshRate();
 	}
 } // namespace core::utility

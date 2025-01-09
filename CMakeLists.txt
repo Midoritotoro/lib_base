@@ -85,6 +85,8 @@ set(PUBLIC_HEADERS
 
     include/base/BaseExport.h
     include/base/TypeWrapper.h
+
+    include/base/TypeTraits.h
 )
 
 
