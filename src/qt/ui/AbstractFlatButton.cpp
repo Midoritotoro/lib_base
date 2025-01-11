@@ -121,7 +121,7 @@ namespace base::qt::style {
 
 namespace base::qt::ui {
     AbstractFlatButton::AbstractFlatButton(QWidget* parent) :
-        QAbstractButton(parent)
+        BaseWidget(parent)
     {}
 
     void AbstractFlatButton::setFitToText(bool fit) {
@@ -147,42 +147,20 @@ namespace base::qt::ui {
         return _text;
     }
 
-    void AbstractFlatButton::setTextColor(const QColor& color) {
-        _textColor = color;
-        update();
-    }
-
-    QColor AbstractFlatButton::textColor() const noexcept {
-        return _textColor;
-    }
-
-    void AbstractFlatButton::setColor(const QColor& color) {
-        _color = color;
-        update();
-    }
-
-    QColor AbstractFlatButton::color() const noexcept {
-        return _color;
-    }
-
     void AbstractFlatButton::setStyle(
         const style::FlatButton* style,
         bool repaint)
     {
-        if (_st == style)
+        if (_style == style)
             return;
 
-        _st = style;
+        _style = style;
 
         if (repaint == false)
             return;
 
         updateGeometry();
         update();
-    }
-
-    const style::FlatButton* AbstractFlatButton::style() const noexcept {
-        return _st;
     }
 
     void AbstractFlatButton::setOpacity(float opacity) {

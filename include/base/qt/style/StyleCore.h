@@ -6,11 +6,15 @@
 #include <algorithm>
 #include <cmath>
 
+#include <optional>
+
 #include <QFontMetrics>
 #include <QPixmapCache>
 
 #include <base/qt/style/StyleScale.h>
 #include <base/qt/style/StyleWidgets.h>
+
+#include <base/qt/style/StyleFont.h>
 
 
 namespace base::qt::style {

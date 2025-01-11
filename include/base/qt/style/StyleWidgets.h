@@ -32,20 +32,7 @@ namespace base::qt::style {
 	[[nodiscard]] QString SliderStyle();
 	[[nodiscard]] QString ScrollAreaStyle();
 
-	//struct StyleBase {
-	//	virtual ~StyleBase() = default;
-	//	virtual bool isEqual(const StyleBase* other) const = 0;
-	//};
-
-	struct FlatLabel {
-		margins margin = { 0, 0, 0, 0 };
-		color colorBg;
-
-		const TextStyle* textStyle = nullptr;
-		const TextPalette* textPalette = nullptr;
-
-		int borderRadius = 0;
-
+	struct StyleSize {
 		int maximumWidth = 0;
 		int maximumHeight = 0;
 
@@ -53,14 +40,27 @@ namespace base::qt::style {
 		int minimumHeight = 0;
 	};
 
-	struct FlatButton {
-		margins margin = { 0, 0, 0, 0 };
-		color colorBg;
+	struct StyleBase {
+		int borderRadius = 0;
+		int borderWidth = 0;
 
 		const TextStyle* textStyle = nullptr;
 		const TextPalette* textPalette = nullptr;
 
-		int borderRadius = 0;
+		margins margin = { 0, 0, 0, 0 };
+		color colorBg;
+
+		int prefferedWidth = 0;
+		int prefferedHeight = 0;
+
+		std::optional<StyleSize> _size;
+	};
+
+
+	struct FlatLabel: public StyleBase {
+	};
+
+	struct FlatButton: public StyleBase {
 	};
 
 	struct Separator {
@@ -70,25 +70,10 @@ namespace base::qt::style {
 		color colorFg;
 	};
 
-	struct Slider {
-
+	struct Slider: public StyleBase {
 	};
 
-	struct PopupMenu {
-		margins margin = { 0, 0, 0, 0 };
-		color colorBg;
-
-		const TextStyle* textStyle = nullptr;
-		const TextPalette* textPalette = nullptr;
-
-		int borderRadius = 0;
-
-		int maximumWidth = 0;
-		int maximumHeight = 0;
-
-		int minimumWidth = 0;
-		int minimumHeight = 0;
-
+	struct PopupMenu: public StyleBase {
 		int actionHeight = 0;
 	};
 

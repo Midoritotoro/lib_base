@@ -26,10 +26,9 @@ namespace base::qt::ui {
 
 
 	class FlatLabel :
-		public QWidget,
+		public CoreWidget<style::FlatLabel>,
 		public common::ClickHandlerHost
 	{
-		Q_OBJECT
 	public:
 		struct ContextMenuRequest {
 			PopupMenu* menu;
@@ -70,7 +69,9 @@ namespace base::qt::ui {
 		void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
 		[[nodiscard]] style::CornersRoundMode cornerRoundMode() const noexcept;
 
-		void setStyle(const style::FlatLabel* style, bool repaint = true);
+		void setStyle(
+			const style::FlatLabel* style,
+			bool repaint = true);
 		[[nodiscard]] const style::FlatLabel* style() const noexcept;
 
 		void setContextMenuHook(Fn<void(ContextMenuRequest)> hook);
@@ -87,6 +88,9 @@ namespace base::qt::ui {
 		void overrideLinkClickHandler(Fn<void(QString url)> handler);
 
 		void init();
+
+		[[nodiscard]] int horizontalMargins() const noexcept;
+		[[nodiscard]] int verticalMargins() const noexcept;
 	protected:
 		void paintEvent(QPaintEvent* event) override;
 		void mouseMoveEvent(QMouseEvent* event) override;
@@ -144,8 +148,6 @@ namespace base::qt::ui {
 			Dragging = 0x02,
 			Selecting = 0x04,
 		};
-
-		const style::FlatLabel* _st = nullptr;
 
 		style::align _alignment = style::alignLeft;
 		text::String _text;

@@ -3,7 +3,6 @@
 #include <QPainterPath>
 #include <QPainter>
 
-#include <base/qt/style/StyleFont.h>
 #include <base/qt/style/StyleWidgets.h>
 
 

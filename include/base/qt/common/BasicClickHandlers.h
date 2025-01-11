@@ -37,6 +37,7 @@ namespace base::qt::common {
 		[[nodiscard]] QString originalUrl() const {
 			return _originalUrl;
 		}
+		 
 
 		QString copyToClipboardContextItemText() const override;
 

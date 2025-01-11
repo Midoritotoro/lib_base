@@ -13,10 +13,10 @@ namespace base::qt::ui {
 		const style::PopupMenu* menuStyle,
 		const style::MenuAction* actionStyle
 	) :
-		QWidget(parent)
-		, _st(menuStyle)
+		BaseWidget(parent)
 		, _actionSt(actionStyle)
 	{
+		setStyle(menuStyle);
 		setAttribute(Qt::WA_OpaquePaintEvent, false);
 
 		setAttribute(Qt::WA_TranslucentBackground);
@@ -37,7 +37,7 @@ namespace base::qt::ui {
 
 		_opacityAnimation.setAnimationCallback([this] {
 			update();
-			});
+		});
 	}
 
 	PopupMenu::~PopupMenu() {
@@ -86,12 +86,12 @@ namespace base::qt::ui {
 	}
 
 	void PopupMenu::setStyle(const style::PopupMenu* style, bool repaint) {
-		_st = style;
+		_style = style;
 		update();
 	}
 
 	const style::PopupMenu* PopupMenu::style() const noexcept {
-		return _st;
+		return _style;
 	}
 
 	void PopupMenu::setDeleteOnHide(bool deleteOnHide) {
@@ -119,13 +119,13 @@ namespace base::qt::ui {
 	void PopupMenu::addSeparator() {
 		const auto separator = new Separator(this,
 			new style::Separator{
-				.width = width() 
-					- _st->margin.left()
-					- _st->margin.right(),
+				.width = width()
+					- _style->margin.left()
+					- _style->margin.right(),
 				.padding = { 5, 5, 5, 5 },
 				.colorFg = Qt::white
 			},
-		_st);
+		_style);
 	}
 
 	void PopupMenu::popup(const QPoint& point) {
@@ -151,7 +151,7 @@ namespace base::qt::ui {
 		painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 
 		painter.setPen(Qt::NoPen);
-		painter.setBrush(_st->colorBg);
+		painter.setBrush(_style->colorBg);
 
 		if (_opacityAnimation.animating()) {
 			painter.setOpacity(_opacityAnimation.opacity());
@@ -176,21 +176,24 @@ namespace base::qt::ui {
 	}
 
 	void PopupMenu::updateGeometry() {
-		const auto fullWidth = _st->maximumWidth
-			+ _st->margin.left()
-			+ _st->margin.right();
+		const auto maximumWidth = _style->_size ? _style->_size->maximumWidth : _style->prefferedWidth;
+		const auto maximumHeight = _style->_size ? _style->_size->maximumHeight : _style->prefferedHeight;
 
-		const auto fullHeight = _st->maximumHeight
-			+ _st->margin.top()
-			+ _st->margin.bottom();
+		const auto fullWidth = _style->_size->maximumWidth
+			+ _style->margin.left()
+			+ _style->margin.right();
+
+		const auto fullHeight = _style->_size->maximumHeight
+			+ _style->margin.top()
+			+ _style->margin.bottom();
 
 		resize(fullWidth, fullHeight);
 
 		for (auto index = 0; index < _actions.size(); ++index) {
-			_actions[index]->resize(_st->maximumWidth, _st->actionHeight);
+			_actions[index]->resize(_style->_size->maximumWidth, _style->actionHeight);
 			index != 0
 				? _actions[index]->move(_actions[index]->rect().bottomLeft())
-				: _actions[index]->move(0, _st->margin.top());
+				: _actions[index]->move(0, _style->margin.top());
 		}
 	}
 } // namespace base::qt::ui

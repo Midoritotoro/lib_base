@@ -3,6 +3,8 @@
 #include <base/qt/style/StyleCore.h>
 #include <base/qt/common/Types.h>
 
+#include <base/qt/ui/BaseWidget.h>
+
 #include <QAbstractButton>
 #include <QStyleOptionComplex>
 
@@ -49,8 +51,11 @@ namespace base::qt::style {
 
 
 namespace base::qt::ui {
-	class AbstractFlatButton : public QAbstractButton {
-		Q_OBJECT
+	class AbstractFlatButton : 
+		public BaseWidget<
+			QAbstractButton,
+			style::FlatButton> 
+	{
 	public:
 		AbstractFlatButton(QWidget* parent = nullptr);
 
@@ -60,16 +65,9 @@ namespace base::qt::ui {
 		void setText(const QString& text);
 		[[nodiscard]] QString text() const noexcept;
 
-		void setTextColor(const QColor& color);
-		[[nodiscard]] QColor textColor() const noexcept;
-
-		void setColor(const QColor& color);
-		[[nodiscard]] QColor color() const noexcept;
-
 		void setStyle(
 			const style::FlatButton* style,
-			bool repaint = true);
-		[[nodiscard]] const style::FlatButton* style() const noexcept;
+			bool repaint = true) override;
 
 		void setOpacity(float opacity);
 		[[nodiscard]] float opacity() const noexcept;
@@ -119,11 +117,6 @@ namespace base::qt::ui {
 		[[nodiscard]] QRect textRect(const QRect& iconRect) const noexcept;
 		[[nodiscard]] QRect badgeRect(const QRect& iconRect) const noexcept;
 	private:
-		const style::FlatButton* _st = nullptr;
-
-		QColor _color;
-		QColor _textColor;
-
 		QString _text;
 
 		mutable QSize _sizeHint;

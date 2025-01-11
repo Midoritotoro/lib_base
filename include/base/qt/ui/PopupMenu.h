@@ -2,22 +2,22 @@
 
 #include <base/qt/common/Timer.h>
 
-#include <base/qt/style/StyleFont.h>
-#include <base/qt/style/StyleWidgets.h>
-
 #include <base/qt/ui/FlatButton.h>
-#include <base/qt/ui/animations/OpacityAnimation.h>
-#include <base/qt/ui/animations/VerticalGrowthAnimation.h>
 
+#include <base/qt/ui/animations/OpacityAnimation.h>
 #include <base/qt/ui/animations/CombinedGrowthAnimation.h>
 
-#include <QWidget>
+#include <base/qt/ui/BaseWidget.h>
+
 #include <QAction>
 
 
 namespace base::qt::ui {
-	class PopupMenu : public QWidget {
-		Q_OBJECT
+	class PopupMenu : 
+		public BaseWidget<
+			QWidget,
+			style::PopupMenu>
+	{
 	public:
 		using Action = FlatButton;
 		using Actions = std::vector<Action*>;
@@ -62,7 +62,6 @@ namespace base::qt::ui {
 	private:
 		void updateGeometry();
 
-		const style::PopupMenu* _st = nullptr;
 		const style::MenuAction* _actionSt = nullptr;
 
 		Actions _actions;

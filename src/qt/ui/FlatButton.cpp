@@ -14,7 +14,6 @@ namespace base::qt::ui {
     FlatButton::FlatButton(QWidget* parent) :
         AbstractFlatButton(parent)
     {
-        setColor(palette().color(QPalette::Base));
         setToolButtonStyle(Qt::ToolButtonTextOnly);
 
         setStyle(style::defaultFlatButtonStyle);
@@ -158,8 +157,8 @@ namespace base::qt::ui {
     {
         painter.setFont(font());
 
-       if (images::IsRgbNull(textColor().rgb()) == false) {
-            painter.setPen(textColor());
+       if (images::IsRgbNull(_style->colorBg.rgb()) == false) {
+            painter.setPen(_style->colorBg);
             painter.drawText(option.rect, Qt::AlignCenter, this->text());
             return;
         }
@@ -180,7 +179,7 @@ namespace base::qt::ui {
         auto painter = QPainter(this);
 
         painter.setOpacity(opacity());
-        painter.setBrush(color());
+        painter.setBrush(_style->colorBg);
         painter.setRenderHints(
             QPainter::SmoothPixmapTransform 
             | QPainter::TextAntialiasing 
@@ -189,7 +188,7 @@ namespace base::qt::ui {
         auto option = QStyleOptionComplex();
         option.initFrom(this);
 
-        option.palette = color();
+        option.palette = _style->colorBg;
 
         if (isDown())
             option.state |= QStyle::State_Sunken;

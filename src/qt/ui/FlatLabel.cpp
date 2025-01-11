@@ -24,8 +24,7 @@
 
 namespace base::qt::ui {
 	FlatLabel::FlatLabel(QWidget* parent) :
-		QWidget(parent)
-		, common::ClickHandlerHost()
+		CoreWidget(parent)
 	{
 		init();
 
@@ -49,8 +48,22 @@ namespace base::qt::ui {
 	}
 
 	void FlatLabel::setText(const QString& text) {
-		_text.setText(_st->textStyle, text, _labelOptions);
+		_text.setText(_style->textStyle, text, _labelOptions);
 		textUpdated();
+	}
+
+	int FlatLabel::horizontalMargins() const noexcept {
+		return _style
+			? _style->margin.left()
+			+ _style->margin.right()
+			: 0;
+	}
+
+	int FlatLabel::verticalMargins() const noexcept {
+		return _style
+			? _style->margin.bottom()
+			  + _style->margin.top()
+			: 0;
 	}
 
 	const text::String& FlatLabel::text() const noexcept {
@@ -109,9 +122,10 @@ namespace base::qt::ui {
 	}
 
 	int FlatLabel::textMaxWidth() const noexcept {
-		return _st->maximumWidth
-			- _st->margin.left()
-			- _st->margin.right();
+		return (_style->_size && _style->_size->maximumWidth)
+			? _style->_size->maximumWidth
+				- horizontalMargins()
+			: _text.maxWidth();
 	}
 
 	bool FlatLabel::hasLinks() const noexcept {
@@ -119,9 +133,7 @@ namespace base::qt::ui {
 	}
 
 	int FlatLabel::fullHeight() const noexcept {
-		return _fullTextHeight
-			+ _st->margin.top()
-			+ _st->margin.bottom();
+		return _fullTextHeight + verticalMargins();
 	}
 
 	void FlatLabel::setTextAlignment(Qt::Alignment alignment) {
@@ -144,41 +156,42 @@ namespace base::qt::ui {
 		if (style == nullptr)
 			return;
 
-		_st = style;
+		_style = style;
 
 		const auto parentWidget = qobject_cast<QWidget*>(parent());
 
 		if (const auto maxWidth = textMaxWidth(); maxWidth)
 			_text.setMaximumWidth(maxWidth);
 
-		if (style->minimumHeight)
-			_text.setMinimumHeight(style->minimumHeight);
+		if (style->_size && _style->_size->minimumHeight)
+			_text.setMinimumHeight(_style->_size->minimumHeight);
 
-		if (!style->maximumHeight || !style->maximumWidth) {
-			auto _style = *_st;
+		if (style->_size && (!style->_size->maximumHeight || !style->_size->maximumWidth)) {
+			auto _Style = *_style;
 
-			if (!style->maximumHeight)
-				_style.maximumHeight = parentWidget
+			if (!style->_size->maximumHeight)
+				_Style._size->maximumHeight = parentWidget
 					? parentWidget->height()
 					: 0
 					? parentWidget->height()
 					: common::ScreenResolution().height();
 
-			if (!style->maximumWidth) {
-				_style.maximumWidth = parentWidget
+			if (!style->_size->maximumWidth) {
+				_Style._size->maximumWidth = parentWidget
 					? parentWidget->width()
 					: 0
 					? parentWidget->width()
 					: common::ScreenResolution().width();
 
 
-				if (_style.maximumWidth)
-					_text.setMaximumWidth(_style.maximumWidth
-						- _st->margin.left()
-						- _st->margin.right());
+				if (_Style._size->maximumWidth)
+					_text.setMaximumWidth((_Style._size && _Style._size->maximumWidth)
+						? _Style._size->maximumWidth
+							- horizontalMargins()
+						: _text.maxWidth());
 			}
 
-			_st = new style::FlatLabel(_style);
+			_style = new style::FlatLabel(_Style);
 		}
 
 		if (repaint == false || _text.toQString().isEmpty())
@@ -189,7 +202,7 @@ namespace base::qt::ui {
 	}
 
 	const style::FlatLabel* FlatLabel::style() const noexcept {
-		return _st;
+		return _style;
 	}
 
 	void FlatLabel::setContextMenuHook(Fn<void(ContextMenuRequest)> hook) {
@@ -255,28 +268,27 @@ namespace base::qt::ui {
 
 		const auto textWidth = textMaxWidth() && _text.maxWidth()
 			? qMin(textMaxWidth(), _text.maxWidth()
-				+ _st->margin.left() + _st->margin.right())
+				+ horizontalMargins())
 					: _textWidth && _text.maxWidth()
 			? qMin(_textWidth, _text.maxWidth() 
-				+ _st->margin.left() + _st->margin.right())
+				+ horizontalMargins())
 					: width()
-						- _st->margin.left()
-						- _st->margin.right();
+						- horizontalMargins();
 
 		const auto recountedSize = QSize(textWidth, height());
-		style::RoundCorners(painter, recountedSize, _st->borderRadius, _cornersRoundMode);
+		style::RoundCorners(painter, recountedSize, _style->borderRadius, _cornersRoundMode);
 
-		painter.fillRect(QRect(QPoint(), recountedSize), _st->colorBg);
+		painter.fillRect(QRect(QPoint(), recountedSize), _style->colorBg);
 
 		painter.setPen(Qt::white);
 
 		const auto textLeft = _textWidth
 			? ((_alignment & Qt::AlignLeft)
-				? _st->margin.left()
+				? _style->margin.left()
 				: (_alignment & Qt::AlignHCenter)
 				? ((width() - _textWidth) / 2)
-				: (width() - _st->margin.right() - _textWidth))
-			: _st->margin.left();
+				: (width() - _style->margin.right() - _textWidth))
+			: _style->margin.left();
 
 		const auto selection = !_selection.empty()
 			? _selection
@@ -284,7 +296,11 @@ namespace base::qt::ui {
 			? _savedSelection
 			: _selection;
 
-		const auto heightExceeded = _st->maximumHeight < _fullTextHeight
+		const auto maximumHeight = _style->_size
+			? _style->_size->maximumHeight
+			: 0;
+
+		const auto heightExceeded = maximumHeight < _fullTextHeight
 			|| textMaxWidth() ? textWidth < textMaxWidth() : textWidth;
 
 		const auto renderElided = _breakEverywhere || heightExceeded;
@@ -295,12 +311,12 @@ namespace base::qt::ui {
 
 		const auto elisionHeight = !renderElided
 			? 0
-			: _st->maximumHeight
-			? qMax(_st->maximumHeight, lineHeight)
+			: maximumHeight
+			? qMax(maximumHeight, lineHeight)
 			: height();
 
 		_text.draw(painter, {
-			.position = { textLeft, _st->margin.top() },
+			.position = { textLeft, _style->margin.top()},
 			.availableWidth = textWidth,
 			.align = _alignment,
 			.clip = event->rect(),
@@ -669,13 +685,15 @@ namespace base::qt::ui {
 		if (_selectable)
 			request.flags |= text::StateRequest::StateFlag::LookupSymbol;
 
-		const auto textWidth = width()
-			- _st->margin.left()
-			- _st->margin.right();
+		const auto textWidth = width() - horizontalMargins();
+
+		const auto maximumHeight = _style->_size
+			? _style->_size->maximumHeight
+			: 0;
 
 		auto state = text::TextState();
 
-		const auto heightExceeded = (_st->maximumHeight < _fullTextHeight
+		const auto heightExceeded = (maximumHeight < _fullTextHeight
 			|| textWidth < _text.maxWidth());
 		const auto renderElided = _breakEverywhere || heightExceeded;
 
@@ -684,18 +702,18 @@ namespace base::qt::ui {
 				? qMax(_text.style()->lineHeight, _text.style()->_font->height)
 				: 1;
 
-			const auto lines = qMax(_st->maximumHeight / lineHeight, 1);
+			const auto lines = qMax(maximumHeight / lineHeight, 1);
 			request.lines = lines;
 
 			if (_breakEverywhere)
 				request.flags |= text::StateRequest::StateFlag::BreakEverywhere;
 
-			state = _text.getStateElided(m - QPoint(_st->margin.left(),
-				_st->margin.top()), textWidth, request);
+			state = _text.getStateElided(m - QPoint(_style->margin.left(),
+				_style->margin.top()), textWidth, request);
 		}
 		else
-			state = _text.getState(m - QPoint(_st->margin.left(),
-				_st->margin.top()), textWidth, request);
+			state = _text.getState(m - QPoint(_style->margin.left(),
+				_style->margin.top()), textWidth, request);
 
 
 		return state;
@@ -833,9 +851,14 @@ namespace base::qt::ui {
 	}
 
 	int FlatLabel::countTextHeight(int textWidth) {
+		const auto maximumHeight = _style->_size
+			? _style->_size->maximumHeight
+			: 0;
+
 		_fullTextHeight = _text.countHeight(textWidth, _breakEverywhere);
-		return _st->maximumHeight
-			? qMin(_fullTextHeight, _st->maximumHeight)
+
+		return maximumHeight
+			? qMin(_fullTextHeight, maximumHeight)
 			: _fullTextHeight;
 	}
 
@@ -843,13 +866,8 @@ namespace base::qt::ui {
 		const auto textWidth = countTextWidth();
 		const auto textHeight = countTextHeight(textWidth);
 
-		const auto fullWidth = textWidth
-			+ _st->margin.left()
-			+ _st->margin.right();
-
-		const auto fullHeight = textHeight
-			+ _st->margin.top()
-			+ _st->margin.bottom();
+		const auto fullWidth = textWidth + horizontalMargins();
+		const auto fullHeight = textHeight + verticalMargins();
 
 		resize(fullWidth, fullHeight);
 	}

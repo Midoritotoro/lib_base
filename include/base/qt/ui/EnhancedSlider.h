@@ -14,7 +14,7 @@ namespace base::qt::ui {
     {
     private:
         Q_OBJECT
-            uint16_t m_HandleLen;
+        uint16_t m_HandleLen;
         bool bIsMove = false;
     public:
         EnhancedSlider(

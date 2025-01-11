@@ -1,15 +1,17 @@
 #pragma once
 
 #include <base/qt/style/StyleWidgets.h>
-#include <QWidget>
+#include <base/qt/ui/BaseWidget.h>
+
 
 namespace base::qt::ui {
-	class Separator : public QWidget {
-		Q_OBJECT
+	class Separator : 
+		public CoreWidget<style::Separator>
+	{
 	public:
 		Separator(
 			QWidget* parent,
-			const style::Separator* style,
+			const SelfStyle* style,
 			const style::PopupMenu* menuStyle);
 	private:
 		const int _lineWidth;

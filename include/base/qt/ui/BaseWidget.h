@@ -4,6 +4,8 @@
 #include <base/TypeTraits.h>
 
 #include <base/qt/ui/Utility.h>
+#include <base/Assert.h>
+
 #include <QSurfaceFormat>
 
 #include <QWidget>
@@ -37,9 +39,9 @@ namespace base::qt::ui {
 	using BaseStyle = std::conditional_t<
 		std::is_base_of_v<style::StyleBase, St>,
 		St,
-		style::StyleBase>>;
+		style::StyleBase>;
 
-	class BaseQWidgetHelper:
+	class BaseQWidgetHelper :
 		public BaseWidgetHelper<QWidget>
 	{
 		Q_OBJECT
@@ -54,7 +56,7 @@ namespace base::qt::ui {
 				QSurfaceFormat::setDefaultFormat(format);
 
 				return true;
-			}();
+				}();
 		}
 
 		virtual [[nodiscard]] QRect rectNoMargins() {
@@ -76,6 +78,9 @@ namespace base::qt::ui {
 		virtual [[nodiscard]] QRect visibleArea() {}
 		virtual [[nodiscard]] QRect hiddenArea() {}
 
+		virtual [[nodiscard]] int verticalMargins() {}
+		virtual [[nodiscard]] int horizontalMargins() {}
+
 		virtual void setStyle(
 			const style::StyleBase* style,
 			bool repaint = false)
@@ -90,42 +95,51 @@ namespace base::qt::ui {
 
 	template <typename Widget>
 	using BaseParent = std::conditional_t<
-		std::is_same_v<Widget, QWidget>,
-		QWidget,
+		std::is_same_v<QWidget, Widget>,
+		BaseQWidgetHelper,
 		BaseWidgetHelper<Widget>>;
-
 
 	template <
 		typename Widget = QWidget,
 		typename St = BaseStyle<style::StyleBase>>
 	class BaseWidget
 		: public BaseParent<Widget>
+	//	Q_OBJECT
 	{
+	protected:
 		using Self = BaseWidget<Widget>;
 		using Parent = BaseParent<Widget>;
-		using Style = St;
+		using SelfStyle = St;
 	public:
 		using Parent::Parent;
 
 		virtual QMargins getMargins() {
-			return QMargins()
-				? ((_style != nullptr) && (constexpr has_member<
-					std::decay_t<decltype(_style)>, std::decay_t<decltype(_style)>::margin)>)) == false
-				: _style->margin;
+			Expects(_style != nullptr);
+			return _style->margin;
 		}
 
-		[[nodiscard]] QRect visibleArea() override {
+		[[nodiscard]] int verticalMargins() {
+			Expects(_style != nullptr);
+			return _style->margin.bottom() + _style.margin.top();
+		}
+
+		[[nodiscard]] int horizontalMargins() {
+			Expects(_style != nullptr);
+			return _style->margin.left() + _style.margin.right();
+		}
+
+		[[nodiscard]] QRect visibleArea() {
 			return QRect()
-				? (constexpr has_method<Self>,
+				? (has_method<Self>,
 					Self::visibleRegion>) == false
 				: Self::visibleRegion();
 		}
 
-		[[nodiscard]] QRect hiddenArea() override {
+		[[nodiscard]] QRect hiddenArea() {
 			const auto selfRect = Self::rect();
 			const auto selfVisibleRect = visibleArea();
 
-			if (visibleRect.contains(widgetRect))
+			if (selfVisibleRect.isNull() || selfVisibleRect.contains(selfRect))
 				return QRect();
 			
 			const auto left = std::min(selfRect.left(), selfVisibleRect.left());
@@ -136,13 +150,13 @@ namespace base::qt::ui {
 
 			const auto hiddenRect = QRect(left, top, right - left, bottom - top);
 
-			return hiddenRect.intersected(widgetRect) 
-					- visibleRect.intersected(widgetRect);
+			return hiddenRect.intersected(selfRect)
+					- selfVisibleRect.intersected(selfRect);
 		}
 
 		void setStyle(
-			const Style* style,
-			bool repaint = false) override 
+			const SelfStyle* style,
+			bool repaint = false)  
 		{
 			_style = style;
 
@@ -150,11 +164,21 @@ namespace base::qt::ui {
 				update();
 		};
 
-		[[nodiscard]] const Style* style() override {
+		[[nodiscard]] const SelfStyle* style()  {
 			return _style;
 		};
 	protected:
-		const Style* _style = nullptr;
+		const SelfStyle* _style = nullptr;
+	};
+
+	template <typename St = BaseStyle<style::StyleBase>>
+	class CoreWidget: 
+		public BaseWidget<QWidget> 
+	{
+	protected:
+		using SelfStyle = St;
+	public:
+		using BaseWidget<QWidget>::BaseWidget;
 	};
 
 } // namespace base::qt::ui

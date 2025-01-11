@@ -5,7 +5,6 @@
 
 namespace base::qt::ui {
 	class FlatButton final : public AbstractFlatButton {
-		Q_OBJECT
 	public:
 		FlatButton(QWidget* parent = nullptr);
 	protected:

@@ -43,21 +43,26 @@ namespace base::qt::style {
 		   .linkUnderLine = true,
 		   .blockquote = {} };
 
-		defaultFlatLabelStyle = new FlatLabel{
-			.margin = margins{ 10, 10, 10, 10 },
-			.colorBg = color(24, 37, 51),
+		defaultFlatLabelStyle = new FlatLabel{ StyleBase {
+
+			.borderRadius = 10,
+			.borderWidth = 1,
 
 			.textStyle = defaultTextStyle,
 			.textPalette = &defaultTextPalette,
 
-			.borderRadius = 10,
 
-		/*  .maximumWidth = style::maximumMessageWidth,
-			.maximumHeight = style::maximumTextHeight,
-			*/
-			.minimumWidth = style::minimumMessageWidth,
-			.minimumHeight = style::minimumMessageHeight,
-		};
+			.margin = margins{ 10, 10, 10, 10 },
+			.colorBg = color(24, 37, 51),
+
+			/*  .maximumWidth = style::maximumMessageWidth,
+				.maximumHeight = style::maximumTextHeight,
+				*/
+			._size = StyleSize{
+				.minimumWidth = style::minimumMessageWidth,
+				.minimumHeight = style::minimumMessageHeight,
+			}
+		}};
 
 		defaultPopupMenuStyle = new PopupMenu{
 			.margin = { 0, 0, 0, 0 },
