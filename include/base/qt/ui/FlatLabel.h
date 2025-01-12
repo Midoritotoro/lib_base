@@ -11,6 +11,7 @@
 
 #include <base/qt/common/UniqueQPtr.h>
 
+
 namespace base::qt::ui {
 	namespace {
 		inline constexpr auto phraseContextCopySelected = "Копировать текст";
@@ -70,9 +71,8 @@ namespace base::qt::ui {
 		[[nodiscard]] style::CornersRoundMode cornerRoundMode() const noexcept;
 
 		void setStyle(
-			const style::FlatLabel* style,
-			bool repaint = true);
-		[[nodiscard]] const style::FlatLabel* style() const noexcept;
+			const SelfStyle* style,
+			bool repaint = true) override;
 
 		void setContextMenuHook(Fn<void(ContextMenuRequest)> hook);
 
@@ -89,8 +89,21 @@ namespace base::qt::ui {
 
 		void init();
 
-		[[nodiscard]] int horizontalMargins() const noexcept;
-		[[nodiscard]] int verticalMargins() const noexcept;
+		 QMargins getMargins() {
+			Expects(_style != nullptr);
+			return _style->margin;
+		}
+
+		 [[nodiscard]] int verticalMargins() {
+			Expects(_style != nullptr);
+			return _style->margin.bottom() + _style->margin.top();
+		}
+
+		 [[nodiscard]] int horizontalMargins() {
+			Expects(_style != nullptr);
+			return _style->margin.left() + _style->margin.right();
+			}
+
 	protected:
 		void paintEvent(QPaintEvent* event) override;
 		void mouseMoveEvent(QMouseEvent* event) override;

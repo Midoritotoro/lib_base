@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
 	const auto ratio = application.devicePixelRatio();
 	const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
-	qDebug() << qCeil(ratio);
+
 	base::qt::style::SetDevicePixelRatio(useRatio);
 
 	base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);

@@ -6,12 +6,12 @@
 
 namespace base::qt::ui {
 	class Separator : 
-		public CoreWidget<style::Separator>
+		public QWidget
 	{
 	public:
 		Separator(
 			QWidget* parent,
-			const SelfStyle* style,
+			const style::Separator* style,
 			const style::PopupMenu* menuStyle);
 	private:
 		const int _lineWidth;

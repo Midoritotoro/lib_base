@@ -16,7 +16,7 @@ namespace base::qt::ui {
 		BaseWidget(parent)
 		, _actionSt(actionStyle)
 	{
-		setStyle(menuStyle);
+		setStyle(menuStyle, true);
 		setAttribute(Qt::WA_OpaquePaintEvent, false);
 
 		setAttribute(Qt::WA_TranslucentBackground);
@@ -83,15 +83,6 @@ namespace base::qt::ui {
 
 	float PopupMenu::opacity() const noexcept {
 		return _opacity;
-	}
-
-	void PopupMenu::setStyle(const style::PopupMenu* style, bool repaint) {
-		_style = style;
-		update();
-	}
-
-	const style::PopupMenu* PopupMenu::style() const noexcept {
-		return _style;
 	}
 
 	void PopupMenu::setDeleteOnHide(bool deleteOnHide) {

@@ -5,10 +5,10 @@
 namespace base::qt::ui {
 	Separator::Separator(
 		QWidget* parent,
-		const SelfStyle* style,
+		const style::Separator* style,
 		const style::PopupMenu* menuStyle
 	) :
-		BaseWidget(parent)
+		QWidget(parent)
 		, _lineWidth(style->width)
 		, _padding(style->padding)
 		, _fg(style->colorFg)

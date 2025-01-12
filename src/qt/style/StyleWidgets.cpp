@@ -51,55 +51,60 @@ namespace base::qt::style {
 			.textStyle = defaultTextStyle,
 			.textPalette = &defaultTextPalette,
 
-
 			.margin = margins{ 10, 10, 10, 10 },
 			.colorBg = color(24, 37, 51),
 
-			/*  .maximumWidth = style::maximumMessageWidth,
-				.maximumHeight = style::maximumTextHeight,
-				*/
 			._size = StyleSize{
+				.maximumWidth = 0,//style::maximumMessageWidth,
+				.maximumHeight = 0,//style::maximumTextHeight,
+
 				.minimumWidth = style::minimumMessageWidth,
 				.minimumHeight = style::minimumMessageHeight,
 			}
 		}};
 
-		defaultPopupMenuStyle = new PopupMenu{
+		defaultPopupMenuStyle = new PopupMenu{ StyleBase{
+
+			.borderRadius = 10,
+			.borderWidth = 1,
+
+			.textStyle = defaultTextStyle,
+			.textPalette = &defaultTextPalette,
+
 			.margin = { 0, 0, 0, 0 },
 			.colorBg = color(24, 37, 51),
 
+			._size = StyleSize {
+				.maximumWidth = 150,
+				.maximumHeight = 210,
+
+				.minimumWidth = 64,
+				.minimumHeight = 30,
+			}
+		}};
+
+		defaultFlatButtonStyle = new FlatButton{ StyleBase {
+			.borderRadius = 10,
+			.borderWidth = 1,
+
 			.textStyle = defaultTextStyle,
 			.textPalette = &defaultTextPalette,
 
-			.borderRadius = 10,
-
-			.maximumWidth = 150,
-			.maximumHeight = 210,
-
-			.minimumWidth = 64,
-			.minimumHeight = 30,
-
-			.actionHeight = 30
-		};
-
-		defaultFlatButtonStyle = new FlatButton{
 			.margin = margins{ 0, 0, 0, 0 },
 			.colorBg = color(24, 37, 51),
-
-			.textStyle = defaultTextStyle,
-			.textPalette = &defaultTextPalette,
-
-			.borderRadius = 10
+			}
 		};
 
-		defaultActionStyle = new style::MenuAction{
-			.margin = style::margins{ 0, 0, 0, 0 },
-			.colorBg = style::color(24, 37, 51),
+		defaultActionStyle = new style::MenuAction{ StyleBase {
+			.borderRadius = 0,
+			.borderWidth = 0,
 
 			.textStyle = style::defaultTextStyle,
 			.textPalette = &style::defaultTextPalette,
 
-			.borderRadius = 0
+			.margin = style::margins{ 0, 0, 0, 0 },
+			.colorBg = style::color(24, 37, 51),
+			}
 		};
 
 	}

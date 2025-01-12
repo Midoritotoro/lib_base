@@ -40,11 +40,6 @@ namespace base::qt::ui {
 		void setOpacity(float opacity);
 		[[nodiscard]] float opacity() const noexcept;
 
-		void setStyle(
-			const style::PopupMenu* style,
-			bool repaint = true);
-		[[nodiscard]] const style::PopupMenu* style() const noexcept;
-
 		void setDeleteOnHide(bool deleteOnHide);
 		[[nodiscard]] bool deleteOnHide() const noexcept;
 

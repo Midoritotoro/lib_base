@@ -52,20 +52,6 @@ namespace base::qt::ui {
 		textUpdated();
 	}
 
-	int FlatLabel::horizontalMargins() const noexcept {
-		return _style
-			? _style->margin.left()
-			+ _style->margin.right()
-			: 0;
-	}
-
-	int FlatLabel::verticalMargins() const noexcept {
-		return _style
-			? _style->margin.bottom()
-			  + _style->margin.top()
-			: 0;
-	}
-
 	const text::String& FlatLabel::text() const noexcept {
 		return _text;
 	}
@@ -152,7 +138,7 @@ namespace base::qt::ui {
 		return _cornersRoundMode;
 	}
 
-	void FlatLabel::setStyle(const style::FlatLabel* style, bool repaint) {
+	void FlatLabel::setStyle(const SelfStyle* style, bool repaint) {
 		if (style == nullptr)
 			return;
 
@@ -191,8 +177,9 @@ namespace base::qt::ui {
 						: _text.maxWidth());
 			}
 
-			_style = new style::FlatLabel(_Style);
+			_style = new SelfStyle(_Style);
 		}
+
 
 		if (repaint == false || _text.toQString().isEmpty())
 			return;
@@ -201,9 +188,6 @@ namespace base::qt::ui {
 		refreshSize();
 	}
 
-	const style::FlatLabel* FlatLabel::style() const noexcept {
-		return _style;
-	}
 
 	void FlatLabel::setContextMenuHook(Fn<void(ContextMenuRequest)> hook) {
 		_contextMenuHook = std::move(hook);

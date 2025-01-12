@@ -74,7 +74,7 @@ namespace base::qt::style {
 	};
 
 	struct PopupMenu: public StyleBase {
-		int actionHeight = 0;
+		int actionHeight = 30;
 	};
 
 	using MenuAction = FlatButton;
