@@ -76,6 +76,15 @@ set(QT_PRIVATE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/VerticalGrowthAnimation.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/CombinedGrowthAnimation.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/Blur.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/BlurBehind.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/OpenGLBlur.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_down.frag
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_up.frag
+    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/simple.vert
 )
 
 set(QT_PUBLIC_HEADERS 
@@ -134,6 +143,12 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/VerticalGrowthAnimation.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/CombinedGrowthAnimation.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/Blur.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/BlurBehind.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/OpenGLBlur.h
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/OpenGLVertex.h
 )
 
 include(CMakePackageConfigHelpers)

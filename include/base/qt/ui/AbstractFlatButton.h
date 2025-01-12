@@ -66,7 +66,7 @@ namespace base::qt::ui {
 		[[nodiscard]] QString text() const noexcept;
 
 		void setStyle(
-			const style::FlatButton* style,
+			const SelfStyle* style,
 			bool repaint = true) override;
 
 		void setOpacity(float opacity);

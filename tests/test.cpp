@@ -4,6 +4,8 @@
 #include <base/qt/ui/FlatLabel.h>
 #include <base/qt/common/MainQueueProcessor.h>
 
+#include <base/qt/ui/effects/BlurBehind.h>
+
 #include <QApplication>
 #include <QWidget>
 
@@ -29,10 +31,15 @@ int main(int argc, char* argv[]) {
 
 
 	QWidget widget;
+	//widget.setWindowFlag(Qt::FramelessWindowHint);
+	//widget.setAttribute(Qt::WA_TranslucentBackground, true);
+	//widget.setAttribute(Qt::WA_NoSystemBackground, true);
+	widget.setStyleSheet("background-color: rgba(1, 0, 0, 0.9");
+
 	widget.resize(1280, 720);
 	widget.setMouseTracking(true);
-	base::qt::ui::FlatLabel label(&widget);
 
+	base::qt::ui::FlatLabel label(&widget);
 
 	label.setText("Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст *Длинный текст* ```Длинный текст```");
 	widget.show();

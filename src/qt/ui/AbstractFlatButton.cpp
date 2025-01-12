@@ -80,7 +80,10 @@ namespace base::qt::style {
             return QSize(44, 22);
         }
 
-        QColor buttonColor(const QPalette& palette, QStyle::State state) noexcept {
+        QColor buttonColor(
+            const QPalette& palette,
+            QStyle::State state) noexcept
+        {
             const auto enabled = state & QStyle::State_Enabled;
             const auto pressed = state & QStyle::State_Sunken;
 
@@ -148,7 +151,7 @@ namespace base::qt::ui {
     }
 
     void AbstractFlatButton::setStyle(
-        const style::FlatButton* style,
+        const SelfStyle* style,
         bool repaint)
     {
         if (_style == style)

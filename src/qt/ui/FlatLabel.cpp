@@ -175,16 +175,16 @@ namespace base::qt::ui {
 			if (!style->_size->maximumHeight)
 				_Style._size->maximumHeight = parentWidget
 					? parentWidget->height()
-					: 0
 					? parentWidget->height()
-					: common::ScreenResolution().height();
-
+					: common::ScreenResolution().height()
+					: 0;
+				
 			if (!style->_size->maximumWidth) {
 				_Style._size->maximumWidth = parentWidget
 					? parentWidget->width()
-					: 0
 					? parentWidget->width()
-					: common::ScreenResolution().width();
+					: common::ScreenResolution().width()
+					: 0;
 
 
 				if (_Style._size->maximumWidth)
@@ -196,7 +196,6 @@ namespace base::qt::ui {
 
 			_style = new SelfStyle(_Style);
 		}
-
 
 		if (repaint == false || _text.toQString().isEmpty())
 			return;

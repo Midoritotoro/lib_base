@@ -122,7 +122,9 @@ namespace base::qt::ui {
 	{
 		Q_OBJECT
 	public:
-		BaseQWidgetHelper(QWidget* parent = nullptr) {
+		BaseQWidgetHelper(QWidget* parent = nullptr):
+			BaseWidgetHelper(parent)
+		{
 			[[maybe_unused]] static const auto Once = [] {
 				qDebug() << "Once Called";
 

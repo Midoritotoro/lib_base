@@ -15,8 +15,7 @@ namespace base::qt::ui {
         AbstractFlatButton(parent)
     {
         setToolButtonStyle(Qt::ToolButtonTextOnly);
-
-        setStyle(style::defaultFlatButtonStyle);
+        setStyle(style::defaultFlatButtonStyle, false);
 
         setFitToText(false);
         setIconSize({ 38, 38 });
@@ -31,7 +30,10 @@ namespace base::qt::ui {
         setCursor(style::cursorPointer);
     }
 
-    void FlatButton::drawBackground(QPainter& _painter, const QStyleOptionComplex& _option, const QRect& _iconRect)
+    void FlatButton::drawBackground(
+        QPainter& _painter, 
+        const QStyleOptionComplex& _option,
+        const QRect& _iconRect)
     {
         const auto checked = _option.state & QStyle::State_On;
         const auto hovered = _option.state & QStyle::State_MouseOver;
@@ -178,8 +180,11 @@ namespace base::qt::ui {
         const auto fill = rect().intersected(event->rect());
         auto painter = QPainter(this);
 
-        painter.setOpacity(opacity());
-        painter.setBrush(_style->colorBg);
+       // painter.setOpacity(opacity());
+
+        painter.setBrush(Qt::NoBrush);
+        painter.setPen(Qt::NoPen);
+
         painter.setRenderHints(
             QPainter::SmoothPixmapTransform 
             | QPainter::TextAntialiasing 
@@ -188,7 +193,7 @@ namespace base::qt::ui {
         auto option = QStyleOptionComplex();
         option.initFrom(this);
 
-        option.palette = _style->colorBg;
+        option.palette.setColor(QPalette::Base, _style->colorBg);
 
         if (isDown())
             option.state |= QStyle::State_Sunken;
