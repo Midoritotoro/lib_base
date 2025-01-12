@@ -89,21 +89,10 @@ namespace base::qt::ui {
 
 		void init();
 
-		 QMargins getMargins() {
-			Expects(_style != nullptr);
-			return _style->margin;
-		}
+		QMargins getMargins() const override;
 
-		 [[nodiscard]] int verticalMargins() {
-			Expects(_style != nullptr);
-			return _style->margin.bottom() + _style->margin.top();
-		}
-
-		 [[nodiscard]] int horizontalMargins() {
-			Expects(_style != nullptr);
-			return _style->margin.left() + _style->margin.right();
-			}
-
+		[[nodiscard]] int verticalMargins() const override;
+		[[nodiscard]] int horizontalMargins() const override;
 	protected:
 		void paintEvent(QPaintEvent* event) override;
 		void mouseMoveEvent(QMouseEvent* event) override;

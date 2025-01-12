@@ -57,8 +57,16 @@ namespace base::qt::ui {
 			ToggleChildrenVisibility(this, true);
 		}
 
-		virtual QMargins getMargins() {
+		virtual QMargins getMargins() const {
 			return QMargins();
+		}
+
+		virtual int verticalMargins() const {
+			return 0;
+		}
+
+		virtual int horizontalMargins() const {
+			return 0;
 		}
 
 	protected:
@@ -74,7 +82,7 @@ namespace base::qt::ui {
 		}
 
 		void leaveEvent(QEvent* e) final override {
-			if (auto parent = tparent())
+			if (auto parent = _parent())
 				parent->enterFromChildEvent(e, this);
 			
 			return leaveEventHook(e);
@@ -82,6 +90,12 @@ namespace base::qt::ui {
 
 		virtual void leaveEventHook(QEvent* e) {
 			return Base::leaveEvent(e);
+		}
+
+		virtual void leaveToChildEvent(QEvent* e, QWidget* child) {
+		}
+
+		virtual void enterFromChildEvent(QEvent* e, QWidget* child) {
 		}
 	private:
 		BaseQWidgetHelper* _parent() {
@@ -121,19 +135,19 @@ namespace base::qt::ui {
 				}();
 		}
 
-		virtual [[nodiscard]] QRect rectNoMargins() {
+		[[nodiscard]] QRect rectNoMargins() {
 			return rect().marginsRemoved(getMargins());
 		};
 
-		virtual [[nodiscard]] QSize sizeNoMargins() {
+		[[nodiscard]] QSize sizeNoMargins() {
 			return rectNoMargins().size();
 		}
 
-		virtual [[nodiscard]] int heightNoMargins() {
+		[[nodiscard]] int heightNoMargins() {
 			return rectNoMargins().height();
 		}
 
-		virtual [[nodiscard]] int widthNoMargins() {
+		[[nodiscard]] int widthNoMargins() {
 			return rectNoMargins().width();
 		}
 
@@ -143,14 +157,6 @@ namespace base::qt::ui {
 
 		virtual [[nodiscard]] QRect hiddenArea() {
 			return QRect();
-		}
-
-		virtual [[nodiscard]] int verticalMargins() {
-			return 0;
-		}
-
-		virtual [[nodiscard]] int horizontalMargins() {
-			return 0;
 		}
 	};
 
@@ -173,12 +179,11 @@ namespace base::qt::ui {
 	public:
 		using Parent::Parent;
 
-	
-		virtual [[nodiscard]] QRect visibleArea() {
+		 [[nodiscard]] QRect visibleArea() {
 			return Parent::visibleRegion().boundingRect();
 		}
 
-		virtual [[nodiscard]] QRect hiddenArea() {
+		 [[nodiscard]] QRect hiddenArea() {
 			const auto selfRect = Parent::rect();
 			const auto selfVisibleRect = visibleArea();
 

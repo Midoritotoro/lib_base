@@ -29,7 +29,7 @@ namespace base::qt::ui {
 		init();
 
 		setContentsMargins(0, 0, 0, 0);
-		setStyle(style::defaultFlatLabelStyle, false);
+		setStyle(style::defaultFlatLabelStyle, true);
 
 		setSelectable(true);
 		setDoubleClickSelectsParagraph(true);
@@ -46,6 +46,23 @@ namespace base::qt::ui {
 	void FlatLabel::init() {
 		_contextCopyText = phraseContextCopySelected;
 	}
+
+
+	QMargins FlatLabel::getMargins() const {
+		Expects(_style != nullptr);
+		return _style->margin;
+	}
+
+	int FlatLabel::verticalMargins() const {
+		Expects(_style != nullptr);
+		return _style->margin.bottom() + _style->margin.top();
+	}
+
+	int FlatLabel::horizontalMargins() const {
+		Expects(_style != nullptr);
+		return _style->margin.left() + _style->margin.right();
+	}
+
 
 	void FlatLabel::setText(const QString& text) {
 		_text.setText(_style->textStyle, text, _labelOptions);
