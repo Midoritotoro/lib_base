@@ -67,6 +67,8 @@ set(QT_PRIVATE_SOURCES
 	${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBuffer.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesPrepare.cpp
 
+     ${PROJECT_SOURCE_DIR}/src/qt/images/StackBlurTask.h
+
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationBase.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationManager.cpp
 
@@ -76,11 +78,10 @@ set(QT_PRIVATE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/VerticalGrowthAnimation.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/CombinedGrowthAnimation.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/Blur.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/BlurBehind.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/OpenGLBlur.cpp
+
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_down.frag
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_up.frag
@@ -143,8 +144,6 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/VerticalGrowthAnimation.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/CombinedGrowthAnimation.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/Blur.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/BlurBehind.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/OpenGLBlur.h
@@ -179,6 +178,7 @@ if(LIB_BASE_QT_ENABLE_FONTS)
     target_compile_definitions(lib_base_qt
         PUBLIC
             LIB_BASE_QT_ENABLE_FONTS
+            LIB_BASE_SHADERS="${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/"
     )
 endif()
 

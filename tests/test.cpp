@@ -31,10 +31,6 @@ int main(int argc, char* argv[]) {
 
 
 	QWidget widget;
-	//widget.setWindowFlag(Qt::FramelessWindowHint);
-	//widget.setAttribute(Qt::WA_TranslucentBackground, true);
-	//widget.setAttribute(Qt::WA_NoSystemBackground, true);
-	widget.setStyleSheet("background-color: rgba(1, 0, 0, 0.9");
 
 	widget.resize(1280, 720);
 	widget.setMouseTracking(true);

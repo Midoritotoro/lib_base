@@ -8,6 +8,7 @@
 #include <base/qt/ui/animations/CombinedGrowthAnimation.h>
 
 #include <base/qt/ui/BaseWidget.h>
+#include <base/qt/ui/effects/BlurBehind.h>
 
 #include <QAction>
 
@@ -63,6 +64,8 @@ namespace base::qt::ui {
 
 		animations::CombinedGrowthAnimation _animation;
 		animations::OpacityAnimation _opacityAnimation;
+
+		std::unique_ptr<BlurBehindEffect> _blur = nullptr;
 
 		float _opacity = 1.f;
 		bool _deleteOnHide;

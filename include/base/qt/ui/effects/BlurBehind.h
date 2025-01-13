@@ -6,13 +6,6 @@ class BlurBehindEffect :
         public QGraphicsEffect
 {
     Q_OBJECT
-    Q_PROPERTY(BlurMethod blurMethod READ blurMethod WRITE setBlurMethod)
-    Q_PROPERTY(int blurRadius READ blurRadius WRITE setBlurRadius NOTIFY blurRadiusChanged)
-    Q_PROPERTY(double blurOpacity READ blurOpacity WRITE setBlurOpacity NOTIFY blurOpacityChanged)
-    Q_PROPERTY(double sourceOpacity READ sourceOpacity WRITE setSourceOpacity NOTIFY sourceOpacityChanged)
-    Q_PROPERTY(double downsampleFactor READ downsampleFactor WRITE setDownsampleFactor NOTIFY downsampleFactorChanged)
-    Q_PROPERTY(QBrush backgroundBrush READ backgroundBrush WRITE setBackgroundBrush NOTIFY backgroundBrushChanged)
-
 public:
     enum class BlurMethod
     {
@@ -54,9 +47,8 @@ public:
 
     void setCoordinateSystem(Qt::CoordinateSystem _system);
     Qt::CoordinateSystem coordinateSystem() const;
-
 protected:
-    void draw(QPainter *_painter) Q_DECL_OVERRIDE;
+    void draw(QPainter *_painter) override;
 
 Q_SIGNALS:
     void blurRadiusChanged(int);

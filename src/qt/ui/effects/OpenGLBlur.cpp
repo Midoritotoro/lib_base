@@ -27,13 +27,13 @@ GLBlurFunctions::GLBlurFunctions()
     initializeOpenGLFunctions();
 
     m_ShaderProgram_kawase_up = new QOpenGLShaderProgram();
-    m_ShaderProgram_kawase_up->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/simple.vert");
-    m_ShaderProgram_kawase_up->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/dual_kawase_up.frag");
+    m_ShaderProgram_kawase_up->addShaderFromSourceFile(QOpenGLShader::Vertex, QString(LIB_BASE_SHADERS) + "simple.vert");
+    m_ShaderProgram_kawase_up->addShaderFromSourceFile(QOpenGLShader::Fragment, QString(LIB_BASE_SHADERS) + "dual_kawase_up.frag");
     m_ShaderProgram_kawase_up->link();
 
     m_ShaderProgram_kawase_down = new QOpenGLShaderProgram();
-    m_ShaderProgram_kawase_down->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/simple.vert");
-    m_ShaderProgram_kawase_down->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/dual_kawase_down.frag");
+    m_ShaderProgram_kawase_down->addShaderFromSourceFile(QOpenGLShader::Vertex, QString(LIB_BASE_SHADERS) + "simple.vert");
+    m_ShaderProgram_kawase_down->addShaderFromSourceFile(QOpenGLShader::Fragment, QString(LIB_BASE_SHADERS) + "dual_kawase_down.frag");
     m_ShaderProgram_kawase_down->link();
 
     m_VertexBuffer.create();

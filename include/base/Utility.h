@@ -13,36 +13,39 @@
 #include <cstdlib>
 #include <gsl/gsl>
 
+/**
+ *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
+ *\param name - "Имя" области видимости
+*/
 #define measureExecutionTime(name) \
 		 const auto ms = Time::now(); \
 		 const auto timer = gsl::finally([] { \
 			std::cout << name << " completed for: " \
 			<< Time::now() - ms << " ms" << '\n'; });
 
-/**
- *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
- *\param name - "Имя" области видимости
-*/
-
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
 
-
 namespace base {
-	using namespace std::ranges;
+	using namespace ::std::ranges;
 
 	template <typename F, typename Type, typename Type2>
 	concept indirectly_binary_invocable =
-		std::indirectly_readable<Type> &&
-		std::indirectly_readable<Type2> &&
-		std::copy_constructible<F>;
+		::std::indirectly_readable<Type> &&
+		::std::indirectly_readable<Type2> &&
+		::std::copy_constructible<F>;
 
 	struct plus
 	{
-		template<typename T, typename U>
-		constexpr auto operator()(T&& t, U&& u) const -> decltype((T&&)t + (U&&)u) {
+		template<
+			typename T,
+			typename U>
+		constexpr auto operator()(T&& t, U&& u) 
+			const -> decltype((T&&)t + (U&&)u) 
+		{
 			return (T&&)t + (U&&)u;
 		}
+
 		using is_transparent = void;
 	};
 
@@ -122,11 +125,11 @@ namespace base {
 
 	template<typename I, typename S, typename T,
 		typename Op = plus, typename P = identity>
-		requires std::input_iterator<I>&&
-	std::sentinel_for<S, I>&&
-		indirectly_binary_invocable<Op, T*, std::projected<I, P>>&&
-		std::assignable_from<T&, std::indirect_result_t<Op&,
-		T*, std::projected<I, P>>>
+		requires ::std::input_iterator<I>&&
+	::std::sentinel_for<S, I>&&
+		indirectly_binary_invocable<Op, T*, ::std::projected<I, P>>&&
+		::std::assignable_from<T&, ::std::indirect_result_t<Op&,
+		T*, ::std::projected<I, P>>>
 
 		always_inline [[nodiscard]] T accumulate(
 			I first,
@@ -143,9 +146,9 @@ namespace base {
 	template<typename Rng, typename T, typename Op = plus, typename P = identity>
 		requires input_range<Rng>&&
 	indirectly_binary_invocable<Op, T*,
-		std::projected<iterator_t<Rng>, P>>&&
-		std::assignable_from<T&, std::indirect_result_t<Op&, T*,
-		std::projected<iterator_t<Rng>, P>>>
+		::std::projected<iterator_t<Rng>, P>>&&
+		::std::assignable_from<T&, ::std::indirect_result_t<Op&, T*,
+		::std::projected<iterator_t<Rng>, P>>>
 
 		always_inline [[nodiscard]] T accumulate(
 			Rng&& rng,
@@ -153,8 +156,8 @@ namespace base {
 			Op op = Op{},
 			P proj = P{})
 	{
-		return (*this)(std::ranges::begin(rng), std::ranges::end(rng),
-			std::move(init), std::move(op), std::move(proj));
+		return (*this)(::std::ranges::begin(rng), ::std::ranges::end(rng),
+			::std::move(init), ::std::move(op), ::std::move(proj));
 	}
 
 	template <typename T>
@@ -171,7 +174,7 @@ namespace base {
 
 	template <typename T>
 	always_inline [[nodiscard]] T&& take(T& value) {
-		return std::exchange(value, T{});
+		return ::std::exchange(value, T{});
 	}
 
 #ifdef _WIN32

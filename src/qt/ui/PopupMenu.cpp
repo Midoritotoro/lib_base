@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QMouseEvent>
 
+#include <QPainterPath>
+
 
 namespace base::qt::ui {
 	PopupMenu::PopupMenu(
@@ -38,6 +40,28 @@ namespace base::qt::ui {
 		_opacityAnimation.setAnimationCallback([this] {
 			update();
 		});
+
+		_blur = std::make_unique<BlurBehindEffect>(this);
+		_blur->setBlurMethod(BlurBehindEffect::BlurMethod::StackBlur);
+
+		_blur->setDownsampleFactor(2.0);
+		_blur->setBlurRadius(5);
+
+		_blur->setBlurOpacity(0.7);
+		_blur->setSourceOpacity(1.0);
+
+		_blur->setBackgroundBrush(Qt::NoBrush);
+		_blur->setCoordinateSystem(Qt::DeviceCoordinates);
+
+		setGraphicsEffect(_blur.get());
+
+
+		connect(_blur.get(), &BlurBehindEffect::repaintRequired, this, qOverload<>(&PopupMenu::repaint));
+	//	connect(_blur.get(), &QGraphicsEffect::enabledChanged, this, &PopupMenu::setVisible);
+
+		QPalette pal;
+		pal.setBrush(QPalette::Window, Qt::black);
+		setPalette(pal);
 	}
 
 	PopupMenu::~PopupMenu() {
@@ -150,7 +174,16 @@ namespace base::qt::ui {
 				_actions[index]->setOpacity(_opacityAnimation.opacity());
 		}
 
+		QPainterPath path;
+		path.addRect(rect().adjusted(0, 0, -1, -1));
+
+		painter.setClipPath(path);
+		path.translate(geometry().topLeft());
+
 		painter.drawRect(_animation.rect());
+	//	_blur->setRegion(rect());
+		_blur->render(&painter, path);
+
 	}
 
 	void PopupMenu::hideEvent(QHideEvent* event) {
