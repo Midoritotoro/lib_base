@@ -14,12 +14,22 @@ namespace base::qt::images {
 	void AlignedImageBufferCleanupHandler(void* data);
 	[[nodiscard]] bool IsAlignedImage(const QImage& image);
 
-	void UnPremultiplyLine(uchar* dst, const uchar* src, int intsCount);
-	void PremultiplyLine(uchar* dst, const uchar* src, int intsCount);
+	void UnPremultiplyLine(
+		uchar* dst,
+		const uchar* src, 
+		int intsCount);
+	void PremultiplyLine(
+		uchar* dst,
+		const uchar* src,
+		int intsCount);
 
-	void UnPremultiply(QImage& dst, const QImage& src);
+	void UnPremultiply(
+		QImage& dst,
+		const QImage& src);
 	void PremultiplyInplace(QImage& image);
 
-	[[nodiscard]] bool GoodStorageForFrame(const QImage& storage, QSize size);
+	[[nodiscard]] bool GoodStorageForFrame(
+		const QImage& storage,
+		QSize size);
 	[[nodiscard]] QImage CreateFrameStorage(QSize size);
 } // namespace base::qt::images

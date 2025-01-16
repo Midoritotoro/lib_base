@@ -1,5 +1,5 @@
-#ifndef GLBLURFUNCTIONS_H
-#define GLBLURFUNCTIONS_H
+#pragma once
+
 
 #include <QDebug>
 #include <QtMath>
@@ -18,18 +18,23 @@
 #include <base/qt/ui/effects/OpenGLVertex.h>
 
 
-class GLBlurFunctions : protected QOpenGLFunctions_3_3_Core
+class GLBlurFunctions: 
+    public QOpenGLFunctions_3_3_Core
 {
 public:
     GLBlurFunctions();
     ~GLBlurFunctions();
 
-    QImage blurImage_DualKawase(QImage imageToBlur, int offset, int iterations);
-    float getGPUTime();
-    float getCPUTime();
+    [[nodiscard]] QImage blurImage_DualKawase(QImage imageToBlur, int offset, int iterations);
 
+    [[nodiscard]] float getGPUTime();
+    [[nodiscard]] float getCPUTime();
 private:
-    void renderToFBO(QOpenGLFramebufferObject* targetFBO, GLuint sourceTexture, QOpenGLShaderProgram *shader);
+    void renderToFBO(
+        QOpenGLFramebufferObject* targetFBO,
+        GLuint sourceTexture, 
+        QOpenGLShaderProgram *shader);
+
     void initFBOTextures();
 
     QOpenGLShaderProgram *m_ShaderProgram_kawase_up;
@@ -56,5 +61,3 @@ private:
     QElapsedTimer CPUTimer;
     quint64 CPUTimerElapsedTime;
 };
-
-#endif // GLBLURFUNCTIONS_H

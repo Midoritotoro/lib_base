@@ -12,7 +12,11 @@ namespace base::qt::images {
 			&& !(image.bytesPerLine() % kAlignImageBy);
 	}
 
-	void UnPremultiplyLine(uchar* dst, const uchar* src, int intsCount) {
+	void UnPremultiplyLine(
+		uchar* dst,
+		const uchar* src,
+		int intsCount) 
+	{
 		[[maybe_unused]] const auto udst = reinterpret_cast<uint*>(dst);
 		const auto usrc = reinterpret_cast<const uint*>(src);
 
@@ -20,7 +24,11 @@ namespace base::qt::images {
 			udst[i] = qUnpremultiply(usrc[i]);
 	}
 
-	void PremultiplyLine(uchar* dst, const uchar* src, int intsCount) {
+	void PremultiplyLine(
+		uchar* dst,
+		const uchar* src,
+		int intsCount)
+	{
 		const auto udst = reinterpret_cast<uint*>(dst);
 		[[maybe_unused]] const auto usrc = reinterpret_cast<const uint*>(src);
 
@@ -28,7 +36,10 @@ namespace base::qt::images {
 			udst[i] = qPremultiply(usrc[i]);
 	}
 
-	void UnPremultiply(QImage& dst, const QImage& src) {
+	void UnPremultiply(
+		QImage& dst,
+		const QImage& src)
+	{
 		if (!GoodStorageForFrame(dst, src.size()))
 			dst = CreateFrameStorage(src.size());
 
@@ -68,7 +79,10 @@ namespace base::qt::images {
 			PremultiplyLine(bytes, bytes, width * height);
 	}
 
-	bool GoodStorageForFrame(const QImage& storage, QSize size) {
+	bool GoodStorageForFrame(
+		const QImage& storage,
+		QSize size)
+	{
 		return !storage.isNull()
 			&& (storage.format() == kImageFormat)
 			&& (storage.size() == size)

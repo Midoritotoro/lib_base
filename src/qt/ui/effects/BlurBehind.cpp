@@ -50,7 +50,7 @@ public:
         case BlurBehindEffect::BlurMethod::BoxBlur:
             return images::boxBlurImage(_input, blurRadius_);
         case BlurBehindEffect::BlurMethod::StackBlur:
-            return stackBlurImage(_input, blurRadius_, maxThreadCount_);
+            return images::stackBlurImage(_input, blurRadius_, maxThreadCount_);
         case BlurBehindEffect::BlurMethod::GLBlur:
             return glBlur_.blurImage_DualKawase(_input, 2, std::max(blurRadius_ - 2, 1));
         }

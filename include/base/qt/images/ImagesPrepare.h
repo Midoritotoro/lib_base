@@ -21,6 +21,5 @@ namespace base::qt::images {
 
 	[[nodiscard]] QImage Prepare(
 		QImage image,
-		const QSize& _outer
-	);
+		const QSize& _outer);
 } // namespace base::qt::images

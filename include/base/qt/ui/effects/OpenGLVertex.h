@@ -2,32 +2,41 @@
 
 #include <QVector3D>
 
-class Vertex
-{
-public:
-	constexpr Vertex();
-	constexpr explicit Vertex(const QVector3D &position);
+namespace base::qt::gl {
+	using vec2 = QVector2D;
+	using vec3 = QVector3D;
+	using vec4 = QVector4D;
 
-	constexpr const QVector3D& position() const;
-    void setPosition(const QVector3D& position);
+	class Vertex
+	{
+	public:
+		constexpr inline Vertex() {};
+		constexpr inline explicit Vertex(const QVector3D& position) :
+			m_position(position)
+		{};
 
-  // OpenGL Helpers
-  static const int PositionTupleSize = 3;
-  static constexpr int positionOffset();
-  static constexpr int stride();
+		constexpr inline const QVector3D& position() const noexcept {
+			return m_position;
+		}
 
-private:
-  QVector3D m_position;
-};
+		void inline setPosition(const QVector3D& position) {
+			m_position = position;
+		}
 
-Q_DECLARE_TYPEINFO(Vertex, Q_MOVABLE_TYPE);
+		static constexpr inline
+			[[nodiscard]] int positionOffset() {
+			return offsetof(Vertex, m_position);
+		}
 
-constexpr inline Vertex::Vertex() {}
-constexpr inline Vertex::Vertex(const QVector3D &position) : m_position(position) {}
+		static constexpr inline
+			[[nodiscard]] int stride() {
+			return sizeof(Vertex);
+		}
 
-constexpr inline const QVector3D& Vertex::position() const { return m_position; }
-void inline Vertex::setPosition(const QVector3D& position) { m_position = position; }
+		static const int PositionTupleSize = 3;
+	private:
+		QVector3D m_position;
+	};
 
-constexpr inline int Vertex::positionOffset() { return offsetof(Vertex, m_position); }
-constexpr inline int Vertex::stride() { return sizeof(Vertex); }
-
+	Q_DECLARE_TYPEINFO(Vertex, Q_MOVABLE_TYPE);
+}

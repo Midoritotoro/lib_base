@@ -15,7 +15,7 @@ namespace base::qt::images {
         uchar* stack
     );
 
-    class StackBlurTask : public QRunnable
+    class StackBlurTask: public QRunnable
     {
     public:
         uchar* src_;

@@ -1,6 +1,9 @@
 #pragma once 
 
-#include <QImage>
+#include <base/qt/images/ImageGaussianBlur.h>
+#include <base/qt/images/ImageBoxBlur.h>
+
+#include <base/qt/images/ImageStackBlur.h>
 
 
 namespace base::qt::images {
