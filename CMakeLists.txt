@@ -56,6 +56,8 @@ set(PRIVATE_SOURCES
 
     src/images/ImagesGaussianBlur.cpp
     src/images/StackBlurTask.h
+
+    src/images/ImagesIntegral.cpp
 )
 
 
@@ -113,6 +115,9 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesPrepare.h
 
     include/base/images/Images.h
+    include/base/images/ImagesIntegral.h
+
+    include/base/images/ImagesCommon.h
 )
 
 

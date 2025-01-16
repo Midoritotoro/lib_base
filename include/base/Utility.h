@@ -7,8 +7,8 @@
 #include <__msvc_iter_core.hpp>
 #endif
 
+#include <random>
 #include <ranges>
-#include <iostream>
 
 #include <cstdlib>
 #include <gsl/gsl>
@@ -75,6 +75,24 @@ namespace base {
     };
 
     typedef void (*cmp_fn_t)(const void*, VISIT, int);
+
+	template<class T>
+	struct Distribution {};
+
+	template<>
+	struct Distribution<int> {
+		typedef ::std::uniform_int_distribution<int> type;
+	};
+
+	template<>
+	struct Distribution<double> {
+		typedef ::std::uniform_real_distribution<double> type;
+	};
+
+	template<>
+	struct Distribution<int64_t> {
+		typedef ::std::uniform_int_distribution<int64_t> type;
+	};
 
 	[[nodiscard]] int64_t GCD(
 		int64_t a,
@@ -177,6 +195,16 @@ namespace base {
 		return ::std::exchange(value, T{});
 	}
 
+	template <typename T>
+	always_inline [[nodiscard]] T randomNumber(
+		T from,
+		T to)
+	{
+		auto randomDevice = ::std::random_device();
+		auto generator = ::std::mt19937(randomDevice());
+
+		return Distribution<T>::type(from, to)(generator);
+	}
 #ifdef _WIN32
 	[[nodiscard]] bool IsWindowsGreaterThen(int version);
 	[[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
