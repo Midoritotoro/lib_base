@@ -44,7 +44,11 @@ set(PRIVATE_SOURCES
 
     src/concurrent/win/WinapiAsync.cpp
     src/concurrent/win/WinapiList.cpp
+
     src/concurrent/win/WinapiSemaphore.cpp
+    
+    src/concurrent/win/WinapiAtomic.cpp
+    src/concurrent/win/WinapiThreads.cpp
 
     src/images/ImagesBlur.cpp
 
@@ -89,12 +93,17 @@ set(PUBLIC_HEADERS
     include/base/concurrent/common/CommonSync.h
     include/base/concurrent/common/CommonUtils.h
 
+    include/base/concurrent/common/CommonAncillary.h
+
     include/base/concurrent/win/WinapiAsync.h
 
     include/base/concurrent/win/WinapiDll.h
 
     include/base/concurrent/win/WinapiList.h
     include/base/concurrent/win/WinapiSemaphore.h
+
+    include/base/concurrent/win/WinapiAtomic.h
+    include/base/concurrent/win/WinapiThreads.h
 
     include/base/BaseExport.h
     include/base/TypeWrapper.h
