@@ -128,12 +128,12 @@
 #  define PROCESSOR_WORDSIZE   4
 
 /*
- * We define PROCESSOR_X86 == 6 for anything above a equivalent or better
+ * Define PROCESSOR_X86 == 6 for anything above a equivalent or better
  * than a Pentium Pro (the processor whose architecture was called P6) or an
  * Athlon.
  *
  * All processors since the Pentium III and the Athlon 4 have SSE support, so
- * we use that to detect. That leaves the original Athlon, Pentium Pro and
+ * use that to detect. That leaves the original Athlon, Pentium Pro and
  * Pentium II.
  */
 

@@ -1,15 +1,20 @@
-function(find_qt)
+function(find_qt TARGET)
+    message("target:\n" ${TARGET})
     if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGET Qt6::WidgetsPrivate AND TARGET Qt6::OpenGL)
         message("Qt was found in parent project")
 
-       get_target_property(QT6_INCLUDE 
-           Qt6::Core 
-           Qt6::Widgets 
-           Qt6::WidgetsPrivate
-           Qt6::OpenGL
+        set(targets            
+             Qt6::Core 
+             Qt6::Widgets 
+             Qt6::WidgetsPrivate
+             Qt6::OpenGL)
+
+       get_target_property( 
+           targets
+           ${TARGET}
            INTERFACE_INCLUDE_DIRECTORIES)
 
-        target_include_directories(lib_base_qt
+        target_include_directories(${TARGET}
            PUBLIC
                ${QT6_INCLUDE}
         )
@@ -26,7 +31,7 @@ function(find_qt)
                 or remove the -DLIB_BASE_ENABLE_QT option.")
         endif()
 
-        target_link_libraries(lib_base_qt
+        target_link_libraries(${TARGET}
             PUBLIC
                 Qt6::Core 
                 Qt6::Widgets 
@@ -35,7 +40,7 @@ function(find_qt)
             )
     endif()
 
-    target_compile_definitions(lib_base_qt
+    target_compile_definitions(${TARGET}
         PUBLIC
             LIB_BASE_ENABLE_QT
     )

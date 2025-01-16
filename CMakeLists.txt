@@ -105,7 +105,9 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesStackBlur.h
 
     include/base/images/ImagesGaussianBlur.h
+
     include/base/images/StbImage.h
+    include/base/images/StbImageWrite.h
 
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
@@ -122,8 +124,10 @@ add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
 include(cmake/Util_FindGSL.cmake)
+include(cmake/Util_FindQt.cmake)
 
 find_ms_gsl(lib_base)
+find_qt(lib_base)
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
@@ -134,8 +138,8 @@ endif()
 
 set_target_properties(
     lib_base PROPERTIES
-    CMAKE_CXX_STANDARD 23
-    CMAKE_CXX_STANDARD_REQUIRED ON
+    CXX_STANDARD 23
+    CXX_STANDARD_REQUIRED ON
     VERSION "${PROJECT_VERSION}"
     SOVERSION "${PROJECT_VERSION_MAJOR}"
     EXPORT_NAME lib_base
@@ -151,6 +155,19 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
 endif()
 
 if(LIB_BASE_ENABLE_QT)
+    set_target_properties(
+        lib_base PROPERTIES
+        CXX_STANDARD 23
+        CXX_STANDARD_REQUIRED ON
+        AUTOMOC ON
+        AUTORCC ON
+        VERSION "${PROJECT_VERSION}"
+        SOVERSION "${PROJECT_VERSION_MAJOR}"
+        EXPORT_NAME lib_base
+        OUTPUT_NAME lib_base
+    )
+
+
     add_subdirectory(src/qt) 
 
     add_library(lib_baseQt INTERFACE)
