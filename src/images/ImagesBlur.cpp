@@ -6,7 +6,7 @@
 #include <base/qt/common/Types.h>
 
 
-namespace base::qt::images {
+namespace base::images {
 	namespace {
 		uint64 BlurGetColors(const uchar* p) {
 			return (uint64)p[0]

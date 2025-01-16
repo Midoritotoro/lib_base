@@ -3,7 +3,7 @@
 #include <QThreadPool>
 
 
-namespace base::qt::images {
+namespace base::images {
     void stackblurJob(
         uchar* src,
         uint width,

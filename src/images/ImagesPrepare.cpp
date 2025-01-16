@@ -10,7 +10,7 @@
 #include <gsl/gsl>
 
 
-namespace base::qt::images {
+namespace base::images {
 	namespace {
 		struct Shifted {
 			Shifted() = default;

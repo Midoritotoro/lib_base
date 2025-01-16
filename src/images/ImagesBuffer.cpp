@@ -1,7 +1,7 @@
 #include <base/qt/images/ImagesBuffer.h>
 
 
-namespace base::qt::images {
+namespace base::images {
 	void AlignedImageBufferCleanupHandler(void* data) {
 		const auto buffer = static_cast<uchar*>(data);
 		delete[] buffer;

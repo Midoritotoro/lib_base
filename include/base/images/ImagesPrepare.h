@@ -9,7 +9,7 @@
 #include <QScreen>
 
 
-namespace base::qt::images {
+namespace base::images {
 	[[nodiscard]] bool IsRgbNull(QRgb rgb);
 
 	[[nodiscard]] QPixmap PixmapFast(QImage&& image);

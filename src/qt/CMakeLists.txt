@@ -62,17 +62,6 @@ set(QT_PRIVATE_SOURCES
 	${PROJECT_SOURCE_DIR}/src/qt/ui/ScrollArea.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/EnhancedSlider.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBlur.cpp
-
-	${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBuffer.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesPrepare.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesBoxBlur.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesStackBlur.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/qt/images/ImagesGaussianBlur.cpp
-     ${PROJECT_SOURCE_DIR}/src/qt/images/StackBlurTask.h
-
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationBase.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/ui/animations/AnimationManager.cpp
 
@@ -132,19 +121,6 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/text/TextUtility.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/ContinuousScroll.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBlur.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBoxBlur.h
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesStackBlur.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesGaussianBlur.h
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/StbImage.h
-
-	${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesBuffer.h
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/ImagesPrepare.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/images/Images.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/AnimationBase.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/animations/OpacityAnimation.h

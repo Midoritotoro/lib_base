@@ -45,6 +45,17 @@ set(PRIVATE_SOURCES
     src/concurrent/win/WinapiAsync.cpp
     src/concurrent/win/WinapiList.cpp
     src/concurrent/win/WinapiSemaphore.cpp
+
+    src/images/ImagesBlur.cpp
+
+	src/images/ImagesBuffer.cpp
+    src/images/ImagesPrepare.cpp
+
+    src/images/ImagesBoxBlur.cpp
+    src/images/ImagesStackBlur.cpp
+
+    src/images/ImagesGaussianBlur.cpp
+    src/images/StackBlurTask.h
 )
 
 
@@ -87,6 +98,19 @@ set(PUBLIC_HEADERS
     include/base/TypeWrapper.h
 
     include/base/TypeTraits.h
+
+    include/base/images/ImagesBlur.h
+
+    include/base/images/ImagesBoxBlur.h
+    include/base/images/ImagesStackBlur.h
+
+    include/base/images/ImagesGaussianBlur.h
+    include/base/images/StbImage.h
+
+	include/base/images/ImagesBuffer.h
+    include/base/images/ImagesPrepare.h
+
+    include/base/images/Images.h
 )
 
 
@@ -131,6 +155,11 @@ if(LIB_BASE_ENABLE_QT)
 
     add_library(lib_baseQt INTERFACE)
     target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
+
+    target_compile_definitions(lib_base
+        PUBLIC
+        LIB_BASE_ENABLE_QT
+    )
 
     add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
 endif()

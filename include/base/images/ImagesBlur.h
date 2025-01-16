@@ -1,12 +1,12 @@
 #pragma once 
 
-#include <base/qt/images/ImageGaussianBlur.h>
-#include <base/qt/images/ImageBoxBlur.h>
+#include <base/qt/images/ImagesGaussianBlur.h>
+#include <base/qt/images/ImagesBoxBlur.h>
 
-#include <base/qt/images/ImageStackBlur.h>
+#include <base/qt/images/ImagesStackBlur.h>
 
 
-namespace base::qt::images {
+namespace base::images {
 	[[nodiscard]] QImage DefaultBlur(
 		QImage&& image,
 		bool ignoreAlpha = false);

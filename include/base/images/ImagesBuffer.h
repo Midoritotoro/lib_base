@@ -4,7 +4,7 @@
 #include <QImage>
 
 
-namespace base::qt::images {
+namespace base::images {
 	inline constexpr auto kImageFormat = QImage::Format_ARGB32_Premultiplied;
 	inline constexpr auto kMaxScaleByAspectRatio = 16;
 
