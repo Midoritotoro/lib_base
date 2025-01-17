@@ -50,8 +50,6 @@ set(PRIVATE_SOURCES
     src/concurrent/win/WinapiAtomic.cpp
     src/concurrent/win/WinapiThreads.cpp
 
-    src/images/ImagesBlur.cpp
-
 	src/images/ImagesBuffer.cpp
     src/images/ImagesPrepare.cpp
 
@@ -62,6 +60,7 @@ set(PRIVATE_SOURCES
     src/images/StackBlurTask.h
 
     src/images/ImagesIntegral.cpp
+    src/images/ImagesRgbBlur.cpp
 )
 
 
@@ -110,10 +109,10 @@ set(PUBLIC_HEADERS
 
     include/base/TypeTraits.h
 
-    include/base/images/ImagesBlur.h
-
     include/base/images/ImagesBoxBlur.h
     include/base/images/ImagesStackBlur.h
+
+    include/base/images/ImagesRgbBlur.h
 
     include/base/images/ImagesGaussianBlur.h
 
@@ -127,6 +126,7 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesIntegral.h
 
     include/base/images/ImagesCommon.h
+    include/base/Types.h
 )
 
 

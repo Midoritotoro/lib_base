@@ -96,7 +96,6 @@ namespace base::qt::common {
 		~unique_qptr() noexcept {
 			destroy();
 		}
-
 	private:
 		void destroy() noexcept {
 			delete base::take(_object).data();

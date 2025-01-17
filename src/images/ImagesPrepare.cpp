@@ -1,6 +1,6 @@
-#include <base/qt/images/ImagesPrepare.h>
+#include <base/images/ImagesPrepare.h>
 
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 #include <base/qt/style/StyleScale.h>
 
 #include <base/Utility.h>
@@ -122,7 +122,7 @@ namespace base::images {
 		auto outer = _outer;
 
 		if (!outer.isEmpty()) {
-			const auto ratio = style::DevicePixelRatio();
+			const auto ratio = qt::style::DevicePixelRatio();
 			outer *= ratio;
 
 			if (outer != QSize(_outer.width(), _outer.height())) {
@@ -137,6 +137,7 @@ namespace base::images {
 					painter.fillRect(
 						QRect(QPoint(), result.size() / ratio),
 						Qt::black);
+
 				painter.drawImage(
 					(result.width() - imageWidth) / (2 * ratio),
 					(result.height() - imageWidth) / (2 * ratio),
@@ -146,7 +147,7 @@ namespace base::images {
 			}
 		}
 
-		image.setDevicePixelRatio(style::DevicePixelRatio());
+		image.setDevicePixelRatio(qt::style::DevicePixelRatio());
 		return image;
 	}
 

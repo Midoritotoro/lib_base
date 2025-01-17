@@ -3,8 +3,8 @@
 #include <base/images/Images.h>
 
 namespace base::images {
-	Image stackBlurImage(
-		const Image& _image,
-		int _radius,
-		int _threadCount = 1);
+	[[nodiscard]] Image stackBlurImage(
+		const Image& image,
+		int radius,
+		int threadCount = 1);
 } // namespace base::images

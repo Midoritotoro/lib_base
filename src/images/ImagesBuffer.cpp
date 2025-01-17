@@ -1,4 +1,4 @@
-#include <base/qt/images/ImagesBuffer.h>
+#include <base/images/ImagesBuffer.h>
 
 
 namespace base::images {

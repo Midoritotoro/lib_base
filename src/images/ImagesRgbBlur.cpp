@@ -1,6 +1,8 @@
 #include <base/images/ImagesRgbBlur.h>
-
 #include <base/images/Images.h>
+
+#include <QPainter>
+
 
 namespace base::images {
 	namespace {

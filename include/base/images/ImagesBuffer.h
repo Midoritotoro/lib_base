@@ -1,5 +1,6 @@
 #pragma once 
 
+
 #include <base/qt/common/Types.h>
 #include <QImage>
 

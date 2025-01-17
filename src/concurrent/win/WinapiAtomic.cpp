@@ -1,5 +1,5 @@
 #include <base/concurrent/win/WinapiAtomic.h>
-#include <base/Platform.h>
+#include <base/Base.h>
 
 
 namespace Threads {
@@ -11,7 +11,7 @@ namespace Threads {
     bool AtomicRcDec(atomic_rc_t* rc) {
         uintptr_t prev = atomic_fetch_sub_explicit(&rc->refs, (uintptr_t)1,
             std::memory_order_acq_rel);
-        assert(prev);
+        Assert(prev);
 
         return prev == 1;
     }
@@ -20,7 +20,8 @@ namespace Threads {
     {
         uintptr_t prev = atomic_fetch_add_explicit(&rc->refs, (uintptr_t)1,
             memory_order_relaxed);
-        assert(prev);
+
+        Assert(prev);
         unused(prev);
     }
 
@@ -55,7 +56,7 @@ namespace Threads {
         if (self->recursion++ > 0)
             return; /* recursion: nothing to do */
 
-        assert(self->generation == NULL);
+        Assert(self->generation == NULL);
         gen = atomic_load_explicit(&generation, std::memory_order_acquire);
         self->generation = gen;
         atomic_fetch_add_explicit(&gen->readers, 1, std::memory_order_relaxed);
@@ -66,7 +67,7 @@ namespace Threads {
         rcu_thread* const self = &current;
         rcu_generation* gen;
 
-        assert(rcu_read_held());
+        Assert(rcu_read_held());
 
         if (--self->recursion > 0)
             return; /* recursion: nothing to do */
@@ -77,7 +78,7 @@ namespace Threads {
         uintptr_t readers = atomic_fetch_sub_explicit(&gen->readers, 1,
             std::memory_order_relaxed);
         if (readers == 0)
-            assert("unreachable!", unreachable());
+            Assert("unreachable!", unreachable());
         if (readers > 1)
             return; /* Other reader threads remain: nothing to do */
 

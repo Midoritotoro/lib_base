@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <QThreadPool>
+#include <base/Types.h>
 
 
 namespace base::images {
