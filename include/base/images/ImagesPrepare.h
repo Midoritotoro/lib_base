@@ -1,25 +1,22 @@
 #pragma once 
 
-#include <QImage>
-#include <QPixmap>
 
-#include <QPixmapCache>
-
-#include <QApplication>
-#include <QScreen>
+#include <base/images/Images.h>
 
 
 namespace base::images {
-	[[nodiscard]] bool IsRgbNull(QRgb rgb);
+	[[nodiscard]] bool IsRgbNull(Rgb rgb);
 
-	[[nodiscard]] QPixmap PixmapFast(QImage&& image);
-	[[nodiscard]] QImage Opaque(QImage&& image);
+#ifdef LIB_BASE_ENABLE_QT
+	[[nodiscard]] QPixmap PixmapFast(Image&& image);
+#endif
+	[[nodiscard]] Image Opaque(Image&& image);
 
-	[[nodiscard]] QImage Prepare(
-		const QImage& image,
+	[[nodiscard]] Image Prepare(
+		const Image& image,
 		double _scale);
 
-	[[nodiscard]] QImage Prepare(
-		QImage image,
-		const QSize& _outer);
+	[[nodiscard]] Image Prepare(
+		Image image,
+		const Size& _outer);
 } // namespace base::qt::images

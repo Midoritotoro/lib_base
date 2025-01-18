@@ -57,6 +57,8 @@ set(PRIVATE_SOURCES
     src/images/ImagesStackBlur.cpp
 
     src/images/ImagesGaussianBlur.cpp
+    src/images/gl/ImagesGLImage.cpp
+
     src/images/StackBlurTask.h
 
     src/images/ImagesIntegral.cpp
@@ -125,7 +127,10 @@ set(PUBLIC_HEADERS
     include/base/images/Images.h
     include/base/images/ImagesIntegral.h
 
+    include/base/images/gl/ImagesGLImage.h
+
     include/base/images/ImagesCommon.h
+    include/base/images/ImagesGeometry.h
     include/base/Types.h
 )
 
@@ -141,7 +146,6 @@ include(cmake/Util_FindGSL.cmake)
 include(cmake/Util_FindQt.cmake)
 
 find_ms_gsl(lib_base)
-find_qt(lib_base)
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
@@ -169,33 +173,14 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
 endif()
 
 if(LIB_BASE_ENABLE_QT)
-    set_target_properties(
-        lib_base PROPERTIES
-        CXX_STANDARD 23
-        CXX_STANDARD_REQUIRED ON
-        AUTOMOC ON
-        AUTORCC ON
-        VERSION "${PROJECT_VERSION}"
-        SOVERSION "${PROJECT_VERSION_MAJOR}"
-        EXPORT_NAME lib_base
-        OUTPUT_NAME lib_base
-    )
-
+    find_qt(lib_base)
     add_subdirectory(src/qt) 
 
     add_library(lib_baseQt INTERFACE)
     target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
 
-    target_compile_definitions(lib_base
-        PUBLIC
-        LIB_BASE_ENABLE_QT
-    )
-
     add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
 endif()
-
-
-# message("LIBTYPE: " ${LIBTYPE})
 
 target_include_directories(lib_base
     PUBLIC

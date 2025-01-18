@@ -21,7 +21,7 @@ namespace Threads {
 	void AncillaryArrayInit(ancillary*** array);
 
 
-    ancillary* AncillatyHold(ancillary* ancillary);
+    ancillary* AncillaryHold(ancillary* ancillary);
     void* AncillaryGetData(const ancillary* ancillary);
 
     size_t AncillaryArrayCount(ancillary** array);

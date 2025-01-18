@@ -178,7 +178,8 @@ namespace base::qt::ui {
 		path.addRect(rect().adjusted(0, 0, -1, -1));
 
 		painter.setClipPath(path);
-		path.translate(geometry().topLeft());
+		path.translate(
+			().topLeft());
 
 		painter.drawRect(_animation.rect());
 	//	_blur->setRegion(rect());

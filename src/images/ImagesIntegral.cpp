@@ -6,7 +6,7 @@ namespace base::images {
 
     }
 
-    IntegralImage::IntegralImage(const std::vector<std::vector<int>>& image) :
+    IntegralImage::IntegralImage(const std::vector<std::vector<int32>>& image) :
         _integralImage(image)
     {}
 
@@ -14,20 +14,20 @@ namespace base::images {
         _integralImage(integralImageFromImage(image))
     {}
 
-    const std::vector<std::vector<int>>& IntegralImage::toVector() const noexcept {
+    const std::vector<std::vector<int32>>& IntegralImage::toVector() const noexcept {
         return _integralImage;
     }
 
-    int IntegralImage::width() const noexcept {
+    int32 IntegralImage::width() const noexcept {
         return _integralImage[0].size();
     }
 
-    int IntegralImage::height() const noexcept {
+    int32 IntegralImage::height() const noexcept {
         return _integralImage.size();
     }
 
-    Size IntegralImage::size() const noexcept {
-        return Size(width(), height());
+    Size<int32> IntegralImage::size() const noexcept {
+        return Size<int32>(width(), height());
     }
 
     std::vector<int>& IntegralImage::operator[](const size_t position) noexcept {
@@ -48,11 +48,11 @@ namespace base::images {
         return _integralImage == other._integralImage;
     }
 
-    bool IntegralImage::operator==(const std::vector<std::vector<int>>& other) const noexcept {
+    bool IntegralImage::operator==(const std::vector<std::vector<int32>>& other) const noexcept {
         return _integralImage == other;
     }
 
-    std::vector<std::vector<int>> IntegralImage::integralImageFromImage(const Image& image) {
+    std::vector<std::vector<int32>> IntegralImage::integralImageFromImage(const Image& image) {
         if (image.isNull())
             return {};
 

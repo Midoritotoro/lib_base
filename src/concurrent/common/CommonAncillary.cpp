@@ -1,5 +1,5 @@
 #include <base/concurrent/common/CommonAncillary.h>
-#include <base/OverflowCheck.h>
+#include <base/Platform.h>
 
 
 namespace Threads {
@@ -81,5 +81,4 @@ namespace Threads {
 
         return SUCCESS;
     }
-
 } // namespace Threads

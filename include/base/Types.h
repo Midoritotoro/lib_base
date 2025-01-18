@@ -30,3 +30,5 @@ using uint32	= unsigned int;			/* 32 bit unsigned */
 
 using int64		= long long;			/* 64 bit signed */
 using uint64	= unsigned long long;	/* 64 bit unsigned */
+
+using sizetype  = std::size_t;

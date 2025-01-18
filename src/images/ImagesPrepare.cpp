@@ -59,20 +59,20 @@ namespace base::images {
 		}
 	}
 
-	bool IsRgbNull(QRgb rgb) {
+	bool IsRgbNull(Rgb rgb) {
 		return qRed(rgb) == 0 
 			&& qGreen(rgb) == 0 
 			&& qBlue(rgb) == 0;
 	}
 
-	QPixmap PixmapFast(QImage&& image) {
+	Pixmap PixmapFast(QImage&& image) {
 		Expects(image.format() == QImage::Format_ARGB32_Premultiplied
 			|| image.format() == QImage::Format_RGB32);
 
 		return QPixmap::fromImage(std::move(image), Qt::NoFormatConversion);
 	}
 
-	QImage Opaque(QImage&& image) {
+	Image Opaque(QImage&& image) {
 		if (image.hasAlphaChannel()) {
 			if (image.format() != QImage::Format_ARGB32_Premultiplied)
 				image = std::move(image).convertToFormat(
