@@ -7,16 +7,17 @@
 
 
 namespace base::images {
+	inline constexpr auto kForceImageChannels = 4; // rgba
+
 	class IntegralImage;
 
 	class GLImage final {
 	public:
 		struct GLImageSizeParameters{
 			sizetype bytesPerLine;
-			sizetype totalSize;
 
 			bool isValid() const { 
-				return bytesPerLine > 0 && totalSize > 0; 
+				return bytesPerLine > 0; 
 			}
 		};
 
@@ -26,6 +27,8 @@ namespace base::images {
 
 			::uchar* data = nullptr;
 			// Format format;
+
+			ushort channels = 0;
 
 			int32 depth = 0;
 			sizetype bytesPerLine = 0;
@@ -76,7 +79,7 @@ namespace base::images {
 		bool isEqual(const GLImage& other) const;
 
 		[[nodiscard]] GLImageSizeParameters 
-			calculateImageParameters(
+			recountImageParameters(
 				int32 width, int32 height, int32 depth);
 
 		GLImageData* _data = nullptr;
