@@ -3,7 +3,7 @@
 #include <text/TextEntities.h>
 
 #include <base/Concurrent.h>
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 
 #include <QPointer>
 

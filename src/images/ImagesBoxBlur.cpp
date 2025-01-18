@@ -4,69 +4,76 @@
 
 namespace base::images {
     Image boxBlurImage(
-        const Image& _image,
-        const Rect& _rect,
-        int _radius)
+        const Image& image,
+        const Rect& rect,
+        int radius)
     {
-        static constexpr int tab[] = { 14, 10, 8, 6, 5, 5, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2 };
-        const int alpha = (_radius < 1) ? 16 : (_radius > 17) ? 1 : tab[_radius - 1];
+        static constexpr int tab[] = {
+            14, 10, 8, 6, 5, 5, 4, 3, 3, 
+            3, 3, 2, 2, 2, 2, 2, 2 
+        };
 
-        Image result = _image.convertToFormat(Image::Format_ARGB32_Premultiplied);
+        const auto alpha = (radius < 1) 
+            ? 16 : (radius > 17) 
+            ? 1 : tab[radius - 1];
 
-        const int r1 = _rect.top();
-        const int r2 = _rect.bottom();
+        auto result = image.convertToFormat(Image::Format_ARGB32_Premultiplied);
 
-        const int c1 = _rect.left();
-        const int c2 = _rect.right();
+        const auto r1 = rect.top();
+        const auto r2 = rect.bottom();
 
-        const int bpl = result.bytesPerLine();
+        const auto c1 = rect.left();
+        const auto c2 = rect.right();
+
+        const auto bpl = result.bytesPerLine();
+
         int rgba[4];
         uchar* p;
 
-        int i1 = 0;
-        int i2 = 3;
+        auto i1 = 0;
+        auto i2 = 3;
 
-        for (int col = c1; col <= c2; col++) {
+        for (auto col = c1; col <= c2; col++) {
             p = result.scanLine(r1) + col * 4;
-            for (int i = i1; i <= i2; i++)
+            for (auto i = i1; i <= i2; i++)
                 rgba[i] = p[i] << 4;
 
             p += bpl;
-            for (int j = r1; j < r2; j++, p += bpl)
-                for (int i = i1; i <= i2; i++)
+            for (auto j = r1; j < r2; j++, p += bpl)
+                for (auto i = i1; i <= i2; i++)
                     p[i] = static_cast<uchar>((rgba[i] += ((p[i] << 4) - rgba[i]) * alpha / 16) >> 4);
         }
 
-        for (int row = r1; row <= r2; row++) {
+        for (auto row = r1; row <= r2; row++) {
             p = result.scanLine(row) + c1 * 4;
-            for (int i = i1; i <= i2; i++)
+            for (auto i = i1; i <= i2; i++)
                 rgba[i] = p[i] << 4;
 
             p += 4;
-            for (int j = c1; j < c2; j++, p += 4)
-                for (int i = i1; i <= i2; i++)
+            for (auto j = c1; j < c2; j++, p += 4)
+                for (auto i = i1; i <= i2; i++)
                     p[i] = static_cast<uchar>((rgba[i] += ((p[i] << 4) - rgba[i]) * alpha / 16) >> 4);
         }
 
-        for (int col = c1; col <= c2; col++) {
+        for (auto col = c1; col <= c2; col++) {
             p = result.scanLine(r2) + col * 4;
-            for (int i = i1; i <= i2; i++)
+            for (auto i = i1; i <= i2; i++)
                 rgba[i] = p[i] << 4;
 
             p -= bpl;
-            for (int j = r1; j < r2; j++, p -= bpl)
-                for (int i = i1; i <= i2; i++)
+            for (auto j = r1; j < r2; j++, p -= bpl)
+                for (auto i = i1; i <= i2; i++)
                     p[i] = static_cast<uchar>((rgba[i] += ((p[i] << 4) - rgba[i]) * alpha / 16) >> 4);
         }
 
-        for (int row = r1; row <= r2; row++) {
+        for (auto row = r1; row <= r2; row++) {
             p = result.scanLine(row) + c2 * 4;
-            for (int i = i1; i <= i2; i++)
+            for (auto i = i1; i <= i2; i++)
                 rgba[i] = p[i] << 4;
 
             p -= 4;
-            for (int j = c1; j < c2; j++, p -= 4)
-                for (int i = i1; i <= i2; i++)
+            for (auto j = c1; j < c2; j++, p -= 4)
+                for (auto i = i1; i <= i2; i++)
                     p[i] = static_cast<uchar>((rgba[i] += ((p[i] << 4) - rgba[i]) * alpha / 16) >> 4);
         }
 

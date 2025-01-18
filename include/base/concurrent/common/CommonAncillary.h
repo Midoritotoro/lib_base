@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/concurrent/win/WinapiThreads.h>
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 
 
 namespace Threads {

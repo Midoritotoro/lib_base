@@ -1,6 +1,6 @@
 #include <base/qt/style/StyleFont.h>
 
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 #include <base/Utility.h>
 
 #include <base/qt/style/StyleCore.h>

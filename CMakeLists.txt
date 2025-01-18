@@ -181,7 +181,6 @@ if(LIB_BASE_ENABLE_QT)
         OUTPUT_NAME lib_base
     )
 
-
     add_subdirectory(src/qt) 
 
     add_library(lib_baseQt INTERFACE)

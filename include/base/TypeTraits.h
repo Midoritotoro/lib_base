@@ -15,6 +15,4 @@ namespace base {
 		typename Member>
 	constexpr bool has_member = std::is_convertible_v<
 		has_member_impl<Struct, Member>, void>;
-
-	
 } // namespace base

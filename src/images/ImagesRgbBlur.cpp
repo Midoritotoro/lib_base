@@ -57,6 +57,7 @@ namespace base::images {
 
 				painter.setCompositionMode(QPainter::CompositionMode_Source);
 				painter.fillRect(0, 0, w, h, Qt::transparent);
+
 				painter.drawImage(
 					QRect(radius, radius, w - 2 * radius, h - 2 * radius),
 					image,

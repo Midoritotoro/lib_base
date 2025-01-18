@@ -22,7 +22,9 @@ namespace base::images {
         enum Policy { EXTEND, KERNEL_CROP };
 
         template<typename T, int C, Policy P = KERNEL_CROP>
-        void horizontal_blur(const T* in, T* out, const int w, const int h, const int r)
+        void HorizontalBlur(
+            const T* in, T* out, const int w,
+            const int h, const int r)
         {
             float iarr = 1.f / (r + r + 1);
 #pragma omp parallel for
@@ -82,16 +84,18 @@ namespace base::images {
         //! \param[in] r            box dimension
         //!
         template<typename T>
-        void horizontal_blur(const T* in, T* out, const int w, const int h, const int c, const int r)
+        void HorizontalBlur(
+            const T* in, T* out, const int w,
+            const int h, const int c, const int r)
         {
             switch (c)
             {
-            case 1: horizontal_blur<T, 1>(in, out, w, h, r); break;
-            case 2: horizontal_blur<T, 2>(in, out, w, h, r); break;
-            case 3: horizontal_blur<T, 3>(in, out, w, h, r); break;
-            case 4: horizontal_blur<T, 4>(in, out, w, h, r); break;
+            case 1: HorizontalBlur<T, 1>(in, out, w, h, r); break;
+            case 2: HorizontalBlur<T, 2>(in, out, w, h, r); break;
+            case 3: HorizontalBlur<T, 3>(in, out, w, h, r); break;
+            case 4: HorizontalBlur<T, 4>(in, out, w, h, r); break;
             default: printf("%d channels is not supported yet. Add a specific case if possible or fall back to the generic version.", c); break;
-                // default: horizontal_blur<T>(in, out, w, h, c, r); break;
+                // default: HorizontalBlur<T>(in, out, w, h, c, r); break;
             }
         }
 
@@ -106,7 +110,7 @@ namespace base::images {
         //! \param[in] h            image height
         //!
         template<typename T, int C>
-        void flip_block(const T* in, T* out, const int w, const int h)
+        void FlipBlock(const T* in, T* out, const int w, const int h)
         {
             constexpr int block = 256 / C;
 #pragma omp parallel for collapse(2)
@@ -142,16 +146,18 @@ namespace base::images {
         //! \param[in] c            image channels
         //!
         template<typename T>
-        void flip_block(const T* in, T* out, const int w, const int h, const int c)
+        void FlipBlock(
+            const T* in, T* out, const int w,
+            const int h, const int c)
         {
             switch (c)
             {
-            case 1: flip_block<T, 1>(in, out, w, h); break;
-            case 2: flip_block<T, 2>(in, out, w, h); break;
-            case 3: flip_block<T, 3>(in, out, w, h); break;
-            case 4: flip_block<T, 4>(in, out, w, h); break;
+            case 1: FlipBlock<T, 1>(in, out, w, h); break;
+            case 2: FlipBlock<T, 2>(in, out, w, h); break;
+            case 3: FlipBlock<T, 3>(in, out, w, h); break;
+            case 4: FlipBlock<T, 4>(in, out, w, h); break;
             default: printf("%d channels is not supported yet. Add a specific case if possible or fall back to the generic version.", c); break;
-                // default: flip_block<T>(in, out, w, h, c); break;
+                // default: FlipBlock<T>(in, out, w, h, c); break;
             }
         }
 
@@ -165,7 +171,10 @@ namespace base::images {
         //! \param[in] sigma    Gaussian standard deviation
         //! \param[in] n        number of box blur pass
         //!
-        void sigma_to_box_radius(int boxes[], const float sigma, const int n)
+        void SigmaToBoxRadius(
+            int boxes[],
+            const float sigma,
+            const int n)
         {
             // ideal filter width
             float wi = std::sqrt((12 * sigma * sigma / n) + 1);
@@ -181,32 +190,32 @@ namespace base::images {
         }
 
         template<typename T>
-        void fast_gaussian_blur_N(T*& in, T*& out, const int w, const int h, const int c, const float sigma, const int n)
+        void FastGaussianBlurN(T*& in, T*& out, const int w, const int h, const int c, const float sigma, const int n)
         {
             // compute box kernel sizes
             std::vector<int> boxes(n);
-            sigma_to_box_radius(boxes.data(), sigma, n);
+            SigmaToBoxRadius(boxes.data(), sigma, n);
 
             // perform N horizontal blur passes
             for (int i = 0; i < n; ++i)
             {
-                horizontal_blur(in, out, w, h, c, boxes[i]);
+                HorizontalBlur(in, out, w, h, c, boxes[i]);
                 std::swap(in, out);
             }
 
             // flip buffer
-            flip_block(in, out, w, h, c);
+            FlipBlock(in, out, w, h, c);
             std::swap(in, out);
 
             // perform N horizontal blur passes
             for (int i = 0; i < n; ++i)
             {
-                horizontal_blur(in, out, h, w, c, boxes[i]);
+                HorizontalBlur(in, out, h, w, c, boxes[i]);
                 std::swap(in, out);
             }
 
             // flip buffer
-            flip_block(in, out, h, w, c);
+            FlipBlock(in, out, h, w, c);
         }
     } // namespace 
 
@@ -218,28 +227,28 @@ namespace base::images {
     {
 
         if (n != 3)
-            return fast_gaussian_blur_N(in, out, w, h, c, sigma, n);
+            return FastGaussianBlurN(in, out, w, h, c, sigma, n);
 
         // compute box kernel sizes
         int n = 3;
         int boxes[3];
-        sigma_to_box_radius(boxes, sigma, n);
+        SigmaToBoxRadius(boxes, sigma, n);
 
         // perform 3 horizontal blur passes
-        horizontal_blur(in, out, w, h, c, boxes[0]);
-        horizontal_blur(out, in, w, h, c, boxes[1]);
-        horizontal_blur(in, out, w, h, c, boxes[2]);
+        HorizontalBlur(in, out, w, h, c, boxes[0]);
+        HorizontalBlur(out, in, w, h, c, boxes[1]);
+        HorizontalBlur(in, out, w, h, c, boxes[2]);
 
         // flip buffer
-        flip_block(out, in, w, h, c);
+        FlipBlock(out, in, w, h, c);
 
         // perform 3 horizontal blur passes
-        horizontal_blur(in, out, h, w, c, boxes[0]);
-        horizontal_blur(out, in, h, w, c, boxes[1]);
-        horizontal_blur(in, out, h, w, c, boxes[2]);
+        HorizontalBlur(in, out, h, w, c, boxes[0]);
+        HorizontalBlur(out, in, h, w, c, boxes[1]);
+        HorizontalBlur(in, out, h, w, c, boxes[2]);
 
         // flip buffer
-        flip_block(out, in, h, w, c);
+        FlipBlock(out, in, h, w, c);
 
         // swap pointers to get result in the ouput buffer 
         std::swap(in, out);

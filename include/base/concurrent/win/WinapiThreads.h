@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Atomic.h"
+#include <base/concurrent/win/WinapiAtomic.h>
 
 #include <Windows.h>
 

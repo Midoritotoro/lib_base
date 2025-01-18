@@ -135,7 +135,10 @@ set(QT_PUBLIC_HEADERS
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/OpenGLBlur.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/effects/OpenGLVertex.h
+
+    ${PROJECT_SOURCE_DIR}/include/base/qt/ui/PainterHqEnabler.h
 )
+
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)

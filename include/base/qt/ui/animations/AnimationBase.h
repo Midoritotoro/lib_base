@@ -3,7 +3,7 @@
 #include <base/Time.h>
 #include <base/qt/common/Size.h>
 
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 
 
 namespace base::qt::ui::animations {

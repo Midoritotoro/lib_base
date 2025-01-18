@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include <base/qt/common/Types.h>
+#include <base/Types.h>
 #include <base/TypeTraits.h>
 
 
