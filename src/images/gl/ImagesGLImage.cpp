@@ -2,6 +2,10 @@
 #include <base/OverflowCheck.h>
 
 #include <base/Assert.h>
+#include <private/qpixellayout_p.h>
+#ifdef LIB_BASE_ENABLE_QT
+#include <base/images/ImagesQtUtility.h>
+#endif
 
 
 namespace base::images {
@@ -72,7 +76,7 @@ namespace base::images {
 		_data->totalSize = image.sizeInBytes();
 		_data->devicePixelRatio = image.devicePixelRatio();
 
-		_data->channels = image.format() == QImage::Format::
+		_data->channels = getChannelsCountByFormat(image);
 
 		_data->width = image.width();
 		_data->height = image.height();
@@ -127,6 +131,14 @@ namespace base::images {
 		_data->bytesPerLine = recountImageParameters(width, height, 1).bytesPerLine;
 	}
 
+	GLImage GLImage::convertToFormat(Format format) const {
+
+	}
+
+	Rect<int32> GLImage::rect() const noexcept {
+		return Rect<int32>(0, 0, _data->width, _data->height);
+	}
+
 	Size<int32> GLImage::size() const noexcept {
 		return Size<int32>(_data->width, _data->height);
 	}
@@ -149,6 +161,61 @@ namespace base::images {
 
 	GLImage::GLImageData* GLImage::data() {
 		return _data;
+	}
+
+	uchar* GLImage::scanLine(int i)
+	{
+		if (!_data)
+			return nullptr;
+
+		return _data->data + i * _data->bytesPerLine;
+	}
+
+	const uchar* GLImage::scanLine(int i) const
+	{
+		if (!_data)
+			return nullptr;
+
+		Assert(i >= 0 && i < height());
+		return _data->data + i * _data->bytesPerLine;
+	}
+
+	Rgb GLImage::pixel(int x, int y) const
+	{
+		if (!_data || x < 0 || x >= _data->width || y < 0 || y >= _data->height) {
+			qWarning("QImage::pixel: coordinate (%d,%d) out of range", x, y);
+			return 12345;
+		}
+
+		const uchar* s = _data->data + y * _data->bytesPerLine;
+
+		int index = -1;
+		switch (_data->format) {
+		case Format::Format_Mono:
+			index = (*(s + (x >> 3)) >> (~x & 7)) & 1;
+			break;
+		default:
+			break;
+		}
+		if (index >= 0) {    // Indexed format
+			if (index >= _data->colorTable.size()) {
+				qWarning("QImage::pixel: color table index %d out of range.", index);
+				return 0;
+			}
+			return _data->colorTable.at(index);
+		}
+
+		switch (_data->format) {
+		case Format::Format_RGB32:
+			return 0xff000000 | reinterpret_cast<const QRgb*>(s)[x];
+		case Format::Format_ARGB32:
+		case Format::Format_ARGB32_Premultiplied:
+			return reinterpret_cast<const QRgb*>(s)[x];
+		default:
+			break;
+		}
+
+		return -1;
 	}
 
 	bool GLImage::isEqual(const GLImage& other) const {

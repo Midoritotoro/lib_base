@@ -15,10 +15,7 @@
 #include <QPixmap>
 #endif
 
-namespace base::gl {
-	class Image;
-}
-
 namespace base::images {
-	using Image = gl::Image;
+	class GLImage;
+	using Image = GLImage;
 } // namespace base::images

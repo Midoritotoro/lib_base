@@ -7,7 +7,7 @@ namespace base::images {
 
 	Image boxBlurImage(
 		const Image& image,
-		const Rect& rect,
+		const Rect<int32>& rect,
 		int radius);
 
 	Image boxBlurImage(

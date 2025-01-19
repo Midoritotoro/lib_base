@@ -2,9 +2,7 @@
 
 
 #include <base/images/Images.h>
-
 #include <string>
-
 
 namespace base::images {
 	inline constexpr auto kForceImageChannels = 4; // rgba
@@ -13,6 +11,13 @@ namespace base::images {
 
 	class GLImage final {
 	public:
+		enum class Format : uchar {
+			Format_Mono,
+			Format_RGB32,
+			Format_ARGB32,
+			Format_ARGB32_Premultiplied
+		};
+
 		struct GLImageSizeParameters{
 			sizetype bytesPerLine;
 
@@ -35,6 +40,9 @@ namespace base::images {
 
 			sizetype totalSize = 0;
 			int32 devicePixelRatio = 0;
+
+			Format format;
+			std::vector<Rgb> colorTable;
 		};
 
 		GLImage();
@@ -65,6 +73,9 @@ namespace base::images {
 		void loadFromData(::uchar* data);
 		void loadFromFile(const std::string& path);
 
+		[[nodiscard]] GLImage convertToFormat(Format format) const;
+
+		[[nodiscard]] Rect<int32> rect() const noexcept;
 		[[nodiscard]] Size<int32> size() const noexcept;
 
 		[[nodiscard]] int32 width() const noexcept;
@@ -74,6 +85,11 @@ namespace base::images {
 
 		[[nodiscard]] ::uchar* bytesData();
 		[[nodiscard]] GLImageData* data();
+
+		[[nodiscard]] uchar* scanLine(int i);
+		[[nodiscard]] const uchar* scanLine(int i) const;
+
+		[[nodiscard]] Rgb pixel(int x, int y) const;
 	private:
 		bool isEqual(const GLImage& other) const;
 

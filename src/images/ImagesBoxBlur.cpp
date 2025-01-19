@@ -1,11 +1,13 @@
 #include <base/images/ImagesBlur.h>
 #include <base/Types.h>
 
+#include <base/images/gl/ImagesGLImage.h>
+
 
 namespace base::images {
     Image boxBlurImage(
         const Image& image,
-        const Rect& rect,
+        const Rect<int32>& rect,
         int radius)
     {
         static constexpr int tab[] = {
@@ -17,7 +19,7 @@ namespace base::images {
             ? 16 : (radius > 17) 
             ? 1 : tab[radius - 1];
 
-       // auto result = image.convertToFormat(Image::Format_ARGB32_Premultiplied);
+        auto result = image.convertToFormat(Image::Format::Format_ARGB32_Premultiplied);
 
         const auto r1 = rect.top();
         const auto r2 = rect.bottom();

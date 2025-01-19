@@ -1,6 +1,9 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
 set(LIB_BASE_QT_ENABLE_FONTS ON)
 
@@ -166,16 +169,6 @@ find_ms_gsl(lib_base_qt)
 find_qt(lib_base_qt)
 
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})
-
-target_compile_definitions(lib_base_qt
-    PUBLIC
-    LIB_BASE_ENABLE_QT
-)
-
-target_compile_definitions(lib_base
-    PUBLIC
-    LIB_BASE_ENABLE_QT
-)
 
 if(LIB_BASE_QT_ENABLE_FONTS)
     target_sources(lib_base_qt PUBLIC ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc)

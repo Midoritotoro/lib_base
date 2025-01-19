@@ -3,32 +3,31 @@
 #include <base/Types.h>
 #include <type_traits>
 
+#include <qrect.h>
+
 namespace base::images {
 	template <typename Integer = int32>
 		requires std::_Is_nonbool_integral<Integer>
-	class Point {
+	class Point final {
 	public:
-		explicit Point(Integer x, Integer y) {
+		constexpr explicit Point(Integer x, Integer y) noexcept {
 			_x = x;
 			_y = y;
 		}
 
-		Point(const Point& point) = default;
-		Point& operator=(const Point& point) = default;
-
-		inline void setX(Integer x) {
+		constexpr inline void setX(Integer x) {
 			_x = x;
 		}
 
-		inline void setY(Integer y) {
+		constexpr inline void setY(Integer y) {
 			_y = y;
 		}
 
-		inline [[nodiscard]] Integer x() const noexcept {
+		constexpr inline [[nodiscard]] Integer x() const noexcept {
 			return _x;
 		}
 
-		inline [[nodiscard]] Integer y() const noexcept {
+		constexpr inline [[nodiscard]] Integer y() const noexcept {
 			return _y;
 		}
 	private:
@@ -40,24 +39,24 @@ namespace base::images {
 		requires std::_Is_nonbool_integral<Integer>
 	class Size final {
 	public:
-		explicit Size(Integer width, Integer height) {
+		constexpr explicit Size(Integer width, Integer height) noexcept {
 			_width = width;
 			_height = height;
 		}
 
-		inline void setWidth(Integer width) {
+		constexpr inline void setWidth(Integer width) {
 			_width = width;
 		}
 
-		inline void setHeight(Integer height) {
+		constexpr inline void setHeight(Integer height) {
 			_height = height;
 		}
 
-		inline [[nodiscard]] Integer width() const noexcept {
+		constexpr inline [[nodiscard]] Integer width() const noexcept {
 			return _width;
 		}
 
-		inline [[nodiscard]] Integer height() const noexcept {
+		constexpr inline [[nodiscard]] Integer height() const noexcept {
 			return _height;
 		}
 	private:
@@ -73,79 +72,205 @@ namespace base::images {
 			&& std::_Is_nonbool_integral<IntegerSize>
 	class Rect final {
 	public:
-		explicit Rect(
-			const Size<IntegerSize>& size,
-			const Point<IntegerPoint>& point) 
+		constexpr explicit Rect(
+			const Point<IntegerPoint>& point,
+			const Size<IntegerSize>& size)
 		{
 			_size = size;
-			_point = point;
+			_pointLeftXY = point;
 		}
 
-		explicit Rect(
-			const Size<IntegerSize>& size,
-			IntegerPoint x, IntegerPoint y)
+		constexpr explicit Rect(
+			IntegerPoint x, IntegerPoint y,
+			const Size<IntegerSize>& size)
 		{
 			_size = size;
-			_point = Point<IntegerPoint>(x, y);
+			_pointLeftXY = Point<IntegerPoint>(x, y);
 		}
 
-		explicit Rect(
-			IntegerSize width, IntegerSize height,
-			const Point<IntegerPoint>& point)
+		constexpr explicit Rect(
+			const Point<IntegerPoint>& point,
+			IntegerSize width, IntegerSize height)
 		{
 			_size = Size<IntegerSize>(width, height);
-			_point = point;
+			_pointLeftXY = point;
 		}
 
-		explicit Rect(
-			IntegerSize width, IntegerSize height,
-			IntegerPoint x, IntegerPoint y)
+		constexpr explicit Rect(
+			IntegerPoint x, IntegerPoint y,
+			IntegerSize width, IntegerSize height)
 		{
 			_size = Size<IntegerSize>(width, height);
-			_point = Point<IntegerPoint>(x, y);
+			_pointLeftXY = Point<IntegerPoint>(x, y);
 		}
 
-		inline [[nodiscard]] const Size<IntegerSize> & size() const noexcept {
+		constexpr inline [[nodiscard]] Size<IntegerSize> size() const noexcept {
 			return _size;
 		}
 
-		inline [[nodiscard]] const Point<IntegerPoint> & point() const noexcept {
-			return _point;
+		constexpr inline [[nodiscard]] Point<IntegerPoint> point() const noexcept {
+			return _pointLeftXY;
 		}
 
-		inline [[nodiscard]] IntegerSize width() const noexcept {
-			return _size.width();
-		}
-
-		inline [[nodiscard]] IntegerSize height() const noexcept {
-			return _size.height();
-		}
-
-		inline [[nodiscard]] IntegerPoint x() const noexcept {
-			return _point.x();
-		}
-
-		inline [[nodiscard]] IntegerPoint y() const noexcept {
-			return _point.y();
-		}
-
-		inline void setX(IntegerPoint x) {
-			_point.setX(x);
-		}
-
-		inline void setY(IntegerPoint y) {
-			_point.setY(y);
-		}
-
-		inline void setWidth(IntegerSize width) {
+		constexpr inline void setWidth(IntegerSize width) {
 			_size.setWidth(width);
 		}
 
-		inline void setHeight(IntegerSize height) {
+		constexpr inline void setHeight(IntegerSize height) {
 			_size.setHeight(height);
 		}
+
+		constexpr inline [[nodiscard]] bool Rect::isNull() const noexcept
+		{
+			return 
+				_pointRightXY.x() == _pointLeftXY.x() - 1 
+				&& _pointRightXY.y() == _pointLeftXY.y() - 1;
+		}
+
+		constexpr inline [[nodiscard]] bool Rect::isEmpty() const noexcept
+		{
+			return 
+				_pointLeftXY.x() > _pointRightXY.x() 
+				| _pointLeftXY.y() > _pointRightXY.y();
+		}
+
+		constexpr inline [[nodiscard]] bool Rect::isValid() const noexcept
+		{
+			return 
+				_pointLeftXY.x() <= _pointRightXY.x() 
+				&& _pointLeftXY.y() <= _pointRightXY.y();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::left() const noexcept
+		{
+			return _pointLeftXY.x();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::top() const noexcept
+		{
+			return _pointLeftXY.y();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::right() const noexcept
+		{
+			return _pointRightXY.x();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::bottom() const noexcept
+		{
+			return _pointRightXY.y();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::x() const noexcept
+		{
+			return _pointLeftXY.x();
+		}
+
+		constexpr inline [[nodiscard]] int Rect::y() const noexcept
+		{
+			return _pointLeftXY.y();
+		}
+
+		constexpr inline void Rect::setLeft(int pos) noexcept
+		{
+			_pointLeftXY.setX(pos);
+		}
+
+		constexpr inline void Rect::setTop(int pos) noexcept
+		{
+			_pointLeftXY.setY(pos);
+		}
+
+		constexpr inline void Rect::setRight(int pos) noexcept
+		{
+			_pointRightXY.setX(pos);
+		}
+
+		constexpr inline void Rect::setBottom(int pos) noexcept
+		{
+			_pointRightXY.setY(pos);
+		}
+
+		constexpr inline void Rect::setTopLeft(const Point<IntegerPoint>& p) noexcept
+		{
+			_pointLeftXY.setX(p.x());
+			_pointLeftXY.setY(p.y());
+		}
+
+		constexpr inline void Rect::setBottomRight(const Point<IntegerPoint>& p) noexcept
+		{
+			_pointRightXY.setX(p.x());
+			_pointRightXY.setY(p.y());
+		}
+
+		constexpr inline void Rect::setTopRight(const Point<IntegerPoint>& p) noexcept
+		{
+			_pointRightXY.setX(p.x());
+			_pointLeftXY.setY(p.y());
+		}
+
+		constexpr inline void Rect::setBottomLeft(const Point<IntegerPoint>& p) noexcept
+		{
+			_pointLeftXY.setX(p.x());
+			_pointRightXY.setY(p.y());
+		}
+
+		constexpr inline void Rect::setX(int ax) noexcept
+		{
+			_pointLeftXY.setX(ax);
+		}
+
+		constexpr inline void Rect::setY(int ay) noexcept
+		{
+			_pointLeftXY.setY(ay);
+		}
+
+		constexpr inline [[nodiscard]] Point<IntegerPoint> Rect::topLeft() const noexcept
+		{
+			return _pointLeftXY;
+		}
+
+		constexpr inline [[nodiscard]] Point<IntegerPoint> Rect::bottomRight() const noexcept
+		{
+			return _pointRightXY;
+		}
+
+		constexpr inline [[nodiscard]] Point<IntegerPoint> Rect::topRight() const noexcept
+		{
+			return Point<IntegerPoint>(_pointRightXY.x(), _pointLeftXY.y());
+		}
+
+		constexpr inline [[nodiscard]] Point Rect::bottomLeft() const noexcept
+		{
+			return Point<IntegerPoint>(_pointLeftXY.x(), _pointRightXY.y());
+		}
+
+		constexpr inline [[nodiscard]] QPoint Rect::center() const noexcept
+		{
+			return Point<IntegerPoint>(
+				IntegerPoint((int64(_pointLeftXY.x()) + _pointRightXY.x()) / 2),
+				IntegerPoint((int64(_pointLeftXY.y()) + _pointRightXY.y()) / 2));
+		}
+
+		constexpr inline [[nodiscard]] int Rect::width() const noexcept
+		{
+			return _pointRightXY.x() - _pointLeftXY.x() + 1;
+		}
+
+		constexpr inline [[nodiscard]] int Rect::height() const noexcept
+		{
+			return _pointRightXY.y() - _pointLeftXY.y() + 1;
+		}
+
+		constexpr inline [[nodiscard]] Size<IntegerSize> Rect::size() const noexcept
+		{
+			return _size;
+		}
+
 	private:
 		Size<IntegerSize> _size;
-		Point<IntegerPoint> _point;
+
+		Point<IntegerPoint> _pointLeftXY;
+		Point<IntegerPoint> _pointRightXY;
 	};
 } // namespace base::images

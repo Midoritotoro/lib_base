@@ -30,7 +30,6 @@ set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
-
    
 set(PRIVATE_SOURCES 
     src/utility/Math.cpp
@@ -110,19 +109,14 @@ set(PUBLIC_HEADERS
     include/base/TypeWrapper.h
 
     include/base/TypeTraits.h
-
-    include/base/images/ImagesBoxBlur.h
-    include/base/images/ImagesStackBlur.h
-
-    include/base/images/ImagesRgbBlur.h
-
-    include/base/images/ImagesGaussianBlur.h
+    include/base/images/ImagesBlur.h
 
     include/base/images/StbImage.h
     include/base/images/StbImageWrite.h
 
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
+
 
     include/base/images/Images.h
     include/base/images/ImagesIntegral.h
@@ -131,6 +125,9 @@ set(PUBLIC_HEADERS
 
     include/base/images/ImagesCommon.h
     include/base/images/ImagesGeometry.h
+
+    include/base/images/ImagesQtUtility.h
+
     include/base/Types.h
 )
 
@@ -146,6 +143,8 @@ include(cmake/Util_FindGSL.cmake)
 include(cmake/Util_FindQt.cmake)
 
 find_ms_gsl(lib_base)
+find_package(OpenMP REQUIRED)
+
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
@@ -171,6 +170,9 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
         set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     endif()
 endif()
+
+
+target_link_libraries(lib_base PUBLIC OpenMP::OpenMP_CXX)
 
 if(LIB_BASE_ENABLE_QT)
     find_qt(lib_base)
@@ -208,6 +210,7 @@ if (WIN32)
         user32.dll
         kernel32.dll
         shlwapi.dll
+        OpenMP::OpenMP_CXX
     )
 endif()
 

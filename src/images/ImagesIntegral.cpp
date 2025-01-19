@@ -1,4 +1,5 @@
 #include <base/images/ImagesIntegral.h>
+#include <base/images/gl/ImagesGLImage.h>
 
 
 namespace base::images {
