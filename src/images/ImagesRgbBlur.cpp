@@ -1,4 +1,4 @@
-#include <base/images/ImagesRgbBlur.h>
+#include <base/images/ImagesBlur.h>
 #include <base/images/Images.h>
 
 #include <QPainter>

@@ -39,7 +39,7 @@ namespace base::images {
 
 		GLImage();
 
-		GLImage(const GLImage& image);
+		GLImage(GLImage&& image);
 		GLImage(const IntegralImage& image);
 
 		GLImage(::uchar* data);
@@ -55,9 +55,8 @@ namespace base::images {
 			const Size<int32>& size);
 
 #ifdef LIB_BASE_ENABLE_QT
-		GLImage(const QImage& image);
+		GLImage(QImage&& image);
 #endif
-
 		GLImage& operator=(const GLImage& other) = default;
 
 		bool operator==(const GLImage& other);

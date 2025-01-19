@@ -1,4 +1,4 @@
-#include <base/images/ImagesGaussianBlur.h>
+#include <base/images/ImagesBlur.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <base/images/StbImage.h>
@@ -18,87 +18,74 @@
 
 
 namespace base::images {
-    namespace {
-        enum Policy { EXTEND, KERNEL_CROP };
-
-        template<typename T, int C, Policy P = KERNEL_CROP>
-        void HorizontalBlur(
-            const T* in, T* out, const int w,
-            const int h, const int r)
-        {
-            float iarr = 1.f / (r + r + 1);
+    template<typename T, int C, Policy P = KERNEL_CROP>
+    void HorizontalBlur(
+        const T* in, T* out, const int w,
+        const int h, const int r)
+    {
+        float iarr = 1.f / (r + r + 1);
 #pragma omp parallel for
-            for (int i = 0; i < h; i++)
-            {
-                int ti = i * w, li = ti, ri = ti + r;
-                float fv[C], lv[C], val[C];
+        for (int i = 0; i < h; i++)
+        {
+            int ti = i * w, li = ti, ri = ti + r;
+            float fv[C], lv[C], val[C];
 
+            for (int ch = 0; ch < C; ++ch)
+            {
+                fv[ch] = P == EXTEND ? in[ti * C + ch] : 0; // unused with kcrop policy
+                lv[ch] = P == EXTEND ? in[(ti + w - 1) * C + ch] : 0; // unused with kcrop policy
+                val[ch] = P == EXTEND ? (r + 1) * fv[ch] : 0;
+            }
+
+            // initial acucmulation
+            for (int j = 0; j < r; j++)
                 for (int ch = 0; ch < C; ++ch)
                 {
-                    fv[ch] = P == EXTEND ? in[ti * C + ch] : 0; // unused with kcrop policy
-                    lv[ch] = P == EXTEND ? in[(ti + w - 1) * C + ch] : 0; // unused with kcrop policy
-                    val[ch] = P == EXTEND ? (r + 1) * fv[ch] : 0;
+                    val[ch] += in[(ti + j) * C + ch];
                 }
 
-                // initial acucmulation
-                for (int j = 0; j < r; j++)
-                    for (int ch = 0; ch < C; ++ch)
-                    {
-                        val[ch] += in[(ti + j) * C + ch];
-                    }
+            // left border - filter kernel is incomplete
+            for (int j = 0; j <= r; j++, ri++, ti++)
+                for (int ch = 0; ch < C; ++ch)
+                {
+                    val[ch] += P == EXTEND ? in[ri * C + ch] - fv[ch] : in[ri * C + ch];
+                    out[ti * C + ch] = P == EXTEND ? val[ch] * iarr : val[ch] / (r + j + 1);
+                }
 
-                // left border - filter kernel is incomplete
-                for (int j = 0; j <= r; j++, ri++, ti++)
-                    for (int ch = 0; ch < C; ++ch)
-                    {
-                        val[ch] += P == EXTEND ? in[ri * C + ch] - fv[ch] : in[ri * C + ch];
-                        out[ti * C + ch] = P == EXTEND ? val[ch] * iarr : val[ch] / (r + j + 1);
-                    }
+            // center of the image - filter kernel is complete
+            for (int j = r + 1; j < w - r; j++, ri++, ti++, li++)
+                for (int ch = 0; ch < C; ++ch)
+                {
+                    val[ch] += in[ri * C + ch] - in[li * C + ch];
+                    out[ti * C + ch] = val[ch] * iarr;
+                }
 
-                // center of the image - filter kernel is complete
-                for (int j = r + 1; j < w - r; j++, ri++, ti++, li++)
-                    for (int ch = 0; ch < C; ++ch)
-                    {
-                        val[ch] += in[ri * C + ch] - in[li * C + ch];
-                        out[ti * C + ch] = val[ch] * iarr;
-                    }
-
-                // right border - filter kernel is incomplete
-                for (int j = w - r; j < w; j++, ti++, li++)
-                    for (int ch = 0; ch < C; ++ch)
-                    {
-                        val[ch] += P == EXTEND ? lv[ch] - in[li * C + ch] : -in[li * C + ch];
-                        out[ti * C + ch] = P == EXTEND ? val[ch] * iarr : val[ch] / (r + w - j);
-                    }
-            }
+            // right border - filter kernel is incomplete
+            for (int j = w - r; j < w; j++, ti++, li++)
+                for (int ch = 0; ch < C; ++ch)
+                {
+                    val[ch] += P == EXTEND ? lv[ch] - in[li * C + ch] : -in[li * C + ch];
+                    out[ti * C + ch] = P == EXTEND ? val[ch] * iarr : val[ch] / (r + w - j);
+                }
         }
-
-        //!
-        //! \brief Utility template dispatcher function for horizontal_blur. Templated by buffer data type T.
-        //!
-        //! \param[in] in           source buffer
-        //! \param[in,out] out      target buffer
-        //! \param[in] w            image width
-        //! \param[in] h            image height
-        //! \param[in] c            image channels
-        //! \param[in] r            box dimension
-        //!
-        template<typename T>
-        void HorizontalBlur(
-            const T* in, T* out, const int w,
-            const int h, const int c, const int r)
+    }
+    template<typename T>
+    void HorizontalBlur(
+        const T* in, T* out, const int w,
+        const int h, const int c, const int r)
+    {
+        switch (c)
         {
-            switch (c)
-            {
-            case 1: HorizontalBlur<T, 1>(in, out, w, h, r); break;
-            case 2: HorizontalBlur<T, 2>(in, out, w, h, r); break;
-            case 3: HorizontalBlur<T, 3>(in, out, w, h, r); break;
-            case 4: HorizontalBlur<T, 4>(in, out, w, h, r); break;
-            default: printf("%d channels is not supported yet. Add a specific case if possible or fall back to the generic version.", c); break;
-                // default: HorizontalBlur<T>(in, out, w, h, c, r); break;
-            }
+        case 1: HorizontalBlur<T, 1>(in, out, w, h, r); break;
+        case 2: HorizontalBlur<T, 2>(in, out, w, h, r); break;
+        case 3: HorizontalBlur<T, 3>(in, out, w, h, r); break;
+        case 4: HorizontalBlur<T, 4>(in, out, w, h, r); break;
+        default: printf("%d channels is not supported yet. Add a specific case if possible or fall back to the generic version.", c); break;
+            // default: HorizontalBlur<T>(in, out, w, h, c, r); break;
         }
+    }
 
+    namespace {
         //!
         //! \brief This function performs a 2D tranposition of an image. The transposition is done per 
         //! block to reduce the number of cache misses and improve cache coherency for large image buffers.
@@ -190,7 +177,10 @@ namespace base::images {
         }
 
         template<typename T>
-        void FastGaussianBlurN(T*& in, T*& out, const int w, const int h, const int c, const float sigma, const int n)
+        void FastGaussianBlurN(
+            T*& in, T*& out, const int w, 
+            const int h, const int c, 
+            const float sigma, const int n)
         {
             // compute box kernel sizes
             std::vector<int> boxes(n);

@@ -1,4 +1,4 @@
-#include <base/images/ImagesStackBlur.h>
+#include <base/images/ImagesBlur.h>
 #include <src/images/StackBlurTask.h>
 
 

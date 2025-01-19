@@ -9,7 +9,7 @@ namespace base::images {
 		_data(new GLImageData())
 	{}
 
-	GLImage::GLImage(const GLImage& image):
+	GLImage::GLImage(GLImage&& image):
 		_data(image._data)
 	{}
 
@@ -63,14 +63,21 @@ namespace base::images {
 	}
 
 #ifdef LIB_BASE_ENABLE_QT
-	GLImage::GLImage(const QImage& image) {
+	GLImage::GLImage(QImage&& image):
+		_data(new GLImageData())
+	{
+		_data->data = image.bits();
+		_data->depth = image.depth();
 
+		_data->totalSize = image.sizeInBytes();
+		_data->devicePixelRatio = image.devicePixelRatio();
+
+		_data->channels = image.format() == QImage::Format::
+
+		_data->width = image.width();
+		_data->height = image.height();
 	}
 #endif
-
-	GLImage& GLImage::operator=(const GLImage& image) {
-
-	}
 
 	bool GLImage::operator==(const GLImage& other) {
 		return isEqual(other);

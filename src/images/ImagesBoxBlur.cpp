@@ -1,4 +1,4 @@
-#include <base/images/ImagesBoxBlur.h>
+#include <base/images/ImagesBlur.h>
 #include <base/Types.h>
 
 
@@ -17,7 +17,7 @@ namespace base::images {
             ? 16 : (radius > 17) 
             ? 1 : tab[radius - 1];
 
-        auto result = image.convertToFormat(Image::Format_ARGB32_Premultiplied);
+       // auto result = image.convertToFormat(Image::Format_ARGB32_Premultiplied);
 
         const auto r1 = rect.top();
         const auto r2 = rect.bottom();

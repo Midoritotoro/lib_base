@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <base/Types.h>
+
 
 namespace base::images {
     using Rgb = uint;
