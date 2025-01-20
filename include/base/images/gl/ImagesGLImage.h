@@ -1,8 +1,8 @@
 #pragma once 
 
-
 #include <base/images/Images.h>
 #include <string>
+
 
 namespace base::images {
 	inline constexpr auto kForceImageChannels = 4; // rgba
@@ -11,11 +11,11 @@ namespace base::images {
 
 	class GLImage final {
 	public:
-		enum class Format : uchar {
-			Format_Mono,
-			Format_RGB32,
-			Format_ARGB32,
-			Format_ARGB32_Premultiplied
+		enum class ColorSpace : uchar {
+			Mono,
+			RGB32,
+			ARGB32,
+			ARGB32_Premultiplied
 		};
 
 		struct GLImageSizeParameters{
@@ -31,8 +31,6 @@ namespace base::images {
 			int32 height = 0;
 
 			::uchar* data = nullptr;
-			// Format format;
-
 			ushort channels = 0;
 
 			int32 depth = 0;
@@ -41,7 +39,7 @@ namespace base::images {
 			sizetype totalSize = 0;
 			int32 devicePixelRatio = 0;
 
-			Format format;
+			ColorSpace colorSpace;
 			std::vector<Rgb> colorTable;
 		};
 
@@ -65,6 +63,9 @@ namespace base::images {
 #ifdef LIB_BASE_ENABLE_QT
 		GLImage(QImage&& image);
 #endif
+
+		~GLImage();
+
 		GLImage& operator=(const GLImage& other) = default;
 
 		bool operator==(const GLImage& other);
@@ -73,7 +74,10 @@ namespace base::images {
 		void loadFromData(::uchar* data);
 		void loadFromFile(const std::string& path);
 
-		[[nodiscard]] GLImage convertToFormat(Format format) const;
+		void resize(int32 width, int32 height);
+		void resize(Size<int32> size);
+
+		[[nodiscard]] GLImage convertToColorSpace(ColorSpace space) const;
 
 		[[nodiscard]] Rect<int32> rect() const noexcept;
 		[[nodiscard]] Size<int32> size() const noexcept;
@@ -90,6 +94,10 @@ namespace base::images {
 		[[nodiscard]] const uchar* scanLine(int i) const;
 
 		[[nodiscard]] Rgb pixel(int x, int y) const;
+
+#ifdef defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
+		void paint();
+#endif
 	private:
 		bool isEqual(const GLImage& other) const;
 

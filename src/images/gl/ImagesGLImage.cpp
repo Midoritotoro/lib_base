@@ -3,9 +3,12 @@
 
 #include <base/Assert.h>
 #include <private/qpixellayout_p.h>
+
 #ifdef LIB_BASE_ENABLE_QT
 #include <base/images/ImagesQtUtility.h>
 #endif
+
+#include <base/Utility.h>
 
 
 namespace base::images {
@@ -131,8 +134,22 @@ namespace base::images {
 		_data->bytesPerLine = recountImageParameters(width, height, 1).bytesPerLine;
 	}
 
-	GLImage GLImage::convertToFormat(Format format) const {
+	GLImage::~GLImage() {
+		stbi_image_free(_data->data);
+		delete base::take(_data);
+	}
 
+	GLImage GLImage::convertToColorSpace(ColorSpace space) const {
+
+	}
+
+	void GLImage::resize(int32 width, int32 height) {
+		/*stbir_resize(_data->data, _data->width, _data->height, _data->totalSize,
+				_data->data, width, height, 0, )*/
+	}
+
+	void GLImage::resize(Size<int32> size) {
+		return resize(size.width(), size.height());
 	}
 
 	Rect<int32> GLImage::rect() const noexcept {
@@ -190,13 +207,12 @@ namespace base::images {
 		const uchar* s = _data->data + y * _data->bytesPerLine;
 
 		int index = -1;
-		switch (_data->format) {
-		case Format::Format_Mono:
-			index = (*(s + (x >> 3)) >> (~x & 7)) & 1;
-			break;
-		default:
-			break;
+		switch (_data->colorSpace) {
+			case ColorSpace::Mono:
+				index = (*(s + (x >> 3)) >> (~x & 7)) & 1;
+				break;
 		}
+
 		if (index >= 0) {    // Indexed format
 			if (index >= _data->colorTable.size()) {
 				qWarning("QImage::pixel: color table index %d out of range.", index);
@@ -205,18 +221,22 @@ namespace base::images {
 			return _data->colorTable.at(index);
 		}
 
-		switch (_data->format) {
-		case Format::Format_RGB32:
-			return 0xff000000 | reinterpret_cast<const QRgb*>(s)[x];
-		case Format::Format_ARGB32:
-		case Format::Format_ARGB32_Premultiplied:
-			return reinterpret_cast<const QRgb*>(s)[x];
-		default:
-			break;
+		switch (_data->colorSpace) {
+		case ColorSpace::RGB32:
+			return 0xff000000 | reinterpret_cast<const Rgb*>(s)[x];
+		case ColorSpace::ARGB32:
+		case ColorSpace::ARGB32_Premultiplied:
+			return reinterpret_cast<const Rgb*>(s)[x];
 		}
 
 		return -1;
 	}
+
+#ifdef defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
+	void GLImage::paint() {
+
+	}
+#endif
 
 	bool GLImage::isEqual(const GLImage& other) const {
 		return _data->bytesPerLine == other._data->bytesPerLine

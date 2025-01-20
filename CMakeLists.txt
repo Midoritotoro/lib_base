@@ -23,11 +23,15 @@ option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использов
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
 option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
+option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
+option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
 
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
+set(LIB_BASE_ENABLE_OPENGL OFF)
+set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
    
@@ -127,6 +131,7 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesGeometry.h
 
     include/base/images/ImagesQtUtility.h
+    include/base/images/StbImageResize.h
 
     include/base/Types.h
 )
@@ -182,6 +187,16 @@ if(LIB_BASE_ENABLE_QT)
     target_link_libraries(lib_baseQt INTERFACE lib_base_qt)
 
     add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
+endif()
+
+if(LIB_BASE_ENABLE_OPENGL)
+    find_gl(lib_base)
+    # add_subdirectory(src/gl)
+endif()
+
+if(LIB_BASE_ENABLE_ZLIB)
+    find_zlib(lib_base)
+    # add_subdirectory(src/zlib)
 endif()
 
 target_include_directories(lib_base
