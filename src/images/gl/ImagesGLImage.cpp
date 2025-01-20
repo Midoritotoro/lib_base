@@ -2,8 +2,6 @@
 #include <base/OverflowCheck.h>
 
 #include <base/Assert.h>
-#include <private/qpixellayout_p.h>
-
 #ifdef LIB_BASE_ENABLE_QT
 #include <base/images/ImagesQtUtility.h>
 #endif
@@ -12,11 +10,11 @@
 
 
 namespace base::images {
-	GLImage::GLImage():
+	GLImage::GLImage() :
 		_data(new GLImageData())
 	{}
 
-	GLImage::GLImage(GLImage&& image):
+	GLImage::GLImage(GLImage&& image) noexcept :
 		_data(image._data)
 	{}
 
@@ -24,20 +22,20 @@ namespace base::images {
 
 	}
 
-	GLImage::GLImage(::uchar* data):
+	GLImage::GLImage(::uchar* data) :
 		_data(new GLImageData())
 	{
 		_data->data = data;
 	}
 
-	GLImage::GLImage(const Size<int32>& size):
+	GLImage::GLImage(const Size<int32>& size) :
 		_data(new GLImageData())
 	{
 		_data->width = size.width();
 		_data->height = size.height();
 	}
 
-	GLImage::GLImage(int32 width, int32 height):
+	GLImage::GLImage(int32 width, int32 height) :
 		_data(new GLImageData())
 	{
 		_data->width = width;
@@ -47,8 +45,8 @@ namespace base::images {
 	GLImage::GLImage(
 		::uchar* data,
 		int32 width, int32 height
-	):
-		_data(new GLImageData()) 
+	) :
+		_data(new GLImageData())
 	{
 		_data->data = data;
 
@@ -59,7 +57,7 @@ namespace base::images {
 	GLImage::GLImage(
 		::uchar* data,
 		const Size<int32>& size
-	):
+	) :
 		_data(new GLImageData())
 
 	{
@@ -70,7 +68,7 @@ namespace base::images {
 	}
 
 #ifdef LIB_BASE_ENABLE_QT
-	GLImage::GLImage(QImage&& image):
+	GLImage::GLImage(QImage&& image) :
 		_data(new GLImageData())
 	{
 		_data->data = image.bits();
@@ -110,7 +108,7 @@ namespace base::images {
 		_data->height = height;
 
 		_data->channels = channels;
-		_data->depth = 32; // ???
+		_data->depth = 1; // ??? 32
 
 		_data->bytesPerLine = recountImageParameters(width, height, 1).bytesPerLine;
 	}
@@ -119,7 +117,10 @@ namespace base::images {
 		uchar* imageData = nullptr;
 		int32 width = 0, height = 0, channels = 0;
 
-		imageData = stbi_load(path.c_str(), &width, &height, &channels, kForceImageChannels);
+		imageData = stbi_load(
+			path.c_str(), &width, &height,
+			&channels, kForceImageChannels);
+
 		Assert(imageData != nullptr);
 
 		_data->data = imageData;
@@ -129,7 +130,7 @@ namespace base::images {
 		_data->height = height;
 
 		_data->channels = channels;
-		_data->depth = 32; // ???
+		_data->depth = 1; // ??? 32
 
 		_data->bytesPerLine = recountImageParameters(width, height, 1).bytesPerLine;
 	}
@@ -140,12 +141,20 @@ namespace base::images {
 	}
 
 	GLImage GLImage::convertToColorSpace(ColorSpace space) const {
-
+		return GLImage();
 	}
 
 	void GLImage::resize(int32 width, int32 height) {
-		/*stbir_resize(_data->data, _data->width, _data->height, _data->totalSize,
-				_data->data, width, height, 0, )*/
+		stbir_resize_uint8(
+			_data->data, _data->width, _data->height, 0,
+			_data->data, width, height, 0, _data->channels);
+
+
+		_data->width = width;
+		_data->height = height;
+
+		_data->totalSize = sizeof(*_data->data);
+		_data->bytesPerLine = recountImageParameters(width, height, 1).bytesPerLine;
 	}
 
 	void GLImage::resize(Size<int32> size) {
@@ -169,7 +178,7 @@ namespace base::images {
 	}
 
 	int32 GLImage::bytesPerLine() const noexcept {
-
+		return _data->bytesPerLine;
 	}
 
 	uchar* GLImage::bytesData() {
@@ -180,8 +189,7 @@ namespace base::images {
 		return _data;
 	}
 
-	uchar* GLImage::scanLine(int i)
-	{
+	uchar* GLImage::scanLine(int i) {
 		if (!_data)
 			return nullptr;
 
@@ -197,11 +205,17 @@ namespace base::images {
 		return _data->data + i * _data->bytesPerLine;
 	}
 
+	bool GLImage::isNull() const noexcept {
+		return _data == nullptr
+			|| (_data->data == nullptr || _data->totalSize <= 0)
+			|| (_data->width <= 0 || _data->height <= 0);
+	}
+
 	Rgb GLImage::pixel(int x, int y) const
 	{
 		if (!_data || x < 0 || x >= _data->width || y < 0 || y >= _data->height) {
 			qWarning("QImage::pixel: coordinate (%d,%d) out of range", x, y);
-			return 12345;
+			return -1;
 		}
 
 		const uchar* s = _data->data + y * _data->bytesPerLine;
@@ -224,17 +238,22 @@ namespace base::images {
 		switch (_data->colorSpace) {
 		case ColorSpace::RGB32:
 			return 0xff000000 | reinterpret_cast<const Rgb*>(s)[x];
-		case ColorSpace::ARGB32:
-		case ColorSpace::ARGB32_Premultiplied:
+		case ColorSpace::RGBA32:
 			return reinterpret_cast<const Rgb*>(s)[x];
 		}
 
 		return -1;
 	}
 
-#ifdef defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
+#if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
 	void GLImage::paint() {
+	#ifdef LIB_BASE_ENABLE_OPENGL
 
+	#endif
+
+	#ifdef LIB_BASE_ENABLE_QT_OPENGL
+
+	#endif
 	}
 #endif
 

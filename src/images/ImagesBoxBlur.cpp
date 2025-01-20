@@ -5,9 +5,10 @@
 
 
 namespace base::images {
-    Image boxBlurImage(
-        const Image& image,
-        const Rect<int32>& rect,
+#ifdef LIB_BASE_ENABLE_QT
+    QImage boxBlurImage(
+        const QImage& image,
+        const QRect& rect,
         int radius)
     {
         static constexpr int tab[] = {
@@ -19,7 +20,7 @@ namespace base::images {
             ? 16 : (radius > 17) 
             ? 1 : tab[radius - 1];
 
-        auto result = image.convertToFormat(Image::Format::Format_ARGB32_Premultiplied);
+        auto result = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
         const auto r1 = rect.top();
         const auto r2 = rect.bottom();
@@ -82,8 +83,8 @@ namespace base::images {
         return result;
     }
 
-    Image boxBlurImage(
-        const Image& _image,
+    QImage boxBlurImage(
+        const QImage& _image,
         int _radius)
     {
         return boxBlurImage(
@@ -91,4 +92,5 @@ namespace base::images {
             _image.rect(),
             _radius);
     }
+#endif
 } // namespace base::images

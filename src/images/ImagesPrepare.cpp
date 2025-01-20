@@ -65,14 +65,14 @@ namespace base::images {
 			&& qBlue(rgb) == 0;
 	}
 
-	Pixmap PixmapFast(QImage&& image) {
+	QPixmap PixmapFast(QImage&& image) {
 		Expects(image.format() == QImage::Format_ARGB32_Premultiplied
 			|| image.format() == QImage::Format_RGB32);
 
 		return QPixmap::fromImage(std::move(image), Qt::NoFormatConversion);
 	}
 
-	Image Opaque(QImage&& image) {
+	QImage Opaque(QImage&& image) {
 		if (image.hasAlphaChannel()) {
 			if (image.format() != QImage::Format_ARGB32_Premultiplied)
 				image = std::move(image).convertToFormat(

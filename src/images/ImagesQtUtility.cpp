@@ -1,4 +1,5 @@
 #include <base/images/ImagesQtUtility.h>
+#include <iostream>
 
 
 #ifdef LIB_BASE_ENABLE_QT 
@@ -22,9 +23,6 @@ namespace base::images {
         case QImage::Format_ARGB32_Premultiplied:
         case QImage::Format_RGBA8888:
         case QImage::Format_RGBA8888_Premultiplied:
-        case QImage::Format_BGRA8888:
-        case QImage::Format_BGRA8888_Premultiplied:
-            return 4; // 3 или 4 канала (RGB или RGBA)
 
         case QImage::Format_RGB888:
         case QImage::Format_BGR888:
@@ -33,7 +31,7 @@ namespace base::images {
             // Добавьте другие форматы, если они вам нужны.
 
         default:
-            qDebug() << "Warning: Unknown QImage format:" << format;
+            std::cout << "Warning: Unknown QImage format:" << format;
             return -1; // Неизвестный формат
         }
     }

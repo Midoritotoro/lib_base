@@ -2,7 +2,7 @@
 
 #include <QVector3D>
 
-namespace base::qt::gl {
+namespace base::qt::ui::effects {
 	using vec2 = QVector2D;
 	using vec3 = QVector3D;
 	using vec4 = QVector4D;

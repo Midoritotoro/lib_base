@@ -2,13 +2,13 @@
 
 #include <base/Platform.h>
 
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include <base/images/StbImage.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <base/images/StbImageWrite.h>
 
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
+//#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include <base/images/StbImageResize.h>
 
 #include <base/images/ImagesRgb.h>

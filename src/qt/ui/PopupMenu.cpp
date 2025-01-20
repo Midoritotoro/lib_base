@@ -41,8 +41,8 @@ namespace base::qt::ui {
 			update();
 		});
 
-		_blur = std::make_unique<BlurBehindEffect>(this);
-		_blur->setBlurMethod(BlurBehindEffect::BlurMethod::StackBlur);
+		_blur = std::make_unique<effects::BlurBehindEffect>(this);
+		_blur->setBlurMethod(effects::BlurBehindEffect::BlurMethod::StackBlur);
 
 		_blur->setDownsampleFactor(2.0);
 		_blur->setBlurRadius(5);
@@ -56,7 +56,7 @@ namespace base::qt::ui {
 		setGraphicsEffect(_blur.get());
 
 
-		connect(_blur.get(), &BlurBehindEffect::repaintRequired, this, qOverload<>(&PopupMenu::repaint));
+		connect(_blur.get(), &effects::BlurBehindEffect::repaintRequired, this, qOverload<>(&PopupMenu::repaint));
 	//	connect(_blur.get(), &QGraphicsEffect::enabledChanged, this, &PopupMenu::setVisible);
 
 		QPalette pal;
@@ -178,8 +178,8 @@ namespace base::qt::ui {
 		path.addRect(rect().adjusted(0, 0, -1, -1));
 
 		painter.setClipPath(path);
-		path.translate(
-			().topLeft());
+		//path.translate(
+		//	().topLeft());
 
 		painter.drawRect(_animation.rect());
 	//	_blur->setRegion(rect());

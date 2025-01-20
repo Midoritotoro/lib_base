@@ -1,5 +1,5 @@
 function(find_qt TARGET)
-    if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGET Qt6::WidgetsPrivate)
+    if(TARGET Qt6::Core AND TARGET Qt6::Widgets)
         message("Qt was found in parent project")
 
         set(targets            
@@ -16,6 +16,14 @@ function(find_qt TARGET)
            PUBLIC
                ${QT6_INCLUDE}
         )
+
+        target_link_libraries(${TARGET} # Потом удалю
+           PUBLIC
+                Qt6::Core 
+                Qt6::Widgets 
+                Qt6::WidgetsPrivate
+        )
+
     else()
         message(STATUS "Can't find Qt in the parent project, trying to find it using find_package")
         find_package(Qt6 REQUIRED COMPONENTS
@@ -35,6 +43,8 @@ function(find_qt TARGET)
                 Qt6::Widgets 
                 Qt6::WidgetsPrivate
             )
+
+        
     endif()
 
     target_compile_definitions(${TARGET}

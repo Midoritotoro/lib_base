@@ -18,7 +18,7 @@
 
 
 namespace base::images {
-    template<typename T, int C, Policy P = KERNEL_CROP>
+    template<typename T, int C, Policy P>
     void HorizontalBlur(
         const T* in, T* out, const int w,
         const int h, const int r)

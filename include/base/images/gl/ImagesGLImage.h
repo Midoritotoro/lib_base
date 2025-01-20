@@ -5,7 +5,7 @@
 
 
 namespace base::images {
-	inline constexpr auto kForceImageChannels = 4; // rgba
+	inline constexpr auto kForceImageChannels = 3; // rgb
 
 	class IntegralImage;
 
@@ -14,8 +14,7 @@ namespace base::images {
 		enum class ColorSpace : uchar {
 			Mono,
 			RGB32,
-			ARGB32,
-			ARGB32_Premultiplied
+			RGBA32
 		};
 
 		struct GLImageSizeParameters{
@@ -31,13 +30,13 @@ namespace base::images {
 			int32 height = 0;
 
 			::uchar* data = nullptr;
-			ushort channels = 0;
+			ushort channels = kForceImageChannels;
 
-			int32 depth = 0;
+			int32 depth = 1;
 			sizetype bytesPerLine = 0;
 
 			sizetype totalSize = 0;
-			int32 devicePixelRatio = 0;
+			int32 devicePixelRatio = 1;
 
 			ColorSpace colorSpace;
 			std::vector<Rgb> colorTable;
@@ -45,7 +44,7 @@ namespace base::images {
 
 		GLImage();
 
-		GLImage(GLImage&& image);
+		GLImage(GLImage&& image) noexcept;
 		GLImage(const IntegralImage& image);
 
 		GLImage(::uchar* data);
@@ -93,9 +92,10 @@ namespace base::images {
 		[[nodiscard]] uchar* scanLine(int i);
 		[[nodiscard]] const uchar* scanLine(int i) const;
 
+		[[nodiscard]] bool isNull() const noexcept;
 		[[nodiscard]] Rgb pixel(int x, int y) const;
 
-#ifdef defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
+#if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
 		void paint();
 #endif
 	private:

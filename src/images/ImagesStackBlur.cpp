@@ -360,12 +360,12 @@ namespace base::images {
     }
 
 
-    Image stackBlurImage(
-        const Image& image,
+    QImage stackBlurImage(
+        const QImage& image,
         int radius,
         int threadCount)
     {
-        Image result = image;
+        QImage result = image;
         stackblur(result.bits(), image.width(), image.height(), radius, threadCount);
         return result;
     }

@@ -5,6 +5,7 @@
 
 
 namespace base::images {
+#ifdef LIB_BASE_ENABLE_QT
 	namespace {
 		uint64 BlurGetColors(const uchar* p) {
 			return (uint64)p[0]
@@ -155,4 +156,5 @@ namespace base::images {
 
 		return std::move(image);
 	}
+#endif
 } // namespace base::images
