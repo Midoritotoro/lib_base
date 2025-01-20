@@ -20,6 +20,8 @@ namespace base::images {
         [[nodiscard]] int32 height() const noexcept;
 
         [[nodiscard]] Size<int32> size() const noexcept;
+        [[nodiscard]] Point<int32> randomFreePositionForSize(const Size<int32>& size) const;
+
 
         [[nodiscard]] std::vector<int>& operator[](const size_t position) noexcept;
 
@@ -30,6 +32,8 @@ namespace base::images {
         [[nodiscard]] bool operator==(const std::vector<std::vector<int32>>& other) const noexcept;
     private:
         std::vector<std::vector<int32>> integralImageFromImage(const Image& image);
+
+
 
         std::vector<std::vector<int32>> _integralImage;
     };

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <base/Platform.h>
+#include <base/Time.h>
 
 #if defined(_MSC_VER) && !defined(__llvm__) && !defined(__INTEL_COMPILER) \
 	&& !defined(__GNUC__) && !defined(__clang__)
@@ -13,15 +14,18 @@
 #include <cstdlib>
 #include <gsl/gsl>
 
+#include <iostream>
+
+
 /**
  *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
  *\param name - "Имя" области видимости
 */
 #define measureExecutionTime(name) \
-		 const auto ms = Time::now(); \
-		 const auto timer = gsl::finally([] { \
+		 const auto ms = base::Time::now(); \
+		 const auto timer = gsl::finally([=] { \
 			std::cout << name << " completed for: " \
-			<< Time::now() - ms << " ms" << '\n'; });
+			<< base::Time::now() - ms << " ms" << '\n'; });
 
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))

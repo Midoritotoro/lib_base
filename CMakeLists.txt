@@ -119,6 +119,7 @@ set(PUBLIC_HEADERS
 
     include/base/images/StbImage.h
     include/base/images/StbImageWrite.h
+    include/base/images/StbImageResize.h
 
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
@@ -133,7 +134,6 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesGeometry.h
 
     include/base/images/ImagesQtUtility.h
-    include/base/images/StbImageResize.h
 
     include/base/Types.h
 )

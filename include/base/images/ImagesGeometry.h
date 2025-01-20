@@ -11,7 +11,7 @@ namespace base::images {
 	class Point final {
 	public:
 		constexpr Point() noexcept {}
-		constexpr explicit Point(Integer x, Integer y) noexcept {
+		constexpr Point(Integer x, Integer y) noexcept {
 			_x = x;
 			_y = y;
 		}
@@ -46,7 +46,7 @@ namespace base::images {
 	class Size final {
 	public:
 		constexpr Size() noexcept {}
-		constexpr explicit Size(Integer width, Integer height) noexcept {
+		constexpr Size(Integer width, Integer height) noexcept {
 			_width = width;
 			_height = height;
 		}
