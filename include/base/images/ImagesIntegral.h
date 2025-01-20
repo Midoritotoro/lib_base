@@ -32,7 +32,7 @@ namespace base::images {
         [[nodiscard]] bool operator==(const std::vector<std::vector<int32>>& other) const noexcept;
     private:
         std::vector<std::vector<int32>> integralImageFromImage(const Image& image);
-
+        
 
 
         std::vector<std::vector<int32>> _integralImage;

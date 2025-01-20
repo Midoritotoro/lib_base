@@ -27,6 +27,12 @@
 			std::cout << name << " completed for: " \
 			<< base::Time::now() - ms << " ms" << '\n'; });
 
+#define measureExecutionTimeToValue(value) \
+		 const auto ms = base::Time::now(); \
+		 const auto timer = gsl::finally([&]() mutable { \
+			value = base::Time::now() - ms; });
+
+
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
 
