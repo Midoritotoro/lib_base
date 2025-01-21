@@ -10,7 +10,7 @@
 #endif
 
 #include <base/Windows.h>
-#include <base/ProcessorDetection.h>
+#include <base/SimdHelpers.h>
 
 #include <base/BaseExport.h>
 

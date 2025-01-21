@@ -1,43 +1,45 @@
-#include <base/images/ImagesIntegral.h>
+п»ї#include <base/images/ImagesIntegral.h>
 #include <base/images/gl/ImagesGLImage.h>
 
 #include <private/qimage_p.h>
 #include <qDebug>
 
-
-#include <omp.h>
+#include <base/Platform.h>
+#include <qsimd.h>
 
 static void Bradley_threshold(unsigned char* src, unsigned char* res, int width, int height) {
     const int S = width / 8;
     int s2 = S / 2;
     const float t = 0.15;
-    unsigned long* integral_image = nullptr;
+    unsigned long* integral_image = 0;
     long sum = 0;
     int count = 0;
     int index;
     int x1, y1, x2, y2;
-    int h = height * 4;
+    int h = height * sizeof(unsigned long);
 
     integral_image = new unsigned long[width * h];
 
-
-    // Вычисление интегрального изображения
-    for (int i = 0; i < width; i++) {
+    for (int j = 0; j < h; j++) {
         sum = 0;
-#pragma omp parallel for
-        for (int j = 0; j < h; j++) {
+        for (int i = 0; i < width; i++) {
             index = j * width + i;
             sum += src[index];
-            if (i == 0)
+            if (j == 0 && i == 0)
                 integral_image[index] = sum;
-            else
+            else if (j == 0)
                 integral_image[index] = integral_image[index - 1] + sum;
+            else if (i == 0)
+                integral_image[index] = integral_image[index - width] + sum;
+            else
+                integral_image[index] = integral_image[index - 1] + integral_image[index - width] - integral_image[index - width - 1] + src[index];
+
         }
     }
-    // Нахождение границ для локальных областей
-#pragma omp parallel for private(sum, count, index, x1, x2, y1, y2)
-    for (int j = 0; j < h; j++) {
-        for (int i = 0; i < width; i++) {
+
+    //Г­Г ГµГ®Г¤ГЁГ¬ ГЈГ°Г Г­ГЁГ¶Г» Г¤Г«Гї Г«Г®ГЄГ Г«ГјГ­Г»ГҐ Г®ГЎГ«Г Г±ГІГҐГ©
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < h; j++) {
             index = j * width + i;
 
             x1 = i - s2;
@@ -54,20 +56,29 @@ static void Bradley_threshold(unsigned char* src, unsigned char* res, int width,
             if (y2 >= h)
                 y2 = h - 1;
 
-            count = (x2 - x1) * (y2 - y1);
+            count = (x2 - x1 + 1) * (y2 - y1 + 1);
 
-            sum = integral_image[y2 * width + x2] - integral_image[y1 * width + x2] -
-                integral_image[y2 * width + x1] + integral_image[y1 * width + x1];
+            // ГЏГ°Г ГўГЁГ«ГјГ­Г®ГҐ ГўГ»Г·ГЁГ±Г«ГҐГ­ГЁГҐ sum Г± ГіГ·ВёГІГ®Г¬ ГЈГ°Г Г­ГЁГ¶
+            sum = integral_image[y2 * width + x2];
+            if (y1 > 0) {
+                sum -= integral_image[(y1 - 1) * width + x2];
+            }
+            if (x1 > 0) {
+                sum -= integral_image[y2 * width + (x1 - 1)];
+            }
+
+            if (y1 > 0 && x1 > 0) {
+                sum += integral_image[(y1 - 1) * width + (x1 - 1)];
+            }
+
             if ((long)(src[index] * count) < (long)(sum * (1.0 - t)))
                 res[index] = 0;
             else
                 res[index] = 255;
         }
     }
-
     delete[] integral_image;
 }
-
 
 
 namespace base::images {

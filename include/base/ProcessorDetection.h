@@ -305,7 +305,7 @@
 #  define PROCESSOR_WASM
 #  define BYTE_ORDER LITTLE_ENDIAN
 #  define PROCESSOR_WORDSIZE 8
-#ifdef QT_COMPILER_SUPPORTS_SSE2
+#ifdef COMPILER_SUPPORTS_SSE2
 #  define PROCESSOR_X86 6   // enables SIMD support
 # define PROCESSOR_X86_64 // wasm64
 #  define PROCESSOR_WASM_64
@@ -362,7 +362,7 @@
    the size of the register). On some architectures where a pointer could be
    smaller than the register, the macro is defined above.
 
-   Falls back to QT_POINTER_SIZE if not set explicitly for the platform.
+   Falls back to POINTER_SIZE if not set explicitly for the platform.
 */
 #ifndef PROCESSOR_WORDSIZE
 #  define PROCESSOR_WORDSIZE        POINTER_SIZE

@@ -136,6 +136,10 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesQtUtility.h
 
     include/base/Types.h
+    include/base/SimdHelpers.h
+
+    include/base/SystemDetection.h
+    include/base/CompilerDetection.h
 )
 
 
@@ -199,6 +203,13 @@ endif()
 if(LIB_BASE_ENABLE_ZLIB)
     find_zlib(lib_base)
     # add_subdirectory(src/zlib)
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(
+        lib_base 
+        PRIVATE
+        :/arch:AVX2)
 endif()
 
 target_include_directories(lib_base
