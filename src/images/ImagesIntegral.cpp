@@ -5,7 +5,7 @@
 #include <qDebug>
 
 #include <base/Platform.h>
-#include <qsimd.h>
+
 
 static void Bradley_threshold(unsigned char* src, unsigned char* res, int width, int height) {
     const int S = width / 8;
@@ -37,7 +37,6 @@ static void Bradley_threshold(unsigned char* src, unsigned char* res, int width,
         }
     }
 
-    //íàõîäèì ãðàíèöû äëÿ ëîêàëüíûå îáëàñòåé
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < h; j++) {
             index = j * width + i;

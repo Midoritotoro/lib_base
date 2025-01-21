@@ -209,7 +209,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(
         lib_base 
         PRIVATE
-        :/arch:AVX2)
+        /arch:AVX2)
 endif()
 
 target_include_directories(lib_base
