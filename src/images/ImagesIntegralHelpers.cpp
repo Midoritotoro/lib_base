@@ -1,44 +1,144 @@
 #include <src/images/ImagesIntegralHelpers.h>
+#include <base/Assert.h>
 
+#include <iostream>
 
 namespace base::images {
     namespace {
-        namespace {
 #ifdef LIB_BASE_ENABLE_avx2
-            void BradleyHelperAvx2(
-                uchar* src, uchar* res,
-                int32 width, int32 height)
-            {
-
-            }
+        void BradleyHelperAvx2(
+            uchar* src, uchar* res,
+            int32 width, int32 height,
+            int32 _S, int32 _T)
+        {
+            const int32 s2 = _S / 2;
+        }
 #endif
 #ifdef LIB_BASE_ENABLE_sse4_2
-            void BradleyHelperSse4_2(
-                uchar* src, uchar* res,
-                int32 width, int32 height) 
-            {
-
-            }
+        void BradleyHelperSse4_2(
+            uchar* src, uchar* res,
+            int32 width, int32 height,
+            int32 _S, int32 _T)
+        {
+            const int32 s2 = _S / 2;
+        }
 #endif
-#ifdef LIB_BASE_ENABLE_sse3
-            void BradleyHelperSse3(
-                uchar* src, uchar* res,
-                int32 width, int32 height)
-            {
+#ifdef LIB_BASE_ENABLE_sse4_1
+        void BradleyHelperSse4_1(
+            unsigned char* src, unsigned char* res,
+            int32_t width, int32_t height,
+            int32_t _S, int32_t _T)
+        {
+            const int32_t s2 = _S / 2;
+          //  const int32_t h = height * sizeof(ulong);
 
+            ulong* integral_image = (ulong*)_aligned_malloc(width * height * sizeof(ulong), 16);
+            Expects(integral_image != nullptr);
+
+
+            std::cout << height << " " << width << '\n';
+
+            for (int32_t iX = 0; iX < width; ++iX) {
+                __m128i sum = _mm_setzero_si128();
+                for (int32_t jY = 0; jY < height; jY += 16) {
+                    std::cout << jY << " " << iX << '\n';
+                    __m128i src_vec;
+
+                    if (jY + 3 <= height)
+                        src_vec = _mm_loadu_si128((const __m128i*)(src + jY * height + iX));
+                    else {
+                        uchar temp[16] = { 0 };
+
+                        for (int32_t k = 0; k < height - jY; k++)
+                            temp[k] = src[iX * height + jY + k];
+                        
+                        src_vec = _mm_loadu_si128((const __m128i*)temp);
+
+                    }
+
+                    sum = _mm_add_epi32(sum, _mm_cvtepu8_epi32(src_vec));
+                    __m128i prev;
+
+                    if (jY == 0) {
+                        if (iX == 0)
+                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY), sum);
+                        else {
+                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
+                                _mm_add_epi64(sum, _mm_load_si128((__m128i*)(integral_image + (iX - 1) * height + jY))));
+                        }
+                    }
+                    else {
+                        if (iX == 0) {
+                            prev = _mm_load_si128((const __m128i*)(integral_image + iX * height + jY - 16));
+                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY), _mm_add_epi64(sum, prev));
+                        }
+                        else {
+                            prev = _mm_load_si128((const __m128i*)(integral_image + iX * height + jY - 16));
+                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
+                                _mm_add_epi64(sum, _mm_add_epi64(prev,
+                                    _mm_load_si128((const __m128i*)(integral_image 
+                                     + (iX - 1) * height + jY)))));
+
+                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
+                                _mm_sub_epi64(_mm_load_si128((const __m128i*)
+                                    (integral_image + iX * height + jY)),
+                                    _mm_load_si128((const __m128i*)(integral_image + (iX - 1) * height + jY - 16))));
+                        }
+                    }
+                }
             }
+
+            for (int32_t j = 0; j < width; ++j) {
+                for (int32_t i = 0; i < height; ++i) {
+                    int32_t index = j * height + i;
+                    int32_t x1 = i - s2;
+                    int32_t x2 = i + s2;
+                    int32_t y1 = j - s2;
+                    int32_t y2 = j + s2;
+
+                    if (x1 < 0) x1 = 0;
+                    if (x2 >= width) x2 = width - 1;
+                    if (y1 < 0) y1 = 0;
+                    if (y2 >= h) y2 = h - 1;
+
+                    int32_t count = (x2 - x1 + 1) * (y2 - y1 + 1);
+
+                    __m128i sum_vec = _mm_setzero_si128();
+                    __m128i y2x2 = _mm_loadu_si128((const __m128i*)(integral_image + y2 * width + x2));
+                    if (y1 > 0)
+                        sum_vec = _mm_sub_epi64(sum_vec, _mm_loadu_si128((const __m128i*)(integral_image + (y1 - 1) * width + x2)));
+
+                    if (x1 > 0)
+                        sum_vec = _mm_sub_epi64(sum_vec, _mm_loadu_si128((const __m128i*)(integral_image + y2 * width + (x1 - 1))));
+
+
+                    if (y1 > 0 && x1 > 0) {
+                        sum_vec = _mm_add_epi64(sum_vec, _mm_loadu_si128((const __m128i*)(integral_image + (y1 - 1) * width + (x1 - 1))));
+
+                    }
+                    long sum = 0;
+                    unsigned long temp[2];
+                    _mm_storeu_si128((__m128i*)temp, sum_vec);
+                    sum = temp[0] + temp[1];
+
+
+                    if ((long)(src[index] * count) < (long)(sum * (1.0 - _T)))
+                        res[index] = 0;
+                    else
+                        res[index] = 255;
+                }
+            }
+
+            _aligned_free(integral_image);
+        }
+  
 #endif
-        } // namespace
-
-
-    } // namespace 
-    void BradleyThreshold(
+    void BradleyHelperNoSIMD(
         uchar* src, uchar* res,
-        int32 width, int32 height)
+        int32 width, int32 height,
+        int32 _S, int32 _T)
     {
-        const int32 S = width / 8;
-        const int32 s2 = S / 2;
-        static const float t = 0.15;
+        const int32 s2 = _S / 2;
         ulong* integral_image = 0;
         long sum = 0;
         int32 count = 0;
@@ -61,8 +161,8 @@ namespace base::images {
                     integral_image[index] = integral_image[index - width] + sum;
                 else
                     integral_image[index] = integral_image[index - 1]
-                        + integral_image[index - width]
-                        - integral_image[index - width - 1] + src[index];
+                    + integral_image[index - width]
+                    - integral_image[index - width - 1] + src[index];
 
             }
         }
@@ -100,12 +200,40 @@ namespace base::images {
                     sum += integral_image[(y1 - 1) * width + (x1 - 1)];
                 }
 
-                if ((long)(src[index] * count) < (long)(sum * (1.0 - t)))
+                if ((long)(src[index] * count) < (long)(sum * (1.0 - _T)))
                     res[index] = 0;
                 else
                     res[index] = 255;
             }
         }
         delete[] integral_image;
+    }
+     } // namespace
+
+    void BradleyThreshold(
+        uchar* src, uchar* res,
+        int32 width, int32 height)
+    {
+        const int32 S = width / 8;
+        static const float t = 0.15;
+
+#ifdef LIB_BASE_ENABLE_sse4_1
+    return BradleyHelperSse4_1(
+        src, res, width, height,
+        S, t);
+#endif
+#ifdef LIB_BASE_ENABLE_avx2
+    return BradleyHelperSse4_1(
+        src, res, width, height,
+        S, t);
+#endif
+#ifdef LIB_BASE_ENABLE_sse4_2
+    return BradleyHelperSse4_2(
+        src, res, width, height,
+        S, t);
+#endif
+    return BradleyHelperNoSIMD(
+        src, res, width, height,
+        S, t);
     }
 } // namespace base::images

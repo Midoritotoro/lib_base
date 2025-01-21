@@ -23,7 +23,7 @@ namespace base::images {
 
         int total = 0;
         int val = 0;
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < 10; ++i) {
             {
                 measureExecutionTimeToValue(val)
                 BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, 1920, 1080);
@@ -32,7 +32,7 @@ namespace base::images {
             qDebug() << "Time: " << val;
         }
 
-        qDebug() << "Average time  " << total / 100;
+        qDebug() << "Average time  " << total / 10;
         image.save(out);
     }
 
