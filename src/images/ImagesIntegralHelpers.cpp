@@ -30,67 +30,68 @@ namespace base::images {
             int32_t _S, int32_t _T)
         {
             const int32_t s2 = _S / 2;
-          //  const int32_t h = height * sizeof(ulong);
+            const int32_t h = height * sizeof(ulong);
 
-            ulong* integral_image = (ulong*)_aligned_malloc(width * height * sizeof(ulong), 16);
+            ulong* integral_image = (ulong*)_aligned_malloc(width * h, 16);
             Expects(integral_image != nullptr);
 
 
-            std::cout << height << " " << width << '\n';
+            std::cout << width << " " << h << '\n';
 
-            for (int32_t iX = 0; iX < width; ++iX) {
-                __m128i sum = _mm_setzero_si128();
-                for (int32_t jY = 0; jY < height; jY += 16) {
-                    std::cout << jY << " " << iX << '\n';
+            for (int32_t j = 0; j < height; ++j) {
+                __m128i sum_vec = _mm_setzero_si128();
+                for (int32_t i = 0; i < width; i += 16) { // обрабатываем 16 байт за раз
                     __m128i src_vec;
-
-                    if (jY + 3 <= height)
-                        src_vec = _mm_loadu_si128((const __m128i*)(src + jY * height + iX));
+                    if (i + 16 <= width) {
+                        src_vec = _mm_loadu_si128((const __m128i*)(src + j * width + i));
+                    }
                     else {
-                        uchar temp[16] = { 0 };
-
-                        for (int32_t k = 0; k < height - jY; k++)
-                            temp[k] = src[iX * height + jY + k];
-                        
+                        unsigned char temp[16] = { 0 };
+                        for (int k = 0; k < width - i; k++) {
+                            temp[k] = src[j * width + i + k];
+                        }
                         src_vec = _mm_loadu_si128((const __m128i*)temp);
 
                     }
 
-                    sum = _mm_add_epi32(sum, _mm_cvtepu8_epi32(src_vec));
+                    sum_vec = _mm_add_epi32(sum_vec, _mm_cvtepu8_epi32(src_vec));
                     __m128i prev;
-
-                    if (jY == 0) {
-                        if (iX == 0)
-                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY), sum);
+                    if (i == 0) {
+                        if (j == 0)
+                            _mm_store_si128((__m128i*)(integral_image + j * width + i), sum_vec);
                         else {
-                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
-                                _mm_add_epi64(sum, _mm_load_si128((__m128i*)(integral_image + (iX - 1) * height + jY))));
+                            _mm_store_si128((__m128i*)(integral_image + j * width + i),
+                                _mm_add_epi64(sum_vec,
+                                    _mm_load_si128((__m128i*)(integral_image + (j - 1) * width + i))));
                         }
                     }
                     else {
-                        if (iX == 0) {
-                            prev = _mm_load_si128((const __m128i*)(integral_image + iX * height + jY - 16));
-                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY), _mm_add_epi64(sum, prev));
+                        if (j == 0) {
+                            prev = _mm_load_si128((const __m128i*)(integral_image + j * width + i - 16));
+                            _mm_store_si128((__m128i*)(integral_image + j * width + i), _mm_add_epi64(sum_vec, prev));
                         }
                         else {
-                            prev = _mm_load_si128((const __m128i*)(integral_image + iX * height + jY - 16));
-                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
-                                _mm_add_epi64(sum, _mm_add_epi64(prev,
-                                    _mm_load_si128((const __m128i*)(integral_image 
-                                     + (iX - 1) * height + jY)))));
+                            prev = _mm_load_si128((const __m128i*)(integral_image + j * width + i - 16));
 
-                            _mm_store_si128((__m128i*)(integral_image + iX * height + jY),
+                            _mm_store_si128((__m128i*)(integral_image + j * width + i),
+                                _mm_add_epi64(sum_vec,
+                                    _mm_add_epi64(prev,
+                                        _mm_load_si128((const __m128i*)(integral_image + (j - 1) * width + i)))));
+
+                            _mm_store_si128((__m128i*)(integral_image + j * width + i), 
                                 _mm_sub_epi64(_mm_load_si128((const __m128i*)
-                                    (integral_image + iX * height + jY)),
-                                    _mm_load_si128((const __m128i*)(integral_image + (iX - 1) * height + jY - 16))));
+                                    (integral_image + j * width + i)), 
+                                    _mm_load_si128((const __m128i*)(integral_image + (j - 1) * width + i - 16))));
                         }
                     }
                 }
             }
 
-            for (int32_t j = 0; j < width; ++j) {
-                for (int32_t i = 0; i < height; ++i) {
-                    int32_t index = j * height + i;
+
+            // Локальная пороговая обработка с SSE4.1
+            for (int32_t j = 0; j < height; ++j) {
+                for (int32_t i = 0; i < width; ++i) {
+                    int32_t index = j * width + i;
                     int32_t x1 = i - s2;
                     int32_t x2 = i + s2;
                     int32_t y1 = j - s2;
@@ -99,7 +100,7 @@ namespace base::images {
                     if (x1 < 0) x1 = 0;
                     if (x2 >= width) x2 = width - 1;
                     if (y1 < 0) y1 = 0;
-                    if (y2 >= h) y2 = h - 1;
+                    if (y2 >= height) y2 = height - 1;
 
                     int32_t count = (x2 - x1 + 1) * (y2 - y1 + 1);
 
