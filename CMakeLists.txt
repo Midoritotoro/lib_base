@@ -68,6 +68,12 @@ set(PRIVATE_SOURCES
 
     src/images/ImagesIntegral.cpp
     src/images/ImagesRgbBlur.cpp
+
+    src/images/ImagesSimdSupport.cpp
+    src/images/ImagesSimdSupport.h
+    
+    src/images/ImagesIntegralHelpers.cpp
+    src/images/ImagesIntegralHelpers.h
 )
 
 

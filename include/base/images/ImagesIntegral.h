@@ -1,9 +1,7 @@
-#pragma once 
+﻿#pragma once 
 
 #include <base/Utility.h>
 #include <base/images/Images.h>
-
-#include <vector>
 
 
 namespace base::images {
@@ -22,7 +20,6 @@ namespace base::images {
         [[nodiscard]] Size<int32> size() const noexcept;
         [[nodiscard]] Point<int32> randomFreePositionForSize(const Size<int32>& size) const;
 
-
         [[nodiscard]] std::vector<int>& operator[](const size_t position) noexcept;
 
         [[nodiscard]] IntegralImage& operator=(const std::vector<std::vector<int32>>& other) noexcept;
@@ -32,9 +29,7 @@ namespace base::images {
         [[nodiscard]] bool operator==(const std::vector<std::vector<int32>>& other) const noexcept;
     private:
         std::vector<std::vector<int32>> integralImageFromImage(const Image& image);
-        
-
 
         std::vector<std::vector<int32>> _integralImage;
     };
-}
+} // namespace base::images
