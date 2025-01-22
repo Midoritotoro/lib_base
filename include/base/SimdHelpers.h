@@ -56,6 +56,7 @@
 // Starting with /arch:AVX512, MSVC defines all the macros
 #endif
 
+
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>
 #  define LIB_BASE_ENABLE_sse2 1
