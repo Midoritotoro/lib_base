@@ -35,12 +35,15 @@ namespace base::images {
         int32 width, int32 height,
         int32 _S, int32 _T)
     {
+        long _height = height * 4;
         int SHalf = _S / 2;
-        ulong* integralImage = new ulong[width * height * sizeof(ulong*)];
+        ulong* integralImage = new ulong[width * _height];
+        long long iters = 0;
 
         for (int32 x = 0; x < width; x++) {
             long sum = 0;
-            for (int32 y = 0; y < height; y++) {
+            for (int32 y = 0; y < _height; y++) {
+                ++iters;
                 int32 index = y * width + x;
 
                 sum += src[index];
@@ -52,8 +55,12 @@ namespace base::images {
             }
         }
 
+        std::cout << "itersf: " << iters << "\n";
+        iters = 0; 
+
         for (int32 x = 0; x < width; x++) {
-            for (int32 y = 0; y < height; y++) {
+            for (int32 y = 0; y < _height; y++) {
+                ++iters;
                 int32 index = y * width + x;
 
                 int32 rectLeftX = x - SHalf;
@@ -67,8 +74,8 @@ namespace base::images {
                     rectRightX = width - 1;
                 if (rectTopY < 0)
                     rectTopY = 0;
-                if (rectBottomY >= height)
-                    rectBottomY = height - 1;
+                if (rectBottomY >= _height)
+                    rectBottomY = _height - 1;
 
                 int32 count = (rectRightX - rectLeftX) * (rectBottomY - rectTopY);
 
@@ -83,6 +90,8 @@ namespace base::images {
                     res[index] = 255;
             }
         }
+
+        std::cout << "iters: " << iters << "\n";
 
         delete[] integralImage;
     }

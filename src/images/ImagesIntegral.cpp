@@ -21,18 +21,18 @@ namespace base::images {
         const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
         QImage image(in);
 
-        int total = 0;
+      /*  int total = 0;
         int val = 0;
-        for (int i = 0; i < 10; ++i) {
-            {
-                measureExecutionTimeToValue(val)
-                BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, 1920, 1080);
-            }
-            total += val;
-            qDebug() << "Time: " << val;
+        for (int i = 0; i < 10; ++i) {*/
+        {
+            measureExecutionTime("IntegralImage: ")
+            BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, 1920, 1080);
         }
+          /*  total += val;
+            qDebug() << "Time: " << val;
+        }*/
 
-        qDebug() << "Average time  " << total / 10;
+  
         image.save(out);
     }
 

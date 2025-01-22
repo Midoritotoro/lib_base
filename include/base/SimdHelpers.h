@@ -3,6 +3,9 @@
 #include <base/SystemDetection.h>
 #include <base/CompilerDetection.h>
 
+#include <qsimd.h>
+
+
 #define LIB_BASE_ENABLE(feature) (1/LIB_BASE_ENABLE_##feature == 1)
 
 #if defined(PROCESSOR_ARM) && defined(__ARM_NEON) || defined(__ARM_NEON__)
@@ -26,7 +29,7 @@
 
 #if defined(PROCESSOR_X86) && defined(CPP_MSVC)
  // MSVC doesn't define __SSE2__, so do it ourselves
-#  if (defined(_M_X64) || _M_IX86_FP >= 2) && defined(COMPILER_SUPPORTS_SSE2)
+#  if (defined(_M_X64) || _M_IX86_FP >= 2)
 #    define __SSE__ 1
 #    define __SSE2__ 1
 #  endif
@@ -54,7 +57,23 @@
 #    define __LZCNT__                       1
 #  endif
 // Starting with /arch:AVX512, MSVC defines all the macros
-#endif
+# elif defined(PROCESSOR_X86) && defined(CPP_GCC)
+# if __builtin_cpu_supports("sse")
+#	define __SSE__
+# elif __builtin_cpu_supports("sse2")
+#	define __SSE2__
+# elif __builtin_cpu_supports("sse3")
+#	define __SSE3__
+# elif __builtin_cpu_supports("sse4.1")
+#	define __SSE4_1__
+# elif __builtin_cpu_supports("sse4.2")
+#	define __SSE4_2__
+# elif __builtin_cpu_supports("avx")
+#	define __AVX__
+# elif __builtin_cpu_supports("avx2")
+#	define __AVX2__
+# endif
+# endif
 
 
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
