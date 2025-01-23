@@ -23,7 +23,7 @@ void GetVectorized512BitIndex(
 
     __m512i x_vec_idx = _mm512_add_epi32(x_offset_vec, _mm512_set1_epi32(x));
     __m512i index_vec_1 = _mm512_add_epi32(
-        _mm512_mullo_epi32(y_offset_vec, width_vec),
+        _mm512_mullo_epi32(y_offset_vec, width_vec),*
         x_vec_idx);
 
     _mm512_storeu_epi32((__m512i*)(out + (y * width + x)), index_vec_1);
@@ -69,7 +69,7 @@ namespace base::images {
                 for (int32 y = 0; y < _height; ++y) {
                     int32* temp = (int32*)aligned_malloc(16 * sizeof(int32), 16);
 
-                    __m512i index = GetVectorized512BitIndex(width, x, y, );
+                    GetVectorized512BitIndex(width, x, y, temp);
                     __m512i sum = _mm512_set1_epi32(0);
 
                     __m256i srcValuesFirstPart = _mm512_extracti32x8_epi32(*((__m512i*)src), 8);
@@ -81,8 +81,8 @@ namespace base::images {
 
                     sum = _mm512_add_epi32(sum, tempVectorizedSrc);
 
-                    if (y == 0)
-                        integralImage[];
+                    //if (y == 0)
+                    //    integralImage[];
 
                     aligned_free(temp);
                 }
