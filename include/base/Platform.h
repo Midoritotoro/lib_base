@@ -25,6 +25,12 @@
 #define LIB_BASE
 #endif
 
+#if defined(_WIN32)
+#define aligned_malloc(size, alignment)					_aligned_malloc(size, alignment)
+#else
+#define aligned_malloc(size, alignment)					malloc(size)
+#endif
+
 #if defined (_WIN32)
 #define aligned_free(ptr)                   _aligned_free(ptr)
 #else
