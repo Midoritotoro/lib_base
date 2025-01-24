@@ -4,29 +4,56 @@
 #include <iostream>
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#define free_null(a) do { free( a ); a = NULL; } while(0)
+
+#define empty_str(str) (!str || !*str)
 
 
-void GetVectorized512BitIndex(
-    int32 width, 
-    int32 x, int32 y,
-    int32* out)
+void ExtractByIndices(
+    const uchar* src,
+    const __m512i indices_arr,
+    __m128i* out)
 {
-    __m512i x_offset_vec = _mm512_set_epi32(
-        15, 14, 13, 12, 11, 10, 9, 
-        8, 7, 6, 5, 4, 3, 2, 1, 0);
+    __m128i result_vector;
 
-    __m512i width_vec = _mm512_set1_epi32(width);
+    __m128i low_indices = _mm512_castsi512_si128(indices_arr);
+    __m128i low_mid_indices = _mm512_extracti32x4_epi32(indices_arr, 1);
+    __m128i high_mid_indices = _mm512_extracti32x4_epi32(indices_arr, 2);
+    __m128i high_indices = _mm512_extracti32x4_epi32(indices_arr, 3);
 
-    __m512i y_offset_vec = _mm512_set_epi32(
-        y + 15, y + 14, y + 13, y + 12, y + 11, y + 10, y + 9, y + 8,
-        y + 7, y + 6, y + 5, y + 4, y + 3, y + 2, y + 1, y + 0);
+    __m128i low_bytes;
+    __m128i low_mid_bytes;
+    __m128i high_mid_bytes;
+    __m128i high_bytes;
 
-    __m512i x_vec_idx = _mm512_add_epi32(x_offset_vec, _mm512_set1_epi32(x));
-    __m512i index_vec_1 = _mm512_add_epi32(
-        _mm512_mullo_epi32(y_offset_vec, width_vec),*
-        x_vec_idx);
+    low_bytes = _mm_i32gather_epi32((const int*)src, low_indices, 1);
+    low_mid_bytes = _mm_i32gather_epi32((const int*)src, low_mid_indices, 1);
+    high_mid_bytes = _mm_i32gather_epi32((const int*)src, high_mid_indices, 1);
+    high_bytes = _mm_i32gather_epi32((const int*)src, high_indices, 1);
 
-    _mm512_storeu_epi32((__m512i*)(out + (y * width + x)), index_vec_1);
+    // Объединяем все загруженные данные в один вектор
+    result_vector = _mm_unpacklo_epi32(low_bytes, low_mid_bytes);
+    result_vector = _mm_unpacklo_epi64(result_vector,
+        _mm_unpacklo_epi32(high_mid_bytes, high_bytes));
+
+    *out = _mm_shuffle_epi8(result_vector, _mm_set_epi8(15, 11, 7, 3, 14, 10, 6, 2, 13, 9, 5, 1, 12, 8, 4, 0));
+}
+
+[[nodiscard]] __m512i GetVectorized512BitIndex(
+    int32 width, 
+    int32 x, int32 y)
+{
+    __m512i yOffsetVector = _mm512_set_epi32(
+        y + 15, y + 14, y + 13, y + 12, y + 11,
+        y + 10, y + 9, y + 8, y + 7, y + 6, y + 5,
+        y + 4, y + 3, y + 2, y + 1, y);
+
+    __m512i vectorizedIndex = _mm512_add_epi32(
+        _mm512_mul_epi32(yOffsetVector,
+            _mm512_set1_epi32(width)),
+        _mm512_set1_epi32(x));
+
+    return vectorizedIndex;
 }
 
 namespace base::images {
@@ -53,6 +80,7 @@ namespace base::images {
             int32 _S, int32 _T)
         {
         }
+
 #endif
 #ifdef LIB_BASE_ENABLE_sse4_1
         void BradleyHelperSse4_1(
@@ -63,28 +91,31 @@ namespace base::images {
             const long _height = height * 4;
             const int32 SHalf = _S / 2;
             
-            ulong* integralImage = (ulong*)aligned_malloc(width * _height, 16);
+            ulong* integralImage = (ulong*)aligned_malloc(width * _height, 64);
 
             for (int32 x = 0; x < width; x += 16) {
+                __m512i sum = _mm512_set1_epi32(0);
                 for (int32 y = 0; y < _height; ++y) {
-                    int32* temp = (int32*)aligned_malloc(16 * sizeof(int32), 16);
+                    __m512i index = GetVectorized512BitIndex(width, x, y);
+                    
+                    __m128i tempSum;
+                    ExtractByIndices(src, index, &tempSum);
 
-                    GetVectorized512BitIndex(width, x, y, temp);
-                    __m512i sum = _mm512_set1_epi32(0);
+                    __m256i srcSum = _mm512_castsi512_si256(_mm512_castsi128_si512(tempSum));
 
-                    __m256i srcValuesFirstPart = _mm512_extracti32x8_epi32(*((__m512i*)src), 8);
-                    __m256i srcValuesSecondPart = _mm512_extracti32x8_epi32(*((__m512i*)src + 8), 16);
 
-                    __m512i tempVectorizedSrc = _mm512_inserti64x4(
-                        _mm512_castsi256_si512(srcValuesFirstPart), 
-                        srcValuesSecondPart, 1);
-
-                    sum = _mm512_add_epi32(sum, tempVectorizedSrc);
-
-                    //if (y == 0)
-                    //    integralImage[];
-
-                    aligned_free(temp);
+                    if (y == 0) {
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[0]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[4]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[8]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[12]);
+                    }
+                    else {
+                      /*  _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[0]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[4]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[8]);
+                        _mm512_inserti64x4((__m512i)*integralImage, srcSum, index.m512i_i32[12]);*/
+                    }
                 }
             }
 
