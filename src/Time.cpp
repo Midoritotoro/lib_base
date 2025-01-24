@@ -46,9 +46,9 @@ namespace base::Time{
 				LastAdjustmentUnixtime = unixtime;
 				LastAdjustmentTime = now;
 
-				if (seconds <= 0) {
+				if (seconds <= 0)
 					return false;
-				}
+				
 				auto current = seconds_type(0);
 
 				static constexpr auto maxTime = std::numeric_limits<seconds_type>::max();
@@ -61,6 +61,7 @@ namespace base::Time{
 					if (AdjustSeconds.compare_exchange_weak(current, next))
 						return true;
 				}
+
 				return false;
 			}
 

@@ -57,22 +57,6 @@
 #    define __LZCNT__                       1
 #  endif
 // Starting with /arch:AVX512, MSVC defines all the macros
-# elif defined(PROCESSOR_X86) && defined(CPP_GCC)
-# if __builtin_cpu_supports("sse")
-#	define __SSE__
-# elif __builtin_cpu_supports("sse2")
-#	define __SSE2__
-# elif __builtin_cpu_supports("sse3")
-#	define __SSE3__
-# elif __builtin_cpu_supports("sse4.1")
-#	define __SSE4_1__
-# elif __builtin_cpu_supports("sse4.2")
-#	define __SSE4_2__
-# elif __builtin_cpu_supports("avx")
-#	define __AVX__
-# elif __builtin_cpu_supports("avx2")
-#	define __AVX2__
-# endif
 # endif
 
 
