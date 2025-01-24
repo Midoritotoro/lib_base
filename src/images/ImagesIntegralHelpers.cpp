@@ -14,8 +14,6 @@ void ExtractByIndices(
     const __m512i indices_arr,
     __m128i* out)
 {
-    __m128i result_vector;
-
     __m128i low_indices = _mm512_castsi512_si128(indices_arr);
     __m128i low_mid_indices = _mm512_extracti32x4_epi32(indices_arr, 1);
     __m128i high_mid_indices = _mm512_extracti32x4_epi32(indices_arr, 2);
@@ -25,22 +23,20 @@ void ExtractByIndices(
         std::cout << high_indices.m128i_i32[i] << std::endl;
     }*/
 
-    __m128i low_bytes;
-    __m128i low_mid_bytes;
-    __m128i high_mid_bytes;
-    __m128i high_bytes;
-
-    low_bytes = _mm_i32gather_epi32((const int*)src, low_indices, 1);
-    low_mid_bytes = _mm_i32gather_epi32((const int*)src, low_mid_indices, 1);
-    high_mid_bytes = _mm_i32gather_epi32((const int*)src, high_mid_indices, 1);
-    high_bytes = _mm_i32gather_epi32((const int*)src, high_indices, 1);
+    __m128i low_bytes = _mm_i32gather_epi32((const int*)src, low_indices, 1);
+    __m128i low_mid_bytes = _mm_i32gather_epi32((const int*)src, low_mid_indices, 1);
+    __m128i high_mid_bytes = _mm_i32gather_epi32((const int*)src, high_mid_indices, 1);
+    __m128i high_bytes = _mm_i32gather_epi32((const int*)src, high_indices, 1);
 
     // Объединяем все загруженные данные в один вектор
-    result_vector = _mm_unpacklo_epi32(low_bytes, low_mid_bytes);
+    __m128i result_vector = _mm_unpacklo_epi32(low_bytes, low_mid_bytes);
     result_vector = _mm_unpacklo_epi64(result_vector,
         _mm_unpacklo_epi32(high_mid_bytes, high_bytes));
 
-    *out = _mm_shuffle_epi8(result_vector, _mm_set_epi8(15, 11, 7, 3, 14, 10, 6, 2, 13, 9, 5, 1, 12, 8, 4, 0));
+    *out = _mm_shuffle_epi8(result_vector,
+        _mm_set_epi8(
+            15, 11, 7, 3, 14, 10, 6, 
+            2, 13, 9, 5, 1, 12, 8, 4, 0));
 }
 
 [[nodiscard]] __m512i GetVectorized512BitIndex(
@@ -95,13 +91,13 @@ namespace base::images {
             const long _height = height * 4;
             const int32 SHalf = _S / 2;
             
-            ulong* integralImage = (ulong*)aligned_malloc(width * _height, 64);
+            ulong* integralImage = (ulong*)aligned_malloc(width * _height, 32);
 
             int32 x, y;
             for (x = 0; x < width; ++x) {
-                ulong suma = 0;
+                long suma = 0;
                 __m512i sum = _mm512_set1_epi32(0);
-                for (y = 0; y + 15 < height; y += 16) {
+                for (y = 0; y + 15 < _height; y += 16) {
                     __m512i index = GetVectorized512BitIndex(width, x, y);
                     
                     __m128i tempSum;
@@ -117,6 +113,9 @@ namespace base::images {
 
                     __m128i lo_64_23 = _mm_unpacklo_epi32(high, _mm_setzero_si128()); // 1, 0, 2, 0, 3, 0, 4, 0
                     __m128i hi_64_23 = _mm_unpackhi_epi32(high, _mm_setzero_si128()); // 5, 0, 6, 0, 7, 0, 8, 0
+
+                    for (int32 i = 0; i < 16; ++i) 
+                        suma += srcSum.m256i_i32[i];
 
                     ulong packed_sum[16];
 
@@ -134,10 +133,7 @@ namespace base::images {
                         _mm_storel_epi64((__m128i*)(packed_sum + 3), hi_64_23);*/
 
                         for (int32 i = 0; i < 16; ++i) {
-
                             int32 indx = index.m512i_i32[i];
-                            suma += src[indx];
-
                             integralImage[indx] = integralImage[indx - 1] + suma;
                         }
                     }
@@ -147,7 +143,7 @@ namespace base::images {
 
             for (; x < width; ++x) {
                 long sum = 0;
-                for (; y < height; ++y) {
+                for (; y < _height; ++y) {
                     int32 index = y * width + x;
 
 
@@ -161,7 +157,7 @@ namespace base::images {
             }
 
             for (int32 x = 0; x < width; ++x) {
-                for (int32 y = 0; y < height; ++y) {
+                for (int32 y = 0; y < _height; ++y) {
                     int32 index = y * width + x;
 
                     int32 rectLeftX = x - SHalf;
@@ -179,8 +175,8 @@ namespace base::images {
                     if (rectTopY < 0)
                         rectTopY = 0;
 
-                    if (rectBottomY >= height)
-                        rectBottomY = height - 1;
+                    if (rectBottomY >= _height)
+                        rectBottomY = _height - 1;
 
                     int32 count = (rectRightX - rectLeftX) * (rectBottomY - rectTopY);
 
