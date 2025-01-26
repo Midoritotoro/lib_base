@@ -1,32 +1,28 @@
 ﻿#include <base/images/ImagesIntegral.h>
-#include <base/images/gl/ImagesGLImage.h>
+#include <base/images/ImagesImage.h>
 
 #include <private/qimage_p.h>
 #include <qDebug>
 
 #include <base/Platform.h>
 #include <src/images/ImagesIntegralHelpers.h>
-//
-//#define STB_IMAGE_IMPLEMENTATION
-//#include <base/images/StbImage.h>
-//
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include <base/images/StbImageWrite.h>
-//
+
 
 namespace base::images {
     IntegralImage::IntegralImage() {
 
         const char* out = "D:/pp.png";
         const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
-        QImage image(in);
+        Image image(in);
 
+
+        qDebug() << image.width() << image.height();
         /*  int total = 0;
         int val = 0;
         for (int i = 0; i < 10; ++i) {*/
         {
             measureExecutionTime("IntegralImage: ")
-            BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, 1920, 1080);
+            BradleyThreshold(image.data()->data, image.data()->data, 1920, 1080);
         }
         
           /*  total += val;

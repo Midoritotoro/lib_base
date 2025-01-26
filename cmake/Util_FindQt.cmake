@@ -61,8 +61,14 @@ function(find_qt TARGET)
 
         target_compile_definitions(${TARGET}
         PUBLIC
-            LIB_BASE_ENABLE_QT_OPENGL
-    )
+            LIB_BASE_FOUND_QT_OPENGL
+        )
 
+        if (LIB_BASE_ENABLE_OPENGL)
+            target_compile_definitions(${TARGET}
+            PUBLIC
+                LIB_BASE_ENABLE_QT_OPENGL
+            )
+        endif()
     endif()
 endfunction()

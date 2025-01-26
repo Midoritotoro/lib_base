@@ -69,8 +69,7 @@ set(PRIVATE_SOURCES
     src/images/ImagesIntegral.cpp
     src/images/ImagesRgbBlur.cpp
 
-    src/images/ImagesSimdSupport.cpp
-    src/images/ImagesSimdSupport.h
+    src/images/ImagesImage.cpp
     
     src/images/ImagesIntegralHelpers.cpp
     src/images/ImagesIntegralHelpers.h
@@ -143,6 +142,8 @@ set(PUBLIC_HEADERS
 
     include/base/Types.h
     include/base/SimdHelpers.h
+
+    include/base/images/ImagesImage.h
 
     include/base/SystemDetection.h
     include/base/CompilerDetection.h

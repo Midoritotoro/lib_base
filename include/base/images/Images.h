@@ -14,5 +14,5 @@
 
 namespace base::images {
 	class GLImage;
-	using Image = GLImage;
+	class Image;
 } // namespace base::images

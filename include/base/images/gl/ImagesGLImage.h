@@ -11,100 +11,11 @@ namespace base::images {
 
 	class GLImage final {
 	public:
-		enum class ColorSpace : uchar {
-			Mono,
-			RGB32,
-			RGBA32
-		};
 
-		struct GLImageSizeParameters{
-			sizetype bytesPerLine;
-
-			bool isValid() const { 
-				return bytesPerLine > 0; 
-			}
-		};
-
-		struct GLImageData {
-			int32 width = 0;
-			int32 height = 0;
-
-			::uchar* data = nullptr;
-			ushort channels = kForceImageChannels;
-
-			int32 depth = 1;
-			sizetype bytesPerLine = 0;
-
-			sizetype totalSize = 0;
-			int32 devicePixelRatio = 1;
-
-			ColorSpace colorSpace;
-			std::vector<Rgb> colorTable;
-		};
-
-		GLImage();
-
-		GLImage(GLImage&& image) noexcept;
-		GLImage(const IntegralImage& image);
-
-		GLImage(::uchar* data);
-
-		GLImage(const Size<int32>& size);
-		GLImage(int32 width, int32 height);
-
-		GLImage(
-			::uchar * data,
-			int32 width, int32 height);
-		GLImage(
-			::uchar* data,
-			const Size<int32>& size);
-
-#ifdef LIB_BASE_ENABLE_QT
-		GLImage(QImage&& image);
-#endif
-
-		~GLImage();
-
-		GLImage& operator=(const GLImage& other) = default;
-
-		bool operator==(const GLImage& other);
-		bool operator!=(const GLImage& other);
-
-		void loadFromData(::uchar* data);
-		void loadFromFile(const std::string& path);
-
-		void resize(int32 width, int32 height);
-		void resize(Size<int32> size);
-
-		[[nodiscard]] GLImage convertToColorSpace(ColorSpace space) const;
-
-		[[nodiscard]] Rect<int32> rect() const noexcept;
-		[[nodiscard]] Size<int32> size() const noexcept;
-
-		[[nodiscard]] int32 width() const noexcept;
-		[[nodiscard]] int32 height() const noexcept;
-
-		[[nodiscard]] int32 bytesPerLine() const noexcept;
-
-		[[nodiscard]] ::uchar* bytesData();
-		[[nodiscard]] GLImageData* data();
-
-		[[nodiscard]] uchar* scanLine(int i);
-		[[nodiscard]] const uchar* scanLine(int i) const;
-
-		[[nodiscard]] bool isNull() const noexcept;
-		[[nodiscard]] Rgb pixel(int x, int y) const;
-
-#if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL)
+#if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL) || defined(LIB_BASE_FOUND_QT_OPENGL)
 		void paint();
 #endif
 	private:
-		bool isEqual(const GLImage& other) const;
-
-		[[nodiscard]] GLImageSizeParameters 
-			recountImageParameters(
-				int32 width, int32 height, int32 depth);
-
-		GLImageData* _data = nullptr;
+	//	GLImageData* _data = nullptr;
 	};
 } // namespace base::images
