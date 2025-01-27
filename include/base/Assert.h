@@ -48,12 +48,12 @@ static inline constexpr [[nodiscard]]
 	__FILE__,\
 	sizeof(__FILE__)))
 
-#define AssertCustom(condition, message) (AssertValidationCondition(\
+#define AssertLog(condition, message) (AssertValidationCondition(\
 	condition,\
 	message,\
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
-#define Assert(condition) AssertCustom(condition, "\"" #condition "\"")
+#define Assert(condition) AssertLog(condition, "\"" #condition "\"")
 
 
 #ifdef Expects

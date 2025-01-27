@@ -17,6 +17,7 @@
 
 
 #include <base/Utility.h>
+#include <qDebug>
 
 
 namespace base::images {
@@ -108,47 +109,34 @@ namespace base::images {
 		return !isEqual(other);
 	}
 
-	void Image::loadFromData(uchar* data) {
-		int32 width = 0, height = 0, channels = 0;
+	void Image::loadFromData(const uchar* data, sizetype length) {
+		AssertLog(data != nullptr, "base::images::Image::loadFromData: Given data is null");
+		AssertLog(length > 0, "base::images::Image::loadFromData: Cannot load from memory width length <= 0");
 
-		uchar* readedData = stbi_load_from_memory(
-			data, sizeof(*data), &width,
-			&height, &channels, kForceImageChannels);
+		_data->data = stbi_load_from_memory(
+			data, length, &_data->width,
+			&_data->height, (int32*)&_data->channels, kForceImageChannels);
 
-		Assert(readedData != nullptr);
+		AssertLog(_data->data != nullptr, "base::images::Image::loadFromData: Cannot load image from memory");
 
-		_data->data = readedData;
-		_data->totalSize = sizeof(*readedData);
+		_data->totalSize = length;
+		_data->depth = 1;
 
-		_data->width = width;
-		_data->height = height;
-
-		_data->channels = channels;
-		_data->depth = 1; // ??? 32
-
-		_data->bytesPerLine = recountBytesPerLine(width, height, 1);
+		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 	}
 
 	void Image::loadFromFile(const std::string& path) {
-		uchar* imageData = nullptr;
-		int32 width = 0, height = 0, channels = 0;
+		_data->data = readImage(
+			path, &_data->width, &_data->height,
+			&_data->channels, &_data->totalSize, kForceImageChannels);
 
-		imageData = stbi_load(
-			path.c_str(), &width, &height,
-			&channels, kForceImageChannels);
+		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
 
-		Assert(imageData != nullptr);
+		_data->depth = 1;
+		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 
-		_data->data = imageData;
-		_data->totalSize = sizeof(*imageData);
-
-		_data->width = width;
-		_data->height = height;
-
-		_data->channels = channels;
-		_data->depth = 1; // ??? 32
-
-		_data->bytesPerLine = recountBytesPerLine(width, height, 1);
+		qDebug() << "_data->totalSize: " << _data->totalSize << "_data->w&h: " << _data->width
+				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
 
 	Image::~Image() {
@@ -164,7 +152,6 @@ namespace base::images {
 		stbir_resize_uint8(
 			_data->data, _data->width, _data->height, 0,
 			_data->data, width, height, 0, _data->channels);
-
 
 		_data->width = width;
 		_data->height = height;
@@ -302,5 +289,25 @@ namespace base::images {
 			return invalid;
 
 		return _bytesPerLine;
+	}
+
+	uchar* Image::readImage(
+		const std::string& path,
+		int32* width, int32* height,
+		ushort* channels, sizetype* size,
+		int32 forceChannelsCount)
+	{
+		FILE* file = stbi__fopen(path.c_str(), "rb");
+		if (!file)
+			return stbi__errpuc("Can't fopen", "Unable to open file");
+
+		uchar* imageData = stbi_load_from_file(
+			file, width, height,
+			(int32*)channels, kForceImageChannels);
+
+		*size = ftell(file);
+		fclose(file);
+
+		return imageData;
 	}
 } // namespace base::images

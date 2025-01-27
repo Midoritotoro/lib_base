@@ -16,7 +16,7 @@ namespace base::images {
         Image image(in);
 
 
-        qDebug() << image.width() << image.height();
+        qDebug() << image.width() << image.height() << strlen((char*)image.data()->data);
         /*  int total = 0;
         int val = 0;
         for (int i = 0; i < 10; ++i) {*/

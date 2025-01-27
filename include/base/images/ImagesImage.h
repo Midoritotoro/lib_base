@@ -62,7 +62,7 @@ namespace base::images {
 		bool operator==(const Image& other);
 		bool operator!=(const Image& other);
 
-		void loadFromData(::uchar* data);
+		void loadFromData(const uchar* data, sizetype length);
 		void loadFromFile(const std::string& path);
 
 		void resize(int32 width, int32 height);
@@ -93,6 +93,12 @@ namespace base::images {
 		[[nodiscard]] int32
 			recountBytesPerLine(
 				int32 width, int32 height, int32 depth);
+
+		[[nodiscard]] uchar* readImage(
+			const std::string& path, 
+			int32* width, int32* height,
+			ushort* channels, sizetype* size,
+			int32 forceChannelsCount);
 
 		ImageData* _data = nullptr;
 	};
