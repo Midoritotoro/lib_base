@@ -72,6 +72,11 @@ set(PRIVATE_SOURCES
     src/images/ImagesImage.cpp
     src/images/ImagesUtility.cpp
 
+    src/images/StbImage.c
+
+    src/images/StbImageResize.c
+    src/images/StbImageWrite.c
+
     src/images/ImagesIntegralHelpers.cpp
     src/images/ImagesIntegralHelpers.h
 )
