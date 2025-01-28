@@ -70,7 +70,8 @@ set(PRIVATE_SOURCES
     src/images/ImagesRgbBlur.cpp
 
     src/images/ImagesImage.cpp
-    
+    src/images/ImagesUtility.cpp
+
     src/images/ImagesIntegralHelpers.cpp
     src/images/ImagesIntegralHelpers.h
 )
@@ -138,7 +139,7 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesCommon.h
     include/base/images/ImagesGeometry.h
 
-    include/base/images/ImagesQtUtility.h
+    include/base/images/ImagesUtility.h
 
     include/base/Types.h
     include/base/SimdHelpers.h

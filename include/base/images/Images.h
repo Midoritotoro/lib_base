@@ -15,6 +15,8 @@
 #include <private/qpixmap_raster_p.h>
 #endif
 
+#define STBI_WEBP_IMPLEMENTATION
+
 namespace base::images {
 	class GLImage;
 	class Image;

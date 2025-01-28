@@ -39,7 +39,10 @@ namespace base::images {
 			std::vector<Rgb> colorTable;
 
 			std::optional<std::string> path;
-			char imageExtension[4];
+
+			// png, jpeg, pic, bmp, gif, psd, pnm, tga
+			const char* imageExtension = nullptr;
+			bool hdr = false;
 		};
 
 		Image();
@@ -105,7 +108,24 @@ namespace base::images {
 
 		void readImage(
 			ImageData* data,
-			int32 forceChannelsCount);
+			int32 forceChannelsCount = kForceImageChannels);
+
+		[[nodiscard]] void* loadImageMain(
+			stbi__context* context,
+			ImageData* data,
+			int32 forceChannelsCount,
+			stbi__result_info* ri, 
+			int32 bitsPerChannel);
+
+		[[nodiscard]] uchar* loadAndPostprocess8Bit(
+			stbi__context* context,
+			ImageData* data,
+			int32 forceChannelsCount = kForceImageChannels);
+
+		[[nodiscard]] uchar* loadImage(
+			FILE* file,
+			ImageData* data, 
+			int32 forceChannelsCount = kForceImageChannels);
 
 		void writeImageToFile(
 			ImageData* data,

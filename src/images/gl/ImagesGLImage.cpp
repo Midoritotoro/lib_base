@@ -3,7 +3,7 @@
 
 #include <base/Assert.h>
 #ifdef LIB_BASE_ENABLE_QT
-#include <base/images/ImagesQtUtility.h>
+#include <base/images/ImagesUtility.h>
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION

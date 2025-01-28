@@ -3,7 +3,7 @@
 
 #include <base/Assert.h>
 #ifdef LIB_BASE_ENABLE_QT
-#include <base/images/ImagesQtUtility.h>
+#include <base/images/ImagesUtility.h>
 #endif
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -121,17 +121,22 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, "base::images::Image::loadFromData: Cannot load image from memory");
 
 		_data->sizeInBytes = length;
-		_data->depth = 32;
+		_data->depth = 1;
 
+		_data->imageExtension = GetImageExtension(_data->data);
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 	}
 
 	void Image::loadFromFile(const std::string& path) {
+		_data->path = path;
 		readImage(_data, kForceImageChannels);
+
 		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
 
-		_data->depth = 32;
+		_data->depth = 1;
+
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
+		_data->imageExtension = GetImageExtension(_data->data);
 
 		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
@@ -166,9 +171,23 @@ namespace base::images {
 		Assert(!isNull());
 
 		qDebug() << "_data->channels: " << _data->channels;
-		stbi_write_png(
-			path.c_str(), _data->width, _data->height, 
-			_data->channels, _data->data, 0);
+		if (_data->imageExtension == "png")
+			stbi_write_png(
+				path.c_str(), _data->width, _data->height,
+				_data->channels, _data->data, 0);
+		else if (_data->imageExtension == "jpeg")
+			stbi_write_jpg(
+				path.c_str(), _data->width, _data->height,
+				_data->channels, _data->data, 10000); // Quality - ?
+		else if (_data->imageExtension == "bmp")
+			stbi_write_bmp(
+				path.c_str(), _data->width, _data->height,
+				_data->channels, _data->data);
+		else if (_data->imageExtension == "tga")
+			stbi_write_tga(
+				path.c_str(), _data->width, _data->height,
+				_data->channels, _data->data);
+		
 	}
 
 	Rect<int32> Image::rect() const noexcept {
@@ -296,14 +315,14 @@ namespace base::images {
 		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		if (_data == nullptr && _data->data == nullptr 
-			&& data->path.has_value() == false)
+		if ((_data == nullptr && _data->data == nullptr)
+			|| data->path.has_value() == false)
 			return;
 
 		FILE* file = stbi__fopen(data->path.value().c_str(), "rb");
 		AssertLog(file != nullptr, "base::images::Image::readImage: Cannot fopen. Unable to open file");
 
-		uchar* imageData = stbi_load_from_file(
+		_data->data = stbi_load_from_file(
 			file, &data->width, &data->height,
 			(int32*)&data->channels, forceChannelsCount);
 
@@ -311,39 +330,141 @@ namespace base::images {
 		fclose(file);
 	}
 
+	void* Image::loadImageMain(
+		stbi__context* context,
+		ImageData* data,
+		int32 forceChannelsCount,
+		stbi__result_info* ri,
+		int32 bitsPerChannel)
+	{
+		memset(ri, 0, sizeof(*ri));
+
+		ri->bits_per_channel = 8;
+		ri->channel_order = STBI_ORDER_RGB;
+		ri->num_channels = 0;
+
+		if (stbi__png_test(context)) {
+			data->imageExtension = "png";
+			return stbi__png_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		if (stbi__bmp_test(context)) {
+			data->imageExtension = "bmp";
+			return stbi__bmp_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		if (stbi__gif_test(context)) {
+			data->imageExtension = "gif";
+			return stbi__gif_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		if (stbi__psd_test(context)) {
+			data->imageExtension = "psd";
+			return stbi__psd_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri, bitsPerChannel);
+		}
+
+		if (stbi__pic_test(context)) {
+			data->imageExtension = "pic";
+			return stbi__pic_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+	
+		if (stbi__jpeg_test(context)) {
+			data->imageExtension = "jpeg";
+			return stbi__jpeg_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		if (stbi__pnm_test(context)) {
+			data->imageExtension = "pnm";
+			return stbi__pnm_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		if (stbi__hdr_test(context)) {
+			data->hdr = true;
+			float* hdr = stbi__hdr_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+
+			return stbi__hdr_to_ldr(
+				hdr, data->width, data->height,
+				forceChannelsCount ? forceChannelsCount : data->channels);
+		}
+
+		if (stbi__tga_test(context)) {
+			data->imageExtension = "tga";
+			return stbi__tga_load(
+				context, &data->width, &data->height,
+				(int32*)&data->channels, forceChannelsCount, ri);
+		}
+
+		return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
+	}
+
+	uchar* Image::loadAndPostprocess8Bit(
+		stbi__context* context,
+		ImageData* data,
+		int32 forceChannelsCount)
+	{
+		stbi__result_info resultInfo;
+		void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
+
+		if (result == NULL)
+			return NULL;
+
+		STBI_ASSERT(resultInfo.bits_per_channel == 8 || resultInfo.bits_per_channel == 16);
+
+		if (resultInfo.bits_per_channel != 8) {
+			result = stbi__convert_16_to_8((stbi__uint16*)result, 
+				data->width, data->height, 
+				forceChannelsCount == 0 
+					? data->channels 
+					: forceChannelsCount);
+
+			resultInfo.bits_per_channel = 8;
+		}
+
+		if (stbi__vertically_flip_on_load) {
+			int channels = forceChannelsCount ? forceChannelsCount : data->channels;
+			stbi__vertical_flip(result, data->width, data->height, channels * sizeof(stbi_uc));
+		}
+
+		return (uchar*)result;
+	}
+
+	uchar* Image::loadImage(
+		FILE* file,
+		ImageData* data,
+		int32 forceChannelsCount)
+	{
+		stbi__context context;
+		stbi__start_file(&context, file);
+
+		uchar* result = loadAndPostprocess8Bit(
+			&context, data, forceChannelsCount);
+
+		if (result)
+			fseek(file, -(int)(context.img_buffer_end - context.img_buffer), SEEK_CUR);
+
+		return result;
+	}
+
 	void Image::writeImageToFile(
 		ImageData* data,
 		const std::string& path)
 	{
-		stbi__context s;
-		if (stbi__png_test(s))  
-			return stbi__png_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__bmp_test(s))
-			return stbi__bmp_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__gif_test(s)) 
-			return stbi__gif_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__psd_test(s)) 
-			return stbi__psd_load(s, x, y, comp, req_comp, ri, bpc);
-
-		if (stbi__pic_test(s)) 
-			return stbi__pic_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__jpeg_test(s)) 
-			return stbi__jpeg_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__pnm_test(s)) 
-			return stbi__pnm_load(s, x, y, comp, req_comp, ri);
-
-		if (stbi__hdr_test(s)) {
-			float* hdr = stbi__hdr_load(s, x, y, comp, req_comp, ri);
-			return stbi__hdr_to_ldr(hdr, *x, *y, req_comp ? req_comp : *comp);
-		}
-
-		// test tga last because it's a crappy test!
-		if (stbi__tga_test(s))
-			return stbi__tga_load(s, x, y, comp, req_comp, ri);
+		
 	}
 } // namespace base::images
