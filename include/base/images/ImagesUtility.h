@@ -1,12 +1,12 @@
 #pragma once 
 
 
-#ifdef LIB_BASE_ENABLE_QT 
-#include <QImage>
+#include <base/images/Images.h>
 
 
 namespace base::images {
+#ifdef LIB_BASE_ENABLE_QT 
     int getChannelsCountByFormat(const QImage& image);
     [[nodiscard]] int getChannelsCountByBytes(const QImage& image);
-} // namespace base::images
 #endif
+} // namespace base::images

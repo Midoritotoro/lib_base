@@ -16,13 +16,13 @@ namespace base::images {
         Image image(in);
 
 
-        qDebug() << image.width() << image.height() << strlen((char*)image.data()->data);
+        qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
         /*  int total = 0;
         int val = 0;
         for (int i = 0; i < 10; ++i) {*/
         {
             measureExecutionTime("IntegralImage: ")
-            BradleyThreshold(image.data()->data, image.data()->data, 1920, 1080);
+            BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, image.data_ptr()->width, image.data_ptr()->height);
         }
         
           /*  total += val;

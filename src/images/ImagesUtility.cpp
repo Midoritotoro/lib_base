@@ -1,9 +1,9 @@
-#include <base/images/ImagesQtUtility.h>
+#include <base/images/ImagesUtility.h>
 #include <iostream>
 
 
-#ifdef LIB_BASE_ENABLE_QT 
 namespace base::images {
+#ifdef LIB_BASE_ENABLE_QT
     int getChannelsCountByFormat(const QImage& image) {
         auto format = image.format();
 
@@ -49,5 +49,5 @@ namespace base::images {
 
         return -1;
     }
-} // namespace base::images
 #endif
+} // namespace base::images

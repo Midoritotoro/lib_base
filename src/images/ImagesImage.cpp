@@ -20,6 +20,7 @@
 #include <qDebug>
 
 
+
 namespace base::images {
 	Image::Image() :
 		_data(new ImageData())
@@ -60,7 +61,7 @@ namespace base::images {
 	}
 
 	Image::Image(
-		::uchar* data,
+		uchar* data,
 		int32 width, int32 height
 	) :
 		_data(new ImageData())
@@ -72,7 +73,7 @@ namespace base::images {
 	}
 
 	Image::Image(
-		::uchar* data,
+		uchar* data,
 		const Size<int32>& size
 	) :
 		_data(new ImageData())
@@ -91,7 +92,7 @@ namespace base::images {
 		_data->data = image.bits();
 		_data->depth = image.depth();
 
-		_data->totalSize = image.sizeInBytes();
+		_data->sizeInBytes = image.sizeInBytes();
 		_data->devicePixelRatio = image.devicePixelRatio();
 
 		_data->channels = getChannelsCountByFormat(image);
@@ -119,23 +120,20 @@ namespace base::images {
 
 		AssertLog(_data->data != nullptr, "base::images::Image::loadFromData: Cannot load image from memory");
 
-		_data->totalSize = length;
-		_data->depth = 1;
+		_data->sizeInBytes = length;
+		_data->depth = 32;
 
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 	}
 
 	void Image::loadFromFile(const std::string& path) {
-		_data->data = readImage(
-			path, &_data->width, &_data->height,
-			&_data->channels, &_data->totalSize, kForceImageChannels);
-
+		readImage(_data, kForceImageChannels);
 		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
 
-		_data->depth = 1;
+		_data->depth = 32;
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 
-		qDebug() << "_data->totalSize: " << _data->totalSize << "_data->w&h: " << _data->width
+		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
 
@@ -156,7 +154,7 @@ namespace base::images {
 		_data->width = width;
 		_data->height = height;
 
-		_data->totalSize = sizeof(*_data->data);
+		_data->sizeInBytes = sizeof(*_data->data);
 		_data->bytesPerLine = recountBytesPerLine(width, height, 1);
 	}
 
@@ -167,7 +165,10 @@ namespace base::images {
 	void Image::save(const std::string& path) {
 		Assert(!isNull());
 
-		stbi_write_png(path.c_str(), _data->width, _data->height, 0, _data->data, 0);
+		qDebug() << "_data->channels: " << _data->channels;
+		stbi_write_png(
+			path.c_str(), _data->width, _data->height, 
+			_data->channels, _data->data, 0);
 	}
 
 	Rect<int32> Image::rect() const noexcept {
@@ -194,7 +195,7 @@ namespace base::images {
 		return _data->data;
 	}
 
-	Image::ImageData* Image::data() {
+	Image::ImageData* Image::data_ptr() {
 		return _data;
 	}
 
@@ -216,7 +217,7 @@ namespace base::images {
 
 	bool Image::isNull() const noexcept {
 		return _data == nullptr
-			|| (_data->data == nullptr || _data->totalSize <= 0)
+			|| (_data->data == nullptr || _data->sizeInBytes <= 0)
 			|| (_data->width <= 0 || _data->height <= 0);
 	}
 
@@ -245,9 +246,9 @@ namespace base::images {
 		}
 
 		switch (_data->colorSpace) {
-		case ColorSpace::RGB32:
+		case ColorSpace::RGB:
 			return 0xff000000 | reinterpret_cast<const Rgb*>(s)[x];
-		case ColorSpace::RGBA32:
+		case ColorSpace::RGBA:
 			return reinterpret_cast<const Rgb*>(s)[x];
 		}
 
@@ -259,7 +260,7 @@ namespace base::images {
 			&& _data->data == other._data->data
 			&& _data->depth == other._data->depth
 			&& _data->devicePixelRatio == other._data->devicePixelRatio
-			&& _data->totalSize == other._data->totalSize
+			&& _data->sizeInBytes == other._data->sizeInBytes
 			&& _data->width == other._data->width
 			&& _data->height == other._data->height;
 	}
@@ -291,23 +292,58 @@ namespace base::images {
 		return _bytesPerLine;
 	}
 
-	uchar* Image::readImage(
-		const std::string& path,
-		int32* width, int32* height,
-		ushort* channels, sizetype* size,
+	void Image::readImage(
+		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		FILE* file = stbi__fopen(path.c_str(), "rb");
-		if (!file)
-			return stbi__errpuc("Can't fopen", "Unable to open file");
+		if (_data == nullptr && _data->data == nullptr 
+			&& data->path.has_value() == false)
+			return;
+
+		FILE* file = stbi__fopen(data->path.value().c_str(), "rb");
+		AssertLog(file != nullptr, "base::images::Image::readImage: Cannot fopen. Unable to open file");
 
 		uchar* imageData = stbi_load_from_file(
-			file, width, height,
-			(int32*)channels, kForceImageChannels);
+			file, &data->width, &data->height,
+			(int32*)&data->channels, forceChannelsCount);
 
-		*size = ftell(file);
+		data->sizeInBytes = ftell(file);
 		fclose(file);
+	}
 
-		return imageData;
+	void Image::writeImageToFile(
+		ImageData* data,
+		const std::string& path)
+	{
+		stbi__context s;
+		if (stbi__png_test(s))  
+			return stbi__png_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__bmp_test(s))
+			return stbi__bmp_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__gif_test(s)) 
+			return stbi__gif_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__psd_test(s)) 
+			return stbi__psd_load(s, x, y, comp, req_comp, ri, bpc);
+
+		if (stbi__pic_test(s)) 
+			return stbi__pic_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__jpeg_test(s)) 
+			return stbi__jpeg_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__pnm_test(s)) 
+			return stbi__pnm_load(s, x, y, comp, req_comp, ri);
+
+		if (stbi__hdr_test(s)) {
+			float* hdr = stbi__hdr_load(s, x, y, comp, req_comp, ri);
+			return stbi__hdr_to_ldr(hdr, *x, *y, req_comp ? req_comp : *comp);
+		}
+
+		// test tga last because it's a crappy test!
+		if (stbi__tga_test(s))
+			return stbi__tga_load(s, x, y, comp, req_comp, ri);
 	}
 } // namespace base::images

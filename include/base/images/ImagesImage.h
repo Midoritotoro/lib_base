@@ -5,15 +5,21 @@
 
 
 namespace base::images {
-	inline constexpr auto kForceImageChannels = 3; // rgb
+	inline constexpr auto kForceImageChannels = 3; // RGB
 
 	class IntegralImage;
 	class Image {
 	public:
 		enum class ColorSpace : uchar {
-			Mono,
-			RGB32,
-			RGBA32
+			Mono = 0x01,
+			RGB = 0x02,
+			RGBA = 0x04,
+			YCbCr = 0x08,
+			YUV = 0x10,
+			CMY = 0x20,
+			CMYK = 0x40,
+			HSL = 0x80,
+			HSV = 0xFF
 		};
 
 		struct ImageData {
@@ -26,11 +32,14 @@ namespace base::images {
 			int32 depth = 1;
 			sizetype bytesPerLine = 0;
 
-			sizetype totalSize = 0;
+			sizetype sizeInBytes = 0;
 			int32 devicePixelRatio = 1;
 
 			ColorSpace colorSpace;
 			std::vector<Rgb> colorTable;
+
+			std::optional<std::string> path;
+			char imageExtension[4];
 		};
 
 		Image();
@@ -80,7 +89,7 @@ namespace base::images {
 		[[nodiscard]] int32 bytesPerLine() const noexcept;
 
 		[[nodiscard]] uchar* bytesData();
-		[[nodiscard]] ImageData* data();
+		[[nodiscard]] ImageData* data_ptr();
 
 		[[nodiscard]] uchar* scanLine(int i);
 		[[nodiscard]] const uchar* scanLine(int i) const;
@@ -94,11 +103,13 @@ namespace base::images {
 			recountBytesPerLine(
 				int32 width, int32 height, int32 depth);
 
-		[[nodiscard]] uchar* readImage(
-			const std::string& path, 
-			int32* width, int32* height,
-			ushort* channels, sizetype* size,
+		void readImage(
+			ImageData* data,
 			int32 forceChannelsCount);
+
+		void writeImageToFile(
+			ImageData* data,
+			const std::string& path);
 
 		ImageData* _data = nullptr;
 	};

@@ -287,14 +287,14 @@ namespace base::images {
             int32 width, int32 height,
             int32 _S, int32 _T)
         {
-            const long _height = height * 4;
             const int32 SHalf = _S / 2;
 
-            ulong* integralImage = new ulong[width * _height];
+            ulong* integralImage = new ulong[width * height * sizeof(ulong*)];
+            
 
             for (int32 x = 0; x < width; ++x) {
                 long sum = 0;
-                for (int32 y = 0; y < _height; ++y) {
+                for (int32 y = 0; y < height; ++y) {
                     int32 index = y * width + x;
 
                     sum += src[index];
@@ -307,7 +307,7 @@ namespace base::images {
             }
 
             ProcessImage(
-                src, width, _height,
+                src, width, height,
                 integralImage, res, 
                 SHalf, _T);
 

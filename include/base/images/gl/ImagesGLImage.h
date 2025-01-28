@@ -5,8 +5,6 @@
 
 
 namespace base::images {
-	inline constexpr auto kForceImageChannels = 3; // rgb
-
 	class IntegralImage;
 
 	class GLImage final {
