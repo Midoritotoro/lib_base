@@ -48,6 +48,50 @@ extern "C" {
         int      (*eof)   (void* user);                       // returns nonzero if we are at end of file/data
     } stbi_io_callbacks;
 
+#ifdef _MSC_VER
+    typedef unsigned short stbi__uint16;
+    typedef   signed short stbi__int16;
+    typedef unsigned int   stbi__uint32;
+    typedef   signed int   stbi__int32;
+#else
+#include <stdint.h>
+    typedef uint16_t stbi__uint16;
+    typedef int16_t  stbi__int16;
+    typedef uint32_t stbi__uint32;
+    typedef int32_t  stbi__int32;
+#endif
+
+
+    typedef struct
+    {
+        stbi__uint32 img_x, img_y;
+        int img_n, img_out_n;
+
+        stbi_io_callbacks io;
+        void* io_user_data;
+
+        int read_from_callbacks;
+        int buflen;
+        stbi_uc buffer_start[128];
+        int callback_already_read;
+
+        stbi_uc* img_buffer, * img_buffer_end;
+        stbi_uc* img_buffer_original, * img_buffer_original_end;
+    } stbi__context;
+
+    enum
+    {
+        STBI_ORDER_RGB,
+        STBI_ORDER_BGR
+    };
+
+    typedef struct
+    {
+        int bits_per_channel;
+        int num_channels;
+        int channel_order;
+    } stbi__result_info;
+
     ////////////////////////////////////
     //
     // 8-bits-per-channel interface
@@ -167,6 +211,60 @@ extern "C" {
     STBIDEF char* stbi_zlib_decode_noheader_malloc(const char* buffer, int len, int* outlen);
     STBIDEF int   stbi_zlib_decode_noheader_buffer(char* obuffer, int olen, const char* ibuffer, int ilen);
 
+#ifndef STBI_NO_JPEG
+    STBIDEF int stbi__jpeg_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_PNG
+    STBIDEF int stbi__png_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_BMP
+    STBIDEF int stbi__bmp_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_TGA
+    STBIDEF int stbi__tga_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_PSD
+    STBIDEF int stbi__psd_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_HDR
+    STBIDEF int stbi__hdr_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_PIC
+    STBIDEF void* stbi__pic_load(stbi__context* s, int* px, int* py, int* comp, int req_comp, stbi__result_info* ri);
+    STBIDEF int stbi__pic_test(stbi__context* s);
+#endif
+
+#ifndef STBI_NO_GIF
+    STBIDEF int stbi__gif_test(stbi__context* s);
+    STBIDEF void* stbi__gif_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
+#endif
+
+#ifndef STBI_NO_PNM
+    STBIDEF int stbi__pnm_test(stbi__context* s);
+    STBIDEF void* stbi__pnm_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
+#endif
+
+#ifndef STBI_NO_STDIO
+    STBIDEF FILE* stbi__fopen(char const* filename, char const* mode);
+    STBIDEF void stbi__start_file(stbi__context* s, FILE* f);
+#endif // STBI_NO_STDIO
+
+#ifndef STBI_NO_LINEAR
+    STBIDEF float* stbi__ldr_to_hdr(stbi_uc* data, int x, int y, int comp);
+#endif
+
+#ifndef STBI_NO_HDR
+    STBIDEF stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp);
+#endif
+    STBIDEF stbi_uc* stbi__convert_16_to_8(stbi__uint16* orig, int w, int h, int channels);
+    STBIDEF stbi__uint16* stbi__convert_8_to_16(stbi_uc* orig, int w, int h, int channels);
+    STBIDEF void stbi__vertical_flip(void* image, int w, int h, int bytes_per_pixel);
 
 #ifdef __cplusplus
 }
@@ -264,19 +362,6 @@ extern "C" {
 #endif
 #endif
 
-#ifdef _MSC_VER
-typedef unsigned short stbi__uint16;
-typedef   signed short stbi__int16;
-typedef unsigned int   stbi__uint32;
-typedef   signed int   stbi__int32;
-#else
-#include <stdint.h>
-typedef uint16_t stbi__uint16;
-typedef int16_t  stbi__int16;
-typedef uint32_t stbi__uint32;
-typedef int32_t  stbi__int32;
-#endif
-
 // should produce compiler error if size is wrong
 typedef unsigned char validate_uint32[sizeof(stbi__uint32) == 4 ? 1 : -1];
 
@@ -321,119 +406,13 @@ typedef unsigned char validate_uint32[sizeof(stbi__uint32) == 4 ? 1 : -1];
 #define STBI__X86_TARGET
 #endif
 
-typedef struct
-{
-    stbi__uint32 img_x, img_y;
-    int img_n, img_out_n;
-
-    stbi_io_callbacks io;
-    void* io_user_data;
-
-    int read_from_callbacks;
-    int buflen;
-    stbi_uc buffer_start[128];
-    int callback_already_read;
-
-    stbi_uc* img_buffer, * img_buffer_end;
-    stbi_uc* img_buffer_original, * img_buffer_original_end;
-} stbi__context;
-
-enum
-{
-    STBI_ORDER_RGB,
-    STBI_ORDER_BGR
-};
-
-typedef struct
-{
-    int bits_per_channel;
-    int num_channels;
-    int channel_order;
-} stbi__result_info;
-
-#ifndef STBI_NO_JPEG
-static int      stbi__jpeg_test(stbi__context* s);
-static void* stbi__jpeg_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__jpeg_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_PNG
-static int      stbi__png_test(stbi__context* s);
-static void* stbi__png_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__png_info(stbi__context* s, int* x, int* y, int* comp);
-static int      stbi__png_is16(stbi__context* s);
-#endif
-
-#ifndef STBI_NO_BMP
-static int stbi__bmp_test_raw(stbi__context* s);
-static int      stbi__bmp_test(stbi__context* s);
-static void* stbi__bmp_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__bmp_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_TGA
-static int      stbi__tga_test(stbi__context* s);
-static void* stbi__tga_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__tga_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_PSD
-static int      stbi__psd_test(stbi__context* s);
-static void* stbi__psd_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri, int bpc);
-static int      stbi__psd_info(stbi__context* s, int* x, int* y, int* comp);
-static int      stbi__psd_is16(stbi__context* s);
-#endif
-
-#ifndef STBI_NO_HDR
-static int      stbi__hdr_test(stbi__context* s);
-static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__hdr_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_PIC
-static int      stbi__pic_test(stbi__context* s);
-static void* stbi__pic_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__pic_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_GIF
-static int      stbi__gif_test(stbi__context* s);
-static void* stbi__gif_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static void* stbi__load_gif_main(stbi__context* s, int** delays, int* x, int* y, int* z, int* comp, int req_comp);
-static int      stbi__gif_info(stbi__context* s, int* x, int* y, int* comp);
-#endif
-
-#ifndef STBI_NO_PNM
-static int      stbi__pnm_test(stbi__context* s);
-static void* stbi__pnm_load(stbi__context* s, int* x, int* y, int* comp, int req_comp, stbi__result_info* ri);
-static int      stbi__pnm_info(stbi__context* s, int* x, int* y, int* comp);
-static int      stbi__pnm_is16(stbi__context* s);
-#endif
-
-#ifndef STBI_NO_STDIO
-static FILE* stbi__fopen(char const* filename, char const* mode);
-static void stbi__start_file(stbi__context* s, FILE* f);
-#endif // STBI_NO_STDIO
-
-#ifndef STBI_NO_LINEAR
-static float* stbi__ldr_to_hdr(stbi_uc* data, int x, int y, int comp);
-#endif
-
-#ifndef STBI_NO_HDR
-static stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp);
-#endif
-
-static stbi_uc* stbi__convert_16_to_8(stbi__uint16* orig, int w, int h, int channels);
-static stbi__uint16* stbi__convert_8_to_16(stbi_uc* orig, int w, int h, int channels);
-static void stbi__vertical_flip(void* image, int w, int h, int bytes_per_pixel);
-
 
 // stbi__err - error
 // stbi__errpf - error returning pointer to float
 // stbi__errpuc - error returning pointer to unsigned char
 
 #ifndef STBI_NO_FAILURE_STRINGS
-static int stbi__err(const char* str);
+int stbi__err(const char* str);
 #endif 
 
 #ifdef STBI_NO_FAILURE_STRINGS
