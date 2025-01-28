@@ -6,16 +6,6 @@
 #include <base/images/ImagesUtility.h>
 #endif
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <base/images/StbImage.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/StbImageWrite.h>
-
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <base/images/StbImageResize.h>
-
-
 #include <base/Utility.h>
 
 

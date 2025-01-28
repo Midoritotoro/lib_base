@@ -1,3 +1,6 @@
+#ifndef STB_IMAGE_WRITE_H
+#define STB_IMAGE_WRITE_H
+
 #ifndef INCLUDE_STB_IMAGE_WRITE_H
 #define INCLUDE_STB_IMAGE_WRITE_H
 
@@ -1476,3 +1479,4 @@ STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const 
 #endif
 
 #endif // STB_IMAGE_WRITE_IMPLEMENTATION
+#endif // STB_IMAGE_WRITE_H

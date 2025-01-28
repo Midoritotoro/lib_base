@@ -40,9 +40,8 @@ namespace base::images {
 
 			std::optional<std::string> path;
 
-			// png, jpeg, pic, bmp, gif, psd, pnm, tga
+			// png, jpeg, bmp, gif
 			const char* imageExtension = nullptr;
-			bool hdr = false;
 		};
 
 		Image();

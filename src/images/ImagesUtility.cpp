@@ -53,26 +53,4 @@ namespace base::images {
         return -1;
     }
 #endif
-
-    const char* GetImageExtension(uchar* image) {
-        stbi__context s;
-
-        if (stbi__png_test(s))
-            return "png";
-        else if (stbi__bmp_test(s))
-            return "bmp";
-        else if (stbi__gif_test(s)) 
-        	return "gif";
-        else if (stbi__psd_test(s))
-        	return "psd";
-        else if (stbi__pic_test(s))
-        	return "pic";
-        else if (stbi__jpeg_test(s))
-        	return "jpeg";
-        else if (stbi__pnm_test(s))
-        	return "pnm";
-        else if (stbi__tga_test(s))
-        	return "tga";
-
-        return nullptr;
 } // namespace base::images

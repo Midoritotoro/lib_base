@@ -9,6 +9,4 @@ namespace base::images {
     int getChannelsCountByFormat(const QImage& image);
     [[nodiscard]] int getChannelsCountByBytes(const QImage& image);
 #endif
-
-    [[nodiscard]] const char* GetImageExtension(uchar* image);
 } // namespace base::images

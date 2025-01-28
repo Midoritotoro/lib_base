@@ -1,24 +1,9 @@
 #include <base/images/ImagesImage.h>
-#include <base/OverflowCheck.h>
 
-#include <base/Assert.h>
-#ifdef LIB_BASE_ENABLE_QT
 #include <base/images/ImagesUtility.h>
-#endif
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <base/images/StbImage.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/StbImageWrite.h>
-
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <base/images/StbImageResize.h>
-
 
 #include <base/Utility.h>
 #include <qDebug>
-
 
 
 namespace base::images {
@@ -123,7 +108,6 @@ namespace base::images {
 		_data->sizeInBytes = length;
 		_data->depth = 1;
 
-		_data->imageExtension = GetImageExtension(_data->data);
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 	}
 
@@ -134,9 +118,7 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
 
 		_data->depth = 1;
-
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
-		_data->imageExtension = GetImageExtension(_data->data);
 
 		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
@@ -168,9 +150,10 @@ namespace base::images {
 	}
 
 	void Image::save(const std::string& path) {
-		Assert(!isNull());
+		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
 
 		qDebug() << "_data->channels: " << _data->channels;
+
 		if (_data->imageExtension == "png")
 			stbi_write_png(
 				path.c_str(), _data->width, _data->height,
@@ -178,13 +161,9 @@ namespace base::images {
 		else if (_data->imageExtension == "jpeg")
 			stbi_write_jpg(
 				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, 10000); // Quality - ?
+				_data->channels, _data->data, 100);
 		else if (_data->imageExtension == "bmp")
 			stbi_write_bmp(
-				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data);
-		else if (_data->imageExtension == "tga")
-			stbi_write_tga(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data);
 		
@@ -322,9 +301,7 @@ namespace base::images {
 		FILE* file = stbi__fopen(data->path.value().c_str(), "rb");
 		AssertLog(file != nullptr, "base::images::Image::readImage: Cannot fopen. Unable to open file");
 
-		_data->data = stbi_load_from_file(
-			file, &data->width, &data->height,
-			(int32*)&data->channels, forceChannelsCount);
+		_data->data = loadImage(file, data, forceChannelsCount);
 
 		data->sizeInBytes = ftell(file);
 		fclose(file);
@@ -363,20 +340,6 @@ namespace base::images {
 				context, &data->width, &data->height,
 				(int32*)&data->channels, forceChannelsCount, ri);
 		}
-
-		if (stbi__psd_test(context)) {
-			data->imageExtension = "psd";
-			return stbi__psd_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri, bitsPerChannel);
-		}
-
-		if (stbi__pic_test(context)) {
-			data->imageExtension = "pic";
-			return stbi__pic_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
 	
 		if (stbi__jpeg_test(context)) {
 			data->imageExtension = "jpeg";
@@ -385,15 +348,9 @@ namespace base::images {
 				(int32*)&data->channels, forceChannelsCount, ri);
 		}
 
-		if (stbi__pnm_test(context)) {
-			data->imageExtension = "pnm";
-			return stbi__pnm_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
-
 		if (stbi__hdr_test(context)) {
-			data->hdr = true;
+			data->imageExtension = "jpeg";
+
 			float* hdr = stbi__hdr_load(
 				context, &data->width, &data->height,
 				(int32*)&data->channels, forceChannelsCount, ri);
@@ -401,13 +358,6 @@ namespace base::images {
 			return stbi__hdr_to_ldr(
 				hdr, data->width, data->height,
 				forceChannelsCount ? forceChannelsCount : data->channels);
-		}
-
-		if (stbi__tga_test(context)) {
-			data->imageExtension = "tga";
-			return stbi__tga_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
 		}
 
 		return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
