@@ -319,28 +319,20 @@ namespace base::images {
         uchar* src, uchar* res,
         int32 width, int32 height)
     {
-        const int32 S = width / 8;
-        static const float t = 0.15;
-//
-//#ifdef LIB_BASE_ENABLE_avx2
-//    return BradleyHelperAvx2(
-//        src, res, width, height,
-//        S, t);
-//#endif
+    static const float bradleyT = 0.15;
 
-        const auto Index = [=](int i, int j, int color) {
-            return (i * width + j) * 3 + color;
-        };
+    const auto Index = [=](int i, int j, int color) {
+        return (i * width + j) * 3 + color;
+    };
 
-        const auto Get = [=](int i, int j, int color) {
-            return res[Index(i, j, color)];
-        };
+    const auto Get = [=](int i, int j, int color) {
+        return res[Index(i, j, color)];
+    };
 
-        const auto Set = [=](int i, int j, uint8_t val) {
-            for (uint8_t color = 0; color < 3; ++color) {
-                src[Index(i, j, color)] = val;
-            }
-        };
+    const auto Set = [=](int i, int j, uint8_t val) {
+        for (uint8_t color = 0; color < 3; ++color)
+            src[Index(i, j, color)] = val;
+    };
 
     int32 block_width_ = width / 16;
 
@@ -370,7 +362,7 @@ namespace base::images {
 
             long sum = integral_data[x2][y2] - integral_data[x1][y2] - integral_data[x2][y1] + integral_data[x1][y1];
             uint8_t color = 255;
-            if (1.0 * Get(i, j, 0) * count < sum * (1.0 - t)) {
+            if (1.0 * Get(i, j, 0) * count < sum * (1.0 - bradleyT)) {
                 color = 0;
             }
             Set(i, j, color);

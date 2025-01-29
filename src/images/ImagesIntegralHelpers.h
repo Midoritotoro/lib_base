@@ -6,8 +6,8 @@
 
 namespace base::images {
     namespace {
-//#ifdef LIB_BASE_ENABLE_avx2
-//    void BradleyHelperAvx2(
+//#ifdef LIB_BASE_ENABLE_sse2
+//    void BradleyHelperSse2(
 //        uchar* src, uchar* res,
 //        int32 width, int32 height,
 //        int32 _S, int32 _T);
@@ -21,6 +21,4 @@ namespace base::images {
     void BradleyThreshold(
         uchar* src, uchar* res,
         int32 width, int32 height);
-
-
 } // namespace base::images
