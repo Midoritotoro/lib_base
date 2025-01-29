@@ -1,9 +1,9 @@
 #include <base/images/ImagesBlur.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <base/images/StbImage.h>
+#include <base/images/stb/StbImage.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/StbImageWrite.h>
+#include <base/images/stb/StbImageWrite.h>
 
 #include <iostream>
 #include <cstring>
@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include <vector>
+#include <omp.h>
 
 
 namespace base::images {

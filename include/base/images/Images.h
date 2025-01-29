@@ -10,15 +10,6 @@
 #include <base/OverflowCheck.h>
 #include <base/Assert.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <base/images/StbImage.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/StbImageWrite.h>
-
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <base/images/StbImageResize.h>
-
 
 #ifdef LIB_BASE_ENABLE_QT
 #include <QImage>

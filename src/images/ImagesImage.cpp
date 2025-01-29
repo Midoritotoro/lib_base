@@ -5,8 +5,106 @@
 #include <base/Utility.h>
 #include <qDebug>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <base/images/stb/StbImage.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <base/images/stb/StbImageWrite.h>
+
+#define STB_IMAGE_RESIZE2_IMPLEMENTATION
+#include <base/images/stb/StbImageResize.h>
+
 
 namespace base::images {
+	namespace {
+		static void* loadImageMain(
+			::stbi__context* context,
+			Image::ImageData* data,
+			int32 forceChannelsCount,
+			::stbi__result_info* ri,
+			int32 bitsPerChannel)
+		{
+			memset(ri, 0, sizeof(*ri));
+
+			ri->bits_per_channel = 8;
+			ri->channel_order = STBI_ORDER_RGB;
+			ri->num_channels = 0;
+
+			if (stbi__png_test(context)) {
+				data->imageExtension = "png";
+				return stbi__png_load(
+					context, &data->width, &data->height,
+					(int32*)&data->channels, forceChannelsCount, ri);
+			}
+
+			if (stbi__bmp_test(context)) {
+				data->imageExtension = "bmp";
+				return stbi__bmp_load(
+					context, &data->width, &data->height,
+					(int32*)&data->channels, forceChannelsCount, ri);
+			}
+
+			if (stbi__gif_test(context)) {
+				data->imageExtension = "gif";
+				return stbi__gif_load(
+					context, &data->width, &data->height,
+					(int32*)&data->channels, forceChannelsCount, ri);
+			}
+
+			if (stbi__jpeg_test(context)) {
+				data->imageExtension = "jpeg";
+				return stbi__jpeg_load(
+					context, &data->width, &data->height,
+					(int32*)&data->channels, forceChannelsCount, ri);
+			}
+
+			if (stbi__hdr_test(context)) {
+				data->imageExtension = "jpeg";
+
+				float* hdr = stbi__hdr_load(
+					context, &data->width, &data->height,
+					(int32*)&data->channels, forceChannelsCount, ri);
+
+				return stbi__hdr_to_ldr(
+					hdr, data->width, data->height,
+					forceChannelsCount ? forceChannelsCount : data->channels);
+			}
+
+			return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
+		}
+
+		static uchar* loadAndPostprocess8Bit(
+			::stbi__context* context,
+			Image::ImageData* data,
+			int32 forceChannelsCount)
+		{
+			::stbi__result_info resultInfo;
+			void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
+
+			if (result == NULL)
+				return NULL;
+
+			STBI_ASSERT(resultInfo.bits_per_channel == 8 || resultInfo.bits_per_channel == 16);
+
+			if (resultInfo.bits_per_channel != 8) {
+				result = stbi__convert_16_to_8((stbi__uint16*)result,
+					data->width, data->height,
+					forceChannelsCount == 0
+					? data->channels
+					: forceChannelsCount);
+
+				resultInfo.bits_per_channel = 8;
+			}
+
+			if (stbi__vertically_flip_on_load) {
+				int channels = forceChannelsCount ? forceChannelsCount : data->channels;
+				stbi__vertical_flip(result, data->width, data->height, channels * sizeof(stbi_uc));
+			}
+
+			return (uchar*)result;
+		}
+	} // namespace
+
 	Image::Image() :
 		_data(new ImageData())
 	{}
@@ -113,7 +211,7 @@ namespace base::images {
 
 	void Image::loadFromFile(const std::string& path) {
 		_data->path = path;
-		readImage(_data, kForceImageChannels);
+		readImage(_data);
 
 		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
 
@@ -134,9 +232,9 @@ namespace base::images {
 	}
 
 	void Image::resize(int32 width, int32 height) {
-		stbir_resize_uint8(
+		/*stbir_resize(
 			_data->data, _data->width, _data->height, 0,
-			_data->data, width, height, 0, _data->channels);
+			_data->data, width, height, 0, _data->channels);*/
 
 		_data->width = width;
 		_data->height = height;
@@ -149,24 +247,21 @@ namespace base::images {
 		return resize(size.width(), size.height());
 	}
 
-	void Image::save(const std::string& path) {
+	void Image::save(const std::string& path, ushort jpgQuality) {
 		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
 
-		qDebug() << "_data->channels: " << _data->channels;
-
-		if (_data->imageExtension == "png")
+		if (strcmp(_data->imageExtension, "png") == 0)
 			stbi_write_png(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, 0);
-		else if (_data->imageExtension == "jpeg")
+		else if (strcmp(_data->imageExtension, "jpeg") == 0)
 			stbi_write_jpg(
 				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, 100);
-		else if (_data->imageExtension == "bmp")
+				_data->channels, _data->data, jpgQuality);
+		else if (strcmp(_data->imageExtension, "bmp") == 0)
 			stbi_write_bmp(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data);
-		
 	}
 
 	Rect<int32> Image::rect() const noexcept {
@@ -294,8 +389,7 @@ namespace base::images {
 		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		if ((_data == nullptr && _data->data == nullptr)
-			|| data->path.has_value() == false)
+		if (_data == nullptr || data->path.has_value() == false)
 			return;
 
 		FILE* file = stbi__fopen(data->path.value().c_str(), "rb");
@@ -307,99 +401,13 @@ namespace base::images {
 		fclose(file);
 	}
 
-	void* Image::loadImageMain(
-		stbi__context* context,
-		ImageData* data,
-		int32 forceChannelsCount,
-		stbi__result_info* ri,
-		int32 bitsPerChannel)
-	{
-		memset(ri, 0, sizeof(*ri));
-
-		ri->bits_per_channel = 8;
-		ri->channel_order = STBI_ORDER_RGB;
-		ri->num_channels = 0;
-
-		if (stbi__png_test(context)) {
-			data->imageExtension = "png";
-			return stbi__png_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
-
-		if (stbi__bmp_test(context)) {
-			data->imageExtension = "bmp";
-			return stbi__bmp_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
-
-		if (stbi__gif_test(context)) {
-			data->imageExtension = "gif";
-			return stbi__gif_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
-	
-		if (stbi__jpeg_test(context)) {
-			data->imageExtension = "jpeg";
-			return stbi__jpeg_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-		}
-
-		if (stbi__hdr_test(context)) {
-			data->imageExtension = "jpeg";
-
-			float* hdr = stbi__hdr_load(
-				context, &data->width, &data->height,
-				(int32*)&data->channels, forceChannelsCount, ri);
-
-			return stbi__hdr_to_ldr(
-				hdr, data->width, data->height,
-				forceChannelsCount ? forceChannelsCount : data->channels);
-		}
-
-		return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
-	}
-
-	uchar* Image::loadAndPostprocess8Bit(
-		stbi__context* context,
-		ImageData* data,
-		int32 forceChannelsCount)
-	{
-		stbi__result_info resultInfo;
-		void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
-
-		if (result == NULL)
-			return NULL;
-
-		STBI_ASSERT(resultInfo.bits_per_channel == 8 || resultInfo.bits_per_channel == 16);
-
-		if (resultInfo.bits_per_channel != 8) {
-			result = stbi__convert_16_to_8((stbi__uint16*)result, 
-				data->width, data->height, 
-				forceChannelsCount == 0 
-					? data->channels 
-					: forceChannelsCount);
-
-			resultInfo.bits_per_channel = 8;
-		}
-
-		if (stbi__vertically_flip_on_load) {
-			int channels = forceChannelsCount ? forceChannelsCount : data->channels;
-			stbi__vertical_flip(result, data->width, data->height, channels * sizeof(stbi_uc));
-		}
-
-		return (uchar*)result;
-	}
 
 	uchar* Image::loadImage(
 		FILE* file,
 		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		stbi__context context;
+		::stbi__context context;
 		stbi__start_file(&context, file);
 
 		uchar* result = loadAndPostprocess8Bit(

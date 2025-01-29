@@ -4,6 +4,8 @@
 #include <iostream>
 #include <thread>
 
+#include <vector>
+
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #define free_null(a) do { free( a ); a = NULL; } while(0)
 
@@ -287,19 +289,17 @@ namespace base::images {
             int32 width, int32 height,
             int32 _S, int32 _T)
         {
-            const int32 SHalf = _S / 2;
-
-            ulong* integralImage = new ulong[width * height * sizeof(ulong*)];
+            long sum = 0;
+            ulong* integralImage = new ulong[width * height];
             
-
             for (int32 x = 0; x < width; ++x) {
-                long sum = 0;
+                sum = 0;
                 for (int32 y = 0; y < height; ++y) {
                     int32 index = y * width + x;
 
                     sum += src[index];
 
-                    if (y == 0)
+                    if (x == 0)
                         integralImage[index] = sum;
                     else
                         integralImage[index] = integralImage[index - 1] + sum;
@@ -309,7 +309,7 @@ namespace base::images {
             ProcessImage(
                 src, width, height,
                 integralImage, res, 
-                SHalf, _T);
+                _S / 2, _T);
 
             delete[] integralImage;
         }
@@ -327,8 +327,58 @@ namespace base::images {
 //        src, res, width, height,
 //        S, t);
 //#endif
-    return BradleyHelper(
+
+        const auto Index = [=](int i, int j, int color) {
+            return (i * width + j) * 3 + color;
+        };
+
+        const auto Get = [=](int i, int j, int color) {
+            return res[Index(i, j, color)];
+        };
+
+        const auto Set = [=](int i, int j, uint8_t val) {
+            for (uint8_t color = 0; color < 3; ++color) {
+                src[Index(i, j, color)] = val;
+            }
+        };
+
+    int32 block_width_ = width / 16;
+
+    std::vector<std::vector<long>> integral_data(height);
+    for (int i = 0; i < height; ++i) {
+        integral_data[i] = std::vector<long>(width);
+        int row = 0;
+        for (int j = 0; j < width; ++j) {
+            row += Get(i, j, 0);
+            if (i == 0) {
+                integral_data[i][j] = row;
+            }
+            else {
+                integral_data[i][j] = integral_data[i - 1][j] + row;
+            }
+        }
+    }
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            int x1 = std::max(0, i - block_width_);
+            int x2 = std::min(height - 1, i + block_width_);
+            int y1 = std::max(0, j - block_width_);
+            int y2 = std::min(width - 1, j + block_width_);
+
+            int count = (y2 - y1) * (x2 - x1);
+
+            long sum = integral_data[x2][y2] - integral_data[x1][y2] - integral_data[x2][y1] + integral_data[x1][y1];
+            uint8_t color = 255;
+            if (1.0 * Get(i, j, 0) * count < sum * (1.0 - t)) {
+                color = 0;
+            }
+            Set(i, j, color);
+        }
+    }
+
+    /*return BradleyHelper(
         src, res, width, height,
-        S, t);
+        S, t);*/
     }
 } // namespace base::images

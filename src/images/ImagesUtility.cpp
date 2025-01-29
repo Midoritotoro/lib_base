@@ -1,9 +1,6 @@
 #include <base/images/ImagesUtility.h>
 #include <iostream>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <base/images/StbImage.h>
-
 
 namespace base::images {
 #ifdef LIB_BASE_ENABLE_QT

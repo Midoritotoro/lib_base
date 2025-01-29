@@ -11,10 +11,13 @@
 namespace base::images {
     IntegralImage::IntegralImage() {
 
-        const char* out = "D:/pp.png";
-        const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
-        Image image(in);
-
+        const char* out = "D:/pp.jpg";
+        const char* in = "C:\\Users\\danya\\Downloads\\tree.jpg";
+        Image image;
+        {
+            measureExecutionTime("Image::loadFromFile: ")
+            image.loadFromFile(in);
+        }
 
         qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
         /*  int total = 0;
@@ -22,15 +25,19 @@ namespace base::images {
         for (int i = 0; i < 10; ++i) {*/
         {
             measureExecutionTime("IntegralImage: ")
-            BradleyThreshold(image.data_ptr()->data, image.data_ptr()->data, image.data_ptr()->width, image.data_ptr()->height);
+            BradleyThreshold(
+                image.data_ptr()->data, image.data_ptr()->data,
+                image.data_ptr()->width, image.data_ptr()->height);
         }
         
           /*  total += val;
             qDebug() << "Time: " << val;
         }*/
 
-  
-        image.save(out);
+        {
+            measureExecutionTime("Image::save: ")
+            image.save(out);
+        }
     }
 
     IntegralImage::IntegralImage(const std::vector<std::vector<int32>>& image) :

@@ -5,7 +5,7 @@
 
 
 namespace base::images {
-	inline constexpr auto kForceImageChannels = 3; // RGB
+	inline constexpr auto kForceImageChannels = 0; // RGB
 
 	class IntegralImage;
 	class Image {
@@ -79,7 +79,10 @@ namespace base::images {
 		void resize(int32 width, int32 height);
 		void resize(Size<int32> size);
 
-		void save(const std::string& path);
+		//!
+		//! \brief
+		//! \param jpgQuality игнорируется, если изображение в отличном от jpg формате
+		void save(const std::string& path, ushort jpgQuality = 50);
 		[[nodiscard]] Image convertToColorSpace(ColorSpace space) const;
 
 		[[nodiscard]] Rect<int32> rect() const noexcept;
@@ -106,18 +109,6 @@ namespace base::images {
 				int32 width, int32 height, int32 depth);
 
 		void readImage(
-			ImageData* data,
-			int32 forceChannelsCount = kForceImageChannels);
-
-		[[nodiscard]] void* loadImageMain(
-			stbi__context* context,
-			ImageData* data,
-			int32 forceChannelsCount,
-			stbi__result_info* ri, 
-			int32 bitsPerChannel);
-
-		[[nodiscard]] uchar* loadAndPostprocess8Bit(
-			stbi__context* context,
 			ImageData* data,
 			int32 forceChannelsCount = kForceImageChannels);
 

@@ -34,6 +34,7 @@ set(LIB_BASE_ENABLE_OPENGL OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
+
    
 set(PRIVATE_SOURCES 
     src/utility/Math.cpp
@@ -71,11 +72,6 @@ set(PRIVATE_SOURCES
 
     src/images/ImagesImage.cpp
     src/images/ImagesUtility.cpp
-
-    src/images/StbImage.c
-
-    src/images/StbImageResize.c
-    src/images/StbImageWrite.c
 
     src/images/ImagesIntegralHelpers.cpp
     src/images/ImagesIntegralHelpers.h
@@ -128,9 +124,9 @@ set(PUBLIC_HEADERS
     include/base/TypeTraits.h
     include/base/images/ImagesBlur.h
 
-    include/base/images/StbImage.h
-    include/base/images/StbImageWrite.h
-    include/base/images/StbImageResize.h
+    include/base/images/stb/StbImage.h
+    include/base/images/stb/StbImageWrite.h
+    include/base/images/stb/StbImageResize.h
 
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
