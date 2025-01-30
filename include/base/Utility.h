@@ -3,8 +3,7 @@
 #include <base/Platform.h>
 #include <base/Time.h>
 
-#if defined(_MSC_VER) && !defined(__llvm__) && !defined(__INTEL_COMPILER) \
-	&& !defined(__GNUC__) && !defined(__clang__)
+#if defined(_MSC_VER) && !defined(__GNUC__) && !defined(__clang__)
 #include <__msvc_iter_core.hpp>
 #endif
 
@@ -35,6 +34,12 @@
 
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
+
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#define free_null(a) do { free( a ); a = NULL; } while(0)
+
+#define empty_str(str) (!str || !*str)
 
 namespace base {
 	using namespace ::std::ranges;

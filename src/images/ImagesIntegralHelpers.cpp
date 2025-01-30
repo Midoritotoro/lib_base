@@ -4,10 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-#define free_null(a) do { free( a ); a = NULL; } while(0)
-
-#define empty_str(str) (!str || !*str)
 
 
 namespace base::images {

@@ -20,19 +20,14 @@ namespace base::images {
         }
 
         qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
-        /*  int total = 0;
-        int val = 0;
-        for (int i = 0; i < 10; ++i) {*/
+
         {
             measureExecutionTime("IntegralImage: ")
             BradleyThreshold(
                 image.data_ptr()->data, image.data_ptr()->data,
-                image.data_ptr()->width, image.data_ptr()->height);
+                image.data_ptr()->width, image.data_ptr()->height,
+                3);
         }
-        
-          /*  total += val;
-            qDebug() << "Time: " << val;
-        }*/
 
         {
             measureExecutionTime("Image::save: ")

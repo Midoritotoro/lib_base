@@ -218,7 +218,46 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_options(
         lib_base 
         PRIVATE
-        /arch:AVX2)
+            /permissive-
+            /utf-8
+            /O2
+            /Ot
+            /W4
+            /MP
+            /EHsc   
+            /w15038 
+            /w14265 
+            /wd4018
+            /wd4100
+            /wd4242
+            /wd4244
+            /wd4245
+            /wd4267
+            /wd4305
+            /wd4324
+            /wd4389
+            /wd4456
+            /wd4457
+            /wd4458
+            /wd4459
+            /wd4611
+            /wd4702
+            /Zi
+            /Zc:__cplusplus
+    )
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(
+        lib_base 
+        PRIVATE
+            /permissive-
+            /utf-8
+            /O3
+            /W4
+            /MP
+            /EHsc   
+            /Zi
+            /Zc:__cplusplus
+    )
 endif()
 
 target_include_directories(lib_base

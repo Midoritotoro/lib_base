@@ -11,6 +11,7 @@ namespace base::images {
 	class Image {
 	public:
 		enum class ColorSpace : uchar {
+			BGR = 0x00,
 			Mono = 0x01,
 			RGB = 0x02,
 			RGBA = 0x04,
@@ -35,12 +36,14 @@ namespace base::images {
 			sizetype sizeInBytes = 0;
 			int32 devicePixelRatio = 1;
 
+			int32 bitsPerChannel = 0;
+
 			ColorSpace colorSpace;
 			std::vector<Rgb> colorTable;
 
 			std::optional<std::string> path;
 
-			// png, jpeg, bmp, gif
+			// png, jpeg, bmp
 			const char* imageExtension = nullptr;
 		};
 
@@ -119,7 +122,8 @@ namespace base::images {
 
 		void writeImageToFile(
 			ImageData* data,
-			const std::string& path);
+			const std::string& path,
+			ushort jpgQuality);
 
 		ImageData* _data = nullptr;
 	};
