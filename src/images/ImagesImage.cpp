@@ -643,6 +643,7 @@ namespace base::images {
 		bool isFormatSupported = false;
 
 		const char* imageExt = getExtensionFromPath(path);
+		bool needFormatConversions = (imageExt != _data->imageExtension);
 
 		if (isFormatSupported = (strcmp(imageExt, "png") == 0))
 			success = stbi_write_png(
@@ -669,11 +670,8 @@ namespace base::images {
 		std::regex regex(R"(\.(bmp|jpe?g|png)(?=[^.]*$))", std::regex::icase);
 		std::smatch match;
 
-		if (std::regex_search(path, match, regex)) {
-			std::string str = match[1].str().erase(0, 0);
-			qDebug() << "str: " << str;
-			return str.c_str();
-		}
+		if (std::regex_search(path, match, regex))
+			return match[1].str().erase(0, 0).c_str();
 
 		return "";
 	}

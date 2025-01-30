@@ -10,9 +10,9 @@
 
 namespace base::images {
     IntegralImage::IntegralImage() {
-
-        const char* out = "D:/pp.jpg";
+        const char* out = "D:/pp.png";
         const char* in = "C:\\Users\\danya\\Downloads\\tree.jpg";
+
         Image image;
         {
             measureExecutionTime("Image::loadFromFile: ")
@@ -26,7 +26,7 @@ namespace base::images {
             BradleyThreshold(
                 image.data_ptr()->data, image.data_ptr()->data,
                 image.data_ptr()->width, image.data_ptr()->height,
-                3);
+                image.data_ptr()->channels);
         }
 
         {

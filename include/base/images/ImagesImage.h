@@ -128,6 +128,8 @@ namespace base::images {
 
 		[[nodiscard]] const char* getExtensionFromPath(const std::string& path);
 
+		
+
 		ImageData* _data = nullptr;
 	};
 } // namespace base::images
