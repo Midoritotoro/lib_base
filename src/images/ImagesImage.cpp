@@ -15,73 +15,12 @@
 #include <base/images/stb/StbImageResize.h>
 
 
+#include <regex>
+
+
+
 namespace base::images {
 	namespace {
-		static void* loadImageMain(
-			::stbi__context* context,
-			Image::ImageData* data,
-			int32 forceChannelsCount,
-			::stbi__result_info* ri,
-			int32 bitsPerChannel)
-		{
-			measureExecutionTime("base::images::Image::loadImageMain")
-			memset(ri, 0, sizeof(*ri));
-
-			ri->bits_per_channel = 8;
-			ri->channel_order = STBI_ORDER_RGB;
-			ri->num_channels = 0;
-
-			if (stbi__png_test(context)) {
-				data->imageExtension = "png";
-				return loadPng(context, data, forceChannelsCount, ri);
-			}
-
-			if (stbi__bmp_test(context)) {
-				data->imageExtension = "bmp";
-				return loadBmp(context, data, forceChannelsCount);
-			}
-
-			if (stbi__jpeg_test(context)) {
-				data->imageExtension = "jpeg";
-				return loadJpeg(context, data, forceChannelsCount);
-			}
-
-			return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
-		}
-
-		static uchar* loadAndPostprocess8Bit(
-			::stbi__context* context,
-			Image::ImageData* data,
-			int32 forceChannelsCount)
-		{
-			::stbi__result_info resultInfo;
-			void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
-
-			if (result == NULL)
-				return NULL;
-
-			STBI_ASSERT(resultInfo.bits_per_channel == 8 || resultInfo.bits_per_channel == 16);
-
-			if (resultInfo.bits_per_channel != 8) {
-				measureExecutionTime("base::images::Image::loadAndPostprocess8Bit - resultInfo.bits_per_channel != 8: ")
-				result = stbi__convert_16_to_8((stbi__uint16*)result,
-					data->width, data->height,
-					forceChannelsCount == 0
-					? data->channels
-					: forceChannelsCount);
-
-				resultInfo.bits_per_channel = 8;
-			}
-
-			if (stbi__vertically_flip_on_load) {
-				measureExecutionTime("base::images::Image::loadAndPostprocess8Bit - stbi__vertically_flip_on_load: ")
-				int channels = forceChannelsCount ? forceChannelsCount : data->channels;
-				stbi__vertical_flip(result, data->width, data->height, channels * sizeof(stbi_uc));
-			}
-
-			return (uchar*)result;
-		}
-
 		static [[nodiscard]] void* loadPng(
 			stbi__context* s, 
 			Image::ImageData* data, 
@@ -101,6 +40,8 @@ namespace base::images {
 			data->colorSpace = ri->channel_order == STBI_ORDER_RGB
 				? Image::ColorSpace::RGB
 				: Image::ColorSpace::BGR; // ? TODO
+
+			return pngData;
 		}
 
 		static void* loadJpeg(
@@ -347,6 +288,70 @@ namespace base::images {
 
 			return out;
 		}
+		static void* loadImageMain(
+			::stbi__context* context,
+			Image::ImageData* data,
+			int32 forceChannelsCount,
+			::stbi__result_info* ri,
+			int32 bitsPerChannel)
+		{
+			measureExecutionTime("base::images::Image::loadImageMain")
+				memset(ri, 0, sizeof(*ri));
+
+			ri->bits_per_channel = 8;
+			ri->channel_order = STBI_ORDER_RGB;
+			ri->num_channels = 0;
+
+			if (stbi__png_test(context)) {
+				data->imageExtension = "png";
+				return loadPng(context, data, forceChannelsCount, ri);
+			}
+
+			if (stbi__bmp_test(context)) {
+				data->imageExtension = "bmp";
+				return loadBmp(context, data, forceChannelsCount);
+			}
+
+			if (stbi__jpeg_test(context)) {
+				data->imageExtension = "jpeg";
+				return loadJpeg(context, data, forceChannelsCount);
+			}
+
+			return stbi__errpuc("unknown image type", "Image not of any known type, or corrupt");
+		}
+
+		static uchar* loadAndPostprocess8Bit(
+			::stbi__context* context,
+			Image::ImageData* data,
+			int32 forceChannelsCount)
+		{
+			::stbi__result_info resultInfo;
+			void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
+
+			if (result == NULL)
+				return NULL;
+
+			STBI_ASSERT(resultInfo.bits_per_channel == 8 || resultInfo.bits_per_channel == 16);
+
+			if (resultInfo.bits_per_channel != 8) {
+				measureExecutionTime("base::images::Image::loadAndPostprocess8Bit - resultInfo.bits_per_channel != 8: ")
+					result = stbi__convert_16_to_8((stbi__uint16*)result,
+						data->width, data->height,
+						forceChannelsCount == 0
+						? data->channels
+						: forceChannelsCount);
+
+				resultInfo.bits_per_channel = 8;
+			}
+
+			if (stbi__vertically_flip_on_load) {
+				measureExecutionTime("base::images::Image::loadAndPostprocess8Bit - stbi__vertically_flip_on_load: ")
+					int channels = forceChannelsCount ? forceChannelsCount : data->channels;
+				stbi__vertical_flip(result, data->width, data->height, channels * sizeof(stbi_uc));
+			}
+
+			return (uchar*)result;
+		}
 
 	} // namespace
 
@@ -570,6 +575,7 @@ namespace base::images {
 	int32 Image::recountBytesPerLine(
 			int32 width, int32 height, int32 depth)
 	{
+		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << depth;
 		int32 invalid = -1;
 
 		if (height <= 0)
@@ -633,17 +639,42 @@ namespace base::images {
 		const std::string& path,
 		ushort jpgQuality)
 	{
-		if (strcmp(_data->imageExtension, "png") == 0)
-			stbi_write_png(
+		int success = 0;
+		bool isFormatSupported = false;
+
+		const char* imageExt = getExtensionFromPath(path);
+
+		if (isFormatSupported = (strcmp(imageExt, "png") == 0))
+			success = stbi_write_png(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, 0);
-		else if (strcmp(_data->imageExtension, "jpeg") == 0)
-			stbi_write_jpg(
+
+		else if (isFormatSupported = (strcmp(imageExt, "jpeg") == 0 || strcmp(imageExt, "jpg") == 0))
+			success = stbi_write_jpg(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, jpgQuality);
-		else if (strcmp(_data->imageExtension, "bmp") == 0)
-			stbi_write_bmp(
+
+		else if (isFormatSupported = (strcmp(imageExt, "bmp") == 0))
+			success = stbi_write_bmp(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data);
+		
+		AssertLog(isFormatSupported != false, 
+			std::string("base::images::Image::writeImageToFile: Given format: " 
+				+ std::string(imageExt) + std::string(" is not supported")).c_str());
+		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
+	}
+
+	const char* Image::getExtensionFromPath(const std::string& path) {
+		std::regex regex(R"(\.(bmp|jpe?g|png)(?=[^.]*$))", std::regex::icase);
+		std::smatch match;
+
+		if (std::regex_search(path, match, regex)) {
+			std::string str = match[1].str().erase(0, 0);
+			qDebug() << "str: " << str;
+			return str.c_str();
+		}
+
+		return "";
 	}
 } // namespace base::images

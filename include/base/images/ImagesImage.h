@@ -11,16 +11,17 @@ namespace base::images {
 	class Image {
 	public:
 		enum class ColorSpace : uchar {
-			BGR = 0x00,
-			Mono = 0x01,
-			RGB = 0x02,
-			RGBA = 0x04,
-			YCbCr = 0x08,
+			Invalid = 0x00,
+			BGR = 0x01,
+			Mono = 0x02,
+			RGB = 0x04,
+			RGBA = 0x08,
+			/*YCbCr = 0x08,
 			YUV = 0x10,
 			CMY = 0x20,
 			CMYK = 0x40,
 			HSL = 0x80,
-			HSV = 0xFF
+			HSV = 0xFF*/
 		};
 
 		struct ImageData {
@@ -124,6 +125,8 @@ namespace base::images {
 			ImageData* data,
 			const std::string& path,
 			ushort jpgQuality);
+
+		[[nodiscard]] const char* getExtensionFromPath(const std::string& path);
 
 		ImageData* _data = nullptr;
 	};
