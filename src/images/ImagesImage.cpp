@@ -5,6 +5,18 @@
 #include <base/Utility.h>
 #include <qDebug>
 
+#ifdef OS_WIN
+	#ifndef UNICODE
+		#define UNICODE
+	#endif
+
+	#ifndef _UNICODE
+		#define _UNICODE
+	#endif
+
+	#define STBIW_WINDOWS_UTF8
+#endif
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <base/images/stb/StbImage.h>
 
@@ -497,9 +509,77 @@ namespace base::images {
 		return resize(size.width(), size.height());
 	}
 
-	void Image::save(const std::string& path, ushort jpgQuality) {
+	void Image::convertToFormat(const char* format) {
+		if (strcmp(_data->imageExtension, format) == 0)
+			return;
+
+		if (strcmp(_data->imageExtension, "png") == 0) {
+			if (strcmp(format, "jpeg") == 0 || strcmp(format, "jpg") == 0) {
+				stbi_write_jpg_to_func([](void* context, void* data, int size) {
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
+					((ImageData*)context)->sizeInBytes += size;
+					},
+					_data, _data->width, _data->height,
+					_data->depth, _data->data, _jpegQuality);
+			}
+			else if (strcmp(format, "bmp") == 0) {
+				stbi_write_bmp_to_func([](void* context, void* data, int size) {
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
+					((ImageData*)context)->sizeInBytes += size;
+					},
+					_data, _data->width, _data->height,
+					_data->depth, _data->data);
+			}
+		}
+		else if (strcmp(_data->imageExtension, "jpeg") == 0 || strcmp(_data->imageExtension, "jpg") == 0) {
+			if (strcmp(format, "png") == 0) {
+				stbi_write_png_to_mem(
+					_data->data, _data->width * _data->depth,
+					_data->width, _data->height,
+					_data->channels, (int32*)&_data->sizeInBytes);
+			}
+			else if (strcmp(format, "bmp") == 0) {
+				stbi_write_bmp_to_func([](void* context, void* data, int size) {
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
+					((ImageData*)context)->sizeInBytes += size;
+					},
+					_data, _data->width, _data->height,
+					_data->depth, _data->data);
+			}
+		}
+		else if (strcmp(_data->imageExtension, "bmp") == 0) {
+			if (strcmp(format, "png") == 0) {
+				stbi_write_png_to_mem(
+					_data->data, _data->width * _data->depth,
+					_data->width, _data->height,
+					_data->channels, (int32*)&_data->sizeInBytes);
+			}
+			else if (strcmp(format, "bmp") == 0) {
+				stbi_write_bmp_to_func([](void* context, void* data, int size) {
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
+					((ImageData*)context)->sizeInBytes += size;
+					},
+					_data, _data->width, _data->height,
+					_data->depth, _data->data);
+			}
+		}
+	}
+
+	const char* Image::format() const noexcept {
+		return _data->imageExtension;
+	}
+
+	void Image::save(const std::string& path) {
 		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
-		writeImageToFile(_data, path, jpgQuality);
+		writeImageToFile(_data, path);
+	}
+
+	void Image::setJpegQuality(ushort quality) {
+		_jpegQuality = quality;
+	}
+
+	ushort Image::jpegQuality() const noexcept {
+		return _jpegQuality;
 	}
 
 	Rect<int32> Image::rect() const noexcept {
@@ -636,33 +716,35 @@ namespace base::images {
 
 	void Image::writeImageToFile(
 		ImageData* data,
-		const std::string& path,
-		ushort jpgQuality)
+		const std::string& path)
 	{
 		int success = 0;
 		bool isFormatSupported = false;
 
-		const char* imageExt = getExtensionFromPath(path);
-		bool needFormatConversions = (imageExt != _data->imageExtension);
+		const char* outputImageExt = getExtensionFromPath(path);
 
-		if (isFormatSupported = (strcmp(imageExt, "png") == 0))
+		if ((outputImageExt != _data->imageExtension))
+			convertToFormat(outputImageExt);
+
+		if (isFormatSupported = (strcmp(outputImageExt, "png") == 0))
 			success = stbi_write_png(
 				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, 0);
+				_data->channels, _data->data, _data->width * _data->channels);
 
-		else if (isFormatSupported = (strcmp(imageExt, "jpeg") == 0 || strcmp(imageExt, "jpg") == 0))
+		else if (isFormatSupported = (strcmp(outputImageExt, "jpeg") == 0
+			|| strcmp(outputImageExt, "jpg") == 0))
 			success = stbi_write_jpg(
 				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, jpgQuality);
+				_data->channels, _data->data, _jpegQuality);
 
-		else if (isFormatSupported = (strcmp(imageExt, "bmp") == 0))
+		else if (isFormatSupported = (strcmp(outputImageExt, "bmp") == 0))
 			success = stbi_write_bmp(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data);
 		
 		AssertLog(isFormatSupported != false, 
-			std::string("base::images::Image::writeImageToFile: Given format: " 
-				+ std::string(imageExt) + std::string(" is not supported")).c_str());
+			std::string("base::images::Image::writeImageToFile: Given format: \"" 
+				+ std::string(outputImageExt) + "\"" + std::string(" is not supported")).c_str());
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
 
@@ -673,6 +755,10 @@ namespace base::images {
 		if (std::regex_search(path, match, regex))
 			return match[1].str().erase(0, 0).c_str();
 
+		size_t pos = path.rfind('.');
+		if (pos != std::string::npos)
+			return path.substr(pos).c_str();
+		
 		return "";
 	}
 } // namespace base::images

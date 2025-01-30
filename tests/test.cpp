@@ -12,6 +12,8 @@
 #include <base/images/ImagesIntegral.h>
 #include <base/images/ImagesPrepare.h>
 
+#include <stdio.h>
+#include <corecrt.h>
 
 int main(int argc, char* argv[]) {
 	QApplication application(argc, argv);

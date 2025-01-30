@@ -5,7 +5,8 @@
 
 
 namespace base::images {
-	inline constexpr auto kForceImageChannels = 0; // RGB
+	inline constexpr auto kForceImageChannels = 0; // default
+	inline constexpr auto kDefaultStbiJpegQuality = 50;
 
 	class IntegralImage;
 	class Image {
@@ -85,8 +86,17 @@ namespace base::images {
 
 		//!
 		//! \brief
-		//! \param jpgQuality игнорируется, если изображение в отличном от jpg формате
-		void save(const std::string& path, ushort jpgQuality = 50);
+		//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)
+		void setJpegQuality(ushort quality);
+		[[nodiscard]] ushort jpegQuality() const noexcept;
+
+		//!
+		//! \brief
+		//! \param format - jpg(jpeg), png, bmp
+		void convertToFormat(const char* format);
+		[[nodiscard]] const char* format() const noexcept;
+
+		void save(const std::string& path);
 		[[nodiscard]] Image convertToColorSpace(ColorSpace space) const;
 
 		[[nodiscard]] Rect<int32> rect() const noexcept;
@@ -105,6 +115,7 @@ namespace base::images {
 
 		[[nodiscard]] bool isNull() const noexcept;
 		[[nodiscard]] Rgb pixel(int x, int y) const;
+
 	private:
 		bool isEqual(const Image& other) const;
 
@@ -123,13 +134,11 @@ namespace base::images {
 
 		void writeImageToFile(
 			ImageData* data,
-			const std::string& path,
-			ushort jpgQuality);
+			const std::string& path);
 
 		[[nodiscard]] const char* getExtensionFromPath(const std::string& path);
 
-		
-
 		ImageData* _data = nullptr;
+		ushort _jpegQuality = kDefaultStbiJpegQuality;
 	};
 } // namespace base::images
