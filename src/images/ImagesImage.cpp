@@ -1,21 +1,9 @@
-#include <base/images/ImagesImage.h>
+﻿#include <base/images/ImagesImage.h>
 
 #include <base/images/ImagesUtility.h>
 
 #include <base/Utility.h>
 #include <qDebug>
-
-#ifdef OS_WIN
-	#ifndef UNICODE
-		#define UNICODE
-	#endif
-
-	#ifndef _UNICODE
-		#define _UNICODE
-	#endif
-
-	#define STBIW_WINDOWS_UTF8
-#endif
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <base/images/stb/StbImage.h>
@@ -371,7 +359,7 @@ namespace base::images {
 		_data(new ImageData())
 	{}
 
-	Image::Image(const std::string& path) :
+	Image::Image(const char* path) :
 		_data(new ImageData())
 	{
 		loadFromFile(path);
@@ -466,20 +454,18 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, "base::images::Image::loadFromData: Cannot load image from memory");
 
 		_data->sizeInBytes = length;
-		_data->depth = 1;
-
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
 	}
 
-	void Image::loadFromFile(const std::string& path) {
+	void Image::loadFromFile(const char* path) {
 		_data->path = path;
 		readImage(_data);
 
-		AssertLog(_data->data != nullptr, std::string("base::images::Image::loadFromFile: Cannot load image from file: " + path).c_str());
+		AssertLog(_data->data != nullptr, 
+			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
+			+ std::string(path)).c_str());
 
-		_data->depth = 1;
 		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
-
 		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
@@ -528,7 +514,7 @@ namespace base::images {
 					((ImageData*)context)->sizeInBytes += size;
 					},
 					_data, _data->width, _data->height,
-					_data->depth, _data->data);
+					_data->channels, _data->data);
 			}
 		}
 		else if (strcmp(_data->imageExtension, "jpeg") == 0 || strcmp(_data->imageExtension, "jpg") == 0) {
@@ -539,12 +525,13 @@ namespace base::images {
 					_data->channels, (int32*)&_data->sizeInBytes);
 			}
 			else if (strcmp(format, "bmp") == 0) {
+				printf("Trying to convert jpeg to bmp...");
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
 					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
 					((ImageData*)context)->sizeInBytes += size;
 					},
 					_data, _data->width, _data->height,
-					_data->depth, _data->data);
+					_data->channels, _data->data);
 			}
 		}
 		else if (strcmp(_data->imageExtension, "bmp") == 0) {
@@ -560,16 +547,18 @@ namespace base::images {
 					((ImageData*)context)->sizeInBytes += size;
 					},
 					_data, _data->width, _data->height,
-					_data->depth, _data->data);
+					_data->channels, _data->data);
 			}
 		}
+
+		_data->imageExtension = format;
 	}
 
 	const char* Image::format() const noexcept {
 		return _data->imageExtension;
 	}
 
-	void Image::save(const std::string& path) {
+	void Image::save(const char* path) {
 		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
 		writeImageToFile(_data, path);
 	}
@@ -687,7 +676,7 @@ namespace base::images {
 		if (_data == nullptr || data->path.has_value() == false)
 			return;
 
-		FILE* file = stbi__fopen(data->path.value().c_str(), "rb");
+		FILE* file = stbi__fopen(data->path.value(), "rb");
 		AssertLog(file != nullptr, "base::images::Image::readImage: Cannot fopen. Unable to open file");
 
 		_data->data = loadImage(file, data, forceChannelsCount);
@@ -718,47 +707,59 @@ namespace base::images {
 		ImageData* data,
 		const std::string& path)
 	{
-		int success = 0;
+		int32 success = 0;
+
+		std::string temp = getExtensionFromPath(path);
+		const char* outputImageExt = temp.c_str();
+
 		bool isFormatSupported = false;
 
-		const char* outputImageExt = getExtensionFromPath(path);
+		if (strcmp(data->imageExtension, outputImageExt) == 0)
+			isFormatSupported = true;
+		else {
+			isFormatSupported = strcmp(outputImageExt, "png") == 0
+				|| strcmp(outputImageExt, "jpeg") == 0
+				|| strcmp(outputImageExt, "jpg") == 0
+				|| strcmp(outputImageExt, "bmp") == 0;
 
-		if ((outputImageExt != _data->imageExtension))
+			AssertLog(isFormatSupported != false,
+				std::string("base::images::Image::writeImageToFile: Given format: "
+					+ std::string(outputImageExt) + std::string(" is not supported")).c_str());
+
 			convertToFormat(outputImageExt);
+		}
 
-		if (isFormatSupported = (strcmp(outputImageExt, "png") == 0))
+		if (strcmp(data->imageExtension, "png"))
 			success = stbi_write_png(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, _data->width * _data->channels);
 
-		else if (isFormatSupported = (strcmp(outputImageExt, "jpeg") == 0
-			|| strcmp(outputImageExt, "jpg") == 0))
+		else if (strcmp(data->imageExtension, "jpeg") == 0 || strcmp(data->imageExtension, "jpg") == 0)
 			success = stbi_write_jpg(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, _jpegQuality);
 
-		else if (isFormatSupported = (strcmp(outputImageExt, "bmp") == 0))
+		else if (strcmp(data->imageExtension, "bmp") == 0)
 			success = stbi_write_bmp(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data);
 		
-		AssertLog(isFormatSupported != false, 
-			std::string("base::images::Image::writeImageToFile: Given format: \"" 
-				+ std::string(outputImageExt) + "\"" + std::string(" is not supported")).c_str());
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
 
-	const char* Image::getExtensionFromPath(const std::string& path) {
+	std::string Image::getExtensionFromPath(const std::string& path) {
 		std::regex regex(R"(\.(bmp|jpe?g|png)(?=[^.]*$))", std::regex::icase);
 		std::smatch match;
 
-		if (std::regex_search(path, match, regex))
-			return match[1].str().erase(0, 0).c_str();
+		if (std::regex_search(path, match, regex)) {
+			std::string result = match[1].str().erase(0, 0);
+			return result;
+		}
 
 		size_t pos = path.rfind('.');
 		if (pos != std::string::npos)
-			return path.substr(pos).c_str();
-		
+			return path.substr(pos);
+	
 		return "";
 	}
 } // namespace base::images

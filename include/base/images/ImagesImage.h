@@ -43,14 +43,14 @@ namespace base::images {
 			ColorSpace colorSpace;
 			std::vector<Rgb> colorTable;
 
-			std::optional<std::string> path;
+			std::optional<const char*> path;
 
 			// png, jpeg, bmp
 			const char* imageExtension = nullptr;
 		};
 
 		Image();
-		Image(const std::string& path);
+		Image(const char* path);
 
 		Image(Image&& image) noexcept;
 		Image(const IntegralImage& image);
@@ -79,7 +79,7 @@ namespace base::images {
 		bool operator!=(const Image& other);
 
 		void loadFromData(const uchar* data, sizetype length);
-		void loadFromFile(const std::string& path);
+		void loadFromFile(const char* path);
 
 		void resize(int32 width, int32 height);
 		void resize(Size<int32> size);
@@ -96,7 +96,7 @@ namespace base::images {
 		void convertToFormat(const char* format);
 		[[nodiscard]] const char* format() const noexcept;
 
-		void save(const std::string& path);
+		void save(const char* path);
 		[[nodiscard]] Image convertToColorSpace(ColorSpace space) const;
 
 		[[nodiscard]] Rect<int32> rect() const noexcept;
@@ -136,7 +136,7 @@ namespace base::images {
 			ImageData* data,
 			const std::string& path);
 
-		[[nodiscard]] const char* getExtensionFromPath(const std::string& path);
+		[[nodiscard]] std::string getExtensionFromPath(const std::string& path);
 
 		ImageData* _data = nullptr;
 		ushort _jpegQuality = kDefaultStbiJpegQuality;

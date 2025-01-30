@@ -1,4 +1,4 @@
-﻿#include <base/images/ImagesIntegral.h>
+#include <base/images/ImagesIntegral.h>
 #include <base/images/ImagesImage.h>
 
 #include <private/qimage_p.h>

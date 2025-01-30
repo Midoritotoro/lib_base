@@ -1,21 +1,23 @@
 ﻿#pragma once
 
-#if defined(_WIN32)
-#if !defined(_UNICODE)
-#define _UNICODE
-#endif
-#if !defined(UNICODE)
-#define UNICODE
-#endif
-#endif
-
-#include <base/Windows.h>
 #include <base/SimdHelpers.h>
 
 #include <base/BaseExport.h>
 
 #include <cstdint>
 #include <span>
+
+
+#ifdef OS_WIN
+	#include <base/Windows.h>
+	#ifndef UNICODE
+		#define UNICODE
+	#endif
+
+	#ifndef _UNICODE
+		#define _UNICODE
+	#endif
+#endif
 
 
 #ifdef LIB_BASE_STATIC

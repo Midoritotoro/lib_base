@@ -220,8 +220,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         PRIVATE
             /permissive-
             /utf-8
-            /O2
-            /Ot
+           # /O2
+            #/Ot
             /W4
             /MP
             /EHsc   
