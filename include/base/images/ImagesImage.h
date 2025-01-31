@@ -86,6 +86,15 @@ namespace base::images {
 		void resize(int32 width, int32 height);
 		void resize(Size<int32> size);
 
+		static [[nodiscard]] bool isJpeg(const char* ext);
+		static [[nodiscard]] bool isPng(const char* ext);
+		static [[nodiscard]] bool isBmp(const char* ext);
+
+		static [[nodiscard]] bool isFormatSupported(const char* format);
+		static [[nodiscard]] bool isFormatsEqual(
+			const char* firstFormat, 
+			const char* secondFormat);
+
 		//!
 		//! \brief
 		//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)

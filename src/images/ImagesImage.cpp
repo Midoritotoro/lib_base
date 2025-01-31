@@ -475,7 +475,7 @@ namespace base::images {
 
 	Image::~Image() {
 		if (isNull() == false)
-			delete[] base::take(_data->data);
+			stbi_image_free(_data->data);
 
 		if (_data != nullptr)
 			delete base::take(_data);
@@ -501,12 +501,39 @@ namespace base::images {
 		return resize(size.width(), size.height());
 	}
 
+	bool Image::isJpeg(const char* ext) {
+		return (strcmp(ext, "jpg") == 0 || strcmp(ext, "jpeg") == 0);
+	}
+
+	bool Image::isPng(const char* ext) {
+		return (strcmp(ext, "png") == 0);
+	}
+
+	bool Image::isBmp(const char* ext) {
+		return (strcmp(ext, "bmp") == 0);
+	}
+
+	bool Image::isFormatSupported(const char* format) {
+		return isJpeg(format) || isBmp(format) || isPng(format);
+	}
+
+	bool Image::isFormatsEqual(
+		const char* firstFormat,
+		const char* secondFormat) 
+	{
+		if (isJpeg(firstFormat) && isJpeg(secondFormat))
+			return true;
+		
+		return (strcmp(firstFormat, secondFormat) == 0);
+	} 
+
+
 	void Image::convertToFormat(const char* format) {
-		if (strcmp(_data->imageExtension, format) == 0)
+		if (isFormatsEqual(_data->imageExtension, format))
 			return;
 
-		if (strcmp(_data->imageExtension, "png") == 0) {
-			if (strcmp(format, "jpeg") == 0 || strcmp(format, "jpg") == 0) {
+		if (isPng(_data->imageExtension)) {
+			if (isJpeg(format)) {
 				stbi_write_jpg_to_func([](void* context, void* data, int size) {
 					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
 					((ImageData*)context)->dataLength += size;
@@ -514,7 +541,7 @@ namespace base::images {
 					_data, _data->width, _data->height,
 					_data->channels, _data->data, _jpegQuality);
 			}
-			else if (strcmp(format, "bmp") == 0) {
+			else if (isBmp(format)) {
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
 					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
 					((ImageData*)context)->dataLength += size;
@@ -524,15 +551,14 @@ namespace base::images {
 			}
 		}
 
-		else if (strcmp(_data->imageExtension, "jpeg") == 0 || strcmp(_data->imageExtension, "jpg") == 0) {
-			if (strcmp(format, "png") == 0) {
+		else if (isJpeg(_data->imageExtension)) {
+			if (isPng(format)) {
 				stbi_write_png_to_mem(
 					_data->data, _data->width * _data->depth,
 					_data->width, _data->height,
 					_data->channels, &_data->sizeInBytes);
 			}
-			else if (strcmp(format, "bmp") == 0) {
-				printf("Trying to convert jpeg to bmp...");
+			else if (isBmp(format)) {
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
 					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
 					((ImageData*)context)->dataLength += size;
@@ -542,20 +568,20 @@ namespace base::images {
 			}
 		}
 
-		else if (strcmp(_data->imageExtension, "bmp") == 0) {
-			if (strcmp(format, "png") == 0) {
+		else if (isBmp(_data->imageExtension)) {
+			if (isPng(format)) {
 				stbi_write_png_to_mem(
 					_data->data, _data->width * _data->depth,
 					_data->width, _data->height,
 					_data->channels, &_data->sizeInBytes);
 			}
-			else if (strcmp(format, "bmp") == 0) {
-				stbi_write_bmp_to_func([](void* context, void* data, int size) {
+			else if (isJpeg(format)) {
+				stbi_write_jpg_to_func([](void* context, void* data, int size) {
 					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
 					((ImageData*)context)->dataLength += size;
 					},
 					_data, _data->width, _data->height,
-					_data->channels, _data->data);
+					_data->channels, _data->data, _jpegQuality);
 			}
 		}
 
@@ -717,41 +743,28 @@ namespace base::images {
 		const std::string& path)
 	{
 		int32 success = 0;
+		std::string outputImageFormat = getExtensionFromPath(path);
 
-		std::string temp = getExtensionFromPath(path);
-		const char* outputImageExt = temp.c_str();
+		AssertLog(isFormatSupported(outputImageFormat.c_str()) != false,
+			std::string("base::images::Image::writeImageToFile: Given format: \"" 
+				+ outputImageFormat + "\"" + std::string(" is not supported")).c_str());
 
-		bool isFormatSupported = false;
+		convertToFormat(outputImageFormat.c_str());
 
-		if (strcmp(data->imageExtension, outputImageExt) == 0)
-			isFormatSupported = true;
-		else {
-			isFormatSupported = strcmp(outputImageExt, "png") == 0
-				|| strcmp(outputImageExt, "jpeg") == 0
-				|| strcmp(outputImageExt, "jpg") == 0
-				|| strcmp(outputImageExt, "bmp") == 0;
-
-			AssertLog(isFormatSupported != false,
-				std::string("base::images::Image::writeImageToFile: Given format: "
-					+ std::string(outputImageExt) + std::string(" is not supported")).c_str());
-
-			convertToFormat(outputImageExt);
-		}
-
-		if (strcmp(data->imageExtension, "png") == 0)
+		if (isPng(data->imageExtension))
 			success = stbi_write_png(
-				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, _data->width * _data->channels);
+				path.c_str(), data->width, data->height,
+				data->channels, data->data, data->width * data->channels);
 
-		else if (strcmp(data->imageExtension, "jpeg") == 0 || strcmp(data->imageExtension, "jpg") == 0)
+		else if (isJpeg(data->imageExtension))
 			success = stbi_write_jpg(
-				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data, _jpegQuality);
+				path.c_str(), data->width, data->height,
+				data->channels, data->data, _jpegQuality);
 
-		else if (strcmp(data->imageExtension, "bmp") == 0)
+		else if (isBmp(data->imageExtension))
 			success = stbi_write_bmp(
-				path.c_str(), _data->width, _data->height,
-				_data->channels, _data->data);
+				path.c_str(), data->width, data->height,
+				data->channels, data->data);
 		
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
