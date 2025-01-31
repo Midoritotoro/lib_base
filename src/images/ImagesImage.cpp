@@ -90,8 +90,11 @@ namespace base::images {
 			flip_vertically = ((int)s->img_y) > 0;
 			s->img_y = abs((int)s->img_y);
 
-			if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large", "Very large image (corrupt?)");
-			if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large", "Very large image (corrupt?)");
+			if (s->img_y > STBI_MAX_DIMENSIONS) 
+				return stbi__errpuc("too large", "Very large image (corrupt?)");
+
+			if (s->img_x > STBI_MAX_DIMENSIONS)
+				return stbi__errpuc("too large", "Very large image (corrupt?)");
 
 			mr = info.mr;
 			mg = info.mg;
@@ -454,7 +457,7 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, "base::images::Image::loadFromData: Cannot load image from memory");
 
 		_data->sizeInBytes = length;
-		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
+		_data->bytesPerLine = recountBytesPerLine(_data);
 	}
 
 	void Image::loadFromFile(const char* path) {
@@ -465,14 +468,17 @@ namespace base::images {
 			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
 			+ std::string(path)).c_str());
 
-		_data->bytesPerLine = recountBytesPerLine(_data->width, _data->height, 1);
+		_data->bytesPerLine = recountBytesPerLine(_data);
 		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
 
 	Image::~Image() {
-		stbi_image_free(_data->data);
-		delete base::take(_data);
+		if (isNull() == false)
+			delete[] base::take(_data->data);
+
+		if (_data != nullptr)
+			delete base::take(_data);
 	}
 
 	Image Image::convertToColorSpace(ColorSpace space) const {
@@ -488,7 +494,7 @@ namespace base::images {
 		_data->height = height;
 
 		_data->sizeInBytes = sizeof(*_data->data);
-		_data->bytesPerLine = recountBytesPerLine(width, height, 1);
+		_data->bytesPerLine = recountBytesPerLine(_data);
 	}
 
 	void Image::resize(Size<int32> size) {
@@ -502,49 +508,51 @@ namespace base::images {
 		if (strcmp(_data->imageExtension, "png") == 0) {
 			if (strcmp(format, "jpeg") == 0 || strcmp(format, "jpg") == 0) {
 				stbi_write_jpg_to_func([](void* context, void* data, int size) {
-					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
-					((ImageData*)context)->sizeInBytes += size;
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
+					((ImageData*)context)->dataLength += size;
 					},
 					_data, _data->width, _data->height,
-					_data->depth, _data->data, _jpegQuality);
+					_data->channels, _data->data, _jpegQuality);
 			}
 			else if (strcmp(format, "bmp") == 0) {
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
-					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
-					((ImageData*)context)->sizeInBytes += size;
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
+					((ImageData*)context)->dataLength += size;
 					},
 					_data, _data->width, _data->height,
 					_data->channels, _data->data);
 			}
 		}
+
 		else if (strcmp(_data->imageExtension, "jpeg") == 0 || strcmp(_data->imageExtension, "jpg") == 0) {
 			if (strcmp(format, "png") == 0) {
 				stbi_write_png_to_mem(
 					_data->data, _data->width * _data->depth,
 					_data->width, _data->height,
-					_data->channels, (int32*)&_data->sizeInBytes);
+					_data->channels, &_data->sizeInBytes);
 			}
 			else if (strcmp(format, "bmp") == 0) {
 				printf("Trying to convert jpeg to bmp...");
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
-					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
-					((ImageData*)context)->sizeInBytes += size;
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
+					((ImageData*)context)->dataLength += size;
 					},
 					_data, _data->width, _data->height,
 					_data->channels, _data->data);
 			}
 		}
+
 		else if (strcmp(_data->imageExtension, "bmp") == 0) {
 			if (strcmp(format, "png") == 0) {
 				stbi_write_png_to_mem(
 					_data->data, _data->width * _data->depth,
 					_data->width, _data->height,
-					_data->channels, (int32*)&_data->sizeInBytes);
+					_data->channels, &_data->sizeInBytes);
 			}
 			else if (strcmp(format, "bmp") == 0) {
 				stbi_write_bmp_to_func([](void* context, void* data, int size) {
-					memcpy(((ImageData*)context)->data + ((ImageData*)context)->sizeInBytes, data, size);
-					((ImageData*)context)->sizeInBytes += size;
+					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
+					((ImageData*)context)->dataLength += size;
 					},
 					_data, _data->width, _data->height,
 					_data->channels, _data->data);
@@ -641,29 +649,28 @@ namespace base::images {
 			&& _data->height == other._data->height;
 	}
 
-	int32 Image::recountBytesPerLine(
-			int32 width, int32 height, int32 depth)
+	int32 Image::recountBytesPerLine(ImageData* data)
 	{
-		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << depth;
+		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << data->depth;
 		int32 invalid = -1;
 
-		if (height <= 0)
+		if (data->height <= 0)
 			return invalid;
 
-		auto _bytesPerLine = sizetype(0);
+		auto _bytesPerLine = int32(0);
 
-		if (MultiplyOverflow(width, depth, &_bytesPerLine))
+		if (MultiplyOverflow(data->width, data->depth, &_bytesPerLine))
 			return invalid;
-		if (AdditionOverflow(_bytesPerLine, sizetype(31), &_bytesPerLine))
+		if (AdditionOverflow(_bytesPerLine, 31, &_bytesPerLine))
 			return invalid;
 
 		_bytesPerLine = (_bytesPerLine >> 5) << 2;    // can't overflow
 
 		auto dummy = sizetype(0);
-		if (MultiplyOverflow(height, sizetype(sizeof(uchar*)), &dummy))
+		if (MultiplyOverflow(data->height, sizetype(sizeof(uchar*)), &dummy))
 			return invalid;
 
-		if (width > (INT_MAX - 31) / depth)
+		if (data->width > (INT_MAX - 31) / data->depth)
 			return invalid;
 
 		return _bytesPerLine;
@@ -673,13 +680,13 @@ namespace base::images {
 		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		if (_data == nullptr || data->path.has_value() == false)
+		if (data == nullptr || data->path.has_value() == false)
 			return;
 
 		FILE* file = stbi__fopen(data->path.value(), "rb");
 		AssertLog(file != nullptr, "base::images::Image::readImage: Cannot fopen. Unable to open file");
 
-		_data->data = loadImage(file, data, forceChannelsCount);
+		data->data = loadImage(file, data, forceChannelsCount);
 
 		data->sizeInBytes = ftell(file);
 		fclose(file);
@@ -697,8 +704,10 @@ namespace base::images {
 		uchar* result = loadAndPostprocess8Bit(
 			&context, data, forceChannelsCount);
 
-		if (result)
+		if (result) {
 			fseek(file, -(int)(context.img_buffer_end - context.img_buffer), SEEK_CUR);
+			data->dataLength = strlen((const char*)result) + 1;
+		}
 
 		return result;
 	}
@@ -729,7 +738,7 @@ namespace base::images {
 			convertToFormat(outputImageExt);
 		}
 
-		if (strcmp(data->imageExtension, "png"))
+		if (strcmp(data->imageExtension, "png") == 0)
 			success = stbi_write_png(
 				path.c_str(), _data->width, _data->height,
 				_data->channels, _data->data, _data->width * _data->channels);

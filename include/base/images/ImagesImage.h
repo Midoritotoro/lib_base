@@ -6,7 +6,7 @@
 
 namespace base::images {
 	inline constexpr auto kForceImageChannels = 0; // default
-	inline constexpr auto kDefaultStbiJpegQuality = 50;
+	inline constexpr auto kDefaultStbiJpegQuality = 30;
 
 	class IntegralImage;
 	class Image {
@@ -33,9 +33,11 @@ namespace base::images {
 			ushort channels = kForceImageChannels;
 
 			int32 depth = 1;
-			sizetype bytesPerLine = 0;
+			int32 bytesPerLine = 0;
 
-			sizetype sizeInBytes = 0;
+			int32 sizeInBytes = 0;
+			sizetype dataLength = 0;
+
 			int32 devicePixelRatio = 1;
 
 			int32 bitsPerChannel = 0;
@@ -119,9 +121,7 @@ namespace base::images {
 	private:
 		bool isEqual(const Image& other) const;
 
-		[[nodiscard]] int32
-			recountBytesPerLine(
-				int32 width, int32 height, int32 depth);
+		[[nodiscard]] int32 recountBytesPerLine(ImageData* data);
 
 		void readImage(
 			ImageData* data,

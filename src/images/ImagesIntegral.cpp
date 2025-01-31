@@ -10,7 +10,7 @@
 
 namespace base::images {
     IntegralImage::IntegralImage() {
-        const char* out = "D:/pp.bmp";
+        const char* out = "D:/pp.png";
         const char* in = "C:\\Users\\danya\\Downloads\\tree.jpg";
 
         Image image;
@@ -19,7 +19,7 @@ namespace base::images {
             image.loadFromFile(in);
         }
 
-        qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
+     /*   qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
 
         {
             measureExecutionTime("IntegralImage: ")
@@ -27,7 +27,7 @@ namespace base::images {
                 image.data_ptr()->data, image.data_ptr()->data,
                 image.data_ptr()->width, image.data_ptr()->height,
                 image.data_ptr()->channels);
-        }
+        }*/
 
         {
             measureExecutionTime("Image::save: ")

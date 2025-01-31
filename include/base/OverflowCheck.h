@@ -55,6 +55,21 @@ namespace base {
 #endif
     }
 
+    always_inline static [[nodiscard]]
+        bool SignedAddOverflow(
+            int a,
+            int b,
+            int* res)
+        {
+#if defined(__GNUC__) || defined(__clang__)
+            return __builtin_uaddll_overflow(a, b, res);
+#else
+            * res = a + b;
+            return (a + b) < a;
+#endif
+        }
+         
+
     // --------------------------------------------
 
     /**
@@ -113,6 +128,20 @@ namespace base {
     }
 
     always_inline static [[nodiscard]]
+        bool SignedMultiplyOverflow(
+            int a,
+            int b,
+            int* res)
+        {
+#if defined(__GNUC__) || defined(__clang__)
+            return __builtin_umulll_overflow(a, b, res);
+#else
+            * res = a * b;
+            return b > 0 && a > (INT_MAX / b);
+#endif
+        }
+
+    always_inline static [[nodiscard]]
         bool MultiplyOverflow(
             unsigned a,
             unsigned b,
@@ -138,6 +167,24 @@ namespace base {
     {
         return UnsignedLongLongMultiplyOverflow(a, b, res);
     }
+
+    always_inline static [[nodiscard]]
+        bool MultiplyOverflow(
+            int a,
+            int b,
+            int* res)
+        {
+            return SignedMultiplyOverflow(a, b, res);
+        }
+
+    always_inline static [[nodiscard]]
+        bool AdditionOverflow(
+            int a,
+            int b,
+            int* res)
+        {
+            return SignedAddOverflow(a, b, res);
+        }
 
     always_inline static [[nodiscard]] 
         bool AdditionOverflow(
