@@ -1,10 +1,5 @@
 #include <base/images/ImagesBlur.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <base/images/stb/StbImage.h>
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/stb/StbImageWrite.h>
-
 #include <iostream>
 #include <cstring>
 

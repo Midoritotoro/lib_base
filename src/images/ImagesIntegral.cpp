@@ -10,7 +10,8 @@
 
 namespace base::images {
     IntegralImage::IntegralImage() {
-        const char* out = "D:/pp.bmp";
+       // const char* out = "D:/pp.bmp"; error
+        const char* out = "D:/pp.jpeg"; 
         const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
 
         Image image;
