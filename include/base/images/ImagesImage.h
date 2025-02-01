@@ -44,6 +44,8 @@ namespace base::images {
 		void resize(int32 width, int32 height);
 		void resize(Size<int32> size);
 
+		static [[nodiscard]] std::vector<const char*> supportedFormats() noexcept;
+
 		//!
 		//! \brief
 		//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)

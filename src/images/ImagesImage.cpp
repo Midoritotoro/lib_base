@@ -156,6 +156,10 @@ namespace base::images {
 		return resize(size.width(), size.height());
 	}
 
+	std::vector<const char*> Image::supportedFormats() noexcept {
+		return std::vector<const char*>({ "jpeg", "jpg", "png", "bmp" });
+	}
+
 	void Image::convertToFormat(const char* format) {
 		Utility::ConvertToFormat(_data, format);
 	}

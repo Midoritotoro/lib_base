@@ -18,6 +18,11 @@ namespace base::images::Utility {
 		const char* firstFormat,
 		const char* secondFormat);
 
+	void StbiWrite(
+		void* context,
+		void* data,
+		int size);
+
 	void ReadImage(
 		ImageData* data,
 		int32 forceChannelsCount = FORCE_IMAGE_CHANNELS);

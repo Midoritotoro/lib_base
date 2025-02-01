@@ -7,28 +7,33 @@
 #include <base/Platform.h>
 #include <src/images/ImagesIntegralHelpers.h>
 
+#include <QImageReader>
+
 
 namespace base::images {
     IntegralImage::IntegralImage() {
        // const char* out = "D:/pp.bmp"; error
-        const char* out = "D:/pp.jpeg"; 
-        const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
+        const char* out = "D:/pp.png"; 
+        const char* in = "C:\\Users\\danya\\Downloads\\tree.jpg";
+        
+      /*  qDebug() << QImageReader::supportedImageFormats();*/
 
-        Image image;
+        QImage image;
         {
             measureExecutionTime("Image::loadFromFile: ")
-            image.loadFromFile(in);
+            image.load(in);
         }
 
-     /*   qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine();
 
-        {
-            measureExecutionTime("IntegralImage: ")
-            BradleyThreshold(
-                image.data_ptr()->data, image.data_ptr()->data,
-                image.data_ptr()->width, image.data_ptr()->height,
-                image.data_ptr()->channels);
-        }*/
+       qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
+
+        //{
+        //    measureExecutionTime("IntegralImage: ")
+        //    BradleyThreshold(
+        //        image.data_ptr()->data, image.data_ptr()->data,
+        //        image.data_ptr()->width, image.data_ptr()->height,
+        //        image.depth() / 8);
+        //}
 
         {
             measureExecutionTime("Image::save: ")

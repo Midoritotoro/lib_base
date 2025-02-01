@@ -75,6 +75,15 @@ set(PRIVATE_SOURCES
 
     src/images/ImagesIntegralHelpers.cpp
     src/images/ImagesIntegralHelpers.h
+
+    src/images/formats/PngHandler.cpp
+    src/images/formats/JpegHandler.cpp
+    src/images/formats/BmpHandler.cpp
+
+    src/images/filters/ImageFilter.cpp
+
+    src/images/ImageWriter.cpp
+    src/images/ImageReader.cpp
 )
 
 
@@ -139,6 +148,17 @@ set(PUBLIC_HEADERS
 
     include/base/images/ImagesCommon.h
     include/base/images/ImagesGeometry.h
+
+    include/base/images/formats/AbstractFormatHandler.h
+
+    include/base/images/formats/PngHandler.h
+    include/base/images/formats/JpegHandler.h
+    include/base/images/formats/BmpHandler.h
+
+    include/base/images/filters/ImageFilter.h
+
+    include/base/images/ImageWriter.h
+    include/base/images/ImageReader.h
 
     include/base/images/ImagesUtility.h
 
@@ -215,13 +235,18 @@ if(LIB_BASE_ENABLE_ZLIB)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options(-g) 
+    elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+        add_compile_options(-O2 -Ot)
+    endif()
+
     target_compile_options(
         lib_base 
         PRIVATE
             /permissive-
             /utf-8
-            # /O2
-            # /Ot
             /W4
             /MP
             /EHsc   

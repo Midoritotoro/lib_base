@@ -63,7 +63,8 @@ namespace base::images::Utility {
     }
 #endif
 	bool IsJpeg(const char* ext) {
-		return (strcmp(ext, "jpg") == 0 || strcmp(ext, "jpeg") == 0);
+		return strcmp(ext, "jpg") == 0 || strcmp(ext, "jpeg") == 0
+			|| strcmp(ext, "jpe") == 0;
 	}
 
 	bool IsPng(const char* ext) {
@@ -88,6 +89,14 @@ namespace base::images::Utility {
 		return (strcmp(firstFormat, secondFormat) == 0);
 	}
 
+	void StbiWrite(
+		void* context, 
+		void* data, 
+		int size)
+	{
+		memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
+		((ImageData*)context)->dataLength += size;
+	};
 
 #ifndef LIB_BASE_IMAGES_NO_GIF
 	// 
@@ -632,7 +641,7 @@ namespace base::images::Utility {
 		else if (IsJpeg(_data->imageExtension)) {
 			if (IsPng(format)) {
 				stbi_write_png_to_mem(
-					_data->data, _data->width * _data->depth,
+					_data->data,  _data->width * _data->channels,	
 					_data->width, _data->height,
 					_data->channels, &_data->sizeInBytes);
 			}
@@ -643,25 +652,6 @@ namespace base::images::Utility {
 					},
 					_data, _data->width, _data->height,
 					_data->channels, _data->data);
-			}
-		}
-
-		else if (IsBmp(_data->imageExtension)) {
-			if (IsPng(format)) {
-				stbi_write_png_to_mem(
-					_data->data, _data->width * _data->depth,
-					_data->width, _data->height,
-					_data->channels, &_data->sizeInBytes);
-			}
-			else if (IsJpeg(format)) {
-				stbi_write_jpg_to_func([](void* context, void* data, int size) {
-					memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
-					((ImageData*)context)->dataLength += size;
-					},
-					_data, _data->width, _data->height,
-					_data->channels, _data->data, _data->jpegQuality.has_value()
-						? _data->jpegQuality.value()
-						: kDefaultStbiJpegQuality);
 			}
 		}
 
@@ -686,18 +676,6 @@ namespace base::images::Utility {
 			success = stbi_write_png(
 				path.c_str(), data->width, data->height,
 				data->channels, data->data, data->width * data->channels);
-
-		else if (IsJpeg(data->imageExtension))
-			success = stbi_write_jpg(
-				path.c_str(), data->width, data->height,
-				data->channels, data->data, data->jpegQuality.has_value()
-					? data->jpegQuality.value()
-					: kDefaultStbiJpegQuality);
-
-		else if (IsBmp(data->imageExtension))
-			success = stbi_write_bmp(
-				path.c_str(), data->width, data->height,
-				data->channels, data->data);
 
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
