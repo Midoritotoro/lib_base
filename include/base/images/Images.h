@@ -5,10 +5,12 @@
 #include <base/images/ImagesRgb.h>
 #include <base/images/ImagesGeometry.h>
 
+#include <base/images/formats/AbstractFormatHandler.h>
 #include <base/Types.h>
 
 #include <base/OverflowCheck.h>
 #include <base/Assert.h>
+
 
 
 #ifdef LIB_BASE_ENABLE_QT
@@ -39,8 +41,8 @@
 #define STBI_NO_PIC
 #define STBI_NO_PNM 
 
-
 #define FORCE_IMAGE_CHANNELS 0
+
 
 namespace base::images {
 	inline constexpr auto kDefaultStbiJpegQuality = 30;
@@ -75,13 +77,13 @@ namespace base::images {
 		int32 sizeInBytes = 0;
 		sizetype dataLength = 0;
 
-		int32 devicePixelRatio = 1;
 		int32 bitsPerChannel = 0;
-
 		ColorSpace colorSpace;
 
 		std::optional<const char*> path;
 		std::optional<ushort> jpegQuality;
+
+		AbstractFormatHandler* handler = nullptr;
 
 		// png, jpeg, bmp
 		const char* imageExtension = nullptr;

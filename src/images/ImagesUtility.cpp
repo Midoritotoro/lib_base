@@ -104,4 +104,31 @@ namespace base::images::Utility {
 
 		return "";
 	}
+
+	int32 CountBytesPerLine(ImageData* data)
+	{
+		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << data->depth;
+		int32 invalid = -1;
+
+		if (data->height <= 0)
+			return invalid;
+
+		auto _bytesPerLine = int32(0);
+
+		if (MultiplyOverflow(data->width, data->depth, &_bytesPerLine))
+			return invalid;
+		if (AdditionOverflow(_bytesPerLine, 31, &_bytesPerLine))
+			return invalid;
+
+		_bytesPerLine = (_bytesPerLine >> 5) << 2;    // can't overflow
+
+		auto dummy = sizetype(0);
+		if (MultiplyOverflow(data->height, sizetype(sizeof(uchar*)), &dummy))
+			return invalid;
+
+		if (data->width > (INT_MAX - 31) / data->depth)
+			return invalid;
+
+		return _bytesPerLine;
+	}
 } // namespace base::images

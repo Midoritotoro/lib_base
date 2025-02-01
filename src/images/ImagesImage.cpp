@@ -3,9 +3,13 @@
 #include <base/images/ImagesUtility.h>
 #include <base/Utility.h>
 
+#include <base/images/ImageReader.h>
+
+#include <base/images/formats/BmpHandler.h>
+#include <base/images/formats/JpegHandler.h>
+
+#include <base/images/formats/PngHandler.h>
 #include <qDebug>
-
-
 
 
 namespace base::images {
@@ -84,7 +88,6 @@ namespace base::images {
 		_data->depth = image.depth();
 
 		_data->sizeInBytes = image.sizeInBytes();
-		_data->devicePixelRatio = image.devicePixelRatio();
 
 		_data->channels = Utility::GetChannelsCountByFormat(image);
 
@@ -116,14 +119,16 @@ namespace base::images {
 	}
 
 	void Image::loadFromFile(const char* path) {
+		if (path == nullptr)
+			return;
+
 		_data->path = path;
-		Utility::ReadImage(_data);
+		ImageReader(_data->path.value()).read(this);
 
 		AssertLog(_data->data != nullptr, 
 			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
 			+ std::string(path)).c_str());
 
-		_data->bytesPerLine = Utility::CountBytesPerLine(_data);
 		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
 				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
@@ -161,7 +166,7 @@ namespace base::images {
 	}
 
 	void Image::convertToFormat(const char* format) {
-		Utility::ConvertToFormat(_data, format);
+		_data->handler->convertToFormat(_data, format);
 	}
 
 	const char* Image::format() const noexcept {
@@ -170,7 +175,7 @@ namespace base::images {
 
 	void Image::save(const char* path) {
 		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
-		Utility::WriteImageToFile(_data, path);
+		_data->handler->write(_data, path);
 	}
 
 	void Image::setJpegQuality(ushort quality) {
@@ -245,9 +250,9 @@ namespace base::images {
 		return _data->bytesPerLine == other._data->bytesPerLine
 			&& _data->data == other._data->data
 			&& _data->depth == other._data->depth
-			&& _data->devicePixelRatio == other._data->devicePixelRatio
 			&& _data->sizeInBytes == other._data->sizeInBytes
 			&& _data->width == other._data->width
-			&& _data->height == other._data->height;
+			&& _data->height == other._data->height
+			&& strcmp(_data->imageExtension, other._data->imageExtension) == 0;
 	}
 } // namespace base::images

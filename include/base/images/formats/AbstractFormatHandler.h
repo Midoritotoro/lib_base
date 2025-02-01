@@ -13,8 +13,5 @@ namespace base::images {
 		virtual [[nodiscard]] AbstractFormatHandler* convertToFormat(
 			ImageData* data, 
 			const char* format) = 0;
-
-		AbstractFormatHandler& operator=(const AbstractFormatHandler& other);
-
 	};
 } // namespace base::images

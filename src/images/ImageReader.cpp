@@ -10,6 +10,12 @@
 #include <base/images/stb/StbImageResize.h>
 
 #include <base/images/ImagesImage.h>
+#include <base/images/ImagesUtility.h>
+
+#include <base/images/formats/BmpHandler.h>
+#include <base/images/formats/JpegHandler.h>
+
+#include <base/images/formats/PngHandler.h>
 
 #define JPEG_FORMAT_DEPTH 24
 
@@ -63,8 +69,6 @@ namespace base::images {
 		void ReadImage(
 			ImageData* data,
 			int32 forceChannelsCount = 0);
-
-		int32 CountBytesPerLine(ImageData* data);
 
 		const char* _path = nullptr;
 	};
@@ -423,10 +427,10 @@ namespace base::images {
 #endif
 
 	void* ImageReaderPrivate::loadImageMain(
-		::stbi__context* context,
+		stbi__context* context,
 		ImageData* data,
 		int32 forceChannelsCount,
-		::stbi__result_info* ri,
+		stbi__result_info* ri,
 		int32 bitsPerChannel)
 	{
 		measureExecutionTime("base::images::Image::loadImageMain")
@@ -438,19 +442,25 @@ namespace base::images {
 
 #ifndef LIB_BASE_IMAGES_NO_PNG
 		if (stbi__png_test(context)) {
+			data->handler = new PngHandler();
 			data->imageExtension = "png";
+
 			return loadPng(context, data, forceChannelsCount, ri);
 		}
 #endif
 #ifndef LIB_BASE_IMAGES_NO_BMP
 		if (stbi__bmp_test(context)) {
+			data->handler = new BmpHandler();
 			data->imageExtension = "bmp";
+
 			return loadBmp(context, data, forceChannelsCount);
 		}
 #endif
 #ifndef LIB_BASE_IMAGES_NO_JPEG
 		if (stbi__jpeg_test(context)) {
+			data->handler = new JpegHandler();
 			data->imageExtension = "jpeg";
+
 			return loadJpeg(context, data, forceChannelsCount);
 		}
 #endif
@@ -459,11 +469,11 @@ namespace base::images {
 	}
 
 	uchar* ImageReaderPrivate::loadAndPostprocess8Bit(
-		::stbi__context* context,
+		stbi__context* context,
 		ImageData* data,
 		int32 forceChannelsCount)
 	{
-		::stbi__result_info resultInfo;
+		stbi__result_info resultInfo;
 		void* result = loadImageMain(context, data, forceChannelsCount, &resultInfo, 8);
 
 		if (result == NULL)
@@ -527,37 +537,11 @@ namespace base::images {
 		data->data = loadImage(file, data, forceChannelsCount);
 		data->sizeInBytes = ftell(file);
 
+		data->bytesPerLine = Utility::CountBytesPerLine(data);
+
 		fclose(file);
 	}
-
-	int32 ImageReaderPrivate::CountBytesPerLine(ImageData* data)
-	{
-		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << data->depth;
-		int32 invalid = -1;
-
-		if (data->height <= 0)
-			return invalid;
-
-		auto _bytesPerLine = int32(0);
-
-		if (MultiplyOverflow(data->width, data->depth, &_bytesPerLine))
-			return invalid;
-		if (AdditionOverflow(_bytesPerLine, 31, &_bytesPerLine))
-			return invalid;
-
-		_bytesPerLine = (_bytesPerLine >> 5) << 2;    // can't overflow
-
-		auto dummy = sizetype(0);
-		if (MultiplyOverflow(data->height, sizetype(sizeof(uchar*)), &dummy))
-			return invalid;
-
-		if (data->width > (INT_MAX - 31) / data->depth)
-			return invalid;
-
-		return _bytesPerLine;
-	}
-
-
+	
 	ImageReader::ImageReader(const char* path) {
 		_private->_path = path;
 	}

@@ -24,4 +24,5 @@ namespace base::images::Utility {
 		int size);
 
 	std::string GetExtensionFromPath(const std::string& path);
+	int32 CountBytesPerLine(ImageData* data);
 } // namespace base::images

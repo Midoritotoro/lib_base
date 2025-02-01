@@ -13,7 +13,7 @@ namespace base::images {
 		int32 success = 0;
 		std::string outputImageFormat = Utility::GetExtensionFromPath(path);
 
-		*this = *(JpegHandler*)convertToFormat(data, outputImageFormat.c_str());
+		*this = *convertToFormat(data, outputImageFormat.c_str());
 
 		success = stbi_write_jpg(
 			path, data->width, data->height,
@@ -40,5 +40,6 @@ namespace base::images {
 				data->channels, data->data);
 
 		data->imageExtension = format;
+		return 
 	}
 } // namespace base::images
