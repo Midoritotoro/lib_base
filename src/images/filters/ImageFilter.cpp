@@ -7,6 +7,7 @@ namespace base::images {
 	}
 
 	ImageFilter::~ImageFilter() {
+
 	}
 
 	void ImageFilter::filter(

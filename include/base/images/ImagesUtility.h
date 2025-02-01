@@ -23,18 +23,5 @@ namespace base::images::Utility {
 		void* data,
 		int size);
 
-	void ReadImage(
-		ImageData* data,
-		int32 forceChannelsCount = FORCE_IMAGE_CHANNELS);
-
-	[[nodiscard]] int32 CountBytesPerLine(ImageData* data);
 	std::string GetExtensionFromPath(const std::string& path);
-
-	void ConvertToFormat(
-		ImageData* src, 
-		const char* format);
-
-	void WriteImageToFile(
-		ImageData* data,
-		const std::string& path);
 } // namespace base::images

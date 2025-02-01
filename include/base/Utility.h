@@ -41,6 +41,18 @@
 
 #define empty_str(str) (!str || !*str)
 
+
+#ifndef LIB_BASE_ENABLE_QT
+	#define DISABLE_COPY(Class) \
+		Class(const Class&) = delete;\
+		Class& operator=(const Class&) = delete;
+
+	#define DISABLE_COPY_MOVE(Class) \
+		Q_DISABLE_COPY(Class) \
+		Class(Class&&) = delete; \
+		Class &operator=(Class &&) = delete;
+#endif 
+
 namespace base {
 	using namespace ::std::ranges;
 

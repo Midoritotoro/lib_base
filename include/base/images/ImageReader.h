@@ -4,21 +4,15 @@
 
 
 namespace base::images {
+	class Image;
+	class ImageReaderPrivate;
+
 	class ImageReader {
 	public:
-		ImageReader();
-		~ImageReader();
+		ImageReader(const char* path);
 
-		void read(
-			ImageData* data,
-			const char* path);
-
-		void write(
-			ImageData* data,
-			const char* path);
-
-		void convertToFormat(
-			ImageData* data,
-			const char* format);
+		void read(Image* image);
+	private:
+		ImageReaderPrivate* _private = nullptr;
 	};
 }

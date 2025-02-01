@@ -81,8 +81,6 @@ set(PRIVATE_SOURCES
     src/images/formats/BmpHandler.cpp
 
     src/images/filters/ImageFilter.cpp
-
-    src/images/ImageWriter.cpp
     src/images/ImageReader.cpp
 )
 
@@ -156,8 +154,6 @@ set(PUBLIC_HEADERS
     include/base/images/formats/BmpHandler.h
 
     include/base/images/filters/ImageFilter.h
-
-    include/base/images/ImageWriter.h
     include/base/images/ImageReader.h
 
     include/base/images/ImagesUtility.h
