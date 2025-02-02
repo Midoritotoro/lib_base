@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\lib_base_qt_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\PopupMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\Separator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\style\StyleWidgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\style\StyleCore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\style\StyleScale.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextEntities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextWord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextDrawUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextClickHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\String.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextStackEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\WordParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\BlockParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\text\TextBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\style\StyleFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\common\ClickHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\common\BasicClickHandlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\common\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\common\MainQueueProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\AbstractFlatButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\FlatButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\ContinuousScroll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\FlatLabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\ScrollArea.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\EnhancedSlider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\AnimationBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\OpacityAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\HorizontalGrowthAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\VerticalGrowthAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\animations\CombinedGrowthAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\effects\BlurBehind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\ui\effects\OpenGLBlur.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\lib_base_qt_autogen\QL2ALYVIGC\qrc_fonts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\lib_base_qt_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\lib_base_qt_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\lib_base\lib_base\src\qt\lib_base_qt_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\BaseWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\UniqueQPtr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\Size.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\InvokeQueued.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\BasicClickHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\ClickHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\WidgetsHider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\common\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\style\StyleWidgets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\style\StyleFont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\style\StyleTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\style\StyleScale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\style\StyleCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\EnhancedSlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\ScrollArea.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\FlatLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\FlatButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\AbstractFlatButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\PopupMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\Separator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\text\String.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\text\TextClickHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\text\TextUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\ContinuousScroll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\AnimationBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\OpacityAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\AnimationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\HorizontalGrowthAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\VerticalGrowthAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\animations\CombinedGrowthAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\effects\BlurBehind.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\effects\OpenGLBlur.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\effects\OpenGLVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\include\base\qt\ui\PainterHqEnabler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextEntities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextWord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextDrawUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextBidiAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextStackEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\WordParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\BlockParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\lib_base\lib_base\src\qt\text\TextBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\lib_base\lib_base\CMakeFiles\0860b02984d7eee2e596603f08a5ceee\qrc_fonts.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\lib_base\lib_base\src\qt\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\lib_base\lib_base\src\qt\ui\effects\shaders\dual_kawase_down.frag" />
+    <None Include="D:\lib_base\lib_base\src\qt\ui\effects\shaders\dual_kawase_up.frag" />
+    <None Include="D:\lib_base\lib_base\src\qt\ui\effects\shaders\simple.vert" />
+    <None Include="D:\lib_base\lib_base\resources\fonts\fonts.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{24BBAAD3-F38D-3F07-832C-C38947314ADA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{572DFAF4-2041-3B06-BE31-BB72264602CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{BFACE11D-153C-3810-A9BC-9D240752445C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

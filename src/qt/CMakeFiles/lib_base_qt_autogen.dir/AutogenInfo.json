@@ -1,0 +1,664 @@
+{
+	"AUTOGEN_COMMAND_LINE_LENGTH_MAX" : 32000,
+	"BUILD_DIR" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen",
+	"CMAKE_BINARY_DIR" : "D:/lib_base/lib_base",
+	"CMAKE_CURRENT_BINARY_DIR" : "D:/lib_base/lib_base/src/qt",
+	"CMAKE_CURRENT_SOURCE_DIR" : "D:/lib_base/lib_base/src/qt",
+	"CMAKE_EXECUTABLE" : "D:/CMake/bin/cmake.exe",
+	"CMAKE_LIST_FILES" : 
+	[
+		"D:/lib_base/lib_base/src/qt/CMakeLists.txt",
+		"D:/CMake/share/cmake-3.30/Modules/CMakePackageConfigHelpers.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/WriteBasicConfigVersionFile.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/GenerateExportHeader.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckCompilerFlag.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckSourceCompiles.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckCCompilerFlag.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckCXXCompilerFlag.cmake",
+		"D:/lib_base/lib_base/cmake/Util_FindQt.cmake",
+		"D:/lib_base/lib_base/cmake/Util_FindGSL.cmake",
+		"D:/Libraries/win64/ms-gsl/share/Microsoft.GSL/Microsoft.GSLConfigVersion.cmake",
+		"D:/Libraries/win64/ms-gsl/share/Microsoft.GSL/Microsoft.GSLConfig.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6ConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6ConfigExtras.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6Targets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6VersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtFeature.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckCXXCompilerFlag.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtFeatureCommon.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicAppleHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicCMakeHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicExternalProjectHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicFinalizerHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicFindPackageHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicPluginHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicTargetHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicTestHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicToolHelpers.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/QtPublicWalkLibsHelpers.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindThreads.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckLibraryExists.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckIncludeFileCXX.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CheckCXXSourceCompiles.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLDependencies.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/FindWrapAtomic.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Core/QtInstallPaths.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake",
+		"D:/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiVersionlessTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiPlugins.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLTargets.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLAdditionalTargetInfo.cmake",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLVersionlessTargets.cmake",
+		"D:/lib_base/lib_base/resources/fonts/fonts.qrc"
+	],
+	"CMAKE_SOURCE_DIR" : "D:/lib_base/lib_base",
+	"CROSS_CONFIG" : false,
+	"DEP_FILE" : "",
+	"DEP_FILE_RULE_NAME" : "",
+	"HEADERS" : 
+	[
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/BasicClickHandlers.h",
+			"Mu",
+			"ZDND33SZJB/moc_BasicClickHandlers.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/ClickHandler.h",
+			"Mu",
+			"ZDND33SZJB/moc_ClickHandler.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/InvokeQueued.h",
+			"Mu",
+			"ZDND33SZJB/moc_InvokeQueued.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/Size.h",
+			"Mu",
+			"ZDND33SZJB/moc_Size.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/Timer.h",
+			"Mu",
+			"ZDND33SZJB/moc_Timer.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/Types.h",
+			"Mu",
+			"ZDND33SZJB/moc_Types.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/UniqueQPtr.h",
+			"Mu",
+			"ZDND33SZJB/moc_UniqueQPtr.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/common/WidgetsHider.h",
+			"Mu",
+			"ZDND33SZJB/moc_WidgetsHider.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/style/StyleCore.h",
+			"Mu",
+			"XFXVSM2LBI/moc_StyleCore.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/style/StyleFont.h",
+			"Mu",
+			"XFXVSM2LBI/moc_StyleFont.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/style/StyleScale.h",
+			"Mu",
+			"XFXVSM2LBI/moc_StyleScale.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/style/StyleTypes.h",
+			"Mu",
+			"XFXVSM2LBI/moc_StyleTypes.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/style/StyleWidgets.h",
+			"Mu",
+			"XFXVSM2LBI/moc_StyleWidgets.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/text/String.h",
+			"Mu",
+			"UM3H4RQP5C/moc_String.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/text/TextClickHandlers.h",
+			"Mu",
+			"UM3H4RQP5C/moc_TextClickHandlers.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/text/TextUtility.h",
+			"Mu",
+			"UM3H4RQP5C/moc_TextUtility.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/AbstractFlatButton.h",
+			"Mu",
+			"T6EJQAB3QT/moc_AbstractFlatButton.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/BaseWidget.h",
+			"Mu",
+			"T6EJQAB3QT/moc_BaseWidget.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/ContinuousScroll.h",
+			"Mu",
+			"T6EJQAB3QT/moc_ContinuousScroll.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/EnhancedSlider.h",
+			"Mu",
+			"T6EJQAB3QT/moc_EnhancedSlider.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/FlatButton.h",
+			"Mu",
+			"T6EJQAB3QT/moc_FlatButton.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/FlatLabel.h",
+			"Mu",
+			"T6EJQAB3QT/moc_FlatLabel.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/PainterHqEnabler.h",
+			"Mu",
+			"T6EJQAB3QT/moc_PainterHqEnabler.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/PopupMenu.h",
+			"Mu",
+			"T6EJQAB3QT/moc_PopupMenu.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/ScrollArea.h",
+			"Mu",
+			"T6EJQAB3QT/moc_ScrollArea.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/Separator.h",
+			"Mu",
+			"T6EJQAB3QT/moc_Separator.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/Utility.h",
+			"Mu",
+			"T6EJQAB3QT/moc_Utility.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/AnimationBase.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_AnimationBase.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/AnimationManager.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_AnimationManager.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/CombinedGrowthAnimation.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_CombinedGrowthAnimation.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/HorizontalGrowthAnimation.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_HorizontalGrowthAnimation.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/OpacityAnimation.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_OpacityAnimation.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/animations/VerticalGrowthAnimation.h",
+			"Mu",
+			"7QPUI3XM5Z/moc_VerticalGrowthAnimation.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/effects/BlurBehind.h",
+			"Mu",
+			"KEAZDSG5HG/moc_BlurBehind.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/effects/OpenGLBlur.h",
+			"Mu",
+			"KEAZDSG5HG/moc_OpenGLBlur.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/include/base/qt/ui/effects/OpenGLVertex.h",
+			"Mu",
+			"KEAZDSG5HG/moc_OpenGLVertex.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/BlockParser.h",
+			"Mu",
+			"GRLPFIQMKL/moc_BlockParser.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextBidiAlgorithm.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextBidiAlgorithm.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextBlock.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextBlock.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextDrawUtility.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextDrawUtility.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextEntities.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextEntities.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextRenderer.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextRenderer.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextStackEngine.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextStackEngine.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/TextWord.h",
+			"Mu",
+			"GRLPFIQMKL/moc_TextWord.cpp",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/text/WordParser.h",
+			"Mu",
+			"GRLPFIQMKL/moc_WordParser.cpp",
+			null
+		]
+	],
+	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+	"INCLUDE_DIR" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/include",
+	"INCLUDE_DIR_Debug" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/include_Debug",
+	"INCLUDE_DIR_MinSizeRel" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/include_MinSizeRel",
+	"INCLUDE_DIR_RelWithDebInfo" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/include_RelWithDebInfo",
+	"INCLUDE_DIR_Release" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/include_Release",
+	"MOC_COMPILATION_FILE" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/mocs_compilation.cpp",
+	"MOC_COMPILATION_FILE_Debug" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/mocs_compilation_Debug.cpp",
+	"MOC_COMPILATION_FILE_MinSizeRel" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/mocs_compilation_MinSizeRel.cpp",
+	"MOC_COMPILATION_FILE_RelWithDebInfo" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/mocs_compilation_RelWithDebInfo.cpp",
+	"MOC_COMPILATION_FILE_Release" : "D:/lib_base/lib_base/src/qt/lib_base_qt_autogen/mocs_compilation_Release.cpp",
+	"MOC_DEFINITIONS" : [],
+	"MOC_DEFINITIONS_Debug" : 
+	[
+		"LIB_BASE_ENABLE_QT",
+		"LIB_BASE_FOUND_QT_OPENGL",
+		"LIB_BASE_QT_ENABLE_FONTS",
+		"LIB_BASE_SHADERS=\"D:/lib_base/lib_base/src/qt/ui/effects/shaders/\"",
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_OPENGL_LIB",
+		"QT_WIDGETS_LIB",
+		"UNICODE",
+		"WIN32",
+		"WIN64",
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE",
+		"_UNICODE",
+		"_WIN64"
+	],
+	"MOC_DEFINITIONS_MinSizeRel" : 
+	[
+		"LIB_BASE_ENABLE_QT",
+		"LIB_BASE_FOUND_QT_OPENGL",
+		"LIB_BASE_QT_ENABLE_FONTS",
+		"LIB_BASE_SHADERS=\"D:/lib_base/lib_base/src/qt/ui/effects/shaders/\"",
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_NO_DEBUG",
+		"QT_OPENGL_LIB",
+		"QT_WIDGETS_LIB",
+		"UNICODE",
+		"WIN32",
+		"WIN64",
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE",
+		"_UNICODE",
+		"_WIN64"
+	],
+	"MOC_DEFINITIONS_RelWithDebInfo" : 
+	[
+		"LIB_BASE_ENABLE_QT",
+		"LIB_BASE_FOUND_QT_OPENGL",
+		"LIB_BASE_QT_ENABLE_FONTS",
+		"LIB_BASE_SHADERS=\"D:/lib_base/lib_base/src/qt/ui/effects/shaders/\"",
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_NO_DEBUG",
+		"QT_OPENGL_LIB",
+		"QT_WIDGETS_LIB",
+		"UNICODE",
+		"WIN32",
+		"WIN64",
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE",
+		"_UNICODE",
+		"_WIN64"
+	],
+	"MOC_DEFINITIONS_Release" : 
+	[
+		"LIB_BASE_ENABLE_QT",
+		"LIB_BASE_FOUND_QT_OPENGL",
+		"LIB_BASE_QT_ENABLE_FONTS",
+		"LIB_BASE_SHADERS=\"D:/lib_base/lib_base/src/qt/ui/effects/shaders/\"",
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_NO_DEBUG",
+		"QT_OPENGL_LIB",
+		"QT_WIDGETS_LIB",
+		"UNICODE",
+		"WIN32",
+		"WIN64",
+		"_ENABLE_EXTENDED_ALIGNED_STORAGE",
+		"_UNICODE",
+		"_WIN64"
+	],
+	"MOC_DEPEND_FILTERS" : 
+	[
+		[
+			"Q_PLUGIN_METADATA",
+			"[\n][ \t]*Q_PLUGIN_METADATA[ \t]*\\([^\\)]*FILE[ \t]*\"([^\"]+)\""
+		]
+	],
+	"MOC_INCLUDES" : [],
+	"MOC_INCLUDES_Debug" : 
+	[
+		"D:/lib_base/lib_base/src/qt",
+		"D:/lib_base/lib_base/include",
+		"D:/lib_base/lib_base/export",
+		"D:/Libraries/win64/ms-gsl/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/mkspecs/win32-msvc",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtOpenGL"
+	],
+	"MOC_INCLUDES_MinSizeRel" : 
+	[
+		"D:/lib_base/lib_base/src/qt",
+		"D:/lib_base/lib_base/include",
+		"D:/lib_base/lib_base/export",
+		"D:/Libraries/win64/ms-gsl/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/mkspecs/win32-msvc",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtOpenGL"
+	],
+	"MOC_INCLUDES_RelWithDebInfo" : 
+	[
+		"D:/lib_base/lib_base/src/qt",
+		"D:/lib_base/lib_base/include",
+		"D:/lib_base/lib_base/export",
+		"D:/Libraries/win64/ms-gsl/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/mkspecs/win32-msvc",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtOpenGL"
+	],
+	"MOC_INCLUDES_Release" : 
+	[
+		"D:/lib_base/lib_base/src/qt",
+		"D:/lib_base/lib_base/include",
+		"D:/lib_base/lib_base/export",
+		"D:/Libraries/win64/ms-gsl/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/mkspecs/win32-msvc",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtWidgets/6.7.0/QtWidgets",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtCore/6.7.0/QtCore",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtGui/6.7.0/QtGui",
+		"D:/Packages/Qt/6.7.0/msvc2019_64/include/QtOpenGL"
+	],
+	"MOC_MACRO_NAMES" : [ "Q_OBJECT", "Q_GADGET", "Q_NAMESPACE", "Q_NAMESPACE_EXPORT" ],
+	"MOC_OPTIONS" : [],
+	"MOC_PATH_PREFIX" : false,
+	"MOC_PREDEFS_CMD" : [],
+	"MOC_PREDEFS_FILE" : "",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : [],
+	"MULTI_CONFIG" : true,
+	"PARALLEL" : 4,
+	"PARSE_CACHE_FILE" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/ParseCache.txt",
+	"PARSE_CACHE_FILE_Debug" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/ParseCache_Debug.txt",
+	"PARSE_CACHE_FILE_MinSizeRel" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/ParseCache_MinSizeRel.txt",
+	"PARSE_CACHE_FILE_RelWithDebInfo" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/ParseCache_RelWithDebInfo.txt",
+	"PARSE_CACHE_FILE_Release" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/ParseCache_Release.txt",
+	"QT_MOC_EXECUTABLE" : "D:/Packages/Qt/6.7.0/msvc2019_64/./bin/moc.exe",
+	"QT_UIC_EXECUTABLE" : "",
+	"QT_VERSION_MAJOR" : 6,
+	"QT_VERSION_MINOR" : 7,
+	"SETTINGS_FILE" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/AutogenUsed.txt",
+	"SETTINGS_FILE_Debug" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/AutogenUsed_Debug.txt",
+	"SETTINGS_FILE_MinSizeRel" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/AutogenUsed_MinSizeRel.txt",
+	"SETTINGS_FILE_RelWithDebInfo" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/AutogenUsed_RelWithDebInfo.txt",
+	"SETTINGS_FILE_Release" : "D:/lib_base/lib_base/src/qt/CMakeFiles/lib_base_qt_autogen.dir/AutogenUsed_Release.txt",
+	"SOURCES" : 
+	[
+		[
+			"D:/lib_base/lib_base/src/qt/common/BasicClickHandlers.cpp",
+			"Mu",
+			null
+		],
+		[ "D:/lib_base/lib_base/src/qt/common/ClickHandler.cpp", "Mu", null ],
+		[
+			"D:/lib_base/lib_base/src/qt/common/MainQueueProcessor.cpp",
+			"Mu",
+			null
+		],
+		[ "D:/lib_base/lib_base/src/qt/common/Timer.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/style/StyleCore.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/style/StyleFont.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/style/StyleScale.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/style/StyleWidgets.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/BlockParser.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/String.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextBlock.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextClickHandlers.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextDrawUtility.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextEntities.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextRenderer.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextStackEngine.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextUtility.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/TextWord.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/text/WordParser.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/AbstractFlatButton.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/ContinuousScroll.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/EnhancedSlider.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/FlatButton.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/FlatLabel.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/PopupMenu.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/ScrollArea.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/Separator.cpp", "Mu", null ],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/AnimationBase.cpp",
+			"Mu",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/AnimationManager.cpp",
+			"Mu",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/CombinedGrowthAnimation.cpp",
+			"Mu",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/HorizontalGrowthAnimation.cpp",
+			"Mu",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/OpacityAnimation.cpp",
+			"Mu",
+			null
+		],
+		[
+			"D:/lib_base/lib_base/src/qt/ui/animations/VerticalGrowthAnimation.cpp",
+			"Mu",
+			null
+		],
+		[ "D:/lib_base/lib_base/src/qt/ui/effects/BlurBehind.cpp", "Mu", null ],
+		[ "D:/lib_base/lib_base/src/qt/ui/effects/OpenGLBlur.cpp", "Mu", null ]
+	],
+	"USE_BETTER_GRAPH" : false,
+	"VERBOSITY" : 0
+}
