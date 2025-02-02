@@ -542,7 +542,9 @@ namespace base::images {
 		fclose(file);
 	}
 	
-	ImageReader::ImageReader(const char* path) {
+	ImageReader::ImageReader(const char* path):
+		_private(new ImageReaderPrivate())
+	{
 		_private->_path = path;
 	}
 

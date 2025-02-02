@@ -4,8 +4,8 @@
 
 #include <base/images/ImagesRgb.h>
 #include <base/images/ImagesGeometry.h>
-
-#include <base/images/formats/AbstractFormatHandler.h>
+//
+//#include <base/images/formats/AbstractFormatHandler.h>
 #include <base/Types.h>
 
 #include <base/OverflowCheck.h>
@@ -41,6 +41,12 @@
 #define STBI_NO_PIC
 #define STBI_NO_PNM 
 
+#define STB_IMAGE_WRITE_STATIC
+#define STB_IMAGE_STATIC
+
+#define STB_IMAGE_RESIZE_STATIC
+#define STB_IMAGE_RESIZE2_STATIC
+
 #define FORCE_IMAGE_CHANNELS 0
 
 
@@ -49,6 +55,7 @@ namespace base::images {
 
 	class GLImage;
 	class Image;
+	class AbstractFormatHandler;
 
 	enum class ColorSpace : uchar {
 		Invalid = 0x00,

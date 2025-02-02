@@ -246,6 +246,38 @@ namespace base::images {
 		return -1;
 	}
 
+	int32 Image::depth() const noexcept {
+		return _data->depth;
+	};
+
+	ushort Image::channels() const noexcept {
+		return _data->channels;
+	}
+
+	int32 Image::sizeInBytes() const noexcept {
+		return _data->sizeInBytes;
+	}
+
+	sizetype Image::dataLength() const noexcept {
+		return _data->dataLength;
+	}
+
+	int32 Image::bitsPerChannel() const noexcept {
+		return _data->bitsPerChannel;
+	}
+
+	ColorSpace Image::colorSpace() const noexcept {
+		return _data->colorSpace;
+	}
+
+	bool Image::hasPath() const noexcept {
+		return _data->path.has_value();
+	}
+
+	const char* Image::path() const noexcept {
+		return hasPath() ? _data->path.value() : "";
+	}
+
 	bool Image::isEqual(const Image& other) const {
 		return _data->bytesPerLine == other._data->bytesPerLine
 			&& _data->data == other._data->data

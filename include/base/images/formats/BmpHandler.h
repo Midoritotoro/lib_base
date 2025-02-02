@@ -9,8 +9,10 @@ namespace base::images {
 			ImageData* data,
 			const char* path) override;
 
-		[[nodiscard]] AbstractFormatHandler* convertToFormat(
+		void convertToFormat(
 			ImageData* data,
 			const char* format) override;
+
+		[[nodiscard]] const char* format() const noexcept override;
 	};
 } // namespace base::images

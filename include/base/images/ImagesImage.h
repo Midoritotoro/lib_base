@@ -78,6 +78,17 @@ namespace base::images {
 		[[nodiscard]] bool isNull() const noexcept;
 		[[nodiscard]] Rgb pixel(int x, int y) const;
 
+		[[nodiscard]] int32 depth() const noexcept;
+		[[nodiscard]] ushort channels() const noexcept;
+
+		[[nodiscard]] int32 sizeInBytes() const noexcept;
+		[[nodiscard]] sizetype dataLength() const noexcept;
+
+		[[nodiscard]] int32 bitsPerChannel() const noexcept;
+		[[nodiscard]] ColorSpace colorSpace() const noexcept;
+
+		[[nodiscard]] bool hasPath() const noexcept;
+		[[nodiscard]] const char* path() const noexcept;
 	private:
 		bool isEqual(const Image& other) const;
 

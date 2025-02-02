@@ -48,9 +48,12 @@
 		Class& operator=(const Class&) = delete;
 
 	#define DISABLE_COPY_MOVE(Class) \
-		Q_DISABLE_COPY(Class) \
+		DISABLE_COPY(Class) \
 		Class(Class&&) = delete; \
 		Class &operator=(Class &&) = delete;
+#else
+	#define DISABLE_COPY Q_DISABLE_COPY
+	#define DISABLE_COPY_MOVE Q_DISABLE_COPY_MOVE
 #endif 
 
 namespace base {

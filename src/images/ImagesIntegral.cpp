@@ -18,10 +18,10 @@ namespace base::images {
         
       /*  qDebug() << QImageReader::supportedImageFormats();*/
 
-        QImage image;
+        Image image;
         {
             measureExecutionTime("Image::loadFromFile: ")
-            image.load(in);
+            image.loadFromFile(in);
         }
 
 
