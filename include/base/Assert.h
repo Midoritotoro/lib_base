@@ -5,15 +5,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <cassert>
-
-
-#if defined (__GNUC__) || defined (__clang__)
-#define AssertUnlikelyHelper(x) __builtin_expect(!!(x), 0)
-#else
-#define AssertUnlikelyHelper(x) (!!(x))
-#endif
-
 static inline void fail(
 	const char* message,
 	const char* file,
@@ -38,10 +29,20 @@ static inline constexpr [[nodiscard]]
 		return path + size;
 	}
 
+#define ReturnOnFailure(message, file, line, retval) \
+	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line); \
+	return retval
+	
 
 #define AssertValidationCondition(condition, message, file, line)\
-	((AssertUnlikelyHelper(!(condition)))\
+	((unlikely(!(condition)))\
 		? fail(message, file, line)\
+		: void(0))
+
+
+#define AssertValidationConditionWithRet(condition, message, file, line, retval)\
+	((unlikely(!(condition)))\
+		? ReturnOnFailure(message, file, line, retval)\
 		: void(0))
 
 #define SOURCE_FILE_BASENAME (extract_basename(\
@@ -53,6 +54,16 @@ static inline constexpr [[nodiscard]]
 	message,\
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
+
+#define AssertReturn(condition, message, return_value) \
+    AssertValidationConditionWithRet(\
+	condition,\
+	message,\
+	SOURCE_FILE_BASENAME,\
+	__LINE__, \
+	return_value))
+
+
 #define Assert(condition) AssertLog(condition, "\"" #condition "\"")
 
 

@@ -10,6 +10,8 @@
 
 #ifdef OS_WIN
 	#include <base/Windows.h>
+	#include <sal.h>
+
 	#ifndef UNICODE
 		#define UNICODE
 	#endif
@@ -20,6 +22,19 @@
 	
 	#define LIB_BASE_ENABLE_WINDOWS_UNICODE
 #endif
+
+#if defined(OS_WIN) && defined(_MSC_VER)
+	#define _SAL2_In_reads_bytes_(size)  _In_reads_bytes_(size)
+	#define _SAL2_In  _In_
+	#define _SAL2_Out _Out_
+	#define _SAL2_In_z _In_z_
+#else
+	#define _SAL2_In_reads_bytes_(size)
+	#define _SAL2_In_
+	#define _SAL2_Out_
+	#define _SAL2_In_z_
+#endif
+
 
 
 

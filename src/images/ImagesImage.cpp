@@ -126,9 +126,9 @@ namespace base::images {
 		_data->path = path;
 		ImageReader(_data->path.value()).read(this);
 
-		AssertLog(_data->data != nullptr, 
+	/*	AssertLog(_data->data != nullptr, 
 			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
-			+ std::string(path)).c_str());
+			+ std::string(path)).c_str());*/
 	}
 
 	void Image::load(const char* path) {
