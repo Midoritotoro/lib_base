@@ -43,7 +43,7 @@ namespace base::images {
 		if (Utility::IsPng(format)) {
 			data->handler = new PngHandler();
 			stbi_write_png_to_mem(
-				data->data, data->width * data->channels,
+				data->data, data->bytesPerLine,
 				data->width, data->height,
 				data->channels, &data->sizeInBytes);
 		}

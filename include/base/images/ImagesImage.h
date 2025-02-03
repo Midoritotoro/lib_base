@@ -39,7 +39,11 @@ namespace base::images {
 		bool operator!=(const Image& other);
 
 		void loadFromData(const uchar* data, sizetype length);
+
 		void loadFromFile(const char* path);
+
+		// Alias to loadFromFile
+		void load(const char* path);
 
 		void resize(int32 width, int32 height);
 		void resize(Size<int32> size);

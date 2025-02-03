@@ -17,6 +17,9 @@
 
 #include <base/images/formats/PngHandler.h>
 
+#include <turbojpeg.h>
+#include <png.h>
+
 #define JPEG_FORMAT_DEPTH 24
 #define JPEG_MONOCHROME_DEPTH 8
 
@@ -403,6 +406,7 @@ namespace base::images {
 			data->height = p->s->img_y;
 			data->channels = p->s->img_n;
 
+			printf("stbi png depth: %i\n", p->depth);
 			data->depth = p->depth;
 			data->bitsPerChannel = ri->bits_per_channel;
 		}
@@ -1078,3 +1082,4 @@ namespace base::images {
 		_private->ReadImage(image->data_ptr());
 	}
 } // namespace base::images
+

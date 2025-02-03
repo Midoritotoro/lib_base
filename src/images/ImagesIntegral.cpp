@@ -8,37 +8,40 @@
 #include <src/images/ImagesIntegralHelpers.h>
 
 #include <QImageReader>
+#include <QImageWriter>
 
 
 namespace base::images {
     IntegralImage::IntegralImage() {
        // const char* out = "D:/pp.bmp"; error
         const char* out = "D:/pp.png"; 
-        const char* in = "C:\\Users\\danya\\Downloads\\tree.jpg";
+        const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
         
-      /*  qDebug() << QImageReader::supportedImageFormats();*/
+        qDebug() << QImageReader::supportedImageFormats() << QImageWriter::supportedImageFormats();
 
-        Image image;
-        {
-            measureExecutionTime("Image::loadFromFile: ")
-            image.loadFromFile(in);
-        }
+       // Image image;
+       // {
+       //     measureExecutionTime("Image::loadFromFile: ")
+       //     image.load(in);
+       // }
 
 
-       qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
+       //qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
 
-        //{
-        //    measureExecutionTime("IntegralImage: ")
-        //    BradleyThreshold(
-        //        image.data_ptr()->data, image.data_ptr()->data,
-        //        image.data_ptr()->width, image.data_ptr()->height,
-        //        image.depth() / 8);
-        //}
+       ///* {
+       //     measureExecutionTime("IntegralImage: ")
+       //     BradleyThreshold(
+       //         image.data_ptr()->data, image.data_ptr()->data,
+       //         image.data_ptr()->width, image.data_ptr()->height,
+       //         image.depth() / 8);
+       // }*/
 
-        {
-            measureExecutionTime("Image::save: ")
-            image.save(out);
-        }
+       // {
+       //     measureExecutionTime("Image::save: ")
+       //     image.save(out);
+       // }
+
+       // qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
     }
 
     IntegralImage::IntegralImage(const std::vector<std::vector<int32>>& image) :

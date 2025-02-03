@@ -225,10 +225,14 @@ if(LIB_BASE_ENABLE_OPENGL)
     # add_subdirectory(src/gl)
 endif()
 
-if(LIB_BASE_ENABLE_ZLIB)
-    find_zlib(lib_base)
+#if(LIB_BASE_ENABLE_ZLIB)
+    #find_zlib(lib_base)
     # add_subdirectory(src/zlib)
-endif()
+#endif()
+
+include(cmake/Util_FindLibPngJpeg.cmake)
+
+find_libpng_and_libjpeg(lib_base)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 

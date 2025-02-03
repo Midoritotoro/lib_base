@@ -12,6 +12,7 @@
 #include <qDebug>
 
 
+
 namespace base::images {
 	Image::Image() :
 		_data(new ImageData())
@@ -128,6 +129,10 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, 
 			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
 			+ std::string(path)).c_str());
+	}
+
+	void Image::load(const char* path) {
+		loadFromFile(path);
 	}
 
 	Image::~Image() {

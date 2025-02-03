@@ -51,7 +51,7 @@
 
 
 namespace base::images {
-	inline constexpr auto kDefaultStbiJpegQuality = 30;
+	inline constexpr auto kDefaultStbiJpegQuality = 90;
 
 	class GLImage;
 	class Image;

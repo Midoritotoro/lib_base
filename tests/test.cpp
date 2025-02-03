@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <corecrt.h>
 
+
 int main(int argc, char* argv[]) {
 	QApplication application(argc, argv);
 	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
