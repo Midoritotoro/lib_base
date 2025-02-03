@@ -9,6 +9,10 @@ namespace base::images {
 			ImageData* data,
 			const char* path) override;
 
+		void read(
+			ImageData* data,
+			const char* path) override;
+
 		void convertToFormat(
 			ImageData* data,
 			const char* format) override;

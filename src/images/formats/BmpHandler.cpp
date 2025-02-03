@@ -13,7 +13,7 @@ namespace base::images {
 		int32 success = 0;
 		std::string outputImageFormat = Utility::GetExtensionFromPath(path);
 
-		if (Utility::IsFormatsEqual(data->imageExtension, outputImageFormat.c_str()) == false) {
+		if (Utility::IsFormatsEqual(data->handler->format(), outputImageFormat.c_str()) == false) {
 			convertToFormat(data, outputImageFormat.c_str());
 			return data->handler->write(data, path);
 		}
@@ -23,14 +23,19 @@ namespace base::images {
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
 
+	void BmpHandler::read(
+		ImageData* data,
+		const char* path)
+	{
+
+	}
+
 	void BmpHandler::convertToFormat(
 		ImageData* data,
 		const char* format)
 	{
-		if (Utility::IsFormatsEqual(data->imageExtension, format))
+		if (Utility::IsFormatsEqual(data->handler->format(), format))
 			return;
-
-		data->imageExtension = format;
 
 		if (Utility::IsPng(format)) {
 			data->handler = new PngHandler();

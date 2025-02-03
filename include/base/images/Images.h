@@ -19,8 +19,6 @@
 	#include <private/qpixmap_raster_p.h>
 #endif
 
-#define FORCE_IMAGE_CHANNELS 0
-
 
 namespace base::images {
 	class GLImage;
@@ -46,7 +44,7 @@ namespace base::images {
 		int32 height = 0;
 
 		uchar* data = nullptr;
-		ushort channels = FORCE_IMAGE_CHANNELS;
+		ushort channels = 0;
 
 		int32 depth;
 		int32 bytesPerLine = 0;
@@ -61,8 +59,5 @@ namespace base::images {
 		std::optional<ushort> jpegQuality;
 
 		AbstractFormatHandler* handler = nullptr;
-
-		// png, jpeg, bmp
-		const char* imageExtension = nullptr;
 	};
 } // namespace base::images

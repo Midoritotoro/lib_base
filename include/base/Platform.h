@@ -17,7 +17,10 @@
 	#ifndef _UNICODE
 		#define _UNICODE
 	#endif
+	
+	#define LIB_BASE_ENABLE_WINDOWS_UNICODE
 #endif
+
 
 
 #ifdef LIB_BASE_STATIC

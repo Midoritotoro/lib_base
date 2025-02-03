@@ -166,7 +166,7 @@ namespace base::images {
 	}
 
 	const char* Image::format() const noexcept {
-		return _data->imageExtension;
+		return _data->handler->format();
 	}
 
 	void Image::save(const char* path) {
@@ -281,6 +281,6 @@ namespace base::images {
 			&& _data->sizeInBytes == other._data->sizeInBytes
 			&& _data->width == other._data->width
 			&& _data->height == other._data->height
-			&& strcmp(_data->imageExtension, other._data->imageExtension) == 0;
+			&& strcmp(_data->handler->format(), other._data->handler->format()) == 0;
 	}
 } // namespace base::images

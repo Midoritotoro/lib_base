@@ -11,6 +11,10 @@ namespace base::images {
 			ImageData* data,
 			const char* path) = 0;
 
+		virtual void read(
+			ImageData* data,
+			const char* path) = 0;
+
 		virtual void convertToFormat(
 			ImageData* data, 
 			const char* format) = 0;

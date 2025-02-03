@@ -6,6 +6,6 @@ function(find_libpng_and_libjpeg TARGET)
     target_link_libraries(${TARGET} PRIVATE PNG::PNG)
 
 
-    find_package(libjpeg-turbo CONFIG REQUIRED)
-    target_link_libraries(${TARGET} PRIVATE libjpeg-turbo::turbojpeg)
+    find_package(libjpeg-turbo REQUIRED)
+    target_link_libraries(${TARGET} PRIVATE libjpeg-turbo::turbojpeg-static)
 endfunction()
