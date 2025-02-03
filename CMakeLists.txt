@@ -131,10 +131,6 @@ set(PUBLIC_HEADERS
     include/base/TypeTraits.h
     include/base/images/ImagesBlur.h
 
-    include/base/images/stb/StbImage.h
-    include/base/images/stb/StbImageWrite.h
-    include/base/images/stb/StbImageResize.h
-
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
 

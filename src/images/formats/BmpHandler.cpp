@@ -1,9 +1,6 @@
 #include <base/images/formats/BmpHandler.h>
 #include <base/images/ImagesUtility.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <base/images/stb/StbImageWrite.h>
-
 #include <base/images/formats/JpegHandler.h>
 #include <base/images/formats/PngHandler.h>
 
@@ -21,9 +18,7 @@ namespace base::images {
 			return data->handler->write(data, path);
 		}
 
-		success = stbi_write_bmp(
-			path, data->width, data->height,
-			data->channels, data->data);
+	// success - write bmp
 
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
@@ -39,19 +34,12 @@ namespace base::images {
 
 		if (Utility::IsPng(format)) {
 			data->handler = new PngHandler();
-			stbi_write_png_to_mem(
-				data->data, data->width * data->channels,
-				data->width, data->height,
-				data->channels, &data->sizeInBytes);
+		// convert to Png
 		}
 		
 		else if (Utility::IsJpeg(format)) {
 			data->handler = new JpegHandler();
-			stbi_write_jpg_to_func(Utility::StbiWrite,
-				data, data->width, data->height,
-				data->channels, data->data, data->jpegQuality.has_value()
-				? data->jpegQuality.value()
-				: kDefaultStbiJpegQuality);
+			// convert to jpeg
 		}
 
 		AssertLog(Utility::IsFormatSupported(format),
