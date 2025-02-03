@@ -128,9 +128,6 @@ namespace base::images {
 		AssertLog(_data->data != nullptr, 
 			std::string("base::images::Image::loadFromFile: Cannot load image from file: "
 			+ std::string(path)).c_str());
-
-		qDebug() << "_data->sizeInBytes: " << _data->sizeInBytes << "_data->w&h: " << _data->width
-				 << _data->height << "_data->bytesPerLine: " << _data->bytesPerLine;
 	}
 
 	Image::~Image() {
@@ -149,12 +146,6 @@ namespace base::images {
 		/*stbi_resize_uint8(
 			_data->data, _data->width, _data->height, 0,
 			_data->data, width, height, 0, _data->channels);*/
-
-		_data->width = width;
-		_data->height = height;
-
-		_data->sizeInBytes = sizeof(*_data->data);
-		_data->bytesPerLine = Utility::CountBytesPerLine(_data);
 	}
 
 	void Image::resize(Size<int32> size) {

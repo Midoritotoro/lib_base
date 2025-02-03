@@ -18,6 +18,9 @@
 #include <base/images/formats/PngHandler.h>
 
 #define JPEG_FORMAT_DEPTH 24
+#define JPEG_MONOCHROME_DEPTH 8
+
+#define JPEG_BPP 8
 #define STBI_AUTO_DETECT_CHANNELS_COUNT 0
 
 
@@ -30,8 +33,8 @@ namespace base::images {
 
 	#ifndef LIB_BASE_IMAGES_NO_PNG
 		[[nodiscard]] int parsePng(
-			stbi__png* z, 
-			int scan, int req_comp);
+			stbi__png* z, ImageData* data,
+			int scan);
 
 		[[nodiscard]] void* doPng(
 			stbi__png* p,
@@ -80,8 +83,11 @@ namespace base::images {
 	};
 
 #ifndef LIB_BASE_IMAGES_NO_PNG
-	int ImageReaderPrivate::parsePng(stbi__png* z, int scan, int req_comp)
+	int ImageReaderPrivate::parsePng(
+		stbi__png* z, ImageData* data,
+		int scan)
 	{
+		measureExecutionTime("base::images::ImageReaderPrivater::parsePng")
 		stbi_uc palette[1024], pal_img_n = 0;
 		stbi_uc has_trans = 0, tc[3] = { 0 };
 
@@ -171,7 +177,8 @@ namespace base::images {
 						// if paletted, then pal_n is our final components, and
 						// img_n is # components to decompress/filter.
 						s->img_n = 1;
-						if ((1 << 30) / s->img_x / 4 < s->img_y) return stbi__err("too large", "Corrupt PNG");
+						if ((1 << 30) / s->img_x / 4 < s->img_y)
+							return stbi__err("too large", "Corrupt PNG");
 					}
 					// even with SCAN_header, have to scan to see if we have a tRNS
 					break;
@@ -304,6 +311,7 @@ namespace base::images {
 
 				// initial guess for decoded data size to avoid unnecessary reallocs
 				bpl = (s->img_x * z->depth + 7) / 8; // bytes per line, per component
+				data->bytesPerLine = bpl;
 
 				raw_len = bpl * s->img_y * s->img_n /* pixels */ + s->img_y /* filter mode per row */;
 
@@ -313,10 +321,7 @@ namespace base::images {
 
 				free_null(z->idata);
 
-				if ((req_comp == s->img_n + 1 && req_comp != 3 && !pal_img_n) || has_trans)
-					s->img_out_n = s->img_n + 1;
-				else
-					s->img_out_n = s->img_n;
+				s->img_out_n = s->img_n;
 
 				if (!stbi__create_png_image(z, z->expanded,
 					raw_len, s->img_out_n, z->depth, color, interlace)) 
@@ -337,9 +342,6 @@ namespace base::images {
 					// pal_img_n == 3 or 4
 					s->img_n = pal_img_n; // record the actual colors we had
 					s->img_out_n = pal_img_n;
-
-					if (req_comp >= 3) 
-						s->img_out_n = req_comp;
 
 					if (!stbi__expand_png_palette(z, palette, pal_len, s->img_out_n))
 						return 0;
@@ -386,7 +388,7 @@ namespace base::images {
 	{
 		void* result = NULL;
 
-		if (parsePng(p, STBI__SCAN_load, STBI_AUTO_DETECT_CHANNELS_COUNT)) {
+		if (parsePng(p, data, STBI__SCAN_load)) {
 			if (p->depth <= 8)
 				ri->bits_per_channel = 8;
 			else if (p->depth == 16)
@@ -435,6 +437,7 @@ namespace base::images {
 		stbi__jpeg* z, 
 		ImageData* data)
 	{
+		measureExecutionTime("base::images::ImageReaderPrivater::loadJpegImage")
 		int n, decode_n, is_rgb;
 		z->s->img_n = 0; // make stbi__cleanup_jpeg safe
 
@@ -630,12 +633,18 @@ namespace base::images {
 					}
 				}
 			}
-			stbi__cleanup_jpeg(z);
 
 			data->width = z->s->img_x;
 			data->height = z->s->img_y;
-			data->channels = z->s->img_n >= 3 ? 3 : 1; // report original components, not output
 
+			data->depth = JPEG_MONOCHROME_DEPTH * z->s->img_n;
+
+			data->bitsPerChannel = JPEG_BPP;
+			data->channels = z->s->img_n; 
+
+			data->bytesPerLine = (data->bitsPerChannel * data->channels / 8) * data->width;
+
+			stbi__cleanup_jpeg(z);
 			return output;
 		}
 	}
@@ -653,11 +662,8 @@ namespace base::images {
 
 		stbi__setup_jpeg(jpeg);
 
-		uchar* result = loadJpegImage(
-			jpeg, &data->width, &data->height,
-			(int32*)&data->channels, STBI_AUTO_DETECT_CHANNELS_COUNT);
+		uchar* result = loadJpegImage(jpeg, data);
 
-		data->depth = JPEG_FORMAT_DEPTH;
 		data->jpegQuality = kDefaultStbiJpegQuality;
 
 		free(jpeg);
@@ -670,6 +676,7 @@ namespace base::images {
 		stbi__context* s,
 		ImageData* data)
 	{
+		measureExecutionTime("base::images::ImageReaderPrivater::loadBmp")
 		stbi_uc* out;
 
 		unsigned int mr = 0, mg = 0, mb = 0, ma = 0, all_a;
@@ -950,7 +957,11 @@ namespace base::images {
 		data->width = s->img_x;
 		data->height = s->img_y;
 
-		data->bitsPerChannel = info.bpp;
+		data->depth = info.bpp;
+		data->bitsPerChannel = info.bpp / s->img_n;
+
+		data->channels / s->img_n;
+		data->bytesPerLine = (info.bpp / 8) * s->img_x;
 
 		return out;
 	}
@@ -1053,8 +1064,6 @@ namespace base::images {
 
 		data->data = loadImage(file, data);
 		data->sizeInBytes = ftell(file);
-
-		data->bytesPerLine = Utility::CountBytesPerLine(data);
 
 		fclose(file);
 	}

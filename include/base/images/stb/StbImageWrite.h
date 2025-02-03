@@ -1228,8 +1228,6 @@ STBIWDEF unsigned char* stbi_write_png_to_mem(const unsigned char* pixels, int s
     stbiw__wptag(o, "IEND");
     stbiw__wpcrc(&o, 0);
 
-    printf("Stbi png stride_bytes: %i\n", stride_bytes);
-
     STBIW_ASSERT(o == out + *out_len);
 
     return out;

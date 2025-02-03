@@ -1611,11 +1611,12 @@ static void stbi__refill_buffer(stbi__context* s)
         s->img_buffer_end = s->buffer_start + n;
     }
 }
-
+#include <iostream>
 stbi_inline static stbi_uc stbi__get8(stbi__context* s)
 {
-    if (s->img_buffer < s->img_buffer_end)
+    if (s->img_buffer < s->img_buffer_end) {
         return *s->img_buffer++;
+    }
     if (s->read_from_callbacks) {
         stbi__refill_buffer(s);
         return *s->img_buffer++;
@@ -4667,7 +4668,9 @@ static int stbi__check_png_header(stbi__context* s)
     static const stbi_uc png_sig[8] = { 137,80,78,71,13,10,26,10 };
     int i;
     for (i = 0; i < 8; ++i)
-        if (stbi__get8(s) != png_sig[i]) return stbi__err("bad png sig", "Not a PNG");
+        if (stbi__get8(s) != png_sig[i]) 
+            return stbi__err("bad png sig", "Not a PNG");
+
     return 1;
 }
 
