@@ -11,7 +11,7 @@ namespace base::images {
 
 		void read(
 			ImageData* data,
-			const char* path) override;
+			FILE* file) override;
 
 		void convertToFormat(
 			ImageData* data,

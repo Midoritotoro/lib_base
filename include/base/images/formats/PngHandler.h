@@ -12,12 +12,14 @@ namespace base::images {
 
 		void read(
 			ImageData* data,
-			const char* path) override;
+			FILE* file) override;
 
 		void convertToFormat(
 			ImageData* data,
 			const char* format) override;
 
 		[[nodiscard]] const char* format() const noexcept override;
+	private:
+
 	};
 } // namespace base::images

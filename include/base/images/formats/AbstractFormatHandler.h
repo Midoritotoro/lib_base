@@ -13,7 +13,7 @@ namespace base::images {
 
 		virtual void read(
 			ImageData* data,
-			const char* path) = 0;
+			FILE* file) = 0;
 
 		virtual void convertToFormat(
 			ImageData* data, 

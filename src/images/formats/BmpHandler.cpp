@@ -25,7 +25,7 @@ namespace base::images {
 
 	void BmpHandler::read(
 		ImageData* data,
-		const char* path)
+		FILE* file)
 	{
 
 	}

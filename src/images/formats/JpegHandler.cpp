@@ -29,7 +29,7 @@ namespace base::images {
 
 	void JpegHandler::read(
 		ImageData* data,
-		const char* path)
+		FILE* file)
 	{
 		
 	}

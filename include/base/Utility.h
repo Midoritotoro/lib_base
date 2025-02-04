@@ -3,7 +3,7 @@
 #include <base/Platform.h>
 #include <base/Time.h>
 
-#if defined(_MSC_VER) && !defined(__GNUC__) && !defined(__clang__)
+#if defined(OS_WIN) && defined(_MSC_VER) && !defined(__GNUC__) && !defined(__clang__)
 #include <__msvc_iter_core.hpp>
 #endif
 
@@ -17,7 +17,7 @@
 
 
 /**
- *После выхода из текущей области видимости определяет затраченное на выполнение этого блока кода время
+ *После выхода из текущей области видимости выводит затраченное на выполнение этого блока кода время
  *\param name - "Имя" области видимости
 */
 #define measureExecutionTime(name) \
@@ -25,21 +25,46 @@
 		 const auto timer = gsl::finally([=] { \
 			std::cout << name << " completed for: " \
 			<< base::Time::now() - ms << " ms" << '\n'; });
-
+//!
+//! \brief
+//! После выхода из текущей области видимости записывает затраченное на выполнение этого блока кода время в value
 #define measureExecutionTimeToValue(value) \
 		 const auto ms = base::Time::now(); \
 		 const auto timer = gsl::finally([&]() mutable { \
 			value = base::Time::now() - ms; });
 
-
+//!
+//! \brief
+//! Проверяет, является ли ptr с названием member членом структуры типа type
+//! \param ptr - Указатель на член структуры (типа member).
+//! \param type - Тип структуры, которая содержит member.
+//! \param member - Имя члена структуры, на который указывает ptr.
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
 
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-#define free_null(a) do { free( a ); a = NULL; } while(0)
+#define free_null(a) \
+	do { \
+		free( a ); \
+		a = nullptr; \
+	} while(0)
+
+#define delete_null(ptr) \
+	do { \
+		delete ptr; \
+		ptr = nullptr; \
+	} while (0)
+
+#define delete_array_null(arr_ptr) \
+	do { \
+		delete[] arr_ptr; \
+		arr_ptr = nullptr; \
+	} while (0)
 
 #define empty_str(str) (!str || !*str)
+
+#define stringify(x)	#x
 
 
 #ifndef LIB_BASE_ENABLE_QT

@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/Platform.h>
+#include <base/Utility.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -65,15 +66,18 @@ static inline constexpr [[nodiscard]]
 	return_value)
 
 
-#define Assert(condition) AssertLog(condition, "\"" #condition "\"")
+#define Assert(condition) AssertLog(condition, "\"" stringify(condition) "\"")
 
+
+#define StaticAssert(cond) static_assert(bool(cond), stringify(cond))
+#define StaticAssertLog(cond, mes) static_assert(bool(cond), mes)
 
 #ifdef Expects
 #undef Expects
 #endif // Expects
 #define Expects(condition) (AssertValidationCondition(\
 	condition,\
-	"\"" #condition "\"",\
+	"\"" stringify(condition) "\"",\
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
 
@@ -82,7 +86,7 @@ static inline constexpr [[nodiscard]]
 #endif // Ensures
 #define Ensures(condition) (AssertValidationCondition(\
 	condition,\
-	"\"" #condition "\"",\
+	"\"" stringify(condition) "\"",\
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
 
