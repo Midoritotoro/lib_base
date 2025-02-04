@@ -80,14 +80,6 @@ namespace base::images::Utility {
 		return (strcmp(firstFormat, secondFormat) == 0);
 	}
 
-	void StbiWrite(
-		void* context, 
-		void* data, 
-		int size)
-	{
-		memcpy(((ImageData*)context)->data + ((ImageData*)context)->dataLength, data, size);
-		((ImageData*)context)->dataLength += size;
-	};
 
 	std::string GetExtensionFromPath(const std::string& path) {
 		std::regex regex(R"(\.(bmp|jpe?g|png)(?=[^.]*$))", std::regex::icase);

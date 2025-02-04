@@ -18,27 +18,27 @@ namespace base::images {
         const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
         
 
-        Image image;
+        QImage image;
         {
             measureExecutionTime("Image::loadFromFile: ")
             image.load(in);
         }
 
 
-       //qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
+       qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
 
-       ///* {
-       //     measureExecutionTime("IntegralImage: ")
-       //     BradleyThreshold(
-       //         image.data_ptr()->data, image.data_ptr()->data,
-       //         image.data_ptr()->width, image.data_ptr()->height,
-       //         image.depth() / 8);
-       // }*/
+       {
+            measureExecutionTime("IntegralImage: ")
+            BradleyThreshold(
+                image.data_ptr()->data, image.data_ptr()->data,
+                image.data_ptr()->width, image.data_ptr()->height,
+                image.depth() / 8);
+        }
 
-       // {
-       //     measureExecutionTime("Image::save: ")
-       //     image.save(out);
-       // }
+        {
+            measureExecutionTime("Image::save: ")
+            image.save(out);
+        }
 
        // qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
     }
