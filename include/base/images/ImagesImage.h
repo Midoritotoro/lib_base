@@ -62,6 +62,11 @@ namespace base::images {
 		void convertToFormat(const char* format);
 		[[nodiscard]] const char* format() const noexcept;
 
+		void setFilter(Filter filter);
+		[[nodiscard]] Filter filter() const noexcept;
+
+		[[nodiscard]] bool hasFilter() const noexcept;
+
 		void save(const char* path);
 		[[nodiscard]] Image convertToColorSpace(ColorSpace space) const;
 

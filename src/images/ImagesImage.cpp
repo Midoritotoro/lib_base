@@ -4,6 +4,7 @@
 #include <base/Utility.h>
 
 #include <base/images/ImageReader.h>
+#include <base/images/filters/ImageFilter.h>
 
 #include <base/images/formats/BmpHandler.h>
 #include <base/images/formats/JpegHandler.h>
@@ -169,6 +170,18 @@ namespace base::images {
 		return _data->handler->format();
 	}
 
+	void Image::setFilter(Filter filter){
+		ImageFilter(this).filter(filter);
+	}
+	
+	Filter Image::filter() const noexcept {
+		return _data->filter;
+	}
+
+	bool Image::hasFilter() const noexcept {
+		return _data->filter != Filter::None;
+	}
+
 	void Image::save(const char* path) {
 		AssertLog(!isNull(), std::string("base::images::Image::save: Cannot save a null image to path - " + std::string(path)).c_str());
 		_data->handler->write(_data, path);
@@ -281,6 +294,7 @@ namespace base::images {
 			&& _data->sizeInBytes == other._data->sizeInBytes
 			&& _data->width == other._data->width
 			&& _data->height == other._data->height
+			&& _data->filter == other._data->filter
 			&& strcmp(_data->handler->format(), other._data->handler->format()) == 0;
 	}
 } // namespace base::images

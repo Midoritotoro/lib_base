@@ -5,17 +5,12 @@
 namespace base::images {
 	class ImageFilter {
 	public:
-		enum class Filter : uchar {
-			BradleyThreshold = 0x00
-		};
+		ImageFilter(not_null<Image*> image);
 
-		ImageFilter();
-		~ImageFilter();
-
-		void filter(
-			Image* image,
-			Filter filter);
+		void filter(Filter filter);
 	private:
-		void BradleyThreshold(Image* image);
+		void BradleyThreshold();
+
+		Image* _image = nullptr;
 	};
 } // namespace base::images

@@ -27,6 +27,11 @@ namespace base::images {
 	class Image;
 	class AbstractFormatHandler;
 
+	enum class Filter : uchar {
+		None = 0x00,
+		BradleyThreshold = 0x01
+	};
+
 	enum class ColorSpace : uchar {
 		Invalid = 0x00,
 		BGR = 0x01,
@@ -61,5 +66,6 @@ namespace base::images {
 		std::optional<ushort> jpegQuality;
 
 		AbstractFormatHandler* handler = nullptr;
+		Filter filter = Filter::None;
 	};
 } // namespace base::images

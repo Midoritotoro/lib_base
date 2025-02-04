@@ -3,33 +3,35 @@
 
 
 namespace base::images {
-	ImageFilter::ImageFilter() {
+	ImageFilter::ImageFilter(not_null<Image*> image): 
+        _image(image)
+    {
 
 	}
 
-	ImageFilter::~ImageFilter() {
-
-	}
-
-	void ImageFilter::filter(
-		Image* image,
-		Filter filter)
+	void ImageFilter::filter(Filter filter)
 	{
+        // Пока что фильтры необратимы)
+        if (filter == Filter::None)
+            return;
+
+        _image->data_ptr()->filter = filter;
+
         switch (filter) {
             case Filter::BradleyThreshold:
-                return BradleyThreshold(image);
+                return BradleyThreshold();
        }
 	}
 
-	void ImageFilter::BradleyThreshold(Image* image)
+	void ImageFilter::BradleyThreshold()
     {
         static const float bradleyT = 0.15;
 
-        const auto width = image->width();
-        const auto height = image->height();
+        const auto width = _image->width();
+        const auto height = _image->height();
 
-        const auto imageChannelsCount = image->channels();
-        const auto src = image->data_ptr()->data;
+        const auto imageChannelsCount = _image->channels();
+        const auto src = _image->data_ptr()->data;
 
         const auto Index = [=](int32 i, int32 j, int32 color) {
             return (i * width + j) * imageChannelsCount + color;

@@ -73,9 +73,6 @@ set(PRIVATE_SOURCES
     src/images/ImagesImage.cpp
     src/images/ImagesUtility.cpp
 
-    src/images/ImagesIntegralHelpers.cpp
-    src/images/ImagesIntegralHelpers.h
-
     src/images/formats/PngHandler.cpp
     src/images/formats/JpegHandler.cpp
     src/images/formats/BmpHandler.cpp

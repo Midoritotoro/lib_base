@@ -5,7 +5,6 @@
 #include <qDebug>
 
 #include <base/Platform.h>
-#include <src/images/ImagesIntegralHelpers.h>
 
 #include <QImageReader>
 #include <QImageWriter>
@@ -27,13 +26,13 @@ namespace base::images {
 
        qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
 
-       {
+      /* {
             measureExecutionTime("IntegralImage: ")
             BradleyThreshold(
                 image.data_ptr()->data, image.data_ptr()->data,
                 image.data_ptr()->width, image.data_ptr()->height,
                 image.depth() / 8);
-        }
+        }*/
 
         {
             measureExecutionTime("Image::save: ")
