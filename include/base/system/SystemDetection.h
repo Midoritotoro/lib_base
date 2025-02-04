@@ -1,6 +1,16 @@
 #pragma once
 
-#if defined(__CYGWIN__)
+#if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
+#  define OS_APPLE
+#  if defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#    define OS_DARWIN
+#    define OS_BSD4
+#    if defined(OS_IPHONE) && TARGET_OS_IPHONE
+#    else
+#      define OS_MAC
+#    endif
+#  endif
+#elif defined(__CYGWIN__)
 #  define OS_CYGWIN
 #elif !defined(SAG_COM) && (!defined(WINAPI_FAMILY) || WINAPI_FAMILY==WINAPI_FAMILY_DESKTOP_APP) && (defined(WIN64) || defined(_WIN64) || defined(__WIN64__))
 #  define OS_WIN32
@@ -20,7 +30,6 @@
 #if defined(OS_WIN32) || defined(OS_WIN64)
 #  define OS_WINDOWS
 #  define OS_WIN
-#  define QT_NO_DATA_RELOCATION
 #endif
 
 #if defined(OS_WIN)

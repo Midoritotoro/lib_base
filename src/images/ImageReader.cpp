@@ -34,73 +34,6 @@
 #endif
 
 
-#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-
-extern "C" __declspec(dllimport) int __stdcall MultiByteToWideChar(
-	unsigned int cp, unsigned long flags,
-	const char* str, int cbmb, wchar_t* widestr, int cchwide);
-
-extern "C" __declspec(dllimport) int __stdcall WideCharToMultiByte(
-	unsigned int cp, unsigned long flags, const wchar_t* widestr, 
-	int cchwide, char* str, int cbmb, const char* defchar, int* used_default);
-
-#endif
-
-#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-
-	int ConvertWCharToUnicode(
-		char* buffer, 
-		size_t bufferlen,
-		const wchar_t* input)
-	{
-		return WideCharToMultiByte(
-			65001 /* UTF8 */, 0, input, -1,
-			buffer, (int)bufferlen, NULL, NULL);
-	}
-
-	int ConvertUnicodeToWChar(
-		wchar_t* buffer,
-		size_t bufferlen,
-		const char* input)
-	{
-		return MultiByteToWideChar(
-			65001 /* UTF8 */, 0, input, -1,
-			buffer, (int)bufferlen);
-	}
-
-
-#endif
-
-
-static FILE* readerFileOpen(
-	char const* filename,
-	char const* mode)
-{
-	FILE* f = nullptr;
-#if defined(_WIN32) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-	wchar_t wMode[64];
-	wchar_t wFilename[1024];
-	if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), filename) == 0)
-		return nullptr;
-
-	if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
-		return nullptr;
-
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-	if (0 != _wfopen_s(&f, wFilename, wMode))
-		f = 0;
-#else
-	f = _wfopen(wFilename, wMode);
-#endif
-
-#elif defined(_MSC_VER) && _MSC_VER >= 1400
-	if (0 != fopen_s(&f, filename, mode))
-		f = 0;
-#else
-	f = fopen(filename, mode);
-#endif
-	return f;
-}
 
 namespace base::images {
 	struct FormatHelper {
@@ -119,26 +52,26 @@ namespace base::images {
 		//! В случае, если не удается определелить формат, изображение повреждено или формат не поддерживается, nullptr
 		[[nodiscard]] FormatHelper* createFormatHandler(ImageData* data);
 
-	#ifndef LIB_BASE_IMAGES_NO_GIF
+#ifndef LIB_BASE_IMAGES_NO_GIF
 		[[nodiscard]] bool checkGifHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
-			// 
-	#endif
+		// 
+#endif
 
-	#ifndef LIB_BASE_IMAGES_NO_PNG
+#ifndef LIB_BASE_IMAGES_NO_PNG
 		[[nodiscard]] bool checkPngHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
-	#endif
+#endif
 
-	#ifndef LIB_BASE_IMAGES_NO_JPEG
+#ifndef LIB_BASE_IMAGES_NO_JPEG
 		[[nodiscard]] bool checkJpegHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
-	#endif
+#endif
 
-	#ifndef LIB_BASE_IMAGES_NO_BMP
+#ifndef LIB_BASE_IMAGES_NO_BMP
 		[[nodiscard]] bool checkBmpHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
-	#endif
+#endif
 
-	#ifndef LIB_BASE_IMAGES_NO_ICO
+#ifndef LIB_BASE_IMAGES_NO_ICO
 
-	#endif
+#endif
 
 		void ReadImage(ImageData* data);
 
@@ -170,33 +103,77 @@ namespace base::images {
 #endif
 
 	FormatHelper* ImageReaderPrivate::createFormatHandler(ImageData* data) {
-		FormatHelper* helper = new FormatHelper();
+		//FormatHelper* helper = new FormatHelper();
 
-		FILE* file = readerFileOpen(data->path.value(), "rb");
-		ImagesAssert(file != nullptr, 
-			"base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл. Проверьте корректность пути. ", nullptr);
+		//FILE* file = readerFileOpen(data->path.value(), "rb");
+		//ImagesAssert(file != nullptr,
+		//	"base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл. Проверьте корректность пути. ", nullptr);
 
-		helper->imageFile = file;
-		helper->handler = new PngHandler();
-		/*uchar header[8];
-		int readed = fread(header, 1, 8, file);
+		//helper->imageFile = file;
+		//uchar header[8];
+		//int readed = fread(header, 1, 8, file);
 
-		fseek(file, SEEK_SET, SEEK_CUR);
+		//fseek(file, SEEK_SET, SEEK_CUR);
 
-		if (checkPngHeader(header))
-			helper->handler = new PngHandler();
+		//if (checkPngHeader(header))
+		//	helper->handler = new PngHandler();
 
-		else if (checkBmpHeader(header))
-			helper->handler = new BmpHandler();
+		//else if (checkBmpHeader(header))
+		//	helper->handler = new BmpHandler();
 
-		else if (checkJpegHeader(header))
-			helper->handler = new JpegHandler();*/
+		//else if (checkJpegHeader(header))
+		//	helper->handler = new JpegHandler();
 
-		ImagesAssert(helper->handler != nullptr, 
-			"base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
+		//ImagesAssert(helper->handler != nullptr,
+		//	"base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
 
-		return helper;
+		//return helper;
+		return nullptr;
 	}
+
+	//static int get8(uchar* s) {
+	//	return *s++;
+	//}
+
+	//static int get16le(uchar* s)
+	//{
+	//	int z = get8(s);
+	//	return z + (get8(s) << 8);
+	//}
+
+	//static uint32 get32le(uchar* s)
+	//{
+	//	uint32 z = get16le(s);
+	//	z += (uint32)get16le(s) << 16;
+	//	return z;
+	//}
+
+	//static int bmp_test_raw(uchar* s)
+	//{
+	//	int r;
+	//	int sz;
+
+	//	if (get8(s) != 'B') 
+	//		return 0;
+
+	//	if (get8(s) != 'M')
+	//		return 0;
+
+	//	get32le(s); // discard filesize
+	//	get16le(s); // discard reserved
+	//	get16le(s); // discard reserved
+	//	get32le(s); // discard data offset
+
+	//	sz = get32le(s);
+	//	r = (sz == 12 || sz == 40 || sz == 56 || sz == 108 || sz == 124);
+	//	return r;
+	//}
+
+	//static int bmp_test(stbi__context* s)
+	//{
+	//	int r = bmp_test_raw(s);
+	//	return r;
+	//}
 
 
 	void ImageReaderPrivate::ReadImage(ImageData* data)

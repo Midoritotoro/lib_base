@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <base/Platform.h>
+#include <base/system/Platform.h>
 #include <base/Time.h>
 
 #if defined(OS_WIN) && defined(_MSC_VER) && !defined(__GNUC__) && !defined(__clang__)

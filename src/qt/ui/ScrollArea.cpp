@@ -11,7 +11,7 @@
 #include <base/qt/style/StyleWidgets.h>
 #include <base/qt/style/StyleScale.h>
 
-#include "base/Windows.h"
+#include <base/system/Windows.h>
 #include <QWindow>
 
 #include <qpa/qplatformnativeinterface.h>

@@ -1,9 +1,7 @@
 #pragma once
 
-#include <base/SystemDetection.h>
-#include <base/CompilerDetection.h>
-
-#include <qsimd.h>
+#include <base/system/SystemDetection.h>
+#include <base/system/CompilerDetection.h>
 
 
 #define LIB_BASE_ENABLE(feature) (1/LIB_BASE_ENABLE_##feature == 1)

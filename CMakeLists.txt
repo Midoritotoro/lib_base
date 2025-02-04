@@ -79,6 +79,9 @@ set(PRIVATE_SOURCES
 
     src/images/filters/ImageFilter.cpp
     src/images/ImageReader.cpp
+
+    src/system/SystemInfo.cpp
+    src/system/File.cpp
 )
 
 
@@ -92,11 +95,11 @@ set(PUBLIC_HEADERS
     include/base/Flags.h
     include/base/Time.h
 
-    include/base/Platform.h
+    include/base/system/Platform.h
     include/base/OverflowCheck.h
 
-    include/base/Windows.h
-    include/base/ProcessorDetection.h
+    include/base/system/Windows.h
+    include/base/system/ProcessorDetection.h
 
     include/base/concurrent/common/CommonConfig.h
     include/base/concurrent/common/CommonGuards.h
@@ -152,12 +155,15 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesUtility.h
 
     include/base/Types.h
-    include/base/SimdHelpers.h
+    include/base/system/SimdHelpers.h
 
     include/base/images/ImagesImage.h
 
-    include/base/SystemDetection.h
-    include/base/CompilerDetection.h
+    include/base/system/SystemDetection.h
+    include/base/system/CompilerDetection.h
+
+    include/base/system/File.h
+    include/base/system/SystemInfo.h
 )
 
 

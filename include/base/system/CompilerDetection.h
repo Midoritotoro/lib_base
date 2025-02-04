@@ -1,7 +1,7 @@
 #pragma once
 
-#include <base/ProcessorDetection.h>
-#include <base/SystemDetection.h>
+#include <base/system/ProcessorDetection.h>
+#include <base/system/SystemDetection.h>
 
 #if defined(_MSC_VER)
 #  define CPP_MSVC (_MSC_VER)

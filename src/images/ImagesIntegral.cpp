@@ -4,7 +4,7 @@
 #include <private/qimage_p.h>
 #include <qDebug>
 
-#include <base/Platform.h>
+#include <base/system/Platform.h>
 
 #include <QImageReader>
 #include <QImageWriter>
@@ -17,7 +17,7 @@ namespace base::images {
         const char* in = "C:\\Users\\danya\\Downloads\\img_.png";
         
 
-        QImage image;
+        Image image;
         {
             measureExecutionTime("Image::loadFromFile: ")
             image.load(in);

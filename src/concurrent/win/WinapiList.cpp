@@ -2,7 +2,7 @@
 
 #ifdef USE_WINAPI_LIST
 
-#include <base/Windows.h>
+#include <base/system/Windows.h>
 #include <base/concurrent/win/WinapiDll.h>
 
 namespace base::concurrent::details {
