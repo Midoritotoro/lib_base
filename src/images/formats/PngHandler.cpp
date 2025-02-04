@@ -12,8 +12,6 @@ namespace base::images {
 		ImageData* data,
 		const char* path)
 	{
-		Assert(!png_sig_cmp(data->data, 0, 8));
-
 		int32 success = 0;
 		std::string outputImageFormat = Utility::GetExtensionFromPath(path);
 
@@ -31,7 +29,24 @@ namespace base::images {
 		ImageData* data,
 		const char* path)
 	{
+		png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL,
+			NULL);
+		AssertLog(png_ptr != nullptr, "base::images::PngHandler::read: Невозможно прочитать изображение, переполнение памяти ");
 
+		png_infop info_ptr = png_create_info_struct(png_ptr);
+		if (!info_ptr) {
+			png_destroy_read_struct(&png_ptr, NULL, NULL);
+			AssertLog(false, "base::images::PngHandler::read: Невозможно прочитать изображение, переполнение памяти ");
+		}
+
+		if (png_jmpbuf(png_ptr)) {
+			png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+			return;
+		}
+	
+		png_init_io(png_ptr, infile);
+		png_set_sig_bytes(png_ptr, 8);
+		png_read_info(png_ptr, info_ptr);
 	}
 
 	void PngHandler::convertToFormat(

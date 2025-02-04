@@ -2,7 +2,6 @@
 
 #include <base/images/Images.h>
 
-
 namespace base::images {
 	class Image;
 	class ImageReaderPrivate;

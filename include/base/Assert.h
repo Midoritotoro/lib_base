@@ -30,8 +30,11 @@ static inline constexpr [[nodiscard]]
 	}
 
 #define ReturnOnFailure(message, file, line, retval) \
-	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line); \
-	return retval
+	do { \
+		printf("Error: %s in File \"%s\", Line: %d\n", message, file, line); \
+		return retval; \
+	} \
+		while (0)
 	
 
 #define AssertValidationCondition(condition, message, file, line)\
@@ -39,11 +42,9 @@ static inline constexpr [[nodiscard]]
 		? fail(message, file, line)\
 		: void(0))
 
-
 #define AssertValidationConditionWithRet(condition, message, file, line, retval)\
-	((unlikely(!(condition)))\
-		? ReturnOnFailure(message, file, line, retval)\
-		: void(0))
+	if ((unlikely(!(condition)))) \
+		ReturnOnFailure(message, file, line, retval)
 
 #define SOURCE_FILE_BASENAME (extract_basename(\
 	__FILE__,\
@@ -55,13 +56,13 @@ static inline constexpr [[nodiscard]]
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
 
-#define AssertReturn(condition, message, return_value) \
-    AssertValidationConditionWithRet(\
+// Возвращает return_value в случае ошибки вместо вызова std::abort
+#define AssertReturn(condition, message, return_value) AssertValidationConditionWithRet(\
 	condition,\
 	message,\
 	SOURCE_FILE_BASENAME,\
 	__LINE__, \
-	return_value))
+	return_value)
 
 
 #define Assert(condition) AssertLog(condition, "\"" #condition "\"")

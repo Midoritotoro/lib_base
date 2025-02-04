@@ -10,6 +10,8 @@
 #include <base/OverflowCheck.h>
 #include <base/Assert.h>
 
+// Отключает все внутренние исключения
+// #define LIB_BASE_IMAGES_NO_FAILURE
 
 #ifdef LIB_BASE_ENABLE_QT
 	#include <QImage>
