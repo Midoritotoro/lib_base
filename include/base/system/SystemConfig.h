@@ -38,13 +38,16 @@ namespace base::system {
 } // namespace base::system
 
 
+#if defined(OS_MAC) || defined(OS_LINUX)
+    #include <unistd.h>
+    #include <fcntl.h> // Для fcntl
+#elif defined(OS_WIN)
+    #include <io.h> // Для _get_osfhandle
+#endif
+
+#include <limits>  // Для PATH_MAX
+
 #if defined(OS_WIN)
-    #include <base/system/Windows.h>
-
-    #if defined(CPP_MSVC)
-        #include <sal.h>
-    #endif
-
     #ifndef UNICODE
         #define UNICODE
     #endif
@@ -53,7 +56,15 @@ namespace base::system {
         #define _UNICODE
     #endif
 
-    #define LIB_BASE_ENABLE_WINDOWS_UNICODE
+    #include <base/system/Windows.h>
+
+    #if defined(CPP_MSVC)
+        #include <sal.h>
+    #endif
+
+    #if defined(UNICODE) || defined(_UNICODE)
+        #define LIB_BASE_ENABLE_WINDOWS_UNICODE
+    #endif
 #endif
 
 // Игнор SAL в случае компилятора, отличного от MSVC
@@ -186,21 +197,10 @@ typedef int64_t tick_t;
 #endif
 
 
-
-#if defined(OS_MAC) || defined(OS_LINUX)
-	#include <unistd.h>
-	#include <fcntl.h> // Для fcntl
-#elif defined(OS_WIN)
-	#include <Windows.h>
-	#include <io.h> // Для _get_osfhandle
-#endif
-
-#include <limits>  // Для PATH_MAX
-
 #ifdef LIB_BASE_SYSTEM_NO_FAILURE
-#define SystemAssert						AssertReturn
+    #define SystemAssert						AssertReturn
 #else
-#define SystemAssert(cond, mes, retval)		AssertLog(cond, mes)
+    #define SystemAssert(cond, mes, retval)		AssertLog(cond, mes)
 #endif
 
 

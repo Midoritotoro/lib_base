@@ -88,6 +88,8 @@ set(PRIVATE_SOURCES
 
     src/system/SystemTools.cpp
     src/io/Compressor.cpp
+
+    src/system/WindowsSmartHandle.cpp
 )
 
 
@@ -178,6 +180,7 @@ set(PUBLIC_HEADERS
     include/base/system/File.h
     include/base/system/SystemInfo.h
 
+    include/base/system/WindowsSmartHandle.h
     include/base/io/Compressor.h
 )
 

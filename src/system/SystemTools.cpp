@@ -32,59 +32,7 @@ namespace base::system::utility {
 
 	#endif
 
-	std::string AbsolutePathFromDescriptor(FILE* descriptor) {
-		static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
-		SystemAssert(descriptor != nullptr, err, "");
 
-		int fd = _fileno(descriptor);
-		SystemAssert(fd != -1, err, "");
-
-#if defined(OS_WIN)
-		HANDLE handle = (HANDLE)_get_osfhandle(fd); // Получаем HANDLE
-		SystemAssert(handle != INVALID_HANDLE_VALUE, err, "");
-
-		std::vector<wchar_t> buffer(MAX_PATH);
-		DWORD length = GetFinalPathNameByHandleW(
-			handle, buffer.data(), MAX_PATH,
-			FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
-
-		SystemAssert(length != 0, err, "");
-
-		if (length > MAX_PATH) {
-			buffer.resize(length);
-			length = GetFinalPathNameByHandleW(handle, buffer.data(), length, FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
-
-			SystemAssert(length != 0, err, "");
-		}
-
-		std::wstring wpath(buffer.data());
-
-		SystemAssert(!wpath.empty(), err, "");
-
-		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wpath[0], (int)wpath.size(), NULL, 0, NULL, NULL);
-		std::string path(size_needed, 0);
-
-		WideCharToMultiByte(CP_UTF8, 0, &wpath[0], (int)wpath.size(), &path[0], size_needed, NULL, NULL);
-
-		return path;
-#elif defined(OS_MAC) || defined(OS_LINUX)
-		char path[PATH_MAX];
-#if defined(OS_MAC)
-		SystemAssert(fcntl(fd, F_GETPATH, path) != -1, err, "");
-#else
-		char proc_path[64];
-		snprintf(proc_path, sizeof(proc_path), "/proc/self/fd/%d", fd);
-
-		ssize_t len = readlink(proc_path, path, sizeof(path) - 1);
-		SystemAssert(len != -1, err, "");
-
-		path[len] = '\0';
-#endif
-
-		return std::string(path);
-#endif
-		return "";
-	}
 
 	std::vector<std::string> GetAllProcesses() {
 		std::vector<std::string> processes;

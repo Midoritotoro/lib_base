@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <base/system/Platform.h>
+#include <base/BaseExport.h>
 #include <type_traits>
 
 

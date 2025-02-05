@@ -17,6 +17,5 @@ namespace base::system::utility {
 			const char* input);
 	#endif
 
-	[[nodiscard]] std::string AbsolutePathFromDescriptor(FILE* descriptor);
 	std::vector<std::string> GetAllProcesses();
 } // namespace base::system::utility
