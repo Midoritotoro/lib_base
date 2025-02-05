@@ -1,35 +1,27 @@
 #pragma once 
 
-#include <base/Types.h>
-#include <string>
+#include <base/system/Platform.h>
+#include <vector>
 
 
 namespace base::system {
 	class AbstractFileEngine {
 	public:
-		AbstractFileEngine();
+		virtual ~AbstractFileEngine() = 0;
 
-		AbstractFileEngine(const char* path);
-		AbstractFileEngine(const std::string& path);
+		virtual void setFileName(const std::string& path) = 0;
+		virtual void setFileDescriptor(not_null<FILE*> file) = 0;
 
-		AbstractFileEngine(not_null<FILE*> file);
-
-		~AbstractFileEngine();
-
-		static [[nodiscard]] bool exists(const char* path);
-		static [[nodiscard]] bool exists(const std::string& path);
-
-		static [[nodiscard]] std::vector<std::string>
-			find(
-				const char* path,
-				const FileFilter& filter);
-
-		static [[nodiscard]] std::vector<std::string>
+		virtual [[nodiscard]] bool exists(const std::string& path) = 0;
+		virtual [[nodiscard]] std::vector<std::string>
 			find(
 				const std::string& path,
-				const FileFilter& filter);
-	private:
-		FILE* _desc = nullptr;
-		
-	}
+				const FileFilter& filter,
+				bool recurse = true) = 0;
+
+		virtual [[nodiscard]] FILE* fileDescriptor() const noexcept = 0;
+		virtual [[nodiscard]] std::string path() const noexcept = 0;
+
+		virtual [[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) = 0;
+	};
 } // namespace base::system

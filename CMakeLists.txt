@@ -83,7 +83,11 @@ set(PRIVATE_SOURCES
     src/system/SystemInfo.cpp
     src/system/File.cpp
 
+    src/system/WindowsFileEngine.cpp
+    src/system/UnixFileEngine.cpp
+
     src/system/SystemTools.cpp
+    src/io/Compressor.cpp
 )
 
 
@@ -168,8 +172,13 @@ set(PUBLIC_HEADERS
     include/base/system/SystemDetection.h
     include/base/system/CompilerDetection.h
 
+    include/base/system/WindowsFileEngine.h
+    include/base/system/UnixFileEngine.h
+
     include/base/system/File.h
     include/base/system/SystemInfo.h
+
+    include/base/io/Compressor.h
 )
 
 

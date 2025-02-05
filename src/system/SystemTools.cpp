@@ -32,36 +32,6 @@ namespace base::system::utility {
 
 	#endif
 
-	static FILE* FileOpen(
-		char const* filename,
-		char const* mode)
-	{
-		FILE* f = nullptr;
-#if defined(_WIN32) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-		wchar_t wMode[64];
-		wchar_t wFilename[1024];
-		if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), filename) == 0)
-			return nullptr;
-
-		if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
-			return nullptr;
-
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-		if (0 != _wfopen_s(&f, wFilename, wMode))
-			f = 0;
-#else
-		f = _wfopen(wFilename, wMode);
-#endif
-
-#elif defined(_MSC_VER) && _MSC_VER >= 1400
-		if (0 != fopen_s(&f, filename, mode))
-			f = 0;
-#else
-		f = fopen(filename, mode);
-#endif
-		return f;
-	}
-
 	std::string AbsolutePathFromDescriptor(FILE* descriptor) {
 		static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
 		SystemAssert(descriptor != nullptr, err, "");

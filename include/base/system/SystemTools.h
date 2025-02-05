@@ -17,10 +17,6 @@ namespace base::system::utility {
 			const char* input);
 	#endif
 
-	[[nodiscard]] FILE* FileOpen(
-		char const* filename,
-		char const* mode);
-
 	[[nodiscard]] std::string AbsolutePathFromDescriptor(FILE* descriptor);
 	std::vector<std::string> GetAllProcesses();
 } // namespace base::system::utility
