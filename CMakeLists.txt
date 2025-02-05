@@ -82,6 +82,8 @@ set(PRIVATE_SOURCES
 
     src/system/SystemInfo.cpp
     src/system/File.cpp
+
+    src/system/SystemTools.cpp
 )
 
 
@@ -91,6 +93,8 @@ set(PUBLIC_HEADERS
 
     include/base/Utility.h
     include/base/Concurrent.h
+
+    include/base/system/SystemConfig.h
 
     include/base/Flags.h
     include/base/Time.h
@@ -127,6 +131,8 @@ set(PUBLIC_HEADERS
 
     include/base/BaseExport.h
     include/base/TypeWrapper.h
+
+    include/base/system/SystemTools.h
 
     include/base/TypeTraits.h
     include/base/images/ImagesBlur.h

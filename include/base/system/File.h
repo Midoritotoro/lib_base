@@ -22,8 +22,13 @@ namespace base::system {
 			,
 			// Так как в cstdlib fopen() флаг "b" игнорируется в системах POSIX,
 			// то и использовать его там смысла нет. В Windows флаг "b" отключает обработку '\n' и '\x1A'.
-			Binary = 0x100
+			Binary = 0x80 // "b"
 #endif
+		};
+
+		enum Position : uchar {
+			FileBegin = 0x01,
+			FileEnd = 0x02
 		};
 
 		DECLARE_FLAGS(Formats, Format);
@@ -45,7 +50,6 @@ namespace base::system {
 		static [[nodiscard]] bool exists(const char* path);
 		static [[nodiscard]] bool exists(const std::string& path);
 
-
 		//!
 		//! \brief
 		//! Ищет файл по пути path. В случае с установленным параметром recurse = true,
@@ -56,22 +60,46 @@ namespace base::system {
 		static [[nodiscard]] std::vector<std::string>
 			find(
 				const char* path,
-				const FileFilter& filter);
+				const FileFilter& filter,
+				bool recurse = true);
 
 		static [[nodiscard]] std::vector<std::string>
 			find(
 				const std::string& path,
-				const FileFilter& filter);
+				const FileFilter& filter,
+				bool recurse = true);
 		
 		[[nodiscard]] bool close();
 
 		[[nodiscard]] bool open(
 			const std::string& path,
-			Formats format = Format::Read);
+			Formats format);
 		[[nodiscard]] bool open(
 			const char* path,
-			Formats format = Format::Read);
+			Formats format);
 
+		
+		[[nodiscard]] bool open(
+			const std::string& path,
+			const char* format);
+		[[nodiscard]] bool open(
+			const char* path,
+			const char* format);
+
+		[[nodiscard]] bool rename(const std::string newFileName);
+		static [[nodiscard]] bool rename(
+			const std::string& oldFileName, 
+			const std::string newFileName);
+
+		//!
+		//! \brief
+		//! Перемещает указатель файла на заданную позицию
+		[[nodiscard]] bool rewind(sizetype position);
+		[[nodiscard]] bool rewind(Position position);
+
+		[[nodiscard]] void remove();
+		[[nodiscard]] void remove(const std::string& path);
+			
 		//! \brief Читает sizeInBytes байт в outBuffer.
 		//!
 		//! Если sizeInBytes больше размера outBuffer и определен макрос

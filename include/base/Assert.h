@@ -3,8 +3,8 @@
 #include <base/system/Platform.h>
 #include <base/Utility.h>
 
-#include <cstdio>
 #include <cstdlib>
+
 
 static inline void fail(
 	const char* message,
@@ -13,7 +13,8 @@ static inline void fail(
 {
 	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line);
 
-	// Crash with access violation and generate crash report.
+	// Сбой из-за нарушения прав доступа и создание отчета о сбое.
+
 	volatile auto nullptr_value = (int*)nullptr;
 	*nullptr_value = 0;
 
@@ -27,6 +28,7 @@ static inline constexpr [[nodiscard]]
 	{
 		while (size != 0 && path[size - 1] != '/' && path[size - 1] != '\\')
 			--size;
+
 		return path + size;
 	}
 
@@ -67,6 +69,7 @@ static inline constexpr [[nodiscard]]
 
 
 #define Assert(condition) AssertLog(condition, "\"" stringify(condition) "\"")
+#define AssertUnreachable() assert(!"unreachable", unreachable())
 
 
 #define StaticAssert(cond) static_assert(bool(cond), stringify(cond))
