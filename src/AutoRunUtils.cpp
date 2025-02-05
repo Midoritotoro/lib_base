@@ -1,6 +1,6 @@
 ﻿#include <base/Utility.h>
 
-#ifdef _WIN32
+#if defined(OS_WIN)
 
 #include <PathCch.h>
 #include <tchar.h>
@@ -29,7 +29,9 @@ namespace base {
             dwlConditionMask) != FALSE;
     }
 
-    bool SetAutoRunKey(LPWSTR path, LPWSTR key)
+    bool SetAutoRunKey(
+        const std::wstring& path, 
+        const std::wstring& key)
     {
         LPCWSTR lpSubKey = TEXT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
         LONG result = 0;
@@ -45,7 +47,7 @@ namespace base {
             RegCloseKey(hKey);
             return FALSE;
         }
-        result = RegSetValueEx(hKey, key, 0, REG_SZ, (PBYTE)(path), ((LPBYTE)(path), (lstrlen(path) * sizeof(TCHAR) + 1)));
+        result = RegSetValueEx(hKey, &key[0], 0, REG_SZ, (PBYTE)(&path[0]), ((LPBYTE)(&path[0]), (lstrlen(&path[0]) * sizeof(TCHAR) + 1)));
         if (result != ERROR_SUCCESS){
             RegCloseKey(hKey);
             return FALSE;
@@ -53,22 +55,6 @@ namespace base {
         RegCloseKey(hKey);
         return TRUE;
     }
-
-    bool addToAutoRun(LPWSTR key)
-    {
-        TCHAR szExeName[MAX_PATH];
-        TCHAR fileName[23] = L"\\TelegramQuickView.exe";
-
-        rsize_t stringSize = MAX_PATH;
-        GetModuleFileName(NULL, szExeName, stringSize);
-
-        if (FAILED(PathCchRemoveFileSpec(szExeName, stringSize)))
-            return FALSE;
-
-        _tcscat_s(szExeName, stringSize, fileName);
-        return SetAutoRunKey(szExeName, key);
-    }
-
 } // namespace base
 
-#endif // _WIN32
+#endif // OS_WIN

@@ -260,13 +260,13 @@ namespace base {
 
 		return Distribution<T>::type(from, to)(generator);
 	}
-#ifdef _WIN32
+#if defined(OS_WIN)
 	[[nodiscard]] bool IsWindowsGreaterThen(int version);
-	[[nodiscard]] bool SetAutoRunKey(LPWSTR path, LPWSTR key);
+	[[nodiscard]] bool SetAutoRunKey(
+		const std::wstring& path, 
+		const std::wstring& key);
 
 	#define MINIMUM_WINDOWS_VERSION NTDDI_WIN10
 	#define IS_MINIMUM_WINDOWS_VERSION IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
-
-	[[nodiscard]] bool addToAutoRun(LPWSTR key);
-#endif // _WIN32
+#endif // OS_WIN
 } // namespace base

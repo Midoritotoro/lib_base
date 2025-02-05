@@ -39,15 +39,12 @@ namespace base::system {
 		};
 
 		File();
-
-		File(const char* path);
 		File(const std::string& path);
 
 		File(not_null<FILE*> file);
 
 		~File();
 
-		static [[nodiscard]] bool exists(const char* path);
 		static [[nodiscard]] bool exists(const std::string& path);
 
 		//!
@@ -57,12 +54,6 @@ namespace base::system {
 		//! \param path - Путь к каталогу для поиска
 		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
 		//! \return Возвращает вектор из путей к найденным файлам 
-		static [[nodiscard]] std::vector<std::string>
-			find(
-				const char* path,
-				const FileFilter& filter,
-				bool recurse = true);
-
 		static [[nodiscard]] std::vector<std::string>
 			find(
 				const std::string& path,
@@ -75,21 +66,13 @@ namespace base::system {
 			const std::string& path,
 			Formats format);
 		[[nodiscard]] bool open(
-			const char* path,
-			Formats format);
-
-		
-		[[nodiscard]] bool open(
 			const std::string& path,
 			const char* format);
-		[[nodiscard]] bool open(
-			const char* path,
-			const char* format);
 
-		[[nodiscard]] bool rename(const std::string newFileName);
+		[[nodiscard]] bool rename(const std::string& newFileName);
 		static [[nodiscard]] bool rename(
 			const std::string& oldFileName, 
-			const std::string newFileName);
+			const std::string& newFileName);
 
 		//!
 		//! \brief

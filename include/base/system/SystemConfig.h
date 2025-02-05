@@ -166,11 +166,7 @@ typedef int64_t tick_t;
 #ifdef LIB_BASE_SYSTEM_NO_FAILURE
 #define SystemAssert						AssertReturn
 #else
-#define SystemAssert(cond, mes, retval)		(AssertValidationCondition(\
-		cond,\
-		mes,\
-		SOURCE_FILE_BASENAME,\
-		__LINE__))
+#define SystemAssert(cond, mes, retval)		AssertLog(cond, mes)
 #endif
 
 
