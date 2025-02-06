@@ -90,6 +90,7 @@ set(PRIVATE_SOURCES
     src/io/Compressor.cpp
 
     src/system/WindowsSmartHandle.cpp
+    src/system/FileSystemPath.cpp
 )
 
 
@@ -182,6 +183,11 @@ set(PUBLIC_HEADERS
 
     include/base/system/WindowsSmartHandle.h
     include/base/io/Compressor.h
+
+    include/base/system/FileSystemPath.h
+
+    include/base/system/SystemString.h
+    include/base/system/SystemStaticCodeAnalysis.h
 )
 
 

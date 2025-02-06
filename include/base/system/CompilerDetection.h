@@ -41,7 +41,7 @@
 #      elif __apple_build_version__ >= 11000033 // Xcode 11.0
 #        define CPP_CLANG 800
 #      else
-#        error "Unsupported Apple Clang version"
+#        error ""
 #      endif
 #    else
 
@@ -105,7 +105,7 @@
 #endif
 
 #ifdef __cplusplus
-# if __has_include(<version>) /* remove this check once Integrity, QNX have caught up */
+# if __has_include(<version>)
 #  include <version>
 # endif
 # endif
@@ -142,7 +142,7 @@
 #  define WARNING_DISABLE_DEPRECATED         WARNING_DISABLE_GCC("-Wdeprecated-declarations")
 #  define WARNING_DISABLE_FLOAT_COMPARE      WARNING_DISABLE_GCC("-Wfloat-equal")
 #  define WARNING_DISABLE_INVALID_OFFSETOF   WARNING_DISABLE_GCC("-Winvalid-offsetof")
-#else       // All other compilers, GCC < 4.6 and MSVC < 2008
+#else       // Все остальные компиляторы, GCC < 4.6 и MSVC < 2008
 #  define WARNING_DISABLE_GCC(text)
 #  define WARNING_PUSH
 #  define WARNING_POP
@@ -185,16 +185,16 @@
 #endif
 #if defined(NO_WARNINGS)
 #  if defined(CPP_MSVC)
-WARNING_DISABLE_MSVC(4251) /* class 'type' needs to have dll-interface to be used by clients of class 'type2' */
-WARNING_DISABLE_MSVC(4244) /* conversion from 'type1' to 'type2', possible loss of data */
-WARNING_DISABLE_MSVC(4275) /* non - DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier' */
-WARNING_DISABLE_MSVC(4514) /* unreferenced inline function has been removed */
-WARNING_DISABLE_MSVC(4800) /* 'type' : forcing value to bool 'true' or 'false' (performance warning) */
-WARNING_DISABLE_MSVC(4097) /* typedef-name 'identifier1' used as synonym for class-name 'identifier2' */
-WARNING_DISABLE_MSVC(4706) /* assignment within conditional expression */
-WARNING_DISABLE_MSVC(4355) /* 'this' : used in base member initializer list */
-WARNING_DISABLE_MSVC(4710) /* function not inlined */
-WARNING_DISABLE_MSVC(4530) /* C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc */
+WARNING_DISABLE_MSVC(4251) /* класс 'type' должен иметь dll-интерфейс, который будет использоваться клиентами класса 'type2' */
+WARNING_DISABLE_MSVC(4244) /* преобразование из 'type1' в 'type2', возможная потеря данных */
+WARNING_DISABLE_MSVC(4275) /* идентификатор ключа класса, отличного от DLL-интерфейса, используемый в качестве базового для идентификатора ключа класса DLL-интерфейса */
+WARNING_DISABLE_MSVC(4514) /* удалена встроенная функция, на которую нет ссылок */
+WARNING_DISABLE_MSVC(4800) /* 'type' : принудительное присвоение значения bool 'true' или 'false' (предупреждение о производительности) */
+WARNING_DISABLE_MSVC(4097) /* typedef-имя 'identifier1' используется как синоним имени класса 'identifier2' */
+WARNING_DISABLE_MSVC(4706) /* присвоение в условном выражении */
+WARNING_DISABLE_MSVC(4355) /* 'this' : используется в списке инициализаторов базовых элементов */
+WARNING_DISABLE_MSVC(4710) /* функция не встроена */
+WARNING_DISABLE_MSVC(4530) /* Используется обработчик исключений C++, но семантика размотки не включена. Укажите /EHsc */
 WARNING_DISABLE_MSVC(4006) 
 #  elif defined(CPP_BOR)
 #    pragma option -w-inl

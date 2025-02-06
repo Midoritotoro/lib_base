@@ -13,14 +13,22 @@ namespace base::system {
 		virtual void setFileDescriptor(not_null<FILE*> file) = 0;
 
 		virtual [[nodiscard]] bool exists(const std::string& path) = 0;
-		virtual [[nodiscard]] std::vector<std::string>
-			find(
-				const std::string& path,
-				const FileFilter& filter,
-				bool recurse = true) = 0;
+
+		virtual void find(
+			const base_string& path,
+			const FileFilter& filter,
+			std::vector<base_string>& output,
+			bool recurse = true) = 0;
+
+		virtual void find(
+			const FileFilter& filter,
+			std::vector<base_string>& output,
+			bool recurse = true);
 
 		virtual [[nodiscard]] FILE* fileDescriptor() const noexcept = 0;
 		virtual [[nodiscard]] std::string path() const noexcept = 0;
+
+		virtual [[nodiscard]] bool isOpened() const noexcept;
 
 		virtual [[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) = 0;
 	};

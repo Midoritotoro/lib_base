@@ -4,7 +4,9 @@
 #include <base/Assert.h>
 
 #include <base/Flags.h>
-#include <string>
+
+#include <base/system/SystemStaticCodeAnalysis.h>
+#include <base/system/SystemString.h>
 
 
 namespace base::system {
@@ -32,10 +34,11 @@ namespace base::system {
     DECLARE_FLAGS(FilePositions, FilePosition);
 
     struct FileFilter {
-        ::std::string nameContains = "";
+        base_string nameContains;
         sizetype minimumSize = 0;
     };
 } // namespace base::system
+
 
 
 #if defined(OS_MAC) || defined(OS_LINUX)
@@ -47,83 +50,6 @@ namespace base::system {
 
 #include <limits>  // Для PATH_MAX
 
-#if defined(OS_WIN)
-    #ifndef UNICODE
-        #define UNICODE
-    #endif
-
-    #ifndef _UNICODE
-        #define _UNICODE
-    #endif
-
-    #include <base/system/Windows.h>
-
-    #if defined(CPP_MSVC)
-        #include <sal.h>
-    #endif
-
-    #if defined(UNICODE) || defined(_UNICODE)
-        #define LIB_BASE_ENABLE_WINDOWS_UNICODE
-    #endif
-#endif
-
-// Игнор SAL в случае компилятора, отличного от MSVC
-#if defined(OS_WIN) && defined(CPP_MSVC)
-    #ifndef _SAL2_In_reads_bytes_
-        #define _SAL2_In_reads_bytes_		        _In_reads_bytes_
-    #endif
-
-    #ifndef _SAL2_Out_writes_bytes_
-        #define _SAL2_Out_writes_bytes_		        _Out_writes_bytes_
-    #endif
-
-    #ifndef _SAL2_In_NLS_string_
-        #define _SAL2_In_NLS_string_                _In_NLS_string_
-    #endif
-
-    #ifndef _SAL2_Out_writes_to_opt_ 
-        #define _SAL2_Out_writes_to_opt_            _Out_writes_to_opt_
-    #endif
-
-    #ifndef _SAL2_Out_writes_bytes_to_opt_
-        #define _SAL2_Out_writes_bytes_to_opt_      _Out_writes_bytes_to_opt_
-    #endif
-
-    #ifndef _SAL2_In
-        #define _SAL2_In_					        _In_
-    #endif
-
-    #ifndef _SAL2_In_opt_
-        #define _SAL2_In_opt_                       _In_opt_
-    #endif
-
-    #ifndef _SAL2_Out
-        #define _SAL2_Out_					        _Out_
-    #endif
-    
-    #ifndef _SAL2_Out_opt_
-        #define _SAL2_Out_opt_                      _Out_opt_
-    #endif      
-
-    #ifndef _SAL2_In_z
-        #define _SAL2_In_z_					        _In_z_
-    #endif
-#else
-    #define _SAL2_In_reads_bytes_(size)		
-    #define _SAL2_Out_writes_bytes_(size)	
-
-    #define _SAL2_In_NLS_string_(size)
-    #define _SAL2_Out_writes_to_opt_(size, count)
-
-    #define _SAL2_Out_writes_bytes_to_opt_(size, count)
-
-    #define _SAL2_In_						
-    #define _SAL2_Out_		
-
-    #define _SAL2_Out_opt_
-    #define _SAL2_In_opt_
-    #define _SAL2_In_z_						
-#endif
 
 
 #if defined(OS_WIN)
@@ -203,25 +129,3 @@ typedef int64_t tick_t;
     #define SystemAssert(cond, mes, retval)		AssertLog(cond, mes)
 #endif
 
-
-#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-    extern "C" __declspec(dllimport) int __stdcall 
-        MultiByteToWideChar(
-            _SAL2_In_ unsigned int CodePage,
-            _SAL2_In_ unsigned long dwFlags,
-            _SAL2_In_NLS_string_(cbMultiByte) const char* lpMultiByteStr,
-            _SAL2_In_ int cbMultiByte,
-            _SAL2_Out_writes_to_opt_(cchWideChar, return) wchar_t* lpWideCharStr,
-            _SAL2_In_ int cchWideChar);
-
-	extern "C" __declspec(dllimport) int __stdcall 
-        WideCharToMultiByte(
-            _SAL2_In_ unsigned int CodePage,
-            _SAL2_In_ unsigned long dwFlags,
-            _SAL2_In_NLS_string_(cchWideChar) const wchar_t* lpWideCharStr,
-            _SAL2_In_ int cchWideChar,
-            _SAL2_Out_writes_bytes_to_opt_(cbMultiByte, return) char* lpMultiByteStr,
-            _SAL2_In_ int cbMultiByte,
-            _SAL2_In_opt_ const char* lpDefaultChar,
-            _SAL2_Out_opt_ int* lpUsedDefaultChar);
-#endif

@@ -8,59 +8,6 @@
 	#include <base/system/UnixFileEngine.h>
 #endif
 
-//
-//void findFilesInAllDisks(
-//	WCHAR* fileExtension, 
-//	std::vector<std::wstring>& filesWithExtension, 
-//	BOOL enableSystemDirectories) 
-//{
-//    DWORD i = 0;
-//    DWORD dwDisksMask = GetLogicalDrives();
-//
-//    for (i = 0; i < 26; i++) {
-//        if (dwDisksMask & i)
-//            FindFiles(static_cast<WCHAR>(
-//                towupper(97 + i)) + std::wstring(L":"),
-//                fileExtension, filesWithExtension);
-//        dwDisksMask >>= 1;
-//    }
-//}
-//
-//void FindFiles(
-//	const std::wstring& directory, 
-//	WCHAR* fileExtension, 
-//	std::vector<std::wstring>& filesWithExtension) 
-//{
-//    WIN32_FIND_DATA findFileData;
-//
-//    std::wstring szPath = directory + std::wstring(L"\\*");
-//    HANDLE hFind = FindFirstFile(szPath.c_str(), &findFileData);
-//
-//    WCHAR pathToWindowsDirectory[MAX_PATH];
-//    GetWindowsDirectory(pathToWindowsDirectory, MAX_PATH);
-//
-//    if (hFind != INVALID_HANDLE_VALUE) {
-//        std::vector<std::wstring> directories;
-//        do {
-//            if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-//                if (wcsstr(findFileData.cFileName, fileExtension) != 0)
-//                    filesWithExtension.push_back(findFileData.cFileName);
-//            }
-//            if ((!lstrcmpW(findFileData.cFileName, L".")) || (!lstrcmpW(findFileData.cFileName, L"..")))
-//                continue;
-//
-//            szPath = directory + L"\\" + std::wstring(findFileData.cFileName);
-//            if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY && (!wcsstr(szPath.c_str(), pathToWindowsDirectory)))
-//                directories.push_back(szPath);
-//
-//        } while (FindNextFile(hFind, &findFileData) != 0);
-//
-//        FindClose(hFind);
-//        for (std::vector<std::wstring>::iterator iter = directories.begin(), end = directories.end(); iter != end; ++iter)
-//			FindFiles(*iter, fileExtension, filesWithExtension, false);
-//    }
-//}
-
 
 static FILE* fileOpenHelper(
 	char const* filename,
@@ -70,10 +17,10 @@ static FILE* fileOpenHelper(
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
 	wchar_t wMode[64];
 	wchar_t wFilename[1024];
-	if (base::system::utility::ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), filename) == 0)
+	if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), filename) == 0)
 		return nullptr;
 
-	if (base::system::utility::ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
+	if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
 		return nullptr;
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -110,25 +57,28 @@ static [[nodiscard]] base::system::AbstractFileEngine*
 	#endif
 }
 
-static [[nodiscard]] base::system::AbstractFileEngine* CreateFileEngine(not_null<FILE*> file) {
-#if defined(OS_WIN)
-	return new base::system::WindowsFileEngine(file);
-#elif defined(OS_LINUX) || defined(OS_MAC)
-	return new base::system::UnixFileEngine(file);
-#endif
-}
-
-static [[nodiscard]] base::system::AbstractFileEngine* CreateFileEngine(
-	const std::string& path,
-	not_null<FILE*> file) 
+static [[nodiscard]] base::system::AbstractFileEngine* 
+	CreateFileEngine(not_null<FILE*> file)
 {
-#if defined(OS_WIN)
-	return new base::system::WindowsFileEngine(file);
-#elif defined(OS_LINUX) || defined(OS_MAC)
-	return new base::system::UnixFileEngine(file);
-#endif
+	#if defined(OS_WIN)
+		return new base::system::WindowsFileEngine(file);
+	#elif defined(OS_LINUX) || defined(OS_MAC)
+		return new base::system::UnixFileEngine(file);
+	#endif
 }
 
+static [[nodiscard]] base::system::AbstractFileEngine* 
+	CreateFileEngine(
+		const std::string& path,
+		not_null<FILE*> file,
+		bool tryToExtractPathFromDescriptor)
+{
+	#if defined(OS_WIN)
+		return new base::system::WindowsFileEngine(file);
+	#elif defined(OS_LINUX) || defined(OS_MAC)
+		return new base::system::UnixFileEngine(file);
+	#endif
+}
 
 
 namespace base::system {
@@ -136,10 +86,14 @@ namespace base::system {
 	{}
 
 	File::File(const std::string& path) :
-		_path(path)
+		_engine(CreateFileEngine(path))
 	{}
 
-	File::File(not_null<FILE*> file):
+	File::File(
+		not_null<FILE*> file,
+		bool tryToExtractPathFromDescriptor
+	):
+		_engine()
 		_desc(file),
 		_path(utility::AbsolutePathFromDescriptor(file))
 	{}

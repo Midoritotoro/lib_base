@@ -27,11 +27,11 @@ namespace base::system {
 			[[nodiscard]] std::string path() const noexcept override;
 
 			[[nodiscard]] bool exists(const std::string& path) override;
-			[[nodiscard]] void find(
-					const std::string& path,
-					const FileFilter& filter,
-					std::vector<std::string>& output,
-					bool recurse = true) override;
+			void find(
+				const base_string& path,
+				const FileFilter& filter,
+				std::vector<base_string>& output,
+				bool recurse = true) override;
 
 			[[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) override;
 		private:

@@ -36,6 +36,12 @@ namespace base::system {
 				const std::string& path,
 				const FileFilter& filter,
 				bool recurse = true);
+
+
+		static void find(
+			const FileFilter& filter,
+			std::vector<base_string>& output,
+			bool recurse = true);
 		
 		[[nodiscard]] bool close();
 

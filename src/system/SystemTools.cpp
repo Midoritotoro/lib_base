@@ -8,32 +8,6 @@
 #endif
 
 namespace base::system::utility {
-	#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-
-		int ConvertWCharToUnicode(
-			char* buffer,
-			size_t bufferlen,
-			const wchar_t* input)
-		{
-			return WideCharToMultiByte(
-				CP_UTF8, 0, input, -1,
-				buffer, (int)bufferlen, NULL, NULL);
-		}
-
-		int ConvertUnicodeToWChar(
-			wchar_t* buffer,
-			size_t bufferlen,
-			const char* input)
-		{
-			return MultiByteToWideChar(
-				CP_UTF8, 0, input, -1,
-				buffer, (int)bufferlen);
-		}
-
-	#endif
-
-
-
 	std::vector<std::string> GetAllProcesses() {
 		std::vector<std::string> processes;
 #if defined (OS_WIN)

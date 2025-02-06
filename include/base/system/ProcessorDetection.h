@@ -1,6 +1,6 @@
 #pragma once
 
-/* Machine byte-order, reuse preprocessor provided macros when available */
+
 #if defined(__ORDER_BIG_ENDIAN__)
 #  define BIG_ENDIAN __ORDER_BIG_ENDIAN__
 #else
@@ -12,21 +12,9 @@
 #  define LITTLE_ENDIAN 1234
 #endif
 
-/*
-    Alpha family, no revisions or variants
-
-    Alpha is bi-endian, use endianness auto-detection implemented below.
-*/
 #if defined(__alpha__) || defined(_M_ALPHA)
 #  define PROCESSOR_ALPHA
-// BYTE_ORDER not defined, use endianness auto-detection
 
-/*
-    ARM family, known revisions: V5, V6, V7, V8
-
-    ARM is bi-endian, detect using __ARMEL__ or __ARMEB__, falling back to
-    auto-detection implemented below.
-*/
 #elif defined(__arm__) || defined(__TARGET_ARCH_ARM) || defined(_M_ARM) || defined(_M_ARM64) || defined(__aarch64__) || defined(__ARM64__)
 #  if defined(__aarch64__) || defined(__ARM64__) || defined(_M_ARM64)
 #    define PROCESSOR_ARM_64
@@ -87,55 +75,18 @@
 #  elif defined(__ARMEB__)
 #    define BYTE_ORDER BIG_ENDIAN
 #  else
-// BYTE_ORDER not defined, use endianness auto-detection
+
 #endif
 
-/*
-    AVR32 family, no revisions or variants
-
-    AVR32 is big-endian.
-*/
-// #elif defined(__avr32__)
-// #  define PROCESSOR_AVR32
-// #  define BYTE_ORDER BIG_ENDIAN
-
-/*
-    Blackfin family, no revisions or variants
-
-    Blackfin is little-endian.
-*/
-// #elif defined(__bfin__)
-// #  define PROCESSOR_BLACKFIN
-// #  define BYTE_ORDER LITTLE_ENDIAN
-
-/*
-    PA-RISC family, no revisions or variants
-
-    PA-RISC is big-endian.
-*/
 #elif defined(__hppa__)
 #  define PROCESSOR_HPPA
 #  define BYTE_ORDER BIG_ENDIAN
 
-/*
-    X86 family, known variants: 32- and 64-bit
-
-    X86 is little-endian.
-*/
 #elif defined(__i386) || defined(__i386__) || defined(_M_IX86)
 #  define PROCESSOR_X86_32
 #  define BYTE_ORDER LITTLE_ENDIAN
 #  define PROCESSOR_WORDSIZE   4
 
-/*
- * Define PROCESSOR_X86 == 6 for anything above a equivalent or better
- * than a Pentium Pro (the processor whose architecture was called P6) or an
- * Athlon.
- *
- * All processors since the Pentium III and the Athlon 4 have SSE support, so
- * use that to detect. That leaves the original Athlon, Pentium Pro and
- * Pentium II.
- */
 
 #  if defined(_M_IX86)
 #    define PROCESSOR_X86     (_M_IX86/100)
@@ -155,21 +106,10 @@
 #  define BYTE_ORDER LITTLE_ENDIAN
 #  define PROCESSOR_WORDSIZE   8
 
-/*
-    Itanium (IA-64) family, no revisions or variants
-
-    Itanium is bi-endian, use endianness auto-detection implemented below.
-*/
 #elif defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
 #  define PROCESSOR_IA64
 #  define PROCESSOR_WORDSIZE   8
-// BYTE_ORDER not defined, use endianness auto-detection
 
-/*
-    LoongArch family, known variants: 32- and 64-bit
-
-    LoongArch is little-endian.
-*/
 #elif defined(__loongarch__)
 #  define PROCESSOR_LOONGARCH
 #  if __loongarch_grlen == 64
@@ -179,20 +119,11 @@
 #  endif
 #  define BYTE_ORDER LITTLE_ENDIAN
 
-/*
-    Motorola 68000 family, no revisions or variants
 
-    M68K is big-endian.
-*/
 #elif defined(__m68k__)
 #  define PROCESSOR_M68K
 #  define BYTE_ORDER BIG_ENDIAN
 
-/*
-    MIPS family, known revisions: I, II, III, IV, 32, 64
-
-    MIPS is bi-endian, use endianness auto-detection implemented below.
-*/
 #elif defined(__mips) || defined(__mips__) || defined(_M_MRX000)
 #  define PROCESSOR_MIPS
 #  if defined(_MIPS_ARCH_MIPS1) || (defined(__mips) && __mips - 0 >= 1)
@@ -222,18 +153,11 @@
 #  elif defined(__MIPSEB__)
 #    define BYTE_ORDER BIG_ENDIAN
 #  else
-// BYTE_ORDER not defined, use endianness auto-detection
+
+// BYTE_ORDER не определен, использование автоматическое определение последовательности байт
 #  endif
 
-/*
-    Power family, known variants: 32- and 64-bit
 
-    There are many more known variants/revisions that we do not handle/detect.
-    See http://en.wikipedia.org/wiki/Power_Architecture
-    and http://en.wikipedia.org/wiki/File:PowerISA-evolution.svg
-
-    Power is bi-endian, use endianness auto-detection implemented below.
-*/
 #elif defined(__ppc__) || defined(__ppc) || defined(__powerpc__) \
       || defined(_ARCH_COM) || defined(_ARCH_PWR) || defined(_ARCH_PPC)  \
       || defined(_M_MPPC) || defined(_M_PPC)
@@ -244,13 +168,15 @@
 #  else
 #    define PROCESSOR_POWER_32
 #  endif
-// BYTE_ORDER not defined, use endianness auto-detection
+
+// BYTE_ORDER не определен, использование автоматическое определение последовательности байт
 
 /*
-    RISC-V family, known variants: 32- and 64-bit
+ Семейство RISC-V, известные варианты: 32- и 64-разрядные
 
-    RISC-V is little-endian.
+ В RISC-V порядок следования ограничен.
 */
+
 #elif defined(__riscv)
 #  define PROCESSOR_RISCV
 #  if __riscv_xlen == 64
@@ -261,10 +187,11 @@
 #  define BYTE_ORDER LITTLE_ENDIAN
 
 /*
-    S390 family, known variant: S390X (64-bit)
+Семейство S390, известный вариант: S390X (64-разрядный)
 
-    S390 is big-endian.
+ В S390 используется big-endian.
 */
+
 #elif defined(__s390__)
 #  define PROCESSOR_S390
 #  if defined(__s390x__)
@@ -273,23 +200,24 @@
 #  define BYTE_ORDER BIG_ENDIAN
 
 /*
-    SuperH family, optional revision: SH-4A
+ Семейство SuperH, необязательная редакция: SH-4A
 
-    SuperH is bi-endian, use endianness auto-detection implemented below.
+ SuperH имеет двоичный порядок следования, используйте автоматическое определение последовательности, реализованное ниже.
 */
 // #elif defined(__sh__)
 // #  define PROCESSOR_SH
 // #  if defined(__sh4a__)
 // #    define PROCESSOR_SH_4A
 // #  endif
-// BYTE_ORDER not defined, use endianness auto-detection
+// Если не определен BYTE_ORDER, используйте автоматическое определение последовательности
 
 /*
-    SPARC family, optional revision: V9
+ Семейство SPARC, необязательная редакция: V9
 
-    SPARC is big-endian only prior to V9, while V9 is bi-endian with big-endian
-    as the default byte order. Assume all SPARC systems are big-endian.
+ SPARC имеет двоичный порядок байтов только до версии 9, в то время как версия 9 имеет двоичный порядок байтов с
+двоичным порядком байтов по умолчанию. Предположим, что все системы SPARC имеют двоичный порядок байтов.
 */
+
 #elif defined(__sparc__)
 #  define PROCESSOR_SPARC
 #  if defined(__sparc_v9__) || defined(__sparcv9)
@@ -306,25 +234,28 @@
 #  define BYTE_ORDER LITTLE_ENDIAN
 #  define PROCESSOR_WORDSIZE 8
 #ifdef COMPILER_SUPPORTS_SSE2
-#  define PROCESSOR_X86 6   // enables SIMD support
+#  define PROCESSOR_X86 6   // Включает поддержку SIMD
 # define PROCESSOR_X86_64 // wasm64
 #  define PROCESSOR_WASM_64
 #endif
 
 #endif
 
+
 /*
-  NOTE:
-  GCC 4.6 added __BYTE_ORDER__, __ORDER_BIG_ENDIAN__, __ORDER_LITTLE_ENDIAN__
-  and __ORDER_PDP_ENDIAN__ in SVN r165881. If you are using GCC 4.6 or newer,
-  this code will properly detect your target byte order; if you are not, and
-  the __LITTLE_ENDIAN__ or __BIG_ENDIAN__ macros are not defined, then this
-  code will fail to detect the target byte order.
+ПРИМЕЧАНИЕ:
+    GCC 4.6 добавил в SVN r165881 __BYTE_ORDER__, __ORDER_BIG_ENDIAN__, _ORDER_LITTLE_ENDIAN__
+    и __ORDER_PDP_ENDIAN__. Если вы используете GCC 4.6 или новее,
+    этот код правильно определит ваш целевой порядок байтов; если это не так, и
+    макросы __LITTLE_ENDIAN__ или __BIG_ENDIAN__ не определены, то этот
+    код не сможет определить целевой порядок байтов.
 */
-// Some processors support either endian format, try to detect which we are using.
+// Некоторые процессоры поддерживают любой из следующих форматов, попробуйте определить, какой из них мы используем.
+
+
 #if !defined(BYTE_ORDER)
 #  if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == BIG_ENDIAN || __BYTE_ORDER__ == LITTLE_ENDIAN)
-// Reuse __BYTE_ORDER__ as-is, since our *_ENDIAN #defines match the preprocessor defaults
+// Повторно использовать __BYTE_ORDER__  как есть, поскольку определения *_ENDIAN соответствуют настройкам препроцессора по умолчанию
 #    define BYTE_ORDER __BYTE_ORDER__
 #  elif defined(__BIG_ENDIAN__) || defined(_big_endian__) || defined(_BIG_ENDIAN)
 #    define BYTE_ORDER BIG_ENDIAN
@@ -336,15 +267,15 @@
 #endif
 
 /*
-   Size of a pointer and the machine register size. We detect a 64-bit system by:
-   * GCC and compatible compilers (Clang, ICC on OS X and Windows) always define
-     __SIZEOF_POINTER__. This catches all known cases of ILP32 builds on 64-bit
-     processors.
-   * Most other Unix compilers define __LP64__ or _LP64 on 64-bit mode
-     (Long and Pointer 64-bit)
-   * If PROCESSOR_WORDSIZE was defined above, it's assumed to match the pointer
-     size.
-   Otherwise, we assume to be 32-bit and then check in qglobal.cpp that it is right.
+ Размер указателя и размер машинного регистра. Мы определяем 64-разрядную систему с помощью:
+ * GCC и совместимые компиляторы (Clang, ICC в OS X и Windows) всегда определяют
+ __SIZEOF_POINTER__. Это позволяет отслеживать все известные случаи сборки ILP32 на 64-разрядных
+процессорах.
+ * Большинство других Unix-компиляторов определяют __LP64__ или _LP64 в 64-разрядном режиме
+ (64-разрядный Long и указатель)
+ * Если PROCESSOR_WORDSIZE было определено выше, предполагается, чтобы соответствовать стрелке
+ размер.
+ В противном случае, мы будем считать 32-разрядную, а затем проверить в qglobal.cpp что это правильно.
 */
 
 #if defined __SIZEOF_POINTER__
@@ -358,13 +289,12 @@
 #endif
 
 /*
-   Define PROCESSOR_WORDSIZE to be the size of the machine's word (usually,
-   the size of the register). On some architectures where a pointer could be
-   smaller than the register, the macro is defined above.
+ Определите PROCESSOR_WORDSIZE как размер машинного слова (обычно
+это размер регистра). В некоторых архитектурах, где указатель может быть
+меньше регистра, макрос определен выше.
 
-   Falls back to POINTER_SIZE if not set explicitly for the platform.
+ Возвращается к значению POINTER_SIZE, если оно явно не задано для платформы.
 */
 #ifndef PROCESSOR_WORDSIZE
 #  define PROCESSOR_WORDSIZE        POINTER_SIZE
 #endif
-

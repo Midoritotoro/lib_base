@@ -18,7 +18,7 @@ namespace base::system {
 		not_null<FILE*> file,
 		bool tryToExtractPathFromDescriptor)
 	{
-
+		
 	}
 
 	WindowsFileEngine::WindowsFileEngine(
@@ -54,45 +54,50 @@ namespace base::system {
 	}
 
 	void WindowsFileEngine::find(
-		const std::string& path,
+		const base_string& path,
 		const FileFilter& filter,
-		std::vector<std::string>& output,
+		std::vector<base_string>& output,
 		bool recurse)
 	{
+		const auto filterNames	= (filter.nameContains.empty() == false);
+		const auto filterSize	= (filter.minimumSize > 0);
+
 		WIN32_FIND_DATA findFileData;
+		base_string szPath = path + ConvertString("\\*");
 
-		std::string szPath = path + std::string("\\*");
+		WindowsSmartHandle hFind = FindFirstFile(szPath.c_str(), &findFileData);
+		base_string pathToWindowsDirectory(MAX_PATH, 0);
 
-		HANDLE hFind = FindFirstFile(szPath.c_str(), &findFileData);
-		WCHAR pathToWindowsDirectory[MAX_PATH];
-		GetWindowsDirectory(pathToWindowsDirectory, MAX_PATH);
+		GetWindowsDirectory(&pathToWindowsDirectory[0], MAX_PATH);
 
 		if (hFind != INVALID_HANDLE_VALUE) {
-			std::vector<std::string> directories;
+			std::vector<base_string> directories;
+
 			do {
-				if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-					if (wcsstr(findFileData.cFileName, fileExtension) != 0)
-						output.push_back(findFileData.cFileName);
-				}
+				if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == false 
+					&& filterNames 
+					&& base_strstr(findFileData.cFileName,
+						filter.nameContains.c_str()) != 0)
+					output.push_back(findFileData.cFileName);
+				
 				if ((!lstrcmpW(findFileData.cFileName, L".")) || (!lstrcmpW(findFileData.cFileName, L"..")))
 					continue;
-				
-				const size_t strSize = ARRAY_SIZE(findFileData.cFileName);
-				std::string cFileName(strSize, 0);
 
-				utility::ConvertWCharToUnicode(&cFileName[0], strSize, findFileData.cFileName);
-				szPath = path + L"\\" + std::string(cFileName);
-				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY && (!wcsstr(szPath.c_str(), pathToWindowsDirectory)))
+				szPath = path + ConvertString("\\") + findFileData.cFileName;
+
+				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
+					&& (!base_strstr(
+						szPath.c_str(), pathToWindowsDirectory.c_str())))
 					directories.push_back(szPath);
 
 			} while (FindNextFile(hFind, &findFileData) != 0);
 
 			FindClose(hFind);
-			for (std::vector<std::wstring>::iterator iter = directories.begin(), end = directories.end(); iter != end; ++iter)
-				find(*iter, filter, output, recurse);
+
+			for (int i = 0; i < directories.size(); ++i)
+				find(directories[i], filter, output, recurse);
 		}
 	}
-
 
 	std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
 		static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
@@ -105,7 +110,7 @@ namespace base::system {
 		SystemAssert(handle != INVALID_HANDLE_VALUE, err, "");
 
 		std::vector<wchar_t> buffer(MAX_PATH);
-		DWORD length = GetFinalPathNameByHandleW(
+		DWORD length = GetFinalPathNameByHandle(
 			handle, buffer.data(), MAX_PATH,
 			FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
@@ -113,7 +118,7 @@ namespace base::system {
 
 		if (length > MAX_PATH) {
 			buffer.resize(length);
-			length = GetFinalPathNameByHandleW(
+			length = GetFinalPathNameByHandle(
 				handle, buffer.data(), length, 
 				FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
