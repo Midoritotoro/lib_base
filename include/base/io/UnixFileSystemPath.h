@@ -17,7 +17,12 @@ namespace base::io {
 		static [[nodiscard]] std::pair<std::string, std::string>
 			split(const std::string& path);
 
+		//!
+		//! \return ¬озвращает начальную (directoryName) часть пути, равную split(path).first
 		static [[nodiscard]] std::string directoryName(const std::string& path);
+
+		//!
+		//! \return ¬озвращает конечную (baseName) часть пути, равную split(path).second
 		static [[nodiscard]] std::string baseName(const std::string& path);
 	};
 } // namespace base::io

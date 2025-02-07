@@ -1,6 +1,5 @@
 #pragma once 
 
-
 #include <base/system/Platform.h>
 #include <base/Flags.h>
 

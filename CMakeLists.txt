@@ -90,7 +90,6 @@ set(PRIVATE_SOURCES
     src/io/Compressor.cpp
 
     src/io/WindowsSmartHandle.cpp
-    src/io/FileSystemPath.cpp
 
     src/system/WindowsSystemInfo.cpp
     src/system/UnixSystemInfo.cpp

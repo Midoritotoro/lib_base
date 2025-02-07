@@ -4,40 +4,12 @@
 
 #if defined(OS_WIN)
 	#include <base/io/WindowsFileEngine.h>
+	/* using FileEngine = base::io::WindowsFileEngine; */
 #elif defined(OS_MAC) || defined(OS_LINUX)
 	#include <base/io/UnixFileEngine.h>
+	/* using FileEngine = base::io::UnixFileEngine; */
 #endif
 
-
-static FILE* fileOpenHelper(
-	char const* filename,
-	char const* mode)
-{
-	FILE* file = nullptr;
-#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-	wchar_t wMode[64];
-	wchar_t wFilename[1024];
-	if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), filename) == 0)
-		return nullptr;
-
-	if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
-		return nullptr;
-
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-	if (0 != _wfopen_s(&file, wFilename, wMode))
-		file = 0;
-#else
-	file = _wfopen(wFilename, wMode);
-#endif
-
-#elif defined(_MSC_VER) && _MSC_VER >= 1400
-	if (0 != fopen_s(&file, filename, mode))
-		file = 0;
-#else
-	file = fopen(filename, mode);
-#endif
-	return file;
-}
 
 static [[nodiscard]] base::io::AbstractFileEngine* CreateFileEngine() {
 	#if defined(OS_WIN)
@@ -115,7 +87,7 @@ namespace base::io {
 	}
 
 	bool File::exists(const std::string& path) {
-		return false;
+		return _engine->exists(path);
 	}
 
 	std::vector<std::string>

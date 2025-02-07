@@ -170,6 +170,9 @@ namespace base::io {
 	}
 
 	void WindowsFileEngine::close() {
+		if (_isOpened == false)
+			return;
+
 		_isOpened = false;
 
 		if (_desc != nullptr)
@@ -187,7 +190,33 @@ namespace base::io {
 		const std::string& path,
 		const char* mode)
 	{
+		const auto openAlreadyOpened = (path == _path && _isOpened == true);
+		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);
 
+		#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+			wchar_t wMode[64];
+			wchar_t wFilename[1024];
+			if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), path.c_str()) == 0)
+				return false;
+
+			if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
+				return false;
+
+		#if defined(_MSC_VER) && _MSC_VER >= 1400
+			if (0 != _wfopen_s(&_desc, wFilename, wMode))
+						_desc = 0;
+		#else
+			_desc = _wfopen(wFilename, wMode);
+		#endif
+
+		#elif defined(_MSC_VER) && _MSC_VER >= 1400
+			if (0 != fopen_s(&_desc, path.c_str(), mode))
+				_desc = 0;
+		#else
+			_desc = fopen(path.c_str(), mode);
+		#endif
+
+		return (_desc != nullptr);
 	}
 
 	bool WindowsFileEngine::rename(const std::string& newFileName) {
