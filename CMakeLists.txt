@@ -91,6 +91,12 @@ set(PRIVATE_SOURCES
 
     src/system/WindowsSmartHandle.cpp
     src/system/FileSystemPath.cpp
+
+    src/system/WindowsSystemInfo.cpp
+    src/system/UnixSystemInfo.cpp
+
+    src/system/UnixFileSystemPath.cpp
+    src/system/WindowsFileSystemPath.cpp
 )
 
 
@@ -188,6 +194,9 @@ set(PUBLIC_HEADERS
 
     include/base/system/SystemString.h
     include/base/system/SystemStaticCodeAnalysis.h
+
+    include/base/system/WindowsSystemInfo.h
+    include/base/system/UnixSystemInfo.h
 )
 
 
