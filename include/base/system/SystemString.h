@@ -1,4 +1,4 @@
-#pragma once 
+п»ї#pragma once 
 
 #include <base/system/SystemDetection.h>
 #include <base/system/CompilerDetection.h>
@@ -9,23 +9,23 @@
     #include <base/system/Windows.h>
     #include <winnt.h>
     
-    // При компиляции не на процессоре x86 включается UNICODE.
-    #if !defined(PROCESSOR_X86_32)
-        #ifndef UNICODE
-            #define UNICODE
-        #endif
+    //// РџСЂРё РєРѕРјРїРёР»СЏС†РёРё РЅРµ РЅР° РїСЂРѕС†РµСЃСЃРѕСЂРµ x86 РІРєР»СЋС‡Р°РµС‚СЃСЏ UNICODE.
+    //#if !defined(PROCESSOR_X86_32)
+    //    #ifndef UNICODE
+    //        #define UNICODE
+    //    #endif
 
-        #define LIB_BASE_ENABLE_WINDOWS_UNICODE
-        #include <corecrt_wstring.h>
-    #endif
-    
-    // При включении UNICODE, стоит также включить C-шные функции для работы с ним
-    #ifdef UNICODE
-        #define _UNICODE
-    #endif
+    //    #define LIB_BASE_ENABLE_WINDOWS_UNICODE
+    //    #include <corecrt_wstring.h>
+    //#endif
+    //
+    //// РџСЂРё РІРєР»СЋС‡РµРЅРёРё UNICODE, СЃС‚РѕРёС‚ С‚Р°РєР¶Рµ РІРєР»СЋС‡РёС‚СЊ C-С€РЅС‹Рµ С„СѓРЅРєС†РёРё РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РЅРёРј
+    //#ifdef UNICODE
+    //    #define _UNICODE
+    //#endif
 #endif
 
-// При включении UNICODE на Windows используется 16-битный Unicode
+// РџСЂРё РІРєР»СЋС‡РµРЅРёРё UNICODE РЅР° Windows РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ 16-Р±РёС‚РЅС‹Р№ Unicode
 // https://ru.wikipedia.org/wiki/UTF-16
 #if defined(OS_WIN)
     #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
@@ -46,8 +46,8 @@
 
 #define ENGLISH_ALPHABET_SIZE               26
 
-// Упрощение использования функций для работы со строками и уменьшение
-// количества проверок в коде
+// РЈРїСЂРѕС‰РµРЅРёРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С„СѓРЅРєС†РёР№ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРѕ СЃС‚СЂРѕРєР°РјРё Рё СѓРјРµРЅСЊС€РµРЅРёРµ
+// РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРѕРІРµСЂРѕРє РІ РєРѕРґРµ
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     #define base_strstr             wcsstr
     #define base_strcmp             wcscmp
@@ -111,21 +111,6 @@
 
 #if defined(OS_WIN)
     #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-        wchar_t* ConvertString(char* str) {
-            if (!str) 
-                return nullptr;
-
-            size_t len = strlen(str) + 1;
-            wchar_t* wstr = new wchar_t[len];
-
-            if (ConvertUnicodeToWChar(wstr, (int)len, str) == 0) {
-                delete[] wstr;
-                return nullptr;
-            }
-
-            return wstr;
-        }
-
         wchar_t* ConvertString(const char* str) {
             if (!str)
                 return nullptr;
@@ -160,37 +145,5 @@
         std::wstring ConvertString(const std::wstring& str) {
             return str;
         }
-    #else
-        char* ConvertString(wchar_t* wstr) {
-            if (!wstr) 
-                return nullptr;
-
-            size_t len = wcslen(wstr) + 1;
-            char* str = new char[len];
-
-            if (ConvertWCharToUnicode(str, (int)len, wstr) == 0) {
-                delete[] str;
-                return nullptr;
-            }
-
-            return str;
-        }
-
-        std::string ConvertString(const std::wstring& wstr) {
-            if (wstr.empty()) 
-                return "";
-
-            size_t len = wstr.length() + 1;
-            std::string str;
-
-            str.resize(len - 1);
-
-            if (ConvertWCharToUnicode(&str[0], (int)len, wstr.c_str()) == 0)
-                return "";
-        
-            str.resize(strlen(str.c_str()));
-            return str;
-        }
-
     #endif
 #endif

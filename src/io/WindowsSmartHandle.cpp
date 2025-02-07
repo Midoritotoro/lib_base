@@ -21,10 +21,12 @@ namespace base::io {
 
 	WindowsSmartHandle& WindowsSmartHandle::operator=(const WindowsSmartHandle& handle) {
 		_handle = handle._handle;
+		return *this;
 	}
 
 	WindowsSmartHandle& WindowsSmartHandle::operator=(HANDLE handle) {
 		_handle = handle;
+		return *this;
 	}
 
 	constexpr WindowsSmartHandle::operator HANDLE() {

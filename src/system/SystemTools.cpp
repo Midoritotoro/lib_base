@@ -9,7 +9,7 @@
 
 namespace base::system::utility {
 	std::vector<std::string> GetAllProcesses() {
-		std::vector<std::string> processes;
+		/*std::vector<std::string> processes;
 #if defined (OS_WIN)
 		HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
@@ -74,7 +74,8 @@ namespace base::system::utility {
 		closedir(proc_dir);
 #endif
 
-		return processes;
+		return processes;*/
+		return {};
 	}
 
 } // namespace base::system::utility

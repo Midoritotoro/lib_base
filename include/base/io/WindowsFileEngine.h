@@ -28,18 +28,18 @@ namespace base::io {
 			[[nodiscard]] FILE* fileDescriptor() const noexcept override;
 			[[nodiscard]] std::string path() const noexcept override;
 
-			[[nodiscard]] bool exists(const std::string& path) override;
+			static [[nodiscard]] bool exists(const std::string& path);
 
-			void find(
+			static void find(
 				const base_string& path,
 				std::vector<base_string>& output,
 				const FileFilter& filter = {},
-				bool recurse = true) override;
+				bool recurse = true);
 
-			void find(
+			static void find(
 				std::vector<base_string>& output,
 				const FileFilter& filter = {},
-				bool recurse = true) override;
+				bool recurse = true);
 
 			void close() override;
 
@@ -53,26 +53,24 @@ namespace base::io {
 				const char* mode) override;
 
 			[[nodiscard]] bool rename(const std::string& newFileName) override;
-			[[nodiscard]] bool rename(
+			static bool rename(
 				const std::string& oldFileName,
-				const std::string& newFileName) override;
+				const std::string& newFileName);
 
-			[[nodiscard]] bool rewind(sizetype position) override;
+			[[nodiscard]] bool rewind(int64 position) override;
 			[[nodiscard]] bool rewind(FilePositions position) override;
 
-			[[nodiscard]] void remove() override;
-			[[nodiscard]] void remove(const std::string& path) override;
+			void remove() override;
+			static void remove(const std::string& path);
 
 			[[nodiscard]] sizetype read(
 				_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 				_SAL2_In_ sizetype sizeInBytes) override;
 
-			[[nodiscard]] sizetype fileSize() const noexcept override;
+			static [[nodiscard]] sizetype fileSize(const std::string& path);
 		private:
 			FILE* _desc = nullptr;
 			std::string _path = "";
-
-			bool _isOpened = false;
 	};
 } // namespace base::io
 

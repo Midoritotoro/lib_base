@@ -18,7 +18,7 @@
 
 
 namespace base::qt::style {
-	enum class FontFlag : uchar {
+	enum FontFlag : uchar {
 		Bold = 0x01,
 		Italic = 0x02,
 		Underline = 0x04,

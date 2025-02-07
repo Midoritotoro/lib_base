@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include <base/system/SimdHelpers.h>
 #include <base/Assert.h>
@@ -36,8 +36,8 @@
 typedef int64_t msftime_t;
 typedef int64_t tick_t;
 
-#define MSFTIME_FROM_SEC(sec)       (INT64_C(10000000) * (sec))  /* Секунды в msftime_t */
-#define MSFTIME_FROM_MS(sec)        (INT64_C(10000) * (sec))     /* Миллисекунды в msftime_t */
+#define MSFTIME_FROM_SEC(sec)       (INT64_C(10000000) * (sec))  /* РЎРµРєСѓРЅРґС‹ РІ msftime_t */
+#define MSFTIME_FROM_MS(sec)        (INT64_C(10000) * (sec))     /* РњРёР»Р»РёСЃРµРєСѓРЅРґС‹ РІ msftime_t */
 
 #if (CLOCK_FREQ % 10000000) == 0
     #define TICK_FROM_MSFTIME(msft) ((msft) * (CLOCK_FREQ / INT64_C(10000000))

@@ -14,19 +14,6 @@ namespace base::io {
 		virtual void setFileName(const std::string& path) = 0;
 		virtual void setFileDescriptor(not_null<FILE*> file) = 0;
 
-		virtual [[nodiscard]] bool exists(const std::string& path) = 0;
-
-		virtual void find(
-			const base_string& path,
-			std::vector<base_string>& output,
-			const FileFilter& filter = {},
-			bool recurse = true) = 0;
-
-		virtual void find(
-			std::vector<base_string>& output,
-			const FileFilter& filter = {},
-			bool recurse = true) = 0;
-
 		virtual void close() = 0;
 
 		virtual [[nodiscard]] FILE* fileDescriptor() const noexcept = 0;
@@ -44,20 +31,14 @@ namespace base::io {
 			const char* mode) = 0;
 
 		virtual [[nodiscard]] bool rename(const std::string& newFileName) = 0;
-		virtual [[nodiscard]] bool rename(
-			const std::string& oldFileName,
-			const std::string& newFileName) = 0;
 
-		virtual [[nodiscard]] bool rewind(sizetype position) = 0;
+		virtual [[nodiscard]] bool rewind(int64 position) = 0;
 		virtual [[nodiscard]] bool rewind(FilePositions position) = 0;
 
-		virtual [[nodiscard]] void remove() = 0;
-		virtual [[nodiscard]] void remove(const std::string& path) = 0;
+		virtual void remove() = 0;
 
 		virtual [[nodiscard]] sizetype read(
 			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 			_SAL2_In_ sizetype sizeInBytes) = 0;
-
-		virtual sizetype fileSize() const noexcept = 0;
 	};
 } // namespace base::io

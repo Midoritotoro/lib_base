@@ -4,59 +4,11 @@
 
 #if defined(OS_WIN)
 	#include <base/io/WindowsFileEngine.h>
-	/* using FileEngine = base::io::WindowsFileEngine; */
+	using FileEngine = base::io::WindowsFileEngine;
 #elif defined(OS_MAC) || defined(OS_LINUX)
 	#include <base/io/UnixFileEngine.h>
-	/* using FileEngine = base::io::UnixFileEngine; */
+	using FileEngine = base::io::UnixFileEngine;
 #endif
-
-
-static [[nodiscard]] base::io::AbstractFileEngine* CreateFileEngine() {
-	#if defined(OS_WIN)
-		return new base::io::WindowsFileEngine();
-	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::system::UnixFileEngine();
-	#endif
-		return nullptr;
-}
-
-static [[nodiscard]] base::io::AbstractFileEngine*
-	CreateFileEngine(const std::string& path) 
-{
-	#if defined(OS_WIN)
-		return new base::io::WindowsFileEngine(path);
-	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::io::UnixFileEngine(path);
-	#endif
-		return nullptr;
-}
-
-static [[nodiscard]] base::io::AbstractFileEngine* 
-	CreateFileEngine(
-		not_null<FILE*> file,
-		bool tryToExtractPathFromDescriptor)
-{
-	#if defined(OS_WIN)
-		return new base::io::WindowsFileEngine(file, tryToExtractPathFromDescriptor);
-	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::io::UnixFileEngine(file, tryToExtractPathFromDescriptor);
-	#endif
-		return nullptr;
-}
-
-static [[nodiscard]] base::io::AbstractFileEngine* 
-	CreateFileEngine(
-		const std::string& path,
-		not_null<FILE*> file,
-		bool tryToExtractPathFromDescriptor)
-{
-	#if defined(OS_WIN)
-		return new base::io::WindowsFileEngine(file);
-	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::io::UnixFileEngine(file);
-	#endif
-		return nullptr;
-}
 
 
 namespace base::io {
@@ -64,21 +16,21 @@ namespace base::io {
 	{}
 
 	File::File(const std::string& path) :
-		_engine(CreateFileEngine(path))
+		_engine(new FileEngine(path))
 	{}
 
 	File::File(
 		not_null<FILE*> file,
 		bool tryToExtractPathFromDescriptor
 	):
-		_engine(CreateFileEngine(file, tryToExtractPathFromDescriptor))
+		_engine(new FileEngine(file, tryToExtractPathFromDescriptor))
 	{}
 
 	File::File(
 		not_null<FILE*> file,
 		const std::string& path
 	):
-		_engine(CreateFileEngine(path, file, false))
+		_engine(new FileEngine(file, path))
 	{}
 
 	File::~File() {
@@ -87,116 +39,73 @@ namespace base::io {
 	}
 
 	bool File::exists(const std::string& path) {
-		return _engine->exists(path);
+		return FileEngine::exists(path);
 	}
 
-	std::vector<std::string>
-		File::find(
-			const std::string& path,
-			const FileFilter& filter,
-			bool recurse)
+	void File::find(
+		const base_string& path,
+		std::vector<base_string>& output,
+		const FileFilter& filter,
+		bool recurse)
 	{
-		return {};
+		FileEngine::find(path, output, filter, recurse);
 	}
 
-	bool File::close() {
-	//	SystemAssert(_desc != nullptr, "base::system::File: Попытка закрыть дескриптор файла, равный nullptr", false);
-		return fclose(_desc) == 0;
+	void File::find(
+		std::vector<base_string>& output,
+		const FileFilter& filter,
+		bool recurse)
+	{
+		FileEngine::find(output, filter, recurse);
+	}
+
+	void File::close() {
+		_engine->close();
 	}
 
 	bool File::open(
 		const std::string& path,
 		FileOpenModes format)
 	{
-		std::string mode;
-
-		switch (format) {
-		[[likely]] case FileOpenMode::Read:
-			mode = "r";
-			break;
-		case FileOpenMode::Write:
-			mode = "w";
-			break;
-		case FileOpenMode::Append:
-			mode = "a";
-			break;
-		case FileOpenMode::ReadEx:
-			mode = "r+";
-			break;
-		case FileOpenMode::WriteEx:
-			mode = "r+";
-			break;
-		case FileOpenMode::AppendEx:
-			mode = "r+";
-			break;
-		default:
-			AssertUnreachable();
-		}
-
-		if (format & FileOpenMode::Binary)
-			if (mode.size() == 1)
-				mode.append("b");
-			else if (mode.size() == 2) {
-				mode[1] = 'b';
-				mode[2] = '+';
-			}
-
-		_desc = fileOpenHelper(path.c_str(), mode.c_str());
-//		SystemAssert(_desc != nullptr, "base::system::File::open: Не удалось открыть файл. Проверьте корректность пути", false);
-
-		return true;
+		return _engine->open(path, format);
 	}
 
 	bool File::open(
 		const std::string& path,
 		const char* format)
 	{
-		_desc = utility::FileOpen(path.c_str(), format);
-	//	SystemAssert(_desc != nullptr, "base::system::File::open: Не удалось открыть файл. Проверьте корректность пути", false);
-
-		return true;
+		return _engine->open(path, format);
 	}
 
 	bool File::rename(const std::string& newFileName) {
-		return false;
+		return _engine->rename(newFileName);
 	}
 
 	bool File::rename(
 		const std::string& oldFileName,
 		const std::string& newFileName)
 	{
-		return false;
+		return FileEngine::rename(oldFileName, newFileName);
 	}
 
-	bool File::rewind(sizetype position) {
-	//	SystemAssert(_desc != nullptr, "base::system::File::open: Не удалось открыть файл. Проверьте корректность пути", false);
-		return fseek(_desc, position, SEEK_CUR);
+	bool File::rewind(int64 position) {
+		return _engine->rewind(position);
 	}
 
 	bool File::rewind(FilePositions position) {
-		//SystemAssert(_desc != nullptr, "base::system::File::open: Не удалось открыть файл. Проверьте корректность пути", false);
-		int result = 0;
-
-		switch (position) {
-			case FilePosition::FileBegin:
-				result = fseek(_desc, SEEK_SET, SEEK_CUR);
-				break;
-			case FilePosition::FileEnd:
-				result = fseek(_desc, SEEK_END, SEEK_CUR);
-				break;
-			default:
-				AssertUnreachable();
-		}
-
-		return result == 0;
+		return _engine->rewind(position);
 	}
 
 	void File::remove() {
+		// Закрыть файл для того, чтобы не получить ERROR_ACCESS_DENIED
+		if (_engine->isOpened())
+			close();
 
+		_engine->remove();
 	}
 
 	void File::remove(const std::string& path) {
-
+		FileEngine::remove(path);
 	}
 
 	sizetype File::read(
@@ -207,6 +116,10 @@ namespace base::io {
 	}
 
 	sizetype File::fileSize() const noexcept {
-		return 0;
+		return FileEngine::fileSize(_engine->path());
+	}
+
+	sizetype File::fileSize(const std::string& path) {
+		return FileEngine::fileSize(path);
 	}
 } // namespace base::io

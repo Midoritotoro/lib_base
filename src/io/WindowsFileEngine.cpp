@@ -5,6 +5,66 @@
 #include <base/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
+#ifdef UNICODE
+#endif 
+#if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+	std::string GetErrorMessage(DWORD errorCode) {
+		LPWSTR messageBuffer = nullptr;
+		size_t size = FormatMessageW(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			errorCode,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPWSTR)&messageBuffer,
+			0,
+			NULL);
+
+		std::wstring messageW;
+		if (size > 0) {
+			messageW = std::wstring(messageBuffer, size);
+			LocalFree(messageBuffer);
+		}
+		else {
+			messageW = L"Error code No system message available";
+		}
+
+		if (messageW.empty()) 
+			return "";
+
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &messageW[0], (int)messageW.size(), NULL, 0, NULL, NULL);
+		std::string message(size_needed, 0);
+
+		WideCharToMultiByte(CP_UTF8, 0, &messageW[0], (int)messageW.size(), &message[0], size_needed, NULL, NULL);
+
+		return message;
+	}
+#else
+	std::string GetErrorMessage(DWORD errorCode) {
+		char* messageBuffer = nullptr;
+		size_t size = FormatMessageA(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			errorCode,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(char*)&messageBuffer,
+			0,
+			NULL);
+
+		std::string message;
+		if (size > 0) {
+			message = std::string(messageBuffer, size);
+			delete[] messageBuffer;
+		}
+		else {
+			message = "Error code No system message available";
+		}
+
+		if (message.empty())
+			return "";
+
+		return message;
+	}
+#endif
 
 namespace base::io {
 	WindowsFileEngine::WindowsFileEngine()
@@ -45,7 +105,9 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::isOpened() const noexcept {
-		return _isOpened;
+		// Так как fclose() удаляет объект FILE*, 
+		// то он открыт только в случае ненулевого значения указателя
+		return (_desc != nullptr);
 	}
 
 	FILE* WindowsFileEngine::fileDescriptor() const noexcept {
@@ -57,7 +119,7 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::exists(const std::string& path) {
-		DWORD dwAttrib = GetFileAttributes(ConvertString(path).c_str());
+		DWORD dwAttrib = GetFileAttributesA(path.c_str());
 		return 
 			(dwAttrib != INVALID_FILE_ATTRIBUTES &&
 			!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -74,7 +136,7 @@ namespace base::io {
 			if (dwDisksMask & i)
 				find(
 					static_cast<base_char>(base_toupper(ENGLISH_ALPHABET_ASCII_START + i))
-						+ ConvertString(":"),
+						+ base_string(":"),
 					output, filter, recurse);
 
 			dwDisksMask >>= 1;
@@ -90,13 +152,13 @@ namespace base::io {
 		const auto filterNames	= (filter.nameContains.empty() == false);
 		const auto filterSize	= (filter.minimumSize > 0);
 
-		WIN32_FIND_DATA findFileData;
-		base_string szPath = path + ConvertString("\\*");
+		WIN32_FIND_DATAA findFileData;
+		base_string szPath = path + base_string("\\*");
 
-		WindowsSmartHandle hFind = FindFirstFile(szPath.c_str(), &findFileData);
+		WindowsSmartHandle hFind = FindFirstFileA(szPath.c_str(), &findFileData);
 		base_string pathToWindowsDirectory(MAX_PATH, 0);
 
-		GetWindowsDirectory(&pathToWindowsDirectory[0], MAX_PATH);
+		GetWindowsDirectoryA(&pathToWindowsDirectory[0], MAX_PATH);
 
 		if (hFind != INVALID_HANDLE_VALUE) {
 			std::vector<base_string> directories;
@@ -108,17 +170,17 @@ namespace base::io {
 						filter.nameContains.c_str()) != 0)
 					output.push_back(findFileData.cFileName);
 				
-				if ((!lstrcmpW(findFileData.cFileName, L".")) || (!lstrcmpW(findFileData.cFileName, L"..")))
+				if ((!base_strcmp(findFileData.cFileName, ".")) || (!base_strcmp(findFileData.cFileName, "..")))
 					continue;
 
-				szPath = path + ConvertString("\\") + findFileData.cFileName;
+				szPath = path + base_string("\\") + findFileData.cFileName;
 
 				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
 					&& (!base_strstr(
 						szPath.c_str(), pathToWindowsDirectory.c_str())))
 					directories.push_back(szPath);
 
-			} while (FindNextFile(hFind, &findFileData) != 0);
+			} while (FindNextFileA(hFind, &findFileData) != 0);
 
 			FindClose(hFind);
 
@@ -170,12 +232,7 @@ namespace base::io {
 	}
 
 	void WindowsFileEngine::close() {
-		if (_isOpened == false)
-			return;
-
-		_isOpened = false;
-
-		if (_desc != nullptr)
+		if (isOpened())
 			fclose(_desc);
 	}
 
@@ -183,19 +240,53 @@ namespace base::io {
 		const std::string& path,
 		FileOpenModes mode)
 	{
+		std::string modeStr;
 
+		switch (mode) {
+			[[likely]] case FileOpenMode::Read:
+				modeStr = "r";
+				break;
+			case FileOpenMode::Write:
+				modeStr = "w";
+				break;
+			case FileOpenMode::Append:
+				modeStr = "a";
+				break;
+			case FileOpenMode::ReadEx:
+				modeStr = "r+";
+				break;
+			case FileOpenMode::WriteEx:
+				modeStr = "r+";
+				break;
+			case FileOpenMode::AppendEx:
+				modeStr = "r+";
+				break;
+			default:
+				AssertUnreachable();
+		}
+
+		if (mode & FileOpenMode::Binary)
+			if (modeStr.size() == 1)
+				modeStr.append("b");
+			else if (modeStr.size() == 2) {
+				modeStr[1] = 'b';
+				modeStr[2] = '+';
+			}
+
+		return open(path, modeStr.c_str());
 	}
 
 	bool WindowsFileEngine::open(
 		const std::string& path,
 		const char* mode)
 	{
-		const auto openAlreadyOpened = (path == _path && _isOpened == true);
+		const auto openAlreadyOpened = (path == _path && isOpened());
 		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);
 
 		#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
 			wchar_t wMode[64];
 			wchar_t wFilename[1024];
+
 			if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), path.c_str()) == 0)
 				return false;
 
@@ -220,32 +311,56 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::rename(const std::string& newFileName) {
+		if (_path.empty())
+			return false;
 
+		return rename(_path, newFileName);
 	}
 
 	bool WindowsFileEngine::rename(
 		const std::string& oldFileName,
 		const std::string& newFileName)
 	{
+		if (MoveFileA(oldFileName.c_str(), newFileName.c_str()) != 0)
+			return true;
 
+		IOAssert(false, std::string("base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла: " 
+			+ GetErrorMessage(GetLastError())).c_str(), false);
 	}
 
-	bool WindowsFileEngine::rewind(sizetype position) {
-
+	bool WindowsFileEngine::rewind(int64 position) {
+		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr", false);
+		return (fseek(_desc, position, SEEK_CUR) == 0);
 	}
 
 	bool WindowsFileEngine::rewind(FilePositions position) {
-
+		switch (position) {
+			case FilePosition::FileBegin:
+				return (fseek(_desc, SEEK_SET, SEEK_CUR) == 0);
+			case FilePosition::FileEnd:
+				return (fseek(_desc, SEEK_END, SEEK_CUR) == 0);
+			default:
+				AssertUnreachable();
+		}
 	}
 
 	void WindowsFileEngine::remove() {
-
+		remove(_path);
 	}
 
 	void WindowsFileEngine::remove(const std::string& path) {
-		bool result = DeleteFile(ConvertString(path).c_str());
+		if (path.empty())
+			return;
 
-		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+		if (DeleteFileA(path.c_str()) == false) {
+			DWORD dwLastError = GetLastError();
+
+			const bool notFoundError	 = (dwLastError & ERROR_FILE_NOT_FOUND);
+			const bool accessDeniedError = (dwLastError & ERROR_ACCESS_DENIED);
+
+			IOAssert(notFoundError, "base::io::WindowsFileEngine::remove: Невозможно удалить несуществующий файл. ", (void)0);
+			IOAssert(accessDeniedError, "base::io::WindowsFileEngine::remove: Недостаточно прав для удаления файла. ", (void)0);
+		}
 	}
 
 	sizetype WindowsFileEngine::read(
@@ -256,19 +371,19 @@ namespace base::io {
 		return fread(outBuffer, 1, sizeInBytes, _desc);
 	}
 
-	sizetype WindowsFileEngine::fileSize() const noexcept {
-		if (_path.empty())
+	sizetype WindowsFileEngine::fileSize(const std::string& path) {
+		if (path.empty())
 			return 0;
 		
-		LARGE_INTEGER file_size = { 0 };
-		WIN32_FILE_ATTRIBUTE_DATA file_attr_data;
+		LARGE_INTEGER fileSize = { 0 };
+		WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
 
-		if (GetFileAttributesEx(ConvertString(_path).c_str(), GetFileExInfoStandard, &file_attr_data)) {
-			file_size.LowPart = file_attr_data.nFileSizeLow;
-			file_size.HighPart = file_attr_data.nFileSizeHigh;
+		if (GetFileAttributesExA(path.c_str(), GetFileExInfoStandard, &fileAttributeData)) {
+			fileSize.LowPart = fileAttributeData.nFileSizeLow;
+			fileSize.HighPart = fileAttributeData.nFileSizeHigh;
 		}
 		
-		return std::max(file_size.QuadPart, LONGLONG(0));
+		return std::max(fileSize.QuadPart, LONGLONG(0));
 	}
 
 } // namespace base::io

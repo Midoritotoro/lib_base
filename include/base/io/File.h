@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/system/AbstractFileEngine.h>
+#include <base/io/AbstractFileEngine.h>
 
 
 // Все возвращаемые этим файлом исключения можно отключить,
@@ -11,6 +11,12 @@ namespace base::io {
 	public:
 		File();
 		File(const std::string& path);
+
+		// Не рекомендуется использовать конструкторы с передачей
+		// дескриптора файла(FILE) из cstdlib. В таком случае, при  
+		// вызове fclose вне этого класса
+
+
 
 		File(
 			not_null<FILE*> file,
@@ -28,21 +34,27 @@ namespace base::io {
 		//! \brief
 		//! Ищет файл по пути path.
 		//! \param path - Путь к каталогу для поиска
+		//! \param output - Выходной вектор из путей к найденным файлам 
 		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
-		//! \param recurse - отвечает за рекурсивный обход всех вложенных папок по пути path.
-		//! \return Возвращает вектор из путей к найденным файлам 
-		static [[nodiscard]] std::vector<std::string>
-			find(
-				const std::string& path,
-				const FileFilter& filter,
-				bool recurse = true);
-
+		//! \param recurse - Отвечает за рекурсивный обход всех вложенных папок по пути path.
 		static void find(
-			const FileFilter& filter,
+			const base_string& path,
 			std::vector<base_string>& output,
+			const FileFilter& filter = {},
+			bool recurse = true);
+
+		//!
+		//! \brief
+		//! Ищет файл на всех дисках и подключённых внешних носителях
+		//! \param output - Выходной вектор из путей к найденным файлам 
+		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
+		//! \param recurse - Отвечает за рекурсивный обход всех вложенных папок по пути path.
+		static void find(
+			std::vector<base_string>& output,
+			const FileFilter& filter = {},
 			bool recurse = true);
 		
-		[[nodiscard]] bool close();
+		void close();
 
 		[[nodiscard]] bool open(
 			const std::string& path,
@@ -59,11 +71,11 @@ namespace base::io {
 		//!
 		//! \brief
 		//! Перемещает указатель файла на заданную позицию
-		[[nodiscard]] bool rewind(sizetype position);
+		[[nodiscard]] bool rewind(int64 position);
 		[[nodiscard]] bool rewind(FilePositions position);
 
-		[[nodiscard]] void remove();
-		[[nodiscard]] void remove(const std::string& path);
+		void remove();
+		static void remove(const std::string& path);
 		
 		//!
 		//! \brief Читает sizeInBytes байт в outBuffer.
@@ -86,6 +98,7 @@ namespace base::io {
 		//! \brief
 		//! \return Размер файла в битах
 		[[nodiscard]] sizetype fileSize() const noexcept;
+		static [[nodiscard]] sizetype fileSize(const std::string& path);
 	private:
 		AbstractFileEngine* _engine = nullptr;
 	};

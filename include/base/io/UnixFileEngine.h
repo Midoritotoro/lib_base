@@ -28,18 +28,18 @@ namespace base::io {
 		[[nodiscard]] FILE* fileDescriptor() const noexcept override;
 		[[nodiscard]] std::string path() const noexcept override;
 
-		[[nodiscard]] bool exists(const std::string& path) override;
+		static [[nodiscard]] bool exists(const std::string& path);
 
-		void find(
+		static void find(
 			const base_string& path,
 			std::vector<base_string>& output,
 			const FileFilter& filter = {},
-			bool recurse = true) override;
+			bool recurse = true);
 
-		void find(
+		static void find(
 			std::vector<base_string>& output,
 			const FileFilter& filter = {},
-			bool recurse = true) override;
+			bool recurse = true);
 
 		void close() override;
 
