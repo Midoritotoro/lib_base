@@ -1,4 +1,4 @@
-#include <base/system/WindowsFileSystemPath.h>
+#include <base/io/WindowsFileSystemPath.h>
 
 #include <algorithm>
 #include <tuple>
@@ -50,25 +50,8 @@ static std::tuple<std::string, std::string, std::string> splitroot(const std::st
         return std::make_tuple(empty, empty, p);
 }
 
-static std::pair<std::string, std::string> splitdrive(const std::string& p) {
-    std::tuple<std::string, std::string, std::string> root_parts = splitroot(p);
 
-    return std::make_pair(
-        std::get<0>(root_parts), 
-        std::get<1>(root_parts) 
-            + std::get<2>(root_parts));
-}
-
-
-std::pair<std::string, std::string> splitext(const std::string& p) {
-    size_t dot_index = p.find_last_of(".");
-    if (dot_index == std::string::npos)
-        return std::make_pair(p, "");
-    
-    return std::make_pair(p.substr(0, dot_index), p.substr(dot_index));
-}
-
-namespace base::system {
+namespace base::io {
     bool WindowsFileSystemPath::isAbsolutePath(const std::string& path) {
         std::string altsep = "/";
 
@@ -83,7 +66,8 @@ namespace base::system {
 
         return (s.length() >= colon_sep.length() && s.substr(1, colon_sep.length() - 1) ==
             colon_sep.substr(1) && s[0] >= 'A' && s[0] <= 'Z') ||
-            (s.length() >= double_sep.length() && s.substr(0, double_sep.length()) == double_sep);
+            (s.length() >= double_sep.length() &&
+            s.substr(0, double_sep.length()) == double_sep);
     }
 
     bool WindowsFileSystemPath::isRelativePath(const std::string& path) {
@@ -125,4 +109,4 @@ namespace base::system {
     std::string WindowsFileSystemPath::baseName(const std::string& path) {
         return split(path).second;
     }
-} // namespace base::system
+} // namespace base::io

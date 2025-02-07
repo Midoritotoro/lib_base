@@ -1,9 +1,12 @@
 #pragma once
 
+
+#if defined(OS_MAC) || defined(OS_LINUX)
+
 #include <string>
 
-namespace base::system {
-	class FileSystemPath {
+namespace base::io {
+	class UnixFileSystemPath {
 	public:
 		static [[nodiscard]] bool isAbsolutePath(const std::string& path);
 		static [[nodiscard]] bool isRelativePath(const std::string& path);
@@ -14,12 +17,9 @@ namespace base::system {
 		static [[nodiscard]] std::pair<std::string, std::string>
 			split(const std::string& path);
 
-		//!
-		//! \return ¬озвращает начальную (directoryName) часть пути, равную split(path).first
 		static [[nodiscard]] std::string directoryName(const std::string& path);
-
-		//!
-		//! \return ¬озвращает конечную (baseName) часть пути, равную split(path).second
 		static [[nodiscard]] std::string baseName(const std::string& path);
 	};
-} // namespace base::system
+} // namespace base::io
+
+#endif

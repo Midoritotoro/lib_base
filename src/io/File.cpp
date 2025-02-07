@@ -1,11 +1,11 @@
-#include <base/system/File.h>
+#include <base/io/File.h>
 
 #include <base/system/SystemTools.h>
 
 #if defined(OS_WIN)
-	#include <base/system/WindowsFileEngine.h>
+	#include <base/io/WindowsFileEngine.h>
 #elif defined(OS_MAC) || defined(OS_LINUX)
-	#include <base/system/UnixFileEngine.h>
+	#include <base/io/UnixFileEngine.h>
 #endif
 
 
@@ -39,49 +39,55 @@ static FILE* fileOpenHelper(
 	return file;
 }
 
-static [[nodiscard]] base::system::AbstractFileEngine* CreateFileEngine() {
+static [[nodiscard]] base::io::AbstractFileEngine* CreateFileEngine() {
 	#if defined(OS_WIN)
-		return new base::system::WindowsFileEngine();
+		return new base::io::WindowsFileEngine();
 	#elif defined(OS_LINUX) || defined(OS_MAC)
 		return new base::system::UnixFileEngine();
 	#endif
+		return nullptr;
 }
 
-static [[nodiscard]] base::system::AbstractFileEngine*
+static [[nodiscard]] base::io::AbstractFileEngine*
 	CreateFileEngine(const std::string& path) 
 {
 	#if defined(OS_WIN)
-		return new base::system::WindowsFileEngine(path);
+		return new base::io::WindowsFileEngine(path);
 	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::system::UnixFileEngine(path);
+		return new base::io::UnixFileEngine(path);
 	#endif
+		return nullptr;
 }
 
-static [[nodiscard]] base::system::AbstractFileEngine* 
-	CreateFileEngine(not_null<FILE*> file)
+static [[nodiscard]] base::io::AbstractFileEngine* 
+	CreateFileEngine(
+		not_null<FILE*> file,
+		bool tryToExtractPathFromDescriptor)
 {
 	#if defined(OS_WIN)
-		return new base::system::WindowsFileEngine(file);
+		return new base::io::WindowsFileEngine(file, tryToExtractPathFromDescriptor);
 	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::system::UnixFileEngine(file);
+		return new base::io::UnixFileEngine(file, tryToExtractPathFromDescriptor);
 	#endif
+		return nullptr;
 }
 
-static [[nodiscard]] base::system::AbstractFileEngine* 
+static [[nodiscard]] base::io::AbstractFileEngine* 
 	CreateFileEngine(
 		const std::string& path,
 		not_null<FILE*> file,
 		bool tryToExtractPathFromDescriptor)
 {
 	#if defined(OS_WIN)
-		return new base::system::WindowsFileEngine(file);
+		return new base::io::WindowsFileEngine(file);
 	#elif defined(OS_LINUX) || defined(OS_MAC)
-		return new base::system::UnixFileEngine(file);
+		return new base::io::UnixFileEngine(file);
 	#endif
+		return nullptr;
 }
 
 
-namespace base::system {
+namespace base::io {
 	File::File()
 	{}
 
@@ -93,13 +99,19 @@ namespace base::system {
 		not_null<FILE*> file,
 		bool tryToExtractPathFromDescriptor
 	):
-		_engine()
-		_desc(file),
-		_path(utility::AbsolutePathFromDescriptor(file))
+		_engine(CreateFileEngine(file, tryToExtractPathFromDescriptor))
+	{}
+
+	File::File(
+		not_null<FILE*> file,
+		const std::string& path
+	):
+		_engine(CreateFileEngine(path, file, false))
 	{}
 
 	File::~File() {
-		fclose(_desc);
+		if (_engine != nullptr)
+			delete _engine;
 	}
 
 	bool File::exists(const std::string& path) {
@@ -219,11 +231,10 @@ namespace base::system {
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes)
 	{
-		AssertLog(_desc != nullptr, "base::system::File::read: Попытка чтения из файла, дескриптор которого равен nullptr");
-		return fread(outBuffer, 1, sizeInBytes, _desc);
+		return _engine->read(outBuffer, sizeInBytes);
 	}
 
 	sizetype File::fileSize() const noexcept {
 		return 0;
 	}
-} // namespace base::system
+} // namespace base::io

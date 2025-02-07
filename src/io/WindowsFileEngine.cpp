@@ -1,12 +1,12 @@
-#include <base/system/WindowsFileEngine.h>
+#include <base/io/WindowsFileEngine.h>
 
 #if defined(OS_WIN)
 
-#include <base/system/WindowsSmartHandle.h>
+#include <base/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
 
-namespace base::system {
+namespace base::io {
 	WindowsFileEngine::WindowsFileEngine()
 	{}
 
@@ -16,29 +16,36 @@ namespace base::system {
 
 	WindowsFileEngine::WindowsFileEngine(
 		not_null<FILE*> file,
-		bool tryToExtractPathFromDescriptor)
+		bool tryToExtractPathFromDescriptor
+	):
+		_desc(file)
 	{
-		
+		if (tryToExtractPathFromDescriptor)
+			_path = absolutePathFromDescriptor(_desc);
 	}
 
 	WindowsFileEngine::WindowsFileEngine(
 		not_null<FILE*> file,
-		const std::string& path)
-	{
-
-	}
+		const std::string& path
+	):
+		_desc(file),
+		_path(path)
+	{}
 
 	WindowsFileEngine::~WindowsFileEngine() {
-		if (_desc != nullptr)
-			fclose(_desc);
+		close();
 	}
 
 	void WindowsFileEngine::setFileName(const std::string& path) {
-
+		_path = path;
 	}
 
 	void WindowsFileEngine::setFileDescriptor(not_null<FILE*> file) {
+		_desc = file;
+	}
 
+	bool WindowsFileEngine::isOpened() const noexcept {
+		return _isOpened;
 	}
 
 	FILE* WindowsFileEngine::fileDescriptor() const noexcept {
@@ -50,13 +57,34 @@ namespace base::system {
 	}
 
 	bool WindowsFileEngine::exists(const std::string& path) {
+		DWORD dwAttrib = GetFileAttributes(ConvertString(path).c_str());
+		return 
+			(dwAttrib != INVALID_FILE_ATTRIBUTES &&
+			!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+	}
 
+	void WindowsFileEngine::find(
+		std::vector<base_string>& output,
+		const FileFilter& filter,
+		bool recurse)
+	{
+		DWORD dwDisksMask = GetLogicalDrives();
+
+		for (DWORD i = 0; i < ENGLISH_ALPHABET_SIZE; ++i) {
+			if (dwDisksMask & i)
+				find(
+					static_cast<base_char>(base_toupper(ENGLISH_ALPHABET_ASCII_START + i))
+						+ ConvertString(":"),
+					output, filter, recurse);
+
+			dwDisksMask >>= 1;
+		}
 	}
 
 	void WindowsFileEngine::find(
 		const base_string& path,
-		const FileFilter& filter,
 		std::vector<base_string>& output,
+		const FileFilter& filter,
 		bool recurse)
 	{
 		const auto filterNames	= (filter.nameContains.empty() == false);
@@ -95,7 +123,7 @@ namespace base::system {
 			FindClose(hFind);
 
 			for (int i = 0; i < directories.size(); ++i)
-				find(directories[i], filter, output, recurse);
+				find(directories[i], output, filter, recurse);
 		}
 	}
 
@@ -140,6 +168,80 @@ namespace base::system {
 
 		return path;
 	}
-} // namespace base::system
+
+	void WindowsFileEngine::close() {
+		_isOpened = false;
+
+		if (_desc != nullptr)
+			fclose(_desc);
+	}
+
+	bool WindowsFileEngine::open(
+		const std::string& path,
+		FileOpenModes mode)
+	{
+
+	}
+
+	bool WindowsFileEngine::open(
+		const std::string& path,
+		const char* mode)
+	{
+
+	}
+
+	bool WindowsFileEngine::rename(const std::string& newFileName) {
+
+	}
+
+	bool WindowsFileEngine::rename(
+		const std::string& oldFileName,
+		const std::string& newFileName)
+	{
+
+	}
+
+	bool WindowsFileEngine::rewind(sizetype position) {
+
+	}
+
+	bool WindowsFileEngine::rewind(FilePositions position) {
+
+	}
+
+	void WindowsFileEngine::remove() {
+
+	}
+
+	void WindowsFileEngine::remove(const std::string& path) {
+		bool result = DeleteFile(ConvertString(path).c_str());
+
+		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+	}
+
+	sizetype WindowsFileEngine::read(
+		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
+		_SAL2_In_ sizetype sizeInBytes)
+	{
+		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+		return fread(outBuffer, 1, sizeInBytes, _desc);
+	}
+
+	sizetype WindowsFileEngine::fileSize() const noexcept {
+		if (_path.empty())
+			return 0;
+		
+		LARGE_INTEGER file_size = { 0 };
+		WIN32_FILE_ATTRIBUTE_DATA file_attr_data;
+
+		if (GetFileAttributesEx(ConvertString(_path).c_str(), GetFileExInfoStandard, &file_attr_data)) {
+			file_size.LowPart = file_attr_data.nFileSizeLow;
+			file_size.HighPart = file_attr_data.nFileSizeHigh;
+		}
+		
+		return std::max(file_size.QuadPart, LONGLONG(0));
+	}
+
+} // namespace base::io
 
 #endif

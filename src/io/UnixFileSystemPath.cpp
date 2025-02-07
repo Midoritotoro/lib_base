@@ -1,4 +1,7 @@
-#include <base/system/UnixFileSystemPath.h>
+#include <base/io/UnixFileSystemPath.h>
+
+
+#if defined(OS_MAC) || defined(OS_LINUX)
 
 #include <algorithm>
 #include <tuple>
@@ -6,7 +9,7 @@
 #define sep std::string("/")
 
 
-namespace base::system {
+namespace base::io {
     bool UnixFileSystemPath::isAbsolutePath(const std::string& path) {
         return path.rfind(sep, 0) == 0;
     }
@@ -54,4 +57,6 @@ namespace base::system {
         size_t i = path.rfind(sep) + 1;
         return path.substr(i);
     }
-} // namespace base::system
+} // namespace base::io
+
+#endif

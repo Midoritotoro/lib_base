@@ -1,8 +1,8 @@
-#include <base/system/WindowsSmartHandle.h>
+#include <base/io/WindowsSmartHandle.h>
 
 #if defined(OS_WIN)
 
-namespace base::system {
+namespace base::io {
 	WindowsSmartHandle::WindowsSmartHandle()
 	{}
 
@@ -30,6 +30,6 @@ namespace base::system {
 	constexpr WindowsSmartHandle::operator HANDLE() {
 		return _handle;
 	}
-} // namespace base::system
+} // namespace base::io
 
 #endif

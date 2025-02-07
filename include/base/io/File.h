@@ -4,9 +4,9 @@
 
 
 // Все возвращаемые этим файлом исключения можно отключить,
-// определив LIB_BASE_SYSTEM_NO_FAILURE, в противном случае ошибки, возникшие здесь, вызовут std::abort
+// определив LIB_BASE_IO_NO_FAILURE, в противном случае ошибки, возникшие здесь, вызовут std::abort
 
-namespace base::system {
+namespace base::io {
 	class File {
 	public:
 		File();
@@ -26,17 +26,16 @@ namespace base::system {
 
 		//!
 		//! \brief
-		//! Ищет файл по пути path. В случае с установленным параметром recurse = true,
-		//! обходит все вложенные папки, начиная с path
+		//! Ищет файл по пути path.
 		//! \param path - Путь к каталогу для поиска
 		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
+		//! \param recurse - отвечает за рекурсивный обход всех вложенных папок по пути path.
 		//! \return Возвращает вектор из путей к найденным файлам 
 		static [[nodiscard]] std::vector<std::string>
 			find(
 				const std::string& path,
 				const FileFilter& filter,
 				bool recurse = true);
-
 
 		static void find(
 			const FileFilter& filter,
@@ -90,4 +89,4 @@ namespace base::system {
 	private:
 		AbstractFileEngine* _engine = nullptr;
 	};
-} // namespace base::system
+} // namespace base::io

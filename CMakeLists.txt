@@ -81,22 +81,22 @@ set(PRIVATE_SOURCES
     src/images/ImageReader.cpp
 
     src/system/SystemInfo.cpp
-    src/system/File.cpp
+    src/io/File.cpp
 
-    src/system/WindowsFileEngine.cpp
-    src/system/UnixFileEngine.cpp
+    src/io/WindowsFileEngine.cpp
+    src/io/UnixFileEngine.cpp
 
     src/system/SystemTools.cpp
     src/io/Compressor.cpp
 
-    src/system/WindowsSmartHandle.cpp
-    src/system/FileSystemPath.cpp
+    src/io/WindowsSmartHandle.cpp
+    src/io/FileSystemPath.cpp
 
     src/system/WindowsSystemInfo.cpp
     src/system/UnixSystemInfo.cpp
 
-    src/system/UnixFileSystemPath.cpp
-    src/system/WindowsFileSystemPath.cpp
+    src/io/UnixFileSystemPath.cpp
+    src/io/WindowsFileSystemPath.cpp
 )
 
 
@@ -181,16 +181,17 @@ set(PUBLIC_HEADERS
     include/base/system/SystemDetection.h
     include/base/system/CompilerDetection.h
 
-    include/base/system/WindowsFileEngine.h
-    include/base/system/UnixFileEngine.h
+    include/base/io/WindowsFileEngine.h
+    include/base/io/UnixFileEngine.h
 
-    include/base/system/File.h
+    include/base/io/File.h
     include/base/system/SystemInfo.h
 
-    include/base/system/WindowsSmartHandle.h
+    include/base/io/WindowsSmartHandle.h
     include/base/io/Compressor.h
 
-    include/base/system/FileSystemPath.h
+    include/base/io/FileSystemPath.h
+    include/base/io/IOConfig.h
 
     include/base/system/SystemString.h
     include/base/system/SystemStaticCodeAnalysis.h

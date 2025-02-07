@@ -4,7 +4,7 @@
 
 #if defined(OS_WIN)
 
-namespace base::system {
+namespace base::io {
 	class WindowsSmartHandle {
 	public:
 		WindowsSmartHandle();
@@ -20,6 +20,6 @@ namespace base::system {
 	private:
 		HANDLE _handle = nullptr;
 	};
-} // namespace base::system
+} // namespace base::io
 
 #endif

@@ -3,7 +3,7 @@
 #include <base/system/Platform.h>
 #include <base/Time.h>
 
-#if defined(OS_WIN) && defined(_MSC_VER) && !defined(__GNUC__) && !defined(__clang__)
+#if defined(OS_WIN) && defined(CPP_MSVC) && !defined(__GNUC__) && !defined(__clang__)
 #include <__msvc_iter_core.hpp>
 #endif
 
@@ -263,10 +263,10 @@ namespace base {
 #if defined(OS_WIN)
 	[[nodiscard]] bool IsWindowsGreaterThen(int version);
 	[[nodiscard]] bool SetAutoRunKey(
-		const std::wstring& path, 
-		const std::wstring& key);
+		const ::std::wstring & path,
+		const ::std::wstring& key);
 
-	#define MINIMUM_WINDOWS_VERSION NTDDI_WIN10
-	#define IS_MINIMUM_WINDOWS_VERSION IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
+	#define MINIMUM_WINDOWS_VERSION		NTDDI_WIN10
+	#define IS_MINIMUM_WINDOWS_VERSION	IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
 #endif // OS_WIN
 } // namespace base
