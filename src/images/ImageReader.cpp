@@ -94,18 +94,78 @@ namespace base::images {
 	}
 #endif
 
+
+	static int get8(uchar* s) {
+		return *s;
+	}
+
+	static int get16le(uchar* s)
+	{
+		int z = get8(s);
+		return z + (get8(s) << 8);
+	}
+
+	static uint32 get32le(uchar* s)
+	{
+		uint32 z = get16le(s);
+		z += (uint32)get16le(s) << 16;
+		return z;
+	}
+
+	static int bmp_test_raw(uchar* s)
+	{
+		int r;
+		int sz;
+
+		if (get8(s) != 'B') {
+			printf("get8(s) != B\n");
+			return 0;
+		}
+
+		s++;
+
+		if (get8(s) != 'M') {
+			printf("get8(s) != M\n");
+			return 0;
+		}
+
+		s++;
+
+		int size = get32le(s); // discard filesize
+		std::cout << "bmp size: " << size;
+		get16le(s); // discard reserved
+		get16le(s); // discard reserved
+		get32le(s); // discard data offset
+
+		sz = get32le(s);
+		r = (sz == 12 || sz == 40 || sz == 56 || sz == 108 || sz == 124);
+		return r;
+	}
+
+	static int bmp_test(uchar* s)
+	{
+		int r = bmp_test_raw(s);
+		return r;
+	}
+
+
 	AbstractFormatHandler* ImageReaderPrivate::createFormatHandler(ImageData* data) {
-		int le16 = 0x8A + (0x80 << 0x70);
+	/*	int le16 = 0x8A + (0x80 << 0x70);
 		le16 += 0x70 + (0x00 << 0x00);
 
-		qDebug() << "bmp size int bytes: " << le16 / pow(1024, 2);
+		qDebug() << "bmp size int bytes: " << le16 / pow(1024, 2);*/
 
 		io::File file = io::File(data->path.value());
 		file.open(io::FileOpenMode::Read | io::FileOpenMode::Binary);
 
-		uchar header[8];
+		uchar header[IMAGE_HEADER_SIZE_IN_BYTES];
 		sizetype readed = file.read(header, IMAGE_HEADER_SIZE_IN_BYTES);
 
+
+		uchar* hh = nullptr;
+		hh = header;
+
+		bmp_test(hh);
 
 		if (checkPngHeader(header))
 			return new PngHandler();
@@ -118,51 +178,6 @@ namespace base::images {
 
 		ImagesAssert(false, "base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
 	}
-
-	//static int get8(uchar* s) {
-	//	return *s++;
-	//}
-
-	//static int get16le(uchar* s)
-	//{
-	//	int z = z(s);
-	//	return z + (get8(s) << 8);
-	//}
-
-	//static uint32 get32le(uchar* s)
-	//{
-	//	uint32 z = get16le(s);
-	//	z += (uint32)get16le(s) << 16;
-	//	return z;
-	//}
-
-	//static int bmp_test_raw(uchar* s)
-	//{
-	//	int r;
-	//	int sz;
-
-	//	if (get8(s) != 'B') 
-	//		return 0;
-
-	//	if (get8(s) != 'M')
-	//		return 0;
-
-	//	get32le(s); // discard filesize
-	//	get16le(s); // discard reserved
-	//	get16le(s); // discard reserved
-	//	get32le(s); // discard data offset
-
-	//	sz = get32le(s);
-	//	r = (sz == 12 || sz == 40 || sz == 56 || sz == 108 || sz == 124);
-	//	return r;
-	//}
-
-	//static int bmp_test(stbi__context* s)
-	//{
-	//	int r = bmp_test_raw(s);
-	//	return r;
-	//}
-
 
 	void ImageReaderPrivate::ReadImage(ImageData* data)
 	{

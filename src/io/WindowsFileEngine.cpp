@@ -278,8 +278,8 @@ namespace base::io {
 		if (path.empty() || mode.empty())
 			return false;
 
-		const auto openAlreadyOpened = (path == _path && isOpened());
-		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);
+		/*const auto openAlreadyOpened = (path == _path && isOpened());
+		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);*/
 
 		#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
 			wchar_t wMode[64];
@@ -369,8 +369,31 @@ namespace base::io {
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes)
 	{
-		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+		// IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
 		return fread(outBuffer, 1, sizeInBytes, _desc);
+	}
+
+	ReadResult WindowsFileEngine::readAll()
+	{
+		measureExecutionTime("WindowsFileEngine::readAll()");
+		uchar* result = nullptr;
+		uchar buffer[1024];
+
+		sizetype size = 0;
+
+		// IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+
+		while (sizetype readed = fread(buffer, 1, sizeof(buffer), _desc)) {
+			size += readed;
+
+			for (int i = 0; i < readed; ++i)
+				result += buffer[i];
+		}
+
+		return {
+			.data = buffer,
+			.sizeInBytes = size / 1024
+		};
 	}
 
 	sizetype WindowsFileEngine::fileSize(const std::string& path) {

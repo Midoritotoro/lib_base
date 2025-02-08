@@ -38,5 +38,7 @@ namespace base::io {
 		virtual [[nodiscard]] sizetype read(
 			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 			_SAL2_In_ sizetype sizeInBytes) = 0;
+
+		virtual [[nodiscard]] ReadResult readAll() = 0;
 	};
 } // namespace base::io

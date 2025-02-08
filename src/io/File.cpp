@@ -123,6 +123,10 @@ namespace base::io {
 		return _engine->read(outBuffer, sizeInBytes);
 	}
 
+	ReadResult File::readAll() {
+		return _engine->readAll();
+	}
+
 	sizetype File::fileSize() const noexcept {
 		return FileEngine::fileSize(_engine->path());
 	}

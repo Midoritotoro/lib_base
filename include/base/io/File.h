@@ -97,9 +97,11 @@ namespace base::io {
 			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 			_SAL2_In_ sizetype sizeInBytes);
 
+		[[nodiscard]] ReadResult readAll();
+
 		//!
 		//! \brief
-		//! \return Размер файла в битах
+		//! \return Размер файла в битах ???
 		[[nodiscard]] sizetype fileSize() const noexcept;
 		static [[nodiscard]] sizetype fileSize(const std::string& path);
 	private:

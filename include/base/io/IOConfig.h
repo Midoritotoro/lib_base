@@ -32,6 +32,11 @@ namespace base::io {
         base_string nameContains;
         sizetype minimumSize = 0;
     };
+
+    struct ReadResult {
+        uchar* data = nullptr;
+        sizetype sizeInBytes = 0;
+    };
 } // namespace base::io
 
 
