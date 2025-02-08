@@ -6,11 +6,15 @@ namespace base::images {
 	class ImageFilter {
 	public:
 		ImageFilter(not_null<Image*> image);
+		
+#if defined(LIB_BASE_ENABLE_QT)
+		ImageFilter(not_null<QImage*> image);
+#endif
 
 		void filter(Filter filter);
 	private:
 		void BradleyThreshold();
 
-		Image* _image = nullptr;
+		QImage* _image = nullptr;
 	};
 } // namespace base::images

@@ -3,11 +3,17 @@
 
 
 namespace base::images {
-	ImageFilter::ImageFilter(not_null<Image*> image): 
-        _image(image)
+	ImageFilter::ImageFilter(not_null<Image*> image)
+      // : _image(image)
     {
 
 	}
+
+    ImageFilter::ImageFilter(not_null<QImage*> image):
+        _image(image)
+    {
+
+    }
 
 	void ImageFilter::filter(Filter filter)
 	{
@@ -15,7 +21,7 @@ namespace base::images {
         if (filter == Filter::None)
             return;
 
-        _image->data_ptr()->filter = filter;
+      //  _image->data_ptr()->filter = filter;
 
         switch (filter) {
             case Filter::BradleyThreshold:
@@ -30,7 +36,7 @@ namespace base::images {
         const auto width = _image->width();
         const auto height = _image->height();
 
-        const auto imageChannelsCount = _image->channels();
+        const auto imageChannelsCount = _image->depth() / 8;//_image->channels();
         const auto src = _image->data_ptr()->data;
 
         const auto Index = [=](int32 i, int32 j, int32 color) {
