@@ -63,6 +63,9 @@ namespace base::io {
 			const std::string& path,
 			const char* mode);
 
+		[[nodiscard]] bool open(FileOpenModes mode);
+		[[nodiscard]] bool open(const char* mode);
+
 		[[nodiscard]] bool rename(const std::string& newFileName);
 		static [[nodiscard]] bool rename(
 			const std::string& oldFileName, 

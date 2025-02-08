@@ -101,10 +101,6 @@ namespace base::qt::style {
 
 	[[nodiscard]] QString CustomFont();
 	[[nodiscard]] const FontResolveResult* FindAdjustResult(const QFont& font);
-
-	inline constexpr bool is_flag_type(FontFlag) {
-		return true;
-	}
 } // namespace base::qt::style
 
 namespace base::qt::style::internal{

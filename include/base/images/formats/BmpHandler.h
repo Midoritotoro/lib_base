@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <base/images/formats/AbstractFormatHandler.h>
+#include <base/io/File.h>
+
 
 namespace base::images {
 	class BmpHandler final: public AbstractFormatHandler {
@@ -9,9 +11,7 @@ namespace base::images {
 			ImageData* data,
 			const char* path) override;
 
-		void read(
-			ImageData* data,
-			FILE* file) override;
+		void read(ImageData* data) override;
 
 		void convertToFormat(
 			ImageData* data,

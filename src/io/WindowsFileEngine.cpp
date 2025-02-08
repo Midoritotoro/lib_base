@@ -156,6 +156,8 @@ namespace base::io {
 		base_string szPath = path + base_string("\\*");
 
 		WindowsSmartHandle hFind = FindFirstFileA(szPath.c_str(), &findFileData);
+		hFind.setDeleteCallback(FindClose);
+
 		base_string pathToWindowsDirectory(MAX_PATH, 0);
 
 		GetWindowsDirectoryA(&pathToWindowsDirectory[0], MAX_PATH);
@@ -181,8 +183,6 @@ namespace base::io {
 					directories.push_back(szPath);
 
 			} while (FindNextFileA(hFind, &findFileData) != 0);
-
-			FindClose(hFind);
 
 			for (int i = 0; i < directories.size(); ++i)
 				find(directories[i], output, filter, recurse);
@@ -242,28 +242,23 @@ namespace base::io {
 	{
 		std::string modeStr;
 
-		switch (mode) {
-			[[likely]] case FileOpenMode::Read:
-				modeStr = "r";
-				break;
-			case FileOpenMode::Write:
-				modeStr = "w";
-				break;
-			case FileOpenMode::Append:
-				modeStr = "a";
-				break;
-			case FileOpenMode::ReadEx:
-				modeStr = "r+";
-				break;
-			case FileOpenMode::WriteEx:
-				modeStr = "r+";
-				break;
-			case FileOpenMode::AppendEx:
-				modeStr = "r+";
-				break;
-			default:
-				AssertUnreachable();
-		}
+		if (mode & FileOpenMode::Read)
+			modeStr = "r";
+
+		else if (mode & FileOpenMode::Write)
+			modeStr = "w";
+
+		else if (mode & FileOpenMode::Append)
+			modeStr = "a";
+
+		else if (mode & FileOpenMode::ReadEx)
+			modeStr = "r+";
+
+		else if (mode & FileOpenMode::WriteEx)
+			modeStr = "r+";
+
+		else if (mode & FileOpenMode::AppendEx)
+			modeStr = "r+";
 
 		if (mode & FileOpenMode::Binary)
 			if (modeStr.size() == 1)
@@ -273,13 +268,16 @@ namespace base::io {
 				modeStr[2] = '+';
 			}
 
-		return open(path, modeStr.c_str());
+		return open(path, modeStr);
 	}
 
 	bool WindowsFileEngine::open(
 		const std::string& path,
-		const char* mode)
+		const std::string& mode)
 	{
+		if (path.empty() || mode.empty())
+			return false;
+
 		const auto openAlreadyOpened = (path == _path && isOpened());
 		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);
 
@@ -290,7 +288,7 @@ namespace base::io {
 			if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), path.c_str()) == 0)
 				return false;
 
-			if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode) == 0)
+			if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode.c_str()) == 0)
 				return false;
 
 		#if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -301,10 +299,10 @@ namespace base::io {
 		#endif
 
 		#elif defined(_MSC_VER) && _MSC_VER >= 1400
-			if (0 != fopen_s(&_desc, path.c_str(), mode))
+			if (0 != fopen_s(&_desc, path.c_str(), mode.c_str()))
 				_desc = 0;
 		#else
-			_desc = fopen(path.c_str(), mode);
+			_desc = fopen(path.c_str(), mode.c_str());
 		#endif
 
 		return (_desc != nullptr);
@@ -326,6 +324,8 @@ namespace base::io {
 
 		IOAssert(false, std::string("base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла: " 
 			+ GetErrorMessage(GetLastError())).c_str(), false);
+
+		return false; // Чтобы не было предупреждений
 	}
 
 	bool WindowsFileEngine::rewind(int64 position) {
@@ -342,6 +342,8 @@ namespace base::io {
 			default:
 				AssertUnreachable();
 		}
+
+		return false; // Чтобы не было предупреждений
 	}
 
 	void WindowsFileEngine::remove() {

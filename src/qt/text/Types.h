@@ -106,9 +106,6 @@ namespace base::qt::text {
 
 
 	DECLARE_FLAGS(TextBlockFlags, TextBlockFlag)
-	inline constexpr bool is_flag_type(TextBlockFlag) {
-		return true;
-	}
 
 	struct TextSelection {
 		enum class Type {

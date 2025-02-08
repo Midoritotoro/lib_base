@@ -5,7 +5,7 @@
 
 
 namespace base::io {
-    enum FileOpenMode : uchar {
+    enum class FileOpenMode : uchar {
         Read = 0x01,    // "r"
         Write = 0x02,   // "w"
         Append = 0x04,  // "a"
@@ -26,7 +26,7 @@ namespace base::io {
     };
 
     DECLARE_FLAGS(FileOpenModes, FileOpenMode);
-    DECLARE_FLAGS(FilePositions, FilePosition);
+    DECLARE_FLAGS_ENUM(FilePositions, FilePosition);
 
     struct FileFilter {
         base_string nameContains;

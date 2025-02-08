@@ -18,7 +18,7 @@ namespace base::io {
 				not_null<FILE*> file,
 				const std::string& path);
 
-			~WindowsFileEngine() override;
+			~WindowsFileEngine();
 
 			void setFileName(const std::string& path) override;
 			void setFileDescriptor(not_null<FILE*> file) override;
@@ -50,7 +50,7 @@ namespace base::io {
 				FileOpenModes mode) override;
 			[[nodiscard]] bool open(
 				const std::string& path,
-				const char* mode) override;
+				const std::string& mode) override;
 
 			[[nodiscard]] bool rename(const std::string& newFileName) override;
 			static bool rename(

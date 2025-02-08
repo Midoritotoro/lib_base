@@ -9,6 +9,8 @@
 
 #include <base/images/formats/PngHandler.h>
 
+#include <base/io/File.h>
+
 #include <turbojpeg.h>
 #include <png.h>
 
@@ -36,21 +38,11 @@
 
 
 namespace base::images {
-	struct FormatHelper {
-		AbstractFormatHandler* handler = nullptr;
-		FILE* imageFile = nullptr;
-	};
-
-	void HelperFree(FormatHelper* helper) {
-		delete helper->handler;
-		free_null(helper->imageFile);
-	}
-
 	class ImageReaderPrivate {
 	public:
 		//! \return Handler, соответствуюший определенному формату изображения.
 		//! В случае, если не удается определелить формат, изображение повреждено или формат не поддерживается, nullptr
-		[[nodiscard]] FormatHelper* createFormatHandler(ImageData* data);
+		[[nodiscard]] AbstractFormatHandler* createFormatHandler(ImageData* data);
 
 #ifndef LIB_BASE_IMAGES_NO_GIF
 		[[nodiscard]] bool checkGifHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
@@ -102,33 +94,29 @@ namespace base::images {
 	}
 #endif
 
-	FormatHelper* ImageReaderPrivate::createFormatHandler(ImageData* data) {
-		//FormatHelper* helper = new FormatHelper();
+	AbstractFormatHandler* ImageReaderPrivate::createFormatHandler(ImageData* data) {
+		int le16 = 0x8A + (0x80 << 0x70);
+		le16 += 0x70 + (0x00 << 0x00);
 
-		//FILE* file = readerFileOpen(data->path.value(), "rb");
-		//ImagesAssert(file != nullptr,
-		//	"base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл. Проверьте корректность пути. ", nullptr);
+		qDebug() << "bmp size int bytes: " << le16 / pow(1024, 2);
 
-		//helper->imageFile = file;
-		//uchar header[8];
-		//int readed = fread(header, 1, 8, file);
+		io::File file = io::File(data->path.value());
+		file.open(io::FileOpenMode::Read | io::FileOpenMode::Binary);
 
-		//fseek(file, SEEK_SET, SEEK_CUR);
+		uchar header[8];
+		sizetype readed = file.read(header, IMAGE_HEADER_SIZE_IN_BYTES);
 
-		//if (checkPngHeader(header))
-		//	helper->handler = new PngHandler();
 
-		//else if (checkBmpHeader(header))
-		//	helper->handler = new BmpHandler();
+		if (checkPngHeader(header))
+			return new PngHandler();
 
-		//else if (checkJpegHeader(header))
-		//	helper->handler = new JpegHandler();
+		else if (checkBmpHeader(header))
+			return new BmpHandler();
 
-		//ImagesAssert(helper->handler != nullptr,
-		//	"base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
+		else if (checkJpegHeader(header))
+			return new JpegHandler();
 
-		//return helper;
-		return nullptr;
+		ImagesAssert(false, "base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
 	}
 
 	//static int get8(uchar* s) {
@@ -137,7 +125,7 @@ namespace base::images {
 
 	//static int get16le(uchar* s)
 	//{
-	//	int z = get8(s);
+	//	int z = z(s);
 	//	return z + (get8(s) << 8);
 	//}
 
@@ -181,10 +169,10 @@ namespace base::images {
 		if (data == nullptr || data->path.has_value() == false)
 			return;
 		
-		FormatHelper* formatHelper = createFormatHandler(data);
+		AbstractFormatHandler* formatHandler = createFormatHandler(data);
 
-		data->handler = formatHelper->handler;
-		data->handler->read(data, formatHelper->imageFile);
+		data->handler = formatHandler;
+		data->handler->read(data);
 	}
 	
 	ImageReader::ImageReader(const char* path):

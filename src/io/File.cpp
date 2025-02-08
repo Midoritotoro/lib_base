@@ -77,6 +77,14 @@ namespace base::io {
 		return _engine->open(path, format);
 	}
 
+	bool File::open(FileOpenModes format) {
+		return _engine->open(_engine->path(), format);
+	}
+
+	bool File::open(const char* format) {
+		return _engine->open(_engine->path(), format);
+	}
+
 	bool File::rename(const std::string& newFileName) {
 		return _engine->rename(newFileName);
 	}

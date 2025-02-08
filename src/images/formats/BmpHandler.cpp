@@ -23,9 +23,7 @@ namespace base::images {
 		AssertLog(success != 0, "base::images::Image::writeImageToFile: Error while writing");
 	}
 
-	void BmpHandler::read(
-		ImageData* data,
-		FILE* file)
+	void BmpHandler::read(ImageData* data)
 	{
 
 	}

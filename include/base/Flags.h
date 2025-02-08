@@ -5,7 +5,7 @@
 namespace base {
 
 	template <typename EnumType>
-	class Flags;
+	class flags;
 
 	template <typename ExtendedEnum>
 	struct extended_flags;
@@ -29,25 +29,25 @@ namespace base {
 		template <typename ExtendedEnum,
 			typename Enum = typename base::extended_flags<ExtendedEnum>::type>
 		inline constexpr auto extended_flags_convert(ExtendedEnum value) {
-			return Flags<Enum>(extended_flag_convert(value));
+			return flags<Enum>(extended_flag_convert(value));
 		}
 
 	} // namespace details
 
 	template <typename EnumType>
-	class Flags{
+	class flags {
 	public:
 		using Enum = EnumType;
 		using Type = std::underlying_type_t<Enum>;
 
-		constexpr Flags() = default;
-		constexpr Flags(details::flags_zero_helper) noexcept {
+		constexpr flags() = default;
+		constexpr flags(details::flags_zero_helper) noexcept {
 		}
-		constexpr Flags(Enum value) noexcept
+		constexpr flags(Enum value) noexcept
 			: _value(static_cast<Type>(value)) {
 		}
-		static constexpr Flags fromRaw(Type value) noexcept {
-			return Flags(static_cast<Enum>(value));
+		static constexpr flags fromRaw(Type value) noexcept {
+			return flags(static_cast<Enum>(value));
 		}
 
 		constexpr auto value() const noexcept {
@@ -57,15 +57,15 @@ namespace base {
 			return value();
 		}
 
-		constexpr auto& operator|=(Flags b) noexcept {
+		constexpr auto& operator|=(flags b) noexcept {
 			_value |= b.value();
 			return *this;
 		}
-		constexpr auto& operator&=(Flags b) noexcept {
+		constexpr auto& operator&=(flags b) noexcept {
 			_value &= b.value();
 			return *this;
 		}
-		constexpr auto& operator^=(Flags b) noexcept {
+		constexpr auto& operator^=(flags b) noexcept {
 			_value ^= b.value();
 			return *this;
 		}
@@ -74,24 +74,24 @@ namespace base {
 			return fromRaw(~value());
 		}
 
-		constexpr auto operator|(Flags b) const noexcept {
-			return (Flags(*this) |= b);
+		constexpr auto operator|(flags b) const noexcept {
+			return (flags(*this) |= b);
 		}
-		constexpr auto operator&(Flags b) const noexcept {
-			return (Flags(*this) &= b);
+		constexpr auto operator&(flags b) const noexcept {
+			return (flags(*this) &= b);
 		}
-		constexpr auto operator^(Flags b) const noexcept {
-			return (Flags(*this) ^= b);
+		constexpr auto operator^(flags b) const noexcept {
+			return (flags(*this) ^= b);
 		}
 
 		constexpr auto operator|(Enum b) const noexcept {
-			return (Flags(*this) |= b);
+			return (flags(*this) |= b);
 		}
 		constexpr auto operator&(Enum b) const noexcept {
-			return (Flags(*this) &= b);
+			return (flags(*this) &= b);
 		}
 		constexpr auto operator^(Enum b) const noexcept {
-			return (Flags(*this) ^= b);
+			return (flags(*this) ^= b);
 		}
 
 		constexpr auto operator==(Enum b) const noexcept {
@@ -120,154 +120,227 @@ namespace base {
 
 	template <typename Enum>
 	constexpr auto make_flags(Enum value) noexcept {
-		return Flags<Enum>(value);
+		return flags<Enum>(value);
 	}
 
 	template <typename Enum,
-		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
-		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
-		inline constexpr auto operator|(Enum a, Flags<Enum> b) noexcept {
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator|(Enum a, flags<Enum> b) noexcept {
 		return b | a;
 	}
 
 	template <typename Enum,
-		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
-		typename = ::std::enable_if_t <is_flag_type(Enum{}) >>
-		inline constexpr auto operator&(Enum a, Flags<Enum> b) noexcept {
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator&(Enum a, flags<Enum> b) noexcept {
 		return b & a;
 	}
 
 	template <typename Enum,
-		typename = ::std::enable_if_t<::std::is_enum<Enum>::value>,
-		typename = ::std::enable_if_t<is_flag_type(Enum{}) >>
-		inline constexpr auto operator^(Enum a, Flags<Enum> b) noexcept {
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator^(Enum a, flags<Enum> b) noexcept {
 		return b ^ a;
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator|(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator|(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return a | details::extended_flags_convert(b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator|(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator|(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return b | a;
 	}
 
 	template <typename ExtendedEnum,
 		typename = extended_flags_t<ExtendedEnum>>
-		inline constexpr auto operator&(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+		inline constexpr auto operator&(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return a & details::extended_flags_convert(b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator&(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator&(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return b & a;
 	}
 
 	template <typename ExtendedEnum,
 		typename = extended_flags_t<ExtendedEnum>>
-		inline constexpr auto operator^(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+		inline constexpr auto operator^(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return a ^ details::extended_flags_convert(b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator^(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator^(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return b ^ a;
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto& operator&=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
+	inline constexpr auto& operator&=(flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
 		return (a &= details::extended_flags_convert(b));
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto& operator|=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
+	inline constexpr auto& operator|=(flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
 		return (a |= details::extended_flags_convert(b));
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto& operator^=(Flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
+	inline constexpr auto& operator^=(flags<extended_flags_t<ExtendedEnum>>& a, ExtendedEnum b) {
 		return (a ^= details::extended_flags_convert(b));
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator==(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator==(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return a == details::extended_flags_convert(b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator==(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator==(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return (b == a);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator!=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator!=(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return !(a == b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator!=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator!=(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return !(a == b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator<(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator<(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return a < details::extended_flags_convert(b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator<(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator<(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return details::extended_flags_convert(a) < b;
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator>(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator>(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return (b < a);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator>(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator>(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return (b < a);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator<=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator<=(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return !(b < a);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator<=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator<=(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return !(b < a);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator>=(Flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
+	inline constexpr auto operator>=(flags<extended_flags_t<ExtendedEnum>> a, ExtendedEnum b) {
 		return !(a < b);
 	}
 
 	template <typename ExtendedEnum,
 		typename = typename extended_flags<ExtendedEnum>::type>
-	inline constexpr auto operator>=(ExtendedEnum a, Flags<extended_flags_t<ExtendedEnum>> b) {
+	inline constexpr auto operator>=(ExtendedEnum a, flags<extended_flags_t<ExtendedEnum>> b) {
 		return !(a < b);
+	}
+
+	// For bare-enum operators to work inside namespace base we duplicate them here.
+
+	template <typename Enum,
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator!(Enum a) noexcept {
+		return !make_flags(a);
+	}
+
+	template <typename Enum,
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator~(Enum a) noexcept {
+		return ~make_flags(a);
+	}
+
+	template <typename Enum,
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator|(Enum a, Enum b) noexcept {
+		return make_flags(a) | b;
+	}
+
+	template <typename Enum,
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator|(Enum a, details::flags_zero_helper) noexcept {
+		return make_flags(a);
+	}
+
+	template <typename Enum,
+		typename = std::enable_if_t<std::is_enum<Enum>::value>,
+		typename = std::enable_if_t < is_flag_type(Enum{}) >>
+		inline constexpr auto operator|(details::flags_zero_helper, Enum b) noexcept {
+		return make_flags(b);
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator|(ExtendedEnum a, ExtendedEnum b) {
+		return details::extended_flags_convert(a) | b;
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator|(ExtendedEnum a, typename extended_flags<ExtendedEnum>::type b) {
+		return details::extended_flags_convert(a) | b;
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator|(typename extended_flags<ExtendedEnum>::type a, ExtendedEnum b) {
+		return b | a;
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator|(details::flags_zero_helper, ExtendedEnum b) {
+		return 0 | details::extended_flag_convert(b);
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator|(ExtendedEnum a, details::flags_zero_helper) {
+		return details::extended_flag_convert(a) | 0;
+	}
+
+	template <typename ExtendedEnum,
+		typename = typename extended_flags<ExtendedEnum>::type>
+	inline constexpr auto operator~(ExtendedEnum b) {
+		return ~details::extended_flags_convert(b);
 	}
 
 } // namespace base
@@ -343,5 +416,10 @@ inline constexpr auto operator~(ExtendedEnum b) {
 	return ~base::details::extended_flags_convert(b);
 }
 
+
 #define DECLARE_FLAGS(_Flags, _Enum) \
-	typedef base::Flags<_Enum> _Flags;
+	typedef base::flags<_Enum> _Flags; \
+	inline constexpr bool is_flag_type(_Enum) { return true; }
+
+#define DECLARE_FLAGS_ENUM(_Flags, _Enum) \
+	typedef base::flags<_Enum> _Flags;

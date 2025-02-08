@@ -9,8 +9,6 @@
 namespace base::io {
 	class AbstractFileEngine {
 	public:
-		virtual ~AbstractFileEngine() = 0;
-
 		virtual void setFileName(const std::string& path) = 0;
 		virtual void setFileDescriptor(not_null<FILE*> file) = 0;
 
@@ -28,7 +26,7 @@ namespace base::io {
 			FileOpenModes mode) = 0;
 		virtual [[nodiscard]] bool open(
 			const std::string& path,
-			const char* mode) = 0;
+			const std::string& mode) = 0;
 
 		virtual [[nodiscard]] bool rename(const std::string& newFileName) = 0;
 

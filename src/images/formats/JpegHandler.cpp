@@ -27,9 +27,7 @@ namespace base::images {
 	}
 
 
-	void JpegHandler::read(
-		ImageData* data,
-		FILE* file)
+	void JpegHandler::read(ImageData* data)
 	{
 		
 	}
