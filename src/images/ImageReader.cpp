@@ -18,7 +18,7 @@
 
 #include <qDebug>
 
-#define IMAGE_HEADER_SIZE_IN_BYTES 8
+#define IMAGE_HEADER_SIZE_IN_BYTES 128
 
 
 // Все возвращаемые этим файлом исключения можно отключить,
@@ -38,6 +38,13 @@
 
 
 namespace base::images {
+	struct ImageContext
+	{
+		uchar buffer_start[IMAGE_HEADER_SIZE_IN_BYTES] = {};
+		uchar* img_buffer = nullptr, * img_buffer_end = nullptr;
+		uchar* img_buffer_original = nullptr;
+	};
+
 	class ImageReaderPrivate {
 	public:
 		//! \return Handler, соответствуюший определенному формату изображения.
@@ -89,30 +96,26 @@ namespace base::images {
 #endif
 
 #ifndef LIB_BASE_IMAGES_NO_BMP
-	bool ImageReaderPrivate::checkBmpHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header) {
-		return false;
-	}
-#endif
-
-
-	static int get8(uchar* s) {
-		return *s;
+	static int get8(ImageContext* s) {
+		if (s->img_buffer < s->img_buffer_end)
+			return *s->img_buffer++;
+		return 0;
 	}
 
-	static int get16le(uchar* s)
+	static int get16le(ImageContext* s)
 	{
 		int z = get8(s);
 		return z + (get8(s) << 8);
 	}
 
-	static uint32 get32le(uchar* s)
+	static uint32 get32le(ImageContext* s)
 	{
 		uint32 z = get16le(s);
 		z += (uint32)get16le(s) << 16;
 		return z;
 	}
 
-	static int bmp_test_raw(uchar* s)
+	static int bmp_test_raw(ImageContext* s)
 	{
 		int r;
 		int sz;
@@ -122,14 +125,10 @@ namespace base::images {
 			return 0;
 		}
 
-		s++;
-
 		if (get8(s) != 'M') {
 			printf("get8(s) != M\n");
 			return 0;
 		}
-
-		s++;
 
 		int size = get32le(s); // discard filesize
 		std::cout << "bmp size: " << size;
@@ -142,41 +141,87 @@ namespace base::images {
 		return r;
 	}
 
-	static int bmp_test(uchar* s)
-	{
-		int r = bmp_test_raw(s);
+	bool ImageReaderPrivate::checkBmpHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header) {
+		int r;
+		int sz;
+
+		if (get8(s) != 'B') {
+			printf("get8(s) != B\n");
+			return 0;
+		}
+
+		if (get8(s) != 'M') {
+			printf("get8(s) != M\n");
+			return 0;
+		}
+
+		int size = get32le(s); // discard filesize
+		std::cout << "bmp size: " << size;
+		get16le(s); // discard reserved
+		get16le(s); // discard reserved
+		get32le(s); // discard data offset
+
+		sz = get32le(s);
+		r = (sz == 12 || sz == 40 || sz == 56 || sz == 108 || sz == 124);
+
+		ctx->img_buffer = ctx->img_buffer_original;
+
 		return r;
+	}
+#endif
+
+	// NOTE: In bmp images all of the integer values are stored in little-endian format (i.e. least-significant byte first).
+	static int bmp_get8(BmpContext* s) {
+		if (s->img_buffer < s->img_buffer_end)
+			return *s->img_buffer++;
+		return 0;
+	}
+
+	static int bmp_get16le(BmpContext* s)
+	{
+		int z = get8(s);
+		return z + (get8(s) << 8);
+	}
+
+	static uint32 bmp_get32le(BmpContext* s)
+	{
+		uint32 z = get16le(s);
+		z += (uint32)get16le(s) << 16;
+		return z;
 	}
 
 
+
 	AbstractFormatHandler* ImageReaderPrivate::createFormatHandler(ImageData* data) {
-	/*	int le16 = 0x8A + (0x80 << 0x70);
-		le16 += 0x70 + (0x00 << 0x00);
-
-		qDebug() << "bmp size int bytes: " << le16 / pow(1024, 2);*/
-
+		ImageContext context;
+		
 		io::File file = io::File(data->path.value());
-		file.open(io::FileOpenMode::Read | io::FileOpenMode::Binary);
+		const auto isOpened = file.open(io::FileOpenMode::Read | io::FileOpenMode::Binary);
 
-		uchar header[IMAGE_HEADER_SIZE_IN_BYTES];
-		sizetype readed = file.read(header, IMAGE_HEADER_SIZE_IN_BYTES);
+		ImagesAssert(isOpened, "base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл изображения. ", nullptr);
+
+		//uchar* header = new uchar[IMAGE_HEADER_SIZE_IN_BYTES];
+		sizetype res = file.read(context.buffer_start, sizeof(context.buffer_start));
+		if (res != 0) {
+			context.img_buffer = context.buffer_start;
+			context.img_buffer_end = context.img_buffer + res;
+		}
 
 
-		uchar* hh = nullptr;
-		hh = header;
+		bmp_test(&context);
 
-		bmp_test(hh);
 
-		if (checkPngHeader(header))
+	/*	if (checkPngHeader(header))
 			return new PngHandler();
 
 		else if (checkBmpHeader(header))
 			return new BmpHandler();
 
 		else if (checkJpegHeader(header))
-			return new JpegHandler();
+			return new JpegHandler();*/
 
 		ImagesAssert(false, "base::images::ImageReaderPrivate::createFormatHandler: Файл не является изображением, или же его расширение не поддерживается. ", nullptr);
+		return new PngHandler;
 	}
 
 	void ImageReaderPrivate::ReadImage(ImageData* data)
@@ -186,8 +231,8 @@ namespace base::images {
 		
 		AbstractFormatHandler* formatHandler = createFormatHandler(data);
 
-		data->handler = formatHandler;
-		data->handler->read(data);
+	/*	data->handler = formatHandler;
+		data->handler->read(data);*/
 	}
 	
 	ImageReader::ImageReader(const char* path):

@@ -31,6 +31,7 @@ namespace base::io {
     struct FileFilter {
         base_string nameContains;
         sizetype minimumSize = 0;
+        sizetype maximumSize = 0;
     };
 
     struct ReadResult {

@@ -18,7 +18,7 @@ namespace base::io {
 				not_null<FILE*> file,
 				const std::string& path);
 
-			~WindowsFileEngine();
+			virtual ~WindowsFileEngine();
 
 			void setFileName(const std::string& path) override;
 			void setFileDescriptor(not_null<FILE*> file) override;

@@ -1,4 +1,4 @@
-#pragma once 
+п»ї#pragma once 
 
 #include <base/system/Platform.h>
 #include <base/Utility.h>
@@ -13,7 +13,7 @@ static inline void fail(
 {
 	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line);
 
-	// Сбой из-за нарушения прав доступа и создание отчета о сбое.
+	// РЎР±РѕР№ РёР·-Р·Р° РЅР°СЂСѓС€РµРЅРёСЏ РїСЂР°РІ РґРѕСЃС‚СѓРїР° Рё СЃРѕР·РґР°РЅРёРµ РѕС‚С‡РµС‚Р° Рѕ СЃР±РѕРµ.
 
 	volatile auto nullptr_value = (int*)nullptr;
 	*nullptr_value = 0;
@@ -59,7 +59,7 @@ static inline constexpr [[nodiscard]]
 	SOURCE_FILE_BASENAME,\
 	__LINE__))
 
-// Возвращает return_value в случае ошибки вместо вызова std::abort
+// Р’РѕР·РІСЂР°С‰Р°РµС‚ return_value РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРјРµСЃС‚Рѕ РІС‹Р·РѕРІР° std::abort
 #define AssertReturn(condition, message, return_value) AssertValidationConditionWithRet(\
 	condition,\
 	message,\

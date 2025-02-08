@@ -267,7 +267,6 @@ include(cmake/Util_FindLibPngJpeg.cmake)
 find_libpng_and_libjpeg(lib_base)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -278,8 +277,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         lib_base 
         PRIVATE
             /permissive-
-            /utf-8
             /W4
+            /utf-8
             /MP
             /EHsc   
             /w15038 
@@ -299,6 +298,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             /wd4459
             /wd4611
             /wd4702
+            /wd4828
             /Zi
             /Zc:__cplusplus
     )
@@ -306,16 +306,16 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(
         lib_base 
         PRIVATE
-            /permissive-
             /utf-8
             /O3
             /W4
-            /MP
             /EHsc   
             /Zi
             /Zc:__cplusplus
     )
 endif()
+
+
 
 target_include_directories(lib_base
     PUBLIC

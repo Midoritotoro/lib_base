@@ -9,6 +9,8 @@
 namespace base::io {
 	class AbstractFileEngine {
 	public:
+		virtual ~AbstractFileEngine() {};
+
 		virtual void setFileName(const std::string& path) = 0;
 		virtual void setFileDescriptor(not_null<FILE*> file) = 0;
 

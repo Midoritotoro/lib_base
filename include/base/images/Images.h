@@ -1,4 +1,4 @@
-#pragma once 
+п»ї#pragma once 
 
 #include <base/system/Platform.h>
 
@@ -10,7 +10,7 @@
 #include <base/OverflowCheck.h>
 #include <base/Assert.h>
 
-// Отключает все внутренние исключения
+// РћС‚РєР»СЋС‡Р°РµС‚ РІСЃРµ РІРЅСѓС‚СЂРµРЅРЅРёРµ РёСЃРєР»СЋС‡РµРЅРёСЏ
 // #define LIB_BASE_IMAGES_NO_FAILURE
 
 #ifdef LIB_BASE_ENABLE_QT

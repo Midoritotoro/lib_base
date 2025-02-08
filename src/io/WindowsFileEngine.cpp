@@ -149,8 +149,14 @@ namespace base::io {
 		const FileFilter& filter,
 		bool recurse)
 	{
-		const auto filterNames	= (filter.nameContains.empty() == false);
-		const auto filterSize	= (filter.minimumSize > 0);
+		const auto filterNames		 = (filter.nameContains.empty() == false);
+		const auto filterSize		 = (filter.minimumSize > 0 || filter.maximumSize > 0);
+
+		const auto useFilter	     = (filterNames || filterSize);
+
+		const auto filterMaximumSize = (filterSize && filter.maximumSize <= 0 
+			? MAXLONGLONG 
+			: filter.maximumSize);
 
 		WIN32_FIND_DATAA findFileData;
 		base_string szPath = path + base_string("\\*");
@@ -158,35 +164,56 @@ namespace base::io {
 		WindowsSmartHandle hFind = FindFirstFileA(szPath.c_str(), &findFileData);
 		hFind.setDeleteCallback(FindClose);
 
-		base_string pathToWindowsDirectory(MAX_PATH, 0);
+		if (hFind == INVALID_HANDLE_VALUE)
+			return;
 
-		GetWindowsDirectoryA(&pathToWindowsDirectory[0], MAX_PATH);
+		std::vector<base_string> directories;
 
-		if (hFind != INVALID_HANDLE_VALUE) {
-			std::vector<base_string> directories;
+		do {
+			if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				directories.push_back(szPath);
+				continue;
+			}
 
-			do {
-				if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == false 
-					&& filterNames 
-					&& base_strstr(findFileData.cFileName,
-						filter.nameContains.c_str()) != 0)
-					output.push_back(findFileData.cFileName);
+			if (useFilter) {
+				if (filterNames && filterSize) {
+					LARGE_INTEGER fileSize = { 0 };
+
+					fileSize.LowPart = findFileData.nFileSizeLow;
+					fileSize.HighPart = findFileData.nFileSizeHigh;
+
+					if (base_strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0
+						&& fileSize.QuadPart > filter.minimumSize
+						&& fileSize.QuadPart < filterMaximumSize)
+						output.push_back(findFileData.cFileName);
+				}
+
+				else if (filterNames) {
+					if (base_strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0)
+						output.push_back(findFileData.cFileName);
+				}
+				else {
+					LARGE_INTEGER fileSize = { 0 };
+
+					fileSize.LowPart = findFileData.nFileSizeLow;
+					fileSize.HighPart = findFileData.nFileSizeHigh;
+
+					if (fileSize.QuadPart > filter.minimumSize
+						&& fileSize.QuadPart < filterMaximumSize)
+						output.push_back(findFileData.cFileName);
+				}
+			}
 				
-				if ((!base_strcmp(findFileData.cFileName, ".")) || (!base_strcmp(findFileData.cFileName, "..")))
-					continue;
+			if ((!base_strcmp(findFileData.cFileName, ".")) || (!base_strcmp(findFileData.cFileName, "..")))
+				continue;
 
-				szPath = path + base_string("\\") + findFileData.cFileName;
+			szPath = path + base_string("\\") + findFileData.cFileName;
 
-				if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
-					&& (!base_strstr(
-						szPath.c_str(), pathToWindowsDirectory.c_str())))
-					directories.push_back(szPath);
+		} while (FindNextFileA(hFind, &findFileData) != 0);
 
-			} while (FindNextFileA(hFind, &findFileData) != 0);
-
-			for (int i = 0; i < directories.size(); ++i)
-				find(directories[i], output, filter, recurse);
-		}
+		for (int i = 0; i < directories.size(); ++i)
+			find(directories[i], output, filter, recurse);
+		
 	}
 
 	std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
