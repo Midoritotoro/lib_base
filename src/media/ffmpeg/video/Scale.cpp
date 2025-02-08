@@ -275,7 +275,9 @@ namespace FFmpeg {
 
         bool b_has_ai = false;
         bool b_has_ao = false;
+
         int i_sws_flags = i_sws_flags_default;
+
         bool b_swap_uvi = false;
         bool b_swap_uvo = false;
 

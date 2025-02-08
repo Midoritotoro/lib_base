@@ -18,12 +18,15 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
   set(CMAKE_INSTALL_INCLUDEDIR "include")
 endif()
 
+set(libs_loc "D:/Libraries/win64")
+
 option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
 option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
 option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
 option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
+option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" ON)
 option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
 
 
@@ -31,6 +34,7 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
 set(LIB_BASE_ENABLE_OPENGL OFF)
+set(LIB_BASE_ENABLE_FFMPEG ON)
 set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
@@ -239,7 +243,6 @@ if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIE
     endif()
 endif()
 
-
 target_link_libraries(lib_base PUBLIC OpenMP::OpenMP_CXX)
 
 if(LIB_BASE_ENABLE_QT)
@@ -261,6 +264,15 @@ endif()
     #find_zlib(lib_base)
     # add_subdirectory(src/zlib)
 #endif()
+
+if(LIB_BASE_ENABLE_FFMPEG)
+    add_subdirectory(src/media/ffmpeg)
+
+    add_library(lib_baseFFmpeg INTERFACE)
+    target_link_libraries(lib_baseFFmpeg INTERFACE lib_base_ffmpeg)
+
+    add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
+endif()
 
 include(cmake/Util_FindLibPngJpeg.cmake)
 
