@@ -1,4 +1,4 @@
-#include "Utility.h"
+#include <base/media/Utility.h>
 
 extern "C" {
 	#include <libavutil/imgutils.h>
@@ -7,17 +7,17 @@ extern "C" {
 
 #include "video/HardwareAcceleration.h"
 
-#if defined Q_OS_WIN
+#if defined OS_WIN
 	#include <Windows.h>
-#endif // Q_OS_WIN
+#endif // OS_WIN
 
 #include <qDebug>
 
-#include "../../core/Time.h"
-#include "../../core/CoreUtility.h"
+#include <base/Time.h>
+#include <base/Utility.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 
 void IODeleter::operator()(AVIOContext* value) {
 	if (value) {
@@ -398,6 +398,4 @@ SwresamplePointer MakeSwresamplePointer(
 #endif // DA_FFMPEG_NEW_CHANNEL_LAYOUT
 		});
 }
-
-
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

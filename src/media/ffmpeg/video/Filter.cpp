@@ -1,7 +1,7 @@
-#include "Filter.h"
+#include <base/media/ffmpeg/video/Filter.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     picture_t* FilterNewPicture(filter_t* p_filter) {
         picture_t* pic = NULL;
         if (p_filter->owner.video != NULL && p_filter->owner.video->buffer_new != NULL)
@@ -15,4 +15,4 @@ namespace FFmpeg {
             printf("can't get output picture");
         return pic;
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

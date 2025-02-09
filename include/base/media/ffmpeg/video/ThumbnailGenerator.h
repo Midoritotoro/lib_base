@@ -1,10 +1,10 @@
 #pragma once 
 
 #include <QString>
-#include "FrameGenerator.h"
+#include <base/media/ffmpeg/video/FrameGenerator.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 	class ThumbnailGenerator {
 	public:
 		[[nodiscard]] static QImage generate(
@@ -12,4 +12,4 @@ namespace FFmpeg {
 			int swscaleFlags = SWS_BICUBIC);
 		[[nodiscard]] static QSize resolution(const QString& path);
 	};
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

@@ -6,9 +6,6 @@
 #define MAXARGS 32
 
 namespace base::images {
-    //[[nodiscard]] int integralImageDimensions(const std::vector<std::vector<int>> &image) {
-    //    return 2;
-
     //}
     //
     //enum ORDER {

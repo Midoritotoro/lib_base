@@ -1,15 +1,13 @@
-#include "Picture.h"
-#include "Ancillary.h"
+#include <base/media/ffmpeg/video/Picture.h>
 
-#include "Fourcc.h"
+#include <base/concurrent/common/CommonAncillary.h>
+#include <base/media/ffmpeg/video/Fourcc.h>
 
-#include "Windows.h"
-#include "Object.h"
-
-#include "Chroma.h"
+#include <base/media/ffmpeg/video/Object.h>
+#include <base/media/ffmpeg/video/Config.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     picture_t* PictureNew(
         fourcc_t i_chroma, int i_width,
         int i_height, int i_sar_num,
@@ -353,4 +351,4 @@ namespace FFmpeg {
         if (p_src->context != NULL)
             p_dst->context = p_src->context->copy(p_src->context);
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

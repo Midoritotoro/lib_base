@@ -1,10 +1,10 @@
-#include "Object.h"
+#include <base/media/ffmpeg/video/Object.h>
 
-#include "Math.h"
-#include "Variables.h"
+#include <base/Utility.h>
+#include <base/media/ffmpeg/video/Variables.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     res** obj_res(object_t* obj)
     {
         return &objectPrivate(obj)->resources;
@@ -167,4 +167,4 @@ namespace FFmpeg {
     {
         objres_remove(obj, ptr, ptrcmp);
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

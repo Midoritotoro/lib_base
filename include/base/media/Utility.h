@@ -4,7 +4,7 @@
 	#define __STDC_CONSTANT_MACROS
 #endif
 
-#include "../../core/Types.h"
+#include <base/Types.h>
 
 extern "C" {
     #include <libavfilter/avfilter.h>
@@ -38,7 +38,7 @@ extern "C" {
 	AV_VERSION_INT(58, 02, 100))
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 	constexpr auto kAvioBlockSize = 4096;
 
 class AvErrorWrap {
@@ -267,4 +267,4 @@ struct EnqueuedFrame {
 	}
 };
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

@@ -1,10 +1,10 @@
-#include "VideoFormat.h"
+#include <base/media/ffmpeg/video/VideoFormat.h>
 
-#include "Ancillary.h"
-#include "Object.h"
+#include <base/concurrent/common/CommonAncillary.h>
+#include <base/media/ffmpeg/video/Object.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     void DecoderDeviceRelease(decoder_device* device)
     {
         decoder_device_priv* priv =
@@ -140,6 +140,4 @@ namespace FFmpeg {
         }
         return SUCCESS;
     }
-
-
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

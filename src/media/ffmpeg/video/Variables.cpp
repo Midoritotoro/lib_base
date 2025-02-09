@@ -1,10 +1,10 @@
-#include "Variables.h"
+#include <base/media/ffmpeg/video/Variables.h>
 
-#include "TFunctions.h"
+#include <base/Utility.h>
 #include <cassert>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     int CmpBool(value_t v, value_t w)
     {
         return v.b_bool ? w.b_bool ? 0 : 1 : w.b_bool ? -1 : 0;
@@ -286,4 +286,4 @@ namespace FFmpeg {
         mutex_unlock(&p_priv->var_lock);
         return err;
     }
-} // namespace FFmpeg
+} // namespace namespace base::media::ffmpeg::video

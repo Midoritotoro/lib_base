@@ -1,13 +1,13 @@
 #pragma once 
 
-#include "VideoHelper.h"
-#include "Fourcc.h"
+#include <base/media/ffmpeg/video/VideoHelper.h>
+#include <base/media/ffmpeg/video/Fourcc.h>
 
-#include "Object.h"
-#include "Ancillary.h"
+#include <base/media/ffmpeg/video/Object.h>
+#include <base/concurrent/common/CommonAncillary.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct video_palette_t {
         int i_entries;                                  /**< number of in-use palette entries */
         uint8_t palette[VIDEO_PALETTE_COLORS_MAX][4];   /**< 4-byte RGBA/YUVA palette */
@@ -347,4 +347,4 @@ namespace FFmpeg {
 	int VideoFormatCopy(
 		video_format_t* p_dst,
 		const video_format_t* p_src);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

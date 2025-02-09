@@ -1,7 +1,7 @@
-#include "Chroma.h"
-#include "Fourcc.h"
+#include <base/media/ffmpeg/video/Chroma.h>
+#include <base/media/ffmpeg/video/Fourcc.h>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     namespace {
         inline constexpr struct
         {
@@ -355,4 +355,4 @@ namespace FFmpeg {
 
         return NULL;
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

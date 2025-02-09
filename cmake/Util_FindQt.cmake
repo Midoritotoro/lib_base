@@ -43,8 +43,6 @@ function(find_qt TARGET)
                 Qt6::Widgets 
                 Qt6::WidgetsPrivate
             )
-
-        
     endif()
 
     target_compile_definitions(${TARGET}

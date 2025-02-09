@@ -1,9 +1,9 @@
 #pragma once 
 
-#include "FourccCodecs.h"
-#include "Math.h"
+#include <base/media/ffmpeg/video/FourccCodecs.h>
+#include <base/Utility.h>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 	using fourcc_t = uint32_t;
 
 	struct fourcc_desc {
@@ -50,4 +50,4 @@ namespace FFmpeg {
 		const char** dsc,
 		int cat);
 	[[nodiscard]] fourcc_t FourccGetCodec(int cat, fourcc_t fourcc);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

@@ -1,7 +1,7 @@
-#include "Fourcc.h"
+#include <base/media/ffmpeg/video/Fourcc.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     namespace {
         inline constexpr fourcc_desc desc_audio[] = {
             {{'a','a','c',' '}, "AAC audio"},
@@ -126,4 +126,4 @@ namespace FFmpeg {
         fourcc_t codec = FourccLookupCat(fourcc, NULL, cat);
         return codec ? codec : fourcc;
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

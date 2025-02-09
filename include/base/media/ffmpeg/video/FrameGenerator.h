@@ -1,16 +1,17 @@
 #pragma once
 
-#include "../Utility.h"
-#include "../../../core/Time.h"
+#include <base/media/Utility.h>
+#include <base/Time.h>
 
 
-namespace FFmpeg {
+
+namespace base::media::ffmpeg::video {
 class ThumbnailGenerator;
 
 class FrameGenerator {
 public:
 	struct Frame {
-		Time::time duration = 0;
+		Time::time_t duration = 0;
 		QImage image;
 		bool last = false;
 	};
@@ -36,19 +37,19 @@ public:
 		bool fullScreen = false);
 
 	void setSpeed(float speed);
-	void rewind(Time::time positionMs);
+	void rewind(Time::time_t positionMs);
 
 	[[nodiscard]] QSize resolution() const;
 
-	[[nodiscard]] Time::time duration() const noexcept;
-	[[nodiscard]] Time::time position() const noexcept;
+	[[nodiscard]] Time::time_t duration() const noexcept;
+	[[nodiscard]] Time::time_t position() const noexcept;
 
-	[[nodiscard]] Time::time frameDelay() const noexcept;
+	[[nodiscard]] Time::time_t frameDelay() const noexcept;
 private:
 	struct ReadFrame {
 		FramePointer frame = nullptr;
-		Time::time position = 0;
-		Time::time duration = 0;
+		Time::time_t position = 0;
+		Time::time_t duration = 0;
 	};
 
 	void readNextFrame();
@@ -78,7 +79,7 @@ private:
 	ReadFrame _current;
 	ReadFrame _next;
 
-	Time::time _framePosition = 0;
+	Time::time_t _framePosition = 0;
 
 	int _deviceOffset = 0;
 	int _bestVideoStreamId = 0;

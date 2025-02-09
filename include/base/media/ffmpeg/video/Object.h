@@ -7,7 +7,7 @@
 #include <type_traits>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct log_t
     {
         uintptr_t   i_object_id; /**< Emitter (temporarily) unique object ID or 0 */
@@ -145,4 +145,4 @@ namespace FFmpeg {
     template<typename O>
     void object_delete(O* obj);
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

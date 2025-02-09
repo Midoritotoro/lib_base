@@ -1,7 +1,6 @@
-#include "ThumbnailGenerator.h"
+#include <base/media/ffmpeg/video/ThumbnailGenerator.h>
 
-
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 	QImage ThumbnailGenerator::generate(
 		const QString& path,
 		int swscaleFlags)
@@ -20,4 +19,4 @@ namespace FFmpeg {
 		auto generator = FrameGenerator(path, 0, false, false);
 		return generator.resolution();
 	}
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

@@ -1,11 +1,11 @@
-#include "Scale.h"
+#include <base/media/ffmpeg/video/Scale.h>
 
 #include <cassert>
 #include <cstdlib>
 #include <malloc.h>
 
-#include "Variables.h"
-#include "Picture.h"
+#include <base/media/ffmpeg/video/Variables.h>
+#include <base/media/ffmpeg/video/Picture.h>
 
 
 extern "C" {
@@ -18,7 +18,7 @@ extern "C" {
 #define OFFSET_A    (3)
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     inline constexpr filter_operations filter_ops = {
         .filter_video = Filter, .close = CloseScaler,
     };
@@ -599,4 +599,4 @@ namespace FFmpeg {
 
         return p_pic_dst;
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

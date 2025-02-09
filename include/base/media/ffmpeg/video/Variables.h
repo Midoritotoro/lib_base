@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "Object.h"
+#include <base/media/ffmpeg/video/Object.h>
 
 #define VAR_TYPE                0x00ff
 #define VAR_CLASS               0x00f0
@@ -30,7 +30,7 @@
 #define VAR_SETMINMAX           0x0027
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     typedef int (*variable_ops_cmp) (value_t, value_t);
     typedef void (*variable_ops_dup) (value_t*);
     typedef void (*variable_ops_free) (value_t*);
@@ -150,4 +150,4 @@ namespace FFmpeg {
 
     int var_GetChecked(object_t* p_this, const char* psz_name,
         int expected_type, value_t* p_val);
-}
+} // namespace base::media::ffmpeg::video

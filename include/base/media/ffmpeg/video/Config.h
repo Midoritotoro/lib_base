@@ -1,7 +1,7 @@
 #pragma once 
 
-#include "../../../core/Config.h"
-#include "Threads.h"
+#include <base/system/Platform.h>
+#include <base/concurrent/win/WinapiThreads.h>
 
 #define SUCCESS                             0
 /** Unspecified error */

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VideoFormat.h"
-#include "Math.h"
+#include <base/media/ffmpeg/video/VideoFormat.h>
+#include <base/Utility.h>
 
 extern "C" {
     #include <libavutil/pixfmt.h>
@@ -9,7 +9,7 @@ extern "C" {
 }
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct chroma_description_t {
         fourcc_t fcc;
 
@@ -33,4 +33,4 @@ namespace FFmpeg {
 
     [[nodiscard]] const chroma_description_t*
         FourccGetChromaDescription(fourcc_t i_fourcc);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

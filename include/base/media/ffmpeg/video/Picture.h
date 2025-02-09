@@ -1,18 +1,18 @@
 #pragma once 
 
+#include <base/Time.h>
+#include <base/media/ffmpeg/video/VideoFormat.h>
 
-#include "../../../core/Time.h"
-#include "VideoFormat.h"
 
 #define PICTURE_SW_SIZE_MAX                 (UINT32_C(1) << 28) /* 256MB: 8K * 8K * 4*/
 #define PICTURE_PLANE_MAX					(5)
 
-namespace Threads {
+namespace base::Threads {
 	struct ancillary;
 	struct atomic_rc_t;
 }
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 	enum
 	{
 		Y_PLANE = 0,
@@ -58,7 +58,7 @@ namespace FFmpeg {
 		 * These properties can be modified using the video output thread API,
 		 * but should never be written directly */
 		 /**@{*/
-		Time::time      date;                                  /**< display date */
+		Time::time_t      date;                                  /**< display date */
 		bool            b_force;
 		bool            b_still;
 		/**@}*/
@@ -187,4 +187,4 @@ namespace FFmpeg {
 
 	void PictureCopyProperties(picture_t* p_dst, const picture_t* p_src);
 	void PictureCopy(picture_t* p_dst, const picture_t* p_src);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

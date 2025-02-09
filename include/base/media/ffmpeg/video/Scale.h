@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Filter.h"
+#include <base/media/ffmpeg/video/Filter.h>
 
 extern "C" {
     #include <libswscale/swscale.h>
@@ -9,7 +9,7 @@ extern "C" {
 
 #define MINIMUM_WIDTH               (32)
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct ScalerConfiguration {
         enum AVPixelFormat i_fmti;
         enum AVPixelFormat i_fmto;
@@ -66,4 +66,4 @@ namespace FFmpeg {
     [[nodiscard]] picture_t* Filter(
         filter_t* p_filter,
         picture_t* p_pic);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

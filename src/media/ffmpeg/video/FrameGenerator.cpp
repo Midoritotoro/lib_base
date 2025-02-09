@@ -1,20 +1,22 @@
-#include "FrameGenerator.h"
-#include "../../../core/CoreUtility.h"
+#include <base/media/ffmpeg/video/FrameGenerator.h>
 
-#include "../../../core/CoreConcurrent.h"
+#include <base/Concurrent.h>
+#include <base/Utility.h>
 
 #include <functional>
 #include <QApplication>
 #include <QScreen>
 
-#include "../../images/ImagesBuffer.h"
+#include <base/images/ImagesBuffer.h>
 #include <qDebug>
+
+#include <base/qt/common/Size.h>
 
 #ifdef min
 #undef min
 #endif // min
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
 
 	namespace {
 		constexpr auto kMaxArea = 1920 * 1080 * 4;
@@ -220,7 +222,7 @@ void FrameGenerator::setSpeed(float speed) {
 	_speed = speed;
 }
 
-void FrameGenerator::rewind(Time::time positionMs) {
+void FrameGenerator::rewind(Time::time_t positionMs) {
 //	measureExecutionTime("FrameGenerator::rewind")
 
 	if (_codec == nullptr)
@@ -255,7 +257,7 @@ QSize FrameGenerator::resolution() const {
 		_format->streams[_bestVideoStreamId]->codecpar->height);
 }
 
-Time::time FrameGenerator::duration() const noexcept {
+Time::time_t FrameGenerator::duration() const noexcept {
 	if (_format == nullptr)
 		return 0;
 
@@ -273,11 +275,11 @@ Time::time FrameGenerator::duration() const noexcept {
 	return 0;
 }
 
-Time::time FrameGenerator::position() const noexcept {
+Time::time_t FrameGenerator::position() const noexcept {
 	return _framePosition;
 }
 
-Time::time FrameGenerator::frameDelay() const noexcept {
+Time::time_t FrameGenerator::frameDelay() const noexcept {
 	return _currentFrameDelay;
 }
 
@@ -339,7 +341,7 @@ QSize FrameGenerator::recountMaximumFrameSize(const QSize& targetSize) {
 	const auto width = targetSize.width();
 	const auto height = targetSize.height();
 
-	const auto screenSize = core::utility::screenResolution();
+	const auto screenSize = base::qt::common::ScreenResolution();
 	double scale = qMin(static_cast<double>(screenSize.width()) / width,
 		static_cast<double>(screenSize.height()) / height);
 
@@ -457,4 +459,4 @@ void FrameGenerator::resolveNextFrameTiming() {
 	++_frameIndex;
 }
 
-} //namespace Ffmpeg
+} //namespace base::media::ffmpeg::video

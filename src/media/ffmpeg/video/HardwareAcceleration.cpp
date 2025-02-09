@@ -1,4 +1,4 @@
-#include "HardwareAcceleration.h"
+#include <base/media/ffmpeg/video/HardwareAcceleration.h>
 #include <qDebug>
 
 

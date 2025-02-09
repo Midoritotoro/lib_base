@@ -143,10 +143,58 @@ set(QT_PUBLIC_HEADERS
 )
 
 
+set(IMAGE_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/qt_assets/images)
+set(CSS_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/qt/src/css)
+
+set(IMAGE_RESOURCES
+    "${IMAGE_RESOURCES_DIR}/button_close.png"
+    "${IMAGE_RESOURCES_DIR}/button_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/play.png"
+    "${IMAGE_RESOURCES_DIR}/player_fullscreen.png"
+    "${IMAGE_RESOURCES_DIR}/player_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/repeat.png"
+    "${IMAGE_RESOURCES_DIR}/shadow_close.png"
+    "${IMAGE_RESOURCES_DIR}/shadow_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_off.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_on.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_small_on.png"
+    "${IMAGE_RESOURCES_DIR}/speed_button.png"
+    "${IMAGE_RESOURCES_DIR}/stop.png"
+    "${IMAGE_RESOURCES_DIR}/black.jpg"
+)
+
+set(CSS_RESOURCES
+    "${CSS_RESOURCES_DIR}/ScrollAreaStyle.css"
+    "${CSS_RESOURCES_DIR}/SliderStyle.css"
+)
+
+qt_add_resources(${PROJECT_NAME}
+    PREFIX "/assets/images" "/src/qt/css"
+    FILES ${IMAGE_RESOURCES} ${CSS_RESOURCES}
+)
+
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-add_library(lib_base_qt ${QT_PUBLIC_HEADERS})
+set(FFMPEG_QT_MEDIA_PLAYER_SOURCES)
+
+if(LIB_BASE_ENABLE_FFMPEG)
+  set(FFMPEG_QT_MEDIA_PLAYER_SOURCES
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/FullScreenButton.h
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/MediaPlayer.h
+
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/MediaPlayerPanel.h
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/SpeedButton.h
+
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/VideoStateWidget.h
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/VolumeController.h
+
+        ${PROJECT_SOURCE_DIR}/include/base/media/Manager.h
+        ${PROJECT_SOURCE_DIR}/include/base/media/MediaCommon.h
+    )
+endif()
+
+add_library(lib_base_qt ${QT_PUBLIC_HEADERS} ${FFMPEG_QT_MEDIA_PLAYER_SOURCES})
 
 set_target_properties(
     lib_base_qt PROPERTIES
@@ -174,6 +222,23 @@ if(LIB_BASE_QT_ENABLE_FONTS)
         PUBLIC
             LIB_BASE_QT_ENABLE_FONTS
             LIB_BASE_SHADERS="${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/"
+    )
+endif()
+
+if(LIB_BASE_ENABLE_FFMPEG)
+    target_sources(lib_base_qt
+        PRIVATE
+         ${PROJECT_SOURCE_DIR}/src/media/player/FullScreenButton.cpp
+         ${PROJECT_SOURCE_DIR}/src/media/player/MediaPlayer.cpp
+
+         ${PROJECT_SOURCE_DIR}/src/media/player/MediaPlayerPanel.cpp
+         ${PROJECT_SOURCE_DIR}/src/media/player/SpeedButton.cpp
+
+         ${PROJECT_SOURCE_DIR}/src/media/player/VideoStateWidget.cpp
+         ${PROJECT_SOURCE_DIR}/src/media/player/VolumeController.cpp
+
+         ${PROJECT_SOURCE_DIR}/src/media/Manager.cpp
+         ${PROJECT_SOURCE_DIR}/src/media/MediaCommon.cpp
     )
 endif()
 

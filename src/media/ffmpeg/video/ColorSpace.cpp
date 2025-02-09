@@ -1,6 +1,6 @@
-#include "ColorSpace.h"
+#include <base/media/ffmpeg/video/ColorSpace.h>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     int GetSwsColorspace(const video_format_t* format)
     {
         /* We currently map bt2020, bt709 and bt601, all other are unspecified */
@@ -37,4 +37,4 @@ namespace FFmpeg {
             output_table, output_range,
             brightness, contrast, saturation);
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video
