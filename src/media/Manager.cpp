@@ -53,13 +53,13 @@ namespace base::media {
 		_state = State::Playing;
 	}
 
-	Time::time Manager::duration() const noexcept {
+	Time::time_t Manager::duration() const noexcept {
 		return hasVideo()
 			? _frameGenerator->duration()
 			: 0;
 	}
 
-	Time::time Manager::position() const noexcept {
+	Time::time_t Manager::position() const noexcept {
 		return hasVideo()
 			? _frameGenerator->position()
 			: 0;
@@ -109,7 +109,7 @@ namespace base::media {
 		_showNormal = showNormal;
 	}
 
-	void Manager::setVideo(std::unique_ptr<FFmpeg::FrameGenerator>&& generator, const QSize& size) {
+	void Manager::setVideo(std::unique_ptr<ffmpeg::video::FrameGenerator>&& generator, const QSize& size) {
 		QMutexLocker locker(&_mutex);
 
 		_size = size;

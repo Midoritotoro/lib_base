@@ -1,13 +1,13 @@
 #pragma once 
 
-#include "../core/Types.h"
+#include <base/Types.h>
 #include <QString>
 
 #include <QSize>
 #include <QPixmap>
 
 
-namespace Media {
+namespace base::media {
 	enum class Type : uchar {
 		Photo = 0x01,
 		Video = 0x02,

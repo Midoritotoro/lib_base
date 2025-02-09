@@ -1,16 +1,19 @@
-#include "MediaCommon.h"
+#include <base/media/MediaCommon.h>
 
-#include "images/ImagesPrepare.h"
-#include "ffmpeg/video/ThumbnailGenerator.h"
+#include <base/images/ImagesPrepare.h>
+#include <base/media/ffmpeg/video/ThumbnailGenerator.h>
 
 #include <QMimeDataBase>
 #include <QFile>
 
-#include "../core/CoreUtility.h"
-#include "../ui/style/StyleScale.h"
+#include <base/Utility.h>
+#include <base/qt/style/StyleScale.h>
+
+#include <QPixmapCache>
+#include <base/qt/common/Size.h>
 
 
-namespace Media {
+namespace base::media {
 	namespace {
 		inline constexpr auto kPreviewPrefix = "_p";
 
@@ -38,13 +41,13 @@ namespace Media {
 		const auto mimeType = QMimeDatabase().mimeTypeForFile(filePath).name();
 
 		if (mimeType.contains("video"))
-			return Media::Type::Video;
+			return Type::Video;
 		else if (mimeType.contains("image"))
-			return Media::Type::Photo;
+			return Type::Photo;
 		else if (mimeType.contains("audio"))
-			return Media::Type::Audio;
+			return Type::Audio;
 
-		return Media::Type::Unknown;
+		return Type::Unknown;
 	}
 
 	QPixmap FindPreviewInCache(const QString& key) {
@@ -70,7 +73,7 @@ namespace Media {
 				return QPixmap(path).size();
 
 			case Type::Video:
-				return FFmpeg::ThumbnailGenerator::resolution(path);
+				return ffmpeg::video::ThumbnailGenerator::resolution(path);
 		}
 
 		return QSize();
@@ -94,7 +97,7 @@ namespace Media {
 			case Type::Video:
 				preview = images::PixmapFast(
 					std::move(
-						FFmpeg::ThumbnailGenerator::generate(path,
+						ffmpeg::video::ThumbnailGenerator::generate(path,
 							QualityToSwscaleFlags(quality))));
 				break;
 
@@ -130,11 +133,11 @@ namespace Media {
 
 		thumbnailImage = images::Prepare(
 			std::move(thumbnailImage),
-			core::utility::GetMinimumSizeWithAspectRatio(
+			qt::common::GetMinimumSizeWithAspectRatio(
 				thumbnailImage.size(),
 				targetSize.width()));
 
-		if (core::utility::PartiallyEqual(thumbnailImage.size(),
+		if (qt::common::PartiallyEqual(thumbnailImage.size(),
 			targetSize, 1) == false)
 			return QPixmap();
 
