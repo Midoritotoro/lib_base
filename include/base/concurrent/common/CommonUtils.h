@@ -26,7 +26,7 @@ struct check_plain_function {
 template <typename Callable, typename Return, typename ...Args>
 constexpr bool is_plain_function_v = sizeof(
 	check_plain_function<Return, Args...>::check(
-		std::declval<Callable>())) == sizeof(true_t);
+		::std::declval<Callable>())) == sizeof(true_t);
 
 template <typename Callable>
 class finalizer {
@@ -35,17 +35,17 @@ public:
 	finalizer &operator=(const finalizer &other) = delete;
 
 	explicit finalizer(Callable&& callable) :
-		_callable(std::move(callable))
+		_callable(::std::move(callable))
 	{}
 
 	finalizer(finalizer &&other):
-		_callable(std::move(other._callable))
-		, _disabled(std::exchange(other._disabled, true)) 
+		_callable(::std::move(other._callable))
+		, _disabled(::std::exchange(other._disabled, true))
 	{}
 
 	finalizer &operator=(finalizer &&other) {
-		_callable = std::move(other._callable);
-		_disabled = std::exchange(other._disabled, true);
+		_callable = ::std::move(other._callable);
+		_disabled = ::std::exchange(other._disabled, true);
 
 		return *this;
 	}
@@ -63,10 +63,10 @@ private:
 
 template <
 	typename Callable,
-	typename = std::enable_if_t<!std::is_reference_v<Callable>>>
+	typename = ::std::enable_if_t<!::std::is_reference_v<Callable>>>
 finalizer<Callable> finally(Callable &&callable) {
 	return finalizer<Callable>{ 
-		std::move(callable) 
+		::std::move(callable)
 	};
 }
 

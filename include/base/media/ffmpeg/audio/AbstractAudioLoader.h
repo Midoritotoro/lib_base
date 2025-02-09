@@ -1,17 +1,17 @@
-#include "../../../core/Time.h"
-#include "../Utility.h"
+#include <base/Time.h>
+#include <base/media/ffmpeg/Utility.h>
 
 #include <deque>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 
 	class AbstractAudioLoader {
 	public:
 		AbstractAudioLoader(const QByteArray& data);
 		virtual ~AbstractAudioLoader();
 
-		virtual bool open(Time::time positionMs, float speed = 1.) = 0;
-		virtual Time::time duration() = 0;
+		virtual bool open(Time::time_t positionMs, float speed = 1.) = 0;
+		virtual Time::time_t duration() = 0;
 
 		virtual int samplesFrequency() = 0;
 		virtual int sampleSize() = 0;

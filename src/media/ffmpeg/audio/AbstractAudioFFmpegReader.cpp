@@ -1,4 +1,4 @@
-#include "AbstractAudioFFmpegReader.h"
+#include <base/media/ffmpeg/audio/AbstractAudioFFmpegReader.h>
 
 extern "C" {
 	#include <libavfilter/buffersink.h>
@@ -15,7 +15,7 @@ extern "C" {
 #endif // max
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 	AbstractAudioFFmpegReader::AbstractAudioFFmpegReader(const QByteArray& data):
 		AbstractAudioReader(data)
 		, _frame(MakeFramePointer()) {
@@ -601,4 +601,4 @@ namespace FFmpeg {
 			}
 		}
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::audio

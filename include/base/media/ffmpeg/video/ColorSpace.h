@@ -1,14 +1,14 @@
 #pragma once 
 
-#include "Picture.h"
-#include "Chroma.h"
+#include <base/media/ffmpeg/video/Picture.h>
+#include <base/media/ffmpeg/video/Chroma.h>
 
 extern "C" {
     #include <libswscale/swscale.h>
 }
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct filter_sys_t {
         SwsFilter* p_filter;
         int i_sws_flags;
@@ -39,4 +39,4 @@ namespace FFmpeg {
 
     [[nodiscard]] int GetSwsColorspace(const video_format_t* format);
     void SetColorspace(filter_sys_t* p_sys);
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

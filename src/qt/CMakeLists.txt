@@ -179,6 +179,7 @@ include(GenerateExportHeader)
 set(FFMPEG_QT_MEDIA_PLAYER_SOURCES)
 
 if(LIB_BASE_ENABLE_FFMPEG)
+   message("ffmpeg is enabled in qt")
   set(FFMPEG_QT_MEDIA_PLAYER_SOURCES
         ${PROJECT_SOURCE_DIR}/include/base/media/player/FullScreenButton.h
         ${PROJECT_SOURCE_DIR}/include/base/media/player/MediaPlayer.h

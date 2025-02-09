@@ -11,13 +11,13 @@
 #include <qDebug>
 
 #include <base/qt/common/Size.h>
+#include <QFile>
 
 #ifdef min
 #undef min
 #endif // min
 
 namespace base::media::ffmpeg::video {
-
 	namespace {
 		constexpr auto kMaxArea = 1920 * 1080 * 4;
 

@@ -7,12 +7,12 @@
 #include <base/Types.h>
 
 extern "C" {
-    #include <libavfilter/avfilter.h>
-    #include <libavcodec/avcodec.h>
-    #include <libavformat/avformat.h>
+	#include <libavfilter/avfilter.h>
+	#include <libavcodec/avcodec.h>
+	#include <libavformat/avformat.h>
 	#include <libswscale/swscale.h>
 	#include <libswresample/swresample.h>
-    #include <libavutil/avutil.h>
+	#include <libavutil/avutil.h>
 	#include <libavformat/avio.h>
 } // extern "C"
 
@@ -38,7 +38,7 @@ extern "C" {
 	AV_VERSION_INT(58, 02, 100))
 
 
-namespace base::media::ffmpeg::video {
+namespace base::media::ffmpeg {
 	constexpr auto kAvioBlockSize = 4096;
 
 class AvErrorWrap {

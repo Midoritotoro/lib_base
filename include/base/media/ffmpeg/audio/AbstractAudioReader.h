@@ -1,7 +1,7 @@
-#include "AbstractAudioLoader.h"
+#include <base/media/ffmpeg/audio/AbstractAudioLoader.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 
 	class AbstractAudioReader : public AbstractAudioLoader {
 	public:
@@ -20,12 +20,12 @@ namespace FFmpeg {
 					&AbstractAudioReader::Seek);
 		}
 
-		bool open(Time::time positionMs, float speed = 1.) override;
+		bool open(Time::time_t positionMs, float speed = 1.) override;
 
-		Time::time duration() override {
+		Time::time_t duration() override {
 			return _duration;
 		}
-		void overrideDuration(int64_t startedAtSample, Time::time duration) {
+		void overrideDuration(int64_t startedAtSample, Time::time_t duration) {
 			_startedAtSample = startedAtSample;
 			_duration = duration;
 		}
@@ -51,7 +51,7 @@ namespace FFmpeg {
 
 		int _samplesFrequency = 48000;
 		int64_t _startedAtSample = 0;
-		Time::time _duration = 0;
+		Time::time_t _duration = 0;
 
 		uchar* ioBuffer = nullptr;
 		IOPointer ioContext = nullptr;
@@ -70,4 +70,4 @@ namespace FFmpeg {
 		static int64_t Seek(void* opaque, int64_t offset, int whence);
 	};
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::audio

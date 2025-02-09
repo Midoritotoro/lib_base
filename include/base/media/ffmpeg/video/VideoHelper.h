@@ -1,7 +1,7 @@
 #pragma once 
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     enum video_orientation_t {
         ORIENT_TOP_LEFT = 0, /**< Top line represents top, left column left. */
         ORIENT_TOP_RIGHT, /**< Flipped horizontally */
@@ -135,4 +135,4 @@ namespace FFmpeg {
 #define FIELD_OF_VIEW_DEGREES_DEFAULT           80.f
 #define FIELD_OF_VIEW_DEGREES_MAX               150.f
 #define FIELD_OF_VIEW_DEGREES_MIN               20.f
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

@@ -17,7 +17,7 @@ public:
 
 	template <typename Callable>
 	bool push_is_first(Callable &&callable) {
-		return push_entry(AllocateEntry(std::forward<Callable>(callable)));
+		return push_entry(AllocateEntry(::std::forward<Callable>(callable)));
 	}
 	bool process();
 	bool empty() const;
@@ -47,14 +47,14 @@ private:
 		ProcessEntryMethod process;
 	};
 
-	static_assert(std::is_trivial_v<BasicEntry>);
-	static_assert(std::is_standard_layout_v<BasicEntry>);
+	static_assert(::std::is_trivial_v<BasicEntry>);
+	static_assert(::std::is_standard_layout_v<BasicEntry>);
 	static_assert(offsetof(BasicEntry, plain) == 0);
 
 	template <typename Function>
 	struct Entry : BasicEntry {
 		Entry(Function&& function):
-			function(std::move(function)) 
+			function(::std::move(function))
 		{}
 
 		Entry(const Function &function):
@@ -74,10 +74,10 @@ private:
 	template <typename Callable>
 	static Entry<std::decay_t<Callable>> *AllocateEntry(
 			Callable &&callable) {
-		using Function = std::decay_t<Callable>;
+		using Function = ::std::decay_t<Callable>;
 		using Type = Entry<Function>;
 
-		auto result = new Type(std::forward<Callable>(callable));
+		auto result = new Type(::std::forward<Callable>(callable));
 		result->process = &Type::Process;
 
 		return result;

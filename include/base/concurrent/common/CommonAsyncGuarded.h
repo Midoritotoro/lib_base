@@ -12,7 +12,7 @@ namespace base::concurrent {
 namespace details {
 
 template <typename T>
-constexpr std::size_t dependent_zero = 0;
+constexpr ::std::size_t dependent_zero = 0;
 
 } // namespace details
 
@@ -26,27 +26,27 @@ struct deduce_call_type_traits {
 
 template <typename Callable>
 using deduced_call_type = typename deduce_call_type_traits<
-	std::decay_t<Callable>>::type;
+	::std::decay_t<Callable>>::type;
 
 template <typename Guard, typename Callable>
 class guarded_wrap {
 public:
-	using ClearCallable = std::decay_t<Callable>;
-	using GuardTraits = guard_traits<std::decay_t<Guard>>;
-	using GuardType = decltype(GuardTraits::create(std::declval<Guard>()));
+	using ClearCallable = ::std::decay_t<Callable>;
+	using GuardTraits = guard_traits<::std::decay_t<Guard>>;
+	using GuardType = decltype(GuardTraits::create(::std::declval<Guard>()));
 
 	guarded_wrap(Guard &&object, Callable &&callable)
 	: _guard(GuardTraits::create(std::forward<Guard>(object)))
-	, _callable(std::forward<Callable>(callable)) {
+	, _callable(::std::forward<Callable>(callable)) {
 	}
 
 	template <
 		typename ...OtherArgs,
 		typename Return = decltype(
-			std::declval<ClearCallable>()(std::declval<OtherArgs>()...))>
+			::std::declval<ClearCallable>()(::std::declval<OtherArgs>()...))>
 	Return operator()(OtherArgs &&...args) {
 		return GuardTraits::check(_guard)
-			? _callable(std::forward<OtherArgs>(args)...)
+			? _callable(::std::forward<OtherArgs>(args)...)
 			: Return();
 	}
 
@@ -74,39 +74,39 @@ struct deduce_call_type_traits<guarded_wrap<Guard, Callable>> {
 template <
 	typename Guard,
 	typename Callable,
-	typename GuardTraits = guard_traits<std::decay_t<Guard>>,
-	typename = std::enable_if_t<
+	typename GuardTraits = guard_traits<::std::decay_t<Guard>>,
+	typename = ::std::enable_if_t<
 		sizeof(GuardTraits) != details::dependent_zero<GuardTraits>>>
 inline auto guard(Guard &&object, Callable &&callable)
 -> guarded_wrap<Guard, Callable> {
 	return {
-		std::forward<Guard>(object),
-		std::forward<Callable>(callable)
+		::std::forward<Guard>(object),
+		::std::forward<Callable>(callable)
 	};
 }
 
 template <
 	typename Guard,
 	typename Callable,
-	typename GuardTraits = guard_traits<std::decay_t<Guard>>,
-	typename = std::enable_if_t<
+	typename GuardTraits = guard_traits<::std::decay_t<Guard>>,
+	typename = ::std::enable_if_t<
 		sizeof(GuardTraits) != details::dependent_zero<GuardTraits>>>
 inline void invokeAsync(Guard &&object, Callable &&callable) {
 	return invokeAsync(guard(
-		std::forward<Guard>(object),
-		std::forward<Callable>(callable)));
+		::std::forward<Guard>(object),
+		::std::forward<Callable>(callable)));
 }
 
 template <
 	typename Guard,
 	typename Callable,
-	typename GuardTraits = guard_traits<std::decay_t<Guard>>,
-	typename = std::enable_if_t<
+	typename GuardTraits = guard_traits<::std::decay_t<Guard>>,
+	typename = ::std::enable_if_t<
 		sizeof(GuardTraits) != details::dependent_zero<GuardTraits>>>
 inline void invokeSync(Guard &&object, Callable &&callable) {
 	return invokeSync(guard(
-		std::forward<Guard>(object),
-		std::forward<Callable>(callable)));
+		::std::forward<Guard>(object),
+		::std::forward<Callable>(callable)));
 }
 
 } // namespace base::concurrent

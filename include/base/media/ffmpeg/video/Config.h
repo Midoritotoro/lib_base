@@ -3,9 +3,7 @@
 #include <base/system/Platform.h>
 #include <base/concurrent/win/WinapiThreads.h>
 
-#define SUCCESS                             0
-/** Unspecified error */
-#define EGENERIC                            (-2 * (1 << (sizeof (int) * 8 - 2))) /* INT_MIN */
+
 
 #define CONFIG_HINT_CATEGORY                0x02  /* Start of new category */
 
@@ -43,7 +41,7 @@
     ((type) == CONFIG_ITEM_FLOAT)
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct module_t;
     struct plagin_t;
 
@@ -233,4 +231,4 @@ namespace FFmpeg {
         ::Threads::rcu_read_unlock();
         return str;
     }
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::video

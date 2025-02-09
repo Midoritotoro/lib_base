@@ -16,14 +16,14 @@ public:
 	{}
 
 	semaphore(semaphore&& other) noexcept
-		: _handle(std::move(other._handle))
+		: _handle(::std::move(other._handle))
 	{}
 
 	semaphore(const semaphore &other) = delete;
 	semaphore &operator=(const semaphore &other) = delete;
 
 	semaphore &operator=(semaphore &&other) noexcept {
-		_handle = std::move(other._handle);
+		_handle = ::std::move(other._handle);
 		return *this;
 	}
 

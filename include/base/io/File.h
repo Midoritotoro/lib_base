@@ -79,6 +79,13 @@ namespace base::io {
 
 		void remove();
 		static void remove(const std::string& path);
+
+		//!
+		//! \return В случае, если количество успешно записанных байтов
+		//! равно sizeInBytes, возвращает true, в противном случае false
+		[[nodiscard]] bool write(
+			void* inBuffer,
+			sizetype sizeInBytes);
 		
 		//!
 		//! \brief Читает sizeInBytes байт в outBuffer.

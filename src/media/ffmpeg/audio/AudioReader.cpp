@@ -1,4 +1,4 @@
-#include "AudioReader.h"
+#include <base/media/ffmpeg/audio/AudioReader.h>
 
 extern "C" {
 	#include <libavutil/opt.h>
@@ -6,7 +6,7 @@ extern "C" {
 
 #include <qDebug>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 	//namespace {
 	//	ALuint CreateSource() {
 	//		auto source = ALuint(0);
@@ -104,7 +104,7 @@ namespace FFmpeg {
 		//alGetError();
 	}
 
-	bool AudioReader::open(Time::time positionMs, float speed) {
+	bool AudioReader::open(Time::time_t positionMs, float speed) {
 		return AbstractAudioReader::open(positionMs)
 				&& openCodecContext()
 				&& initUsingContext(_codecContext, speed)
@@ -135,7 +135,7 @@ namespace FFmpeg {
 		return true;
 	}
 
-	bool AudioReader::seekTo(Time::time positionMs) {
+	bool AudioReader::seekTo(Time::time_t positionMs) {
 		const auto stream = fmtContext->streams[streamId];
 		const auto timeBase = stream->time_base;
 
@@ -203,8 +203,8 @@ namespace FFmpeg {
 		}
 	}
 
-	Time::time AudioReader::position() const noexcept {
+	Time::time_t AudioReader::position() const noexcept {
 		return 0;
 	}
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::audio

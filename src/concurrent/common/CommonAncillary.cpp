@@ -1,11 +1,13 @@
 #include <base/concurrent/common/CommonAncillary.h>
-#include <base/Platform.h>
+#include <base/system/Platform.h>
+
+#include <base/OverflowCheck.h>
 
 
-namespace Threads {
+namespace base::Threads {
     void AncillaryRelease(ancillary* ancillary) {
-        if (AtomicRcDec(&ancillary->rc) == false)
-            return;
+       // if (AtomicRcDec(&ancillary->rc) == false)
+        //    return;
 
         if (ancillary->free_cb != NULL)
             ancillary->free_cb(ancillary->data);
@@ -32,7 +34,7 @@ namespace Threads {
 
     ancillary* AncillaryHold(ancillary* ancillary)
     {
-        AtomicRcInc(&ancillary->rc);
+       //AtomicRcInc(&ancillary->rc);
         return ancillary;
     }
 
@@ -66,7 +68,7 @@ namespace Threads {
         size_t count = AncillaryArrayCount(src_array);
 
         ancillary** dst_array =
-            (ancillary**)MemoryAllocate(count + 1, sizeof(ancillary*));
+            (ancillary**)::base::MemoryAllocate(count + 1, sizeof(ancillary*));
 
         if (dst_array == NULL)
             return ENOMEM;
@@ -81,4 +83,4 @@ namespace Threads {
 
         return SUCCESS;
     }
-} // namespace Threads
+} // namespace base::Threads

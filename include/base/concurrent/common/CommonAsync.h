@@ -13,7 +13,7 @@
 
 namespace base::concurrent::details {
 	extern base::concurrent::queue* MainQueue;
-	extern std::atomic<int> MainQueueCounter;
+	extern ::std::atomic<int> MainQueueCounter;
 
 	class main_queue_pointer {
 	public:
@@ -54,12 +54,12 @@ namespace base::concurrent {
 	template <typename Callable>
 	inline void invokeAsync(Callable&& callable) {
 		if (const auto main = details::main_queue_pointer())
-			main->async(std::forward<Callable>(callable));
+			main->async(::std::forward<Callable>(callable));
 	}
 
 	template <typename Callable>
 	inline void invokeSync(Callable&& callable) {
 		if (const auto main = details::main_queue_pointer())
-			main->sync(std::forward<Callable>(callable));
+			main->sync(::std::forward<Callable>(callable));
 	}
 } // namespace base::concurrent

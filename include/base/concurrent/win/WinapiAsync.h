@@ -16,10 +16,10 @@ namespace base::concurrent::details {
 namespace base::concurrent {
 	template <
 		typename Callable,
-		typename Return = decltype(std::declval<Callable>()())>
+		typename Return = decltype(::std::declval<Callable>()())>
 
 	inline void async(Callable &&callable) {
-		using Function = std::decay_t<Callable>;
+		using Function = ::std::decay_t<Callable>;
 
 		if constexpr (details::is_plain_function_v<Function, Return>) {
 			using Plain = Return(*)();
@@ -31,7 +31,7 @@ namespace base::concurrent {
 			}, reinterpret_cast<void*>(copy));
 		} 
 		else {
-			const auto copy = new Function(std::forward<Callable>(callable));
+			const auto copy = new Function(::std::forward<Callable>(callable));
 
 			details::async_plain([](void *passed) {
 				const auto callable = static_cast<Function*>(passed);

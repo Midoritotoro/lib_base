@@ -7,7 +7,7 @@
 namespace {
 
 base::concurrent::queue *Queue/* = nullptr*/;
-std::atomic<int> Counter/* = 0*/;
+::std::atomic<int> Counter/* = 0*/;
 base::concurrent::details::main_queue_pointer Lifetime;
 
 } // namespace

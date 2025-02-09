@@ -24,7 +24,7 @@ public:
 
 	template <typename Callable>
 	void async(Callable &&callable) {
-		if (_list.push_is_first(std::forward<Callable>(callable)))
+		if (_list.push_is_first(::std::forward<Callable>(callable)))
 			wake_async();
 	}
 
@@ -51,7 +51,7 @@ private:
 
 	main_queue_processor _main_processor = nullptr;
 	details::list _list;
-	std::atomic_flag _queued = ATOMIC_FLAG_INIT;
+	::std::atomic_flag _queued = ATOMIC_FLAG_INIT;
 };
 
 } // namespace base::concurrent

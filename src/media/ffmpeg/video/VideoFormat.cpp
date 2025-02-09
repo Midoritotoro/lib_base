@@ -3,7 +3,6 @@
 #include <base/concurrent/common/CommonAncillary.h>
 #include <base/media/ffmpeg/video/Object.h>
 
-
 namespace base::media::ffmpeg::video {
     void DecoderDeviceRelease(decoder_device* device)
     {
@@ -55,7 +54,7 @@ namespace base::media::ffmpeg::video {
         p_fmt->i_x_offset =
             p_fmt->i_y_offset = 0;
         p_fmt->orientation = ORIENT_NORMAL;
-        UReduce(&p_fmt->i_sar_num, &p_fmt->i_sar_den,
+        UnsignedReduce(&p_fmt->i_sar_num, &p_fmt->i_sar_den,
             i_sar_num, i_sar_den, 0);
 
     }

@@ -1,7 +1,7 @@
 #pragma once 
 
 
-#include "Config.h"
+#include <base/media/ffmpeg/video/Config.h>
 
 #include <cstddef>
 #include <type_traits>

@@ -1,10 +1,10 @@
 #pragma once 
 
-#include "SubPicture.h"
-#include "ColorSpace.h"
+#include <base/media/ffmpeg/video/SubPicture.h>
+#include <base/media/ffmpeg/video/ColorSpace.h>
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::video {
     struct filter_t;
 
     struct filter_video_callbacks
@@ -139,4 +139,4 @@ namespace FFmpeg {
     typedef int (*filter_open)(filter_t*);
 
     [[nodiscard]] picture_t* FilterNewPicture(filter_t* p_filter);
-} // namespace FFmpeg 
+} // namespace base::media::ffmpeg::video 

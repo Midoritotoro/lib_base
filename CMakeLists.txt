@@ -26,7 +26,7 @@ option(LIB_BASE_INSTALL "Генерация цели для установки �
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
 option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
 option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" ON)
+option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" OFF)
 option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
 
 
@@ -34,7 +34,7 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG ON)
+set(LIB_BASE_ENABLE_FFMPEG OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
@@ -55,10 +55,10 @@ set(PRIVATE_SOURCES
 
     src/concurrent/win/WinapiSemaphore.cpp
 
-    src/concurrent/common/CommonAncillary.cpp
+ #   src/concurrent/common/CommonAncillary.cpp
     
-    src/concurrent/win/WinapiAtomic.cpp
-    src/concurrent/win/WinapiThreads.cpp
+ #  src/concurrent/win/WinapiAtomic.cpp
+ #   src/concurrent/win/WinapiThreads.cpp
 
 	src/images/ImagesBuffer.cpp
     src/images/ImagesPrepare.cpp
@@ -133,7 +133,7 @@ set(PUBLIC_HEADERS
     include/base/concurrent/common/CommonSync.h
     include/base/concurrent/common/CommonUtils.h
 
-    include/base/concurrent/common/CommonAncillary.h
+ #  include/base/concurrent/common/CommonAncillary.h
 
     include/base/concurrent/win/WinapiAsync.h
 
@@ -142,8 +142,8 @@ set(PUBLIC_HEADERS
     include/base/concurrent/win/WinapiList.h
     include/base/concurrent/win/WinapiSemaphore.h
 
-    include/base/concurrent/win/WinapiAtomic.h
-    include/base/concurrent/win/WinapiThreads.h
+   # include/base/concurrent/win/WinapiAtomic.h
+  # include/base/concurrent/win/WinapiThreads.h
 
     include/base/BaseExport.h
     include/base/TypeWrapper.h
@@ -266,6 +266,7 @@ endif()
 #endif()
 
 if(LIB_BASE_ENABLE_FFMPEG)
+    message("ffmpeg is enabled")
     add_subdirectory(src/media/ffmpeg)
 
     add_library(lib_baseFFmpeg INTERFACE)

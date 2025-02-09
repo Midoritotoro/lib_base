@@ -33,7 +33,7 @@ namespace base::media::ffmpeg::video {
         static const struct fourcc_mapping mapping_spu[] = {
             {}
         };
-    } // namespace FFmpeg
+    } // namespace
 
     int FourccCmp(
         const void* key,

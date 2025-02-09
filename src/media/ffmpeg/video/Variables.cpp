@@ -61,8 +61,8 @@ namespace base::media::ffmpeg::video {
         object_internals_t* priv = objectPrivate(obj);
         void** pp_var;
 
-        mutex_lock(&priv->var_lock);
-        pp_var = (void**)tfind(&psz_name, &priv->var_root, varcmp);
+        Threads::mutex_lock(&priv->var_lock);
+        pp_var = (void**)TFind(&psz_name, &priv->var_root, varcmp);
         return (pp_var != NULL) ? (variable_t*)*pp_var : NULL;
     }
 
@@ -71,8 +71,8 @@ namespace base::media::ffmpeg::video {
         object_internals_t* priv = objectPrivate(obj);
         void** pp_var;
 
-        mutex_lock(&priv->var_lock);
-        pp_var = (void**)tfind(&psz_name, &priv->var_root, varcmp);
+        Threads::mutex_lock(&priv->var_lock);
+        pp_var = (void**)TFind(&psz_name, &priv->var_root, varcmp);
         return (pp_var != NULL) ? (variable_t*)*pp_var : NULL;
     }
 
@@ -145,7 +145,7 @@ namespace base::media::ffmpeg::video {
     {
         object_internals_t* priv = objectPrivate(obj);
 
-        tdestroy(priv->var_root, CleanupVar);
+        TDestroy(priv->var_root, CleanupVar);
         priv->var_root = NULL;
     }
 
@@ -212,7 +212,7 @@ namespace base::media::ffmpeg::video {
             assert("unreachable!", unreachable());
         }
 
-        cond_init(&p_var->wait);
+        Threads::cond_init(&p_var->wait);
 
         if (i_type & VAR_DOINHERIT)
             var_Inherit(p_this, psz_name, i_type, &p_var->val);
@@ -222,9 +222,9 @@ namespace base::media::ffmpeg::video {
         variable_t* p_oldvar;
         int ret = SUCCESS;
 
-        mutex_lock(&p_priv->var_lock);
+        Threads::mutex_lock(&p_priv->var_lock);
 
-        pp_var = (void**)tsearch(p_var, &p_priv->var_root, varcmp);
+        pp_var = (void**)TSearch(p_var, &p_priv->var_root, varcmp);
         if (unlikely(pp_var == NULL))
             ret = ENOMEM;
         else if ((p_oldvar = ((variable_t*)(*pp_var))) == p_var) /* Variable create */
@@ -235,7 +235,7 @@ namespace base::media::ffmpeg::video {
             p_oldvar->i_usage++;
             p_oldvar->i_type |= i_type & VAR_ISCOMMAND;
         }
-        mutex_unlock(&p_priv->var_lock);
+        Threads::mutex_unlock(&p_priv->var_lock);
 
         /* If we did not need to create a new variable, free everything... */
         if (p_var != NULL)
@@ -283,7 +283,7 @@ namespace base::media::ffmpeg::video {
         else
             err = ENOENT;
 
-        mutex_unlock(&p_priv->var_lock);
+        Threads::mutex_unlock(&p_priv->var_lock);
         return err;
     }
 } // namespace namespace base::media::ffmpeg::video

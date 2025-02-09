@@ -6,6 +6,8 @@
 #include <base/media/ffmpeg/video/Object.h>
 #include <base/media/ffmpeg/video/Config.h>
 
+#include <base/media/ffmpeg/video/Chroma.h>
+
 
 namespace base::media::ffmpeg::video {
     picture_t* PictureNew(
@@ -40,7 +42,7 @@ namespace base::media::ffmpeg::video {
 
     void PictureRelease(picture_t* picture)
     {
-        if (AtomicRcDec(&picture->refs))
+        if (Threads::AtomicRcDec(&picture->refs))
             PictureDestroy(picture);
     }
 
@@ -186,7 +188,7 @@ namespace base::media::ffmpeg::video {
             return false;
         }
 
-        AtomicRcInit(&p_picture->refs);
+        Threads::AtomicRcInit(&p_picture->refs);
         priv->gc.opaque = NULL;
 
         p_picture->p_sys = p_resource->p_sys;

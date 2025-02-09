@@ -11,5 +11,8 @@
 
 #include <span>
 
+#define SUCCESS                             0
+/** Unspecified error */
+#define EGENERIC                            (-2 * (1 << (sizeof (int) * 8 - 2))) /* INT_MIN */
 
 #define unused(x)								((void)(x))

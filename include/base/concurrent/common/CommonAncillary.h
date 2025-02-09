@@ -4,11 +4,11 @@
 #include <base/Types.h>
 
 
-namespace Threads {
+namespace base::Threads {
     typedef void (*ancillary_free_cb)(void* data);
     struct ancillary
     {
-        atomic_rc_t rc;
+      //  atomic_rc_t rc;
 
         uint32 id;
         void* data;
@@ -20,7 +20,6 @@ namespace Threads {
 
 	void AncillaryArrayInit(ancillary*** array);
 
-
     ancillary* AncillaryHold(ancillary* ancillary);
     void* AncillaryGetData(const ancillary* ancillary);
 
@@ -29,4 +28,4 @@ namespace Threads {
         ancillary*** dst_arrayp,
         ancillary** const* src_arrayp);
 
-} // namespace Threads
+} // namespace base::Threads

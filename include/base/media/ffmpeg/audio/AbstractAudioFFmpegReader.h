@@ -1,4 +1,4 @@
-#include "AbstractAudioReader.h"
+#include <base/media/ffmpeg/audio/AbstractAudioReader.h>
 
 //#include <al.h>
 //#include <alc.h>
@@ -13,7 +13,7 @@
 #define AL_FORMAT_STEREO16                       0x1103
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 	class AbstractAudioFFmpegReader : public AbstractAudioReader {
 	public:
 		AbstractAudioFFmpegReader(const QByteArray& data);
@@ -100,4 +100,4 @@ namespace FFmpeg {
 
 	};
 
-} // namespace FFmpeg
+} // namespace base::media::ffmpeg::audio

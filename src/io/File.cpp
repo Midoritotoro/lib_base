@@ -12,7 +12,8 @@
 
 
 namespace base::io {
-	File::File()
+	File::File():
+		_engine(new FileEngine())
 	{}
 
 	File::File(const std::string& path) :
@@ -114,6 +115,13 @@ namespace base::io {
 
 	void File::remove(const std::string& path) {
 		FileEngine::remove(path);
+	}
+
+	bool File::write(
+		void* inBuffer,
+		sizetype sizeInBytes)
+	{
+		return _engine->write(inBuffer, sizeInBytes);
 	}
 
 	sizetype File::read(

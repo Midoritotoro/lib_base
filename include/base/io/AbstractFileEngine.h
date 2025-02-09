@@ -35,6 +35,10 @@ namespace base::io {
 		virtual [[nodiscard]] bool rewind(int64 position) = 0;
 		virtual [[nodiscard]] bool rewind(FilePositions position) = 0;
 
+		bool void write(
+			void* inBuffer,
+			sizetype sizeInBytes) = 0;
+
 		virtual void remove() = 0;
 
 		virtual [[nodiscard]] sizetype read(

@@ -392,34 +392,57 @@ namespace base::io {
 		}
 	}
 
+	bool WindowsFileEngine::write(
+		void* inBuffer,
+		sizetype sizeInBytes)
+	{
+		return (fwrite(inBuffer, 1, sizeInBytes, _desc) == sizeInBytes);
+	}
+
 	sizetype WindowsFileEngine::read(
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes)
 	{
-		// IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
 		return fread(outBuffer, 1, sizeInBytes, _desc);
 	}
 
 	ReadResult WindowsFileEngine::readAll()
 	{
-		measureExecutionTime("WindowsFileEngine::readAll()");
+		measureExecutionTime("WindowsFileEngine::readAll()")
+
 		uchar* result = nullptr;
-		uchar buffer[1024];
+		alignas(16) uchar buffer[1024];
 
 		sizetype size = 0;
 
-		// IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::read: Невозможно прочитать из файла. Дескриптор равен nullptr. ", 0);
+#if defined(LIB_BASE_ENABLE_sse2)
+		__m128i r = _mm_set1_epi8(0);
 
 		while (sizetype readed = fread(buffer, 1, sizeof(buffer), _desc)) {
 			size += readed;
 
-			for (int i = 0; i < readed; ++i)
-				result += buffer[i];
+			for (int i = 0; i < readed; i += 16) {
+				__m128i a = _mm_load_si128((const __m128i*)(buffer + i));
+				r = _mm_add_epi8(a, r);
+			}
+
+			memset(buffer, 0, sizeof(buffer));
 		}
 
+		for (int i = 0; i < 16; ++i) {
+			result += ((unsigned char*)&r)[i];
+		}
+#else
+	while (sizetype readed = fread(buffer, 1, sizeof(buffer), _desc)) {
+		size += readed;
+
+		for (int i = 0; i < readed; ++i)
+			result += buffer[i];
+	}
+#endif
 		return {
 			.data = buffer,
-			.sizeInBytes = size / 1024
+			.sizeInBytes = size
 		};
 	}
 

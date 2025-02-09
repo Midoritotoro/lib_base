@@ -494,10 +494,10 @@ namespace base::media::ffmpeg::video {
              */
             unsigned i_sar_num = p_fmti->i_sar_num * p_fmti->i_visible_width;
             unsigned i_sar_den = p_fmti->i_sar_den * p_fmto->i_visible_width;
-            UReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
+            UnsignedReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
             i_sar_num *= p_fmto->i_visible_height;
             i_sar_den *= p_fmti->i_visible_height;
-            UReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
+            UnsignedReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
             p_fmto->i_sar_num = i_sar_num;
             p_fmto->i_sar_den = i_sar_den;
         }

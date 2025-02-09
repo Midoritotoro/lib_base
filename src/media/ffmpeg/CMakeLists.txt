@@ -31,6 +31,7 @@ set(FFMPEG_PRIVATE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/audio/AudioFormat.cpp
 
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/audio/AudioReader.cpp
+    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/Utility.cpp
 )
 
 set(FFMPEG_PUBLIC_HEADERS 
@@ -65,13 +66,24 @@ set(FFMPEG_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/audio/AudioFormat.h
 
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/audio/AudioReader.h
-)
 
+    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/Utility.h
+)
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
 add_library(lib_base_ffmpeg ${FFMPEG_PUBLIC_HEADERS})
+
+include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpenH264.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpus.cmake)
+
+include(${PROJECT_SOURCE_DIR}/cmake/Util_FindFFmpeg.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/Util_FindGSL.cmake)
+
+target_link_libraries(lib_base_ffmpeg
+    PUBLIC
+    app::external_ffmpeg)
 
 if(LIB_BASE_ENABLE_QT)
     include(${PROJECT_SOURCE_DIR}/cmake/Util_FindQt.cmake)
@@ -88,19 +100,11 @@ set_target_properties(
 
 target_compile_features(lib_base_ffmpeg PUBLIC cxx_std_23)
 
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpenH264.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpus.cmake)
-
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindFFmpeg.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindGSL.cmake)
 
 find_ms_gsl(lib_base_ffmpeg)
 
-target_sources(lib_base_ffmpeg PRIVATE ${FFMPEG_PRIVATE_SOURCES})
+target_sources(lib_base_ffmpeg PUBLIC ${FFMPEG_PRIVATE_SOURCES})
 
-target_link_libraries(lib_base_ffmpeg
-    PRIVATE
-    app::external_ffmpeg)
 
 target_include_directories(lib_base_ffmpeg
     PUBLIC

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <corecrt.h>
 
+#include <base/io/File.h>
 
 int main(int argc, char* argv[]) {
 	QApplication application(argc, argv);
@@ -22,6 +23,13 @@ int main(int argc, char* argv[]) {
 
 	setlocale(LC_ALL, "");
 
+	base::io::File file;
+
+	if (file.open("C:/Users/danya/Downloads/bmphqi.bmp", "rb") == false)
+		return -1;
+
+	base::io::ReadResult data = file.readAll();
+	file.write("D:/bmptestimg.bmp");
 	//const auto ratio = application.devicePixelRatio();
 	//const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 
@@ -34,28 +42,6 @@ int main(int argc, char* argv[]) {
 
 	//base::qt::style::Start();
 
-	//QSize _targetSize(1920, 1080);
- //   auto result = QImage(_targetSize, QImage::Format_ARGB32_Premultiplied);
- //   result = base::images::Prepare(std::move(result), _targetSize);
-
- //   result = result.scaled(
- //       result.width() * base::qt::style::DevicePixelRatio(),
- //       result.height() * base::qt::style::DevicePixelRatio(),
- //       Qt::IgnoreAspectRatio,
- //       Qt::SmoothTransformation);
-
- //   auto font = QFont("Arial", 8);
-
- //   auto painter = QPainter(&result);
- //   painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing | QPainter::Antialiasing);
-
- //   painter.fillRect(result.rect(), Qt::black);
-
-  //  auto integralOccupancy = IntegralOccupancyMap(result.size());
-  //  auto integralImage = IntegralImage(result);
-
-  //  integralOccupancy.update(integralImage, QPoint(50, 50));
-
 	/*QWidget widget;
 
 	widget.resize(1280, 720);
@@ -67,9 +53,6 @@ int main(int argc, char* argv[]) {
 	widget.show();
 	label.move((widget.width() - label.width()) / 2,
 		(widget.height() - label.height()) / 2);*/
-
-	base::images::IntegralImage image;
-	
 
 	return application.exec();
 }
