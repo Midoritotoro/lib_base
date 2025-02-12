@@ -70,6 +70,11 @@ typedef int64_t tick_t;
 
 #endif
 
+#if __has_cpp_attribute(gnu::malloc)
+    #define DECLARE_MALLOCLIKE [[nodiscard, gnu::malloc]]
+#else
+    #define DECLARE_MALLOCLIKE [[nodiscard]]
+#endif
 
 #ifdef LIB_BASE_SYSTEM_NO_FAILURE
     #define SystemAssert						AssertReturn

@@ -100,6 +100,11 @@ set(PRIVATE_SOURCES
 
     src/io/UnixFileSystemPath.cpp
     src/io/WindowsFileSystemPath.cpp
+
+    src/io/ByteArray.cpp
+    src/io/ArrayDataPointer.cpp
+
+    src/io/ArrayData.cpp
 )
 
 
@@ -201,6 +206,17 @@ set(PUBLIC_HEADERS
 
     include/base/system/WindowsSystemInfo.h
     include/base/system/UnixSystemInfo.h
+
+    include/base/io/ByteArray.h
+    include/base/io/ArrayDataPointer.h
+
+    include/base/utility/ClassHelperMacros.h
+    include/base/utility/Swap.h
+
+    include/base/utility/TypeInfo.h
+    include/base/io/ArrayData.h
+
+    include/base/utility/BitOps.h
 )
 
 

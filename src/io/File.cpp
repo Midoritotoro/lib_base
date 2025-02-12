@@ -118,10 +118,14 @@ namespace base::io {
 	}
 
 	bool File::write(
+		const std::string& path,
 		void* inBuffer,
-		sizetype sizeInBytes)
+		sizetype sizeInBytes,
+		const char* mode)
 	{
-		return _engine->write(inBuffer, sizeInBytes);
+		return FileEngine::write(
+			path, inBuffer, 
+			sizeInBytes, mode);
 	}
 
 	sizetype File::read(

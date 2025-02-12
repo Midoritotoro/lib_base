@@ -15,4 +15,14 @@ namespace base {
 		typename Member>
 	constexpr bool has_member = std::is_convertible_v<
 		has_member_impl<Struct, Member>, void>;
+
+	template <typename T>
+	inline constexpr bool IsRelocatable = 
+		std::is_trivially_copyable_v<T> 
+		&& std::is_trivially_destructible_v<T>;
+
+	template <typename T>
+	inline constexpr bool IsValueInitializationBitwiseZero =
+		std::is_scalar_v<T> && 
+		!std::is_member_object_pointer_v<T>;
 } // namespace base

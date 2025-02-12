@@ -393,10 +393,15 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::write(
+		const std::string& path,
 		void* inBuffer,
-		sizetype sizeInBytes)
+		sizetype sizeInBytes,
+		const char* mode)
 	{
-		return (fwrite(inBuffer, 1, sizeInBytes, _desc) == sizeInBytes);
+		FILE* file = fopen(path.c_str(), mode);
+		IOAssert(file != nullptr, "base::io::WindowsFileEngine::write: Не удается открыыть файл. ", false);
+
+		return (fwrite(inBuffer, 1, sizeInBytes, file) == sizeInBytes);
 	}
 
 	sizetype WindowsFileEngine::read(
@@ -410,15 +415,16 @@ namespace base::io {
 	{
 		measureExecutionTime("WindowsFileEngine::readAll()")
 
-		uchar* result = nullptr;
-		alignas(16) uchar buffer[1024];
+		uchar* result = 0;
+		alignas(16) uchar buffer[1024] = { 0 };
 
+		sizetype readed = 0;
 		sizetype size = 0;
 
 #if defined(LIB_BASE_ENABLE_sse2)
 		__m128i r = _mm_set1_epi8(0);
 
-		while (sizetype readed = fread(buffer, 1, sizeof(buffer), _desc)) {
+		while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
 			size += readed;
 
 			for (int i = 0; i < readed; i += 16) {
@@ -429,19 +435,19 @@ namespace base::io {
 			memset(buffer, 0, sizeof(buffer));
 		}
 
-		for (int i = 0; i < 16; ++i) {
+		for (int i = 0; i < 16; ++i)
 			result += ((unsigned char*)&r)[i];
-		}
 #else
-	while (sizetype readed = fread(buffer, 1, sizeof(buffer), _desc)) {
+	while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
 		size += readed;
 
 		for (int i = 0; i < readed; ++i)
 			result += buffer[i];
 	}
 #endif
+
 		return {
-			.data = buffer,
+			.data = result,
 			.sizeInBytes = size
 		};
 	}

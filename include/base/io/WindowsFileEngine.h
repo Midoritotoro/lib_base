@@ -63,9 +63,11 @@ namespace base::io {
 			void remove() override;
 			static void remove(const std::string& path);
 
-			bool write(
+			static [[nodiscard]] bool write(
+				const std::string& path,
 				void* inBuffer,
-				sizetype sizeInBytes) override;
+				sizetype sizeInBytes,
+				const char* mode);
 
 			[[nodiscard]] sizetype read(
 				_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,

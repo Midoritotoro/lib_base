@@ -1,9 +1,10 @@
 #pragma once 
 
-
 #ifdef LIB_BASE_ENABLE_QT
-#include <base/qt/common/Types.h>
+    #include <base/qt/common/Types.h>
 #endif
+
+#include <base/system/ProcessorDetection.h>
 
 #include <functional>
 #include <gsl/gsl>
@@ -31,4 +32,26 @@ using uint32	= unsigned int;			/* 32 bit unsigned */
 using int64		= long long;			/* 64 bit signed */
 using uint64	= unsigned long long;	/* 64 bit unsigned */
 
-using sizetype  = std::size_t;
+
+template <int> struct IntegerForSize;
+
+template <>    struct IntegerForSize<1> { typedef uint8  Unsigned; typedef int8  Signed; };
+template <>    struct IntegerForSize<2> { typedef uint16 Unsigned; typedef int16 Signed; };
+
+template <>    struct IntegerForSize<4> { typedef uint32 Unsigned; typedef int32 Signed; };
+template <>    struct IntegerForSize<8> { typedef uint64 Unsigned; typedef int64 Signed; };
+
+template <class T> struct IntegerForSizeof : IntegerForSize<sizeof(T)> { };
+
+typedef IntegerForSize<PROCESSOR_WORDSIZE>::Signed registerint;
+typedef IntegerForSize<PROCESSOR_WORDSIZE>::Unsigned registeruint;
+
+typedef IntegerForSizeof<void*>::Unsigned uintptr;
+typedef IntegerForSizeof<void*>::Signed ptrdiff;
+
+typedef ptrdiff qintptr;
+
+using sizetype = IntegerForSizeof<std::size_t>::Signed;
+
+#  define INT64_C(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
+#  define UINT64_C(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */

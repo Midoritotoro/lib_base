@@ -12,12 +12,6 @@ namespace base::io {
 		File();
 		File(const std::string& path);
 
-		// Не рекомендуется использовать конструкторы с передачей
-		// дескриптора файла(FILE) из cstdlib. В таком случае, при  
-		// вызове fclose вне этого класса
-
-
-
 		File(
 			not_null<FILE*> file,
 			bool tryToExtractPathFromDescriptor = false);
@@ -83,9 +77,11 @@ namespace base::io {
 		//!
 		//! \return В случае, если количество успешно записанных байтов
 		//! равно sizeInBytes, возвращает true, в противном случае false
-		[[nodiscard]] bool write(
+		static [[nodiscard]] bool write(
+			const std::string& path,
 			void* inBuffer,
-			sizetype sizeInBytes);
+			sizetype sizeInBytes,
+			const char* mode);
 		
 		//!
 		//! \brief Читает sizeInBytes байт в outBuffer.
@@ -108,7 +104,7 @@ namespace base::io {
 
 		//!
 		//! \brief
-		//! \return Размер файла в битах ???
+		//! \return Размер файла в байтах
 		[[nodiscard]] sizetype fileSize() const noexcept;
 		static [[nodiscard]] sizetype fileSize(const std::string& path);
 	private:

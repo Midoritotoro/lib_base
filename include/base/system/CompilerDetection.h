@@ -12,7 +12,10 @@
 #    define CPP_CLANG ((__clang_major__ * 100) + __clang_minor__)
 #    define CPP_CLANG_ONLY CPP_CLANG
 #  endif
-#  define ASSUME_IMPL(expr) __assume(expr)
+#  define OUTOFLINE_TEMPLATE inline
+#  define COMPILER_MANGLES_RETURN_TYPE
+#  define COMPILER_MANGLES_ACCESS_SPECIFIER
+#  define FUNC_INFO __FUNCSIG__
 #  define UNREACHABLE_IMPL() __assume(0)
 #  define DECL_EXPORT __declspec(dllexport)
 #  define DECL_IMPORT __declspec(dllimport)
@@ -81,6 +84,18 @@
 #    define DECL_IMPORT     __attribute__((visibility("default")))
 #    define DECL_HIDDEN     __attribute__((visibility("hidden")))
 #  endif
+
+#  define FUNC_INFO       __PRETTY_FUNCTION__
+#  define TYPEOF(expr)    __typeof__(expr)
+#  define DECL_DEPRECATED __attribute__ ((__deprecated__))
+#  define DECL_UNUSED     __attribute__((__unused__))
+#  define LIKELY(expr)    __builtin_expect(!!(expr), true)
+#  define UNLIKELY(expr)  __builtin_expect(!!(expr), false)
+#  define NORETURN        __attribute__((__noreturn__))
+#  define REQUIRED_RESULT __attribute__ ((__warn_unused_result__))
+#  define DECL_PURE_FUNCTION __attribute__((pure))
+#  define DECL_CONST_FUNCTION __attribute__((const))
+#  define DECL_COLD_FUNCTION __attribute__((cold))
 
 # else 
 # endif
@@ -155,8 +170,63 @@
 #  define WARNING_DISABLE_INVALID_OFFSETOF
 #endif
 
+#define CAST_IGNORE_ALIGN(body) WARNING_PUSH WARNING_DISABLE_GCC("-Wcast-align") body WARNING_POP
+
+#define OFFSETOF(Class, member) \
+    []() -> size_t { \
+        WARNING_PUSH WARNING_DISABLE_INVALID_OFFSETOF \
+        return offsetof(Class, member); \
+        WARNING_POP \
+    }()
+
 
 # ifdef __cplusplus
+
+#ifndef OUTOFLINE_TEMPLATE
+#  define OUTOFLINE_TEMPLATE
+#endif
+
+#ifndef NORETURN
+# define NORETURN
+#endif
+#ifndef DECL_EXPORT
+#  define DECL_EXPORT
+#endif
+#ifndef DECL_EXPORT_OVERRIDABLE
+#  define DECL_EXPORT_OVERRIDABLE Q_DECL_EXPORT
+#endif
+#ifndef DECL_IMPORT
+#  define DECL_IMPORT
+#endif
+#ifndef DECL_HIDDEN
+#  define DECL_HIDDEN
+#endif
+#ifndef DECL_UNUSED
+#  define DECL_UNUSED
+#endif
+#ifndef DECL_UNUSED_MEMBER
+#  define DECL_UNUSED_MEMBER
+#endif
+#ifndef FUNC_INFO
+#    define FUNC_INFO __FILE__ ":" stringify(__LINE__)
+#  endif
+#endif
+#ifndef DECL_CF_RETURNS_RETAINED
+#  define DECL_CF_RETURNS_RETAINED
+#endif
+#ifndef DECL_NS_RETURNS_AUTORELEASED
+#  define DECL_NS_RETURNS_AUTORELEASED
+#endif
+#ifndef DECL_PURE_FUNCTION
+#  define DECL_PURE_FUNCTION
+#endif
+#ifndef DECL_CONST_FUNCTION
+#  define DECL_CONST_FUNCTION DECL_PURE_FUNCTION
+#endif
+#ifndef DECL_COLD_FUNCTION
+#  define DECL_COLD_FUNCTION
+#endif
+
 #if !defined(PROCESSOR_X86)
 #  undef COMPILER_SUPPORTS_SSE2
 #  undef COMPILER_SUPPORTS_SSE3

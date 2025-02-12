@@ -13,6 +13,9 @@
 #include <cstdlib>
 #include <gsl/gsl>
 
+#include <base/Assert.h>
+
+
 #include <iostream>
 
 
@@ -66,20 +69,6 @@
 
 #define stringify(x)	#x
 
-
-#ifndef LIB_BASE_ENABLE_QT
-	#define DISABLE_COPY(Class) \
-		Class(const Class&) = delete;\
-		Class& operator=(const Class&) = delete;
-
-	#define DISABLE_COPY_MOVE(Class) \
-		DISABLE_COPY(Class) \
-		Class(Class&&) = delete; \
-		Class &operator=(Class &&) = delete;
-#else
-	#define DISABLE_COPY Q_DISABLE_COPY
-	#define DISABLE_COPY_MOVE Q_DISABLE_COPY_MOVE
-#endif 
 
 namespace base {
 	using namespace ::std::ranges;
@@ -196,6 +185,53 @@ namespace base {
         void* root,
         void (*freenode)(void*));
 
+	constexpr inline quint32 qConstexprNextPowerOfTwo(quint32 v)
+	{
+		v |= v >> 1;
+		v |= v >> 2;
+		v |= v >> 4;
+		v |= v >> 8;
+		v |= v >> 16;
+		++v;
+		return v;
+	}
+
+	constexpr inline quint64 qConstexprNextPowerOfTwo(quint64 v)
+	{
+		v |= v >> 1;
+		v |= v >> 2;
+		v |= v >> 4;
+		v |= v >> 8;
+		v |= v >> 16;
+		v |= v >> 32;
+		++v;
+		return v;
+	}
+
+	constexpr inline quint32 qConstexprNextPowerOfTwo(qint32 v)
+	{
+		return qConstexprNextPowerOfTwo(quint32(v));
+	}
+
+	constexpr inline quint64 qConstexprNextPowerOfTwo(qint64 v)
+	{
+		return qConstexprNextPowerOfTwo(quint64(v));
+	}
+
+	constexpr inline uint32 qNextPowerOfTwo(uint32 v)
+	{
+		Assert(static_cast<int32>(v) >= 0); // There is a next power of two
+	#if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
+		return std::bit_ceil(v + 1);
+	#elif defined(QT_HAS_BUILTIN_CLZ)
+		if (v == 0)
+			return 1;
+		return 2U << (31 ^ QAlgorithmsPrivate::qt_builtin_clz(v));
+	#else
+		return QtPrivate::qConstexprNextPowerOfTwo(v);
+	#endif
+	}
+
 	template<typename I, typename S, typename T,
 		typename Op = plus, typename P = identity>
 		requires ::std::input_iterator<I>&&
@@ -263,7 +299,7 @@ namespace base {
 #if defined(OS_WIN)
 	[[nodiscard]] bool IsWindowsGreaterThen(int version);
 	[[nodiscard]] bool SetAutoRunKey(
-		const ::std::wstring & path,
+		const ::std::wstring& path,
 		const ::std::wstring& key);
 
 	#define MINIMUM_WINDOWS_VERSION		NTDDI_WIN10

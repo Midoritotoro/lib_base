@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 		return -1;
 
 	base::io::ReadResult data = file.readAll();
-	file.write("D:/bmptestimg.bmp");
+	base::io::File::write("D:/bmptestimg.bmp", data.data, data.sizeInBytes, "wb");
 	//const auto ratio = application.devicePixelRatio();
 	//const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 
