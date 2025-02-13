@@ -1,35 +1,60 @@
-#include <base/Utility.h>
+#include <base/utility/TFunctions.h>
 
 #include <cstdlib>
 #include <cassert>
 
 #include <search.h>
+#include <base/utility/Assert.h>
 
 
 namespace base {
-    namespace {
-        static struct
-        {
-            const void** tab;
-            size_t count;
-        } list = { NULL, 0 };
-        static const void* smallest;
+    // $NetBSD: tdelete.c,v 1.8 2016/01/20 20:47:41 christos Exp $
+    void* TDelete(
+        const void* vkey,
+        void** vrootp,
+        int (*compar)(const void*, 
+            const void*))
+    {
+        node_t** rootp = (node_t**)vrootp;
+        node_t* p, * q, * r;
+        int  cmp;
 
-        int CmpSmallest(
-            const void* a,
-            const void* b)
-        {
-            if (a == b)
-                return 0;
-            if (a == smallest)
-                return -1;
-            if (b == smallest)
-                return +1;
-            abort();
+        Assert(vkey != NULL);
+        Assert(compar != NULL);
+
+        if (rootp == NULL || (p = *rootp) == NULL)
+            return NULL;
+
+        while ((cmp = (*compar)(vkey, (*rootp)->key)) != 0) {
+            p = *rootp;
+            rootp = (cmp < 0) ?
+                &(*rootp)->llink :		/* follow llink branch */
+                &(*rootp)->rlink;		/* follow rlink branch */
+            if (*rootp == NULL)
+                return NULL;		/* key not found */
         }
-    } // namespace 
+        r = (*rootp)->rlink;			/* D1: */
+        if ((q = (*rootp)->llink) == NULL)	/* Left NULL? */
+            q = r;
+        else if (r != NULL) {			/* Right link is NULL? */
+            if (r->llink == NULL) {		/* D2: Find successor */
+                r->llink = q;
+                q = r;
+            }
+            else {			/* D3: Find NULL link */
+                for (q = r->llink; q->llink != NULL; q = r->llink)
+                    r = q;
+                r->llink = q->rlink;
+                q->llink = (*rootp)->llink;
+                q->rlink = (*rootp)->rlink;
+            }
+        }
+        free(*rootp);				/* D4: Free node */
+        *rootp = q;				/* link parent to new node */
+        return p;
+    }
 
-
+    // $NetBSD: tfind.c,v 1.7 2012/06/25 22:32:45 abs Exp $
     [[nodiscard]] void* TFind(
         const void* vkey,
         void* const* vrootp,
@@ -49,6 +74,7 @@ namespace base {
 
             if ((r = (*compar)(vkey, (*rootp)->key)) == 0)	/* T2: */
                 return *rootp;		/* Ключ найден */
+
             rootp = (r < 0) ?
                 &(*rootp)->llink :		/* T3: Идем на левую ветку */
                 &(*rootp)->rlink;		/* T4: Идем на правую ветку */
@@ -56,6 +82,7 @@ namespace base {
         return NULL;
     }
 
+    // $NetBSD: tsearch.c,v 1.7 2012/06/25 22:32:45 abs Exp $
     [[nodiscard]] void* TSearch(
         const void* vkey,
         void** vrootp,
@@ -78,8 +105,8 @@ namespace base {
                 return *rootp;		/* Ключ найден */
 
             rootp = (r < 0) ?
-                &(*rootp)->llink :		/* T3: follow left branch */
-                &(*rootp)->rlink;		/* T4: follow right branch */
+                &(*rootp)->llink :		/* T3: Идем налево */
+                &(*rootp)->rlink;		/* T4: Идем направо */
         }
 
         q = (node_t*)malloc(sizeof(node_t));		/* T5: Ключ не найден */
@@ -112,6 +139,7 @@ namespace base {
         }
     }
 
+    // $NetBSD: twalk.c,v 1.4 2012/03/20 16:38:45 matt Exp $
     void TWalk(
         const void* vroot,
         cmp_fn_t action)

@@ -3,11 +3,11 @@
 #include <base/system/Platform.h>
 
 #if __has_include(<bit>) && __cplusplus > 201703L
-#include <bit>
+    #include <bit>
 #endif
 
 #ifdef CPP_MSVC
-#include <intrin.h>
+    #include <intrin.h>
 #endif
 
 namespace base {
@@ -30,8 +30,8 @@ namespace base {
     // Использование битовых операций из C++20, что обеспечивает их constexpr выполнение
 #  define HAS_CONSTEXPR_BITOPS
 #elif defined(CC_GNU)
-#  define HAS_CONSTEXPR_BITOPS
-#  define HAS_BUILTIN_CTZS
+#   define HAS_CONSTEXPR_BITOPS
+#   define HAS_BUILTIN_CTZS
     constexpr always_inline uint base_builtin_ctzs(uint16 v) noexcept
     {
 #  if __has_builtin(__builtin_ctzs)
@@ -40,7 +40,8 @@ namespace base {
         return __builtin_ctz(v);
 #  endif
     }
-#define HAS_BUILTIN_CLZS
+
+#   define HAS_BUILTIN_CLZS
     constexpr always_inline uint base_builtin_clzs(uint16 v) noexcept
     {
 #  if __has_builtin(__builtin_clzs)
@@ -49,120 +50,137 @@ namespace base {
         return __builtin_clz(v) - 16U;
 #  endif
     }
-#define HAS_BUILTIN_CTZ
+
+#   define HAS_BUILTIN_CTZ
     constexpr always_inline uint base_builtin_ctz(uint32 v) noexcept
     {
         return __builtin_ctz(v);
     }
-#define HAS_BUILTIN_CLZ
+
+#   define HAS_BUILTIN_CLZ
     constexpr always_inline uint base_builtin_clz(uint32 v) noexcept
     {
         return __builtin_clz(v);
     }
-#define HAS_BUILTIN_CTZLL
+
+#   define HAS_BUILTIN_CTZLL
     constexpr always_inline uint base_builtin_ctzll(uint64 v) noexcept
     {
         return __builtin_ctzll(v);
     }
-#define HAS_BUILTIN_CLZLL
+
+#   define HAS_BUILTIN_CLZLL
     constexpr always_inline uint base_builtin_clzll(uint64 v) noexcept
     {
         return __builtin_clzll(v);
     }
-#define ALGORITHMS_USE_BUILTIN_POPCOUNT
+
+#   define ALGORITHMS_USE_BUILTIN_POPCOUNT
     constexpr always_inline uint base_builtin_popcount(uint32 v) noexcept
     {
         return __builtin_popcount(v);
     }
+
     constexpr always_inline uint base_builtin_popcount(uint8 v) noexcept
     {
         return __builtin_popcount(v);
     }
+
     constexpr always_inline uint base_builtin_popcount(uint16 v) noexcept
     {
         return __builtin_popcount(v);
     }
-#define ALGORITHMS_USE_BUILTIN_POPCOUNTLL
+
+#   define ALGORITHMS_USE_BUILTIN_POPCOUNTLL
     constexpr always_inline uint base_builtin_popcountll(uint64 v) noexcept
     {
         return __builtin_popcountll(v);
     }
+
 #elif defined(CC_MSVC) && !defined(PROCESSOR_ARM)
-#define HAS_BUILTIN_CTZ
+#   define HAS_BUILTIN_CTZ
     always_inline unsigned long base_builtin_ctz(uint32 val)
     {
         unsigned long result;
         _BitScanForward(&result, val);
         return result;
     }
-#define HAS_BUILTIN_CLZ
+
+#   define HAS_BUILTIN_CLZ
     always_inline unsigned long base_builtin_clz(uint32 val)
     {
         unsigned long result;
         _BitScanReverse(&result, val);
-        // Now Invert the result: clz will count *down* from the msb to the lsb, so the msb index is 31
-        // and the lsb index is 0. The result for the index when counting up: msb index is 0 (because it
-        // starts there), and the lsb index is 31.
-        result ^= sizeof(quint32) * 8 - 1;
+        // Инверсия результата: clz будет вести обратный отсчет от старшего бита к младшему, так что индекс старшего будет равен 31
+        //, а индекс младшего - 0. Результат для индекса при подсчете: индекс старшего бита равен 0 (потому что он
+        // начинается там), а индекс младшего равен 31.
+        result ^= sizeof(uint32) * 8 - 1;
         return result;
     }
+
 #if PROCESSOR_WORDSIZE == 8
-    // These are only defined for 64bit builds.
-#define HAS_BUILTIN_CTZLL
+    // Только для x64 сборки
+#   define HAS_BUILTIN_CTZLL
     always_inline unsigned long base_builtin_ctzll(uint64 val)
     {
         unsigned long result;
         _BitScanForward64(&result, val);
         return result;
     }
-    // MSVC calls it _BitScanReverse and returns the carry flag, which we don't need
-#define HAS_BUILTIN_CLZLL
+    // В MSVC это называется _BitScanReverse
+#   define HAS_BUILTIN_CLZLL
     always_inline unsigned long base_builtin_clzll(uint64 val)
     {
         unsigned long result;
         _BitScanReverse64(&result, val);
-        // see qt_builtin_clz
-        result ^= sizeof(quint64) * 8 - 1;
+
+        result ^= sizeof(uint64) * 8 - 1;
         return result;
     }
 #endif // MSVC 64bit
-#  define HAS_BUILTIN_CTZS
+#   define HAS_BUILTIN_CTZS
     always_inline uint base_builtin_ctzs(uint16 v) noexcept
     {
-        return qt_builtin_ctz(v);
+        return base_builtin_ctz(v);
     }
-#define HAS_BUILTIN_CLZS
+#   define HAS_BUILTIN_CLZS
     always_inline uint base_builtin_clzs(uint16 v) noexcept
     {
         return base_builtin_clz(v) - 16U;
     }
 
-    // Neither MSVC nor the Intel compiler define a macro for the POPCNT processor
-    // feature, so we're using either the SSE4.2 or the AVX macro as a proxy (Clang
-    // does define the macro). It's incorrect for two reasons:
-    // 1. It's a separate bit in CPUID, so a processor could implement SSE4.2 and
-    //    not POPCNT, but that's unlikely to happen.
-    // 2. There are processors that support POPCNT but not AVX (Intel Nehalem
-    //    architecture), but unlike the other compilers, MSVC has no option
-    //    to generate code for those processors.
-    // So it's an acceptable compromise.
+    // Ни MSVC, ни компилятор Intel не определяют макрос для процессора POPCNT
+    // Поэтому используется либо SSE4.2, либо макрос AV (Clang
+    // определяет макрос). Это неверно по двум причинам:
+    // 1. Это отдельный бит в CPUID, поэтому процессор может реализовать SSE4.2 и
+    // не использовать POPCNT, но это маловероятно.
+    // 2. Есть процессоры, которые поддерживают POPCNT, но не AVX (Intel Nehalem
+    // архитектура), но в отличие от других компиляторов, MSVC не имеет возможности
+    // генерировать код для этих процессоров.
+    // Так что это приемлемый компромисс.
+
 #if defined(__AVX__) || defined(__SSE4_2__) || defined(__POPCNT__)
-#define POPCOUNT_CONSTEXPR
-#define POPCOUNT_RELAXED_CONSTEXPR
-#define AGORITHMS_USE_BUILTIN_POPCOUNT
-#define ALGORITHMS_USE_BUILTIN_POPCOUNTLL
+    #define POPCOUNT_CONSTEXPR
+    #define POPCOUNT_RELAXED_CONSTEXPR
+
+    #define AGORITHMS_USE_BUILTIN_POPCOUNT
+    #define ALGORITHMS_USE_BUILTIN_POPCOUNTLL
+
     always_inline uint base_builtin_popcount(uint32 v) noexcept
     {
         return __popcnt(v);
     }
+
     always_inline uint base_builtin_popcount(uint8 v) noexcept
     {
         return __popcnt16(v);
     }
+
     always_inline uint base_builtin_popcount(uint16 v) noexcept
     {
         return __popcnt16(v);
     }
+
     always_inline uint base_builtin_popcountll(uint64 v) noexcept
     {
 #if PROCESSOR_WORDSIZE == 8
@@ -177,8 +195,8 @@ namespace base {
 #endif // MSVC
 
 #ifndef POPCOUNT_CONSTEXPR
-#define POPCOUNT_CONSTEXPR constexpr
-#define POPCOUNT_RELAXED_CONSTEXPR constexpr
+    #define POPCOUNT_CONSTEXPR constexpr
+    #define POPCOUNT_RELAXED_CONSTEXPR constexpr
 #endif
 
 
@@ -245,21 +263,25 @@ namespace base {
     }
 
 #if defined(ALGORITHMS_USE_BUILTIN_POPCOUNT)
-#undef ALGORITHMS_USE_BUILTIN_POPCOUNT
+    #undef ALGORITHMS_USE_BUILTIN_POPCOUNT
 #endif
-#undef POPCOUNT_CONSTEXPR
+#   undef POPCOUNT_CONSTEXPR
 
     constexpr inline uint ConstexprCountTrailingZeroBits(uint32 v) noexcept
     {
-        // see http://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightParallel
-        unsigned int c = 32; // c will be the number of zero bits on the right
+        // http://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightParallel
+        unsigned int c = 32; // c - число нулевых битов справа
+
         v &= -signed(v);
         if (v) c--;
+
         if (v & 0x0000FFFF) c -= 16;
         if (v & 0x00FF00FF) c -= 8;
         if (v & 0x0F0F0F0F) c -= 4;
+
         if (v & 0x33333333) c -= 2;
         if (v & 0x55555555) c -= 1;
+
         return c;
     }
 
@@ -272,24 +294,31 @@ namespace base {
 
     constexpr inline uint ConstexprCountTrailingZeroBits(uint8 v) noexcept
     {
-        unsigned int c = 8; // c will be the number of zero bits on the right
+        unsigned int c = 8; // c - число нулевых битов справа
+
         v &= uint8(-signed(v));
         if (v) c--;
+
         if (v & 0x0000000F) c -= 4;
         if (v & 0x00000033) c -= 2;
         if (v & 0x00000055) c -= 1;
+
         return c;
     }
 
     constexpr inline uint ConstexprCountTrailingZeroBits(uint16 v) noexcept
     {
-        unsigned int c = 16; // c will be the number of zero bits on the right
-        v &= quint16(-signed(v));
+        unsigned int c = 16; // c - число нулевых битов справа
+
+        v &= uint16(-signed(v));
         if (v) c--;
+
         if (v & 0x000000FF) c -= 8;
         if (v & 0x00000F0F) c -= 4;
+
         if (v & 0x00003333) c -= 2;
         if (v & 0x00005555) c -= 1;
+
         return c;
     }
 
@@ -324,7 +353,7 @@ namespace base {
     {
 #if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
         return std::countr_zero(v);
-#elif defined(QT_HAS_BUILTIN_CTZS)
+#elif defined(HAS_BUILTIN_CTZS)
         return v ? base_builtin_ctzs(v) : 16U;
 #else
         return ConstexprCountTrailingZeroBits(v);
@@ -358,8 +387,10 @@ namespace base {
         v = v | (v >> 1);
         v = v | (v >> 2);
         v = v | (v >> 4);
+
         v = v | (v >> 8);
         v = v | (v >> 16);
+
         return PopulationCount(~v);
 #endif
     }
@@ -374,6 +405,7 @@ namespace base {
         v = v | (v >> 1);
         v = v | (v >> 2);
         v = v | (v >> 4);
+
         return PopulationCount(static_cast<uint8>(~v));
 #endif
     }
@@ -388,6 +420,7 @@ namespace base {
 
         v = v | (v >> 1);
         v = v | (v >> 2);
+
         v = v | (v >> 4);
         v = v | (v >> 8);
 
@@ -395,7 +428,7 @@ namespace base {
 #endif
     }
 
-    POPCOUNT_RELAXED_CONSTEXPR inline uint CountLeadingZeroBits(quint64 v) noexcept
+    POPCOUNT_RELAXED_CONSTEXPR inline uint CountLeadingZeroBits(uint64 v) noexcept
     {
 #if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
         return std::countl_zero(v);
@@ -405,6 +438,7 @@ namespace base {
         v = v | (v >> 1);
         v = v | (v >> 2);
         v = v | (v >> 4);
+
         v = v | (v >> 8);
         v = v | (v >> 16);
         v = v | (v >> 32);

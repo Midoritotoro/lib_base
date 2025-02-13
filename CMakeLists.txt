@@ -109,8 +109,7 @@ set(PRIVATE_SOURCES
 
 
 set(PUBLIC_HEADERS 
-    include/base/Base.h
-    include/base/Assert.h
+    include/base/utility/Assert.h
 
     include/base/Utility.h
     include/base/Concurrent.h

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#include <base/Types.h>
-#include <base/BaseExport.h>
+#include <base/utility/Types.h>
+#include <base/core/BaseExport.h>
 
 #include <base/system/SystemConfig.h>
 
