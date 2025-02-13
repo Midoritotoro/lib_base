@@ -111,16 +111,16 @@ set(PRIVATE_SOURCES
 set(PUBLIC_HEADERS 
     include/base/utility/Assert.h
 
-    include/base/Utility.h
-    include/base/Concurrent.h
+    include/base/utility/Algorithm.h
+    include/base/concurrent/Concurrent.h
 
     include/base/system/SystemConfig.h
 
-    include/base/Flags.h
-    include/base/Time.h
+    include/base/utility/Flags.h
+    include/base/system/Time.h
 
     include/base/system/Platform.h
-    include/base/OverflowCheck.h
+    include/base/utility/OverflowCheck.h
 
     include/base/system/Windows.h
     include/base/system/ProcessorDetection.h
@@ -149,12 +149,12 @@ set(PUBLIC_HEADERS
    # include/base/concurrent/win/WinapiAtomic.h
   # include/base/concurrent/win/WinapiThreads.h
 
-    include/base/BaseExport.h
-    include/base/TypeWrapper.h
+    include/base/core/BaseExport.h
+    include/base/utility/TypeWrapper.h
 
     include/base/system/SystemTools.h
 
-    include/base/TypeTraits.h
+    include/base/utility/TypeTraits.h
     include/base/images/ImagesBlur.h
 
 	include/base/images/ImagesBuffer.h
@@ -180,7 +180,7 @@ set(PUBLIC_HEADERS
 
     include/base/images/ImagesUtility.h
 
-    include/base/Types.h
+    include/base/core/Types.h
     include/base/system/SimdHelpers.h
 
     include/base/images/ImagesImage.h
@@ -216,6 +216,7 @@ set(PUBLIC_HEADERS
     include/base/io/ArrayData.h
 
     include/base/utility/BitOps.h
+    include/base/utility/Random.h
 )
 
 

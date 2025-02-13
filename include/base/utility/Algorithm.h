@@ -1,85 +1,19 @@
 ﻿#pragma once
 
 #include <base/system/Platform.h>
-#include <base/Time.h>
 
 #if defined(OS_WIN) && defined(CPP_MSVC) && !defined(__GNUC__) && !defined(__clang__)
 #include <__msvc_iter_core.hpp>
 #endif
 
-#include <random>
 #include <ranges>
-
-#include <cstdlib>
-#include <gsl/gsl>
-
-#include <base/Assert.h>
 #include <base/core/Types.h>
 
-#include <iostream>
-
-
+#include <base/utility/TypeTraits.h>
 
 
 namespace base {
 	using namespace ::std::ranges;
-
-	
-
-	struct rational_t {
-		unsigned num, den;
-	};
-
-    struct node_t {
-        char* key;
-        struct node_t* llink, * rlink;
-    };
-
-    enum VISIT {
-        preorder,
-        postorder,
-        endorder,
-        leaf
-    };
-
-    typedef void (*cmp_fn_t)(const void*, VISIT, int);
-
-	template<class T>
-	struct Distribution {};
-
-	template<>
-	struct Distribution<int> {
-		typedef ::std::uniform_int_distribution<int> type;
-	};
-
-	template<>
-	struct Distribution<float> {
-		typedef ::std::uniform_int_distribution<float> type;
-	};
-
-	template<>
-	struct Distribution<double> {
-		typedef ::std::uniform_real_distribution<double> type;
-	};
-
-	template<>
-	struct Distribution<int64> {
-		typedef ::std::uniform_int_distribution<int64> type;
-	};
-
-	[[nodiscard]] int64_t GCD(
-		int64_t a,
-		int64_t b);
-
-	[[nodiscard]] int64_t LCM(
-		int64_t a, 
-		int64_t b);
-
-	bool UnsignedReduce(
-		unsigned* pi_dst_nom, unsigned* pi_dst_den,
-		uint64_t i_nom, uint64_t i_den, uint64_t i_max);
-
-	[[nodiscard]] double SafeRound(double value);
 
 	template<typename I, typename S, typename T,
 		typename Op = plus, typename P = identity>

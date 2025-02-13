@@ -8,6 +8,21 @@
 
 
 namespace base {
+    struct node_t {
+        char* key;
+        struct node_t* llink, * rlink;
+    };
+
+    enum VISIT {
+        preorder,
+        postorder,
+        endorder,
+        leaf
+    };
+
+    typedef void (*cmp_fn_t)(const void*, VISIT, int);
+
+
     // $NetBSD: tdelete.c,v 1.8 2016/01/20 20:47:41 christos Exp $
     void* TDelete(
         const void* vkey,

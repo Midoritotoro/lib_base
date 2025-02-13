@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <base/utility/Types.h>
+#include <base/core/Types.h>
 #include <base/core/BaseExport.h>
 
 #include <base/system/SystemConfig.h>
