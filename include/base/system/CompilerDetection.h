@@ -208,8 +208,7 @@
 #  define DECL_UNUSED_MEMBER
 #endif
 #ifndef FUNC_INFO
-#    define FUNC_INFO __FILE__ ":" stringify(__LINE__)
-#  endif
+#  define FUNC_INFO __FILE__ ":" stringify(__LINE__)
 #endif
 #ifndef DECL_CF_RETURNS_RETAINED
 #  define DECL_CF_RETURNS_RETAINED

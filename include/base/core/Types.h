@@ -9,6 +9,8 @@
 #include <functional>
 #include <gsl/gsl>
 
+#include <numeric>
+
 using gsl::not_null;
 
 template <typename Signature>
@@ -57,5 +59,5 @@ typedef ptrdiff qintptr;
 
 using sizetype = IntegerForSizeof<std::size_t>::Signed;
 
-#  define INT64_C(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
-#  define UINT64_C(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */
+#  define INT64_CAST(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
+#  define UINT64_CAST(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */

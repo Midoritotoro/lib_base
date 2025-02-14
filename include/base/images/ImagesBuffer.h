@@ -1,7 +1,7 @@
 #pragma once 
 
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 #include <QImage>
 
 

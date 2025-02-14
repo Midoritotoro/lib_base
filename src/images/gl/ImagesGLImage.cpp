@@ -1,12 +1,13 @@
 #include <base/images/gl/ImagesGLImage.h>
-#include <base/OverflowCheck.h>
+#include <base/utility/OverflowCheck.h>
 
-#include <base/Assert.h>
+#include <base/utility/Assert.h>
+
 #ifdef LIB_BASE_ENABLE_QT
-#include <base/images/ImagesUtility.h>
+	#include <base/images/ImagesUtility.h>
 #endif
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 
 namespace base::images {

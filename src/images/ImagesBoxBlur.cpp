@@ -1,5 +1,5 @@
 #include <base/images/ImagesBlur.h>
-#include <base/Types.h>
+#include <base/core/Types.h>
 
 #include <base/images/gl/ImagesGLImage.h>
 

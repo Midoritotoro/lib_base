@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <base/system/SimdHelpers.h>
-#include <base/Assert.h>
+#include <base/utility/Assert.h>
 
-#include <base/Flags.h>
+#include <base/utility/Flags.h>
 
 #include <base/system/SystemStaticCodeAnalysis.h>
 #include <base/system/SystemString.h>

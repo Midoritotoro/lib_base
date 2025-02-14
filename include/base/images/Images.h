@@ -5,10 +5,10 @@
 #include <base/images/ImagesRgb.h>
 #include <base/images/ImagesGeometry.h>
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 
-#include <base/OverflowCheck.h>
-#include <base/Assert.h>
+#include <base/utility/OverflowCheck.h>
+#include <base/utility/Assert.h>
 
 // Отключает все внутренние исключения
 // #define LIB_BASE_IMAGES_NO_FAILURE

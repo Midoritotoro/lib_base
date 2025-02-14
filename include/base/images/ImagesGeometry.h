@@ -1,9 +1,8 @@
 #pragma once 
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 #include <type_traits>
 
-#include <qrect.h>
 
 namespace base::images {
 	template <typename Integer = int32>

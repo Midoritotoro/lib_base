@@ -413,7 +413,7 @@ namespace base::io {
 
 	ReadResult WindowsFileEngine::readAll()
 	{
-		measureExecutionTime("WindowsFileEngine::readAll()")
+		measureExecutionTime();
 
 		uchar* result = 0;
 		alignas(16) uchar buffer[1024] = { 0 };

@@ -1,6 +1,7 @@
 #include <base/images/ImagesUtility.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
+#include <base/utility/OverflowCheck.h>
 #include <iostream>
 #include <regex>
 
@@ -99,28 +100,29 @@ namespace base::images::Utility {
 
 	int32 CountBytesPerLine(ImageData* data)
 	{
-		qDebug() << "base::images::Image::recountBytesPerLine: depth - " << data->depth;
-		int32 invalid = -1;
+		//qDebug() << "base::images::Image::recountBytesPerLine: depth - " << data->depth;
+		//int32 invalid = -1;
 
-		if (data->height <= 0)
-			return invalid;
+		//if (data->height <= 0)
+		//	return invalid;
 
-		auto _bytesPerLine = int32(0);
+		//auto _bytesPerLine = int32(0);
 
-		if (MultiplyOverflow(data->width, data->depth, &_bytesPerLine))
-			return invalid;
-		if (AdditionOverflow(_bytesPerLine, 31, &_bytesPerLine))
-			return invalid;
+		//if (MultiplyOverflow(data->width, data->depth, &_bytesPerLine))
+		//	return invalid;
+		//if (AdditionOverflow(_bytesPerLine, 31, &_bytesPerLine))
+		//	return invalid;
 
-		_bytesPerLine = (_bytesPerLine >> 5) << 2;    // can't overflow
+		//_bytesPerLine = (_bytesPerLine >> 5) << 2;    // can't overflow
 
-		auto dummy = sizetype(0);
-		if (MultiplyOverflow(data->height, sizetype(sizeof(uchar*)), &dummy))
-			return invalid;
+		//auto dummy = sizetype(0);
+		//if (MultiplyOverflow(data->height, sizetype(sizeof(uchar*)), &dummy))
+		//	return invalid;
 
-		if (data->width > (INT_MAX - 31) / data->depth)
-			return invalid;
+		//if (data->width > (INT_MAX - 31) / data->depth)
+		//	return invalid;
 
-		return _bytesPerLine;
+		//return _bytesPerLine;
+		return 0;
 	}
 } // namespace base::images

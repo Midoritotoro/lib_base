@@ -1,9 +1,9 @@
 #include <base/images/ImagesPrepare.h>
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 #include <base/qt/style/StyleScale.h>
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 #include <base/qt/common/Size.h>
 
 #include <QPainter>

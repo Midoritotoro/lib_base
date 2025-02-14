@@ -12,6 +12,7 @@
 #include <base/utility/TypeTraits.h>
 
 
+
 namespace base {
 	using namespace ::std::ranges;
 
@@ -67,17 +68,6 @@ namespace base {
 	template <typename T>
 	always_inline [[nodiscard]] T&& take(T& value) {
 		return ::std::exchange(value, T{});
-	}
-
-	template <typename T>
-	always_inline [[nodiscard]] T randomNumber(
-		T from,
-		T to)
-	{
-		auto randomDevice = ::std::random_device();
-		auto generator = ::std::mt19937(randomDevice());
-
-		return Distribution<T>::type(from, to)(generator);
 	}
 #if defined(OS_WIN)
 	[[nodiscard]] bool IsWindowsGreaterThen(int version);

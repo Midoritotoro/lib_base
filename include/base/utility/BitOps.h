@@ -209,9 +209,9 @@ namespace base {
 #else
         // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
         return
-            (((v) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 12) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 24) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f;
+            (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 12) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 24) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 #endif
     }
 
@@ -223,7 +223,7 @@ namespace base {
         return base_builtin_popcount(v);
 #else
         return
-            (((v) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f;
+            (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 #endif
     }
 
@@ -235,8 +235,8 @@ namespace base {
         return base_builtin_popcount(v);
 #else
         return
-            (((v) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 12) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f;
+            (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 12) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 #endif
     }
 
@@ -248,12 +248,12 @@ namespace base {
         return base_builtin_popcountll(v);
 #else
         return
-            (((v) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 12) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 24) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 36) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 48) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f +
-            (((v >> 60) & 0xfff) * UINT64_C(0x1001001001001) & UINT64_C(0x84210842108421)) % 0x1f;
+            (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 12) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 24) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 36) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 48) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
+            (((v >> 60) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 #endif
     }
 

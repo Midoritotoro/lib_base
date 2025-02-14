@@ -5,6 +5,7 @@
 #include <base/core/BaseExport.h>
 
 #include <base/system/SystemConfig.h>
+#include <base/utility/CommonMacros.h>
 
 #include <cstdint>
 #include <cstdio>

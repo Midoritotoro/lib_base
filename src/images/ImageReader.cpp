@@ -1,5 +1,5 @@
 #include <base/images/ImageReader.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 #include <base/images/ImagesImage.h>
 #include <base/images/ImagesUtility.h>

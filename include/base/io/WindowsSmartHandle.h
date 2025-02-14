@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/system/Platform.h>
-#include <base/Types.h>
+#include <base/core/Types.h>
 
 #if defined(OS_WIN)
 

@@ -3,18 +3,36 @@
 #include <cstdio>
 #include <base/system/CompilerDetection.h>
 
+#include <gsl/gsl>
+#include <base/system/Time.h>
 
-#if __has_include(<gsl/gsl>)
-	#include <gsl/gsl>
+#include <iostream>
+
+#define _PP_CAT(a,b) a##b
+#define PP_CAT(a,b) _PP_CAT(a,b)
+
+#define ELEVENTH_ARGUMENT(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, ...) a11
+#define COUNT_ARGS(...) ELEVENTH_ARGUMENT(_, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+
 
 /**
- *После выхода из текущей области видимости выводит затраченное на выполнение этого блока кода время
+	*После выхода из текущей области видимости выводит затраченное на выполнение этого блока кода время
 */
+#define measureExecutionTime_0() \
+	const auto ms = base::Time::now(); \
+	const auto timer = gsl::finally([&]() { \
+	std::cout << (FUNC_INFO) << " completed for: " \
+				<< base::Time::now() - ms << " ms" << '\n'; });
+
+#define measureExecutionTime_1(name)		\
+	const auto ms = base::Time::now(); \
+	const auto timer = gsl::finally([&]() { \
+	std::cout << (name) << " completed for: " \
+		<< base::Time::now() - ms << " ms" << '\n'; });
+
 #define measureExecutionTime(...) \
-  const auto ms = base::Time::now(); \
-  const auto timer = gsl::finally([&]() { \
-    std::cout << (__VA_ARGS__[0] ? __VA_ARGS__[0] : FUNC_INFO) << " completed for: " \
-              << base::Time::now() - ms << " ms" << '\n'; });
+	PP_CAT(measureExecutionTime_, \
+		COUNT_ARGS(__VA_ARGS__))(__VA_ARGS__) 
 
 //!
 //! \brief
@@ -23,9 +41,6 @@
 	const auto ms = base::Time::now(); \
 	const auto timer = gsl::finally([&]() mutable { \
 		value = base::Time::now() - ms; });
-
-
-#define 
 
 //!
 //! \brief

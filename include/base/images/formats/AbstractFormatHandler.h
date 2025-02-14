@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/images/Images.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 
 namespace base::images {
