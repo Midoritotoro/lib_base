@@ -61,47 +61,61 @@
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>
 #  define LIB_BASE_ENABLE_sse2 1
+#  define SSE2_ALIGNAS		   alignas
 #else
+#  define SSE2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse2 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE3__)
 #  define LIB_BASE_ENABLE_sse3 1
+#  define SSE3_ALIGNAS         alignas
 #else
+#  define SSE3_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse3 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSSE3__)
 #  define LIB_BASE_ENABLE_ssse3 1
+#  define SSSE3_ALIGNAS		    alignas
 #else
+#  define SSSE3_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_ssse3 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_1__)
 #  define LIB_BASE_ENABLE_sse4_1 1
+#  define SSE4_1_ALIGNAS	     alignas
 #else
+#  define SSE4_1_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse4_1 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_2__)
 #  define LIB_BASE_ENABLE_sse4_2 1
+#  define SSE4_2_ALIGNAS		 alignas
 #else
+#  define SSE4_2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse4_2 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__AVX__)
 #  define LIB_BASE_ENABLE_avx 1
+#  define AVX_ALIGNAS         alignas
 #else
+#  define AVX_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_avx -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__AVX2__)
 #  define LIB_BASE_ENABLE_avx2 1
+#  define AVX2_ALIGNAS         alignas
 #else
+#  define AVX2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_avx2 -1
 #endif
 
 
 #ifndef VECTORCALL
-#define VECTORCALL
+	#define VECTORCALL
 #endif

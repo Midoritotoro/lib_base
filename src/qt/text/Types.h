@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <base/Types.h>
-#include <base/Flags.h>
+#include <base/core/Types.h>
+#include <base/utility/Flags.h>
 
-#include <base/Time.h>
+#include <base/system/Time.h>
 
 #include <base/qt/style/StyleFont.h>
 //#include <base/qt/common/ClickHandler.h>

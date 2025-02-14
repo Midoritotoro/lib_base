@@ -3,8 +3,8 @@
 #include <QFont>
 #include <QFontMetrics>
 
-#include <base/Types.h>
-#include <base/Flags.h>
+#include <base/core/Types.h>
+#include <base/utility/Flags.h>
 
 #include <base/qt/style/StyleTypes.h>
 

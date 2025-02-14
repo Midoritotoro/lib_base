@@ -217,6 +217,9 @@ set(PUBLIC_HEADERS
 
     include/base/utility/BitOps.h
     include/base/utility/Random.h
+
+    include/base/utility/MathConstants.h
+    include/base/io/ByteArrayView.h
 )
 
 

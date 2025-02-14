@@ -413,10 +413,10 @@ namespace base::io {
 
 	ReadResult WindowsFileEngine::readAll()
 	{
-		measureExecutionTime();
+		std::cout << (__FUNCSIG__);
 
 		uchar* result = 0;
-		alignas(16) uchar buffer[1024] = { 0 };
+		SSE2_ALIGNAS(16) uchar buffer[1024] = { 0 };
 
 		sizetype readed = 0;
 		sizetype size = 0;

@@ -2,8 +2,8 @@
 
 #include <QTimer>
 
-#include <base/Time.h>
-#include <base/Types.h>
+#include <base/system/Time.h>
+#include <base/core/Types.h>
 
 
 namespace base::qt::common {

@@ -1,10 +1,14 @@
 #include <base/io/ArrayData.h>
 #include <base/io/ByteArray.h>
 
+#include <base/utility/BitOps.h>
+#include <base/utility/Math.h>
+
 #include <cstdlib>
 
+
 namespace base::io {
-    sizetype qCalculateBlockSize(sizetype elementCount, sizetype elementSize, sizetype headerSize) noexcept
+    sizetype CalculateBlockSize(sizetype elementCount, sizetype elementSize, sizetype headerSize) noexcept
     {
         Assert(elementSize);
 
@@ -20,36 +24,19 @@ namespace base::io {
         return sizetype(bytes);
     }
 
-    /*!
-        \internal
-        \since 5.7
 
-        Returns the memory block size and the number of elements that will fit in
-        that block for a container containing \a elementCount elements, each of \a
-        elementSize bytes, plus a header of \a headerSize bytes. This function
-        assumes the container will grow and pre-allocates a growth factor.
-
-        Both \a elementCount and \a headerSize can be zero, but \a elementSize
-        cannot.
-
-        This function returns -1 on overflow or if the memory block size
-        would not fit a qsizetype.
-
-        \note The memory block may contain up to \a elementSize - 1 bytes more than
-        needed.
-    */
     CalculateGrowingBlockSizeResult
-        qCalculateGrowingBlockSize(sizetype elementCount, sizetype elementSize, sizetype headerSize) noexcept
+        CalculateGrowingBlockSize(sizetype elementCount, sizetype elementSize, sizetype headerSize) noexcept
     {
         CalculateGrowingBlockSizeResult result = {
             sizetype(-1), sizetype(-1)
         };
 
-        qsizetype bytes = qCalculateBlockSize(elementCount, elementSize, headerSize);
+        qsizetype bytes = CalculateBlockSize(elementCount, elementSize, headerSize);
         if (bytes < 0)
             return result;
 
-        size_t morebytes = static_cast<size_t>(qNextPowerOfTwo(quint64(bytes)));
+        size_t morebytes = static_cast<size_t>(NextPowerOfTwo(quint64(bytes)));
         if (Q_UNLIKELY(qsizetype(morebytes) < 0)) {
             // grow by half the difference between bytes and morebytes
             // this slows the growth and avoids trying to allocate exactly
@@ -79,17 +66,17 @@ namespace base::io {
         // Adjust the header size up to account for the trailing null for QString
         // and QByteArray. This is not checked for overflow because headers sizes
         // should not be anywhere near the overflow limit.
-        constexpr qsizetype FooterSize = qMax(sizeof(QString::value_type), sizeof(QByteArray::value_type));
+        constexpr sizetype FooterSize = std::max(sizeof(QString::value_type), sizeof(ByteArray::value_type));
         if (objectSize <= FooterSize)
             headerSize += FooterSize;
 
         // allocSize = objectSize * capacity + headerSize, but checked for overflow
         // plus padded to grow in size
-        if (option == QArrayData::Grow) {
-            return qCalculateGrowingBlockSize(capacity, objectSize, headerSize);
+        if (option == ArrayData::Grow) {
+            return CalculateGrowingBlockSize(capacity, objectSize, headerSize);
         }
         else {
-            return { qCalculateBlockSize(capacity, objectSize, headerSize), capacity };
+            return { CalculateBlockSize(capacity, objectSize, headerSize), capacity };
         }
     }
 
@@ -107,20 +94,19 @@ namespace base::io {
     namespace {
         struct AllocationResult {
             void* data;
-            QArrayData* header;
+            ArrayData* header;
         };
     }
-    using QtPrivate::AlignedQArrayData;
 
     static inline AllocationResult
-        allocateHelper(qsizetype objectSize, qsizetype alignment, qsizetype capacity,
-            QArrayData::AllocationOption option) noexcept
+        allocateHelper(sizetype objectSize, sizetype alignment, sizetype capacity,
+            ArrayData::AllocationOption option) noexcept
     {
         if (capacity == 0)
             return {};
 
-        qsizetype headerSize = sizeof(AlignedQArrayData);
-        const qsizetype headerAlignment = alignof(AlignedQArrayData);
+        qsizetype headerSize = sizeof(AlignedArrayData);
+        const qsizetype headerAlignment = alignof(AlignedArrayData);
 
         if (alignment > headerAlignment) {
             // Allocate extra (alignment - Q_ALIGNOF(AlignedQArrayData)) padding
@@ -133,28 +119,28 @@ namespace base::io {
 
         auto blockSize = calculateBlockSize(capacity, objectSize, headerSize, option);
         capacity = blockSize.elementCount;
-        qsizetype allocSize = blockSize.size;
+        sizetype allocSize = blockSize.size;
         if (Q_UNLIKELY(allocSize < 0))      // handle overflow. cannot allocate reliably
             return {};
 
-        QArrayData* header = allocateData(allocSize);
+        ArrayData* header = allocateData(allocSize);
         void* data = nullptr;
         if (header) {
             // find where offset should point to so that data() is aligned to alignment bytes
-            data = QTypedArrayData<void>::dataStart(header, alignment);
-            header->alloc = qsizetype(capacity);
+            data = TypedArrayData<void>::dataStart(header, alignment);
+            header->alloc = sizetype(capacity);
         }
 
         return { data, header };
     }
 
     // Generic size and alignment allocation function
-    void* QArrayData::allocate(QArrayData** dptr, qsizetype objectSize, qsizetype alignment,
-        qsizetype capacity, AllocationOption option) noexcept
+    void* ArrayData::allocate(ArrayData** dptr, sizetype objectSize, sizetype alignment,
+        sizetype capacity, AllocationOption option) noexcept
     {
-        Q_ASSERT(dptr);
+        Assert(dptr);
         // Alignment is a power of two
-        Q_ASSERT(alignment >= qsizetype(alignof(QArrayData))
+        Assert(alignment >= qsizetype(alignof(QArrayData))
             && !(alignment & (alignment - 1)));
 
         auto r = allocateHelper(objectSize, alignment, capacity, option);
