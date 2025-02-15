@@ -105,6 +105,11 @@ set(PRIVATE_SOURCES
     src/io/ArrayDataPointer.cpp
 
     src/io/ArrayData.cpp
+    
+    src/string/Char.cpp
+    src/string/String.cpp
+
+    src/string/StringView.cpp
 )
 
 
@@ -225,6 +230,11 @@ set(PUBLIC_HEADERS
     include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
+
+    include/base/string/String.h
+    include/base/string/Char.h
+
+    include/base/string/StringView.h
 )
 
 

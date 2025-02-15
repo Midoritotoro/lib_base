@@ -5,67 +5,6 @@
 #include <base/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
-#ifdef UNICODE
-#endif 
-#if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-	std::string GetErrorMessage(DWORD errorCode) {
-		LPWSTR messageBuffer = nullptr;
-		size_t size = FormatMessageW(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			errorCode,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPWSTR)&messageBuffer,
-			0,
-			NULL);
-
-		std::wstring messageW;
-		if (size > 0) {
-			messageW = std::wstring(messageBuffer, size);
-			LocalFree(messageBuffer);
-		}
-		else {
-			messageW = L"Error code No system message available";
-		}
-
-		if (messageW.empty()) 
-			return "";
-
-		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &messageW[0], (int)messageW.size(), NULL, 0, NULL, NULL);
-		std::string message(size_needed, 0);
-
-		WideCharToMultiByte(CP_UTF8, 0, &messageW[0], (int)messageW.size(), &message[0], size_needed, NULL, NULL);
-
-		return message;
-	}
-#else
-	std::string GetErrorMessage(DWORD errorCode) {
-		char* messageBuffer = nullptr;
-		size_t size = FormatMessageA(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			errorCode,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(char*)&messageBuffer,
-			0,
-			NULL);
-
-		std::string message;
-		if (size > 0) {
-			message = std::string(messageBuffer, size);
-			delete[] messageBuffer;
-		}
-		else {
-			message = "Error code No system message available";
-		}
-
-		if (message.empty())
-			return "";
-
-		return message;
-	}
-#endif
-
 namespace base::io {
 	WindowsFileEngine::WindowsFileEngine()
 	{}
@@ -105,8 +44,6 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::isOpened() const noexcept {
-		// Так как fclose() удаляет объект FILE*, 
-		// то он открыт только в случае ненулевого значения указателя
 		return (_desc != nullptr);
 	}
 
@@ -352,7 +289,7 @@ namespace base::io {
 		IOAssert(false, std::string("base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла: " 
 			+ GetErrorMessage(GetLastError())).c_str(), false);
 
-		return false; // Чтобы не было предупреждений
+		return false;
 	}
 
 	bool WindowsFileEngine::rewind(int64 position) {
@@ -370,7 +307,7 @@ namespace base::io {
 				AssertUnreachable();
 		}
 
-		return false; // Чтобы не было предупреждений
+		return false;
 	}
 
 	void WindowsFileEngine::remove() {

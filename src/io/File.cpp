@@ -106,7 +106,6 @@ namespace base::io {
 	}
 
 	void File::remove() {
-		// Закрыть файл для того, чтобы не получить ERROR_ACCESS_DENIED
 		if (_engine->isOpened())
 			close();
 

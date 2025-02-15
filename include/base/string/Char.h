@@ -523,41 +523,41 @@ namespace base::string {
             return char16_t(ucs4 % 0x400 + 0xdc00);
         }
 
-        static Category FASTCALL category(char32_t ucs4) noexcept const;
-        static Direction FASTCALL direction(char32_t ucs4) noexcept const;
+        static Category FASTCALL category(char32_t ucs4) noexcept;
+        static Direction FASTCALL direction(char32_t ucs4) noexcept;
 
-        static JoiningType FASTCALL joiningType(char32_t ucs4) noexcept const;
-        static unsigned char FASTCALL combiningClass(char32_t ucs4) noexcept const;
+        static JoiningType FASTCALL joiningType(char32_t ucs4) noexcept;
+        static unsigned char FASTCALL combiningClass(char32_t ucs4) noexcept;
 
-        static char32_t FASTCALL mirroredChar(char32_t ucs4) noexcept const;
-        static bool FASTCALL hasMirrored(char32_t ucs4) noexcept const;
+        static char32_t FASTCALL mirroredChar(char32_t ucs4) noexcept;
+        static bool FASTCALL hasMirrored(char32_t ucs4) noexcept;
 
         static QString FASTCALL decomposition(char32_t ucs4);
-        static Decomposition FASTCALL decompositionTag(char32_t ucs4) noexcept const;
+        static Decomposition FASTCALL decompositionTag(char32_t ucs4) noexcept;
 
-        static int FASTCALL digitValue(char32_t ucs4) noexcept const;
-        static char32_t FASTCALL toLower(char32_t ucs4) noexcept const;
-        static char32_t FASTCALL toUpper(char32_t ucs4) noexcept const;
-        static char32_t FASTCALL toTitleCase(char32_t ucs4) noexcept const;
-        static char32_t FASTCALL toCaseFolded(char32_t ucs4) noexcept const;
+        static int FASTCALL digitValue(char32_t ucs4) noexcept;
+        static char32_t FASTCALL toLower(char32_t ucs4) noexcept;
+        static char32_t FASTCALL toUpper(char32_t ucs4) noexcept;
+        static char32_t FASTCALL toTitleCase(char32_t ucs4) noexcept;
+        static char32_t FASTCALL toCaseFolded(char32_t ucs4) noexcept;
 
-        static Script FASTCALL script(char32_t ucs4) noexcept const;
+        static Script FASTCALL script(char32_t ucs4) noexcept;
 
-        static UnicodeVersion FASTCALL unicodeVersion(char32_t ucs4) noexcept const;
+        static UnicodeVersion FASTCALL unicodeVersion(char32_t ucs4) noexcept;
 
-        static UnicodeVersion FASTCALL currentUnicodeVersion() noexcept const;
+        static UnicodeVersion FASTCALL currentUnicodeVersion() noexcept;
 
-        static bool FASTCALL isPrint(char32_t ucs4) noexcept const;
-        static constexpr inline bool isSpace(char32_t ucs4) noexcept const
+        static bool FASTCALL isPrint(char32_t ucs4) noexcept;
+        static constexpr inline bool isSpace(char32_t ucs4) noexcept
         {
             // note that [0x09..0x0d] + 0x85 are exceptional Cc-s and must be handled explicitly
             return ucs4 == 0x20 || (ucs4 <= 0x0d && ucs4 >= 0x09)
                 || (ucs4 > 127 && (ucs4 == 0x85 || ucs4 == 0xa0 || Char::isSpace_helper(ucs4)));
         }
         static bool FASTCALL isMark(char32_t ucs4) noexcept const;
-        static bool FASTCALL isPunct(char32_t ucs4) noexcept const;
-        static bool FASTCALL isSymbol(char32_t ucs4) noexcept const;
-        static constexpr inline bool isLetter(char32_t ucs4) noexcept const
+        static bool FASTCALL isPunct(char32_t ucs4) noexcept;
+        static bool FASTCALL isSymbol(char32_t ucs4) noexcept;
+        static constexpr inline bool isLetter(char32_t ucs4) noexcept
         {
             return (ucs4 >= 'A' && ucs4 <= 'z' && (ucs4 >= 'a' || ucs4 <= 'Z'))
                 || (ucs4 > 127 && Char::isLetter_helper(ucs4));
@@ -613,47 +613,34 @@ namespace base::string {
         friend constexpr inline bool operator<=(std::nullptr_t, Char rhs) noexcept { return !operator< (rhs, nullptr); }
 
     private:
-        static bool FASTCALL isSpace_helper(char32_t ucs4) noexcept const;
-        static bool FASTCALL isLetter_helper(char32_t ucs4) noexcept const;
-        static bool FASTCALL isNumber_helper(char32_t ucs4) noexcept const;
-        static bool FASTCALL isLetterOrNumber_helper(char32_t ucs4) noexcept const;
-
-#ifdef QT_NO_CAST_FROM_ASCII
-        Char(char c) = delete;
-        Char(uchar c) = delete;
-#endif
+        static bool FASTCALL isSpace_helper(char32_t ucs4) noexcept;
+        static bool FASTCALL isLetter_helper(char32_t ucs4) noexcept;
+        static bool FASTCALL isNumber_helper(char32_t ucs4) noexcept;
+        static bool FASTCALL isLetterOrNumber_helper(char32_t ucs4) noexcept;
 
         char16_t ucs;
     };
 
-    Q_DECLARE_TYPEINFO(Char, Q_PRIMITIVE_TYPE);
+    DECLARE_TYPEINFO(Char, Q_PRIMITIVE_TYPE);
 
-#ifndef QT_NO_DATASTREAM
-    Q_CORE_EXPORT QDataStream& operator<<(QDataStream&, Char);
-    Q_CORE_EXPORT QDataStream& operator>>(QDataStream&, Char&);
-#endif
+    inline namespace Literals {
+        inline namespace StringLiterals {
 
-    namespace Qt {
-        inline namespace Literals {
-            inline namespace StringLiterals {
+            constexpr inline Latin1Char operator""_L1(char ch) noexcept
+            {
+                return Latin1Char(ch);
+            }
 
-                constexpr inline Latin1Char operator""_L1(char ch) noexcept
-                {
-                    return Latin1Char(ch);
-                }
-
-            } // StringLiterals
-        } // Literals
-    } // Qt
-
+        } // StringLiterals
+    } // Literals
 }
 
 namespace std {
     template <>
-    struct hash<QT_PREPEND_NAMESPACE(Char)>
+    struct hash<::Char>
     {
         template <typename = void> // for transparent constexpr tracking
-        constexpr size_t operator()(QT_PREPEND_NAMESPACE(Char) c) const
+        constexpr size_t operator()(::Char c) const
             noexcept(noexcept(std::hash<char16_t>{}(u' ')))
         {
             return std::hash<char16_t>{}(c.unicode());
