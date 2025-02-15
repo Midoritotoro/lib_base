@@ -1,12 +1,12 @@
 #pragma once 
 
 #include <base/utility/TypeInfo.h>
-#include <base/Assert.h>
+#include <base/utility/Assert.h>
 
 #include <base/io/ArrayDataPointer.h>
 
 
-namespace base {
+namespace base::io {
     template <typename T>
     struct ArrayDataPointer;
 
@@ -941,4 +941,4 @@ namespace base {
     {
     };
 
-} // namespace base
+} // namespace base::io

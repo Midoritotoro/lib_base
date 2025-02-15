@@ -220,6 +220,11 @@ set(PUBLIC_HEADERS
 
     include/base/utility/MathConstants.h
     include/base/io/ByteArrayView.h
+
+    include/base/io/ByteArrayAlgorithms.h
+    include/base/io/ByteArrayPrivate.h
+
+    include/base/system/Endian.h
 )
 
 

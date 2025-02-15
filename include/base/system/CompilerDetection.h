@@ -186,6 +186,24 @@
 #  define OUTOFLINE_TEMPLATE
 #endif
 
+#ifdef __cpp_conditional_explicit
+    #define IMPLICIT explicit(false)
+#else
+    #define IMPLICIT
+#endif
+
+#ifdef PROCESSOR_X86_32
+#  if defined(CC_GNU)
+#    define FASTCALL __attribute__((regparm(3)))
+#  elif defined(Q_CC_MSVC)
+#    define FASTCALL __fastcall
+#  else
+#    define FASTCALL
+#  endif
+#else
+#  define FASTCALL
+#endif
+
 #ifndef NORETURN
 # define NORETURN
 #endif

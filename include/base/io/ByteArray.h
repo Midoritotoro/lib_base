@@ -11,10 +11,12 @@
 #include <base/io/ArrayDataPointer.h>
 #include <base/io/ArrayData.h>
 
+#include <base/io/ByteArrayView.h>
+
 #include <atomic>
 
 
-namespace base {
+namespace base::io {
     using ByteArrayData = ArrayDataPointer<char>;
 
 #  define ByteArrayLiteral(str) \
@@ -45,7 +47,7 @@ namespace base {
             IgnoreBase64DecodingErrors = 0,
             AbortOnBase64DecodingErrors = 4,
         };
-        Q_DECLARE_FLAGS(Base64Options, Base64Option)
+        DECLARE_FLAGS(Base64Options, Base64Option)
 
             enum class Base64DecodingStatus {
             Ok,
@@ -118,7 +120,7 @@ namespace base {
         }
         sizetype lastIndexOf(ByteArrayView bv, sizetype from) const
         {
-            return QtPrivate::lastIndexOf(qToByteArrayViewIgnoringNull(*this), from, bv);
+            return QtPrivate::lastIndexOf(ToByteArrayViewIgnoringNull(*this), from, bv);
         }
 
         inline bool contains(char c) const;
@@ -126,7 +128,7 @@ namespace base {
         sizetype count(char c) const;
         sizetype count(ByteArrayView bv) const
         {
-            return QtPrivate::count(qToByteArrayViewIgnoringNull(*this), bv);
+            return QtPrivate::count(ToByteArrayViewIgnoringNull(*this), bv);
         }
 
         inline int compare(ByteArrayView a, Qt::CaseSensitivity cs = Qt::CaseSensitive) const noexcept;

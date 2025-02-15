@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <base/system/Platform.h>
 
-#ifdef BIG_ENDIAN
+#if BYTE_ORDER == BIG_ENDIAN
 #   define FOURCC( a, b, c, d ) \
         ( ((uint32_t)d) | ( ((uint32_t)c) << 8 ) \
            | ( ((uint32_t)b) << 16 ) | ( ((uint32_t)a) << 24 ) )
