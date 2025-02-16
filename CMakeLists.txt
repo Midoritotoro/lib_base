@@ -114,8 +114,17 @@ set(PRIVATE_SOURCES
 
     src/string/AnyStringView.cpp
     src/string/Latin1StringView.cpp
-)
 
+    src/io/ByteArrayMatcher.cpp
+    
+    src/string/StringMatcher.cpp
+    src/string/Latin1StringMatcher.cpp
+
+    src/string/UnicodeTools.cpp
+    src/string/StringTokenizer.cpp
+
+    src/string/StringConverter.cpp
+)
 
 set(PUBLIC_HEADERS 
     include/base/utility/Assert.h
@@ -245,6 +254,25 @@ set(PUBLIC_HEADERS
     include/base/string/Latin1StringView.h
 
     include/base/string/StringFwd.h
+    include/base/io/ByteArrayMatcher.h
+
+    include/base/string/StringMatcher.h
+    include/base/string/Latin1StringMatcher.h
+
+    include/base/io/ByteArrayView.h
+    include/base/string/UnicodeTools.h
+
+    include/base/string/StringTokenizer.h
+    include/base/string/Utf8StringView.h
+
+    include/base/string/StringLiteral.h
+    include/base/string/StringConverter.h
+
+    include/base/string/StringConverterBase.h
+    include/base/string/StringConverterPrivate.h
+
+    include/base/string/StringAlgorithms.h
+    include/base/string/StringAlgorithmsPrivate.h
 )
 
 

@@ -286,8 +286,7 @@ namespace base::io {
 		if (MoveFileA(oldFileName.c_str(), newFileName.c_str()) != 0)
 			return true;
 
-		IOAssert(false, std::string("base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла: " 
-			+ GetErrorMessage(GetLastError())).c_str(), false);
+		IOAssert(false, "base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла", false);
 
 		return false;
 	}

@@ -4,6 +4,7 @@
 #include <base/string/StringView.h>
 
 #include <base/string/StringFwd.h>
+#include <base/string/StringAlgorithms.h>
 
 
 namespace base::string {

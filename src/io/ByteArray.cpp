@@ -323,7 +323,7 @@ int compareMemory(ByteArrayView lhs, ByteArrayView rhs)
 */
 bool QtPrivate::isValidUtf8(ByteArrayView s) noexcept
 {
-    return QUtf8::isValidUtf8(s).isValidUtf8;
+    return isValidUtf8(s).isValidUtf8;
 }
 
 // the CRC table below is created by the following piece of code

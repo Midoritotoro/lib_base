@@ -76,4 +76,14 @@ namespace base {
 	#endif
 		}
 	#endif // __cpp_lib_is_constant_evaluated
+
+#ifdef __cpp_lib_remove_cvref
+		using std::remove_cvref;
+		using std::remove_cvref_t;
+#else
+		template <typename T>
+		using remove_cvref = std::remove_cv<std::remove_reference_t<T>>;
+		template <typename T>
+		using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+#endif // __cpp_lib_remove_cvref
 } // namespace base

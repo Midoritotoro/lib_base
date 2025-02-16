@@ -1,58 +1,58 @@
-// Copyright (C) 2020 The Qt Company Ltd.
-// Copyright (C) 2019 Mail.ru Group.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+#pragma once 
 
-#ifndef QSTRINGMATCHER_H
-#define QSTRINGMATCHER_H
+#include <base/string/String.h>
+#include <base/string/StringView.h>
 
-#include <QtCore/qstring.h>
-#include <QtCore/qstringview.h>
+namespace base::string {
+    class StringMatcherPrivate;
 
-QT_BEGIN_NAMESPACE
+    class StringMatcher
+    {
+        void updateSkipTable();
+    public:
+        StringMatcher() = default;
+        explicit StringMatcher(const QString& pattern,
+            CaseSensitivity cs = CaseSensitive);
+        StringMatcher(const QChar* uc, sizetype len,
+            CaseSensitivity cs = CaseSensitive)
+            : StringMatcher(StringView(uc, len), cs)
+        {}
+        StringMatcher(StringView pattern,
+            CaseSensitivity cs = CaseSensitive);
+        StringMatcher(const StringMatcher& other);
+        ~StringMatcher();
 
+        StringMatcher& operator=(const StringMatcher& other);
 
-class QStringMatcherPrivate;
+        void setPattern(const String& pattern);
+        void setCaseSensitivity(CaseSensitivity cs);
 
-class Q_CORE_EXPORT QStringMatcher
-{
-    void updateSkipTable();
-public:
-    QStringMatcher() = default;
-    explicit QStringMatcher(const QString &pattern,
-                   Qt::CaseSensitivity cs = Qt::CaseSensitive);
-    QStringMatcher(const QChar *uc, qsizetype len,
-                   Qt::CaseSensitivity cs = Qt::CaseSensitive)
-        : QStringMatcher(QStringView(uc, len), cs)
-    {}
-    QStringMatcher(QStringView pattern,
-                   Qt::CaseSensitivity cs = Qt::CaseSensitive);
-    QStringMatcher(const QStringMatcher &other);
-    ~QStringMatcher();
+        sizetype indexIn(const String& str, sizetype from = 0) const
+        {
+            return indexIn(StringView(str), from);
+        }
 
-    QStringMatcher &operator=(const QStringMatcher &other);
+        sizetype indexIn(const Char* str, sizetype length, sizetype from = 0) const
+        {
+            return indexIn(StringView(str, length), from);
+        }
 
-    void setPattern(const QString &pattern);
-    void setCaseSensitivity(Qt::CaseSensitivity cs);
+        sizetype indexIn(StringView str, sizetype from = 0) const;
 
-    qsizetype indexIn(const QString &str, qsizetype from = 0) const
-    { return indexIn(QStringView(str), from); }
-    qsizetype indexIn(const QChar *str, qsizetype length, qsizetype from = 0) const
-    { return indexIn(QStringView(str, length), from); }
-    qsizetype indexIn(QStringView str, qsizetype from = 0) const;
-    QString pattern() const;
-    QStringView patternView() const noexcept
-    { return q_sv; }
+        String pattern() const;
 
-    inline Qt::CaseSensitivity caseSensitivity() const { return q_cs; }
+        StringView patternView() const noexcept
+        {
+            return q_sv;
+        }
 
-private:
-    QStringMatcherPrivate *d_ptr = nullptr;
-    Qt::CaseSensitivity q_cs = Qt::CaseSensitive;
-    QString q_pattern;
-    QStringView q_sv;
-    uchar q_skiptable[256] = {};
-};
+        inline CaseSensitivity caseSensitivity() const { return q_cs; }
 
-QT_END_NAMESPACE
-
-#endif // QSTRINGMATCHER_H
+    private:
+        StringMatcherPrivate* d_ptr = nullptr;
+        CaseSensitivity q_cs = CaseSensitive;
+        String q_pattern;
+        StringView q_sv;
+        uchar q_skiptable[256] = {};
+    };
+} // namespace base::string

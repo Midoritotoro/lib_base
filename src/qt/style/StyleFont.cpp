@@ -1,7 +1,7 @@
 #include <base/qt/style/StyleFont.h>
 
-#include <base/Types.h>
-#include <base/Utility.h>
+#include <base/core/Types.h>
+#include <base/utility/Algorithm.h>
 
 #include <base/qt/style/StyleCore.h>
 

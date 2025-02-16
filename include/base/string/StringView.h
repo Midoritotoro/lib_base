@@ -11,17 +11,6 @@
 
 
 namespace base::string {
-    enum SplitBehaviorFlags {
-        KeepEmptyParts = 0,
-        SkipEmptyParts = 0x1,
-    };
-
-    enum CaseSensitivity {
-        CaseInsensitive,
-        CaseSensitive
-    };
-
-    DECLARE_FLAGS(SplitBehavior, SplitBehaviorFlags)
 
     class String;
     class StringView;
@@ -39,7 +28,7 @@ namespace base::string {
 
     template <typename Char>
     struct IsCompatibleCharType
-        : IsCompatibleCharTypeHelper<std::remove_cvref_t<Char>> {};
+        : IsCompatibleCharTypeHelper<remove_cvref_t<Char>> {};
 
     template <typename Pointer>
     struct IsCompatiblePointerHelper : std::false_type {};
@@ -50,7 +39,7 @@ namespace base::string {
 
     template <typename Pointer>
     struct IsCompatiblePointer
-        : IsCompatiblePointerHelper<std::remove_cvref_t<Pointer>> {};
+        : IsCompatiblePointerHelper<remove_cvref_t<Pointer>> {};
 
     template <typename T, typename Enable = void>
     struct IsContainerCompatibleWithStringView : std::false_type {};
