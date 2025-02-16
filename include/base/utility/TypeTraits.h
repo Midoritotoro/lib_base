@@ -51,12 +51,29 @@ namespace base {
 		has_member_impl<Struct, Member>, void>;
 
 	template <typename T>
-	inline constexpr bool IsRelocatable = 
-		std::is_trivially_copyable_v<T> 
+	inline constexpr bool IsRelocatable =
+		std::is_trivially_copyable_v<T>
 		&& std::is_trivially_destructible_v<T>;
 
 	template <typename T>
 	inline constexpr bool IsValueInitializationBitwiseZero =
-		std::is_scalar_v<T> && 
+		std::is_scalar_v<T> &&
 		!std::is_member_object_pointer_v<T>;
+
+	#ifdef __cpp_lib_is_constant_evaluated
+		using std::is_constant_evaluated;
+	#define SUPPORTS_IS_CONSTANT_EVALUATED
+	#else
+		constexpr bool is_constant_evaluated() noexcept
+		{
+	#if 0
+		return false;
+	#elif __has_builtin(__builtin_is_constant_evaluated)
+			# define SUPPORTS_IS_CONSTANT_EVALUATED
+			return __builtin_is_constant_evaluated();
+	#else
+			return false;
+	#endif
+		}
+	#endif // __cpp_lib_is_constant_evaluated
 } // namespace base

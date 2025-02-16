@@ -110,6 +110,7 @@ set(PRIVATE_SOURCES
     src/string/String.cpp
 
     src/string/StringView.cpp
+    src/string/UnicodeTable.cpp
 )
 
 
@@ -235,6 +236,7 @@ set(PUBLIC_HEADERS
     include/base/string/Char.h
 
     include/base/string/StringView.h
+    include/base/string/UnicodeTable.h
 )
 
 

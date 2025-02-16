@@ -1,6 +1,8 @@
 #pragma once
 
 #include <base/system/Platform.h>
+#include <base/utility/TypeInfo.h>
+
 #include <functional> // for std::hash
 
 
@@ -554,7 +556,7 @@ namespace base::string {
             return ucs4 == 0x20 || (ucs4 <= 0x0d && ucs4 >= 0x09)
                 || (ucs4 > 127 && (ucs4 == 0x85 || ucs4 == 0xa0 || Char::isSpace_helper(ucs4)));
         }
-        static bool FASTCALL isMark(char32_t ucs4) noexcept const;
+        static bool FASTCALL isMark(char32_t ucs4) noexcept;
         static bool FASTCALL isPunct(char32_t ucs4) noexcept;
         static bool FASTCALL isSymbol(char32_t ucs4) noexcept;
         static constexpr inline bool isLetter(char32_t ucs4) noexcept
@@ -562,29 +564,29 @@ namespace base::string {
             return (ucs4 >= 'A' && ucs4 <= 'z' && (ucs4 >= 'a' || ucs4 <= 'Z'))
                 || (ucs4 > 127 && Char::isLetter_helper(ucs4));
         }
-        static constexpr inline bool isNumber(char32_t ucs4) noexcept const
+        static constexpr inline bool isNumber(char32_t ucs4) noexcept
         {
             return (ucs4 <= '9' && ucs4 >= '0') || (ucs4 > 127 && Char::isNumber_helper(ucs4));
         }
-        static constexpr inline bool isLetterOrNumber(char32_t ucs4) noexcept const
+        static constexpr inline bool isLetterOrNumber(char32_t ucs4) noexcept
         {
             return (ucs4 >= 'A' && ucs4 <= 'z' && (ucs4 >= 'a' || ucs4 <= 'Z'))
                 || (ucs4 >= '0' && ucs4 <= '9')
                 || (ucs4 > 127 && Char::isLetterOrNumber_helper(ucs4));
         }
-        static constexpr inline bool isDigit(char32_t ucs4) noexcept const
+        static constexpr inline bool isDigit(char32_t ucs4) noexcept
         {
             return (ucs4 <= '9' && ucs4 >= '0') || (ucs4 > 127 && Char::category(ucs4) == Number_DecimalDigit);
         }
-        static constexpr inline bool isLower(char32_t ucs4) noexcept const
+        static constexpr inline bool isLower(char32_t ucs4) noexcept
         {
             return (ucs4 <= 'z' && ucs4 >= 'a') || (ucs4 > 127 && Char::category(ucs4) == Letter_Lowercase);
         }
-        static constexpr inline bool isUpper(char32_t ucs4) noexcept const
+        static constexpr inline bool isUpper(char32_t ucs4) noexcept
         {
             return (ucs4 <= 'Z' && ucs4 >= 'A') || (ucs4 > 127 && Char::category(ucs4) == Letter_Uppercase);
         }
-        static constexpr inline bool isTitleCase(char32_t ucs4) noexcept const
+        static constexpr inline bool isTitleCase(char32_t ucs4) noexcept
         {
             return ucs4 > 127 && Char::category(ucs4) == Letter_Titlecase;
         }
@@ -594,36 +596,41 @@ namespace base::string {
 
         friend constexpr inline bool operator!=(Char c1, Char c2) noexcept { return !operator==(c1, c2); }
         friend constexpr inline bool operator>=(Char c1, Char c2) noexcept { return !operator< (c1, c2); }
+
         friend constexpr inline bool operator> (Char c1, Char c2) noexcept { return  operator< (c2, c1); }
         friend constexpr inline bool operator<=(Char c1, Char c2) noexcept { return !operator< (c2, c1); }
 
         friend constexpr inline bool operator==(Char lhs, std::nullptr_t) noexcept { return lhs.isNull(); }
         friend constexpr inline bool operator< (Char, std::nullptr_t) noexcept { return false; }
+
         friend constexpr inline bool operator==(std::nullptr_t, Char rhs) noexcept { return rhs.isNull(); }
         friend constexpr inline bool operator< (std::nullptr_t, Char rhs) noexcept { return !rhs.isNull(); }
 
         friend constexpr inline bool operator!=(Char lhs, std::nullptr_t) noexcept { return !operator==(lhs, nullptr); }
         friend constexpr inline bool operator>=(Char lhs, std::nullptr_t) noexcept { return !operator< (lhs, nullptr); }
+
         friend constexpr inline bool operator> (Char lhs, std::nullptr_t) noexcept { return  operator< (nullptr, lhs); }
         friend constexpr inline bool operator<=(Char lhs, std::nullptr_t) noexcept { return !operator< (nullptr, lhs); }
 
         friend constexpr inline bool operator!=(std::nullptr_t, Char rhs) noexcept { return !operator==(nullptr, rhs); }
         friend constexpr inline bool operator>=(std::nullptr_t, Char rhs) noexcept { return !operator< (nullptr, rhs); }
+
         friend constexpr inline bool operator> (std::nullptr_t, Char rhs) noexcept { return  operator< (rhs, nullptr); }
         friend constexpr inline bool operator<=(std::nullptr_t, Char rhs) noexcept { return !operator< (rhs, nullptr); }
 
     private:
         static bool FASTCALL isSpace_helper(char32_t ucs4) noexcept;
         static bool FASTCALL isLetter_helper(char32_t ucs4) noexcept;
+
         static bool FASTCALL isNumber_helper(char32_t ucs4) noexcept;
         static bool FASTCALL isLetterOrNumber_helper(char32_t ucs4) noexcept;
 
         char16_t ucs;
     };
 
-    DECLARE_TYPEINFO(Char, Q_PRIMITIVE_TYPE);
+   DECLARE_TYPEINFO(base::string::Char, PRIMITIVE_TYPE);
 
-    inline namespace Literals {
+    namespace Literals {
         inline namespace StringLiterals {
 
             constexpr inline Latin1Char operator""_L1(char ch) noexcept
@@ -633,14 +640,14 @@ namespace base::string {
 
         } // StringLiterals
     } // Literals
-}
+} // namespace base::string
 
 namespace std {
     template <>
-    struct hash<::Char>
+    struct hash<::base::string::Char>
     {
         template <typename = void> // for transparent constexpr tracking
-        constexpr size_t operator()(::Char c) const
+        constexpr size_t operator()(::base::string::Char c) const
             noexcept(noexcept(std::hash<char16_t>{}(u' ')))
         {
             return std::hash<char16_t>{}(c.unicode());
@@ -649,5 +656,3 @@ namespace std {
 } // namespace std
 
 #include <base/string/StringView.h>
-
-#endif

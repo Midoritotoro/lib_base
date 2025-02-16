@@ -9,7 +9,6 @@
     #include <base/system/Windows.h>
     #include <winnt.h>
     
-    //// При компиляции не на процессоре x86 включается UNICODE.
     //#if !defined(PROCESSOR_X86_32)
     //    #ifndef UNICODE
     //        #define UNICODE
@@ -19,25 +18,18 @@
     //    #include <corecrt_wstring.h>
     //#endif
     //
-    //// При включении UNICODE, стоит также включить C-шные функции для работы с ним
+
     //#ifdef UNICODE
     //    #define _UNICODE
     //#endif
 #endif
 
-// При включении UNICODE на Windows используется 16-битный Unicode
-// https://ru.wikipedia.org/wiki/UTF-16
-#if defined(OS_WIN)
-    #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-        using base_string   =   std::wstring;
-        using base_char     =   wchar_t;
-    #else 
-        using base_string   =   std::string;
-        using base_char     =   char;
-    #endif
+#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+    using base_string   =   std::wstring;
+    using base_char     =   wchar_t;
 #else
-    using base_string       =   std::string;
-    using base_char         =   char;
+    using base_string   =   std::string;
+    using base_char     =   char;
 #endif
 
 
@@ -46,8 +38,6 @@
 
 #define ENGLISH_ALPHABET_SIZE               26
 
-// Упрощение использования функций для работы со строками и уменьшение
-// количества проверок в коде
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     #define base_strstr             wcsstr
     #define base_strcmp             wcscmp

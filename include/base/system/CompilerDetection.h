@@ -204,6 +204,18 @@
 #  define FASTCALL
 #endif
 
+
+#if defined(OS_WIN) && defined(CPP_MSVC)
+#  define STDCALL __stdcall
+#  define CDECL   __cdecl
+#elif defined(CPP_GNU)
+#  define STDCALL __attribute__(__stdcall__)
+#  define CDECL __attribute__((__cdecl__))
+#else 
+#  define STDCALL
+#  define CDECL
+#endif
+
 #ifndef NORETURN
 # define NORETURN
 #endif
