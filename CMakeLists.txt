@@ -111,6 +111,9 @@ set(PRIVATE_SOURCES
 
     src/string/StringView.cpp
     src/string/UnicodeTable.cpp
+
+    src/string/AnyStringView.cpp
+    src/string/Latin1StringView.cpp
 )
 
 
@@ -237,6 +240,11 @@ set(PUBLIC_HEADERS
 
     include/base/string/StringView.h
     include/base/string/UnicodeTable.h
+
+    include/base/string/AnyStringView.h
+    include/base/string/Latin1StringView.h
+
+    include/base/string/StringFwd.h
 )
 
 
