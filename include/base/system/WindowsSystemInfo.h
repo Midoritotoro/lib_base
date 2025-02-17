@@ -8,7 +8,7 @@
 namespace base::system {
 	class WindowsSystemInfo {
 	public:
-		
+		static [[nodiscard]] int GetCpuCount();
 	};
 } // namespace base::system
 

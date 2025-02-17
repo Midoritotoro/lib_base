@@ -15,9 +15,6 @@
 #define COUNT_ARGS(...) ELEVENTH_ARGUMENT(_, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 
 
-/**
-	*ѕосле выхода из текущей области видимости выводит затраченное на выполнение этого блока кода врем€
-*/
 #define measureExecutionTime_0() \
 	const auto ms = base::Time::now(); \
 	const auto timer = gsl::finally([&]() { \
@@ -37,6 +34,7 @@
 //!
 //! \brief
 //! ѕосле выхода из текущей области видимости записывает затраченное на выполнение этого блока кода врем€ в value
+//! 
 #define measureExecutionTimeToValue(value) \
 	const auto ms = base::Time::now(); \
 	const auto timer = gsl::finally([&]() mutable { \
@@ -48,6 +46,7 @@
 //! \param ptr - ”казатель на член структуры (типа member).
 //! \param type - “ип структуры, котора€ содержит member.
 //! \param member - »м€ члена структуры, на который указывает ptr.
+//! 
 #define container_of(ptr, type, member) \
     ((type *)(((char *)(ptr)) - offsetof(type, member)))
 

@@ -125,6 +125,133 @@
 # endif
 # endif
 
+
+#  if (defined(__cplusplus) && __cplusplus >= 201103L) \
+      || defined(__GXX_EXPERIMENTAL_CXX0X__)
+/*  http://clang.llvm.org/docs/LanguageExtensions.html#cxx11 */
+#    if __has_feature(cxx_alignas)
+#      define COMPILER_ALIGNAS
+#      define COMPILER_ALIGNOF
+#    endif
+
+#    if __has_feature(cxx_atomic) && __has_include(<atomic>)
+#     define COMPILER_ATOMICS
+#    endif
+
+#    if __has_feature(cxx_attributes)
+#      define COMPILER_ATTRIBUTES
+#    endif
+
+#    if __has_feature(cxx_auto_type)
+#      define COMPILER_AUTO_FUNCTION
+#      define COMPILER_AUTO_TYPE
+#    endif
+
+#    if __has_feature(cxx_strong_enums)
+#      define COMPILER_CLASS_ENUM
+#    endif
+
+#    if __has_feature(cxx_constexpr) && Q_CC_CLANG > 302 /* CLANG 3.2 has bad/partial support */
+#      define COMPILER_CONSTEXPR
+#    endif
+
+#    if __has_feature(cxx_decltype) /* && __has_feature(cxx_decltype_incomplete_return_types) */
+#      define COMPILER_DECLTYPE
+#    endif
+
+#    if __has_feature(cxx_defaulted_functions)
+#      define COMPILER_DEFAULT_MEMBERS
+#    endif
+
+#    if __has_feature(cxx_deleted_functions)
+#      define COMPILER_DELETE_MEMBERS
+#    endif
+
+#    if __has_feature(cxx_delegating_constructors)
+#      define COMPILER_DELEGATING_CONSTRUCTORS
+#    endif
+
+#    if __has_feature(cxx_explicit_conversions)
+#      define COMPILER_EXPLICIT_CONVERSIONS
+#    endif
+
+#    if __has_feature(cxx_override_control)
+#      define COMPILER_EXPLICIT_OVERRIDES
+#    endif
+
+#    if __has_feature(cxx_inheriting_constructors)
+#      define COMPILER_INHERITING_CONSTRUCTORS
+#    endif
+
+#    if __has_feature(cxx_generalized_initializers)
+#      define COMPILER_INITIALIZER_LISTS
+#      define COMPILER_UNIFORM_INIT /* both covered by this feature macro, according to docs */
+#    endif
+
+#    if __has_feature(cxx_lambdas)
+#      define COMPILER_LAMBDA
+#    endif
+
+#    if __has_feature(cxx_noexcept)
+#      define COMPILER_NOEXCEPT
+#    endif
+
+#    if __has_feature(cxx_nonstatic_member_init)
+#      define COMPILER_NONSTATIC_MEMBER_INIT
+#    endif
+
+#    if __has_feature(cxx_nullptr)
+#      define COMPILER_NULLPTR
+#    endif
+
+#    if __has_feature(cxx_range_for)
+#      define COMPILER_RANGE_FOR
+#    endif
+
+#    if __has_feature(cxx_raw_string_literals)
+#      define COMPILER_RAW_STRINGS
+#    endif
+
+#    if __has_feature(cxx_reference_qualified_functions)
+#      define COMPILER_REF_QUALIFIERS
+#    endif
+
+#    if __has_feature(cxx_rvalue_references)
+#      define COMPILER_RVALUE_REFS
+#    endif
+
+#    if __has_feature(cxx_static_assert)
+#      define COMPILER_STATIC_ASSERT
+#    endif
+
+#    if __has_feature(cxx_alias_templates)
+#      define COMPILER_TEMPLATE_ALIAS
+#    endif
+
+#    if __has_feature(cxx_thread_local)
+#      if !defined(__FreeBSD__) /* FreeBSD clang fails on __cxa_thread_atexit */
+#        define COMPILER_THREAD_LOCAL
+#      endif
+#    endif
+
+#    if __has_feature(cxx_user_literals)
+#      define COMPILER_UDL
+#    endif
+
+#    if __has_feature(cxx_unicode_literals)
+#      define COMPILER_UNICODE_STRINGS
+#    endif
+
+#    if __has_feature(cxx_unrestricted_unions)
+#      define COMPILER_UNRESTRICTED_UNIONS
+#    endif
+
+#    if __has_feature(cxx_variadic_templates)
+#      define COMPILER_VARIADIC_TEMPLATES
+#    endif
+
+#  endif // (defined(__cplusplus) && __cplusplus >= 201103L) || defined(__GXX_EXPERIMENTAL_CXX0X__)
+
 #define DO_PRAGMA(text)                      _Pragma(#text)
 #if defined(CPP_MSVC) && !defined(CPP_CLANG)
 #  undef DO_PRAGMA                           /* not needed */
@@ -280,9 +407,20 @@
 #  undef COMPILER_SUPPORTS_SSE4_2
 #  undef COMPILER_SUPPORTS_AVX
 #  undef COMPILER_SUPPORTS_AVX2
-#  undef COMPILER_SUPPORTS_F16C
+#  undef COMPILER_SUPPORTS_F16C // ????????
 #endif
 
+#if defined(CPP_GNU) && !defined(__INSURE__)
+#  if defined(CPP_MINGW) && !defined(CPP_CLANG)
+#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
+         __attribute__((format(gnu_printf, (A), (B))))
+#  else
+#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
+         __attribute__((format(printf, (A), (B))))
+#  endif
+#else
+#  define ATTRIBUTE_FORMAT_PRINTF(A, B)
+#endif
 
 #ifdef CPP_MSVC
 #  define never_inline __declspec(noinline)

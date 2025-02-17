@@ -20,5 +20,7 @@ namespace base::system {
 #    error "Undefined byte order"
 #  endif
         };
+
+        static [[nodiscard]] int GetCpuCount();
 	};
 } // namespace base::system

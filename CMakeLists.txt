@@ -28,6 +28,7 @@ option(LIB_BASE_ENABLE_QT "Включить вспомогательный ин�
 option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
 option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" OFF)
 option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
+option(LIB_BASE_ENABLE_STRING_PARSER "" ON)
 
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
@@ -36,6 +37,7 @@ set(LIB_BASE_ENABLE_QT ON)
 set(LIB_BASE_ENABLE_OPENGL OFF)
 set(LIB_BASE_ENABLE_FFMPEG OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)
+set(LIB_BASE_ENABLE_STRING_PARSER ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -105,26 +107,7 @@ set(PRIVATE_SOURCES
     src/io/ArrayDataPointer.cpp
 
     src/io/ArrayData.cpp
-    
-    src/string/Char.cpp
-    src/string/String.cpp
-
-    src/string/StringView.cpp
-    src/string/UnicodeTable.cpp
-
-    src/string/AnyStringView.cpp
-    src/string/Latin1StringView.cpp
-
     src/io/ByteArrayMatcher.cpp
-    
-    src/string/StringMatcher.cpp
-    src/string/Latin1StringMatcher.cpp
-
-    src/string/UnicodeTools.cpp
-    src/string/StringTokenizer.cpp
-
-    src/string/StringConverter.cpp
-    src/string/StringBuilder.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -244,45 +227,52 @@ set(PUBLIC_HEADERS
     include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
-
-    include/base/string/String.h
-    include/base/string/Char.h
-
-    include/base/string/StringView.h
-    include/base/string/UnicodeTable.h
-
-    include/base/string/AnyStringView.h
-    include/base/string/Latin1StringView.h
-
-    include/base/string/StringFwd.h
-    include/base/io/ByteArrayMatcher.h
-
-    include/base/string/StringMatcher.h
-    include/base/string/Latin1StringMatcher.h
-
-    include/base/io/ByteArrayView.h
-    include/base/string/UnicodeTools.h
-
-    include/base/string/StringTokenizer.h
-    include/base/string/Utf8StringView.h
-
-    include/base/string/StringLiteral.h
-    include/base/string/StringConverter.h
-
-    include/base/string/StringConverterBase.h
-    include/base/string/StringConverterPrivate.h
-
-    include/base/string/StringAlgorithms.h
-    include/base/string/StringAlgorithmsPrivate.h
-
-    include/base/string/StringBuilder.h
 )
 
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-add_library(lib_base ${PUBLIC_HEADERS})
+set(STRING_HEADERS)
+
+if(LIB_BASE_ENABLE_STRING_PARSER)
+    set(STRING_HEADERS
+        include/base/string/String.h
+        include/base/string/Char.h
+
+        include/base/string/StringView.h
+        include/base/string/UnicodeTable.h
+
+        include/base/string/AnyStringView.h
+        include/base/string/Latin1StringView.h
+
+        include/base/string/StringFwd.h
+        include/base/io/ByteArrayMatcher.h
+
+        include/base/string/StringMatcher.h
+        include/base/string/Latin1StringMatcher.h
+
+        include/base/io/ByteArrayView.h
+        include/base/string/UnicodeTools.h
+
+        include/base/string/StringTokenizer.h
+        include/base/string/Utf8StringView.h
+
+        include/base/string/StringLiteral.h
+        include/base/string/StringConverter.h
+
+        include/base/string/StringConverterBase.h
+        include/base/string/StringConverterPrivate.h
+
+        include/base/string/StringAlgorithms.h
+        include/base/string/StringAlgorithmsPrivate.h
+
+        include/base/string/StringBuilder.h
+        )
+endif()
+
+
+add_library(lib_base ${PUBLIC_HEADERS} ${STRING})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
@@ -350,6 +340,46 @@ if(LIB_BASE_ENABLE_FFMPEG)
     add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
 endif()
 
+if(LIB_BASE_ENABLE_STRING_PARSER)
+   target_sources(lib_base
+        PRIVATE
+        src/string/Char.cpp
+        src/string/String.cpp
+
+        src/string/StringView.cpp
+        src/string/UnicodeTable.cpp
+
+        src/string/AnyStringView.cpp
+        src/string/Latin1StringView.cpp
+        
+        src/string/StringMatcher.cpp
+        src/string/Latin1StringMatcher.cpp
+
+        src/string/UnicodeTools.cpp
+        src/string/StringTokenizer.cpp
+
+        src/string/StringConverter.cpp
+        src/string/StringBuilder.cpp
+   )
+
+    if (LIB_BASE_ENABLE_QT)
+        target_compile_definitions(lib_base
+            PUBLIC
+            LIB_BASE_USE_QSTRING_CLASS_AS_MAIN
+        )
+    else()
+        target_compile_definitions(lib_base
+            PUBLIC
+            LIB_BASE_USE_STRING_CLASS_AS_MAIN
+        )
+    endif()
+
+    target_compile_definitions(lib_base
+        PUBLIC
+        LIB_BASE_ENABLE_STRING_PARSER
+    )
+endif()
+
 include(cmake/Util_FindLibPngJpeg.cmake)
 
 find_libpng_and_libjpeg(lib_base)
@@ -402,8 +432,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             /Zc:__cplusplus
     )
 endif()
-
-
 
 target_include_directories(lib_base
     PUBLIC
