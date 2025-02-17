@@ -10,6 +10,8 @@
 #include <base/system/SystemInfo.h>
 
 #include <base/utility/BitOps.h>
+#include <base/utility/Math.h>
+
 #include <array>
 
 
@@ -79,7 +81,7 @@ static inline bool simdEncodeAscii(uchar *&dst, const char16_t *&nextAscii, cons
             // characters still coming
             nextAscii = src + __BitScanReverse(n) + 1;
 
-            n = qCountTrailingZeroBits(n);
+            n = CountTrailingZeroBits(n);
             dst += n;
             src += n;
             return false;
@@ -98,7 +100,7 @@ static inline bool simdEncodeAscii(uchar *&dst, const char16_t *&nextAscii, cons
         uchar n = ~_mm_movemask_epi8(nonAscii);
         if (n) {
             nextAscii = src + __BitScanReverse(n) + 1;
-            n = qCountTrailingZeroBits(n);
+            n = CountTrailingZeroBits(n);
             dst += n;
             src += n;
             return false;

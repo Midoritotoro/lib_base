@@ -209,7 +209,7 @@
 #  define STDCALL __stdcall
 #  define CDECL   __cdecl
 #elif defined(CPP_GNU)
-#  define STDCALL __attribute__(__stdcall__)
+#  define STDCALL __attribute__((__stdcall__))
 #  define CDECL __attribute__((__cdecl__))
 #else 
 #  define STDCALL
@@ -219,41 +219,57 @@
 #ifndef NORETURN
 # define NORETURN
 #endif
+
 #ifndef DECL_EXPORT
 #  define DECL_EXPORT
 #endif
+
 #ifndef DECL_EXPORT_OVERRIDABLE
 #  define DECL_EXPORT_OVERRIDABLE Q_DECL_EXPORT
 #endif
+
 #ifndef DECL_IMPORT
 #  define DECL_IMPORT
 #endif
+
 #ifndef DECL_HIDDEN
 #  define DECL_HIDDEN
 #endif
+
 #ifndef DECL_UNUSED
 #  define DECL_UNUSED
 #endif
+
 #ifndef DECL_UNUSED_MEMBER
 #  define DECL_UNUSED_MEMBER
 #endif
+
 #ifndef FUNC_INFO
 #  define FUNC_INFO __FILE__ ":" stringify(__LINE__)
 #endif
+
 #ifndef DECL_CF_RETURNS_RETAINED
 #  define DECL_CF_RETURNS_RETAINED
 #endif
+
 #ifndef DECL_NS_RETURNS_AUTORELEASED
 #  define DECL_NS_RETURNS_AUTORELEASED
 #endif
+
 #ifndef DECL_PURE_FUNCTION
 #  define DECL_PURE_FUNCTION
 #endif
+
 #ifndef DECL_CONST_FUNCTION
 #  define DECL_CONST_FUNCTION DECL_PURE_FUNCTION
 #endif
+
 #ifndef DECL_COLD_FUNCTION
 #  define DECL_COLD_FUNCTION
+#endif
+
+#ifndef WEAK_OVERLOAD
+#  define WEAK_OVERLOAD template <typename = void>
 #endif
 
 #if !defined(PROCESSOR_X86)

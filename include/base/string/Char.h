@@ -426,7 +426,7 @@ namespace base::string {
         inline Char mirroredChar() const noexcept { return Char(Char::mirroredChar(ucs)); }
         inline bool hasMirrored() const noexcept { return Char::hasMirrored(ucs); }
 
-        QString decomposition() const;
+        String decomposition() const;
         inline Decomposition decompositionTag() const noexcept { return Char::decompositionTag(ucs); }
 
         inline int digitValue() const noexcept { return Char::digitValue(ucs); }
@@ -534,7 +534,7 @@ namespace base::string {
         static char32_t FASTCALL mirroredChar(char32_t ucs4) noexcept;
         static bool FASTCALL hasMirrored(char32_t ucs4) noexcept;
 
-        static QString FASTCALL decomposition(char32_t ucs4);
+        static String FASTCALL decomposition(char32_t ucs4);
         static Decomposition FASTCALL decompositionTag(char32_t ucs4) noexcept;
 
         static int FASTCALL digitValue(char32_t ucs4) noexcept;

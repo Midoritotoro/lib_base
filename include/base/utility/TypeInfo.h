@@ -57,10 +57,10 @@ class TypeInfo<TYPE > \
 public: \
     enum { \
         isComplex = (((FLAGS) & PRIMITIVE_TYPE) == 0) && !std::is_trivial_v<TYPE>, \
-        isRelocatable = !isComplex || ((FLAGS) & RELOCATABLE_TYPE) || base::IsRelocatable<TYPE>, \
+        isRelocatable = !isComplex || ((FLAGS) & RELOCATABLE_TYPE) || IsRelocatable<TYPE>, \
         isPointer [[deprecated("Use std::is_pointer instead")]] = std::is_pointer_v< TYPE >, \
         isIntegral [[deprecated("Use std::is_integral instead")]] = std::is_integral< TYPE >::value, \
-        isValueInitializationBitwiseZero = base::IsValueInitializationBitwiseZero<TYPE>, \
+        isValueInitializationBitwiseZero = IsValueInitializationBitwiseZero<TYPE>, \
     }; \
     static_assert(!isRelocatable || \
                   std::is_copy_constructible_v<TYPE > || \

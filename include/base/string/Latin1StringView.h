@@ -18,12 +18,13 @@ namespace base::string {
         template <typename = void>
             constexpr Latin1String(std::nullptr_t) noexcept : Latin1String() {}
         constexpr explicit Latin1String(const char* s) noexcept
-            : m_size(s ? sizetype(lengthHelperPointer(s)) : 0), m_data(s) {}
+            : m_size(s ? io::lengthHelperPointer(s) : 0), m_data(s) {}
         constexpr Latin1String(const char* f, const char* l)
             : Latin1String(f, sizetype(l - f)) {}
+
         constexpr Latin1String(const char* s, sizetype sz) noexcept : m_size(sz), m_data(s) {}
-        explicit Latin1String(const ByteArray& s) noexcept : m_size(s.size()), m_data(s.constData()) {}
-        constexpr explicit Latin1String(ByteArrayView s) noexcept : m_size(s.size()), m_data(s.data()) {}
+        explicit Latin1String(const io::ByteArray& s) noexcept : m_size(s.size()), m_data(s.constData()) {}
+        constexpr explicit Latin1String(io::ByteArrayView s) noexcept : m_size(s.size()), m_data(s.data()) {}
 
         inline String toString() const;
 

@@ -124,6 +124,7 @@ set(PRIVATE_SOURCES
     src/string/StringTokenizer.cpp
 
     src/string/StringConverter.cpp
+    src/string/StringBuilder.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -273,6 +274,8 @@ set(PUBLIC_HEADERS
 
     include/base/string/StringAlgorithms.h
     include/base/string/StringAlgorithmsPrivate.h
+
+    include/base/string/StringBuilder.h
 )
 
 

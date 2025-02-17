@@ -3,6 +3,9 @@
 #include <base/system/SystemDetection.h>
 #include <base/system/CompilerDetection.h>
 
+#ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 
+#  define LIB_BASE_USE_COMPILER_ALIGNMENT
+#endif
 
 #define LIB_BASE_ENABLE(feature) (1/LIB_BASE_ENABLE_##feature == 1)
 
@@ -61,7 +64,15 @@
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>
 #  define LIB_BASE_ENABLE_sse2 1
-#  define SSE2_ALIGNAS		   alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define SSE2_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define SSE2_ALIGNAS		alignas
+#    endif
+#  else
+#  define SSE2_ALIGNAS	 		alignas
+#  endif
 #else
 #  define SSE2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse2 -1
@@ -69,7 +80,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__SSE3__)
 #  define LIB_BASE_ENABLE_sse3 1
-#  define SSE3_ALIGNAS         alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define SSE3_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define SSE3_ALIGNAS		alignas
+#    endif
+#  else
+#  define SSE3_ALIGNAS	 		alignas
+#  endif
 #else
 #  define SSE3_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse3 -1
@@ -77,7 +96,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__SSSE3__)
 #  define LIB_BASE_ENABLE_ssse3 1
-#  define SSSE3_ALIGNAS		    alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define SSSE3_ALIGNAS			__attribute__((aligned)) 
+#    else
+#      define SSSE3_ALIGNAS			alignas
+#    endif
+#  else
+#  define SSSE3_ALIGNAS	 			alignas
+#  endif
 #else
 #  define SSSE3_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_ssse3 -1
@@ -85,7 +112,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_1__)
 #  define LIB_BASE_ENABLE_sse4_1 1
-#  define SSE4_1_ALIGNAS	     alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define SSE4_1_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define SSE4_1_ALIGNAS		alignas
+#    endif
+#  else
+#  define SSE4_1_ALIGNAS	 	   alignas
+#  endif
 #else
 #  define SSE4_1_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse4_1 -1
@@ -93,7 +128,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_2__)
 #  define LIB_BASE_ENABLE_sse4_2 1
-#  define SSE4_2_ALIGNAS		 alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define SSE4_2_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define SSE4_2_ALIGNAS		alignas
+#    endif
+#  else
+#  define SSE4_2_ALIGNAS	 		alignas
+#  endif
 #else
 #  define SSE4_2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_sse4_2 -1
@@ -101,7 +144,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__AVX__)
 #  define LIB_BASE_ENABLE_avx 1
-#  define AVX_ALIGNAS         alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define AVX_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define AVX_ALIGNAS		alignas
+#    endif
+#  else
+#  define AVX_ALIGNAS	 		alignas
+#  endif
 #else
 #  define AVX_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_avx -1
@@ -109,7 +160,15 @@
 
 #if defined(PROCESSOR_X86) && defined(__AVX2__)
 #  define LIB_BASE_ENABLE_avx2 1
-#  define AVX2_ALIGNAS         alignas
+#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
+#    if defined(CPP_GNU) || defined(CPP_CLANG)
+#      define AVX2_ALIGNAS		__attribute__((aligned)) 
+#    else
+#      define AVX2_ALIGNAS		alignas
+#    endif
+#  else
+#  define AVX2_ALIGNAS	 		alignas
+#  endif
 #else
 #  define AVX2_ALIGNAS(size)
 #  define LIB_BASE_ENABLE_avx2 -1

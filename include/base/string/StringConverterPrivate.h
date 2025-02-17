@@ -10,6 +10,8 @@
 #include <base/io/ByteArrayView.h>
 #include <base/string/StringConverterBase.h>
 
+#include <base/string/Char.h>
+
 
 namespace base::string {
     struct Latin1

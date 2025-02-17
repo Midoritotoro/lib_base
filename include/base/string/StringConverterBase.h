@@ -36,11 +36,11 @@ namespace base::string {
 
         struct State {
             constexpr State(Flags f = Flag::Default) noexcept
-                : flags(f), state_data{0, 0, 0, 0} {}
+                : _flags(f), state_data{0, 0, 0, 0} {}
             ~State() { clear(); }
 
             State(State &&other) noexcept
-                : flags(other.flags),
+                : _flags(other._flags),
                   remainingChars(other.remainingChars),
                   invalidChars(other.invalidChars),
                   state_data{other.state_data[0], other.state_data[1],
@@ -50,7 +50,7 @@ namespace base::string {
             State &operator=(State &&other) noexcept
             {
                 clear();
-                flags = other.flags;
+                _flags = other._flags;
                 remainingChars = other.remainingChars;
                 invalidChars = other.invalidChars;
                 std::memmove(state_data, other.state_data, sizeof state_data); // self-assignment-safe
@@ -61,7 +61,7 @@ namespace base::string {
             void clear() noexcept;
             void reset() noexcept;
 
-            Flags flags;
+            Flags _flags;
             int internalState = 0;
             sizetype remainingChars = 0;
             sizetype invalidChars = 0;
@@ -117,7 +117,7 @@ protected:
         : iface(nullptr)
     {}
     constexpr explicit StringConverter(Encoding encoding, Flags f)
-        : iface(&encodingInterfaces[qsizetype(encoding)]), state(f)
+        : iface(&encodingInterfaces[sizetype(encoding)]), state(f)
     {}
     constexpr explicit StringConverter(const Interface *i) noexcept
         : iface(i)

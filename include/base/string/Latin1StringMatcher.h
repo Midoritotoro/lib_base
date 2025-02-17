@@ -162,7 +162,7 @@ namespace base::string {
         void freeSearcher() noexcept;
 
         Latin1StringView m_pattern;
-        Qt::CaseSensitivity m_cs;
+        CaseSensitivity m_cs;
         typedef boyer_moore_searcher_hashed_needle<const char*,
             CaseSensitiveLatin1Hash>
             CaseSensitiveSearcher;

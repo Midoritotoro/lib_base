@@ -9,7 +9,8 @@ namespace base::string {
 	using Latin1StringView = Latin1String;
 
 	class StringView;
-	template <bool> class BasicUtf8StringView;
+	//template <bool> class BasicUtf8StringView;
+	class BasicUtf8StringView;
 
 	class AnyStringView;
 	class Char;
@@ -17,6 +18,8 @@ namespace base::string {
 	class RegularExpression;
 	class RegularExpressionMatch;
 
-	using Utf8StringView = BasicUtf8StringView<false>;
-	using Utf8StringView = BasicUtf8StringView<true>;
+	//using Utf8StringView = BasicUtf8StringView<false>;
+	//using Utf8StringView = BasicUtf8StringView<true>;
+
+	using Utf8StringView = BasicUtf8StringView;
 }
