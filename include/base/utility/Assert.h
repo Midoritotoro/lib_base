@@ -1,7 +1,9 @@
 ﻿#pragma once 
 
 #include <base/system/Platform.h>
+
 #include <cstdlib>
+#include <cassert>
 
 
 static inline void fail(

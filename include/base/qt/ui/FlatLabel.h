@@ -6,10 +6,15 @@
 #include <base/qt/common/InvokeQueued.h>
 #include <base/qt/common/BasicClickHandlers.h>
 
-#include <base/qt/text/String.h>
 #include <base/qt/ui/PopupMenu.h>
-
 #include <base/qt/common/UniqueQPtr.h>
+
+
+#if defined(LIB_BASE_ENABLE_QT) && !defined(LIB_BASE_ENABLE_STRING_PARSER)
+#  error "FlatLabel class requires LIB_BASE_ENABLE_STRING_PARSER option"
+#endif
+
+#include <base/string/parser/String.h>
 
 
 namespace base::qt::ui {

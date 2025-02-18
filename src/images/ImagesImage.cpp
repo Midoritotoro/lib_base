@@ -10,7 +10,6 @@
 #include <base/images/formats/JpegHandler.h>
 
 #include <base/images/formats/PngHandler.h>
-#include <qDebug>
 
 
 
@@ -247,11 +246,9 @@ namespace base::images {
 
 	Rgb Image::pixel(int x, int y) const
 	{
-		if (!_data || x < 0 || x >= _data->width || y < 0 || y >= _data->height) {
-			qWarning("QImage::pixel: coordinate (%d,%d) out of range", x, y);
+		if (!_data || x < 0 || x >= _data->width || y < 0 || y >= _data->height)
 			return -1;
-		}
-
+		
 		return -1;
 	}
 

@@ -30,7 +30,7 @@ namespace base::images {
     
 
 
-		qDebug() << "width: " << data->width << "height: " << data->height;
+		//qDebug() << "width: " << data->width << "height: " << data->height;
 	}
 
 	void PngHandler::convertToFormat(

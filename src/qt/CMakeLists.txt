@@ -16,36 +16,13 @@ set(QT_PRIVATE_SOURCES
 	${PROJECT_SOURCE_DIR}/src/qt/style/StyleCore.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/style/StyleScale.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextEntities.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextEntities.h
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextWord.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextWord.h
-    
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextDrawUtility.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextDrawUtility.h
 
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextClickHandlers.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/qt/text/String.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBidiAlgorithm.h
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextStackEngine.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextStackEngine.h
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/WordParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/WordParser.h
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/BlockParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/BlockParser.h
-
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.h
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextUtility.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBlock.cpp
-    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBlock.h
 
     ${PROJECT_SOURCE_DIR}/src/qt/style/StyleFont.cpp
    
@@ -118,10 +95,7 @@ set(QT_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/PopupMenu.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/Separator.h
 
-    ${PROJECT_SOURCE_DIR}/include/base/qt/text/String.h
     ${PROJECT_SOURCE_DIR}/include/base/qt/text/TextClickHandlers.h
-
-    ${PROJECT_SOURCE_DIR}/include/base/qt/text/TextUtility.h
 
     ${PROJECT_SOURCE_DIR}/include/base/qt/ui/ContinuousScroll.h
 

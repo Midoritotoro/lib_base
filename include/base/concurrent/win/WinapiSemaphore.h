@@ -4,7 +4,7 @@
 
 #ifdef USE_WINAPI
 
-#include <base/system/Windows.h>
+#include <base/system/Platform.h>
 #include <memory>
 
 namespace base::concurrent {

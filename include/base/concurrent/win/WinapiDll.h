@@ -5,7 +5,6 @@
 #ifdef USE_WINAPI
 
 #include <exception>
-#include <base/system/Windows.h>
 
 namespace base::concurrent::details {
 
@@ -19,8 +18,8 @@ public:
 
 	dll(LPCWSTR library, own_policy policy)
 		: _handle((policy == own_policy::use_existing)
-			? GetModuleHandle(library)
-			: LoadLibrary(library))
+			? GetModuleHandleW(library)
+			: LoadLibraryW(library))
 		, _policy(policy)
 	{}
 

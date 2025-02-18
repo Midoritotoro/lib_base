@@ -44,8 +44,8 @@ namespace base::io {
 	}
 
 	void File::find(
-		const base_string& path,
-		std::vector<base_string>& output,
+		const std::string& path,
+		std::vector<std::string>& output,
 		const FileFilter& filter,
 		bool recurse)
 	{
@@ -53,7 +53,7 @@ namespace base::io {
 	}
 
 	void File::find(
-		std::vector<base_string>& output,
+		std::vector<std::string>& output,
 		const FileFilter& filter,
 		bool recurse)
 	{

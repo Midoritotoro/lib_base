@@ -17,8 +17,8 @@ add_executable(lib_base_test test.cpp)
 target_link_libraries(
     lib_base_test PRIVATE
     lib_base::lib_base
-    lib_base::lib_baseQt
+   # lib_base::lib_baseQt
   #  lib_base::lib_base::lib_baseFFmpeg
-    Qt6::Core
-    Qt6::Widgets
+ #   Qt6::Core
+  #  Qt6::Widgets
 )

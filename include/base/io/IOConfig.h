@@ -29,7 +29,7 @@ namespace base::io {
     DECLARE_FLAGS_ENUM(FilePositions, FilePosition);
 
     struct FileFilter {
-        base_string nameContains;
+        std::string nameContains;
         sizetype minimumSize = 0;
         sizetype maximumSize = 0;
     };

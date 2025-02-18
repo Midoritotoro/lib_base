@@ -6,8 +6,8 @@
 
 struct CalculateGrowingBlockSizeResult
 {
-    qsizetype size;
-    qsizetype elementCount;
+    sizetype size;
+    sizetype elementCount;
 };
 
 
@@ -29,7 +29,9 @@ namespace base::io {
             CapacityReserved = 0x1  //!< the capacity was reserved by the user, try to keep it
         };
 
-        DECLARE_FLAGS(ArrayOptions, ArrayOption)
+        typedef ::base::flags<ArrayOption> ArrayOptions; inline constexpr bool is_flag_type(ArrayOption) {
+            return true;
+        }
 
         std::atomic<int> ref_;
         ArrayOptions flags;

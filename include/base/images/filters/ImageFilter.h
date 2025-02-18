@@ -15,6 +15,6 @@ namespace base::images {
 	private:
 		void BradleyThreshold();
 
-		QImage* _image = nullptr;
+		Image* _image = nullptr;
 	};
 } // namespace base::images

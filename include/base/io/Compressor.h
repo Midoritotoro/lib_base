@@ -1,5 +1,6 @@
 #pragma once 
 
+#ifdef LIB_BASE_ENABLE_ZLIB
 #include <zlib.h>
 
 
@@ -19,3 +20,5 @@ namespace base::io {
             unsigned long sourceLen);
 	};
 } // namespace base::io
+
+#endif

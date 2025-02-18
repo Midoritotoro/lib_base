@@ -1,8 +1,9 @@
 #include <base/images/ImagesBlur.h>
 #include <base/images/Images.h>
 
-#include <QPainter>
-
+#ifdef LIB_BASE_ENABLE_QT
+	#include <QPainter>
+#endif
 
 namespace base::images {
 #ifdef LIB_BASE_ENABLE_QT

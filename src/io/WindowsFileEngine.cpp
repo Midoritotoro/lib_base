@@ -63,7 +63,7 @@ namespace base::io {
 	}
 
 	void WindowsFileEngine::find(
-		std::vector<base_string>& output,
+		std::vector<std::string>& output,
 		const FileFilter& filter,
 		bool recurse)
 	{
@@ -72,8 +72,8 @@ namespace base::io {
 		for (DWORD i = 0; i < ENGLISH_ALPHABET_SIZE; ++i) {
 			if (dwDisksMask & i)
 				find(
-					static_cast<base_char>(base_toupper(ENGLISH_ALPHABET_ASCII_START + i))
-						+ base_string(":"),
+					static_cast<char>(toupper(ENGLISH_ALPHABET_ASCII_START + i))
+						+ std::string(":"),
 					output, filter, recurse);
 
 			dwDisksMask >>= 1;
@@ -81,8 +81,8 @@ namespace base::io {
 	}
 
 	void WindowsFileEngine::find(
-		const base_string& path,
-		std::vector<base_string>& output,
+		const std::string& path,
+		std::vector<std::string>& output,
 		const FileFilter& filter,
 		bool recurse)
 	{
@@ -96,7 +96,7 @@ namespace base::io {
 			: filter.maximumSize);
 
 		WIN32_FIND_DATAA findFileData;
-		base_string szPath = path + base_string("\\*");
+		std::string szPath = path + std::string("\\*");
 
 		WindowsSmartHandle hFind = FindFirstFileA(szPath.c_str(), &findFileData);
 		hFind.setDeleteCallback(FindClose);
@@ -104,7 +104,7 @@ namespace base::io {
 		if (hFind == INVALID_HANDLE_VALUE)
 			return;
 
-		std::vector<base_string> directories;
+		std::vector<std::string> directories;
 
 		do {
 			if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -119,14 +119,14 @@ namespace base::io {
 					fileSize.LowPart = findFileData.nFileSizeLow;
 					fileSize.HighPart = findFileData.nFileSizeHigh;
 
-					if (base_strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0
+					if (strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0
 						&& fileSize.QuadPart > filter.minimumSize
 						&& fileSize.QuadPart < filterMaximumSize)
 						output.push_back(findFileData.cFileName);
 				}
 
 				else if (filterNames) {
-					if (base_strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0)
+					if (strstr(findFileData.cFileName, filter.nameContains.c_str()) != 0)
 						output.push_back(findFileData.cFileName);
 				}
 				else {
@@ -141,10 +141,10 @@ namespace base::io {
 				}
 			}
 				
-			if ((!base_strcmp(findFileData.cFileName, ".")) || (!base_strcmp(findFileData.cFileName, "..")))
+			if ((!strcmp(findFileData.cFileName, ".")) || (!strcmp(findFileData.cFileName, "..")))
 				continue;
 
-			szPath = path + base_string("\\") + findFileData.cFileName;
+			szPath = path + std::string("\\") + findFileData.cFileName;
 
 		} while (FindNextFileA(hFind, &findFileData) != 0);
 
@@ -154,7 +154,7 @@ namespace base::io {
 	}
 
 	std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
-		static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
+		/*static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
 		SystemAssert(descriptor != nullptr, err, "");
 
 		int fd = _fileno(descriptor);
@@ -163,8 +163,8 @@ namespace base::io {
 		WindowsSmartHandle handle = (HANDLE)_get_osfhandle(fd);
 		SystemAssert(handle != INVALID_HANDLE_VALUE, err, "");
 
-		std::vector<wchar_t> buffer(MAX_PATH);
-		DWORD length = GetFinalPathNameByHandle(
+		std::vector<char> buffer(MAX_PATH);
+		DWORD length = GetFinalPathNameByHandleA(
 			handle, buffer.data(), MAX_PATH,
 			FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
@@ -172,14 +172,14 @@ namespace base::io {
 
 		if (length > MAX_PATH) {
 			buffer.resize(length);
-			length = GetFinalPathNameByHandle(
+			length = GetFinalPathNameByHandleA(
 				handle, buffer.data(), length, 
 				FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
 			SystemAssert(length != 0, err, "");
 		}
 
-		std::wstring wpath(buffer.data());
+		std::string wpath(buffer.data());
 		SystemAssert(!wpath.empty(), err, "");
 
 		int size_needed = WideCharToMultiByte(
@@ -192,7 +192,8 @@ namespace base::io {
 			CP_UTF8, 0, &wpath[0], (int)wpath.size(),
 			&path[0], size_needed, NULL, NULL);
 
-		return path;
+		return path;*/
+		return "";
 	}
 
 	void WindowsFileEngine::close() {
@@ -286,13 +287,13 @@ namespace base::io {
 		if (MoveFileA(oldFileName.c_str(), newFileName.c_str()) != 0)
 			return true;
 
-		IOAssert(false, "base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла", false);
+		IOAssert(false, "base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла. ", false);
 
 		return false;
 	}
 
 	bool WindowsFileEngine::rewind(int64 position) {
-		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr", false);
+		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr. ", false);
 		return (fseek(_desc, position, SEEK_CUR) == 0);
 	}
 
@@ -349,8 +350,6 @@ namespace base::io {
 
 	ReadResult WindowsFileEngine::readAll()
 	{
-		std::cout << (__FUNCSIG__);
-
 		uchar* result = 0;
 		SSE2_ALIGNAS(16) uchar buffer[1024] = { 0 };
 

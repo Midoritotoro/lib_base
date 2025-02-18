@@ -24,7 +24,7 @@ option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
 option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
-option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" ON)
+option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
 option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
 option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" OFF)
 option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
@@ -33,11 +33,11 @@ option(LIB_BASE_ENABLE_STRING_PARSER "" ON)
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT ON)
+set(LIB_BASE_ENABLE_QT OFF)
 set(LIB_BASE_ENABLE_OPENGL OFF)
 set(LIB_BASE_ENABLE_FFMPEG OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)
-set(LIB_BASE_ENABLE_STRING_PARSER ON)
+set(LIB_BASE_ENABLE_STRING_PARSER OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -103,11 +103,18 @@ set(PRIVATE_SOURCES
     src/io/UnixFileSystemPath.cpp
     src/io/WindowsFileSystemPath.cpp
 
-    src/io/ByteArray.cpp
-    src/io/ArrayDataPointer.cpp
+  #  src/io/ByteArray.cpp
+  #  src/io/ArrayDataPointer.cpp
 
-    src/io/ArrayData.cpp
-    src/io/ByteArrayMatcher.cpp
+  #  src/io/ArrayData.cpp
+  #  src/io/ByteArrayMatcher.cpp
+    src/core/ConcurrentAncillary.cpp
+
+    src/core/Thread.cpp
+    src/core/Atomic.cpp
+
+    src/core/WindowsAtomic.cpp
+    src/core/UnixAtomic.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -208,8 +215,8 @@ set(PUBLIC_HEADERS
     include/base/system/WindowsSystemInfo.h
     include/base/system/UnixSystemInfo.h
 
-    include/base/io/ByteArray.h
-    include/base/io/ArrayDataPointer.h
+  #  include/base/io/ByteArray.h
+  #  include/base/io/ArrayDataPointer.h
 
     include/base/utility/ClassHelperMacros.h
     include/base/utility/Swap.h
@@ -221,12 +228,26 @@ set(PUBLIC_HEADERS
     include/base/utility/Random.h
 
     include/base/utility/MathConstants.h
-    include/base/io/ByteArrayView.h
+  #  include/base/io/ByteArrayView.h
 
-    include/base/io/ByteArrayAlgorithms.h
-    include/base/io/ByteArrayPrivate.h
+  #  include/base/io/ByteArrayAlgorithms.h
+  #  include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
+    include/base/string/StringCommonConfig.h
+
+    include/base/core/ConcurrentAncillary.h
+
+    include/base/core/Thread.h
+    include/base/core/Atomic.h
+
+    include/base/core/AbstractAtomic.h
+    include/base/core/WindowsAtomic.h
+
+    include/base/core/UnixAtomic.h
+    include/base/core/CommonAtomicOperations.h
+
+    include/base/core/AtomicConfig.h
 )
 
 
@@ -235,8 +256,11 @@ include(GenerateExportHeader)
 
 set(STRING_HEADERS)
 
-if(LIB_BASE_ENABLE_STRING_PARSER)
+if(LIB_BASE_ENABLE_STRING_PARSER AND NOT LIB_BASE_ENABLE_QT)
     set(STRING_HEADERS
+        include/base/string/parser/TextUtility.h
+        include/base/string/parser/String.h
+
         include/base/string/String.h
         include/base/string/Char.h
 
@@ -272,13 +296,15 @@ if(LIB_BASE_ENABLE_STRING_PARSER)
 endif()
 
 
-add_library(lib_base ${PUBLIC_HEADERS} ${STRING})
+add_library(lib_base ${PUBLIC_HEADERS} ${STRING_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
 include(cmake/Util_FindGSL.cmake)
 include(cmake/Util_FindQt.cmake)
+include(cmake/Util_FindLibPngJpeg.cmake)
 
+find_libpng_and_libjpeg(lib_base)
 find_ms_gsl(lib_base)
 find_package(OpenMP REQUIRED)
 
@@ -331,7 +357,6 @@ endif()
 #endif()
 
 if(LIB_BASE_ENABLE_FFMPEG)
-    message("ffmpeg is enabled")
     add_subdirectory(src/media/ffmpeg)
 
     add_library(lib_baseFFmpeg INTERFACE)
@@ -341,33 +366,64 @@ if(LIB_BASE_ENABLE_FFMPEG)
 endif()
 
 if(LIB_BASE_ENABLE_STRING_PARSER)
-   target_sources(lib_base
-        PRIVATE
-        src/string/Char.cpp
-        src/string/String.cpp
-
-        src/string/StringView.cpp
-        src/string/UnicodeTable.cpp
-
-        src/string/AnyStringView.cpp
-        src/string/Latin1StringView.cpp
-        
-        src/string/StringMatcher.cpp
-        src/string/Latin1StringMatcher.cpp
-
-        src/string/UnicodeTools.cpp
-        src/string/StringTokenizer.cpp
-
-        src/string/StringConverter.cpp
-        src/string/StringBuilder.cpp
-   )
-
     if (LIB_BASE_ENABLE_QT)
         target_compile_definitions(lib_base
             PUBLIC
             LIB_BASE_USE_QSTRING_CLASS_AS_MAIN
         )
     else()
+        target_sources(lib_base
+            PRIVATE
+            src/string/Char.cpp
+            src/string/String.cpp
+
+            src/string/StringView.cpp
+            src/string/UnicodeTable.cpp
+
+            src/string/AnyStringView.cpp
+            src/string/Latin1StringView.cpp
+        
+            src/string/StringMatcher.cpp
+            src/string/Latin1StringMatcher.cpp
+
+            src/string/UnicodeTools.cpp
+            src/string/StringTokenizer.cpp
+
+            src/string/StringConverter.cpp
+            src/string/StringBuilder.cpp
+
+            src/qt/text/TextEntities.cpp
+            src/string/parser/TextEntities.h
+
+            src/string/parser/TextWord.cpp
+            src/string/parser/TextWord.h
+    
+            src/string/parser/TextDrawUtility.cpp
+            src/string/parser/TextDrawUtility.h
+
+            src/string/parser/TextClickHandlers.cpp
+
+            src/string/parser/String.cpp
+            src/string/parser/TextBidiAlgorithm.h
+
+            src/string/parser/TextStackEngine.cpp
+            src/string/parser/TextStackEngine.h
+
+            src/string/parser/WordParser.cpp
+            src/string/parser/WordParser.h
+
+            src/string/parser/BlockParser.cpp
+            src/string/parser/BlockParser.h
+
+            src/string/parser/TextRenderer.cpp
+            src/string/parser/TextRenderer.h
+
+            src/string/parser/TextUtility.cpp
+
+            src/string/parser/TextBlock.cpp
+            src/string/parser/TextBlock.h
+        )
+
         target_compile_definitions(lib_base
             PUBLIC
             LIB_BASE_USE_STRING_CLASS_AS_MAIN
@@ -380,9 +436,6 @@ if(LIB_BASE_ENABLE_STRING_PARSER)
     )
 endif()
 
-include(cmake/Util_FindLibPngJpeg.cmake)
-
-find_libpng_and_libjpeg(lib_base)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")

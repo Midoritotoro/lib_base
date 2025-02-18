@@ -32,8 +32,8 @@ namespace base::io {
 		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
 		//! \param recurse - Отвечает за рекурсивный обход всех вложенных папок по пути path.
 		static void find(
-			const base_string& path,
-			std::vector<base_string>& output,
+			const std::string& path,
+			std::vector<std::string>& output,
 			const FileFilter& filter = {},
 			bool recurse = true);
 
@@ -44,7 +44,7 @@ namespace base::io {
 		//! \param filter - Параметры фильтрации файлов, по умолчанию отсутствуют
 		//! \param recurse - Отвечает за рекурсивный обход всех вложенных папок по пути path.
 		static void find(
-			std::vector<base_string>& output,
+			std::vector<std::string>& output,
 			const FileFilter& filter = {},
 			bool recurse = true);
 		

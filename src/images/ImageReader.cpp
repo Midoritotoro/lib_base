@@ -16,7 +16,7 @@
 
 #include <cstdio>
 
-#include <qDebug>
+//#include <qDebug>
 
 #define IMAGE_HEADER_SIZE_IN_BYTES 128
 

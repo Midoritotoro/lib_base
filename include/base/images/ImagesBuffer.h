@@ -2,6 +2,8 @@
 
 
 #include <base/core/Types.h>
+
+#if defined(LIB_BASE_ENABLE_QT)
 #include <QImage>
 
 
@@ -33,4 +35,6 @@ namespace base::images {
 		const QImage& storage,
 		QSize size);
 	[[nodiscard]] QImage CreateFrameStorage(QSize size);
-} // namespace base::qt::images
+} // namespace base::images
+
+#endif

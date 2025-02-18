@@ -1,4 +1,6 @@
 #include <base/images/ImagesBlur.h>
+
+#ifdef LIB_BASE_ENABLE_QT
 #include <src/images/StackBlurTask.h>
 
 
@@ -370,3 +372,4 @@ namespace base::images {
         return result;
     }
 } // namespace base::images
+#endif

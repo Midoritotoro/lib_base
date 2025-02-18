@@ -1,5 +1,7 @@
 #pragma once 
 
+
+#ifdef LIB_BASE_ENABLE_QT
 #include <QThreadPool>
 #include <base/core/Types.h>
 
@@ -51,4 +53,5 @@ namespace base::images {
                 cores_, core_, step_, stack_);
         }
     };
-} // namespace base::qt::images
+} // namespace base::images
+#endif

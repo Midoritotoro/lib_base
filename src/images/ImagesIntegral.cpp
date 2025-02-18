@@ -2,14 +2,7 @@
 #include <base/images/ImagesImage.h>
 
 #include <base/images/filters/ImageFilter.h>
-
-#include <private/qimage_p.h>
-#include <qDebug>
-
 #include <base/system/Platform.h>
-
-#include <QImageReader>
-#include <QImageWriter>
 
 
 namespace base::images {

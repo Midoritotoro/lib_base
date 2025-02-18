@@ -8,12 +8,13 @@ namespace base::images {
     {
 
 	}
-
+#ifdef LIB_BASE_ENABLE_QT
     ImageFilter::ImageFilter(not_null<QImage*> image):
         _image(image)
     {
 
     }
+#endif
 
 	void ImageFilter::filter(Filter filter)
 	{
@@ -36,7 +37,7 @@ namespace base::images {
         const auto width = _image->width();
         const auto height = _image->height();
 
-        const auto imageChannelsCount = _image->depth() / 8;//_image->channels();
+        const auto imageChannelsCount = _image->channels();
         const auto src = _image->data_ptr()->data;
 
         const auto Index = [=](int32 i, int32 j, int32 color) {

@@ -1,6 +1,6 @@
 #include <base/io/Compressor.h>
 
-
+#ifdef LIB_BASE_ENABLE_ZLIB
 namespace base::io {
     int Compressor::Compress(
         Bytef* dest,
@@ -89,3 +89,4 @@ namespace base::io {
         return err;
     }
 } // namespace base::io
+#endif

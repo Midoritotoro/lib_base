@@ -107,7 +107,7 @@ namespace base {
 		} // namespace _detail
 
 		template <template <typename...> class Op, typename...Args>
-		using is_detected = typename _detail::detector<qxp::nonesuch, void, Op, Args...>::value_t;
+		using is_detected = typename _detail::detector<nonesuch, void, Op, Args...>::value_t;
 
 		template <template <typename...> class Op, typename...Args>
 		constexpr inline bool is_detected_v = is_detected<Op, Args...>::value;

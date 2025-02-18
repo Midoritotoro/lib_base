@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+#include <base/system/SystemString.h>
+
 #include <base/system/SimdHelpers.h>
 #include <base/utility/Assert.h>
 
 #include <base/utility/Flags.h>
 
 #include <base/system/SystemStaticCodeAnalysis.h>
-#include <base/system/SystemString.h>
 
 
 #if defined(OS_WIN)

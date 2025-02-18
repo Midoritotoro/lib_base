@@ -334,13 +334,13 @@
 
 #if defined(OS_WIN) && defined(CPP_MSVC)
 #  define STDCALL __stdcall
-#  define CDECL   __cdecl
+#  define __CDECL   __cdecl
 #elif defined(CPP_GNU)
 #  define STDCALL __attribute__((__stdcall__))
 #  define CDECL __attribute__((__cdecl__))
 #else 
 #  define STDCALL
-#  define CDECL
+#  define __CDECL
 #endif
 
 #ifndef NORETURN

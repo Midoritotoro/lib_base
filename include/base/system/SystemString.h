@@ -3,25 +3,25 @@
 #include <base/system/SystemDetection.h>
 #include <base/system/CompilerDetection.h>
 
-
+#include <string>
 
 #if defined(OS_WIN)
     #include <base/system/Windows.h>
     #include <winnt.h>
     
-    //#if !defined(PROCESSOR_X86_32)
-    //    #ifndef UNICODE
-    //        #define UNICODE
-    //    #endif
+    #if !defined(PROCESSOR_X86_32)
+        #ifndef UNICODE
+            #define UNICODE
+        #endif
 
-    //    #define LIB_BASE_ENABLE_WINDOWS_UNICODE
-    //    #include <corecrt_wstring.h>
-    //#endif
-    //
+        #define LIB_BASE_ENABLE_WINDOWS_UNICODE
+        #include <corecrt_wstring.h>
+    #endif
+    
 
-    //#ifdef UNICODE
-    //    #define _UNICODE
-    //#endif
+    #ifdef UNICODE
+        #define _UNICODE
+    #endif
 #endif
 
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
@@ -41,14 +41,12 @@
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     #define base_strstr             wcsstr
     #define base_strcmp             wcscmp
-    #define base_strlen(string)     wcslen(string) - 1
-    #define base_strcmp             lstrcmpW         
+    #define base_strlen(string)     wcslen(string) - 1     
     #define base_toupper            towupper
 #else
     #define base_strstr             strstr
     #define base_strcmp             strcmp
     #define base_strlen             strlen
-    #define base_strcmp             strcmp
     #define base_toupper            toupper
 #endif
 
@@ -99,41 +97,41 @@
 #endif
 
 
-#if defined(OS_WIN)
-    #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-        wchar_t* ConvertString(const char* str) {
-            if (!str)
-                return nullptr;
-
-            size_t len = strlen(str) + 1;
-            wchar_t* wstr = new wchar_t[len];
-
-            if (ConvertUnicodeToWChar(wstr, (int)len, str) == 0) {
-                delete[] wstr;
-                return nullptr;
-            }
-
-            return wstr;
-        }
-
-        std::wstring ConvertString(const std::string& str) {
-            if (str.empty()) 
-                return L"";
-
-            size_t len = str.length() + 1;
-            std::wstring wstr;
-
-            wstr.resize(len - 1);
-
-            if (ConvertUnicodeToWChar(&wstr[0], (int)len, str.c_str()) == 0)
-                return L"";
-        
-            wstr.resize(wcslen(wstr.c_str()));
-            return wstr;
-        }
-
-        std::wstring ConvertString(const std::wstring& str) {
-            return str;
-        }
-    #endif
-#endif
+//#if defined(OS_WIN)
+//    #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+//        wchar_t* ConvertString(const char* str) {
+//            if (!str)
+//                return nullptr;
+//
+//            size_t len = strlen(str) + 1;
+//            wchar_t* wstr = new wchar_t[len];
+//
+//            if (ConvertUnicodeToWChar(wstr, (int)len, str) == 0) {
+//                delete[] wstr;
+//                return nullptr;
+//            }
+//
+//            return wstr;
+//        }
+//
+//        std::wstring ConvertString(const std::string& str) {
+//            if (str.empty()) 
+//                return L"";
+//
+//            size_t len = str.length() + 1;
+//            std::wstring wstr;
+//
+//            wstr.resize(len - 1);
+//
+//            if (ConvertUnicodeToWChar(&wstr[0], (int)len, str.c_str()) == 0)
+//                return L"";
+//        
+//            wstr.resize(wcslen(wstr.c_str()));
+//            return wstr;
+//        }
+//
+//        std::wstring ConvertString(const std::wstring& str) {
+//            return str;
+//        }
+//    #endif
+//#endif

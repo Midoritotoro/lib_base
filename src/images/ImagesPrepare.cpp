@@ -1,16 +1,23 @@
 #include <base/images/ImagesPrepare.h>
 
 #include <base/core/Types.h>
-#include <base/qt/style/StyleScale.h>
 
 #include <base/utility/Algorithm.h>
-#include <base/qt/common/Size.h>
+
+#ifdef LIB_BASE_ENABLE_QT
 
 #include <QPainter>
+
+#include <base/qt/style/StyleScale.h>
+#include <base/qt/common/Size.h>
+
+#endif
+
 #include <gsl/gsl>
 
 
 namespace base::images {
+#ifdef LIB_BASE_ENABLE_QT
 	namespace {
 		struct Shifted {
 			Shifted() = default;
@@ -58,13 +65,14 @@ namespace base::images {
 			return reshifted(components * alpha);
 		}
 	}
+#endif
 
 	bool IsRgbNull(Rgb rgb) {
-		return qRed(rgb) == 0 
-			&& qGreen(rgb) == 0 
-			&& qBlue(rgb) == 0;
+		return RgbRed(rgb) == 0 
+			&& RgbGreen(rgb) == 0 
+			&& RgbBlue(rgb) == 0;
 	}
-
+#ifdef LIB_BASE_ENABLE_QT
 	QPixmap PixmapFast(QImage&& image) {
 		Expects(image.format() == QImage::Format_ARGB32_Premultiplied
 			|| image.format() == QImage::Format_RGB32);
@@ -169,4 +177,5 @@ namespace base::images {
 
 		return Prepare(sourceImage, resolveSize(sourceImage.size()));
 	}
-} // namespace base::qt::images
+#endif
+} // namespace base::images

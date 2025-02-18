@@ -1,5 +1,6 @@
 #include <base/images/ImagesBuffer.h>
 
+#if defined(LIB_BASE_ENABLE_QT)
 
 namespace base::images {
 	void AlignedImageBufferCleanupHandler(void* data) {
@@ -115,4 +116,6 @@ namespace base::images {
 			AlignedImageBufferCleanupHandler,
 			cleanupData);
 	}
-} // namespace base::qt::images
+} // namespace base::images
+
+#endif

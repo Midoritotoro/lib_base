@@ -31,13 +31,13 @@ namespace base::io {
 			static [[nodiscard]] bool exists(const std::string& path);
 
 			static void find(
-				const base_string& path,
-				std::vector<base_string>& output,
+				const std::string& path,
+				std::vector<std::string>& output,
 				const FileFilter& filter = {},
 				bool recurse = true);
 
 			static void find(
-				std::vector<base_string>& output,
+				std::vector<std::string>& output,
 				const FileFilter& filter = {},
 				bool recurse = true);
 
