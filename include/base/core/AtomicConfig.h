@@ -13,7 +13,6 @@
 
 #include <base/system/Platform.h>
 
-
 template <int N> struct AtomicTraits
 {
 	static inline bool isLockFree();
@@ -21,7 +20,7 @@ template <int N> struct AtomicTraits
 
 template<int Size> struct AtomicOpsSupport
 {
-	enum { IsSupported = (Size == sizeof(int) || Size == sizeof(qptrdiff)) };
+	enum { IsSupported = (Size == sizeof(int) || Size == sizeof(ptrdiff)) };
 };
 
 template <typename T> struct AtomicAdditiveType
@@ -35,7 +34,6 @@ template <typename T> struct AtomicAdditiveType<T*>
 	typedef ptrdiff AdditiveT;
 	static const int AddScale = sizeof(T);
 };
-
 
 
 #define ATOMIC_INT32_IS_SUPPORTED

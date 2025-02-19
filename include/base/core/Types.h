@@ -38,7 +38,6 @@ using longlong  = int64;
 using ulonglong = uint64;
 
 
-
 template <int> struct IntegerForSize;
 
 template <>    struct IntegerForSize<1> { typedef uint8  Unsigned; typedef int8  Signed; };

@@ -1,4 +1,4 @@
-#include <base/core/Atomic.h>
+#include <base/core/AtomicInteger.h>
 
 
 #if defined(OS_WIN)
@@ -10,5 +10,5 @@
 #endif
 
 namespace base {
-
+    
 } // namespace base

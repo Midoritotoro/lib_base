@@ -111,7 +111,7 @@ set(PRIVATE_SOURCES
     src/core/ConcurrentAncillary.cpp
 
     src/core/Thread.cpp
-    src/core/Atomic.cpp
+    src/core/AtomicInteger.cpp
 
     src/core/WindowsAtomic.cpp
     src/core/UnixAtomic.cpp
@@ -239,7 +239,7 @@ set(PUBLIC_HEADERS
     include/base/core/ConcurrentAncillary.h
 
     include/base/core/Thread.h
-    include/base/core/Atomic.h
+    include/base/core/AtomicInteger.h
 
     include/base/core/AbstractAtomic.h
     include/base/core/WindowsAtomic.h
