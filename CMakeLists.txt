@@ -20,24 +20,38 @@ endif()
 
 set(libs_loc "D:/Libraries/win64")
 
-option(LIB_BASE_BUILD_TESTS "Сборка тестов библиотеки" ON)
-option(LIB_BASE_BUILD_EXAMPLES "Сборка примеров использования библиотеки" OFF)
+option(LIB_BASE_BUILD_TESTS "" ON)
+option(LIB_BASE_BUILD_EXAMPLES "" OFF)
+
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
-option(LIB_BASE_LINK_OPTIONS "Опции линковки библиотеки для MSVC" ${linkOptions})
-option(LIB_BASE_ENABLE_QT "Включить вспомогательный интерфейс для Qt" OFF)
-option(LIB_BASE_ENABLE_OPENGL "Поддержка OpenGL ES 2" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "Утилиты ffmpeg" OFF)
-option(LIB_BASE_ENABLE_ZLIB "Поддержка zlib" OFF)
-option(LIB_BASE_ENABLE_STRING_PARSER "" ON)
+option(LIB_BASE_LINK_OPTIONS "" ${linkOptions})
+
+option(LIB_BASE_ENABLE_QT "" OFF)
+
+option(LIB_BASE_ENABLE_OPENGL "" OFF)
+option(LIB_BASE_ENABLE_FFMPEG "" OFF)
+
+option(LIB_BASE_ENABLE_ZLIB "" OFF)
+option(LIB_BASE_ENABLE_STRING_PARSER "" OFF)
+
+if (UNIX)
+    option(LIB_BASE_ENABLE_PHTHREAD "" OFF)
+endif()
 
 
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
+
+set(LIB_BASE_BUILD_TESTS ON)
+
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT OFF)
+
 set(LIB_BASE_ENABLE_OPENGL OFF)
 set(LIB_BASE_ENABLE_FFMPEG OFF)
+
 set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_ENABLE_STRING_PARSER OFF)
+
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -57,10 +71,10 @@ set(PRIVATE_SOURCES
 
     src/concurrent/win/WinapiSemaphore.cpp
 
- #   src/concurrent/common/CommonAncillary.cpp
+    src/concurrent/common/CommonAncillary.cpp
     
- #  src/concurrent/win/WinapiAtomic.cpp
- #   src/concurrent/win/WinapiThreads.cpp
+    src/concurrent/win/WinapiAtomic.cpp
+    src/concurrent/win/WinapiThreads.cpp
 
 	src/images/ImagesBuffer.cpp
     src/images/ImagesPrepare.cpp
@@ -115,6 +129,9 @@ set(PRIVATE_SOURCES
 
     src/core/WindowsAtomic.cpp
     src/core/UnixAtomic.cpp
+
+    src/core/WindowsThread.cpp
+    src/core/UnixThread.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -146,7 +163,7 @@ set(PUBLIC_HEADERS
     include/base/concurrent/common/CommonSync.h
     include/base/concurrent/common/CommonUtils.h
 
- #  include/base/concurrent/common/CommonAncillary.h
+    include/base/concurrent/common/CommonAncillary.h
 
     include/base/concurrent/win/WinapiAsync.h
 
@@ -155,8 +172,8 @@ set(PUBLIC_HEADERS
     include/base/concurrent/win/WinapiList.h
     include/base/concurrent/win/WinapiSemaphore.h
 
-   # include/base/concurrent/win/WinapiAtomic.h
-  # include/base/concurrent/win/WinapiThreads.h
+    include/base/concurrent/win/WinapiAtomic.h
+    include/base/concurrent/win/WinapiThreads.h
 
     include/base/core/BaseExport.h
     include/base/utility/TypeWrapper.h
@@ -214,6 +231,9 @@ set(PUBLIC_HEADERS
 
     include/base/system/WindowsSystemInfo.h
     include/base/system/UnixSystemInfo.h
+
+    include/base/core/WindowsThread.h
+    include/base/core/UnixThread.h
 
   #  include/base/io/ByteArray.h
   #  include/base/io/ArrayDataPointer.h
@@ -292,22 +312,39 @@ if(LIB_BASE_ENABLE_STRING_PARSER AND NOT LIB_BASE_ENABLE_QT)
         include/base/string/StringAlgorithmsPrivate.h
 
         include/base/string/StringBuilder.h
-        )
+    )
 endif()
 
 
-add_library(lib_base ${PUBLIC_HEADERS} ${STRING_HEADERS})
+add_library(lib_base 
+    ${PUBLIC_HEADERS}
+    ${STRING_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
 include(cmake/Util_FindGSL.cmake)
+
 include(cmake/Util_FindQt.cmake)
 include(cmake/Util_FindLibPngJpeg.cmake)
 
 find_libpng_and_libjpeg(lib_base)
 find_ms_gsl(lib_base)
+
 find_package(OpenMP REQUIRED)
 
+if(LIB_BASE_ENABLE_PHTHREAD)
+    find_package(Threads REQUIRED)
+
+    if (Threads_FOUND)
+        target_compile_definitions(lib_base
+            PUBLIC
+            LIB_BASE_USE_PHTHREAD)
+
+        target_link_libraries(lib_base 
+            PUBLIC
+            Threads::Threads)
+    endif()
+endif()
 
 target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
 
@@ -318,10 +355,13 @@ endif()
 
 set_target_properties(
     lib_base PROPERTIES
+
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
+
     VERSION "${PROJECT_VERSION}"
     SOVERSION "${PROJECT_VERSION_MAJOR}"
+
     EXPORT_NAME lib_base
     OUTPUT_NAME lib_base
 )
@@ -449,9 +489,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         PRIVATE
             /permissive-
             /W4
+
             /utf-8
+
             /MP
             /EHsc   
+
             /w15038 
             /w14265 
             /wd4018
@@ -470,6 +513,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             /wd4611
             /wd4702
             /wd4828
+
             /Zi
             /Zc:__cplusplus
     )
@@ -478,9 +522,12 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         lib_base 
         PRIVATE
             /utf-8
+
             /O3
             /W4
+
             /EHsc   
+
             /Zi
             /Zc:__cplusplus
     )
@@ -517,8 +564,9 @@ if (WIN32)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   set_target_properties(${PROJECT_NAME} PROPERTIES
-       MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+   set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+        MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
 
     target_link_options(${PROJECT_NAME}
     INTERFACE

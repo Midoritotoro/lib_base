@@ -1,14 +1,16 @@
 #pragma once 
 
 #include <base/concurrent/win/WinapiThreads.h>
-#include <base/Types.h>
+#include <base/core/Types.h>
+
+#include <base/concurrent/win/WinapiAtomic.h>
 
 
 namespace base::Threads {
     typedef void (*ancillary_free_cb)(void* data);
     struct ancillary
     {
-      //  atomic_rc_t rc;
+        atomic_rc_t rc;
 
         uint32 id;
         void* data;

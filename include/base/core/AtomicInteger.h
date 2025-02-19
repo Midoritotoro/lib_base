@@ -4,6 +4,7 @@
 #include <base/core/AtomicConfig.h>
 
 #include <base/core/CommonAtomicOperations.h>
+#include <cassert>
 
 
 namespace base {
@@ -11,9 +12,9 @@ namespace base {
 		typename Integer = int,
 		typename = std::enable_if<std::is_integral_v<Integer>>>
 	class AtomicInteger {
-        static_assert(AtomicOpsSupport<sizeof(Integer)>::IsSupported, 
-            "Параметр шаблона - числовой тип с неподдерживаемым для данной платформы размером");
 	public:
+        static_assert(AtomicOpsSupport<sizeof(Integer)>::IsSupported, "Template parameter is an integral of a size not supported on this platform");
+
         using SelfAtomicOperations = AtomicOperations<Integer>;
 
         [[nodiscard]] Integer loadRelaxed() const noexcept {
@@ -200,7 +201,7 @@ namespace base {
                 _atomic, valueToAdd);
         }
 
-        [[nodiscard]] Integer fetchAndAddOrdered(T valueToAdd) noexcept {
+        [[nodiscard]] Integer fetchAndAddOrdered(Integer valueToAdd) noexcept {
             return SelfAtomicOperations::fetchAndAddOrdered(
                 _atomic, valueToAdd);
         }

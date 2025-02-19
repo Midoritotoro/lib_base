@@ -13,14 +13,18 @@
 
 #include <base/system/Platform.h>
 
-template <int N> struct AtomicTraits
+template <int N> 
+struct AtomicTraits
 {
 	static inline bool isLockFree();
 };
 
-template<int Size> struct AtomicOpsSupport
+template<int Size> 
+struct AtomicOpsSupport
 {
-	enum { IsSupported = (Size == sizeof(int) || Size == sizeof(ptrdiff)) };
+	enum { 
+		IsSupported = (Size == sizeof(int) || Size == sizeof(ptrdiff)) 
+	};
 };
 
 template <typename T> struct AtomicAdditiveType

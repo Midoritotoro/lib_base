@@ -1,5 +1,6 @@
 #include <base/concurrent/win/WinapiAtomic.h>
-#include <base/Base.h>
+#include <base/utility/Assert.h>
+
 
 
 namespace base::Threads {
@@ -76,8 +77,10 @@ namespace base::Threads {
 
         uintptr_t readers = atomic_fetch_sub_explicit(&gen->readers, 1,
             ::std::memory_order_relaxed);
+
         if (readers == 0)
             Assert("unreachable!", unreachable());
+
         if (readers > 1)
             return; /* Other reader threads remain: nothing to do */
 
