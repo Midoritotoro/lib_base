@@ -268,6 +268,7 @@ set(PUBLIC_HEADERS
     include/base/core/CommonAtomicOperations.h
 
     include/base/core/AtomicConfig.h
+    include/base/utility/Foreach.h
 )
 
 
