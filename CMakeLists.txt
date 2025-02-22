@@ -132,6 +132,16 @@ set(PRIVATE_SOURCES
 
     src/core/WindowsThread.cpp
     src/core/UnixThread.cpp
+
+    src/core/WindowsMutex.cpp
+    src/core/UnixMutex.cpp
+
+    src/core/Mutex.cpp
+
+    src/core/ThreadsData.h
+    src/core/ThreadsData.cpp
+
+
 )
 
 set(PUBLIC_HEADERS 
@@ -269,8 +279,15 @@ set(PUBLIC_HEADERS
 
     include/base/core/AtomicConfig.h
     include/base/utility/Foreach.h
-)
 
+    include/base/core/WindowsMutex.h
+    include/base/core/UnixMutex.h
+
+    include/base/core/Mutex.h
+    include/base/core/AbstractMutex.h
+
+    include/base/core/YieldCpu.h
+)
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
@@ -534,6 +551,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
+message(${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(lib_base
     PUBLIC
          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"

@@ -4,24 +4,35 @@
 #include <base/images/ImagesIntegral.h>
 #include <base/images/ImagesPrepare.h>
 
+#include <base/core/AtomicInteger.h>
+#include <base/core/Thread.h>
+
 #include <stdio.h>
 #include <corecrt.h>
 
 #include <base/io/File.h>
 
+
+#define MAX_ITER LONG_MAX
+
+void worker(sizetype start = 0) {
+	for (sizetype i = start; i < MAX_ITER; ++i) {
+		printf("Iter: %i", i);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
 	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
-	setlocale(LC_ALL, "");
 
-	base::io::File file;
+	base::AtomicInteger atomicInt;
+	
+	base::Thread thread;
 
-	if (file.open("C:/Users/danya/Downloads/raidvid.mp4", "rb") == false)
-		return -1;
 
-	base::io::ReadResult data = file.readAll();
-	base::io::File::write("D:/raidvid.mp4", data.data, data.sizeInBytes, "wb");
+	return 0;
+
 	//const auto ratio = application.devicePixelRatio();
 	//const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 

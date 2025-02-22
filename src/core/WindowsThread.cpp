@@ -1,8 +1,17 @@
 #include <base/core/WindowsThread.h>
 
+#include <src/core/ThreadsData.h>
+
+
 #ifdef OS_WIN
 
 namespace base {
+    WindowsThread::~WindowsThread() {
+        if (__terminateOnClose) {
+
+        }
+    }
+
     void WindowsThread::setPriority(Priority priority) {
         int prio;
         _priority = priority;
@@ -40,9 +49,49 @@ namespace base {
                 return;
         }
 
-        if (!SetThreadPriority(handle, prio)) {
-            qErrnoWarning("QThread::setPriority: Failed to set thread priority");
-        }
+        if (!SetThreadPriority(_handle, prio))
+            printf("base::Thread::setPriority: Ќе удалось установить приоритет потока\n");
+    }
+
+    AbstractThread::Priority WindowsThread::priority() const noexcept {
+        return _priority;
+    }
+
+    bool WindowsThread::isFinished() const noexcept {
+
+    }
+
+    bool WindowsThread::isRunning() const noexcept {
+        
+    }
+
+    io::WindowsSmartHandle WindowsThread::currentThreadHandle() noexcept {
+        return io::WindowsSmartHandle();
+    }
+
+    sizetype WindowsThread::currentThreadId() noexcept {
+        return GetCurrentThread();
+    }
+
+    void WindowsThread::setTerminateOnClose(bool _terminateOnClose) {
+        __terminateOnClose = _terminateOnClose;
+    }
+
+    bool WindowsThread::terminateOnClose() const noexcept {
+        return __terminateOnClose;
+    }
+
+    void WindowsThread::setStackSize(sizetype size) {
+        _stackSize = size;
+    }
+
+    sizetype WindowsThread::stackSize() const noexcept {
+        return _stackSize;
+    }
+
+
+    void WindowsThread::waitMs(sizetype milliseconds) {
+        Sleep(milliseconds);
     }
 
     template <
@@ -52,7 +101,11 @@ namespace base {
         Function&& callback,
         Args&& ... args)
     {
-
+        _handle = CreateThread(
+            NULL, 
+            _stackSize, std::move(callback),
+            std::move(args), CREATE_SUSPENDED,
+            NULL);
     }
 } // namespace base
 

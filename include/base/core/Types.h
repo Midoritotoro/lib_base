@@ -16,6 +16,8 @@ using gsl::not_null;
 template <typename Signature>
 using Fn = std::function<Signature>;
 
+
+
 using uchar		= unsigned char;
 using ushort	= unsigned short;
 
@@ -38,15 +40,15 @@ using longlong  = int64;
 using ulonglong = uint64;
 
 
-template <int> struct IntegerForSize;
+template <int>      struct IntegerForSize;
 
-template <>    struct IntegerForSize<1> { typedef uint8  Unsigned; typedef int8  Signed; };
-template <>    struct IntegerForSize<2> { typedef uint16 Unsigned; typedef int16 Signed; };
+template <>         struct IntegerForSize<1> { typedef uint8  Unsigned; typedef int8  Signed; };
+template <>         struct IntegerForSize<2> { typedef uint16 Unsigned; typedef int16 Signed; };
 
-template <>    struct IntegerForSize<4> { typedef uint32 Unsigned; typedef int32 Signed; };
-template <>    struct IntegerForSize<8> { typedef uint64 Unsigned; typedef int64 Signed; };
+template <>         struct IntegerForSize<4> { typedef uint32 Unsigned; typedef int32 Signed; };
+template <>         struct IntegerForSize<8> { typedef uint64 Unsigned; typedef int64 Signed; };
 
-template <class T> struct IntegerForSizeof : IntegerForSize<sizeof(T)> { };
+template <class T>  struct IntegerForSizeof : IntegerForSize<sizeof(T)> { };
 
 typedef IntegerForSize<PROCESSOR_WORDSIZE>::Signed registerint;
 typedef IntegerForSize<PROCESSOR_WORDSIZE>::Unsigned registeruint;

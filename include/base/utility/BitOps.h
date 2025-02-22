@@ -29,7 +29,7 @@ namespace base {
 #if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
     // Использование битовых операций из C++20, что обеспечивает их constexpr выполнение
 #  define HAS_CONSTEXPR_BITOPS
-#elif defined(CC_GNU)
+#elif defined(CPP_GNU)
 #   define HAS_CONSTEXPR_BITOPS
 #   define HAS_BUILTIN_CTZS
     constexpr always_inline uint base_builtin_ctzs(uint16 v) noexcept
@@ -97,7 +97,7 @@ namespace base {
         return __builtin_popcountll(v);
     }
 
-#elif defined(CC_MSVC) && !defined(PROCESSOR_ARM)
+#elif defined(CPP_MSVC) && !defined(PROCESSOR_ARM)
 #   define HAS_BUILTIN_CTZ
     always_inline unsigned long base_builtin_ctz(uint32 val)
     {

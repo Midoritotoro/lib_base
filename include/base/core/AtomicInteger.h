@@ -51,7 +51,7 @@ namespace base {
         static constexpr [[nodiscard]] 
             bool isReferenceCountingWaitFree() noexcept 
         { 
-                return SelfAtomicOperations::isReferenceCountingWaitFree();
+            return SelfAtomicOperations::isReferenceCountingWaitFree();
         }
 
         [[nodiscard]] bool ref() noexcept { 

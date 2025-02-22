@@ -10,7 +10,7 @@ namespace base::io {
 		const WindowsSmartHandle& handle,
 		bool autoDelete,
 		Fn<BOOL(HANDLE)> deleteCallback
-	):
+	) :
 		_handle(handle._handle),
 		_deleteCallback(std::move(deleteCallback)),
 		_autoDelete(autoDelete)
@@ -18,7 +18,8 @@ namespace base::io {
 
 	WindowsSmartHandle::WindowsSmartHandle(
 		HANDLE handle,
-		bool autoDelete) :
+		bool autoDelete
+	) :
 		_handle(handle),
 		_autoDelete(autoDelete)
 	{}
@@ -56,6 +57,12 @@ namespace base::io {
 	
 	Fn<BOOL(HANDLE)> WindowsSmartHandle::deleteCallback() const noexcept {
 		return _deleteCallback;
+	}
+
+	bool WindowsSmartHandle::isValid() const noexcept {
+		return 
+			(_handle != nullptr 
+			&& _handle != INVALID_HANDLE_VALUE);
 	}
 
 	WindowsSmartHandle& WindowsSmartHandle::operator=(const WindowsSmartHandle& handle) {
