@@ -5,12 +5,14 @@
 #ifdef OS_WIN
 
 #include <base/io/WindowsSmartHandle.h>
+#include <base/core/AtomicInteger.h>
 
 
 namespace base {
 	class WindowsThread final :
         public AbstractThread
     {
+
 	public:
         ~WindowsThread();
 
@@ -34,41 +36,16 @@ namespace base {
 
         sizetype threadId() const noexcept override;
         void join();
-
-        template <class _Fn, class... _Args>
-        void start(_Fn&& _Fx, _Args&&... _Ax) {
-            __Start(std::forward<_Fn>(_Fx), std::forward<_Args>(_Ax)...);
-        }
-
-        void start();
-        void start(Priority priority);
-
+            
         template <
-            typename Function,
-            typename ... Args>
-        void create(
-            Function&& callback,
+            class Function,
+            class ... Args>
+        void start(
+            Function&& _routine,
             Args&& ... args);
     private:
-        template <
-            class _Tuple,
-            size_t... _Indices>
-        [[nodiscard]] static CDECL unsigned int Invoke(void* _RawVals);
-
-        template <
-            class _Tuple,
-            size_t... _Indices>
-        [[nodiscard]] static constexpr auto GetInvoke(std::index_sequence<_Indices...>);
-
-        template <
-            class _Fn,
-            class... _Args>
-        void Start(
-            _Fn&& _Fx,
-            _Args&& ... _Ax) noexcept;
-
+        [[nodiscard]] static int WinPriorityFromInternal(Priority _Priority);
         void checkWaitForSingleObject(DWORD waitForSingleObjectResult);
-        static void STDCALL winThreadStartRoutine() noexcept;
 
         Priority _priority;
 
@@ -78,7 +55,7 @@ namespace base {
         io::WindowsSmartHandle _handle = nullptr;
 
         sizetype _stackSize = 0;
-        sizetype _threadId = 0;
+        AtomicInteger<sizetype> _threadId = 0;
 	};
 } // namespace base
 

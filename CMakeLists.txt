@@ -288,6 +288,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/YieldCpu.h
     include/base/core/ThreadsConfig.h
+
+    include/base/core/WindowsThreadsHelpers.h
 )
 
 include(CMakePackageConfigHelpers)

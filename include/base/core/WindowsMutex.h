@@ -6,23 +6,25 @@
 
 namespace base {
 	class Thread;
+	class WindowsThread;
+
 	class WindowsMutex: public AbstractMutex {
 	public:
-		WindowsMutex(not_null<Thread*> thread);
+		WindowsMutex(not_null<WindowsThread*> thread);
 		~WindowsMutex();
 
 		void setUnlockOnDelete(bool unlockOnDel) override;
 		bool unlockOnDelete() const noexcept override;
 
-		[[nodiscard]] bool lock() override;
-		[[nodiscard]] bool unlock() override;
+		bool lock() override;
+		bool unlock() override;
 
-		[[nodiscard]] bool isLocked() const noexcept override;
+		bool isLocked() const noexcept override;
 	private:
 		bool _unlockOnDelete = true;
 		bool _isLocked = false;
 
-		Thread* _thread = nullptr;
+		WindowsThread* _thread = nullptr;
 	};
 }
 #endif

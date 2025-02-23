@@ -2,7 +2,7 @@
 
 
 namespace base {
-	WindowsMutex::WindowsMutex(not_null<Thread*> thread):
+	WindowsMutex::WindowsMutex(not_null<WindowsThread*> thread):
 		_thread(thread)
 	{}
 

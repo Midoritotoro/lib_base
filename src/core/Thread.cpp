@@ -4,13 +4,6 @@
 #include <src/core/ThreadsData.h> 
 
 
-#if defined(OS_WIN)
-	#include <base/core/WindowsThread.h>
-	using ThreadPlatformImplementation = base::WindowsThread;
-#elif defined(OS_MAC) || defined(OS_LINUX)
-	#include <base/core/UnixThread.h>
-	using ThreadPlatformImplementation = base::UnixThread;
-#endif
 
 
 namespace base {
@@ -50,6 +43,18 @@ namespace base {
 	void Thread::join() {
 		_impl->join();
 	}
+
+	//template <
+	//	class Function,
+	//	class ... Args>
+	//void Thread::start(
+	//	Function&& _routine,
+	//	Args&& ... args) 
+	//{
+	//	((ThreadPlatformImplementation*)_impl)->start(
+	//		std::forward<Function>(_routine),
+	//		std::forward<Args>(args)...);
+	//}
 
 	int Thread::getIdealThreadCount() noexcept {
 		return system::SystemInfo::GetCpuCount();

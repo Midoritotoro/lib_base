@@ -1,10 +1,13 @@
 #include <base/core/WindowsThread.h>
 
+#ifdef OS_WIN
+
 #include <src/core/ThreadsData.h>
 #include <base/core/ThreadsConfig.h>
 
+#include <base/core/WindowsMutex.h>
+#include <base/core/WindowsThreadsHelpers.h>
 
-#ifdef OS_WIN
 
 namespace base {
     WindowsThread::~WindowsThread() {
@@ -14,41 +17,8 @@ namespace base {
     }
 
     void WindowsThread::setPriority(Priority priority) {
-        int prio;
+        int prio = WinPriorityFromInternal(priority);
         _priority = priority;
-
-        switch (priority) {
-        case WindowsThread::IdlePriority:
-            prio = THREAD_PRIORITY_IDLE;
-            break;
-
-        case WindowsThread::LowestPriority:
-            prio = THREAD_PRIORITY_LOWEST;
-            break;
-
-        case WindowsThread::LowPriority:
-            prio = THREAD_PRIORITY_BELOW_NORMAL;
-            break;
-
-        case WindowsThread::NormalPriority:
-            prio = THREAD_PRIORITY_NORMAL;
-            break;
-
-        case WindowsThread::HighPriority:
-            prio = THREAD_PRIORITY_ABOVE_NORMAL;
-            break;
-
-        case WindowsThread::HighestPriority:
-            prio = THREAD_PRIORITY_HIGHEST;
-            break;
-
-        case WindowsThread::TimeCriticalPriority:
-            prio = THREAD_PRIORITY_TIME_CRITICAL;
-            break;
-
-        default:
-            return;
-        }
 
         ThreadsAssert(_handle != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
 
@@ -77,6 +47,9 @@ namespace base {
     }
 
     void WindowsThread::setTerminateOnClose(bool _terminateOnClose) {
+        WindowsMutex mutex(this);
+        mutex.lock();
+
         __terminateOnClose = _terminateOnClose;
     }
 
@@ -85,6 +58,9 @@ namespace base {
     }
 
     void WindowsThread::setStackSize(sizetype size) {
+        WindowsMutex mutex(this);
+        mutex.lock();
+
         _stackSize = size;
     }
 
@@ -100,7 +76,6 @@ namespace base {
         return _handle;
     }
 
-
     sizetype WindowsThread::threadId() const noexcept {
         return _threadId;
     }
@@ -110,23 +85,23 @@ namespace base {
         ThreadsAssert(_isRunning != false, "base::threads::WindowsThread: Попытка вызвать join для неактивного потока. ", unused(0));
 
         checkWaitForSingleObject(WaitForSingleObject(_handle, INFINITE));
-            
     }
 
-    void WindowsThread::start(Priority _Priority_) {
-#if defined(CPP_MSVC) && !defined(_DLL)
-        // -MT или -MTd 
-        _handle = (HANDLE)_beginthreadex(
-            NULL, _stackSize, WindowsThread::winThreadStartRoutine,
-            this, CREATE_SUSPENDED, &_threadId);
-#else
-        // -MD или -MDd или сборка под MinGW
+    template <
+        class Function,
+        class ... Args>
+    void WindowsThread::start(
+        Function&& _routine,
+        Args&& ... args)
+    {
+        std::cout << "WindowsThread::start called";
+        const auto prio = WinPriorityFromInternal(priority);
 
-       _handle = CreateThread(
-            nullptr, _stackSize,
-            reinterpret_cast<LPTHREAD_START_ROUTINE>(WindowsThread::winThreadStartRoutine),
-            this, CREATE_SUSPENDED, reinterpret_cast<LPDWORD>(&_threadId));
-#endif
+        StartImplementation(
+            std::forward<Function>(_routine),
+            std::forward<Args>(args)...,
+            _threadId,
+            _handle);
 
         if (!_handle) {
             printf("QThread::start: Failed to create thread");
@@ -135,113 +110,42 @@ namespace base {
             return;
         }
 
-        int prio;
-        _priority = _Priority_;
-
-        switch (_Priority_) {
-            case IdlePriority:
-                prio = THREAD_PRIORITY_IDLE;
-                break;
-
-            case LowestPriority:
-                prio = THREAD_PRIORITY_LOWEST;
-                break;
-
-            case LowPriority:
-                prio = THREAD_PRIORITY_BELOW_NORMAL;
-                break;
-
-            case NormalPriority:
-                prio = THREAD_PRIORITY_NORMAL;
-                break;
-
-            case HighPriority:
-                prio = THREAD_PRIORITY_ABOVE_NORMAL;
-                break;
-
-            case HighestPriority:
-                prio = THREAD_PRIORITY_HIGHEST;
-                break;
-
-            case TimeCriticalPriority:
-                prio = THREAD_PRIORITY_TIME_CRITICAL;
-                break;
-
-            case InheritPriority:
-            default:
-                prio = GetThreadPriority(GetCurrentThread());
-                break;
-        }
-
         if (!SetThreadPriority(_handle, prio))
-            printf("QThread::start: Failed to set thread priority\n");
+            printf("base::threads::WindowsThread::start: Failed to set thread priority\n");
 
         if (ResumeThread(_handle) == (DWORD)-1)
-            printf("QThread::start: Failed to resume new thread\n");
+            printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
     }
-
-    void WindowsThread::start() {
-        return start(_priority);
-    }
-
-    template <
-        typename Function,
-        typename ... Args>
-    void WindowsThread::create(
-        Function&& callback,
-        Args&& ... args)
-    {
-      
-
-    }
-
 
     void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
         ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));
     }
 
-    void STDCALL WindowsThread::winThreadStartRoutine() noexcept {
-        
-    }
+    int WindowsThread::WinPriorityFromInternal(Priority _Priority) {
+        switch (_Priority) {
+            case WindowsThread::IdlePriority:
+                return THREAD_PRIORITY_IDLE;
 
-    template <
-        class _Tuple,
-        size_t... _Indices>
-    CDECL unsigned int WindowsThread::Invoke(void* _RawVals)
-    {
-        const std::unique_ptr<_Tuple> _FnVals(static_cast<_Tuple*>(_RawVals));
+            case WindowsThread::LowestPriority:
+                return THREAD_PRIORITY_LOWEST;
 
-        _Tuple& _Tup = *_FnVals.get(); // avoid ADL, handle incomplete types
-        std::invoke(std::move(std::get<_Indices>(_Tup))...);
+            case WindowsThread::LowPriority:
+                return THREAD_PRIORITY_BELOW_NORMAL;
 
-        return 0;
-    }
+            case WindowsThread::NormalPriority:
+                return THREAD_PRIORITY_NORMAL;
 
+            case WindowsThread::HighPriority:
+                return THREAD_PRIORITY_ABOVE_NORMAL;
 
-    template <
-        class _Tuple,
-        size_t... _Indices>
-    constexpr auto WindowsThread::GetInvoke(std::index_sequence<_Indices...>) {
-        return &Invoke<_Tuple, _Indices...>;
-    }
+            case WindowsThread::HighestPriority:
+                return THREAD_PRIORITY_HIGHEST;
 
-    template <
-        class _Fn,
-        class... _Args>
-    void __Start(
-        _Fn&& _Fx,
-        _Args&& ... _Ax) noexcept
-    {
-        using _Tuple = std::tuple<
-            std::decay_t<_Fn>, 
-            std::decay_t<_Args>...>;
+            case WindowsThread::TimeCriticalPriority:
+                return THREAD_PRIORITY_TIME_CRITICAL;
+        }
 
-        auto _Decay_copied = std::make_unique<_Tuple>(
-            std::forward<_Fn>(_Fx),
-            std::forward<_Args>(_Ax)...);
-
-        constexpr auto _Invoker_proc = GetInvoke<_Tuple>(
-            std::make_index_sequence<1 + sizeof...(_Args)>{});
+        return EGENERIC;
     }
 } // namespace base
 

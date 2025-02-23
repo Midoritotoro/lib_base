@@ -16,15 +16,16 @@
 
 #define MAX_ITER LONG_MAX
 
-void worker(sizetype start = 0) {
+void worker(sizetype start) {
 	for (sizetype i = start; i < MAX_ITER; ++i) {
-		printf("Iter: %i", i);
+		printf("Iter: %lli\n", i);
 	}
 }
 
 void wk(int a, int* r) {
 	*r = a * 2;
 }
+
 
 int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
@@ -34,14 +35,12 @@ int main(int argc, char* argv[]) {
 
 	base::AtomicInteger atomicInt;
 
-	std::thread r(&worker, MAX_ITER - 543);
-	std::thread rk(&wk, 4, &res);
-
-	r.join();
+	std::thread th(worker, 423);
 
 	base::Thread thread;
-	
+	thread.start(worker, 423);
 
+	std::cout << res;
 
 	return 0;
 

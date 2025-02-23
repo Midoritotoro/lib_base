@@ -1,9 +1,18 @@
 #pragma once 
 
 #include <base/core/AbstractThread.h>
-#include <thread> 
+
+#if defined(OS_WIN)
+	#include <base/core/WindowsThread.h>
+	using ThreadPlatformImplementation = base::WindowsThread;
+#elif defined(OS_MAC) || defined(OS_LINUX)
+	#include <base/core/UnixThread.h>
+	using ThreadPlatformImplementation = base::UnixThread;
+#endif
+
 
 namespace base {
+
 	class Thread {
 	public:
 		Thread();
@@ -20,6 +29,17 @@ namespace base {
 
 		void join();
 
+		template <
+			class Function,
+			class ... Args>
+		void start(
+			Function&& _routine,
+			Args&& ... args) 
+		{
+			((ThreadPlatformImplementation*)_impl)->start(
+				std::forward<Function>(_routine),
+				std::forward<Args>(args)...);
+		} 
 		
 		static [[nodiscard]] int getIdealThreadCount() noexcept;
 		static [[nodiscard]] Thread* currentThread() noexcept;

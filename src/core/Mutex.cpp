@@ -13,7 +13,7 @@
 
 namespace base {
 	Mutex::Mutex(not_null<Thread*> thread) {
-		_impl = new PlatformMutexImplementation(thread);
+		// _impl = new PlatformMutexImplementation(thread);
 	}
 
 	Mutex::~Mutex() {
