@@ -1,6 +1,8 @@
 #include <base/core/Thread.h>
 
 #include <base/system/SystemInfo.h>
+#include <src/core/ThreadsData.h> 
+
 
 #if defined(OS_WIN)
 	#include <base/core/WindowsThread.h>
@@ -38,11 +40,15 @@ namespace base {
 	}
 
 	void Thread::waitMs(int ms) {
-		_impl->wait(ms);
+		_impl->waitMs(ms);
 	}
 
 	void Thread::waitS(int sec) {
-		_impl->waisS(sec);
+		_impl->waitMs(sec / 1000);
+	}
+
+	void Thread::join() {
+		_impl->join();
 	}
 
 	int Thread::getIdealThreadCount() noexcept {
@@ -50,7 +56,9 @@ namespace base {
 	}
 
 	Thread* Thread::currentThread() noexcept {
-		return ThreadPlatformImplementation::currentThread();
+		return 
+			ThreadsData::threadById(
+				ThreadPlatformImplementation::currentThreadId());
 	}
 
 } // namespace base

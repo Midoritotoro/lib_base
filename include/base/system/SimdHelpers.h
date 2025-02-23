@@ -29,7 +29,7 @@
 #endif
 
 #if defined(PROCESSOR_X86) && defined(CPP_MSVC)
- // MSVC doesn't define __SSE2__, so do it ourselves
+
 #  if (defined(_M_X64) || _M_IX86_FP >= 2)
 #    define __SSE__ 1
 #    define __SSE2__ 1

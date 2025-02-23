@@ -75,6 +75,10 @@ namespace base::io {
 		return *this;
 	}
 
+	bool WindowsSmartHandle::operator==(HANDLE handle) {
+		return (_handle == handle);
+	}
+
 	WindowsSmartHandle::operator HANDLE() const {
 		return handle();
 	}

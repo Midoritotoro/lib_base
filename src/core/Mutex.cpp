@@ -17,19 +17,27 @@ namespace base {
 	}
 
 	Mutex::~Mutex() {
-		if (isLocked())
-			unlock();
+		delete _impl;
+		_impl = nullptr;
+	}
+
+	void Mutex::setUnlockOnDelete(bool unlockOnDel) {
+		_impl->setUnlockOnDelete(unlockOnDel);
+	}
+
+	bool Mutex::unlockOnDelete() const noexcept {
+		return _impl->unlockOnDelete();
 	}
 
 	bool Mutex::lock() {
-
+		return _impl->lock();
 	}
 
 	bool Mutex::unlock() {
-
+		return _impl->unlock();
 	}
 
 	bool Mutex::isLocked() const noexcept {
-
+		return _impl->isLocked();
 	}
 } // namespace base

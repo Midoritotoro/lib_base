@@ -206,13 +206,10 @@ namespace base::qt::text {
 		[[nodiscard]] int quoteMinWidth(QuoteDetails* quote) const;
 		[[nodiscard]] const QString& quoteHeaderText(QuoteDetails* quote) const;
 
-		// Returns -1 in case there is no limit.
 		[[nodiscard]] int quoteLinesLimit(QuoteDetails* quote) const;
 
-		// Block must be either nullptr or a pointer to a NewlineBlock.
 		[[nodiscard]] int quoteIndex(const AbstractBlock* block) const;
 
-		// Template method for originalText(), originalTextWithEntities().
 		template <
 			typename AppendPartCallback,
 			typename ClickHandlerStartCallback,
@@ -225,9 +222,6 @@ namespace base::qt::text {
 			ClickHandlerFinishCallback clickHandlerFinishCallback,
 			FlagsChangeCallback flagsChangeCallback) const;
 
-		// Template method for countWidth(), countHeight(), countLineWidths().
-		// callback(lineWidth, lineBottom) will be called for all lines with:
-		// QFixed lineWidth, int lineBottom
 		template <typename Callback>
 		void enumerateLines(
 			int w,

@@ -16,8 +16,6 @@ using gsl::not_null;
 template <typename Signature>
 using Fn = std::function<Signature>;
 
-
-
 using uchar		= unsigned char;
 using ushort	= unsigned short;
 

@@ -31,5 +31,8 @@ namespace base {
         virtual bool terminateOnClose() const noexcept = 0;
 
         virtual void waitMs(sizetype milliseconds) = 0;
+        virtual sizetype threadId() const noexcept = 0;
+
+        virtual void join() = 0;
 	};
 } // namespace base

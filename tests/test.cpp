@@ -11,6 +11,7 @@
 #include <corecrt.h>
 
 #include <base/io/File.h>
+#include <thread>
 
 
 #define MAX_ITER LONG_MAX
@@ -21,14 +22,25 @@ void worker(sizetype start = 0) {
 	}
 }
 
+void wk(int a, int* r) {
+	*r = a * 2;
+}
+
 int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
 	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
+	int res;
 
 	base::AtomicInteger atomicInt;
-	
+
+	std::thread r(&worker, MAX_ITER - 543);
+	std::thread rk(&wk, 4, &res);
+
+	r.join();
+
 	base::Thread thread;
+	
 
 
 	return 0;

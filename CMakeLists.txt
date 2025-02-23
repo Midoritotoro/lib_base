@@ -287,6 +287,7 @@ set(PUBLIC_HEADERS
     include/base/core/AbstractMutex.h
 
     include/base/core/YieldCpu.h
+    include/base/core/ThreadsConfig.h
 )
 
 include(CMakePackageConfigHelpers)

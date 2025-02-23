@@ -11,6 +11,9 @@ namespace base {
 		Mutex(not_null<Thread*> thread);
 		~Mutex();
 
+		void setUnlockOnDelete(bool unlockOnDel);
+		[[nodiscard]] bool unlockOnDelete() const noexcept;
+
 		[[nodiscard]] bool lock();
 		[[nodiscard]] bool unlock();
 

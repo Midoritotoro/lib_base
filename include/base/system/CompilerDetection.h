@@ -309,6 +309,7 @@
 
 # ifdef __cplusplus
 
+
 #ifndef OUTOFLINE_TEMPLATE
 #  define OUTOFLINE_TEMPLATE
 #endif
@@ -330,6 +331,23 @@
 #else
 #  define FASTCALL
 #endif
+
+#if __has_cpp_attribute(clang::fallthrough)
+#    define FALLTHROUGH() [[clang::fallthrough]]
+#elif __has_cpp_attribute(gnu::fallthrough)
+#    define FALLTHROUGH() [[gnu::fallthrough]]
+#elif __has_cpp_attribute(fallthrough)
+#  define FALLTHROUGH() [[fallthrough]]
+#endif
+
+#ifndef FALLTHROUGH
+#  ifdef CPP_GNU
+#    define FALLTHROUGH() __attribute__((fallthrough))
+#  else
+#    define FALLTHROUGH() (void)0
+#  endif
+#endif
+
 
 
 #if defined(OS_WIN) && defined(CPP_MSVC)
@@ -438,7 +456,7 @@
 #endif
 #if defined(NO_WARNINGS)
 #  if defined(CPP_MSVC)
-WARNING_DISABLE_MSVC(4828) /* Файл содержит знак, начинающийся со смещения xx, который является недопустимым в текущей исходной кодировке. */
+WARNING_DISABLE_MSVC(4828) /* Файл содержит знак, начинающийся со смещения 0xX, который является недопустимым в текущей исходной кодировке. */
 WARNING_DISABLE_MSVC(4251) /* класс 'type' должен иметь dll-интерфейс, который будет использоваться клиентами класса 'type2' */
 WARNING_DISABLE_MSVC(4244) /* преобразование из 'type1' в 'type2', возможная потеря данных */
 WARNING_DISABLE_MSVC(4275) /* идентификатор ключа класса, отличного от DLL-интерфейса, используемый в качестве базового для идентификатора ключа класса DLL-интерфейса */
@@ -450,15 +468,7 @@ WARNING_DISABLE_MSVC(4355) /* 'this' : используется в списке 
 WARNING_DISABLE_MSVC(4710) /* функция не встроена */
 WARNING_DISABLE_MSVC(4530) /* Используется обработчик исключений C++, но семантика размотки не включена. Укажите /EHsc */
 WARNING_DISABLE_MSVC(4006) 
-#  elif defined(CPP_BOR)
-#    pragma option -w-inl
-#    pragma option -w-aus
-#    pragma warn -inl
-#    pragma warn -pia
-#    pragma warn -ccc
-#    pragma warn -rch
-#    pragma warn -sig
-#  endif
+#endif
 #endif
 
 # endif // __cplusplus

@@ -31,6 +31,8 @@ namespace base::io {
 		WindowsSmartHandle& operator=(const WindowsSmartHandle& handle);
 		WindowsSmartHandle& operator=(HANDLE handle);
 
+		bool operator==(HANDLE handle);
+
 		void setHandle(
 			not_null<HANDLE> handle, 
 			bool autoDeletePrevious = true);
