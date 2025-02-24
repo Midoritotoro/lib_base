@@ -57,7 +57,7 @@ namespace base {
             std::cout << "WindowsThread::start called";
             const auto prio = WinPriorityFromInternal(_priority);
 
-            StartImplementation(
+            StartImplementation<Function, Args...>(
                 std::forward<Function>(_routine),
                 std::forward<Args>(args)...,
                 &_threadId,

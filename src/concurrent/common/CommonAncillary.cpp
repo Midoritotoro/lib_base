@@ -58,7 +58,7 @@ namespace base::Threads {
     int AncillaryArrayDup(ancillary*** dst_arrayp,
             ancillary** const* src_arrayp)
     {
-        if (unlikely(*dst_arrayp != NULL))
+        if (UNLIKELY(*dst_arrayp != NULL))
             AncillaryArrayClear(dst_arrayp);
 
         if (*src_arrayp == NULL)

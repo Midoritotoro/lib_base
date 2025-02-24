@@ -41,12 +41,12 @@ static inline constexpr [[nodiscard]]
 	
 
 #define AssertValidationCondition(condition, message, file, line)\
-	((unlikely(!(condition)))\
+	((UNLIKELY(!(condition)))\
 		? fail(message, file, line)\
 		: void(0))
 
 #define AssertValidationConditionWithRet(condition, message, file, line, retval)\
-	if ((unlikely(!(condition)))) \
+	if ((UNLIKELY(!(condition)))) \
 		ReturnOnFailure(message, file, line, retval)
 
 #define SOURCE_FILE_BASENAME (extract_basename(\
@@ -69,7 +69,7 @@ static inline constexpr [[nodiscard]]
 
 
 #define Assert(condition) AssertLog(condition, "\"" #condition "\"")
-#define AssertUnreachable() assert(!"unreachable", unreachable())
+#define AssertUnreachable() assert(!"unreachable", UNREACHABLE())
 
 
 #define StaticAssert(cond) static_assert(bool(cond), stringify(cond))

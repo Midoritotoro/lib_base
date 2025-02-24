@@ -3,6 +3,7 @@
 #include <atomic>
 #include <limits>
 
+WARNING_DISABLE_MSVC(4996)
 
 namespace base::Time {
 	namespace details {

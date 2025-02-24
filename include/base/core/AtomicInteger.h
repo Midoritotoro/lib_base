@@ -34,11 +34,13 @@ namespace base {
         }
 
         void storeRelease(Integer newValue) noexcept { 
-            SelfAtomicOperations::storeRelease(_atomic, newValue);
+            SelfAtomicOperations::storeRelease(
+                _atomic, newValue);
         }
 
-        operator Integer() const noexcept {
-            return loadAcquire();
+        void storeSequentiallyConsistent(Integer newValue) noexcept {
+            SelfAtomicOperations::storeSequentiallyConsistent(
+                _atomic, newValue);
         }
 
         Integer operator=(Integer newValue) noexcept {
@@ -327,12 +329,11 @@ namespace base {
         }
 
         operator Integer() const volatile noexcept {
-            static_assert(_Deprecate_non_lock_free_volatile<_Ty>, "Never fails");
-            return load();
+            return loadSequentiallyConsistent();
         }
 
         operator Integer() const noexcept {
-            return load();
+            return loadSequentiallyConsistent();
         }
 
         AtomicInteger() = default;

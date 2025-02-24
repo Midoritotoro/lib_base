@@ -52,8 +52,8 @@ namespace base {
         }
 
         template <typename T>
-        static loadSequentiallyConsistent inline [[nodiscard]]
-            T load(const std::atomic<T>& _atomic_value) noexcept
+        static inline [[nodiscard]]
+            T loadSequentiallyConsistent(const std::atomic<T>& _atomic_value) noexcept
         {
             return _atomic_value.load(std::memory_order_seq_cst);
         }
@@ -67,23 +67,38 @@ namespace base {
 
         template <typename T>
         static inline [[nodiscard]]
-            void store(std::atomic<T>& _atomic_value, T newValue) noexcept
+            void store(
+                std::atomic<T>& _atomic_value, 
+                T newValue) noexcept
         {
             _atomic_value.store(newValue, std::memory_order_relaxed);
         }
 
         template <typename T>
         static inline [[nodiscard]]
-            void storeRelaxed(std::atomic<T>& _atomic_value, T newValue) noexcept
+            void storeRelaxed(
+                std::atomic<T>& _atomic_value, 
+                T newValue) noexcept
         {
             _atomic_value.store(newValue, std::memory_order_relaxed);
         }
 
         template <typename T>
         static inline [[nodiscard]]
-            void storeRelease(std::atomic<T>& _atomic_value, T newValue) noexcept
+            void storeRelease(
+                std::atomic<T>& _atomic_value,
+                T newValue) noexcept
         {
             _atomic_value.store(newValue, std::memory_order_release);
+        }
+
+        template <typename T>
+        static inline [[nodiscard]]
+            void storeSequentiallyConsistent(
+                std::atomic<T>& _atomic_value,
+                T newValue) noexcept
+        {
+            _atomic_value.store(newValue, std::memory_order_seq_cst);
         }
 
         static inline [[nodiscard]] bool isReferenceCountingNative() noexcept { 

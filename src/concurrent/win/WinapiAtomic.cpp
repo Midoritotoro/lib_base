@@ -84,7 +84,7 @@ namespace base::Threads {
         if (readers > 1)
             return; /* Other reader threads remain: nothing to do */
 
-        if (unlikely(atomic_exchange_explicit(&gen->writer, 0,
+        if (UNLIKELY(atomic_exchange_explicit(&gen->writer, 0,
             ::std::memory_order_release)))
             atomic_notify_one(&gen->writer); /* Last reader wakes writer up */
     }

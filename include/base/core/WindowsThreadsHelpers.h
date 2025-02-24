@@ -16,7 +16,7 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    static CDECL uint Invoke(void* _RawVals)
+    static inline CDECL uint Invoke(void* _RawVals)
     {
         const std::unique_ptr<_Tuple> 
             _FnVals(static_cast<_Tuple*>(_RawVals));
@@ -31,17 +31,24 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    static constexpr auto GetInvoke(std::index_sequence<_Indices...>) {
+    static constexpr inline auto GetInvoke(std::index_sequence<_Indices...>) {
         return &Invoke<_Tuple, _Indices...>;
     }
 
+    template <typename IdType>
+    concept IsValidIdType = (sizeof(IdType) == sizeof(DWORD));
+
     template <
         class Function,
-        class... Args>
-    void STDCALL StartImplementation(
+        class... Args,
+        class IdType = sizetype,
+        class = std::enable_if<
+            std::is_integral_v<IdType>
+            && IsValidIdType<IdType>>>
+    void inline STDCALL StartImplementation(
         Function&& _Routine,
         Args&& ... _Args,
-        AtomicInteger<sizetype>* _PThreadId,
+        AtomicInteger<IdType>* _PThreadId,
         io::WindowsSmartHandle* _PHandle) noexcept
     {
         using _Tuple = std::tuple<
@@ -55,19 +62,24 @@ namespace base {
         constexpr auto invokerProc = GetInvoke<_Tuple>(
             std::make_index_sequence<1 + sizeof...(Args)>{});
 
+        IdType threadId;
+
 #if defined(CPP_MSVC) && !defined(_DLL)
         // -MT или -MTd 
         _PHandle = (HANDLE)reinterpret_cast<void*>(
             _beginthreadex(nullptr, 0, _Invoker_proc,
-            _Decay_copied.get(), 0, _PThreadId));
+            _Decay_copied.get(), 0, &threadId));
 #else
         // -MD или -MDd или сборка под MinGW
-        std::atomic<int>;
-        _PHandle = CreateThread(
-            nullptr, 0, // default stack sizes
+        
+        *_PHandle = CreateThread(
+            nullptr, 0, // default stack size
             reinterpret_cast<LPTHREAD_START_ROUTINE>(invokerProc),
-            decayCopied, CREATE_SUSPENDED, 
-            reinterpret_cast<LPDWORD>(_PThreadId->loadRelaxed());
+            reinterpret_cast<LPVOID>(decayCopied.get()),
+            CREATE_SUSPENDED, 
+            reinterpret_cast<LPDWORD>(&threadId));
+
+        _PThreadId->storeSequentiallyConsistent(threadId);
 #endif
     }
 } // namespace base
