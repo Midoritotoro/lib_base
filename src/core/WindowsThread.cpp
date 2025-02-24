@@ -9,6 +9,10 @@
 
 
 namespace base {
+    WindowsThread::WindowsThread() {
+        _handle.setDeleteCallback(CustomTerminate);
+    }
+
     WindowsThread::~WindowsThread() {
         if (__terminateOnClose) {
 
@@ -145,6 +149,13 @@ namespace base {
         }
 
         return EGENERIC;
+    }
+
+    BOOL STDCALL WindowsThread::CustomTerminate(HANDLE handle) {
+        DWORD exitCode = 0;
+        GetExitCodeThread(handle, &exitCode);
+
+        return TerminateThread(handle, exitCode);
     }
 } // namespace base
 

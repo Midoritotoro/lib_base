@@ -11,11 +11,12 @@
 
 
 namespace base {
-	class WindowsThread final :
+    class WindowsThread final :
         public AbstractThread
     {
 
-	public:
+    public:
+        WindowsThread();
         ~WindowsThread();
 
         void setPriority(Priority priority) override;
@@ -38,13 +39,13 @@ namespace base {
 
         sizetype threadId() const noexcept override;
         void join();
-       /*     
-        template <
-            class Function,
-            class ... Args>
-        void start(
-            Function&& _routine,
-            Args&& ... args);*/
+        /*
+         template <
+             class Function,
+             class ... Args>
+         void start(
+             Function&& _routine,
+             Args&& ... args);*/
 
 
         template <
@@ -58,10 +59,10 @@ namespace base {
             const auto prio = WinPriorityFromInternal(_priority);
 
             StartImplementation(
-                std::forward<Function>(_routine),
-                std::forward<Args>(args)...,
                 &_threadId,
-                &_handle);
+                &_handle,
+                std::forward<Function>(_routine),
+                std::forward<Args>(args)...);
 
             if (!_handle.handle()) {
                 printf("base::threads::WindowsThread::start: Failed to create thread");
@@ -80,6 +81,8 @@ namespace base {
         [[nodiscard]] static int WinPriorityFromInternal(Priority _Priority);
         void checkWaitForSingleObject(DWORD waitForSingleObjectResult);
 
+        static BOOL STDCALL CustomTerminate(HANDLE handle);
+
         Priority _priority;
 
         bool _isRunning = false;
@@ -89,7 +92,7 @@ namespace base {
 
         sizetype _stackSize = 0;
         AtomicInteger<sizetype> _threadId = 0;
-	};
+    };
 } // namespace base
 
 #endif

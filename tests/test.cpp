@@ -14,16 +14,19 @@
 #include <thread>
 
 
-#define MAX_ITER LONG_MAX
 
-void worker(sizetype start = 0) {
-	for (sizetype i = start; i < MAX_ITER; ++i) {
+void worker(sizetype end) {
+	for (sizetype i = 0; i < end; ++i) {
 		printf("Iter: %lli\n", i);
 	}
 }
 
 void wk(int a, int* r) {
 	*r = a * 2;
+}
+
+void worker1() {
+
 }
 
 
@@ -33,12 +36,15 @@ int main(int argc, char* argv[]) {
 
 	int res = 0;
 
-	base::AtomicInteger atomicInt;
+	//base::AtomicInteger atomicInt;
 
-	//std::thread th(worker, 423);
+	//std::thread th(worker, 254);
+	//th.join();
 
-	base::Thread thread;
+	base::WindowsThread thread;
 	thread.start(worker, 254);
+
+
 
 	std::cout << res << '\n';
 

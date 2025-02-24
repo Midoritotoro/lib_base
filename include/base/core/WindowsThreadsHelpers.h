@@ -3,12 +3,14 @@
 #include <base/system/Platform.h>
 #include <base/utility/TypeTraits.h>
 
+#include <memory>
+
 #include <base/io/WindowsSmartHandle.h>
 
 #include <base/core/AtomicInteger.h>
 
 #if defined(CPP_MSVC) && !defined(_DLL)
-    #include <process.h> // Для _beginthreadex
+#include <process.h> // Для _beginthreadex
 #endif
 
 
@@ -16,16 +18,17 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    uint STDCALL Invoke(void* _RawVals)
+    NODISCARD uint STDCALL Invoke(void* _RawVals) noexcept
     {
-        const std::unique_ptr<_Tuple> 
+        const std::unique_ptr<_Tuple>
             _FnVals(static_cast<_Tuple*>(_RawVals));
 
         _Tuple& _Tup = *_FnVals.get();
 
-        std::invoke(
-            std::move(
-                std::get<_Indices>(_Tup))...);
+        std::invoke(std::move(
+            std::get<_Indices>(_Tup))...);
+
+       // _Cnd_do_broadcast_at_thread_exit();
 
         return 0;
     }
@@ -33,25 +36,25 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    constexpr auto GetInvoke(std::index_sequence<_Indices...>) {
+    NODISCARD constexpr auto GetInvoke(std::index_sequence<_Indices...>) noexcept {
         return &Invoke<_Tuple, _Indices...>;
     }
 
-    template <typename IdType>
-    concept IsValidIdType = (sizeof(IdType) == sizeof(DWORD));
+    template <class IdType>
+    concept IsValidIdType = 
+        (sizeof(IdType) >= sizeof(DWORD))
+        && std::is_integral_v<IdType>;
 
     template <
         class Function,
         class... Args,
         class IdType = sizetype,
-        class = std::enable_if<
-            std::is_integral_v<IdType>
-            && IsValidIdType<IdType>>>
-    void STDCALL StartImplementation(
-        Function&& _Routine,
-        Args&& ... _Args,
-        AtomicInteger<IdType>* _PThreadId,
-        io::WindowsSmartHandle* _PHandle) noexcept
+        class = std::enable_if<IsValidIdType<IdType>>>
+        void STDCALL StartImplementation(
+            AtomicInteger<IdType>* _PThreadId,
+            io::WindowsSmartHandle* _PHandle,
+            Function&& _Routine,
+            Args&& ... _Args) noexcept
     {
         using _Tuple = std::tuple<
             std::decay_t<Function>,
@@ -74,15 +77,20 @@ namespace base {
                 reinterpret_cast<uint*>(&threadId)));
 #else
         // -MD или -MDd или сборка под MinGW
-        printf("RRR\n");
+
         *_PHandle = CreateThread(
             nullptr, 0, // default stack size
             reinterpret_cast<LPTHREAD_START_ROUTINE>(invokerProc),
             reinterpret_cast<LPVOID>(decayCopied.get()),
-            CREATE_SUSPENDED, 
+            CREATE_SUSPENDED,
             reinterpret_cast<LPDWORD>(&threadId));
 
         _PThreadId->storeSequentiallyConsistent(threadId);
 #endif
+
+        if (LIKELY(_PHandle != nullptr))
+            unused(decayCopied.release());
+        else // failed to start thread
+            _PThreadId->storeSequentiallyConsistent(0);
     }
 } // namespace base
