@@ -5,6 +5,8 @@
 #ifdef OS_WIN
 
 #include <base/io/WindowsSmartHandle.h>
+
+#include <base/core/WindowsThreadsHelpers.h>
 #include <base/core/AtomicInteger.h>
 
 
@@ -36,13 +38,44 @@ namespace base {
 
         sizetype threadId() const noexcept override;
         void join();
-            
+       /*     
         template <
             class Function,
             class ... Args>
         void start(
             Function&& _routine,
-            Args&& ... args);
+            Args&& ... args);*/
+
+
+        template <
+            class Function,
+            class ... Args>
+        void start(
+            Function&& _routine,
+            Args&& ... args)
+        {
+            std::cout << "WindowsThread::start called";
+            const auto prio = WinPriorityFromInternal(_priority);
+
+            StartImplementation(
+                std::forward<Function>(_routine),
+                std::forward<Args>(args)...,
+                &_threadId,
+                &_handle);
+
+            if (!_handle) {
+                printf("QThread::start: Failed to create thread");
+
+                _isRunning = false;
+                return;
+            }
+
+            if (!SetThreadPriority(_handle, prio))
+                printf("base::threads::WindowsThread::start: Failed to set thread priority\n");
+
+            if (ResumeThread(_handle) == (DWORD)-1)
+                printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
+        }
     private:
         [[nodiscard]] static int WinPriorityFromInternal(Priority _Priority);
         void checkWaitForSingleObject(DWORD waitForSingleObjectResult);

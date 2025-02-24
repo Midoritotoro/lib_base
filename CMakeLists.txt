@@ -290,6 +290,7 @@ set(PUBLIC_HEADERS
     include/base/core/ThreadsConfig.h
 
     include/base/core/WindowsThreadsHelpers.h
+    include/base/system/KeywordSupport.h
 )
 
 include(CMakePackageConfigHelpers)

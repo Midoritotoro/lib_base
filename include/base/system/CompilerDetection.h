@@ -6,19 +6,26 @@
 #if defined(_MSC_VER)
 #  define CPP_MSVC (_MSC_VER)
 #  define CPP_MSVC_NET
+
 #  define CPP_MSVC_ONLY CPP_MSVC
+
 #  ifdef __clang__
 #    undef CPP_MSVC_ONLY
 #    define CPP_CLANG ((__clang_major__ * 100) + __clang_minor__)
 #    define CPP_CLANG_ONLY CPP_CLANG
 #  endif
+
 #  define OUTOFLINE_TEMPLATE inline
+
 #  define COMPILER_MANGLES_RETURN_TYPE
 #  define COMPILER_MANGLES_ACCESS_SPECIFIER
+#
 #  define FUNC_INFO __FUNCSIG__
 #  define UNREACHABLE_IMPL() __assume(0)
+
 #  define DECL_EXPORT __declspec(dllexport)
 #  define DECL_IMPORT __declspec(dllimport)
+
 #  define COMPILER_COMPLAINS_ABOUT_RETURN_AFTER_UNREACHABLE
 #elif defined(__GNUC__)
 #  define CPP_GNU          (__GNUC__ * 100 + __GNUC_MINOR__)
@@ -86,14 +93,19 @@
 #  endif
 
 #  define FUNC_INFO       __PRETTY_FUNCTION__
+
 #  define TYPEOF(expr)    __typeof__(expr)
 #  define DECL_DEPRECATED __attribute__ ((__deprecated__))
+
 #  define DECL_UNUSED     __attribute__((__unused__))
 #  define LIKELY(expr)    __builtin_expect(!!(expr), true)
+
 #  define UNLIKELY(expr)  __builtin_expect(!!(expr), false)
 #  define NORETURN        __attribute__((__noreturn__))
+
 #  define REQUIRED_RESULT __attribute__ ((__warn_unused_result__))
 #  define DECL_PURE_FUNCTION __attribute__((pure))
+
 #  define DECL_CONST_FUNCTION __attribute__((const))
 #  define DECL_COLD_FUNCTION __attribute__((cold))
 
@@ -309,147 +321,17 @@
 
 # ifdef __cplusplus
 
-
-#ifndef OUTOFLINE_TEMPLATE
-#  define OUTOFLINE_TEMPLATE
-#endif
-
-#ifdef __cpp_conditional_explicit
-    #define IMPLICIT explicit(false)
-#else
-    #define IMPLICIT
-#endif
-
-#ifdef PROCESSOR_X86_32
-#  if defined(CC_GNU)
-#    define FASTCALL __attribute__((regparm(3)))
-#  elif defined(Q_CC_MSVC)
-#    define FASTCALL __fastcall
-#  else
-#    define FASTCALL
-#  endif
-#else
-#  define FASTCALL
-#endif
-
-#if __has_cpp_attribute(clang::fallthrough)
-#    define FALLTHROUGH() [[clang::fallthrough]]
-#elif __has_cpp_attribute(gnu::fallthrough)
-#    define FALLTHROUGH() [[gnu::fallthrough]]
-#elif __has_cpp_attribute(fallthrough)
-#  define FALLTHROUGH() [[fallthrough]]
-#endif
-
-#ifndef FALLTHROUGH
-#  ifdef CPP_GNU
-#    define FALLTHROUGH() __attribute__((fallthrough))
-#  else
-#    define FALLTHROUGH() (void)0
-#  endif
-#endif
-
-
-
-#if defined(OS_WIN) && defined(CPP_MSVC)
-#  define STDCALL __stdcall
-#  define __CDECL   __cdecl
-#elif defined(CPP_GNU)
-#  define STDCALL __attribute__((__stdcall__))
-#  define CDECL __attribute__((__cdecl__))
-#else 
-#  define STDCALL
-#  define __CDECL
-#endif
-
-#ifndef NORETURN
-# define NORETURN
-#endif
-
-#ifndef DECL_EXPORT
-#  define DECL_EXPORT
-#endif
-
-#ifndef DECL_EXPORT_OVERRIDABLE
-#  define DECL_EXPORT_OVERRIDABLE Q_DECL_EXPORT
-#endif
-
-#ifndef DECL_IMPORT
-#  define DECL_IMPORT
-#endif
-
-#ifndef DECL_HIDDEN
-#  define DECL_HIDDEN
-#endif
-
-#ifndef DECL_UNUSED
-#  define DECL_UNUSED
-#endif
-
-#ifndef DECL_UNUSED_MEMBER
-#  define DECL_UNUSED_MEMBER
-#endif
-
-#ifndef FUNC_INFO
-#  define FUNC_INFO __FILE__ ":" stringify(__LINE__)
-#endif
-
-#ifndef DECL_CF_RETURNS_RETAINED
-#  define DECL_CF_RETURNS_RETAINED
-#endif
-
-#ifndef DECL_NS_RETURNS_AUTORELEASED
-#  define DECL_NS_RETURNS_AUTORELEASED
-#endif
-
-#ifndef DECL_PURE_FUNCTION
-#  define DECL_PURE_FUNCTION
-#endif
-
-#ifndef DECL_CONST_FUNCTION
-#  define DECL_CONST_FUNCTION DECL_PURE_FUNCTION
-#endif
-
-#ifndef DECL_COLD_FUNCTION
-#  define DECL_COLD_FUNCTION
-#endif
-
-#ifndef WEAK_OVERLOAD
-#  define WEAK_OVERLOAD template <typename = void>
-#endif
-
 #if !defined(PROCESSOR_X86)
-#  undef COMPILER_SUPPORTS_SSE2
-#  undef COMPILER_SUPPORTS_SSE3
-#  undef COMPILER_SUPPORTS_SSSE3
-#  undef COMPILER_SUPPORTS_SSE4_1
-#  undef COMPILER_SUPPORTS_SSE4_2
-#  undef COMPILER_SUPPORTS_AVX
-#  undef COMPILER_SUPPORTS_AVX2
-#  undef COMPILER_SUPPORTS_F16C // ????????
+#  undef LIB_BASE_ENABLE_sse2
+#  undef LIB_BASE_ENABLE_sse3
+#  undef LIB_BASE_ENABLE_ssse3
+#  undef LIB_BASE_ENABLE_sse4_1
+#  undef LIB_BASE_ENABLE_sse4_2
+#  undef LIB_BASE_ENABLE_avx
+#  undef LIB_BASE_ENABLE_avx2
+#  undef LIB_BASE_ENABLE_f16c // ????????
 #endif
 
-#if defined(CPP_GNU) && !defined(__INSURE__)
-#  if defined(CPP_MINGW) && !defined(CPP_CLANG)
-#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
-         __attribute__((format(gnu_printf, (A), (B))))
-#  else
-#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
-         __attribute__((format(printf, (A), (B))))
-#  endif
-#else
-#  define ATTRIBUTE_FORMAT_PRINTF(A, B)
-#endif
-
-#ifdef CPP_MSVC
-#  define never_inline __declspec(noinline)
-#  define always_inline __forceinline
-#elif defined(CPP_GNU)
-#  define never_inline __attribute__((noinline))
-#  define always_inline inline __attribute__((always_inline))
-#else
-#  define never_inline
-#  define always_inline inline
-#endif
 
 #if !defined(CPP_WARNINGS)
 #  define NO_WARNINGS

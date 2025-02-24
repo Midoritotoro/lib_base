@@ -3,6 +3,9 @@
 #include <base/system/SystemDetection.h>
 #include <base/system/CompilerDetection.h>
 
+#include <base/system/KeywordSupport.h>
+
+
 #ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 
 #  define LIB_BASE_USE_COMPILER_ALIGNMENT
 #endif
@@ -65,8 +68,6 @@
 #    define __LZCNT__                       1
 #  endif
 # endif
-
-
 
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>

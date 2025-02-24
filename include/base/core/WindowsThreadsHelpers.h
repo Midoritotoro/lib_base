@@ -5,6 +5,8 @@
 
 #include <base/io/WindowsSmartHandle.h>
 
+#include <base/core/AtomicInteger.h>
+
 #if defined(CPP_MSVC) && !defined(_DLL)
     #include <process.h> // Для _beginthreadex
 #endif
@@ -39,7 +41,7 @@ namespace base {
     void STDCALL StartImplementation(
         Function&& _Routine,
         Args&& ... _Args,
-        sizetype* _PThreadId,
+        AtomicInteger<sizetype>* _PThreadId,
         io::WindowsSmartHandle* _PHandle) noexcept
     {
         using _Tuple = std::tuple<
@@ -60,12 +62,12 @@ namespace base {
             _Decay_copied.get(), 0, _PThreadId));
 #else
         // -MD или -MDd или сборка под MinGW
-
+        std::atomic<int>;
         _PHandle = CreateThread(
             nullptr, 0, // default stack sizes
             reinterpret_cast<LPTHREAD_START_ROUTINE>(invokerProc),
             decayCopied, CREATE_SUSPENDED, 
-            reinterpret_cast<LPDWORD>(_PThreadId));
+            reinterpret_cast<LPDWORD>(_PThreadId->loadRelaxed());
 #endif
     }
 } // namespace base

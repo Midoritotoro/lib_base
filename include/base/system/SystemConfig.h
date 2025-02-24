@@ -9,19 +9,6 @@
 
 #include <base/system/SystemStaticCodeAnalysis.h>
 
-
-#if defined(OS_WIN)
-    #define aligned_malloc(size, alignment)					_aligned_malloc(size, alignment)
-#else
-    #define aligned_malloc(size, alignment)					malloc(size)
-#endif
-
-#if defined (OS_WIN)
-    #define aligned_free(ptr)                   _aligned_free(ptr)
-#else
-    #define aligned_free(ptr)                   free(ptr)
-#endif
-
 #define CLOCK_FREQ INT64_C(1000000)
 #if (CLOCK_FREQ % 1000) == 0
     #define TICK_FROM_MS(ms)  ((CLOCK_FREQ / INT64_C(1000)) * (ms))
@@ -51,31 +38,6 @@ typedef int64_t tick_t;
     #define MSFTIME_FROM_TICK(tk)  ((tk)  * INT64_C(10000000) / CLOCK_FREQ)
 #endif /* CLOCK_FREQ / 10000000 */
 
-#if defined (__GNUC__) || defined (__clang__)
-
-    #define likely(p)                           __builtin_expect(!!(p), 1)
-    #define unlikely(p)                         __builtin_expect(!!(p), 0)
-    #define unreachable()                       __builtin_unreachable()
-
-#elif defined(CPP_MSVC)
-
-    #define likely(p)                           (!!(p))
-    #define unlikely(p)                         (!!(p))
-    #define unreachable()                       (__assume(0))
-
-#else
-
-    #define likely(p)                           (!!(p))
-    #define unlikely(p)                         (!!(p))
-    #define unreachable()                       ((void)0)
-
-#endif
-
-#if __has_cpp_attribute(gnu::malloc)
-    #define DECLARE_MALLOCLIKE [[nodiscard, gnu::malloc]]
-#else
-    #define DECLARE_MALLOCLIKE [[nodiscard]]
-#endif
 
 #ifdef LIB_BASE_SYSTEM_NO_FAILURE
     #define SystemAssert						AssertReturn

@@ -52,6 +52,20 @@ namespace base {
         }
 
         template <typename T>
+        static loadSequentiallyConsistent inline [[nodiscard]]
+            T load(const std::atomic<T>& _atomic_value) noexcept
+        {
+            return _atomic_value.load(std::memory_order_seq_cst);
+        }
+
+        template <typename T>
+        static inline [[nodiscard]]
+            T loadSequentiallyConsistent(const volatile std::atomic<T>& _atomic_value) noexcept
+        {
+            return _atomic_value.load(std::memory_order_seq_cst);
+        }
+
+        template <typename T>
         static inline [[nodiscard]]
             void store(std::atomic<T>& _atomic_value, T newValue) noexcept
         {

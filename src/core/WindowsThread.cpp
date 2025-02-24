@@ -6,7 +6,6 @@
 #include <base/core/ThreadsConfig.h>
 
 #include <base/core/WindowsMutex.h>
-#include <base/core/WindowsThreadsHelpers.h>
 
 
 namespace base {
@@ -87,7 +86,7 @@ namespace base {
         checkWaitForSingleObject(WaitForSingleObject(_handle, INFINITE));
     }
 
-    template <
+   /* template <
         class Function,
         class ... Args>
     void WindowsThread::start(
@@ -115,7 +114,7 @@ namespace base {
 
         if (ResumeThread(_handle) == (DWORD)-1)
             printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
-    }
+    }*/
 
     void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
         ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));

@@ -21,6 +21,10 @@ namespace base {
             return SelfAtomicOperations::loadRelaxed(_atomic);
         }
 
+        [[nodiscard]] Integer loadSequentiallyConsistent() const noexcept {
+            return SelfAtomicOperations::loadSequentiallyConsistent(_atomic);
+        }
+
         void storeRelaxed(Integer newValue) noexcept { 
             SelfAtomicOperations::storeRelaxed(_atomic, newValue);
         }
@@ -320,6 +324,15 @@ namespace base {
 
         Integer operator^=(Integer v) noexcept {
             return fetchAndXorOrdered(v) ^ v;
+        }
+
+        operator Integer() const volatile noexcept {
+            static_assert(_Deprecate_non_lock_free_volatile<_Ty>, "Never fails");
+            return load();
+        }
+
+        operator Integer() const noexcept {
+            return load();
         }
 
         AtomicInteger() = default;
