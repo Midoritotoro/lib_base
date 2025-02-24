@@ -57,14 +57,14 @@ namespace base {
             std::cout << "WindowsThread::start called";
             const auto prio = WinPriorityFromInternal(_priority);
 
-            StartImplementation<Function, Args...>(
+            StartImplementation(
                 std::forward<Function>(_routine),
                 std::forward<Args>(args)...,
                 &_threadId,
                 &_handle);
 
-            if (!_handle) {
-                printf("QThread::start: Failed to create thread");
+            if (!_handle.handle()) {
+                printf("base::threads::WindowsThread::start: Failed to create thread");
 
                 _isRunning = false;
                 return;

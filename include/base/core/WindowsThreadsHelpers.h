@@ -16,14 +16,16 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    static inline CDECL uint Invoke(void* _RawVals)
+    uint STDCALL Invoke(void* _RawVals)
     {
         const std::unique_ptr<_Tuple> 
             _FnVals(static_cast<_Tuple*>(_RawVals));
 
         _Tuple& _Tup = *_FnVals.get();
-        std::invoke(std::move(
-            std::get<_Indices>(_Tup))...);
+
+        std::invoke(
+            std::move(
+                std::get<_Indices>(_Tup))...);
 
         return 0;
     }
@@ -31,7 +33,7 @@ namespace base {
     template <
         class _Tuple,
         size_t... _Indices>
-    static constexpr inline auto GetInvoke(std::index_sequence<_Indices...>) {
+    constexpr auto GetInvoke(std::index_sequence<_Indices...>) {
         return &Invoke<_Tuple, _Indices...>;
     }
 
@@ -45,7 +47,7 @@ namespace base {
         class = std::enable_if<
             std::is_integral_v<IdType>
             && IsValidIdType<IdType>>>
-    void inline STDCALL StartImplementation(
+    void STDCALL StartImplementation(
         Function&& _Routine,
         Args&& ... _Args,
         AtomicInteger<IdType>* _PThreadId,
@@ -66,12 +68,13 @@ namespace base {
 
 #if defined(CPP_MSVC) && !defined(_DLL)
         // -MT или -MTd 
-        _PHandle = (HANDLE)reinterpret_cast<void*>(
-            _beginthreadex(nullptr, 0, _Invoker_proc,
-            _Decay_copied.get(), 0, &threadId));
+        *_PHandle = (HANDLE)reinterpret_cast<void*>(
+            _beginthreadex(nullptr, 0, invokerProc,
+                decayCopied.get(), 0, 
+                reinterpret_cast<uint*>(&threadId)));
 #else
         // -MD или -MDd или сборка под MinGW
-        
+        printf("RRR\n");
         *_PHandle = CreateThread(
             nullptr, 0, // default stack size
             reinterpret_cast<LPTHREAD_START_ROUTINE>(invokerProc),

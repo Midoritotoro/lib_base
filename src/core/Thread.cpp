@@ -56,6 +56,10 @@ namespace base {
 	//		std::forward<Args>(args)...);
 	//}
 
+	AbstractThread* Thread::impl() const noexcept {
+		return _impl;
+	}
+
 	int Thread::getIdealThreadCount() noexcept {
 		return system::SystemInfo::GetCpuCount();
 	}

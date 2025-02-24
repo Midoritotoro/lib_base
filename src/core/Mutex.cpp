@@ -13,7 +13,8 @@
 
 namespace base {
 	Mutex::Mutex(not_null<Thread*> thread) {
-		// _impl = new PlatformMutexImplementation(thread);
+		_impl = new PlatformMutexImplementation(
+			reinterpret_cast<ThreadPlatformImplementation*>(thread->impl()));
 	}
 
 	Mutex::~Mutex() {

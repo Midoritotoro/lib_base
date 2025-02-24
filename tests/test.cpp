@@ -16,7 +16,7 @@
 
 #define MAX_ITER LONG_MAX
 
-void worker(sizetype start) {
+void worker(sizetype start = 0) {
 	for (sizetype i = start; i < MAX_ITER; ++i) {
 		printf("Iter: %lli\n", i);
 	}
@@ -31,16 +31,16 @@ int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
 	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
-	int res;
+	int res = 0;
 
 	base::AtomicInteger atomicInt;
 
-	std::thread th(worker, 423);
+	//std::thread th(worker, 423);
 
 	base::Thread thread;
-	thread.start(worker, 423);
+	thread.start(worker, 254);
 
-	std::cout << res;
+	std::cout << res << '\n';
 
 	return 0;
 

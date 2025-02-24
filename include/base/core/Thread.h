@@ -40,6 +40,8 @@ namespace base {
 				std::forward<Function>(_routine),
 				std::forward<Args>(args)...);
 		} 
+
+		[[nodiscard]] AbstractThread* impl() const noexcept;
 		
 		static [[nodiscard]] int getIdealThreadCount() noexcept;
 		static [[nodiscard]] Thread* currentThread() noexcept;
