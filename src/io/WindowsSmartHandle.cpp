@@ -25,7 +25,7 @@ namespace base::io {
 	{}
 
 	WindowsSmartHandle::~WindowsSmartHandle() {
-		if (_handle != nullptr)
+		if (_autoDelete)
 			_deleteCallback(_handle);
 	}
 

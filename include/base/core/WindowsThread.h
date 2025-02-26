@@ -9,6 +9,8 @@
 #include <base/core/WindowsThreadsHelpers.h>
 #include <base/core/AtomicInteger.h>
 
+#include <base/core/WindowsMutex.h>
+
 
 namespace base {
     class WindowsThread final :
@@ -28,14 +30,13 @@ namespace base {
         void setTerminateOnClose(bool _terminateOnClose) override;
         bool terminateOnClose() const noexcept override;
 
-        void setStackSize(sizetype size);
-        sizetype stackSize() const noexcept;
-
         void waitMs(sizetype milliseconds) override;
         const io::WindowsSmartHandle& handle() const noexcept;
 
         static [[nodiscard]] io::WindowsSmartHandle currentThreadHandle() noexcept;
         static [[nodiscard]] sizetype currentThreadId() noexcept;
+
+        void terminate();
 
         sizetype threadId() const noexcept override;
         void join();
@@ -55,6 +56,11 @@ namespace base {
             Function&& _routine,
             Args&& ... args)
         {
+            WindowsMutex mutex(this);
+            mutex.lock();
+
+            _isRunning = true;
+
             std::cout << "WindowsThread::start called";
             const auto prio = WinPriorityFromInternal(_priority);
 
@@ -83,14 +89,12 @@ namespace base {
 
         static BOOL STDCALL CustomTerminate(HANDLE handle);
 
-        Priority _priority;
-
+        Priority _priority = Priority::NormalPriority;
         bool _isRunning = false;
 
         bool __terminateOnClose = true;
         io::WindowsSmartHandle _handle = nullptr;
 
-        sizetype _stackSize = 0;
         AtomicInteger<sizetype> _threadId = 0;
     };
 } // namespace base

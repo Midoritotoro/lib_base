@@ -28,8 +28,6 @@ namespace base {
         std::invoke(std::move(
             std::get<_Indices>(_Tup))...);
 
-       // _Cnd_do_broadcast_at_thread_exit();
-
         return 0;
     }
 

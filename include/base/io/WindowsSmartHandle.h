@@ -41,7 +41,7 @@ namespace base::io {
 		operator HANDLE() const;
 	private:
 		HANDLE _handle = nullptr;
-		Fn<BOOL(HANDLE)> _deleteCallback = nullptr;
+		Fn<BOOL(HANDLE)> _deleteCallback = CloseHandle;
 
 		bool _autoDelete = true;
 	};

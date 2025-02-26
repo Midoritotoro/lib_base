@@ -10,16 +10,18 @@
 
 namespace base {
     WindowsThread::WindowsThread() {
-        _handle.setDeleteCallback(CustomTerminate);
+      //  _handle.setDeleteCallback(CustomTerminate);
     }
 
     WindowsThread::~WindowsThread() {
-        if (__terminateOnClose) {
-
-        }
+        if (__terminateOnClose)
+            terminate();
     }
 
     void WindowsThread::setPriority(Priority priority) {
+        WindowsMutex mutex(this);
+        mutex.lock();
+
         int prio = WinPriorityFromInternal(priority);
         _priority = priority;
 
@@ -60,17 +62,6 @@ namespace base {
         return __terminateOnClose;
     }
 
-    void WindowsThread::setStackSize(sizetype size) {
-        WindowsMutex mutex(this);
-        mutex.lock();
-
-        _stackSize = size;
-    }
-
-    sizetype WindowsThread::stackSize() const noexcept {
-        return _stackSize;
-    }
-
     void WindowsThread::waitMs(sizetype milliseconds) {
         Sleep(milliseconds);
     }
@@ -85,7 +76,7 @@ namespace base {
 
     void WindowsThread::join() {
         ThreadsAssert(_handle != nullptr, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
-        ThreadsAssert(_isRunning != false, "base::threads::WindowsThread: Попытка вызвать join для неактивного потока. ", unused(0));
+        ThreadsAssert(_isRunning, "base::threads::WindowsThread: Попытка вызвать join для неактивного потока. ", unused(0));
 
         checkWaitForSingleObject(WaitForSingleObject(_handle, INFINITE));
     }
@@ -119,6 +110,14 @@ namespace base {
         if (ResumeThread(_handle) == (DWORD)-1)
             printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
     }*/
+
+
+    void WindowsThread::terminate() {
+        WindowsMutex mutex(this);
+        mutex.lock();
+
+
+    }
 
     void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
         ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));

@@ -4,6 +4,9 @@
 
 #ifdef OS_WIN
 
+#include <base/io/WindowsSmartHandle.h>
+
+
 namespace base {
 	class Thread;
 	class WindowsThread;
@@ -25,6 +28,7 @@ namespace base {
 		bool _isLocked = false;
 
 		WindowsThread* _thread = nullptr;
+		io::WindowsSmartHandle _handle;
 	};
 }
 #endif

@@ -15,9 +15,10 @@
 
 
 
-void worker(sizetype end) {
+void worker(sizetype end, const char* name) {
 	for (sizetype i = 0; i < end; ++i) {
-		printf("Iter: %lli\n", i);
+		if ( i % 10000 == 0)
+			printf(name, i);
 	}
 }
 
@@ -34,19 +35,23 @@ int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
 	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
-	int res = 0;
+	//int res = 0;
 
 	//base::AtomicInteger atomicInt;
 
 	//std::thread th(worker, 254);
 	//th.join();
 
-	base::WindowsThread thread;
-	thread.start(worker, 254);
+	base::Thread thread;
+	thread.start(worker, 210000, "Iter thread: %lli\n");
 
+	base::Thread other;
+	other.start(worker, 210000, "Iter other: %lli\n");
 
-
-	std::cout << res << '\n';
+	std::cout << "p";
+	thread.join();
+	other.join();
+//	std::cout << res << '\n';
 
 	return 0;
 

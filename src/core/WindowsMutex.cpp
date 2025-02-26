@@ -1,10 +1,20 @@
 #include <base/core/WindowsMutex.h>
 
 
+#ifdef OS_WIN
+
+#include <base/core/ThreadsConfig.h>
+
+
 namespace base {
 	WindowsMutex::WindowsMutex(not_null<WindowsThread*> thread):
 		_thread(thread)
-	{}
+	{
+		_handle = CreateMutexA(
+			nullptr, false, nullptr);
+
+		AssertLog(_handle != nullptr, "base::thread::WindowsMutex: Не удалось создать мьютекс. ");
+	}
 
 	WindowsMutex::~WindowsMutex() {
 		if (_unlockOnDelete)
@@ -13,6 +23,8 @@ namespace base {
 
 	bool WindowsMutex::lock() {
 		_isLocked = true;
+		WaitForSingleObject(_handle, INFINITE);
+
 		return _isLocked;
 	}
 
@@ -26,6 +38,8 @@ namespace base {
 
 	bool WindowsMutex::unlock() {
 		_isLocked = false;
+
+		ReleaseMutex(_handle);
 		return _isLocked;
 	}
 
@@ -33,3 +47,5 @@ namespace base {
 		return _isLocked;
 	}
 } // namespace base
+
+#endif
