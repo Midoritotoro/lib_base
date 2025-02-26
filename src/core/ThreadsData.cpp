@@ -27,7 +27,7 @@ namespace base {
 
 	Thread* ThreadsData::threadByHandle(const io::WindowsSmartHandle& handle) {
 		for (sizetype i = 0; i < _threads.size(); ++i)
-			if (((WindowsThread*)(_threads[i]->_impl))->handle() == handle)
+			if (_threads[i]->_impl->handle().handle() == handle.handle())
 				return _threads[i];
 
 		return nullptr;

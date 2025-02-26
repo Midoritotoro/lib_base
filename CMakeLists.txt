@@ -264,7 +264,6 @@ set(PUBLIC_HEADERS
   #  include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
-    include/base/string/StringCommonConfig.h
 
     include/base/core/ConcurrentAncillary.h
 
@@ -289,10 +288,11 @@ set(PUBLIC_HEADERS
     include/base/core/YieldCpu.h
     include/base/core/ThreadsConfig.h
 
-    include/base/core/WindowsThreadsHelpers.h
     include/base/system/KeywordSupport.h
+    include/base/core/MutexLocker.h
 
-    include/base/system/MutexLocker.h
+    include/base/core/WindowsThreadPrivate.h
+    include/base/utility/MacrosOverload.h
 )
 
 include(CMakePackageConfigHelpers)

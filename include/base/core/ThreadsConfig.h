@@ -1,6 +1,10 @@
 #pragma once 
 
-#include <base/utility/Assert.h>
+#include <base/system/Platform.h>
+
+#ifdef OS_WIN
+	#include <base/io/WindowsSmartHandle.h>
+#endif
 
 // Отключает все внутренние исключения
 #ifndef BASE_THREADS_NO_FAILURE

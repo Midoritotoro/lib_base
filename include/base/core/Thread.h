@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/AbstractThread.h>
+#include <base/utility/ClassHelperMacros.h>
 
 #if defined(OS_WIN)
 	#include <base/core/WindowsThread.h>
@@ -12,14 +13,16 @@
 
 
 namespace base {
-
-	class Thread {
+	class Thread final {
 	public:
 		Thread();
 		~Thread();
 
 	    void setPriority(AbstractThread::Priority priority);
 		[[nodiscard]] AbstractThread::Priority priority() const noexcept;
+
+		void setTerminateOnClose(bool terminateOnClose);
+		bool terminateOnClose() const noexcept;
 
 		[[nodiscard]] bool isFinished() const noexcept;
 		[[nodiscard]] bool isRunning() const noexcept;
@@ -29,24 +32,29 @@ namespace base {
 
 		void join();
 
+		void close();
+		void terminate();
+
 		template <
 			class Function,
 			class ... Args>
-		void start(
+		inline void start(
 			Function&& _routine,
 			Args&& ... args) 
 		{
-			((ThreadPlatformImplementation*)_impl)->start(
+			_impl->start(
 				std::forward<Function>(_routine),
 				std::forward<Args>(args)...);
 		} 
 
-		[[nodiscard]] AbstractThread* impl() const noexcept;
+		[[nodiscard]] ThreadPlatformImplementation* impl() const noexcept;
 		
 		static [[nodiscard]] int getIdealThreadCount() noexcept;
 		static [[nodiscard]] Thread* currentThread() noexcept;
+
+		DISABLE_COPY(Thread)
 	private:
 		friend class ThreadsData;
-		AbstractThread* _impl = nullptr;
+		std::unique_ptr<ThreadPlatformImplementation> _impl = nullptr;
 	};
 } // namespace base

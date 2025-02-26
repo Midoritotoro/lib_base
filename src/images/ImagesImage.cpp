@@ -32,7 +32,7 @@ namespace base::images {
 
 	}
 
-	Image::Image(::uchar* data) :
+	Image::Image(uchar* data) :
 		_data(new ImageData())
 	{
 		_data->data = data;

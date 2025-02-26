@@ -99,6 +99,8 @@ namespace base::io {
 		std::string szPath = path + std::string("\\*");
 
 		WindowsSmartHandle hFind = FindFirstFileA(szPath.c_str(), &findFileData);
+
+		hFind.setAutoDelete(true);
 		hFind.setDeleteCallback(FindClose);
 
 		if (hFind == INVALID_HANDLE_VALUE)
@@ -146,7 +148,7 @@ namespace base::io {
 
 			szPath = path + std::string("\\") + findFileData.cFileName;
 
-		} while (FindNextFileA(hFind, &findFileData) != 0);
+		} while (FindNextFileA(hFind.handle(), &findFileData) != 0);
 
 		for (int i = 0; i < directories.size(); ++i)
 			find(directories[i], output, filter, recurse);

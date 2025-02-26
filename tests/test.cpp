@@ -13,19 +13,12 @@
 #include <base/io/File.h>
 #include <thread>
 
+#include <memory>
 
 
-void worker(sizetype end, const char* name) {
-	for (sizetype i = 0; i < end; ++i)
-		printf(name, i);
-}
-
-void wk(int a, int* r) {
-	*r = a * 2;
-}
-
-void worker1() {
-
+void worker(base::sizetype end, const char* name) {
+	for (base::sizetype i = 0; i < end; ++i);
+		//printf(name, i);
 }
 
 
@@ -39,19 +32,31 @@ int main(int argc, char* argv[]) {
 
 	//std::thread th(worker, 254);
 	//th.join();
+	//{
+	{ 
+		measureExecutionTime();
 
-	base::Thread thread;
-	thread.start(worker, 210000, "Iter thread: %lli\n");
+		base::Thread thread;
+		base::Thread other;
 
-	base::Thread other;
-	other.start(worker, 210000, "Iter other: %lli\n");
+		thread.start(worker, 10000, "Iter thread: %lli\n");
+		other.start(worker, 10000, "Iter other: %lli\n");
+
+		thread.join();
+		other.join();
+	}
+
+	//{
+	//	measureExecutionTime()
+
+	//	std::thread thread(worker, 10000, "Iter thread: %lli\n");
+	//	std::thread other(worker, 10000, "Iter other: %lli\n");
 
 
-	/*std::thread thread(worker, 210000, "Iter thread: %lli\n");
-	std::thread other(worker, 210000, "Iter other: %lli\n");*/
+	//	thread.join();
+	//	other.join();
+	//} 
 
-	thread.join();
-	other.join();
 //	std::cout << res << '\n';
 
 	return 0;

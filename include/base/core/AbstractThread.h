@@ -33,6 +33,10 @@ namespace base {
         virtual void waitMs(sizetype milliseconds) = 0;
         virtual sizetype threadId() const noexcept = 0;
 
+        virtual void close() = 0;
+        virtual void terminate() = 0;
+
         virtual void join() = 0;
+
 	};
 } // namespace base

@@ -4,7 +4,10 @@
 #include <base/utility/MathConstants.h>
 
 #include <base/utility/Assert.h>
+#include <base/utility/BitOps.h>
+
 #include <cmath>
+#include <numeric>
 
 
 namespace base {
@@ -12,11 +15,11 @@ namespace base {
 		unsigned num, den;
 	};
 
-	[[nodiscard]] int64_t GCD(
+	NODISCARD int64_t GCD(
 		int64_t a,
 		int64_t b);
 
-	[[nodiscard]] int64_t LCM(
+	NODISCARD int64_t LCM(
 		int64_t a,
 		int64_t b);
 
@@ -24,9 +27,9 @@ namespace base {
 		unsigned* pi_dst_nom, unsigned* pi_dst_den,
 		uint64_t i_nom, uint64_t i_den, uint64_t i_max);
 
-	[[nodiscard]] double SafeRound(double value);
+    NODISCARD double SafeRound(double value);
 
-    inline [[nodiscard]] 
+    inline NODISCARD 
         double FastSin(double x)
     {
         int si = int(x * (0.5 * SINE_TABLE_SIZE / M_PI));
@@ -41,7 +44,7 @@ namespace base {
             (sineTable[ci] - 0.5 * sineTable[si] * d) * d;
     }
 
-    inline [[nodiscard]]
+    inline NODISCARD
         double FastCos(double x)
     {
         int ci = int(x * (0.5 * SINE_TABLE_SIZE / M_PI));
@@ -56,19 +59,19 @@ namespace base {
             (sineTable[ci] + 0.5 * sineTable[si] * d) * d;
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         float DegreesToRadians(float degrees)
     {
         return degrees * float(M_PI / 180);
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         double DegreesToRadians(double degrees)
     {
         return degrees * (M_PI / 180);
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         long double DegreesToRadians(long double degrees)
     {
         return degrees * (M_PI / 180);
@@ -76,31 +79,31 @@ namespace base {
 
     template <typename T, 
         std::enable_if_t<std::is_integral_v<T>, bool> = true>
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         double DegreesToRadians(T degrees)
     {
         return DegreesToRadians(static_cast<double>(degrees));
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         float RadiansToDegrees(float radians)
     {
         return radians * float(180 / M_PI);
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         double RadiansToDegrees(double radians)
     {
         return radians * (180 / M_PI);
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         long double RadiansToDegrees(long double radians)
     {
         return radians * (180 / M_PI);
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         uint32 ConstexprNextPowerOfTwo(uint32 v)
     {
         v |= v >> 1;
@@ -115,7 +118,7 @@ namespace base {
         return v;
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         uint64 ConstexprNextPowerOfTwo(uint64 v)
     {
         v |= v >> 1;
@@ -131,19 +134,19 @@ namespace base {
         return v;
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         uint32 ConstexprNextPowerOfTwo(int32 v)
     {
         return ConstexprNextPowerOfTwo(uint32(v));
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         uint64 ConstexprNextPowerOfTwo(int64 v)
     {
         return ConstexprNextPowerOfTwo(uint64(v));
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         uint32 NextPowerOfTwo(uint32 v)
     {
         Assert(static_cast<int32>(v) >= 0); // There is a next power of two
@@ -158,7 +161,7 @@ namespace base {
 #endif
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         uint64 NextPowerOfTwo(uint64 v)
     {
         Assert(static_cast<int64>(v) >= 0); // There is a next power of two
@@ -173,27 +176,37 @@ namespace base {
 #endif
     }
 
-    constexpr inline [[nodiscard]] u
+    constexpr inline NODISCARD u
         int32 NextPowerOfTwo(int32 v) 
     {
         return NextPowerOfTwo(uint32(v));
     }
 
-    constexpr inline [[nodiscard]]
+    constexpr inline NODISCARD
         uint64 NextPowerOfTwo(int64 v)
     {
         return NextPowerOfTwo(uint64(v));
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         ulong NextPowerOfTwo(ulong v)
     {
         return NextPowerOfTwo(IntegerForSizeof<long>::Unsigned(v));
     }
 
-    constexpr inline [[nodiscard]] 
+    constexpr inline NODISCARD 
         ulong NextPowerOfTwo(long v)
     {
         return NextPowerOfTwo(IntegerForSizeof<long>::Unsigned(v));
+    }
+
+    float FastInverseSqrt(float x) {
+        int i = *(int*)&x;
+        i = 0x5f3759df - (i >> 1);
+
+        x = *(float*)&i;
+        x = x * (1.5f - (0.5f * x * x * x));
+
+        return x;
     }
 } // namespace base

@@ -7,20 +7,19 @@
 
 
 namespace base {
-	template<
-		typename Integer = int,
-		typename = std::enable_if_t<
-			std::_Is_any_of_v<Integer,
-				short, int, long, longlong,
-				ushort, uint, ulong,
-				ulonglong>>>
-
-	struct RandomDistribution {
-		static_assert(!std::_Is_character<Integer>);
-		using type = std::uniform_int_distribution<Integer>;
-	};
-
 	class Random {
+		template<
+			typename Integer = int,
+			typename = std::enable_if_t<
+				std::_Is_any_of_v<Integer,
+					short, int, long, longlong,
+					ushort, uint, ulong,
+					ulonglong>>>
+
+		struct RandomDistribution {
+			static_assert(!std::_Is_character<Integer>);
+			using type = std::uniform_int_distribution<Integer>;
+		};
 	public: 
 		template <typename T>
 		static inline [[nodiscard]] T randomNumber(

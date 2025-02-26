@@ -13,7 +13,7 @@ namespace base {
 		_handle = CreateMutexA(
 			nullptr, false, nullptr);
 
-		AssertLog(_handle != nullptr, "base::thread::WindowsMutex: Не удалось создать мьютекс. ");
+		AssertLog(_handle.handle() != nullptr, "base::thread::WindowsMutex: Не удалось создать мьютекс. ");
 	}
 
 	WindowsMutex::~WindowsMutex() {
@@ -23,7 +23,7 @@ namespace base {
 
 	bool WindowsMutex::lock() {
 		_isLocked = true;
-		WaitForSingleObject(_handle, INFINITE);
+		WaitForSingleObject(_handle.handle(), INFINITE);
 
 		return _isLocked;
 	}
@@ -39,7 +39,7 @@ namespace base {
 	bool WindowsMutex::unlock() {
 		_isLocked = false;
 
-		ReleaseMutex(_handle);
+		ReleaseMutex(_handle.handle());
 		return _isLocked;
 	}
 

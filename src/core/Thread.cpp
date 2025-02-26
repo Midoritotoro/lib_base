@@ -4,16 +4,13 @@
 #include <src/core/ThreadsData.h> 
 
 
-
-
 namespace base {
 	Thread::Thread() {
-		_impl = new ThreadPlatformImplementation();
+		_impl = std::make_unique<ThreadPlatformImplementation>();
 	}
 
 	Thread::~Thread() {
-		delete _impl;
-		_impl = nullptr;
+
 	}
 
 	void Thread::setPriority(AbstractThread::Priority priority) {
@@ -22,6 +19,14 @@ namespace base {
 
 	AbstractThread::Priority Thread::priority() const noexcept {
 		return _impl->priority();
+	}
+
+	void Thread::setTerminateOnClose(bool terminateOnClose) {
+		_impl->setTerminateOnClose(terminateOnClose);
+	}
+
+	bool Thread::terminateOnClose() const noexcept {
+		return _impl->terminateOnClose();
 	}
 
 	bool Thread::isFinished() const noexcept {
@@ -40,24 +45,20 @@ namespace base {
 		_impl->waitMs(sec / 1000);
 	}
 
+	void Thread::close() {
+		_impl->close();
+	}
+
+	void Thread::terminate() {
+		_impl->terminate();
+	}
+
 	void Thread::join() {
 		_impl->join();
 	}
 
-	//template <
-	//	class Function,
-	//	class ... Args>
-	//void Thread::start(
-	//	Function&& _routine,
-	//	Args&& ... args) 
-	//{
-	//	((ThreadPlatformImplementation*)_impl)->start(
-	//		std::forward<Function>(_routine),
-	//		std::forward<Args>(args)...);
-	//}
-
-	AbstractThread* Thread::impl() const noexcept {
-		return _impl;
+	ThreadPlatformImplementation* Thread::impl() const noexcept {
+		return _impl.get();
 	}
 
 	int Thread::getIdealThreadCount() noexcept {
@@ -69,5 +70,4 @@ namespace base {
 			ThreadsData::threadById(
 				ThreadPlatformImplementation::currentThreadId());
 	}
-
 } // namespace base

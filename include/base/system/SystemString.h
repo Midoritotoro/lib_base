@@ -50,30 +50,6 @@
     #define base_toupper            toupper
 #endif
 
-
-//#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-//    extern "C" __declspec(dllimport) int __stdcall 
-//        MultiByteToWideChar(
-//            _SAL2_In_ unsigned int CodePage,
-//            _SAL2_In_ unsigned long dwFlags,
-//            _SAL2_In_NLS_string_(cbMultiByte) const char* lpMultiByteStr,
-//            _SAL2_In_ int cbMultiByte,
-//            _SAL2_Out_writes_to_opt_(cchWideChar, return) wchar_t* lpWideCharStr,
-//            _SAL2_In_ int cchWideChar);
-//
-//	extern "C" __declspec(dllimport) int __stdcall 
-//        WideCharToMultiByte(
-//            _SAL2_In_ unsigned int CodePage,
-//            _SAL2_In_ unsigned long dwFlags,
-//            _SAL2_In_NLS_string_(cchWideChar) const wchar_t* lpWideCharStr,
-//            _SAL2_In_ int cchWideChar,
-//            _SAL2_Out_writes_bytes_to_opt_(cbMultiByte, return) char* lpMultiByteStr,
-//            _SAL2_In_ int cbMultiByte,
-//            _SAL2_In_opt_ const char* lpDefaultChar,
-//            _SAL2_Out_opt_ int* lpUsedDefaultChar);
-//#endif
-
-
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     inline [[nodiscard]] int ConvertWCharToUnicode(
         char* buffer,
@@ -95,43 +71,3 @@
             buffer, (int)bufferlen);
     }
 #endif
-
-
-//#if defined(OS_WIN)
-//    #if defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-//        wchar_t* ConvertString(const char* str) {
-//            if (!str)
-//                return nullptr;
-//
-//            size_t len = strlen(str) + 1;
-//            wchar_t* wstr = new wchar_t[len];
-//
-//            if (ConvertUnicodeToWChar(wstr, (int)len, str) == 0) {
-//                delete[] wstr;
-//                return nullptr;
-//            }
-//
-//            return wstr;
-//        }
-//
-//        std::wstring ConvertString(const std::string& str) {
-//            if (str.empty()) 
-//                return L"";
-//
-//            size_t len = str.length() + 1;
-//            std::wstring wstr;
-//
-//            wstr.resize(len - 1);
-//
-//            if (ConvertUnicodeToWChar(&wstr[0], (int)len, str.c_str()) == 0)
-//                return L"";
-//        
-//            wstr.resize(wcslen(wstr.c_str()));
-//            return wstr;
-//        }
-//
-//        std::wstring ConvertString(const std::wstring& str) {
-//            return str;
-//        }
-//    #endif
-//#endif

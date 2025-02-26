@@ -5,6 +5,15 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <iostream>
+
+struct staticlocale {
+	staticlocale() {
+		setlocale(LC_ALL, "");
+	}
+};
+
+static staticlocale lc;
 
 static inline void fail(
 	const char* message,

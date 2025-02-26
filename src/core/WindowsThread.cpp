@@ -5,29 +5,29 @@
 #include <src/core/ThreadsData.h>
 #include <base/core/ThreadsConfig.h>
 
-#include <base/core/WindowsMutex.h>
-
 
 namespace base {
-    WindowsThread::WindowsThread() {
-      //  _handle.setDeleteCallback(CustomTerminate);
-    }
+    WindowsThread::WindowsThread():
+        _mutex(std::make_unique<WindowsMutex>(this))
+    {}
 
     WindowsThread::~WindowsThread() {
         if (__terminateOnClose)
             terminate();
+        else
+            close();
     }
 
     void WindowsThread::setPriority(Priority priority) {
-        WindowsMutex mutex(this);
-        mutex.lock();
+        if (joinable())
+            MutexLocker mutex(_mutex.get());
 
         int prio = WinPriorityFromInternal(priority);
         _priority = priority;
 
-        ThreadsAssert(_handle != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
+        ThreadsAssert(_handle.handle() != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
 
-        if (!SetThreadPriority(_handle, prio))
+        if (!SetThreadPriority(_handle.handle(), prio))
             printf("base::Thread::setPriority: Не удалось установить приоритет потока\n");
     }
 
@@ -52,9 +52,10 @@ namespace base {
     }
 
     void WindowsThread::setTerminateOnClose(bool _terminateOnClose) {
-        WindowsMutex mutex(this);
-        mutex.lock();
+        if (joinable())
+            MutexLocker mutex(_mutex.get());
 
+        _handle.setAutoDelete(!_terminateOnClose);
         __terminateOnClose = _terminateOnClose;
     }
 
@@ -74,26 +75,40 @@ namespace base {
         return _threadId;
     }
 
-    void WindowsThread::join() {
-        ThreadsAssert(_handle != nullptr, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
-        ThreadsAssert(_isRunning, "base::threads::WindowsThread: Попытка вызвать join для неактивного потока. ", unused(0));
+    bool WindowsThread::joinable() const noexcept {
+        return (_threadId != 0);
+    }
 
-        checkWaitForSingleObject(WaitForSingleObject(_handle, INFINITE));
+    void WindowsThread::join() {
+        ThreadsAssert(joinable() != false, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
+
+        checkWaitForSingleObject(
+            WaitForSingleObject(
+                _handle.handle(), INFINITE));
     }
 
     void WindowsThread::terminate() {
-        WindowsMutex mutex(this);
-        mutex.lock();
+        if (joinable())
+            MutexLocker mutex(_mutex.get());
 
+        _isRunning = false;
 
+        const auto result = WindowsThreadPrivate::TerminateImplementation(&_handle);
+        ThreadsAssert(result != 0, "base::threads::WindowsThread: Ошибка при попытке убить поток. ", unused(0));
+    }
 
+    void WindowsThread::close() {
+        if (joinable())
+            MutexLocker mutex(_mutex.get());
 
+        _isRunning = false;
+        WindowsThreadPrivate::CloseImplementation(&_handle);
     }
 
     void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
         ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));
     }
-
+     
     int WindowsThread::WinPriorityFromInternal(Priority _Priority) {
         switch (_Priority) {
             case WindowsThread::IdlePriority:
@@ -116,16 +131,13 @@ namespace base {
 
             case WindowsThread::TimeCriticalPriority:
                 return THREAD_PRIORITY_TIME_CRITICAL;
+
+            case WindowsThread::InheritPriority:
+                return GetThreadPriority(GetCurrentThread());
         }
 
+        AssertUnreachable();
         return EGENERIC;
-    }
-
-    BOOL STDCALL WindowsThread::CustomTerminate(HANDLE handle) {
-        DWORD exitCode = 0;
-        GetExitCodeThread(handle, &exitCode);
-
-        return TerminateThread(handle, exitCode);
     }
 } // namespace base
 

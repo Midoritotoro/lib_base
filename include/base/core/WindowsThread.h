@@ -4,12 +4,11 @@
 
 #ifdef OS_WIN
 
-#include <base/io/WindowsSmartHandle.h>
-
-#include <base/core/WindowsThreadsHelpers.h>
-#include <base/core/AtomicInteger.h>
-
 #include <base/core/WindowsMutex.h>
+#include <base/core/MutexLocker.h>
+
+#include <base/core/AtomicInteger.h>
+#include <base/core/WindowsThreadPrivate.h>
 
 
 namespace base {
@@ -36,11 +35,14 @@ namespace base {
         static [[nodiscard]] io::WindowsSmartHandle currentThreadHandle() noexcept;
         static [[nodiscard]] sizetype currentThreadId() noexcept;
 
-        void terminate();
+        void terminate() override;
+        void close() override;
 
         sizetype threadId() const noexcept override;
-        void join();
+        void join() override;
 
+        [[nodiscard]] bool joinable() const noexcept;
+         
         template <
             class Function,
             class ... Args>
@@ -48,15 +50,13 @@ namespace base {
             Function&& _routine,
             Args&& ... args)
         {
-            WindowsMutex mutex(this);
-            mutex.lock();
+            if (joinable())
+                MutexLocker mutex(_mutex.get());
 
             _isRunning = true;
-
-            std::cout << "WindowsThread::start called";
             const auto prio = WinPriorityFromInternal(_priority);
 
-            StartImplementation(
+            WindowsThreadPrivate::StartImplementation(
                 &_threadId,
                 &_handle,
                 std::forward<Function>(_routine),
@@ -69,24 +69,23 @@ namespace base {
                 return;
             }
 
-            if (!SetThreadPriority(_handle, prio))
+            if (!SetThreadPriority(_handle.handle(), prio))
                 printf("base::threads::WindowsThread::start: Failed to set thread priority\n");
 
-            if (ResumeThread(_handle) == (DWORD)-1)
+            if (ResumeThread(_handle.handle()) == (DWORD)-1)
                 printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
         }
     private:
         [[nodiscard]] static int WinPriorityFromInternal(Priority _Priority);
         void checkWaitForSingleObject(DWORD waitForSingleObjectResult);
 
-        static BOOL STDCALL CustomTerminate(HANDLE handle);
-
         Priority _priority = Priority::NormalPriority;
         bool _isRunning = false;
 
-        bool __terminateOnClose = true;
-        io::WindowsSmartHandle _handle = nullptr;
+        bool __terminateOnClose = false;
+        io::WindowsSmartHandle _handle;
 
+        std::unique_ptr<WindowsMutex> _mutex = nullptr;
         AtomicInteger<sizetype> _threadId = 0;
     };
 } // namespace base
