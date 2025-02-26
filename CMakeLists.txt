@@ -141,7 +141,7 @@ set(PRIVATE_SOURCES
     src/core/ThreadsData.h
     src/core/ThreadsData.cpp
 
-
+    src/core/MutexLocker.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -291,6 +291,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/WindowsThreadsHelpers.h
     include/base/system/KeywordSupport.h
+
+    include/base/system/MutexLocker.h
 )
 
 include(CMakePackageConfigHelpers)
@@ -298,42 +300,10 @@ include(GenerateExportHeader)
 
 set(STRING_HEADERS)
 
-if(LIB_BASE_ENABLE_STRING_PARSER AND NOT LIB_BASE_ENABLE_QT)
+if(LIB_BASE_ENABLE_STRING_PARSER)
     set(STRING_HEADERS
         include/base/string/parser/TextUtility.h
         include/base/string/parser/String.h
-
-        include/base/string/String.h
-        include/base/string/Char.h
-
-        include/base/string/StringView.h
-        include/base/string/UnicodeTable.h
-
-        include/base/string/AnyStringView.h
-        include/base/string/Latin1StringView.h
-
-        include/base/string/StringFwd.h
-        include/base/io/ByteArrayMatcher.h
-
-        include/base/string/StringMatcher.h
-        include/base/string/Latin1StringMatcher.h
-
-        include/base/io/ByteArrayView.h
-        include/base/string/UnicodeTools.h
-
-        include/base/string/StringTokenizer.h
-        include/base/string/Utf8StringView.h
-
-        include/base/string/StringLiteral.h
-        include/base/string/StringConverter.h
-
-        include/base/string/StringConverterBase.h
-        include/base/string/StringConverterPrivate.h
-
-        include/base/string/StringAlgorithms.h
-        include/base/string/StringAlgorithmsPrivate.h
-
-        include/base/string/StringBuilder.h
     )
 endif()
 
@@ -436,24 +406,7 @@ if(LIB_BASE_ENABLE_STRING_PARSER)
     else()
         target_sources(lib_base
             PRIVATE
-            src/string/Char.cpp
-            src/string/String.cpp
-
-            src/string/StringView.cpp
-            src/string/UnicodeTable.cpp
-
-            src/string/AnyStringView.cpp
-            src/string/Latin1StringView.cpp
-        
-            src/string/StringMatcher.cpp
-            src/string/Latin1StringMatcher.cpp
-
-            src/string/UnicodeTools.cpp
-            src/string/StringTokenizer.cpp
-
-            src/string/StringConverter.cpp
-            src/string/StringBuilder.cpp
-
+   
             src/qt/text/TextEntities.cpp
             src/string/parser/TextEntities.h
 

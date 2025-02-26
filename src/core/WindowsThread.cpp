@@ -81,40 +81,11 @@ namespace base {
         checkWaitForSingleObject(WaitForSingleObject(_handle, INFINITE));
     }
 
-   /* template <
-        class Function,
-        class ... Args>
-    void WindowsThread::start(
-        Function&& _routine,
-        Args&& ... args)
-    {
-        std::cout << "WindowsThread::start called";
-        const auto prio = WinPriorityFromInternal(priority);
-
-        StartImplementation(
-            std::forward<Function>(_routine),
-            std::forward<Args>(args)...,
-            _threadId,
-            _handle);
-
-        if (!_handle) {
-            printf("QThread::start: Failed to create thread");
-
-            _isRunning = false;
-            return;
-        }
-
-        if (!SetThreadPriority(_handle, prio))
-            printf("base::threads::WindowsThread::start: Failed to set thread priority\n");
-
-        if (ResumeThread(_handle) == (DWORD)-1)
-            printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
-    }*/
-
-
     void WindowsThread::terminate() {
         WindowsMutex mutex(this);
         mutex.lock();
+
+
 
 
     }

@@ -16,10 +16,8 @@
 
 
 void worker(sizetype end, const char* name) {
-	for (sizetype i = 0; i < end; ++i) {
-		if ( i % 10000 == 0)
-			printf(name, i);
-	}
+	for (sizetype i = 0; i < end; ++i)
+		printf(name, i);
 }
 
 void wk(int a, int* r) {
@@ -48,7 +46,10 @@ int main(int argc, char* argv[]) {
 	base::Thread other;
 	other.start(worker, 210000, "Iter other: %lli\n");
 
-	std::cout << "p";
+
+	/*std::thread thread(worker, 210000, "Iter thread: %lli\n");
+	std::thread other(worker, 210000, "Iter other: %lli\n");*/
+
 	thread.join();
 	other.join();
 //	std::cout << res << '\n';

@@ -40,14 +40,6 @@ namespace base {
 
         sizetype threadId() const noexcept override;
         void join();
-        /*
-         template <
-             class Function,
-             class ... Args>
-         void start(
-             Function&& _routine,
-             Args&& ... args);*/
-
 
         template <
             class Function,
