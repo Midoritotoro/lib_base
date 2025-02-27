@@ -9,8 +9,8 @@ namespace base::images {
 
 	}
 #ifdef LIB_BASE_ENABLE_QT
-    ImageFilter::ImageFilter(not_null<QImage*> image):
-        _image(image)
+    ImageFilter::ImageFilter(not_null<QImage*> image)
+       // _image(image)
     {
 
     }

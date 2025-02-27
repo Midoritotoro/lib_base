@@ -5,6 +5,9 @@
 
 #include <string>
 
+
+WARNING_DISABLE_MSVC(4005)
+
 #if defined(OS_WIN)
     #include <base/system/Windows.h>
     #include <winnt.h>

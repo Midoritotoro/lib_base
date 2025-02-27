@@ -1,4 +1,4 @@
-#include <text/BlockParser.h>
+#include <src/qt/text/BlockParser.h>
 
 #include <QUrl>
 

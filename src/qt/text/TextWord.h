@@ -1,6 +1,6 @@
 #pragma once
 
-#include <text/Types.h>
+#include <src/qt/text/Types.h>
 #include <cmath>
 
 

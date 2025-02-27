@@ -1,7 +1,7 @@
 #pragma once
 
-#include <text/Types.h>
-#include <text/TextBlock.h>
+#include <src/qt/text/Types.h>
+#include <src/qt/text/TextBlock.h>
 
 #include <base/qt/text/TextClickHandlers.h>
 

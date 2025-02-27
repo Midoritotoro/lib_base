@@ -31,8 +31,7 @@ option(LIB_BASE_ENABLE_QT "" ON)
 option(LIB_BASE_ENABLE_OPENGL "" OFF)
 option(LIB_BASE_ENABLE_FFMPEG "" ON)
 
-option(LIB_BASE_ENABLE_ZLIB "" OFF)
-option(LIB_BASE_ENABLE_STRING_PARSER "" OFF)
+option(LIB_BASE_ENABLE_ZLIB "" ON)
 
 if (UNIX)
     option(LIB_BASE_ENABLE_PHTHREAD "" OFF)
@@ -44,14 +43,12 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(LIB_BASE_BUILD_TESTS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT OFF)
+set(LIB_BASE_ENABLE_QT ON)
 
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG OFF)
+set(LIB_BASE_ENABLE_FFMPEG ON)
 
-set(LIB_BASE_ENABLE_ZLIB OFF)
-set(LIB_BASE_ENABLE_STRING_PARSER OFF)
-
+set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -298,19 +295,9 @@ set(PUBLIC_HEADERS
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-set(STRING_HEADERS)
 
-if(LIB_BASE_ENABLE_STRING_PARSER)
-    set(STRING_HEADERS
-        include/base/string/parser/TextUtility.h
-        include/base/string/parser/String.h
-    )
-endif()
+add_library(lib_base ${PUBLIC_HEADERS})
 
-
-add_library(lib_base 
-    ${PUBLIC_HEADERS}
-    ${STRING_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
@@ -395,60 +382,6 @@ if(LIB_BASE_ENABLE_FFMPEG)
     target_link_libraries(lib_baseFFmpeg INTERFACE lib_base_ffmpeg)
 
     add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
-endif()
-
-if(LIB_BASE_ENABLE_STRING_PARSER)
-    if (LIB_BASE_ENABLE_QT)
-        target_compile_definitions(lib_base
-            PUBLIC
-            LIB_BASE_USE_QSTRING_CLASS_AS_MAIN
-        )
-    else()
-        target_sources(lib_base
-            PRIVATE
-   
-            src/qt/text/TextEntities.cpp
-            src/string/parser/TextEntities.h
-
-            src/string/parser/TextWord.cpp
-            src/string/parser/TextWord.h
-    
-            src/string/parser/TextDrawUtility.cpp
-            src/string/parser/TextDrawUtility.h
-
-            src/string/parser/TextClickHandlers.cpp
-
-            src/string/parser/String.cpp
-            src/string/parser/TextBidiAlgorithm.h
-
-            src/string/parser/TextStackEngine.cpp
-            src/string/parser/TextStackEngine.h
-
-            src/string/parser/WordParser.cpp
-            src/string/parser/WordParser.h
-
-            src/string/parser/BlockParser.cpp
-            src/string/parser/BlockParser.h
-
-            src/string/parser/TextRenderer.cpp
-            src/string/parser/TextRenderer.h
-
-            src/string/parser/TextUtility.cpp
-
-            src/string/parser/TextBlock.cpp
-            src/string/parser/TextBlock.h
-        )
-
-        target_compile_definitions(lib_base
-            PUBLIC
-            LIB_BASE_USE_STRING_CLASS_AS_MAIN
-        )
-    endif()
-
-    target_compile_definitions(lib_base
-        PUBLIC
-        LIB_BASE_ENABLE_STRING_PARSER
-    )
 endif()
 
 

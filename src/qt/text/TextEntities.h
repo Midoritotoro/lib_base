@@ -1,7 +1,7 @@
 #pragma once
 
 #include <base/qt/common/ClickHandler.h>
-#include <text/Types.h>
+#include <src/qt/text/Types.h>
 
 
 namespace base::qt::text {

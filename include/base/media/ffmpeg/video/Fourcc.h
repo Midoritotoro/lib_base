@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/media/ffmpeg/video/FourccCodecs.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 namespace base::media::ffmpeg::video {
 	using fourcc_t = uint32_t;

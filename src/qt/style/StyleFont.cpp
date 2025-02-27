@@ -11,6 +11,8 @@
 #include <QResource>
 #include <QDir>
 
+#include <base/utility/Math.h>
+
 
 void style_InitFontsResource() {
 #if defined(LIB_BASE_QT_ENABLE_FONTS)

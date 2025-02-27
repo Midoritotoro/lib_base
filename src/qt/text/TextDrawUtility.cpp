@@ -1,4 +1,4 @@
-#include <text/TextDrawUtility.h>
+#include <src/qt/text/TextDrawUtility.h>
 
 #include <base/qt/style/StyleCore.h>
 #include <base/qt/style/StyleFont.h>

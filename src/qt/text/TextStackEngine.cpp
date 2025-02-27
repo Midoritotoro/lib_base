@@ -1,6 +1,6 @@
-#include <text/TextStackEngine.h>
+#include <src/qt/text/TextStackEngine.h>
 
-#include <text/TextBlock.h>
+#include <src/qt/text/TextBlock.h>
 #include <base/qt/text/String.h>
 
 namespace base::qt::text {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <text/Types.h>
-#include <text/TextStackEngine.h>
+#include <src/qt/text/Types.h>
+#include <src/qt/text/TextStackEngine.h>
 
 
 namespace base::qt::text {

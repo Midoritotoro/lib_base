@@ -1,25 +1,25 @@
-#include <text/TextRenderer.h>
+#include <src/qt/text/TextRenderer.h>
 
-#include <text/TextBidiAlgorithm.h>
+#include <src/qt/text/TextBidiAlgorithm.h>
 #include <base/qt/style/StyleCore.h>
 
 #include <QPainterPath>
 #include <base/qt/style/StyleFont.h>
 
 #include <base/qt/text/String.h>
-#include <text/BlockParser.h>
+#include <src/qt/text/BlockParser.h>
 
-#include <text/TextWord.h>
+#include <src/qt/text/TextWord.h>
 #include <base/qt/text/TextClickHandlers.h>
 
 #include <base/qt/text/TextUtility.h>
-#include <text/WordParser.h>
+#include <src/qt/text/WordParser.h>
 
-#include <text/TextDrawUtility.h>
-#include <text/Types.h>
+#include <src/qt/text/TextDrawUtility.h>
+#include <src/qt/text/Types.h>
 
 #include <base/qt/common/BasicClickHandlers.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 #include <cmath>
 

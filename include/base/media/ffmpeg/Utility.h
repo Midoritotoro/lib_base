@@ -4,7 +4,7 @@
 	#define __STDC_CONSTANT_MACROS
 #endif
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 
 extern "C" {
 	#include <libavfilter/avfilter.h>

@@ -1,10 +1,10 @@
 #include <base/qt/text/TextUtility.h>
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 #include <QIODevice>
 
 #include <QRegularExpression>
-#include <text/TextWord.h>
+#include <src/qt/text/TextWord.h>
 
 
 namespace base::qt::text {

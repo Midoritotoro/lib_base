@@ -1,9 +1,9 @@
-#include <text/WordParser.h>
+#include <src/qt/text/WordParser.h>
 
 #include <base/qt/text/String.h>
-#include <text/TextBidiAlgorithm.h>
+#include <src/qt/text/TextBidiAlgorithm.h>
 
-#include <text/TextWord.h>
+#include <src/qt/text/TextWord.h>
 
 
 namespace base::qt::text {

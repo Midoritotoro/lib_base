@@ -7,7 +7,40 @@ set(CMAKE_AUTORCC ON)
 option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
 set(LIB_BASE_QT_ENABLE_FONTS ON)
 
+
+
 set(QT_PRIVATE_SOURCES 
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextDrawUtility.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextDrawUtility.h 
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextClickHandlers.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextEntities.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextEntities.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextWord.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextWord.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/String.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBidiAlgorithm.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextStackEngine.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextStackEngine.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/WordParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/WordParser.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/BlockParser.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/BlockParser.h
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextUtility.cpp
+
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBlock.cpp
+    ${PROJECT_SOURCE_DIR}/src/qt/text/TextBlock.h
+
     ${PROJECT_SOURCE_DIR}/src/qt/ui/PopupMenu.cpp
 
     ${PROJECT_SOURCE_DIR}/src/qt/ui/Separator.cpp

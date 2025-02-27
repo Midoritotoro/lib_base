@@ -1,10 +1,10 @@
 #pragma once 
 
 #include <base/qt/style/StyleCore.h>
-#include <base/TypeTraits.h>
+#include <base/utility/TypeTraits.h>
 
 #include <base/qt/ui/Utility.h>
-#include <base/Assert.h>
+#include <base/utility/Assert.h>
 
 #include <QSurfaceFormat>
 

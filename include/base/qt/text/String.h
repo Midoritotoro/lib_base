@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <text/BlockParser.h>
-#include <text/WordParser.h>
+#include <src/qt/text/BlockParser.h>
+#include <src/qt/text/WordParser.h>
 
-#include <text/TextWord.h>
+#include <src/qt/text/TextWord.h>
 
 
 namespace base::qt::text {

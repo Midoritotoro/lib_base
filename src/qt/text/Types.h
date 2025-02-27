@@ -6,7 +6,7 @@
 #include <base/system/Time.h>
 
 #include <base/qt/style/StyleFont.h>
-//#include <base/qt/common/ClickHandler.h>
+#include <base/qt/common/ClickHandler.h>
 
 #include <private/qfixed_p.h>
 #include <private/qfontengine_p.h>

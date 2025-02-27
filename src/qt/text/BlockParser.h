@@ -1,10 +1,10 @@
 #pragma once
 
-#include <text/TextBlock.h>
-#include <text/TextEntities.h>
+#include <src/qt/text/TextBlock.h>
+#include <src/qt/text/TextEntities.h>
 
 #include <base/qt/style/StyleCore.h>
-#include <text/Types.h>
+#include <src/qt/text/Types.h>
 
 #include <any>
 

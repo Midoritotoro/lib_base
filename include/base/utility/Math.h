@@ -176,8 +176,8 @@ namespace base {
 #endif
     }
 
-    constexpr inline NODISCARD u
-        int32 NextPowerOfTwo(int32 v) 
+    constexpr inline NODISCARD 
+        uint32 NextPowerOfTwo(int32 v) 
     {
         return NextPowerOfTwo(uint32(v));
     }
@@ -200,7 +200,9 @@ namespace base {
         return NextPowerOfTwo(IntegerForSizeof<long>::Unsigned(v));
     }
 
-    float FastInverseSqrt(float x) {
+    constexpr inline NODISCARD
+        float FastInverseSqrt(float x) 
+    {
         int i = *(int*)&x;
         i = 0x5f3759df - (i >> 1);
 

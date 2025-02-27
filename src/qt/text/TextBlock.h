@@ -3,10 +3,10 @@
 #include <base/qt/style/StyleTypes.h>
 #include <base/qt/style/StyleFont.h>
 
-#include <base/Time.h>
+#include <base/system/Time.h>
 
-#include <base/Types.h>
-#include <text/Types.h>
+#include <base/core/Types.h>
+#include <src/qt/text/Types.h>
 
 
 namespace base::qt::text {

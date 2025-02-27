@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <ranges>
 
+#include <base/system/Platform.h>
 
 
 namespace base {
@@ -162,8 +163,12 @@ namespace base {
 		}
 
 		template <typename Base, typename Derived>
-		using is_virtual_base_of = _detail::is_virtual_base_of<std::remove_cv_t<Base>, std::remove_cv_t<Derived>>;
+		using is_virtual_base_of = _detail::is_virtual_base_of<
+			std::remove_cv_t<Base>, 
+			std::remove_cv_t<Derived>>;
 
-		template <typename Base, typename Derived>
+		template <
+			typename Base,
+			typename Derived>
 		constexpr inline bool is_virtual_base_of_v = is_virtual_base_of<Base, Derived>::value;
 } // namespace base

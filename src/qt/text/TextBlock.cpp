@@ -1,4 +1,4 @@
-#include <text/TextBlock.h>
+#include <src/qt/text/TextBlock.h>
 #include <private/qfontengine_p.h>
 
 

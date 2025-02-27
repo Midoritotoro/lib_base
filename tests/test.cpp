@@ -1,8 +1,5 @@
-﻿//#include <QApplication>
-//#include <QWidget>
-
-#include <base/images/ImagesIntegral.h>
-#include <base/images/ImagesPrepare.h>
+﻿#include <QApplication>
+#include <QWidget>
 
 #include <base/core/AtomicInteger.h>
 #include <base/core/Thread.h>
@@ -10,74 +7,35 @@
 #include <stdio.h>
 #include <corecrt.h>
 
+#include <base/qt/style/StyleCore.h>
+#include <base/qt/common/MainQueueProcessor.h>
+
 #include <base/io/File.h>
 #include <thread>
 
-#include <base/utility/CommonMacros.h>
+#include <base/qt/ui/FlatLabel.h>
 
+#include <base/utility/CommonMacros.h>
 #include <memory>
 
 
-void worker(base::sizetype end, const char* name) {
-	for (base::sizetype i = 0; i < end; ++i);
-		//printf(name, i);
-}
-
 int main(int argc, char* argv[]) {
-	//QApplication application(argc, argv);
-	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
+	QApplication application(argc, argv);
+	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
-	//int res = 0;
+	const auto ratio = application.devicePixelRatio();
+	const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 
-	//base::AtomicInteger atomicInt;
+	base::qt::style::SetDevicePixelRatio(useRatio);
 
-	//std::thread th(worker, 254);
-	//th.join();
-	//{
-	// 
+	base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
+	base::qt::style::internal::StartFonts();
 
+	base::qt::style::RegisterStyles();
 
-	//{ 
-	//	measureExecutionTime("my threads");
+	base::qt::style::Start();
 
-	//	base::Thread thread;
-	//	base::Thread other;
-
-	//	thread.start(worker, 1000000, "Iter thread: %lli\n");
-	//	other.start(worker, 1000000, "Iter other: %lli\n");
-
-	//	thread.join();
-	//	other.join();
-	//}
-
-	//{
-	//	measureExecutionTime("std threads")
-
-	//	std::thread thread(worker, 1000000, "Iter thread: %lli\n");
-	//	std::thread other(worker, 1000000, "Iter other: %lli\n");
-
-
-	//	thread.join();
-	//	other.join();
-	//} 
-
-//	std::cout << res << '\n';
-
-	return 0;
-
-	//const auto ratio = application.devicePixelRatio();
-	//const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
-
-	//base::qt::style::SetDevicePixelRatio(useRatio);
-
-	//base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
-	//base::qt::style::internal::StartFonts();
-
-	//base::qt::style::RegisterStyles();
-
-	//base::qt::style::Start();
-
-	/*QWidget widget;
+	QWidget widget;
 
 	widget.resize(1280, 720);
 	widget.setMouseTracking(true);
@@ -87,7 +45,7 @@ int main(int argc, char* argv[]) {
 	label.setText("Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст Длинный текст *Длинный текст* ```Длинный текст```");
 	widget.show();
 	label.move((widget.width() - label.width()) / 2,
-		(widget.height() - label.height()) / 2);*/
+		(widget.height() - label.height()) / 2);
 
-//	return application.exec();
+	return application.exec();
 }
