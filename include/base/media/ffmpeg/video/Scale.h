@@ -24,9 +24,6 @@ namespace base::media::ffmpeg::video {
         bool b_swap_uvo;
     };
 
- 
-	[[nodiscard]] int GetCpuCount();
-
 	void Clean(filter_t* p_filter);
 
     int OpenScaler(filter_t* p_filter);

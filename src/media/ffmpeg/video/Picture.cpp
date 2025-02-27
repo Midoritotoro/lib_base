@@ -26,7 +26,7 @@ namespace base::media::ffmpeg::video {
 
     void PictureDestroy(picture_t* picture)
     {
-        assert(AtomicRcDec(&picture->refs) == 0);
+        Assert(AtomicRcDec(&picture->refs) == 0);
 
         PictureDestroyContext(picture);
 
@@ -210,7 +210,7 @@ namespace base::media::ffmpeg::video {
             "misplaced picture_priv_t, destroy won't work");
 
         struct picture_priv_buffer_t* privbuf = (picture_priv_buffer_t*)malloc(sizeof(*privbuf));
-        if (unlikely(privbuf == NULL))
+        if (UNLIKELY(privbuf == NULL))
             return NULL;
 
         picture_buffer_t* res = &privbuf->res;
@@ -247,21 +247,21 @@ namespace base::media::ffmpeg::video {
         {
             const plane_t* p = &pic->p[i];
 
-            if (unlikely(ckd_mul(&plane_sizes[i], static_cast<size_t>(p->i_pitch), static_cast<size_t>(p->i_lines)))
-                || (unlikely(ckd_add(&pic_size, pic_size, plane_sizes[i])))) {
+            if (UNLIKELY(ckd_mul(&plane_sizes[i], static_cast<size_t>(p->i_pitch), static_cast<size_t>(p->i_lines)))
+                || (UNLIKELY(ckd_add(&pic_size, pic_size, plane_sizes[i])))) {
                 error();
                 return NULL;
             }
                 
         }
 
-        if (unlikely(pic_size >= PICTURE_SW_SIZE_MAX)) {
+        if (UNLIKELY(pic_size >= PICTURE_SW_SIZE_MAX)) {
             error();
             return NULL;
         }
 
         unsigned char* buf = (uchar*)PictureAllocate(&res->fd, pic_size);
-        if (unlikely(buf == NULL))
+        if (UNLIKELY(buf == NULL))
         {
             error();
             return NULL;

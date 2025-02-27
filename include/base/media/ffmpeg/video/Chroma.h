@@ -1,7 +1,7 @@
 #pragma once
 
 #include <base/media/ffmpeg/video/VideoFormat.h>
-#include <base/Utility.h>
+#include <base/utility/Math.h>
 
 extern "C" {
     #include <libavutil/pixfmt.h>

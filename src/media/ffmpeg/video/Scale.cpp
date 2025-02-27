@@ -7,6 +7,7 @@
 #include <base/media/ffmpeg/video/Variables.h>
 #include <base/media/ffmpeg/video/Picture.h>
 
+#include <base/system/SystemInfo.h>
 
 extern "C" {
     #include <libswscale/version.h>
@@ -22,17 +23,6 @@ namespace base::media::ffmpeg::video {
     inline constexpr filter_operations filter_ops = {
         .filter_video = Filter, .close = CloseScaler,
     };
-
-
-    int GetCpuCount() {
-#if defined Q_OS_WIN
-        SYSTEM_INFO info;
-        GetSystemInfo(&info);
-
-        return info.dwNumberOfProcessors;
-#endif // Q_OS_WIN
-        return 1;
-    }
 
     void Clean(filter_t* p_filter)
     {
@@ -57,8 +47,10 @@ namespace base::media::ffmpeg::video {
         /* We have to set it to null has we call be called again :( */
         p_sys->ctx = NULL;
         p_sys->ctxA = NULL;
+
         p_sys->p_src_a = NULL;
         p_sys->p_dst_a = NULL;
+
         p_sys->p_src_e = NULL;
         p_sys->p_dst_e = NULL;
     }
@@ -190,7 +182,7 @@ namespace base::media::ffmpeg::video {
                 for (int i = 0; i < p_palette->i_entries; i++)
                 {
                     // we want ARGB in host endianess from RGBA in byte order
-#ifdef WORDS_BIGENDIAN
+#if system::SystemInfo::ByteOrder == system::SystemInfo::BigEndian
                     dstp[0] = p_palette->palette[i][3];
                     dstp[1] = p_palette->palette[i][0];
                     dstp[2] = p_palette->palette[i][1];
