@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+WARNING_DISABLE_MSVC(6011)
+
 struct staticlocale {
 	staticlocale() {
 		setlocale(LC_ALL, "");

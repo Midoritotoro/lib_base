@@ -42,8 +42,6 @@
 #  endif
 #endif
 
-
-
 #if defined(OS_WIN) && defined(CPP_MSVC)
 #  define STDCALL       __stdcall
 #  define __CDECL       __cdecl

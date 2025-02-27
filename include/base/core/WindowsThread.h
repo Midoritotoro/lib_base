@@ -32,8 +32,8 @@ namespace base {
         void waitMs(sizetype milliseconds) override;
         const io::WindowsSmartHandle& handle() const noexcept;
 
-        static [[nodiscard]] io::WindowsSmartHandle currentThreadHandle() noexcept;
-        static [[nodiscard]] sizetype currentThreadId() noexcept;
+        static io::WindowsSmartHandle currentThreadHandle() noexcept;
+        static sizetype currentThreadId() noexcept;
 
         void terminate() override;
         void close() override;
@@ -41,7 +41,8 @@ namespace base {
         sizetype threadId() const noexcept override;
         void join() override;
 
-        [[nodiscard]] bool joinable() const noexcept;
+        bool joinable() const noexcept;
+        static int HardwareConcurrency() noexcept;
          
         template <
             class Function,
@@ -76,7 +77,7 @@ namespace base {
                 printf("base::threads::WindowsThread::start: Failed to resume new thread\n");
         }
     private:
-        [[nodiscard]] static int WinPriorityFromInternal(Priority _Priority);
+        static int WinPriorityFromInternal(Priority _Priority);
         void checkWaitForSingleObject(DWORD waitForSingleObjectResult);
 
         Priority _priority = Priority::NormalPriority;

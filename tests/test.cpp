@@ -13,6 +13,8 @@
 #include <base/io/File.h>
 #include <thread>
 
+#include <base/utility/CommonMacros.h>
+
 #include <memory>
 
 
@@ -20,7 +22,6 @@ void worker(base::sizetype end, const char* name) {
 	for (base::sizetype i = 0; i < end; ++i);
 		//printf(name, i);
 }
-
 
 int main(int argc, char* argv[]) {
 	//QApplication application(argc, argv);
@@ -33,24 +34,27 @@ int main(int argc, char* argv[]) {
 	//std::thread th(worker, 254);
 	//th.join();
 	//{
-	{ 
-		measureExecutionTime();
+	// 
 
-		base::Thread thread;
-		base::Thread other;
 
-		thread.start(worker, 10000, "Iter thread: %lli\n");
-		other.start(worker, 10000, "Iter other: %lli\n");
+	//{ 
+	//	measureExecutionTime("my threads");
 
-		thread.join();
-		other.join();
-	}
+	//	base::Thread thread;
+	//	base::Thread other;
+
+	//	thread.start(worker, 1000000, "Iter thread: %lli\n");
+	//	other.start(worker, 1000000, "Iter other: %lli\n");
+
+	//	thread.join();
+	//	other.join();
+	//}
 
 	//{
-	//	measureExecutionTime()
+	//	measureExecutionTime("std threads")
 
-	//	std::thread thread(worker, 10000, "Iter thread: %lli\n");
-	//	std::thread other(worker, 10000, "Iter other: %lli\n");
+	//	std::thread thread(worker, 1000000, "Iter thread: %lli\n");
+	//	std::thread other(worker, 1000000, "Iter other: %lli\n");
 
 
 	//	thread.join();

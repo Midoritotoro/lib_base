@@ -26,10 +26,10 @@ option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
 option(LIB_BASE_LINK_OPTIONS "" ${linkOptions})
 
-option(LIB_BASE_ENABLE_QT "" OFF)
+option(LIB_BASE_ENABLE_QT "" ON)
 
 option(LIB_BASE_ENABLE_OPENGL "" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "" OFF)
+option(LIB_BASE_ENABLE_FFMPEG "" ON)
 
 option(LIB_BASE_ENABLE_ZLIB "" OFF)
 option(LIB_BASE_ENABLE_STRING_PARSER "" OFF)

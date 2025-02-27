@@ -58,7 +58,7 @@
 
 #define BASE_MACRO_OVERLOAD_MACRO_CHOOSER(target, ...)\
 		BASE_MACRO_OVERLOAD_CHOOSE_FROM_ARG_COUNT(target, \
-			HUNDRED_COMMAS PP_CAT(target, _0) __VA_ARGS__ )
+			target##BASE_MACRO_OVERLOAD_NO_ARG_EXPANDER(target))
 
 #define BASE_MACRO_OVERLOAD_CHOOSE_FROM_ARG_COUNT(arg, ...) \
   BASE_MACRO_OVERLOAD_FUNC_RECOMPOSER((__VA_ARGS__, arg##_100, arg##_99, \
@@ -96,3 +96,6 @@
     arg##_5, arg##_4, arg##_3, \
     arg##_2, arg##_1, ))
 
+
+#define BASE_MACRO_OVERLOAD_NO_ARG_EXPANDER(target) \
+        HUNDRED_COMMAS target##_0

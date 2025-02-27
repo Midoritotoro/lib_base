@@ -12,10 +12,9 @@ namespace base {
     {}
 
     WindowsThread::~WindowsThread() {
-        if (__terminateOnClose)
-            terminate();
-        else
-            close();
+        __terminateOnClose
+            ? terminate()
+            : close();
     }
 
     void WindowsThread::setPriority(Priority priority) {
@@ -77,6 +76,10 @@ namespace base {
 
     bool WindowsThread::joinable() const noexcept {
         return (_threadId != 0);
+    }
+
+    int WindowsThread::HardwareConcurrency() noexcept {
+        return _Thrd_hardware_concurrency();
     }
 
     void WindowsThread::join() {
