@@ -13,10 +13,6 @@
 //#include <sys/timeb.h>
 
 
-#define TICK_INVALID                    INT64_C(0)
-#define TICK_0                          INT64_C(1)
-
-
 namespace base::Threads {
 
 //    struct threadvar

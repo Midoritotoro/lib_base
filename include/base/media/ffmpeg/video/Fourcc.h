@@ -4,18 +4,6 @@
 #include <base/utility/Algorithm.h>
 
 namespace base::media::ffmpeg::video {
-	using fourcc_t = uint32_t;
-
-	struct fourcc_desc {
-		unsigned char alias[4];
-		const char* desc;
-	};
-
-	struct fourcc_mapping {
-		unsigned char alias[4];
-		uint32_t fourcc;
-	};
-
 	enum es_format_category_e {
 		UNKNOWN_ES = 0x00,
 		VIDEO_ES,

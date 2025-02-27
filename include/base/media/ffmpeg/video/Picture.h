@@ -83,7 +83,6 @@ namespace base::media::ffmpeg::video {
 		/** Next picture in a FIFO a pictures */
 		struct picture_t* p_next;
 
-		::Threads::atomic_rc_t refs;
 
 		picture_t(const picture_t& other) {
 			format = other.format;
@@ -101,7 +100,6 @@ namespace base::media::ffmpeg::video {
 			context = other.context;
 			p_sys = other.p_sys;
 			p_next = other.p_next;
-			refs = refs;
 		}
 	};
 
@@ -115,9 +113,6 @@ namespace base::media::ffmpeg::video {
 			void* opaque;
 		} gc;
 
-		/** Private ancillary struct. Don't use it directly, but use it via
-		 * picture_AttachAncillary() and picture_GetAncillary(). */
-		Threads::ancillary** ancillaries;
 	};
 
 	struct picture_buffer_t

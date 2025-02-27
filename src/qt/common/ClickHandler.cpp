@@ -2,8 +2,8 @@
 
 #include <text/TextEntities.h>
 
-#include <base/Concurrent.h>
-#include <base/Types.h>
+#include <base/concurrent/Concurrent.h>
+#include <base/core/Types.h>
 
 #include <QPointer>
 

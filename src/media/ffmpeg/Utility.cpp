@@ -1,11 +1,11 @@
-#include <base/media/Utility.h>
+#include <base/media/ffmpeg/Utility.h>
 
 extern "C" {
 	#include <libavutil/imgutils.h>
 	#include <libavutil/opt.h>
 } // extern "C"
 
-#include "video/HardwareAcceleration.h"
+#include <base/media/ffmpeg/video/HardwareAcceleration.h>
 
 #if defined OS_WIN
 	#include <Windows.h>
@@ -13,11 +13,11 @@ extern "C" {
 
 #include <qDebug>
 
-#include <base/Time.h>
-#include <base/Utility.h>
+#include <base/system/Time.h>
+#include <base/utility/Algorithm.h>
 
 
-namespace base::media::ffmpeg::video {
+namespace base::media::ffmpeg {
 
 void IODeleter::operator()(AVIOContext* value) {
 	if (value) {

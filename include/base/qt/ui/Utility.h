@@ -5,8 +5,8 @@
 
 #include <vector>
 
-#include <base/Types.h>
-#include <base/TypeTraits.h>
+#include <base/core/Types.h>
+#include <base/utility/TypeTraits.h>
 
 
 

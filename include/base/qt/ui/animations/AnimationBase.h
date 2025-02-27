@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <base/Time.h>
+#include <base/system/Time.h>
 #include <base/qt/common/Size.h>
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 
 
 namespace base::qt::ui::animations {

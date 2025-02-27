@@ -257,6 +257,11 @@ target_include_directories(lib_base_qt
 
 target_include_directories(lib_base_qt
     PUBLIC
+         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+)
+
+target_include_directories(lib_base_qt
+    PUBLIC
         "$<INSTALL_INTERFACE:include>"
 )
 
@@ -269,3 +274,4 @@ target_include_directories(lib_base_qt
     PUBLIC
         "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
+

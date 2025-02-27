@@ -24,14 +24,12 @@ option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
-option(LIB_BASE_LINK_OPTIONS "" ${linkOptions})
-
-option(LIB_BASE_ENABLE_QT "" OFF)
+option(LIB_BASE_ENABLE_QT "" ON)
 
 option(LIB_BASE_ENABLE_OPENGL "" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "" OFF)
+option(LIB_BASE_ENABLE_FFMPEG "" ON)
 
-option(LIB_BASE_ENABLE_ZLIB "" OFF)
+option(LIB_BASE_ENABLE_ZLIB "" ON)
 
 if (UNIX)
     option(LIB_BASE_ENABLE_PHTHREAD "" OFF)
@@ -43,12 +41,12 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(LIB_BASE_BUILD_TESTS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT OFF)
+set(LIB_BASE_ENABLE_QT ON)
 
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG OFF)
+set(LIB_BASE_ENABLE_FFMPEG ON)
 
-set(LIB_BASE_ENABLE_ZLIB OFF)
+set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -347,10 +345,8 @@ set_target_properties(
 
 target_compile_features(lib_base PUBLIC cxx_std_23)
 
-if(NOT DEFINED CMAKE_DEBUG_TARGET_PROPERTIES OR NOT CMAKE_DEBUG_TARGET_PROPERTIES)
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-    endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
 target_link_libraries(lib_base PUBLIC OpenMP::OpenMP_CXX)
@@ -473,14 +469,36 @@ if (WIN32)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   set_target_properties(${PROJECT_NAME}
+   set_target_properties(lib_base
         PROPERTIES
         MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
 
-    target_link_options(${PROJECT_NAME}
+        target_link_options(lib_base
     INTERFACE
-       ${linkOptions}
+       ${CMAKE_LINK_}
    )
+
+    if (LIB_BASE_ENABLE_FFMPEG)
+       set_target_properties(lib_baseFFmpeg
+        PROPERTIES
+        MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+
+        target_link_options(lib_baseFFmpeg
+            INTERFACE
+        ${CMAKE_LINK_}
+     )
+    endif() 
+
+    if (LIB_BASE_ENABLE_QT)
+       set_target_properties(lib_baseQt
+        PROPERTIES
+        MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+
+        target_link_options(lib_baseQt
+            INTERFACE
+        ${CMAKE_LINK_}
+     )
+    endif() 
 endif()
 
 if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)

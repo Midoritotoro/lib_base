@@ -1,7 +1,7 @@
 #pragma once
 
 #include <base/qt/style/StyleCore.h>
-#include <base/Types.h>
+#include <base/core/Types.h>
 
 #include <base/qt/ui/BaseWidget.h>
 

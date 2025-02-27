@@ -127,7 +127,7 @@ namespace base::media::ffmpeg::video {
         }
 
         /* */
-        p_filter->ops = &filter_ops;
+       // p_filter->ops = &filter_ops;
 
        /* msg_Dbg(p_filter, "%ix%i (%ix%i) chroma: %4.4s colorspace: %s -> %ix%i (%ix%i) chroma: %4.4s colorspace: %s with scaling using %s",
             p_filter->fmt_in.video.i_visible_width, p_filter->fmt_in.video.i_visible_height,
@@ -208,7 +208,7 @@ namespace base::media::ffmpeg::video {
                 for (int i = 0; i < p_palette->i_entries; i++)
                 {
                     // we want ARGB in host endianess from RGBA in byte order
-#if system::SystemInfo::ByteOrder == system::SystemInfo::BigEndian
+#if BYTE_ORDER == BIG_ENDIAN
                     dstp[0] = p_palette->palette[i][3];
                     dstp[1] = p_palette->palette[i][0];
                     dstp[2] = p_palette->palette[i][1];
@@ -547,7 +547,7 @@ namespace base::media::ffmpeg::video {
         }
 
         /* Request output picture */
-        p_pic_dst = FilterNewPicture(p_filter);
+       // p_pic_dst = FilterNewPicture(p_filter);
         if (!p_pic_dst)
         {
             PictureRelease(p_pic);

@@ -37,78 +37,79 @@ extern "C" {
 #define FFMPEG_HAVE_DURATION (LIBAVUTIL_VERSION_INT >= \
 	AV_VERSION_INT(58, 02, 100))
 
+namespace base::media::ffmpeg {
+	class AvErrorWrap {
+	public:
+		AvErrorWrap(int code = 0) : _code(code) {
+		}
+
+		[[nodiscard]] bool failed() const {
+			return (_code < 0);
+		}
+		[[nodiscard]] explicit operator bool() const {
+			return failed();
+		}
+
+		[[nodiscard]] int code() const {
+			return _code;
+		}
+
+		[[nodiscard]] std::string text() const {
+			char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
+			return std::string(av_make_error_string(
+				string,
+				sizeof(string),
+				_code));
+		}
+
+	private:
+		int _code = 0;
+	};
+
+	class Packet {
+	public:
+		Packet() = default;
+		Packet(Packet&& other) : _data(std::exchange(other._data, {})) {}
+
+		Packet& operator=(Packet&& other) noexcept {
+			if (this != &other) {
+				release();
+				_data = std::exchange(other._data, {});
+			}
+			return *this;
+		}
+
+		~Packet() {
+			release();
+		}
+
+		[[nodiscard]] AVPacket& fields() {
+			if (!_data)
+				_data = av_packet_alloc();
+			return *_data;
+		}
+
+		[[nodiscard]] const AVPacket& fields() const {
+			if (!_data)
+				_data = av_packet_alloc();
+			return *_data;
+		}
+
+		[[nodiscard]] bool empty() const {
+			return !_data || !fields().data;
+		}
+
+		void release() {
+			av_packet_free(&_data);
+		}
+
+	private:
+		mutable AVPacket* _data = nullptr;
+	};
+}
 
 namespace base::media::ffmpeg {
 	constexpr auto kAvioBlockSize = 4096;
-
-class AvErrorWrap {
-public:
-	AvErrorWrap(int code = 0) : _code(code) {
-	}
-
-	[[nodiscard]] bool failed() const {
-		return (_code < 0);
-	}
-	[[nodiscard]] explicit operator bool() const {
-		return failed();
-	}
-
-	[[nodiscard]] int code() const {
-		return _code;
-	}
-
-	[[nodiscard]] std::string text() const {
-		char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
-		return std::string(av_make_error_string(
-			string,
-			sizeof(string),
-			_code));
-	}
-
-private:
-	int _code = 0;
-};
-
-class Packet {
-public:
-	Packet() = default;
-	Packet(Packet&& other) : _data(std::exchange(other._data, {})) {}
-
-	Packet& operator=(Packet&& other) noexcept {
-		if (this != &other) {
-			release();
-			_data = std::exchange(other._data, {});
-		}
-		return *this;
-	}
-
-	~Packet() {
-		release();
-	}
-
-	[[nodiscard]] AVPacket& fields() {
-		if (!_data)
-			_data = av_packet_alloc();
-		return *_data;
-	}
-
-	[[nodiscard]] const AVPacket& fields() const {
-		if (!_data)
-			_data = av_packet_alloc();
-		return *_data;
-	}
-
-	[[nodiscard]] bool empty() const {
-		return !_data || !fields().data;
-	}
-
-	void release() {
-		av_packet_free(&_data);
-	}
-
-private:
-	mutable AVPacket* _data = nullptr;
-};
 
 struct IODeleter {
 	void operator()(AVIOContext* value);

@@ -6,6 +6,8 @@ enable_language(ASM)
 set(ffmpeg_lib_list)
 set(ffmpeg_lib_loc ${libs_loc}/ffmpeg)
 
+message(ffmpeglibloc ${ffmpeg_lib_loc})
+
 list(APPEND ffmpeg_lib_list
     app::external_opus
     app::external_openh264

@@ -1,6 +1,6 @@
 #include <base/media/ffmpeg/audio/AbstractAudioReader.h>
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 
 #if !DA_FFMPEG_NEW_CHANNEL_LAYOUT
 	uint64_t AbstractFFMpegLoader::ComputeChannelLayout(
@@ -19,7 +19,7 @@ namespace FFmpeg {
 		return value * rational.num / rational.den;
 	}
 
-	bool AbstractAudioReader::open(Time::time positionMs, float speed) {
+	bool AbstractAudioReader::open(Time::time_t positionMs, float speed) {
 		ioBuffer = (uchar*)av_malloc(kAvioBlockSize);
 
 		if (_data.isEmpty())

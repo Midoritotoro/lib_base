@@ -757,15 +757,28 @@
 #define PLANAR_8(n, w_den, h_den)        PLANAR(n, w_den, h_den, 8)
 #define PLANAR_16(n, w_den, h_den, bits) PLANAR(n, w_den, h_den, bits)
 
+namespace base::media::ffmpeg::video { 
+    using fourcc_t = uint32_t;
+
 struct fourcc_mapping {
-    union { unsigned char alias_str[4]; vlc_fourcc_t alias; };
-    union { unsigned char fourcc_str[4]; vlc_fourcc_t fourcc; };
+    union { 
+        unsigned char alias_str[4];
+        fourcc_t alias;
+    };
+    union { 
+        unsigned char fourcc_str[4];
+        fourcc_t fourcc;
+    };
 };
 struct fourcc_desc {
-    union { unsigned char alias_str[4]; vlc_fourcc_t alias; };
+    union { 
+        unsigned char alias_str[4];
+        fourcc_t alias; 
+    };
+
     const char desc[52];
 };
-static const struct fourcc_mapping mapping_video[] = {
+static const fourcc_mapping mapping_video[] = {
     { { { 0x01, 0x00, 0x00, 0x00 } }, { { 0x6d, 0x72, 0x6c, 0x65 } } },
     { { { 0x02, 0x00, 0x00, 0x00 } }, { { 0x6d, 0x72, 0x6c, 0x65 } } },
     { { { 0x04, 0x00, 0x00, 0x00 } }, { { 0x6d, 0x70, 0x34, 0x76 } } },
@@ -1201,7 +1214,7 @@ static const struct fourcc_mapping mapping_video[] = {
     { { { 0x79, 0x75, 0x76, 0x75 } }, { { 0x79, 0x75, 0x76, 0x32 } } },
     { { { 0x79, 0x76, 0x31, 0x32 } }, { { 0x59, 0x56, 0x31, 0x32 } } },
 };
-static const struct fourcc_desc desc_video[] = {
+static const fourcc_desc desc_video[] = {
     { { { 0x33, 0x49, 0x56, 0x32 } }, "3ivx MPEG-4 Video" },
     { { { 0x33, 0x69, 0x76, 0x32 } }, "3ivx MPEG-4 Video" },
     { { { 0x34, 0x58, 0x4d, 0x56 } }, "4X Technologies Video" },
@@ -1679,8 +1692,8 @@ static const struct fourcc_desc desc_video[] = {
     { { { 0x78, 0x76, 0x69, 0x78 } }, "Xvid MPEG-4 Video" },
     { { { 0x79, 0x75, 0x76, 0x32 } }, "Packed YUV 4:2:2, Y:U:Y:V signed" },
 };
-video: 977 entries
-static const struct fourcc_mapping mapping_audio[] = {
+
+static const fourcc_mapping mapping_audio[] = {
     { { { 0x2e, 0x6d, 0x70, 0x31 } }, { { 0x6d, 0x70, 0x67, 0x61 } } },
     { { { 0x2e, 0x6d, 0x70, 0x32 } }, { { 0x6d, 0x70, 0x67, 0x61 } } },
     { { { 0x2e, 0x6d, 0x70, 0x33 } }, { { 0x6d, 0x70, 0x33, 0x20 } } },
@@ -1739,7 +1752,7 @@ static const struct fourcc_mapping mapping_audio[] = {
     { { { 0x77, 0x6d, 0x61, 0x73 } }, { { 0x57, 0x4d, 0x41, 0x53 } } },
     { { { 0x77, 0x76, 0x70, 0x6b } }, { { 0x57, 0x56, 0x50, 0x4b } } },
 };
-static const struct fourcc_desc desc_audio[] = {
+static const fourcc_desc desc_audio[] = {
     { { { 0x01, 0x04, 0x00, 0x00 } }, "IMC" },
     { { { 0x22, 0x00, 0x00, 0x00 } }, "TrueSpeech" },
     { { { 0x31, 0x34, 0x5f, 0x34 } }, "RealAudio 1.0" },
@@ -1865,7 +1878,7 @@ static const struct fourcc_desc desc_audio[] = {
     { { { 0x78, 0x61, 0x20, 0x20 } }, "PSX XA ADPCM Audio" },
 };
 
-static const struct fourcc_mapping mapping_spu[] = {
+static const fourcc_mapping mapping_spu[] = {
     { { { 0x44, 0x58, 0x53, 0x41 } }, { { 0x58, 0x53, 0x55, 0x42 } } },
     { { { 0x44, 0x58, 0x53, 0x42 } }, { { 0x58, 0x53, 0x55, 0x42 } } },
     { { { 0x63, 0x63, 0x31, 0x20 } }, { { 0x63, 0x36, 0x30, 0x38 } } },
@@ -1876,7 +1889,7 @@ static const struct fourcc_mapping mapping_spu[] = {
     { { { 0x74, 0x74, 0x6d, 0x6c } }, { { 0x73, 0x74, 0x70, 0x70 } } },
     { { { 0x78, 0x73, 0x75, 0x62 } }, { { 0x58, 0x53, 0x55, 0x42 } } },
 };
-static const struct fourcc_desc desc_spu[] = {
+static const fourcc_desc desc_spu[] = {
     { { { 0x53, 0x43, 0x32, 0x37 } }, "SCTE-27 subtitles" },
     { { { 0x53, 0x54, 0x4c, 0x20 } }, "EBU STL subtitles" },
     { { { 0x54, 0x45, 0x58, 0x54 } }, "Plain text subtitles" },
@@ -1901,3 +1914,4 @@ static const struct fourcc_desc desc_spu[] = {
     { { { 0x75, 0x73, 0x66, 0x20 } }, "USF subtitles" },
     { { { 0x77, 0x76, 0x74, 0x74 } }, "WEBVTT subtitles" },
 };
+} // namespace base::media::ffmpeg::video

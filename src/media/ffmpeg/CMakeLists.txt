@@ -67,10 +67,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpus.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/Util_FindFFmpeg.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/Util_FindGSL.cmake)
 
-target_link_libraries(lib_base_ffmpeg
-    PUBLIC
-    app::external_ffmpeg)
-
 set_target_properties(
     lib_base_ffmpeg PROPERTIES
     CXX_STANDARD 23
@@ -81,14 +77,17 @@ set_target_properties(
 
 target_compile_features(lib_base_ffmpeg PUBLIC cxx_std_23)
 
-
+target_link_libraries(lib_base_ffmpeg
+    PUBLIC
+    app:external_openh264
+    app::external_opus
+    app::external_ffmpeg)
 find_ms_gsl(lib_base_ffmpeg)
 
-if(LIB_BASE_ENABLE_QT)
-    message(ffmpegenableqte)
-    include(${PROJECT_SOURCE_DIR}/cmake/Util_FindQt.cmake)
-    find_qt(lib_base_ffmpeg)
-endif()
+#if(LIB_BASE_ENABLE_QT)
+include(${PROJECT_SOURCE_DIR}/cmake/Util_FindQt.cmake)
+find_qt(lib_base_ffmpeg)
+#endif()
 
 
 target_sources(lib_base_ffmpeg PUBLIC ${FFMPEG_PRIVATE_SOURCES})

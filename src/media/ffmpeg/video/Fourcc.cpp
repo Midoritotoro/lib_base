@@ -2,39 +2,6 @@
 
 
 namespace base::media::ffmpeg::video {
-    namespace {
-        inline constexpr fourcc_desc desc_audio[] = {
-            {{'a','a','c',' '}, "AAC audio"},
-             {{'m','p','4','a'}, "MP4A audio"},
-             {{'m','p','3',' '}, "MP3 audio"},
-             {{'a','c','3',' '}, "AC3 audio"}
-        };
-        inline constexpr fourcc_mapping mapping_audio[] = {
-            {{'m','p','4','a'},{'a'}},
-            {{'m','p','3',' '},{'m'}}
-        };
-
-        inline constexpr fourcc_desc desc_video[] = {
-            {{'h','2','6','4'}, "H264 codec"},
-            {{'x','2','6','4'}, "X264 codec"},
-            {{'m','p','e','g'}, "MPEG codec"},
-            {{'a','v','c','1'}, "AVC1 codec"}
-        };
-
-        inline constexpr fourcc_mapping mapping_video[] = {
-          {{'x','2','6','4'},{'h'}}
-        };
-
-        inline constexpr fourcc_desc desc_spu[] = {
-            {{'s','r','t',' '}, "srt sub"},
-            {{'s','u','b',' '}, "sub sub"},
-            {{'t','x','t',' '}, "txt sub"},
-        };
-        static const struct fourcc_mapping mapping_spu[] = {
-            {}
-        };
-    } // namespace
-
     int FourccCmp(
         const void* key,
         const void* ent)

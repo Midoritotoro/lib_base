@@ -1,12 +1,12 @@
 #include <base/media/ffmpeg/video/Picture.h>
-
-#include <base/concurrent/common/CommonAncillary.h>
 #include <base/media/ffmpeg/video/Fourcc.h>
 
-#include <base/media/ffmpeg/video/Object.h>
-#include <base/media/ffmpeg/video/Config.h>
-
 #include <base/media/ffmpeg/video/Chroma.h>
+#include <base/system/SystemConfig.h>
+
+
+#define TICK_INVALID                    INT64_C(0)
+#define TICK_0                          INT64_C(1)
 
 
 namespace base::media::ffmpeg::video {
@@ -48,7 +48,7 @@ namespace base::media::ffmpeg::video {
 
     void PictureDestroy(picture_t* picture)
     {
-        Assert(AtomicRcDec(&picture->refs) == 0);
+       // Assert(AtomicRcDec(&picture->refs) == 0);
 
         PictureDestroyContext(picture);
 
@@ -57,15 +57,15 @@ namespace base::media::ffmpeg::video {
 
         priv->gc.destroy(picture);
 
-        Threads::AncillaryArrayClear(&priv->ancillaries);
+      //  Threads::AncillaryArrayClear(&priv->ancillaries);
         VideoFormatClean(&picture->format);
         free(priv);
     }
 
     void PictureRelease(picture_t* picture)
     {
-        if (Threads::AtomicRcDec(&picture->refs))
-            PictureDestroy(picture);
+      //  if (Threads::AtomicRcDec(&picture->refs))
+        PictureDestroy(picture);
     }
 
     void PictureDestroyContext(picture_t* p_picture)
@@ -210,7 +210,7 @@ namespace base::media::ffmpeg::video {
             return false;
         }
 
-        Threads::AtomicRcInit(&p_picture->refs);
+       // Threads::AtomicRcInit(&p_picture->refs);
         priv->gc.opaque = NULL;
 
         p_picture->p_sys = p_resource->p_sys;
@@ -220,7 +220,7 @@ namespace base::media::ffmpeg::video {
         else
             priv->gc.destroy = PictureDestroyDummy;
 
-        Threads::AncillaryArrayInit(&priv->ancillaries);
+       // Threads::AncillaryArrayInit(&priv->ancillaries);
 
         return true;
     }
@@ -355,7 +355,7 @@ namespace base::media::ffmpeg::video {
         const picture_priv_t* src_priv = container_of(p_src, picture_priv_t, picture);
         picture_priv_t* dst_priv = container_of(p_dst, picture_priv_t, picture);
 
-        Threads::AncillaryArrayDup(&dst_priv->ancillaries, &src_priv->ancillaries);
+     //   Threads::AncillaryArrayDup(&dst_priv->ancillaries, &src_priv->ancillaries);
     }
 
     void PictureCopy(

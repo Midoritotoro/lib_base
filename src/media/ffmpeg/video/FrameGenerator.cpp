@@ -13,9 +13,6 @@
 #include <base/qt/common/Size.h>
 #include <QFile>
 
-#ifdef min
-#undef min
-#endif // min
 
 namespace base::media::ffmpeg::video {
 	namespace {
@@ -45,7 +42,7 @@ FrameGenerator::FrameGenerator(
 	_bytes(bytes)
 	, _swscaleFlags(swscaleFlags)
 {
-	measureExecutionTime("FrameGenerator::FrameGenerator")
+//	measureExecutionTime("FrameGenerator::FrameGenerator")
 
 	if (_bytes.isEmpty())
 		return;

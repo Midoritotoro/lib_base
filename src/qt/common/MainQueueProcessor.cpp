@@ -5,8 +5,8 @@
 
 #include <QEvent>
 
-#include <base/Concurrent.h>
-#include <base/Assert.h>
+#include <base/concurrent/Concurrent.h>
+#include <base/utility/Assert.h>
 
 
 namespace base::qt::common {

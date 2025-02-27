@@ -4,8 +4,8 @@ project(lib_baseTests LANGUAGES CXX)
 if (PROJECT_IS_TOP_LEVEL)
     find_package(lib_base REQUIRED COMPONENTS
         lib_base 
-      #  lib_baseQt 
-       #  lib_baseFFmpeg 
+        lib_baseQt 
+        lib_baseFFmpeg 
     )
 endif()
 
@@ -21,6 +21,6 @@ add_executable(lib_base_test test.cpp)
 target_link_libraries(
     lib_base_test PRIVATE
     lib_base::lib_base
-  #  lib_base::lib_baseQt
-   #  lib_base::lib_baseFFmpeg
+    lib_base::lib_baseQt
+    lib_base::lib_baseFFmpeg
 )
