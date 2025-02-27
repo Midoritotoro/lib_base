@@ -1,8 +1,6 @@
 #include <base/media/ffmpeg/video/VideoFormat.h>
 
 #include <base/concurrent/common/CommonAncillary.h>
-#include <base/media/ffmpeg/video/Object.h>
-
 #include <base/utility/Math.h>
 
 namespace base::media::ffmpeg::video {
@@ -10,12 +8,12 @@ namespace base::media::ffmpeg::video {
     {
         decoder_device_priv* priv =
             container_of(device, decoder_device_priv, device);
-        if (AtomicRcDec(&priv->rc))
+       // if (AtomicRcDec(&priv->rc))
         {
             if (device->ops->close != NULL)
                 device->ops->close(device);
-            objres_clear(OBJECT(device));
-            object_delete(OBJECT(device));
+            //objres_clear(OBJECT(device));
+            //object_delete(OBJECT(device));
         }
     }
 
@@ -31,7 +29,7 @@ namespace base::media::ffmpeg::video {
 
     void VideoContextRelease(video_context* vctx)
     {
-        if (AtomicRcDec(&vctx->rc))
+       // if (AtomicRcDec(&vctx->rc))
         {
             if (vctx->device)
                 DecoderDeviceRelease(vctx->device);

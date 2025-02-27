@@ -5,22 +5,15 @@ set(libs_loc "D:/Libraries/win64")
 
 set(FFMPEG_PRIVATE_SOURCES 
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Chroma.cpp
-    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/ColorSpace.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Filter.cpp
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Fourcc.cpp
 
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/FrameGenerator.cpp
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/HardwareAcceleration.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Object.cpp
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Picture.cpp
-
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Scale.cpp
-    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/SubPicture.cpp
 
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/ThumbnailGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/Variables.cpp
 
     ${PROJECT_SOURCE_DIR}/src/media/ffmpeg/video/VideoFormat.cpp
 
@@ -38,23 +31,16 @@ set(FFMPEG_PUBLIC_HEADERS
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Chroma.h
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/ColorSpace.h
 
-    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Config.h
-    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Filter.h
-
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Fourcc.h
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/FourccCodecs.h
 
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/FrameGenerator.h
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/HardwareAcceleration.h
 
-    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Object.h
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Picture.h
 
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Scale.h
-    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/SubPicture.h
-
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/ThumbnailGenerator.h
-    ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/Variables.h
 
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/VideoFormat.h
     ${PROJECT_SOURCE_DIR}/include/base/media/ffmpeg/video/VideoHelper.h

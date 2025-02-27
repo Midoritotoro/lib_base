@@ -1,7 +1,7 @@
-#include "AbstractAudioLoader.h"
+#include <base/media/ffmpeg/audio/AbstractAudioLoader.h>
 
- 
-namespace FFmpeg {
+
+namespace base::media::ffmpeg::audio {
 
 	AbstractAudioLoader::AbstractAudioLoader(const QByteArray& data) :
 		_data(data)

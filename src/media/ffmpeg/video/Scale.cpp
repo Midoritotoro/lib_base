@@ -4,10 +4,8 @@
 #include <cstdlib>
 #include <malloc.h>
 
-#include <base/media/ffmpeg/video/Variables.h>
-#include <base/media/ffmpeg/video/Picture.h>
-
 #include <base/system/SystemInfo.h>
+#include <base/media/ffmpeg/video/ColorSpace.h>
 
 extern "C" {
     #include <libswscale/version.h>
@@ -20,10 +18,6 @@ extern "C" {
 
 
 namespace base::media::ffmpeg::video {
-    inline constexpr filter_operations filter_ops = {
-        .filter_video = Filter, .close = CloseScaler,
-    };
-
     void Clean(filter_t* p_filter)
     {
         filter_sys_t* p_sys = (filter_sys_t*)p_filter->p_sys;
@@ -57,11 +51,10 @@ namespace base::media::ffmpeg::video {
 
     int OpenScaler(filter_t* p_filter)
     {
-        filter_sys_t* p_sys;
+        filter_sys_t* p_sys = nullptr;
+        int i_sws_mode = -1;
 
-        int i_sws_mode;
-
-        if (GetParameters(NULL,
+        if (GetParameters(nullptr,
             &p_filter->fmt_in.video,
             &p_filter->fmt_out.video, 0))
             return EGENERIC;
@@ -70,22 +63,55 @@ namespace base::media::ffmpeg::video {
         if ((p_filter->p_sys = p_sys = (filter_sys_t*)calloc(1, sizeof(filter_sys_t))) == NULL)
             return ENOMEM;
 
-        /* */
-        i_sws_mode = var_CreateGetInteger(OBJECT(p_filter), "swscale-mode");
-        switch (i_sws_mode)
-        {
-        case 0:  p_sys->i_sws_flags = SWS_FAST_BILINEAR; break;
-        case 1:  p_sys->i_sws_flags = SWS_BILINEAR; break;
-        case 2:  p_sys->i_sws_flags = SWS_BICUBIC; break;
-        case 3:  p_sys->i_sws_flags = SWS_X; break;
-        case 4:  p_sys->i_sws_flags = SWS_POINT; break;
-        case 5:  p_sys->i_sws_flags = SWS_AREA; break;
-        case 6:  p_sys->i_sws_flags = SWS_BICUBLIN; break;
-        case 7:  p_sys->i_sws_flags = SWS_GAUSS; break;
-        case 8:  p_sys->i_sws_flags = SWS_SINC; break;
-        case 9:  p_sys->i_sws_flags = SWS_LANCZOS; break;
-        case 10: p_sys->i_sws_flags = SWS_SPLINE; break;
-        default: p_sys->i_sws_flags = SWS_BICUBIC; i_sws_mode = 2; break;
+        switch (i_sws_mode) {
+            case 0:  
+                p_sys->i_sws_flags = SWS_FAST_BILINEAR; 
+                break;
+
+            case 1: 
+                p_sys->i_sws_flags = SWS_BILINEAR;
+                break;
+
+            case 2:  
+                p_sys->i_sws_flags = SWS_BICUBIC; 
+                break;
+
+            case 3:  
+                p_sys->i_sws_flags = SWS_X; 
+                break;
+
+            case 4: 
+                p_sys->i_sws_flags = SWS_POINT;
+                break;
+
+            case 5:  
+                p_sys->i_sws_flags = SWS_AREA;
+                break;
+
+            case 6:  
+                p_sys->i_sws_flags = SWS_BICUBLIN;
+                break;
+
+            case 7:  
+                p_sys->i_sws_flags = SWS_GAUSS; 
+                break;
+
+            case 8: 
+                p_sys->i_sws_flags = SWS_SINC;
+                break;
+
+            case 9:  
+                p_sys->i_sws_flags = SWS_LANCZOS;
+                break;
+
+            case 10: 
+                p_sys->i_sws_flags = SWS_SPLINE;
+                break;
+
+            default:
+                p_sys->i_sws_flags = SWS_BICUBIC; 
+                i_sws_mode = 2;
+                break;
         }
 
         /* Misc init */
@@ -126,7 +152,7 @@ namespace base::media::ffmpeg::video {
     }
 
     void GetPixels(uint8_t* pp_pixel[4], int pi_pitch[4],
-        const chroma_description_t* desc,
+        const Chroma::ChromaDescription* desc,
         const video_format_t* fmt,
         const picture_t* p_picture, unsigned planes,
         bool b_swap_uv)
@@ -273,8 +299,8 @@ namespace base::media::ffmpeg::video {
         bool b_swap_uvi = false;
         bool b_swap_uvo = false;
 
-        i_fmti = FindFfmpegChroma(p_fmti->i_chroma, &b_swap_uvi);
-        i_fmto = FindFfmpegChroma(p_fmto->i_chroma, &b_swap_uvo);
+        i_fmti = Chroma::FindFfmpegChroma(p_fmti->i_chroma, &b_swap_uvi);
+        i_fmto = Chroma::FindFfmpegChroma(p_fmto->i_chroma, &b_swap_uvo);
 
         if (p_fmti->i_chroma == p_fmto->i_chroma)
         {
@@ -419,8 +445,8 @@ namespace base::media::ffmpeg::video {
             return EGENERIC;
         }
 
-        p_sys->desc_in = FourccGetChromaDescription(p_fmti->i_chroma);
-        p_sys->desc_out = FourccGetChromaDescription(p_fmto->i_chroma);
+        p_sys->desc_in = Chroma::FourccGetChromaDescription(p_fmti->i_chroma);
+        p_sys->desc_out = Chroma::FourccGetChromaDescription(p_fmto->i_chroma);
         if (p_sys->desc_in == NULL || p_sys->desc_out == NULL)
             return EGENERIC;
 

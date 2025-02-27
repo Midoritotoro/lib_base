@@ -10,6 +10,28 @@
 
 
 namespace base::media::ffmpeg::video {
+    template <typename type>
+    inline bool ckd_add(type* r, type a, type b)
+    {
+        *r = a + b;
+        return ((type)(a + b)) < a;
+    }
+
+    template <typename type>
+    inline bool ckd_sub(type* r, type a, type b)
+    {
+        *r = a - b;
+        return a < b;
+    }
+
+    template <typename type>
+    inline bool ckd_mul(type* r, type a, type b)
+    {
+        if (b == 0) return true;
+        *r = a * b;
+        return a > (INT_MAX / b);
+    }
+
     picture_t* PictureNew(
         fourcc_t i_chroma, int i_width,
         int i_height, int i_sar_num,
@@ -88,9 +110,9 @@ namespace base::media::ffmpeg::video {
 
     int PictureSetup(picture_t* p_picture, const video_format_t* fmt)
     {
-        const chroma_description_t* p_dsc =
-            FourccGetChromaDescription(fmt->i_chroma);
-        if (unlikely(!p_dsc))
+        const Chroma::ChromaDescription* p_dsc =
+            Chroma::FourccGetChromaDescription(fmt->i_chroma);
+        if (UNLIKELY(!p_dsc))
             return EGENERIC;
 
         /* Store default values */
@@ -134,15 +156,15 @@ namespace base::media::ffmpeg::video {
 
         unsigned width, height;
 
-        if (unlikely(ckd_add(&width, fmt->i_width, i_modulo_w - 1))
-            || unlikely(ckd_add(&height, fmt->i_height, i_modulo_h - 1)))
+        if (UNLIKELY(ckd_add(&width, fmt->i_width, i_modulo_w - 1))
+            || UNLIKELY(ckd_add(&height, fmt->i_height, i_modulo_h - 1)))
             return EGENERIC;
 
         width = width / i_modulo_w * i_modulo_w;
         height = height / i_modulo_h * i_modulo_h;
 
         /* plane_t uses 'int'. */
-        if (unlikely(width > INT_MAX) || unlikely(height > INT_MAX))
+        if (UNLIKELY(width > INT_MAX) || UNLIKELY(height > INT_MAX))
             return EGENERIC;
 
         for (unsigned i = 0; i < p_dsc->plane_count; i++)
@@ -283,9 +305,12 @@ namespace base::media::ffmpeg::video {
 
     void PlaneCopyPixels(plane_t* p_dst, const plane_t* p_src)
     {
-        const unsigned i_width = std::min(p_dst->i_visible_pitch,
+        const unsigned i_width = std::min(
+            p_dst->i_visible_pitch,
             p_src->i_visible_pitch);
-        const unsigned i_height = std::min(p_dst->i_visible_lines,
+
+        const unsigned i_height = std::min(
+            p_dst->i_visible_lines,
             p_src->i_visible_lines);
 
         /* The 2x visible pitch check does two things:

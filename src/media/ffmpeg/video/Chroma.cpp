@@ -168,7 +168,7 @@ namespace base::media::ffmpeg::video {
            {CODEC_XYZ_12B, AV_PIX_FMT_XYZ12BE,  COLOR_RANGE_UNDEF },
         };
 
-        inline constexpr chroma_description_t chromaDescriptionList[] = {
+        inline constexpr Chroma::ChromaDescription chromaDescriptionList[] = {
             { CODEC_I411,                  PLANAR_8(3, 4, 1) },
             { CODEC_I410,                  PLANAR_8(3, 4, 4) },
             { CODEC_I420,                  PLANAR_8(3, 2, 2) },
@@ -315,7 +315,7 @@ namespace base::media::ffmpeg::video {
         };
     } // namespace
 
-    int GetVlcChroma(
+    int Chroma::GetChroma(
         video_format_t* fmt,
         enum AVPixelFormat i_ffmpeg_chroma)
     {
@@ -332,7 +332,7 @@ namespace base::media::ffmpeg::video {
         return EGENERIC;
     }
 
-    enum AVPixelFormat FindFfmpegChroma(
+    enum AVPixelFormat Chroma::FindFfmpegChroma(
         fourcc_t fourcc,
         bool* uv_flipped)
     {
@@ -346,8 +346,8 @@ namespace base::media::ffmpeg::video {
     }
 
 
-    const chroma_description_t* 
-        FourccGetChromaDescription(fourcc_t i_fourcc)
+    const Chroma::ChromaDescription*
+        Chroma::FourccGetChromaDescription(fourcc_t i_fourcc)
     {
         for (size_t i = 0; i < ARRAY_SIZE(chromaDescriptionList); i++)
             if (chromaDescriptionList[i].fcc == i_fourcc)

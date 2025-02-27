@@ -1,6 +1,8 @@
 #pragma once
 
-#include <base/media/ffmpeg/video/Filter.h>
+#include <base/media/ffmpeg/video/Picture.h>
+#include <base/media/ffmpeg/video/Chroma.h>
+
 
 extern "C" {
     #include <libswscale/swscale.h>
@@ -10,6 +12,20 @@ extern "C" {
 #define MINIMUM_WIDTH               (32)
 
 namespace base::media::ffmpeg::video {
+    struct filter_t
+    {
+        void* p_sys;
+
+        /* Input format */
+        es_format_t         fmt_in;
+        struct video_context* vctx_in;  // video filter, set by owner
+
+        /* Output format of filter */
+        es_format_t         fmt_out;
+        struct video_context* vctx_out; // video filter, handled by the filter
+        bool                b_allow_fmt_out_change;
+    };
+
     struct ScalerConfiguration {
         enum AVPixelFormat i_fmti;
         enum AVPixelFormat i_fmto;
@@ -30,7 +46,7 @@ namespace base::media::ffmpeg::video {
     void CloseScaler(filter_t* p_filter);
 
     void GetPixels(uint8_t* pp_pixel[4], int pi_pitch[4],
-        const chroma_description_t* desc,
+        const Chroma::ChromaDescription* desc,
         const video_format_t* fmt,
         const picture_t* p_picture, unsigned planes,
         bool b_swap_uv);

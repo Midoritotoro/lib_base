@@ -1,6 +1,6 @@
 #pragma once 
 
 
-namespace FFmpeg {
+namespace base::media::ffmpeg::audio {
 
 } // namespace FFmppeg

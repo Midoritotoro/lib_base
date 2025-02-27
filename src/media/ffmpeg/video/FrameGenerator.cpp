@@ -1,7 +1,7 @@
 #include <base/media/ffmpeg/video/FrameGenerator.h>
 
-#include <base/Concurrent.h>
-#include <base/Utility.h>
+#include <base/concurrent/Concurrent.h>
+#include <base/utility/Algorithm.h>
 
 #include <functional>
 #include <QApplication>

@@ -3,8 +3,6 @@
 #include <base/media/ffmpeg/video/VideoHelper.h>
 #include <base/media/ffmpeg/video/Fourcc.h>
 
-#include <base/media/ffmpeg/video/Object.h>
-#include <base/concurrent/common/CommonAncillary.h>
 
 
 namespace base::media::ffmpeg::video {
@@ -27,7 +25,6 @@ namespace base::media::ffmpeg::video {
 
     struct decoder_device
     {
-        object_t obj;
         const struct decoder_device_operations* ops;
 
         /** Private context that could be used by the "decoder device" module
@@ -68,7 +65,6 @@ namespace base::media::ffmpeg::video {
     struct decoder_device_priv
     {
         struct decoder_device device;
-        Threads::atomic_rc_t rc;
     };
 
     struct video_format_t
@@ -277,7 +273,6 @@ namespace base::media::ffmpeg::video {
 
     struct video_context
     {
-        Threads::atomic_rc_t    rc;
         decoder_device* device;
         const struct video_context_operations* ops;
         enum video_context_type private_type;
@@ -307,9 +302,6 @@ namespace base::media::ffmpeg::video {
         tick_t  i_dts;
         tick_t  i_length;
 
-        /** Private ancillary struct. Don't use it directly, but use it via
-         * vlc_frame_AttachAncillary() and vlc_frame_GetAncillary(). */
-        Threads::ancillary** priv_ancillaries;
 
         const frame_callbacks* cbs;
     };
