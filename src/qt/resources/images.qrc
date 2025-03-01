@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/assets/images">
+        <file>assets/images/button_close.png</file>
+        <file>assets/images/button_minimize.png</file>
+        <file>assets/images/play.png</file>
+        <file>assets/images/player_fullscreen.png</file>
+        <file>assets/images/player_minimize.png</file>
+        <file>assets/images/repeat.png</file>
+        <file>assets/images/shadow_close.png</file>
+        <file>assets/images/shadow_minimize.png</file>
+        <file>assets/images/speaker_white_off.png</file>
+        <file>assets/images/speaker_white_on.png</file>
+        <file>assets/images/speaker_white_small_on.png</file>
+        <file>assets/images/speed_button.png</file>
+        <file>assets/images/stop.png</file>
+        <file>assets/images/SliderStyle.assets/images</file>
+    </qresource>
+</RCC>

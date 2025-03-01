@@ -11,7 +11,7 @@ namespace base::qt::ui {
 		QPushButton(parent)
 		, _state(State::FullScreenFrom)
 	{
-		_fullScreenTo = QImage(":/assets/images/player_fullscreen.png");
+		_fullScreenTo = QImage("D:/lib_base/lib_base/assets/images/player_fullscreen.png");
 		_fullScreenFrom = QImage(":/assets/images/player_minimize.png");
 
 		setAttribute(Qt::WA_NoSystemBackground);

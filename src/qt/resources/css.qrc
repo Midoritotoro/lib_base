@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/src/qt/css">
+        <file>css/ScrollAreaStyle.css</file>
+        <file>css/SliderStyle.css</file>
+    </qresource>
+</RCC>
