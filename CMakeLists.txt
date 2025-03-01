@@ -41,12 +41,12 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(LIB_BASE_BUILD_TESTS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT ON)
+set(LIB_BASE_ENABLE_QT OFF)
 
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG ON)
+set(LIB_BASE_ENABLE_FFMPEG OFF)
 
-set(LIB_BASE_ENABLE_ZLIB ON)
+set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -141,6 +141,7 @@ set(PRIVATE_SOURCES
 
 set(PUBLIC_HEADERS 
     include/base/utility/Assert.h
+    include/base/core/BaseNamespace.h
 
     include/base/utility/Algorithm.h
     include/base/concurrent/Concurrent.h

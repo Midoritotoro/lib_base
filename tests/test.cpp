@@ -4,6 +4,8 @@
 #include <base/core/AtomicInteger.h>
 #include <base/core/Thread.h>
 
+#include <base/core/BaseNamespace.h>
+
 #include <stdio.h>
 #include <corecrt.h>
 
@@ -12,6 +14,7 @@
 
 #include <base/io/File.h>
 #include <thread>
+
 
 //#include <base/qt/ui/FlatLabel.h>
 
