@@ -41,12 +41,12 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(LIB_BASE_BUILD_TESTS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT OFF)
+set(LIB_BASE_ENABLE_QT ON)
 
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG OFF)
+set(LIB_BASE_ENABLE_FFMPEG ON)
 
-set(LIB_BASE_ENABLE_ZLIB OFF)
+set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -65,11 +65,6 @@ set(PRIVATE_SOURCES
     src/concurrent/win/WinapiList.cpp
 
     src/concurrent/win/WinapiSemaphore.cpp
-
-    src/concurrent/common/CommonAncillary.cpp
-    
-    src/concurrent/win/WinapiAtomic.cpp
-    src/concurrent/win/WinapiThreads.cpp
 
 	src/images/ImagesBuffer.cpp
     src/images/ImagesPrepare.cpp
@@ -169,17 +164,12 @@ set(PUBLIC_HEADERS
     include/base/concurrent/common/CommonSync.h
     include/base/concurrent/common/CommonUtils.h
 
-    include/base/concurrent/common/CommonAncillary.h
-
     include/base/concurrent/win/WinapiAsync.h
 
     include/base/concurrent/win/WinapiDll.h
 
     include/base/concurrent/win/WinapiList.h
     include/base/concurrent/win/WinapiSemaphore.h
-
-    include/base/concurrent/win/WinapiAtomic.h
-    include/base/concurrent/win/WinapiThreads.h
 
     include/base/core/BaseExport.h
     include/base/utility/TypeWrapper.h
@@ -373,6 +363,13 @@ endif()
 #endif()
 
 if(LIB_BASE_ENABLE_FFMPEG)
+    include(cmake/Util_FindFFmpeg.cmake)
+    find_ffmpeg(lib_base)
+
+    if (LIB_BASE_ENABLE_QT)
+        find_ffmpeg(lib_base_qt)
+    endif()
+
     add_subdirectory(src/media/ffmpeg)
 
     add_library(lib_baseFFmpeg INTERFACE)

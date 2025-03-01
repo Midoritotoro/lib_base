@@ -19,4 +19,4 @@ namespace base::images {
 		QImage image,
 		const QSize& _outer);
 #endif
-} // namespace base::qt::images
+} // namespace base::images

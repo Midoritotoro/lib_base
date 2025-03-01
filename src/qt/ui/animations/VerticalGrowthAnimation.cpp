@@ -1,5 +1,5 @@
 #include <base/qt/ui/animations/VerticalGrowthAnimation.h>
-#include <base/Concurrent.h>
+#include <base/concurrent/Concurrent.h>
 
 
 namespace base::qt::ui::animations {

@@ -9,7 +9,7 @@
 #include <QString>
 
 #include <text/TextEntities.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 
 namespace base::qt::common {

@@ -6,9 +6,8 @@
 #include <functional>
 #include <base/qt/ui/EnhancedSlider.h>
 
-class SpeedController;
-
 namespace base::qt::ui {
+	class SpeedController;
 	class SpeedButtonOverlay : public QWidget {
 		Q_OBJECT
 	private:

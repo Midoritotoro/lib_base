@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 #include <QPointer>
 #include <QObject>

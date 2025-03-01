@@ -6,7 +6,7 @@
 #include <QMimeDataBase>
 #include <QFile>
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 #include <base/qt/style/StyleScale.h>
 
 #include <QPixmapCache>

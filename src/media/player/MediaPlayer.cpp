@@ -14,11 +14,7 @@
 #include <base/media/player/VideoStateWidget.h>
 
 #include <base/images/ImagesPrepare.h>
-#include <base/Utility.h>
-
-extern "C" {
-
-}
+#include <base/utility/Algorithm.h>
 
 
 namespace {
@@ -32,14 +28,13 @@ namespace {
 	}
 } // namespace
 
-namespace base::qt::ui {
-
+namespace base::media {
 	MediaPlayer::MediaPlayer(QWidget* parent) :
 		QWidget(parent)
 		, _manager(std::make_unique<Manager>())
 	{
-		_mediaPlayerPanel = new MediaPlayerPanel(this);
-		_widgetsHider = std::make_unique<WidgetsHider>(false, true, QWidgetList({ _mediaPlayerPanel, _mediaPlayerPanel->speedController() }));
+		_mediaPlayerPanel = new base::qt::ui::MediaPlayerPanel(this);
+		_widgetsHider = std::make_unique<base::qt::ui::WidgetsHider>(false, true, QWidgetList({ _mediaPlayerPanel, _mediaPlayerPanel->speedController() }));
 
 		_widgetsHider->SetInactivityDuration(3000);
 		_widgetsHider->SetAnimationDuration(3000);
@@ -58,13 +53,13 @@ namespace base::qt::ui {
 			});
 
 		connect(_manager.get(), &Manager::endOfMedia, this, [this] {
-			_mediaPlayerPanel->updateStateWidget(VideoStateWidget::State::Repeat);
+			_mediaPlayerPanel->updateStateWidget(base::qt::ui::VideoStateWidget::State::Repeat);
 			qDebug() << "Media player time taken: " << static_cast<double>(Time::now() - _currMs) / 1000 << " seconds";
 			if (_manager->hasVideo() || _manager->hasAudio())
 				cleanUp();
 			});
 
-		connect(_manager.get(), &Manager::durationChanged, _mediaPlayerPanel, &MediaPlayerPanel::setVideoSliderMaximum);
+		connect(_manager.get(), &Manager::durationChanged, _mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::setVideoSliderMaximum);
 		connect(_manager.get(), &Manager::positionChanged, this, [this](qint64 position) {
 			disconnect(_mediaPlayerPanel->playbackSlider(), &QSlider::valueChanged, _manager.get(), &Manager::rewind);
 			_mediaPlayerPanel->playbackSlider()->setValue(position);
@@ -77,30 +72,30 @@ namespace base::qt::ui {
 			_playbackState = state;
 			switch (state) {
 			case Manager::State::Playing:
-				_mediaPlayerPanel->updateStateWidget(VideoStateWidget::State::Pause);
+				_mediaPlayerPanel->updateStateWidget(base::qt::ui::VideoStateWidget::State::Pause);
 				break;
 
 			case Manager::State::Paused:
-				_mediaPlayerPanel->updateStateWidget(VideoStateWidget::State::Play);
+				_mediaPlayerPanel->updateStateWidget(base::qt::ui::VideoStateWidget::State::Play);
 				break;
 			}
 			});
 
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::videoRepeatClicked, [this] {
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::videoRepeatClicked, [this] {
 			rewind(0);
 			_currMs = Time::now();
 			});
 
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::videoPlayClicked, this, &MediaPlayer::play);
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::videoPauseClicked, this, &MediaPlayer::pause);
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::videoPlayClicked, this, &MediaPlayer::play);
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::videoPauseClicked, this, &MediaPlayer::pause);
 
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::needsNormal, this, &MediaPlayer::setNormal);
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::needsFullScreen, this, &MediaPlayer::setFullScreen);
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::needsNormal, this, &MediaPlayer::setNormal);
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::needsFullScreen, this, &MediaPlayer::setFullScreen);
 
 		connect(_mediaPlayerPanel->playbackSlider(), &QSlider::valueChanged, _manager.get(), &Manager::rewind);
-		connect(_mediaPlayerPanel, &MediaPlayerPanel::needsChangeVolume, this, &MediaPlayer::changeVolume);
+		connect(_mediaPlayerPanel, &base::qt::ui::MediaPlayerPanel::needsChangeVolume, this, &MediaPlayer::changeVolume);
 
-		connect(_mediaPlayerPanel->speedController(), &SpeedController::speedChanged, _manager.get(), &Manager::setSpeed);
+		connect(_mediaPlayerPanel->speedController(), &base::qt::ui::SpeedController::speedChanged, _manager.get(), &Manager::setSpeed);
 
 		_mediaPlayerPanel->setVolume(20);
 
@@ -126,33 +121,33 @@ namespace base::qt::ui {
 			cleanUp();
 		}
 
-		_currentMediaType = Media::detectMediaType(path);
+		_currentMediaType = detectMediaType(path);
 		_currentMediaPath = path;
 
-		if (_currentMediaType == Media::Type::Unknown)
+		if (_currentMediaType == Type::Unknown)
 			return;
 
 		updatePanelVisibility();
 		const auto data = ReadFile(path);
 
 		switch (_currentMediaType) {
-		case Media::Type::Video:
-			_manager->setVideo(std::move(std::make_unique<FFmpeg::FrameGenerator>(data, SWS_BICUBIC)));
-			_mediaPlayerPanel->updateStateWidget(VideoStateWidget::State::Pause);
+		case Type::Video:
+			_manager->setVideo(std::move(std::make_unique<ffmpeg::video::FrameGenerator>(data, SWS_BICUBIC)));
+			_mediaPlayerPanel->updateStateWidget(base::qt::ui::VideoStateWidget::State::Pause);
 			play();
 
 			_currMs = Time::now();
 			break;
-		case Media::Type::Photo:
+		case Type::Photo:
 			_current.loadFromData(data);
 			_current = images::Prepare(_current, 0.7);
 
 			update();
 			break;
 
-		case Media::Type::Audio:
-			_manager->setAudio(std::move(std::make_unique<FFmpeg::AudioReader>(data)));
-			_mediaPlayerPanel->updateStateWidget(VideoStateWidget::State::Pause);
+		case Type::Audio:
+			_manager->setAudio(std::move(std::make_unique<ffmpeg::audio::AudioReader>(data)));
+			_mediaPlayerPanel->updateStateWidget(base::qt::ui::VideoStateWidget::State::Pause);
 			play();
 
 			_currMs = Time::now();
@@ -210,14 +205,15 @@ namespace base::qt::ui {
 
 		const auto center = _current.size().width() < size().width()
 			|| _current.size().height() < size().height()
-			? QPoint((width() - _current.width()) / 2, (height() - _current.height()) / 2) : QPoint(0, 0);
+			? QPoint((width() - _current.width()) / 2,
+				(height() - _current.height()) / 2) : QPoint(0, 0);
 
 		_currentFrameRect = QRect(center, _current.size());
 
-		//if (_current.size().width() <= size().width() && _current.size().height() <= size().height())
-		//	painter.drawImage(center, _current);
-		//else
-		//	painter.drawImage(QRect(QPoint(0, 0), size()), _current);
+		if (_current.size().width() <= size().width() && _current.size().height() <= size().height())
+			painter.drawImage(center, _current);
+		else
+			painter.drawImage(QRect(QPoint(0, 0), size()), _current);
 
 		const auto text = "Fps: " + QString::number(_currFPS);
 		const auto frameTopLeft = _currentFrameRect.topLeft();
@@ -241,7 +237,7 @@ namespace base::qt::ui {
 			break;
 
 		case Manager::State::Paused:
-			if (_manager->hasVideo() == false && _currentMediaPath.isEmpty() == false && _currentMediaType == Media::Type::Video)
+			if (_manager->hasVideo() == false && _currentMediaPath.isEmpty() == false && _currentMediaType == Type::Video)
 				setMedia(_currentMediaPath);
 
 			if ((_manager->duration() - _manager->position()) <= 100)
@@ -255,7 +251,7 @@ namespace base::qt::ui {
 
 	void MediaPlayer::updatePanelVisibility() {
 		switch (_currentMediaType) {
-		case Media::Type::Video:
+		case Type::Video:
 			_widgetsHider->addWidget(_mediaPlayerPanel);
 			_widgetsHider->addWidget(_mediaPlayerPanel->speedController());
 
@@ -264,7 +260,7 @@ namespace base::qt::ui {
 
 			break;
 
-		case Media::Type::Photo:
+		case Type::Photo:
 			_widgetsHider->removeWidget(_mediaPlayerPanel);
 			_widgetsHider->removeWidget(_mediaPlayerPanel->speedController());
 
@@ -273,7 +269,7 @@ namespace base::qt::ui {
 
 			break;
 
-		case Media::Type::Audio:
+		case Type::Audio:
 			_widgetsHider->addWidget(_mediaPlayerPanel);
 			_widgetsHider->addWidget(_mediaPlayerPanel->speedController());
 

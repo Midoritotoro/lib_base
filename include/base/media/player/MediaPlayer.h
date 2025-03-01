@@ -9,7 +9,7 @@
 
 #include <base/media/MediaCommon.h>
 
-namespace base::qt::ui {
+namespace base::media {
 	class MediaPlayer final : public QWidget {
 		Q_OBJECT
 	public:
@@ -53,9 +53,9 @@ namespace base::qt::ui {
 		void updatePanelVisibility();
 
 		std::unique_ptr<Manager> _manager = nullptr;
-		MediaPlayerPanel* _mediaPlayerPanel = nullptr;
+		base::qt::ui::MediaPlayerPanel* _mediaPlayerPanel = nullptr;
 
-		std::unique_ptr<WidgetsHider> _widgetsHider = nullptr;
+		std::unique_ptr<base::qt::ui::WidgetsHider> _widgetsHider = nullptr;
 
 		QImage _current;
 		QRect _currentFrameRect;
@@ -65,7 +65,7 @@ namespace base::qt::ui {
 		Time::time_t _currMs;
 
 		MediaDisplayType _displayType = MediaDisplayType::Normal;
-		Media::Type _currentMediaType = Media::Type::Unknown;
+		media::Type _currentMediaType = media::Type::Unknown;
 
 		QString _currentMediaPath;
 		uint32 _currFPS = 0;

@@ -57,7 +57,7 @@ namespace base::qt::ui::animations {
 				break;
 
 			default:
-				unreachable();
+				AssertUnreachable();
 		}
 
 		_timer.setCallback([this] {
@@ -141,7 +141,7 @@ namespace base::qt::ui::animations {
 				_animation._combined->call();
 				break;
 			default:
-				unreachable();
+				AssertUnreachable();
 		}
 	}
 
@@ -160,7 +160,7 @@ namespace base::qt::ui::animations {
 			case CombinedGrowthAnimation::Corner::RightBottom:
 				break;
 			default:
-				unreachable();
+				AssertUnreachable();
 		}
 	}
 } // namespace base::qt::ui::animations

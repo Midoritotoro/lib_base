@@ -1,7 +1,7 @@
 #include <base/qt/ui/PopupMenu.h>
 
 #include <base/qt/ui/Separator.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 
 #include <QApplication>
 #include <QMouseEvent>

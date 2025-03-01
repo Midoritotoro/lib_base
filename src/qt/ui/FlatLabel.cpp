@@ -16,7 +16,7 @@
 #include <base/qt/style/StyleTypes.h>
 
 #include <QPainterPath>
-#include <base/Concurrent.h>
+#include <base/concurrent/Concurrent.h>
 
 #include <base/qt/text/TextUtility.h>
 #include <base/qt/common/Size.h>

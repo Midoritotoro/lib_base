@@ -45,7 +45,7 @@ namespace base::media {
 		Q_INVOKABLE void setDisplayType(bool showNormal);
 
 		void setVideo(std::unique_ptr<ffmpeg::video::FrameGenerator>&& generator, const QSize& size = QSize());
-		void setAudio(std::unique_ptr<FFmpeg::AudioReader>&& audio);
+		void setAudio(std::unique_ptr<ffmpeg::audio::AudioReader>&& audio);
 
 		[[nodiscard]] bool hasVideo() const noexcept;
 		[[nodiscard]] bool hasAudio() const noexcept;
@@ -63,7 +63,7 @@ namespace base::media {
 		QSize _size;
 
 		std::unique_ptr<ffmpeg::video::FrameGenerator> _frameGenerator = nullptr;
-		std::unique_ptr<FFmpeg::AudioReader> _audioReader = nullptr;
+		std::unique_ptr<ffmpeg::audio::AudioReader> _audioReader = nullptr;
 
 		State _state;
 

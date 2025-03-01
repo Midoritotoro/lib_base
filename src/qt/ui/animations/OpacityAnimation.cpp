@@ -1,7 +1,7 @@
 #include <base/qt/ui/animations/OpacityAnimation.h>
-#include <base/Assert.h>
+#include <base/utility/Assert.h>
 
-#include <base/Concurrent.h>
+#include <base/concurrent/Concurrent.h>
 
 
 namespace base::qt::ui::animations {

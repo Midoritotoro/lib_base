@@ -1,6 +1,6 @@
 #include <base/qt/ui/AbstractFlatButton.h>
 
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
 #include <base/qt/common/Size.h>
 
 #include <cmath>

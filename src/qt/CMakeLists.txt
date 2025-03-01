@@ -8,7 +8,6 @@ option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
 set(LIB_BASE_QT_ENABLE_FONTS ON)
 
 
-
 set(QT_PRIVATE_SOURCES 
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.cpp
     ${PROJECT_SOURCE_DIR}/src/qt/text/TextRenderer.h
@@ -150,8 +149,8 @@ set(QT_PUBLIC_HEADERS
 )
 
 
-set(IMAGE_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/qt_assets/images)
-set(CSS_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/qt/src/css)
+set(IMAGE_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/assets/images)
+set(CSS_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/src/qt/css)
 
 set(IMAGE_RESOURCES
     "${IMAGE_RESOURCES_DIR}/button_close.png"
@@ -173,11 +172,6 @@ set(IMAGE_RESOURCES
 set(CSS_RESOURCES
     "${CSS_RESOURCES_DIR}/ScrollAreaStyle.css"
     "${CSS_RESOURCES_DIR}/SliderStyle.css"
-)
-
-qt_add_resources(${PROJECT_NAME}
-    PREFIX "/assets/images" "/src/qt/css"
-    FILES ${IMAGE_RESOURCES} ${CSS_RESOURCES}
 )
 
 include(CMakePackageConfigHelpers)
@@ -206,10 +200,13 @@ add_library(lib_base_qt ${QT_PUBLIC_HEADERS} ${FFMPEG_QT_MEDIA_PLAYER_SOURCES})
 
 set_target_properties(
     lib_base_qt PROPERTIES
+
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
+
     AUTOMOC ON
     AUTORCC ON
+
     EXPORT_NAME lib_base_qt
     OUTPUT_NAME lib_base_qt
 )
@@ -249,6 +246,12 @@ if(LIB_BASE_ENABLE_FFMPEG)
          ${PROJECT_SOURCE_DIR}/src/media/MediaCommon.cpp
     )
 endif()
+
+qt_add_resources(lib_base_qt
+    PREFIX "/assets/images" "/src/qt/css"
+    FILES ${IMAGE_RESOURCES} ${CSS_RESOURCES}
+)
+
 
 target_include_directories(lib_base_qt
     PUBLIC

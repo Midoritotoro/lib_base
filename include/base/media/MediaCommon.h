@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/Types.h>
+#include <base/core/Types.h>
 #include <QString>
 
 #include <QSize>

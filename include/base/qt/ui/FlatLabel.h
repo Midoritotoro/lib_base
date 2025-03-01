@@ -9,7 +9,7 @@
 #include <base/qt/ui/PopupMenu.h>
 #include <base/qt/common/UniqueQPtr.h>
 
-#include <base/string/parser/String.h>
+#include <base/qt/text/String.h>
 
 
 namespace base::qt::ui {

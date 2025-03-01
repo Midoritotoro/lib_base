@@ -4,7 +4,7 @@
 #include <QAbstractEventDispatcher>
 
 #include <functional>
-#include <base/Concurrent.h>
+#include <base/concurrent/Concurrent.h>
 
 
 namespace base::media {
@@ -122,7 +122,7 @@ namespace base::media {
 		_thread->setPriority(QThread::HighestPriority);
 	}
 
-	void Manager::setAudio(std::unique_ptr<FFmpeg::AudioReader>&& audio) {
+	void Manager::setAudio(std::unique_ptr<ffmpeg::audio::AudioReader>&& audio) {
 		QMutexLocker locker(&_mutex);
 
 		_audioReader = std::move(audio);

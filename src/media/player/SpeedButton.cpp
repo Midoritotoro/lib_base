@@ -4,7 +4,10 @@
 #include <base/qt/style/StyleWidgets.h>
 
 #include <base/images/ImagesUtility.h>
-#include <base/Utility.h>
+#include <base/utility/Algorithm.h>
+
+#include <base/images/ImagesPrepare.h>
+#include <base/qt/common/Size.h>
 
 #include <base/qt/style/StyleCore.h>
 
@@ -14,6 +17,7 @@
 
 #include <QPainterPath>
 #include <QMouseEvent>
+
 
 namespace base::qt::ui {
 	SpeedButtonOverlay::SpeedButtonOverlay(QWidget* parent) :
@@ -47,7 +51,7 @@ namespace base::qt::ui {
 	}
 
 	void SpeedButtonOverlay::resizeEvent(QResizeEvent* event) {
-		_textRect = QRect(QPoint(), core::utility::TextSize(QString::number(_speed, 'f', 1) + "x", font()));
+		_textRect = QRect(QPoint(), common::TextSize(QString::number(_speed, 'f', 1) + "x", font()));
 		_textRect.moveTo(QPoint(style::mediaPlayerPanelMargins.left() * 0.5,
 			(height() - _textRect.height()) / 2.));
 
