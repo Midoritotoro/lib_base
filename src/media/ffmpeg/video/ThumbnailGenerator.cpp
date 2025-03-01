@@ -1,22 +1,18 @@
 #include <base/media/ffmpeg/video/ThumbnailGenerator.h>
 
-namespace base::media::ffmpeg::video {
-	QImage ThumbnailGenerator::generate(
-		const QString& path,
-		int swscaleFlags)
-	{
-		const auto ms = Time::now();
-		const auto timer = gsl::finally([=] { qDebug() << "ThumbnailGenerator::generate: " << Time::now() - ms << " ms"; });
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
 
-		auto generator = FrameGenerator(path, swscaleFlags, false);
-		return generator.renderNext(QSize(), Qt::IgnoreAspectRatio, false).image;
-	}
+QImage ThumbnailGenerator::generate(
+	const QString& path,
+	media::Quality quality)
+{
+	auto generator = video::FrameGenerator(path, media::QualityToSwscaleFlags(quality), false);
+	return generator.renderNext(QSize(), Qt::IgnoreAspectRatio, false).image;
+}
 
-	QSize ThumbnailGenerator::resolution(const QString& path) {
-		const auto ms = Time::now();
-		const auto timer = gsl::finally([=] { qDebug() << "ThumbnailGenerator::resolution: " << Time::now() - ms << " ms"; });
+QSize ThumbnailGenerator::resolution(const QString& path) {
+	auto generator = video::FrameGenerator(path, 0, false, false);
+	return generator.resolution();
+}
 
-		auto generator = FrameGenerator(path, 0, false, false);
-		return generator.resolution();
-	}
-} // namespace base::media::ffmpeg::video
+__BASE_MEDIA_FFMPEG_NAMESPACE_END

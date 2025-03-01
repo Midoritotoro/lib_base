@@ -97,9 +97,6 @@ namespace base::media::ffmpeg::video {
         video_color_range_t color_range;            /**< 0-255 instead of 16-235 */
         video_chroma_location_t chroma_location;      /**< YCbCr chroma location */
 
-        video_multiview_mode_t multiview_mode;        /** Multiview mode, 2D, 3D */
-        bool b_multiview_right_eye_first;   /** Multiview left or right eye first*/
-
         video_projection_mode_t projection_mode;            /**< projection mode */
         viewpoint_t pose;
         struct {
@@ -110,23 +107,7 @@ namespace base::media::ffmpeg::video {
             uint32_t max_luminance;
             uint32_t min_luminance;
         } mastering;
-        struct {
-            /* similar to CTA-861.3 content light level */
-            uint16_t MaxCLL;  /* max content light level */
-            uint16_t MaxFALL; /* max frame average light level */
-        } lighting;
-        struct {
-            uint8_t version_major;
-            uint8_t version_minor;
 
-            unsigned profile : 7;
-
-            unsigned level : 6;
-            unsigned rpu_present : 1;
-
-            unsigned el_present : 1;
-            unsigned bl_present : 1;
-        } dovi;
         uint32_t i_cubemap_padding; /**< padding in pixels of the cube map faces */
     };
 

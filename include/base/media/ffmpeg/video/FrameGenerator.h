@@ -3,9 +3,11 @@
 #include <base/media/ffmpeg/Utility.h>
 #include <base/system/Time.h>
 
+#include <base/media/ffmpeg/video/Scale.h>
 
 
-namespace base::media::ffmpeg::video {
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
+
 class ThumbnailGenerator;
 
 class FrameGenerator {
@@ -99,4 +101,5 @@ private:
 	friend class ThumbnailGenerator;
 };
 
-} // namespace FFmpeg
+
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

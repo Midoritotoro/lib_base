@@ -22,13 +22,13 @@ namespace base::media::ffmpeg::video {
         SwsContext* ctx;
         SwsContext* ctxA;
 
-        picture_t* p_src_a;
-        picture_t* p_dst_a;
+        Frame* p_src_a;
+        Frame* p_dst_a;
 
         int i_extend_factor;
 
-        picture_t* p_src_e;
-        picture_t* p_dst_e;
+        Frame* p_src_e;
+        Frame* p_dst_e;
 
         bool b_add_a;
         bool b_copy;

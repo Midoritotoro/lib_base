@@ -14,24 +14,26 @@
 #include <QFile>
 
 
-namespace base::media::ffmpeg::video {
-	namespace {
-		constexpr auto kMaxArea = 1920 * 1080 * 4;
 
-		[[nodiscard]] QByteArray ReadFile(const QString& filepath) {
-			auto file = QFile(filepath);
-			return file.open(QIODevice::ReadOnly)
-				? file.readAll()
-				: QByteArray();
-		}
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
-		[[nodiscard]] QByteArray ReadFile(const QString& filepath, int bytes) {
-			auto file = QFile(filepath);
-			return file.open(QIODevice::ReadOnly)
-				? file.read(bytes)
-				: QByteArray();
-		}
-	} // namespace
+namespace {
+	constexpr auto kMaxArea = 1920 * 1080 * 4;
+
+	[[nodiscard]] QByteArray ReadFile(const QString& filepath) {
+		auto file = QFile(filepath);
+		return file.open(QIODevice::ReadOnly)
+			? file.readAll()
+			: QByteArray();
+	}
+
+	[[nodiscard]] QByteArray ReadFile(const QString& filepath, int bytes) {
+		auto file = QFile(filepath);
+		return file.open(QIODevice::ReadOnly)
+			? file.read(bytes)
+			: QByteArray();
+	}
+} // namespace
 
 FrameGenerator::FrameGenerator(
 	const QByteArray& bytes,
@@ -42,8 +44,6 @@ FrameGenerator::FrameGenerator(
 	_bytes(bytes)
 	, _swscaleFlags(swscaleFlags)
 {
-//	measureExecutionTime("FrameGenerator::FrameGenerator")
-
 	if (_bytes.isEmpty())
 		return;
 
@@ -352,20 +352,12 @@ QSize FrameGenerator::recountMaximumFrameSize(const QSize& targetSize) {
 
 
 void FrameGenerator::readNextFrame() {
-//	measureExecutionTime("FrameGenerator::readNextFrame")
-	//	const auto milliseconds = Time::now();
-	//	const auto time = gsl::finally([&milliseconds] { qDebug() << "readNextFrame: " << Time::now() - milliseconds << " ms";  });
-
 	auto frame = _next.frame 
 		? std::exchange(_next.frame, {}) 
 		: MakeFramePointer();
 
-
 	while (true) {
-		auto ms = Time::now();
 		auto result = avcodec_receive_frame(_codec.get(), frame.get());
-
-	//	qDebug() << "avcodec_receive_frame(_codec.get(), frame.get()): " << Time::now() - ms << " ms";
 
 		if (result >= 0) {
 			if (frame->width * frame->height > kMaxArea)
@@ -384,8 +376,6 @@ void FrameGenerator::readNextFrame() {
 		auto packet = Packet();
 		auto finished = false;
 
-		ms = Time::now();
-
 		do {
 			const auto result = av_read_frame(
 				_format.get(),
@@ -398,9 +388,6 @@ void FrameGenerator::readNextFrame() {
 			else if (result < 0)
 				return;
 		} while (packet.fields().stream_index != _bestVideoStreamId);
-
-	//	qDebug() << "read frame while: " << Time::now() - ms << " ms";
-		ms = Time::now();
 
 		if (finished)
 			result = avcodec_send_packet(_codec.get(), nullptr);
@@ -417,7 +404,7 @@ void FrameGenerator::readNextFrame() {
 				});
 			result = avcodec_send_packet(_codec.get(), native);
 		}
-		//qDebug() << " avcodec_send_packet(_codec.get(), native): " << Time::now() - ms << " ms";
+
 		if (result < 0) 
 			return;
 		}
@@ -456,4 +443,5 @@ void FrameGenerator::resolveNextFrameTiming() {
 	++_frameIndex;
 }
 
-} //namespace base::media::ffmpeg::video
+
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

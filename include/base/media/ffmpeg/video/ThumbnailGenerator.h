@@ -2,14 +2,16 @@
 
 #include <QString>
 #include <base/media/ffmpeg/video/FrameGenerator.h>
+#include <base/media/MediaCommon.h>
 
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
 
-namespace base::media::ffmpeg::video {
-	class ThumbnailGenerator {
-	public:
-		[[nodiscard]] static QImage generate(
-			const QString& path,
-			int swscaleFlags = SWS_BICUBIC);
-		[[nodiscard]] static QSize resolution(const QString& path);
-	};
-} // namespace base::media::ffmpeg::video
+class ThumbnailGenerator {
+public:
+	[[nodiscard]] static QImage generate(
+		const QString& path,
+		media::Quality quality = media::Quality::Medium);
+	[[nodiscard]] static QSize resolution(const QString& path);
+};
+
+__BASE_MEDIA_FFMPEG_NAMESPACE_END

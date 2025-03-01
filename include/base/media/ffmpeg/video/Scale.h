@@ -11,72 +11,92 @@ extern "C" {
 
 #define MINIMUM_WIDTH               (32)
 
-namespace base::media::ffmpeg::video {
-    struct filter_t
-    {
-        void* p_sys;
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
-        /* Input format */
-        es_format_t         fmt_in;
-        struct video_context* vctx_in;  // video filter, set by owner
+struct filter_t
+{
+    filter_sys_t* p_sys;
 
-        /* Output format of filter */
-        es_format_t         fmt_out;
-        struct video_context* vctx_out; // video filter, handled by the filter
-        bool                b_allow_fmt_out_change;
-    };
+    /* Input format */
+    es_format_t         fmt_in;
+    struct video_context* vctx_in;  // video filter, set by owner
 
-    struct ScalerConfiguration {
-        enum AVPixelFormat i_fmti;
-        enum AVPixelFormat i_fmto;
+    /* Output format of filter */
+    es_format_t         fmt_out;
+    struct video_context* vctx_out; // video filter, handled by the filter
+    bool                b_allow_fmt_out_change;
+};
 
-        bool b_has_a;
-        bool b_add_a;
+struct ScalerConfiguration {
+    AVPixelFormat i_fmti;
+    AVPixelFormat i_fmto;
 
-        int  i_sws_flags;
-        bool b_copy;
+    bool b_has_a;
+    bool b_add_a;
 
-        bool b_swap_uvi;
-        bool b_swap_uvo;
-    };
+    int  i_sws_flags;
+    bool b_copy;
 
-	void Clean(filter_t* p_filter);
+    bool b_swap_uvi;
+    bool b_swap_uvo;
+};
 
-    int OpenScaler(filter_t* p_filter);
-    void CloseScaler(filter_t* p_filter);
+class FrameScaler {
+    FrameScaler(Frame* frame);
+    ~FrameScaler(); 
 
-    void GetPixels(uint8_t* pp_pixel[4], int pi_pitch[4],
+    void cleanMemory(filter_t* p_filter);
+
+    int openScaler(filter_t* p_filter);
+    void closeScaler(filter_t* p_filter);
+
+    [[nodiscard]] int initScaler(filter_t* p_filter);
+    [[nodiscard]] Frame* filter(
+        filter_t* p_filter,
+        Frame* p_pic);
+
+    void getPixels(uint8_t* pp_pixel[4], int pi_pitch[4],
         const Chroma::ChromaDescription* desc,
         const video_format_t* fmt,
-        const picture_t* p_picture, unsigned planes,
+        const Frame* p_picture, unsigned planes,
         bool b_swap_uv);
 
-    void Convert(filter_t* p_filter, struct SwsContext* ctx,
-        picture_t* p_dst, picture_t* p_src, int i_height,
+    void convert(
+        filter_t* p_filter, struct SwsContext* ctx,
+        Frame* p_dst, Frame* p_src, int i_height,
         int i_plane_count, bool b_swap_uvi, bool b_swap_uvo);
 
-	void FixParameters(
-		enum AVPixelFormat* pi_fmt,
-		bool* pb_has_a, fourcc_t fmt);
-	[[nodiscard]] int GetParameters(ScalerConfiguration* p_cfg,
-		const video_format_t* p_fmti,
-		const video_format_t* p_fmto,
-		int i_sws_flags_default);
+    void fixParameters(
+        enum AVPixelFormat* pi_fmt,
+        bool* pb_has_a, fourcc_t fmt);
+    [[nodiscard]] int getParameters(
+        ScalerConfiguration* p_cfg,
+        const video_format_t* p_fmti,
+        const video_format_t* p_fmto,
+        int i_sws_flags_default);
 
-    void ExtractA(picture_t* p_dst, const picture_t* p_src,
+    void extractA(
+        Frame* p_dst, 
+        const Frame* p_src,
         unsigned offset);
-    void InjectA(picture_t* p_dst, const picture_t* p_src,
+    void injectA(
+        Frame* p_dst,
+        const Frame* p_src,
         unsigned offset);
 
-    void FillA(plane_t* d, unsigned i_offset);
-    void CopyPad(picture_t* p_dst, const picture_t* p_src);
+    void fillA(
+        Frame* d,
+        unsigned i_offset);
+    void copyPad(
+        Frame* p_dst,
+        const Frame* p_src);
 
-    void SwapUV(
-        picture_t* p_dst,
-        const picture_t* p_src);
+    void swapUV(
+        Frame* p_dst,
+        const Frame* p_src);
+private:
+    std::unique_ptr<Frame> _frame = nullptr;
+};
 
-	[[nodiscard]] int Init(filter_t* p_filter);
-    [[nodiscard]] picture_t* Filter(
-        filter_t* p_filter,
-        picture_t* p_pic);
-} // namespace base::media::ffmpeg::video
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END
+

@@ -120,9 +120,6 @@ namespace base::media::ffmpeg::video {
         if (f1->orientation != f2->orientation)
             return false;
 
-        if (f1->multiview_mode != f2->multiview_mode)
-            return false;
-
         return true;
     }
 

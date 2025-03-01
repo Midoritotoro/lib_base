@@ -1,8 +1,8 @@
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(AUTOMOC ON)
-set(AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 option(LIB_BASE_QT_ENABLE_FONTS "¬ключить кастомные шрифты" ON)
 set(LIB_BASE_QT_ENABLE_FONTS ON)
@@ -149,6 +149,31 @@ set(QT_PUBLIC_HEADERS
 )
 
 
+set(IMAGE_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/assets/images)
+set(CSS_RESOURCES_DIR ${PROJECT_SOURCE_DIR}/src/qt/css)
+
+set(IMAGE_RESOURCES
+    "${IMAGE_RESOURCES_DIR}/button_close.png"
+    "${IMAGE_RESOURCES_DIR}/button_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/play.png"
+    "${IMAGE_RESOURCES_DIR}/player_fullscreen.png"
+    "${IMAGE_RESOURCES_DIR}/player_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/repeat.png"
+    "${IMAGE_RESOURCES_DIR}/shadow_close.png"
+    "${IMAGE_RESOURCES_DIR}/shadow_minimize.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_off.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_on.png"
+    "${IMAGE_RESOURCES_DIR}/speaker_white_small_on.png"
+    "${IMAGE_RESOURCES_DIR}/speed_button.png"
+    "${IMAGE_RESOURCES_DIR}/stop.png"
+    "${IMAGE_RESOURCES_DIR}/black.jpg"
+)
+
+set(CSS_RESOURCES
+    "${CSS_RESOURCES_DIR}/ScrollAreaStyle.css"
+    "${CSS_RESOURCES_DIR}/SliderStyle.css"
+)
+
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
@@ -179,6 +204,9 @@ set_target_properties(
     CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
 
+    AUTOMOC ON
+    AUTORCC ON
+
     EXPORT_NAME lib_base_qt
     OUTPUT_NAME lib_base_qt
 )
@@ -194,7 +222,7 @@ find_qt(lib_base_qt)
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})
 
 if(LIB_BASE_QT_ENABLE_FONTS)
-   target_sources(lib_base_qt PUBLIC "${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc")
+    target_sources(lib_base_qt PUBLIC ${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc)
     target_compile_definitions(lib_base_qt
         PUBLIC
             LIB_BASE_QT_ENABLE_FONTS
@@ -219,9 +247,10 @@ if(LIB_BASE_ENABLE_FFMPEG)
     )
 endif()
 
-#qt6_add_resources(lib_base_qt 
-  #  FILES "${PROJECT_SOURCE_DIR}/resources/fonts/fonts.qrc" "${PROJECT_SOURCE_DIR}/src/qt/resources/images.qrc" "${PROJECT_SOURCE_DIR}/src/qt/resources/css.qrc"
-#)
+qt_add_resources(lib_base_qt
+    PREFIX "/assets/images" "/src/qt/css"
+    FILES ${IMAGE_RESOURCES} ${CSS_RESOURCES}
+)
 
 
 target_include_directories(lib_base_qt

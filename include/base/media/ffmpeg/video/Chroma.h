@@ -2,6 +2,7 @@
 
 #include <base/media/ffmpeg/video/VideoFormat.h>
 #include <base/utility/Math.h>
+#include <base/core/BaseNamespace.h>
 
 extern "C" {
     #include <libavutil/pixfmt.h>
@@ -9,32 +10,34 @@ extern "C" {
 }
 
 
-namespace base::media::ffmpeg::video {
-    class Chroma {
-    public:
-        struct ChromaDescription {
-            fourcc_t fcc;
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
-            unsigned plane_count;
+class Chroma {
+public:
+    struct ChromaDescription {
+        fourcc_t fcc;
 
-            struct {
-                rational_t w;
-                rational_t h;
-            } p[4];
+        unsigned plane_count;
 
-            unsigned pixel_size;        /* Number of bytes per pixel for a plane */
-            unsigned pixel_bits;        /* Number of bits actually used bits per pixel for a plane */
-        };
+        struct {
+            rational_t w;
+            rational_t h;
+        } p[4];
 
-        [[nodiscard]] static int GetChroma(
-            video_format_t* fmt,
-            enum AVPixelFormat i_ffmpeg_chroma);
-
-        [[nodiscard]] static enum AVPixelFormat FindFfmpegChroma(
-            fourcc_t fourcc,
-            bool* uv_flipped);
-
-        [[nodiscard]] static const ChromaDescription*
-            FourccGetChromaDescription(fourcc_t i_fourcc);
+        unsigned pixel_size;        /* Number of bytes per pixel for a plane */
+        unsigned pixel_bits;        /* Number of bits actually used bits per pixel for a plane */
     };
-} // namespace base::media::ffmpeg::video
+
+    [[nodiscard]] static int GetChroma(
+        video_format_t* fmt,
+        enum AVPixelFormat i_ffmpeg_chroma);
+
+    [[nodiscard]] static enum AVPixelFormat FindFfmpegChroma(
+        fourcc_t fourcc,
+        bool* uv_flipped);
+
+    [[nodiscard]] static const ChromaDescription*
+        FourccGetChromaDescription(fourcc_t i_fourcc);
+};
+
+__BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

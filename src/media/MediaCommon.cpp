@@ -16,26 +16,28 @@
 namespace base::media {
 	namespace {
 		inline constexpr auto kPreviewPrefix = "_p";
-
-		[[nodiscard]] int QualityToSwscaleFlags(Quality quality) {
-			switch (quality) {
-				case Quality::Low:
-					return SWS_POINT;
-
-				case Quality::Medium:
-					return SWS_BICUBIC;
-
-				case Quality::High:
-					return SWS_BILINEAR;
-
-				case Quality::Ultra:
-					return SWS_SINC;
-
-				default: 
-					return SWS_BICUBIC;	
-			}
-		}
 	} // namespace 
+
+	[[nodiscard]] int QualityToSwscaleFlags(Quality quality) {
+		switch (quality) {
+		case Quality::Low:
+			return SWS_POINT;
+
+		case Quality::Medium:
+			return SWS_BICUBIC;
+
+		case Quality::High:
+			return SWS_BILINEAR;
+
+		case Quality::Ultra:
+			return SWS_SINC;
+
+		default:
+			return SWS_BICUBIC;
+		}
+
+		AssertUnreachable();
+	}
 
 	Type detectMediaType(const QString& filePath) {
 		const auto mimeType = QMimeDatabase().mimeTypeForFile(filePath).name();
@@ -73,7 +75,7 @@ namespace base::media {
 				return QPixmap(path).size();
 
 			case Type::Video:
-				return ffmpeg::video::ThumbnailGenerator::resolution(path);
+				return ffmpeg::ThumbnailGenerator::resolution(path);
 		}
 
 		return QSize();
@@ -97,7 +99,7 @@ namespace base::media {
 			case Type::Video:
 				preview = images::PixmapFast(
 					std::move(
-						ffmpeg::video::ThumbnailGenerator::generate(path,
+						ffmpeg::ThumbnailGenerator::generate(path,
 							QualityToSwscaleFlags(quality))));
 				break;
 

@@ -14,11 +14,9 @@ namespace base::qt::ui {
 		setAttribute(Qt::WA_NoSystemBackground);
 		setCursor(Qt::PointingHandCursor);
 
-		_speakerOff = QImage(":/assets/images/speaker_white_off.png");
-		_speakerOn = QImage(":/assets/images/speaker_white_on.png");
-		_speakerSmallOn = QImage(":/assets/images/speaker_white_small_on.png");
-
-		qDebug() << "_speakerOn: " << _speakerOn.size();
+		_speakerOff = QImage("D:/lib_base/lib_base/assets/images/speaker_white_off.png");
+		_speakerOn = QImage("D:/lib_base/lib_base/assets/images/speaker_white_on.png");
+		_speakerSmallOn = QImage("D:/lib_base/lib_base/assets/images/speaker_white_small_on.png");
 	}
 
 

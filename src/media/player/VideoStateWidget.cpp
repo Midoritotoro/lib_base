@@ -11,9 +11,9 @@ namespace base::qt::ui {
     VideoStateWidget::VideoStateWidget(QWidget* parent) :
         QPushButton(parent)
     {
-        _pause = QImage(":/assets/images/stop.png");
-        _play = QImage(":/assets/images/play.png");
-        _repeat = QImage(":/assets/images/repeat.png");
+        _pause = QImage("D:/lib_base/lib_base/assets/images/stop.png");
+        _play = QImage("D:/lib_base/lib_base/assets/images/play.png");
+        _repeat = QImage("D:/lib_base/lib_base/assets/images/repeat.png");
 
         setAttribute(Qt::WA_NoSystemBackground);
         setCursor(Qt::PointingHandCursor);

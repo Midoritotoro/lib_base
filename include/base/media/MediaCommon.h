@@ -22,6 +22,7 @@ namespace base::media {
 		Ultra = 0x08,
 	};
 
+	[[nodiscard]] int QualityToSwscaleFlags(Quality quality);
 	[[nodiscard]] Type detectMediaType(const QString& path);
 	
 	[[nodiscard]] QPixmap FindPreviewInCache(const QString& key);
