@@ -1,31 +1,12 @@
 #pragma once
 
 #include <base/media/ffmpeg/video/Picture.h>
-#include <base/media/ffmpeg/video/Chroma.h>
-
-
-extern "C" {
-    #include <libswscale/swscale.h>
-}
 
 
 #define MINIMUM_WIDTH               (32)
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
-struct filter_t
-{
-    filter_sys_t* p_sys;
-
-    /* Input format */
-    es_format_t         fmt_in;
-    struct video_context* vctx_in;  // video filter, set by owner
-
-    /* Output format of filter */
-    es_format_t         fmt_out;
-    struct video_context* vctx_out; // video filter, handled by the filter
-    bool                b_allow_fmt_out_change;
-};
 
 struct ScalerConfiguration {
     AVPixelFormat i_fmti;

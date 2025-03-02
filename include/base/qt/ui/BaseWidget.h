@@ -8,225 +8,225 @@
 
 #include <QSurfaceFormat>
 
+#include <base/core/BaseNamespace.h>
 #include <QWidget>
 
 
-namespace base::qt::style {
-	struct StyleBase;
-} // namespace base::qt::style
+__BASE_QT_STYLE_NAMESPACE_BEGIN
+struct StyleBase;
+__BASE_QT_STYLE_NAMESPACE_END
 
-namespace base::qt::ui {
-	class BaseQWidgetHelper;
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-	namespace {
-		[[nodiscard]] std::vector<QPointer<QWidget>>
-			GetChildWidgets(not_null<QWidget*> widget)
-		{
-			const auto& children = widget->children();
-			auto result = std::vector<QPointer<QWidget>>();
+class BaseQWidgetHelper;
 
-			result.reserve(children.size());
+namespace {
+	[[nodiscard]] std::vector<QPointer<QWidget>>
+		GetChildWidgets(not_null<QWidget*> widget)
+	{
+		const auto& children = widget->children();
+		auto result = std::vector<QPointer<QWidget>>();
 
-			for (const auto child : children)
-				if (child && child->isWidgetType())
-					result.push_back(static_cast<QWidget*>(child));
+		result.reserve(children.size());
 
-			return result;
-		}
+		for (const auto child : children)
+			if (child && child->isWidgetType())
+				result.push_back(static_cast<QWidget*>(child));
 
-		void ToggleChildrenVisibility(
-			not_null<QWidget*> widget,
-			bool visible)
-		{
-			for (const auto& child : GetChildWidgets(widget))
-				if (child)
-					child->setVisible(visible);
-		}
+		return result;
 	}
 
-	template <typename Base>
-	class BaseWidgetHelper : public Base {
-	public:
-		using Base::Base;
+	void ToggleChildrenVisibility(
+		not_null<QWidget*> widget,
+		bool visible)
+	{
+		for (const auto& child : GetChildWidgets(widget))
+			if (child)
+				child->setVisible(visible);
+	}
+}
 
-		virtual void hideChildren() {
-			ToggleChildrenVisibility(this, false);
-		}
+template <typename Base>
+class BaseWidgetHelper : public Base {
+public:
+	using Base::Base;
 
-		virtual void showChildren() {
-			ToggleChildrenVisibility(this, true);
-		}
+	virtual void hideChildren() {
+		ToggleChildrenVisibility(this, false);
+	}
 
-		virtual QMargins getMargins() const {
-			return QMargins();
-		}
+	virtual void showChildren() {
+		ToggleChildrenVisibility(this, true);
+	}
 
-		virtual int verticalMargins() const {
-			return 0;
-		}
+	virtual QMargins getMargins() const {
+		return QMargins();
+	}
 
-		virtual int horizontalMargins() const {
-			return 0;
-		}
+	virtual int verticalMargins() const {
+		return 0;
+	}
 
-	protected:
-		void enterEvent(QEnterEvent* e) final override {
-			if (auto parent = _parent())
-				parent->leaveToChildEvent(e, this);
+	virtual int horizontalMargins() const {
+		return 0;
+	}
+
+protected:
+	void enterEvent(QEnterEvent* e) final override {
+		if (auto parent = _parent())
+			parent->leaveToChildEvent(e, this);
 			
-			return enterEventHook(static_cast<QEnterEvent*>(e));
-		}
+		return enterEventHook(static_cast<QEnterEvent*>(e));
+	}
 
-		virtual void enterEventHook(QEnterEvent* e) {
-			return Base::enterEvent(e);
-		}
+	virtual void enterEventHook(QEnterEvent* e) {
+		return Base::enterEvent(e);
+	}
 
-		void leaveEvent(QEvent* e) final override {
-			if (auto parent = _parent())
-				parent->enterFromChildEvent(e, this);
+	void leaveEvent(QEvent* e) final override {
+		if (auto parent = _parent())
+			parent->enterFromChildEvent(e, this);
 			
-			return leaveEventHook(e);
-		}
+		return leaveEventHook(e);
+	}
 
-		virtual void leaveEventHook(QEvent* e) {
-			return Base::leaveEvent(e);
-		}
+	virtual void leaveEventHook(QEvent* e) {
+		return Base::leaveEvent(e);
+	}
 
-		virtual void leaveToChildEvent(QEvent* e, QWidget* child) {
-		}
+	virtual void leaveToChildEvent(QEvent* e, QWidget* child) {
+	}
 
-		virtual void enterFromChildEvent(QEvent* e, QWidget* child) {
-		}
-	private:
-		BaseQWidgetHelper* _parent() {
-			return qobject_cast<BaseQWidgetHelper*>(Base::parentWidget());
-		}
+	virtual void enterFromChildEvent(QEvent* e, QWidget* child) {
+	}
+private:
+	BaseQWidgetHelper* _parent() {
+		return qobject_cast<BaseQWidgetHelper*>(Base::parentWidget());
+	}
 
-		const BaseQWidgetHelper* _parent() const {
-			return qobject_cast<const BaseQWidgetHelper*>(Base::parentWidget());
-		}
+	const BaseQWidgetHelper* _parent() const {
+		return qobject_cast<const BaseQWidgetHelper*>(Base::parentWidget());
+	}
 
-		template <typename OtherBase>
-		friend class BaseWidgetHelper;
+	template <typename OtherBase>
+	friend class BaseWidgetHelper;
+};
+
+
+template <typename St>
+using BaseStyle = std::conditional_t<
+	std::is_base_of_v<style::StyleBase, St>,
+	St,
+	style::StyleBase>;
+
+class BaseQWidgetHelper :
+	public BaseWidgetHelper<QWidget>
+{
+	Q_OBJECT
+public:
+	BaseQWidgetHelper(QWidget* parent = nullptr):
+		BaseWidgetHelper(parent)
+	{
+		[[maybe_unused]] static const auto Once = [] {
+			auto format = QSurfaceFormat::defaultFormat();
+			format.setSwapInterval(0);
+
+			QSurfaceFormat::setDefaultFormat(format);
+
+			return true;
+		}();
+	}
+
+	[[nodiscard]] QRect rectNoMargins() {
+		return rect().marginsRemoved(getMargins());
 	};
 
+	[[nodiscard]] QSize sizeNoMargins() {
+		return rectNoMargins().size();
+	}
 
-	template <typename St>
-	using BaseStyle = std::conditional_t<
-		std::is_base_of_v<style::StyleBase, St>,
-		St,
-		style::StyleBase>;
+	[[nodiscard]] int heightNoMargins() {
+		return rectNoMargins().height();
+	}
 
-	class BaseQWidgetHelper :
-		public BaseWidgetHelper<QWidget>
-	{
-		Q_OBJECT
-	public:
-		BaseQWidgetHelper(QWidget* parent = nullptr):
-			BaseWidgetHelper(parent)
-		{
-			[[maybe_unused]] static const auto Once = [] {
-				qDebug() << "Once Called";
+	[[nodiscard]] int widthNoMargins() {
+		return rectNoMargins().width();
+	}
 
-				auto format = QSurfaceFormat::defaultFormat();
-				format.setSwapInterval(0);
+	virtual [[nodiscard]] QRect visibleArea() {
+		return QRect();
+	}
 
-				QSurfaceFormat::setDefaultFormat(format);
+	virtual [[nodiscard]] QRect hiddenArea() {
+		return QRect();
+	}
+};
 
-				return true;
-				}();
-		}
+template <typename Widget>
+using BaseParent = std::conditional_t<
+	std::is_same_v<QWidget, Widget>,
+	BaseQWidgetHelper,
+	BaseWidgetHelper<Widget>>;
 
-		[[nodiscard]] QRect rectNoMargins() {
-			return rect().marginsRemoved(getMargins());
-		};
+template <
+	typename Widget,
+	typename St = BaseStyle<style::StyleBase>>
+class BaseWidget
+	: public BaseParent<Widget>
+{
+protected:
+	using Self = BaseWidget<Widget, St>;
+	using Parent = BaseParent<Widget>;
+	using SelfStyle = St;
+public:
+	using Parent::Parent;
 
-		[[nodiscard]] QSize sizeNoMargins() {
-			return rectNoMargins().size();
-		}
+	[[nodiscard]] QRect visibleArea() {
+		return Parent::visibleRegion().boundingRect();
+	}
 
-		[[nodiscard]] int heightNoMargins() {
-			return rectNoMargins().height();
-		}
+	[[nodiscard]] QRect hiddenArea() {
+		const auto selfRect = Parent::rect();
+		const auto selfVisibleRect = visibleArea();
 
-		[[nodiscard]] int widthNoMargins() {
-			return rectNoMargins().width();
-		}
-
-		virtual [[nodiscard]] QRect visibleArea() {
+		if (selfVisibleRect.isNull() || selfVisibleRect.contains(selfRect))
 			return QRect();
-		}
-
-		virtual [[nodiscard]] QRect hiddenArea() {
-			return QRect();
-		}
-	};
-
-	template <typename Widget>
-	using BaseParent = std::conditional_t<
-		std::is_same_v<QWidget, Widget>,
-		BaseQWidgetHelper,
-		BaseWidgetHelper<Widget>>;
-
-	template <
-		typename Widget,
-		typename St = BaseStyle<style::StyleBase>>
-	class BaseWidget
-		: public BaseParent<Widget>
-	{
-	protected:
-		using Self = BaseWidget<Widget, St>;
-		using Parent = BaseParent<Widget>;
-		using SelfStyle = St;
-	public:
-		using Parent::Parent;
-
-		 [[nodiscard]] QRect visibleArea() {
-			return Parent::visibleRegion().boundingRect();
-		}
-
-		 [[nodiscard]] QRect hiddenArea() {
-			const auto selfRect = Parent::rect();
-			const auto selfVisibleRect = visibleArea();
-
-			if (selfVisibleRect.isNull() || selfVisibleRect.contains(selfRect))
-				return QRect();
 			
-			const auto left = std::min(selfRect.left(), selfVisibleRect.left());
-			const auto top = std::min(selfRect.top(), selfVisibleRect.top());
+		const auto left = std::min(selfRect.left(), selfVisibleRect.left());
+		const auto top = std::min(selfRect.top(), selfVisibleRect.top());
 
-			const auto right = std::max(selfRect.right(), selfVisibleRect.right());
-			const auto bottom = std::max(selfRect.bottom(), selfVisibleRect.bottom());
+		const auto right = std::max(selfRect.right(), selfVisibleRect.right());
+		const auto bottom = std::max(selfRect.bottom(), selfVisibleRect.bottom());
 
-			const auto hiddenRect = QRect(left, top, right - left, bottom - top);
+		const auto hiddenRect = QRect(left, top, right - left, bottom - top);
 
-			return hiddenRect.intersected(selfRect).intersected(selfVisibleRect.intersected(selfRect));
-		}
+		return hiddenRect.intersected(selfRect).intersected(selfVisibleRect.intersected(selfRect));
+	}
 
-		virtual void setStyle(
-			const SelfStyle* style,
-			bool repaint = false)  
-		{
-			_style = style;
-
-			if (repaint)
-				Parent::update();
-		};
-
-		virtual [[nodiscard]] const SelfStyle* style()  {
-			return _style;
-		};
-	protected:
-		const SelfStyle* _style = nullptr;
-	};
-
-	template <typename St = BaseStyle<style::StyleBase>>
-	class CoreWidget: 
-		public BaseWidget<QWidget, St> 
+	virtual void setStyle(
+		const SelfStyle* style,
+		bool repaint = false)  
 	{
-	public:
-		using SelfStyle = St;
-		using BaseWidget<QWidget, SelfStyle>::BaseWidget;
+		_style = style;
+
+		if (repaint)
+			Parent::update();
 	};
 
-} // namespace base::qt::ui
+	virtual [[nodiscard]] const SelfStyle* style()  {
+		return _style;
+	};
+protected:
+	const SelfStyle* _style = nullptr;
+};
+
+template <typename St = BaseStyle<style::StyleBase>>
+class CoreWidget: 
+	public BaseWidget<QWidget, St> 
+{
+public:
+	using SelfStyle = St;
+	using BaseWidget<QWidget, SelfStyle>::BaseWidget;
+};
+
+__BASE_QT_UI_NAMESPACE_END

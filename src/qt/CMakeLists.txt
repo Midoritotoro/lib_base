@@ -193,6 +193,8 @@ if(LIB_BASE_ENABLE_FFMPEG)
 
         ${PROJECT_SOURCE_DIR}/include/base/media/Manager.h
         ${PROJECT_SOURCE_DIR}/include/base/media/MediaCommon.h
+
+        ${PROJECT_SOURCE_DIR}/include/base/media/player/VideoSurface.h
     )
 endif()
 
@@ -244,6 +246,8 @@ if(LIB_BASE_ENABLE_FFMPEG)
 
          ${PROJECT_SOURCE_DIR}/src/media/Manager.cpp
          ${PROJECT_SOURCE_DIR}/src/media/MediaCommon.cpp
+
+         ${PROJECT_SOURCE_DIR}/src/media/player/VideoSurface.cpp
     )
 endif()
 

@@ -8,66 +8,79 @@
 #include <QWidget>
 
 #include <base/media/MediaCommon.h>
+#include <base/qt/ui/BaseWidget.h>
 
-namespace base::media {
-	class MediaPlayer final : public QWidget {
-		Q_OBJECT
-	public:
-		MediaPlayer(QWidget* parent = nullptr);
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-		void setMedia(const QString& path);
+struct MediaPlayerStyle: public StyleBase {
 
-		[[nodiscard]] int getVideoControlsHeight() const noexcept;
+};
 
-		[[nodiscard]] QSize occupiedMediaSpace() const noexcept;
-		[[nodiscard]] QPoint mediaPosition() const noexcept;
+__BASE_QT_STYLE_NAMESPACE_END
 
-		[[nodiscard]] Manager::State playbackState() const noexcept;
+__BASE_MEDIA_NAMESPACE_BEGIN
 
-		void setFullScreen();
-		void setNormal();
+class MediaPlayer final : 
+	public qt::ui::CoreWidget<qt::style::MediaPlayerStyle> 
+{
+	Q_OBJECT
+public:
+	MediaPlayer(QWidget* parent = nullptr);
 
-		void play();
-		void pause();
+	void setMedia(const QString& path);
 
-		void cleanUp();
-		void rewind(Time::time_t positionMs);
+	[[nodiscard]] int getVideoControlsHeight() const noexcept;
 
-		void changeVolume(int value);
-	Q_SIGNALS:
-		void mediaGeometryChanged();
-		void needScrollToMessage();
-	protected:
-		void resizeEvent(QResizeEvent* event) override;
-		void paintEvent(QPaintEvent* event) override;
-		void mousePressEvent(QMouseEvent* event);
-	private:
-		enum class MediaDisplayType {
-			FullScreen,
-			Normal
-		};
+	[[nodiscard]] QSize occupiedMediaSpace() const noexcept;
+	[[nodiscard]] QPoint mediaPosition() const noexcept;
 
-		void paintBackground(
-			QPainter& painter,
-			QPaintEvent* event);
-		void updatePanelVisibility();
+	[[nodiscard]] Manager::State playbackState() const noexcept;
 
-		std::unique_ptr<Manager> _manager = nullptr;
-		base::qt::ui::MediaPlayerPanel* _mediaPlayerPanel = nullptr;
+	void setFullScreen();
+	void setNormal();
 
-		std::unique_ptr<base::qt::ui::WidgetsHider> _widgetsHider = nullptr;
+	void play();
+	void pause();
 
-		QImage _current;
-		QRect _currentFrameRect;
+	void cleanUp();
+	void rewind(Time::time_t positionMs);
 
-		Manager::State _playbackState;
-
-		Time::time_t _currMs;
-
-		MediaDisplayType _displayType = MediaDisplayType::Normal;
-		media::Type _currentMediaType = media::Type::Unknown;
-
-		QString _currentMediaPath;
-		uint32 _currFPS = 0;
+	void changeVolume(int value);
+Q_SIGNALS:
+	void mediaGeometryChanged();
+	void needScrollToMessage();
+protected:
+	void resizeEvent(QResizeEvent* event) override;
+	void paintEvent(QPaintEvent* event) override;
+	void mousePressEvent(QMouseEvent* event);
+private:
+	enum class MediaDisplayType {
+		FullScreen,
+		Normal
 	};
-}
+
+	void paintBackground(
+		QPainter& painter,
+		QPaintEvent* event);
+	void updatePanelVisibility();
+
+	std::unique_ptr<Manager> _manager = nullptr;
+	base::qt::ui::MediaPlayerPanel* _mediaPlayerPanel = nullptr;
+
+	std::unique_ptr<base::qt::ui::WidgetsHider> _widgetsHider = nullptr;
+
+	QImage _current;
+	QRect _currentFrameRect;
+
+	Manager::State _playbackState;
+
+	Time::time_t _currMs;
+
+	MediaDisplayType _displayType = MediaDisplayType::Normal;
+	media::Type _currentMediaType = media::Type::Unknown;
+
+	QString _currentMediaPath;
+	uint32 _currFPS = 0;
+};
+
+__BASE_MEDIA_NAMESPACE_END

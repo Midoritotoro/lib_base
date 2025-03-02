@@ -1,8 +1,12 @@
 #pragma once 
 
 #include <cstdint>
+
 #include <base/system/Platform.h>
 #include <base/system/SystemInfo.h>
+
+#include <base/core/BaseNamespace.h>
+
 
 #if BYTE_ORDER == BIG_ENDIAN
 #   define FOURCC( a, b, c, d ) \
@@ -757,8 +761,9 @@
 #define PLANAR_8(n, w_den, h_den)        PLANAR(n, w_den, h_den, 8)
 #define PLANAR_16(n, w_den, h_den, bits) PLANAR(n, w_den, h_den, bits)
 
-namespace base::media::ffmpeg::video { 
-    using fourcc_t = uint32_t;
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
+
+using fourcc_t = uint32_t;
 
 struct fourcc_mapping {
     union { 
@@ -1914,4 +1919,5 @@ static const fourcc_desc desc_spu[] = {
     { { { 0x75, 0x73, 0x66, 0x20 } }, "USF subtitles" },
     { { { 0x77, 0x76, 0x74, 0x74 } }, "WEBVTT subtitles" },
 };
-} // namespace base::media::ffmpeg::video
+
+__BASE_MEDIA_FFMPEG_NAMESPACE_END

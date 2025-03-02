@@ -1,11 +1,13 @@
 function(find_qt TARGET)
-    if(TARGET Qt6::Core AND TARGET Qt6::Widgets)
+    if(TARGET Qt6::Core AND TARGET Qt6::Widgets AND TARGET Qt6::OpenGL AND TARGET Qt6::OpenGLWidgets)
         message("Qt was found in parent project")
 
         set(targets            
              Qt6::Core 
              Qt6::Widgets 
-             Qt6::WidgetsPrivate)
+             Qt6::WidgetsPrivate
+             Qt6::OpenGL
+             Qt6::OpenGLWidgets)
 
        get_target_property( 
            targets
@@ -22,6 +24,8 @@ function(find_qt TARGET)
                 Qt6::Core 
                 Qt6::Widgets 
                 Qt6::WidgetsPrivate
+                Qt6::OpenGL
+                Qt6::OpenGLWidgets
         )
 
     else()
@@ -29,7 +33,8 @@ function(find_qt TARGET)
         find_package(Qt6 REQUIRED COMPONENTS
             Core
             Widgets
-            OpenGL)
+            OpenGL
+            OpenGLWidgets)
 
         if (NOT Qt6_FOUND)
             message(FATAL_ERROR "Can't find Qt using find_package, 
@@ -42,6 +47,8 @@ function(find_qt TARGET)
                 Qt6::Core 
                 Qt6::Widgets 
                 Qt6::WidgetsPrivate
+                Qt6::OpenGL
+                Qt6::OpenGLWidgets
             )
     endif()
 
@@ -49,24 +56,4 @@ function(find_qt TARGET)
         PUBLIC
             LIB_BASE_ENABLE_QT
     )
-
-    if (TARGET Qt6::OpenGL)
-        find_package(Qt6 REQUIRED COMPONENTS OpenGL)
-        target_link_libraries(${TARGET}
-            PUBLIC
-            Qt6::OpenGL
-        )
-
-        target_compile_definitions(${TARGET}
-        PUBLIC
-            LIB_BASE_FOUND_QT_OPENGL
-        )
-
-        if (LIB_BASE_ENABLE_OPENGL)
-            target_compile_definitions(${TARGET}
-            PUBLIC
-                LIB_BASE_ENABLE_QT_OPENGL
-            )
-        endif()
-    endif()
 endfunction()

@@ -124,7 +124,77 @@ void Frame::setupFromFormat(const video_format_t* fmt)
 
 void Frame::newFrameFromFormat(const video_format_t* fmt)
 {
-    
+//    static_assert(offsetof(struct picture_priv_buffer_t, priv) == 0,
+//        "misplaced picture_priv_t, destroy won't work");
+//
+//    struct picture_priv_buffer_t* privbuf = malloc(sizeof(*privbuf));
+//    if (unlikely(privbuf == NULL))
+//        return NULL;
+//
+//    picture_buffer_t* res = &privbuf->res;
+//
+//    picture_resource_t pic_res = {
+//        .p_sys = res,
+//        .pf_destroy = picture_DestroyFromFormat,
+//    };
+//
+//    picture_priv_t* priv = &privbuf->priv;
+//    if (!picture_InitPrivate(fmt, priv, &pic_res))
+//        goto error;
+//
+//    picture_t* pic = &priv->picture;
+//    if (pic->i_planes == 0) {
+//        pic->p_sys = NULL; // not compatible with picture_DestroyFromFormat
+//        return pic;
+//    }
+//
+//    /* Calculate how big the new image should be */
+//    assert(pic->i_planes <= PICTURE_PLANE_MAX);
+//    size_t plane_sizes[PICTURE_PLANE_MAX];
+//    size_t pic_size = 0;
+//
+//    for (int i = 0; i < pic->i_planes; i++)
+//    {
+//        const plane_t* p = &pic->p[i];
+//
+//        if (unlikely(ckd_mul(&plane_sizes[i], p->i_pitch, p->i_lines))
+//            || unlikely(ckd_add(&pic_size, pic_size, plane_sizes[i])))
+//            goto error;
+//    }
+//
+//    if (unlikely(pic_size >= PICTURE_SW_SIZE_MAX))
+//        goto error;
+//
+//    unsigned char* buf = picture_Allocate(&res->fd, pic_size);
+//    if (unlikely(buf == NULL))
+//        goto error;
+//
+//    res->base = buf;
+//    res->size = pic_size;
+//    res->offset = 0;
+//
+//    /* Fill the p_pixels field for each plane */
+//    for (int i = 0; i < pic->i_planes; i++)
+//    {
+//        pic->p[i].p_pixels = buf;
+//        buf += plane_sizes[i];
+//    }
+//
+//    return pic;
+//error:
+//    video_format_Clean(&priv->picture.format);
+//    free(privbuf);
+//    return NULL;
+}
+
+Frame* Frame::FrameNew(
+    fourcc_t i_chroma, int i_width,
+    int i_height, int i_sar_num,
+    int i_sar_den)
+{
+  //  Frame* pic = newFrameFromFormat(&p_filter->fmt_out.video);
+   // return pic;
+    return nullptr;
 }
 
 void Frame::clean() {

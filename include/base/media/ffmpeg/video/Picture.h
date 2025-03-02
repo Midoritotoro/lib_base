@@ -3,11 +3,15 @@
 #include <base/system/Time.h>
 #include <base/media/ffmpeg/video/VideoFormat.h>
 
+#include <base/media/ffmpeg/Utility.h>
+#include <base/media/ffmpeg/video/Chroma.h>
+
 
 #define PICTURE_SW_SIZE_MAX                 (UINT32_C(1) << 28) /* 256MB: 8K * 8K * 4*/
 #define PICTURE_PLANE_MAX					(5)
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
+
 
 
 enum
@@ -18,6 +22,7 @@ enum
 	A_PLANE = 3,
 };
 
+class FrameScaler;
 
 class Frame {
 public:
@@ -48,6 +53,11 @@ private:
 		int i_visible_pitch;            /**< How many bytes for visible pixels are there? */
 
 	};
+
+	//bool frameInitPrivate(
+	//	const video_format_t* p_fmt,
+	//	picture_priv_t* priv,
+	//	const picture_resource_t* p_resource);
 
 	void planeCopyPixels(
 		plane_t* p_dst, 
@@ -83,5 +93,48 @@ private:
 
 	friend class FrameScaler;
 };
+
+struct filter_sys_t {
+	SwsFilter* p_filter;
+	int i_sws_flags;
+
+	video_format_t fmt_in;
+	video_format_t fmt_out;
+
+	const Chroma::ChromaDescription* desc_in;
+	const Chroma::ChromaDescription* desc_out;
+
+	SwsContext* ctx;
+	SwsContext* ctxA;
+
+	Frame* p_src_a;
+	Frame* p_dst_a;
+
+	int i_extend_factor;
+
+	Frame* p_src_e;
+	Frame* p_dst_e;
+
+	bool b_add_a;
+	bool b_copy;
+
+	bool b_swap_uvi;
+	bool b_swap_uvo;
+};
+
+struct filter_t
+{
+	filter_sys_t* p_sys;
+
+	/* Input format */
+	es_format_t         fmt_in;
+	video_context* vctx_in;  // video filter, set by owner
+
+	/* Output format of filter */
+	es_format_t         fmt_out;
+	video_context* vctx_out; // video filter, handled by the filter
+	bool                b_allow_fmt_out_change;
+};
+
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

@@ -1,6 +1,6 @@
 #pragma once 
 
-#define __BASE_ENABLE_INLINE_NAMESPACES
+// #define __BASE_ENABLE_INLINE_NAMESPACES
 
 #ifdef __BASE_ENABLE_INLINE_NAMESPACES
 #  define INLINE_NAMESPACE inline

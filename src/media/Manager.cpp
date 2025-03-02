@@ -83,7 +83,7 @@ namespace base::media {
 
 		if (hasVideo()) {
 			const auto ms = Time::now();
-			const auto frame = _frameGenerator->renderNext(_size, Qt::IgnoreAspectRatio, _showNormal);
+			const auto frame = _frameGenerator->renderNext(_size, Qt::IgnoreAspectRatio, !_showNormal);
 
 			if (frame.last)
 				return emit endOfMedia();
@@ -92,7 +92,7 @@ namespace base::media {
 
 			auto nowMs = Time::now() - ms;
 
-			concurrent::invokeAsync([=] { emit needToRepaint(frame.image, 1000 / nowMs);  });
+			concurrent::invokeAsync([=] { emit needToRepaint(frame.image, 1000 / std::max(time_t(1), nowMs));  });
 
 			const auto timeout = std::max(time_t(1), _frameGenerator->frameDelay() - nowMs);
 			_timer.start(timeout);
@@ -119,7 +119,7 @@ namespace base::media {
 
 		if (!_thread->isRunning())
 			_thread->start();
-		_thread->setPriority(QThread::HighestPriority);
+		_thread->setPriority(QThread::TimeCriticalPriority);
 	}
 
 	void Manager::setAudio(std::unique_ptr<ffmpeg::audio::AudioReader>&& audio) {
@@ -131,7 +131,7 @@ namespace base::media {
 		if (!_thread->isRunning())
 			_thread->start();
 
-		_thread->setPriority(QThread::HighestPriority);
+		_thread->setPriority(QThread::TimeCriticalPriority);
 	}
 
 	bool Manager::hasVideo() const noexcept {

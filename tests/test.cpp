@@ -24,31 +24,34 @@
 #include <iostream>
 
 #include <base/media/player/MediaPlayer.h>
+#include <base/concurrent/Concurrent.h>
 
 
 int main(int argc, char* argv[]) {
 	QApplication application(argc, argv);
 	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
-	const auto ratio = application.devicePixelRatio();
-	const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
+	base::concurrent::invokeAsync([&]() {
+		const auto ratio = application.devicePixelRatio();
+		const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 
-	base::qt::style::SetDevicePixelRatio(useRatio);
+		base::qt::style::SetDevicePixelRatio(useRatio);
 
-	base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
-	base::qt::style::internal::StartFonts();
+		base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
+		base::qt::style::internal::StartFonts();
 
-	base::qt::style::RegisterStyles();
+		base::qt::style::RegisterStyles();
 
-	base::qt::style::Start();
+		base::qt::style::Start();
+	});
 
-	QString videoPath = "C:\\Users\\danya\\Downloads\\videotestvertical.mp4";
+	// QString videoPath = "C:\\Users\\danya\\Downloads\\videotestvertical.mp4";
+	QString videoPath = "C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4";
 	std::unique_ptr<base::media::MediaPlayer> _mediaPlayer = std::make_unique<base::media::MediaPlayer>();
 
 	_mediaPlayer->show();
 
-	_mediaPlayer->setNormal();
-	_mediaPlayer->showFullScreen();
+	_mediaPlayer->setFullScreen();
 
 	_mediaPlayer->setMedia(videoPath);
 

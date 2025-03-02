@@ -12,6 +12,8 @@
 #include <QPixmapCache>
 #include <base/qt/common/Size.h>
 
+WARNING_DISABLE_MSVC(26813)
+
 
 namespace base::media {
 	namespace {
@@ -100,7 +102,7 @@ namespace base::media {
 				preview = images::PixmapFast(
 					std::move(
 						ffmpeg::ThumbnailGenerator::generate(path,
-							QualityToSwscaleFlags(quality))));
+							quality)));
 				break;
 
 			case Type::Audio:
