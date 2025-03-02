@@ -73,7 +73,7 @@ namespace base::io {
 				_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 				_SAL2_In_ sizetype sizeInBytes) override;
 
-			[[nodiscard]] ReadResult readAll() override;
+			[[nodiscard]] ByteArray readAll() override;
 
 			static [[nodiscard]] sizetype fileSize(const std::string& path);
 		private:

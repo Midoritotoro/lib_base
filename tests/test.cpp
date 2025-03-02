@@ -78,7 +78,8 @@ int main(int argc, char* argv[]) {
 	if (!file.open("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4", "rb"))
 		return -1;
 
-	file.readAll();
+	auto readed = file.readAll();
+	qDebug() << "size: " << readed.size();
 
 	return application.exec();
 }

@@ -100,7 +100,7 @@ namespace base::io {
 			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 			_SAL2_In_ sizetype sizeInBytes);
 
-		[[nodiscard]] ReadResult readAll();
+		[[nodiscard]] ByteArray readAll();
 
 		//!
 		//! \brief

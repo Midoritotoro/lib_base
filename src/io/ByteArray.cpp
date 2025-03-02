@@ -525,13 +525,174 @@ bool base::io::algorithms::isValidUtf8(ByteArrayView s) noexcept
 
 __BASE_IO_NAMESPACE_BEGIN
 
-const char ByteArray::_empty = '\0';
+// Used generically for both QString and QByteArray
+template <typename T>
+static T dtoString(double d, QLocaleData::DoubleForm form, int precision, bool uppercase)
+{
+    // Undocumented: aside from F.P.Shortest, precision < 0 is treated as
+    // default, 6 - same as printf().
+    if (precision != QLocale::FloatingPointShortest && precision < 0)
+        precision = 6;
 
+    using D = std::numeric_limits<double>;
+    // 1 is for the null-terminator
+    constexpr int MaxDigits = 1 + qMax(D::max_exponent10, D::digits10 - D::min_exponent10);
+
+    // "maxDigits" above is a reasonable estimate, though we may need more due to extra precision
+    int bufSize = 1;
+    if (precision == QLocale::FloatingPointShortest)
+        bufSize += D::max_digits10;
+    else if (form == QLocaleData::DFDecimal && qIsFinite(d))
+        bufSize += wholePartSpace(qAbs(d)) + precision;
+    else // Add extra digit due to different interpretations of precision.
+        bufSize += qMax(2, precision) + 1; // Must also be big enough for "nan" or "inf"
+
+    // Reserve `MaxDigits` on the stack, which is a reasonable estimate;
+    // but we may need more due to extra precision, which we cannot know at compile-time.
+    QVarLengthArray<char, MaxDigits> buffer(bufSize);
+    bool negative = false;
+    int length = 0;
+    int decpt = 0;
+    qt_doubleToAscii(d, form, precision, buffer.data(), buffer.size(), negative, length, decpt);
+    QLatin1StringView view(buffer.data(), length);
+    const bool succinct = form == QLocaleData::DFSignificantDigits;
+    qsizetype total = (negative ? 1 : 0) + length;
+    if (qIsFinite(d)) {
+        if (succinct)
+            form = resolveFormat(precision, decpt, view.size());
+
+        switch (form) {
+        case QLocaleData::DFExponent:
+            total += 3; // (.e+) The '.' may not be needed, but we would only overestimate by 1 char
+            // Exponents: we guarantee at least 2
+            total += std::max(2, digits(std::abs(decpt - 1)));
+            // "length - 1" because one of the digits will always be before the decimal point
+            if (int extraPrecision = precision - (length - 1); extraPrecision > 0 && !succinct)
+                total += extraPrecision; // some requested zero-padding
+            break;
+        case QLocaleData::DFDecimal:
+            if (decpt <= 0) // leading "0." and zeros
+                total += 2 - decpt;
+            else if (decpt < length) // just the dot
+                total += 1;
+            else // trailing zeros (and no dot, unless we require extra precision):
+                total += decpt - length;
+
+            if (precision > 0 && !succinct) {
+                // May need trailing zeros to satisfy precision:
+                if (decpt < length)
+                    total += std::max(0, precision - length + decpt);
+                else // and a dot to separate them:
+                    total += 1 + precision;
+            }
+            break;
+        case QLocaleData::DFSignificantDigits:
+            AssertUnreachable(); // Handled earlier
+        }
+    }
+
+    constexpr bool IsQString = std::is_same_v<T, QString>;
+    using Char = std::conditional_t<IsQString, char16_t, char>;
+
+    T result;
+    result.reserve(total);
+
+    if (negative && !isZero(d)) // We don't return "-0"
+        result.append(Char('-'));
+    if (!qIsFinite(d)) {
+        result.append(view);
+        if (uppercase)
+            result = std::move(result).toUpper();
+    }
+    else {
+        switch (form) {
+        case QLocaleData::DFExponent: {
+            result.append(view.first(1));
+            view = view.sliced(1);
+            if (!view.isEmpty() || (!succinct && precision > 0)) {
+                result.append(Char('.'));
+                result.append(view);
+                if (qsizetype pad = precision - view.size(); !succinct && pad > 0) {
+                    for (int i = 0; i < pad; ++i)
+                        result.append(Char('0'));
+                }
+            }
+            int exponent = decpt - 1;
+            result.append(Char(uppercase ? 'E' : 'e'));
+            result.append(Char(exponent < 0 ? '-' : '+'));
+            exponent = std::abs(exponent);
+            Q_ASSERT(exponent <= D::max_exponent10 + D::max_digits10);
+            int exponentDigits = digits(exponent);
+            // C's printf guarantees a two-digit exponent, and so do we:
+            if (exponentDigits == 1)
+                result.append(Char('0'));
+            result.resize(result.size() + exponentDigits);
+            auto location = reinterpret_cast<Char*>(result.end());
+            qulltoString_helper<Char>(exponent, 10, location);
+            break;
+        }
+        case QLocaleData::DFDecimal:
+            if (decpt < 0) {
+                if constexpr (IsQString)
+                    result.append(u"0.0");
+                else
+                    result.append("0.0");
+                while (++decpt < 0)
+                    result.append(Char('0'));
+                result.append(view);
+                if (!succinct) {
+                    auto numDecimals = result.size() - 2 - (negative ? 1 : 0);
+                    for (qsizetype i = numDecimals; i < precision; ++i)
+                        result.append(Char('0'));
+                }
+            }
+            else {
+                if (decpt > view.size()) {
+                    result.append(view);
+                    const int sign = negative ? 1 : 0;
+                    while (result.size() - sign < decpt)
+                        result.append(Char('0'));
+                    view = {};
+                }
+                else if (decpt) {
+                    result.append(view.first(decpt));
+                    view = view.sliced(decpt);
+                }
+                else {
+                    result.append(Char('0'));
+                }
+                if (!view.isEmpty() || (!succinct && view.size() < precision)) {
+                    result.append(Char('.'));
+                    result.append(view);
+                    if (!succinct) {
+                        for (qsizetype i = view.size(); i < precision; ++i)
+                            result.append(Char('0'));
+                    }
+                }
+            }
+            break;
+        case QLocaleData::DFSignificantDigits:
+            Q_UNREACHABLE(); // taken care of earlier
+            break;
+        }
+    }
+    Q_ASSERT(total >= result.size()); // No reallocations are needed
+    return result;
+}
+
+ByteArray dtoAscii(double d, LocaleData::DoubleForm form, int precision, bool uppercase)
+{
+    return dtoString<ByteArray>(d, form, precision, uppercase);
+}
+
+
+
+
+const char ByteArray::_empty = '\0';
 
 sizetype FindByteArray(
     const char* haystack0, sizetype haystackLen, sizetype from,
-    const char* needle0, sizetype needleLen);
-
+    const char* needle, sizetype needleLen);
 
 char* qstrdup(const char* src)
 {
@@ -1573,7 +1734,7 @@ static inline sizetype countCharHelper(ByteArrayView haystack, char needle) noex
     return num;
 }
 
-sizetype count(ByteArrayView haystack, ByteArrayView needle) noexcept
+sizetype algorithms::count(ByteArrayView haystack, ByteArrayView needle) noexcept
 {
     if (needle.size() == 0)
         return haystack.size() + 1;
@@ -1828,7 +1989,7 @@ auto algorithms::toUnsignedInteger(ByteArrayView data, int base) -> ParsedNumber
     if (data.isEmpty())
         return {};
 
-    const QSimpleParsedNumber r = QLocaleData::bytearrayToUnsLongLong(data, base);
+    const QSimpleParsedNumber r = QLocaleData::bytearrayToUnsLongLong(QByteArrayView(data.data()), base);
     if (r.ok())
         return ParsedNumber(r.result);
     return {};
@@ -2080,8 +2241,7 @@ ByteArray ByteArray::number(double n, char format, int precision)
         break;
     }
 
-    return ByteArray(qdtoAscii(n, form, precision, isUpperCaseAscii(format)));
-}
+    return dtoAscii(n, form, precision, isUpperCaseAscii(format));
 
 ByteArray& ByteArray::setRawData(const char* data, sizetype size)
 {

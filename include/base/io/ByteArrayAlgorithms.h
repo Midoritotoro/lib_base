@@ -76,11 +76,6 @@ namespace base::io {
         }
     } // algorithms
 
-    /*****************************************************************************
-      Safe and portable C string functions; extensions to standard string.h
-     *****************************************************************************/
-
-    char* qstrdup(const char*);
 
     inline size_t qstrlen(const char* str)
     {
@@ -106,13 +101,4 @@ namespace base::io {
         return (str1 && str2) ? strncmp(str1, str2, len)
             : (str1 ? 1 : (str2 ? -1 : 0));
     }
-    int qstricmp(const char*, const char*);
-    int qstrnicmp(const char*, const char*, size_t len);
-    int qstrnicmp(const char*, qsizetype, const char*, qsizetype = -1);
-
-    // implemented in qvsnprintf.cpp
-    int qvsnprintf(char* str, size_t n, const char* fmt, va_list ap);
-    int qsnprintf(char* str, size_t n, const char* fmt, ...);
-
-    quint16 qChecksum(QByteArrayView data, Qt::ChecksumType standard = Qt::ChecksumIso3309);
 }

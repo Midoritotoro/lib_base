@@ -134,7 +134,7 @@ static sizetype findChar(const char* str, sizetype len, char ch, sizetype from)
 /*!
     \internal
  */
-static sizetype qFindByteArrayBoyerMoore(
+static sizetype FindByteArrayBoyerMoore(
     const char* haystack, sizetype haystackLen, sizetype haystackOffset,
     const char* needle, sizetype needleLen)
 {
@@ -152,7 +152,7 @@ static sizetype qFindByteArrayBoyerMoore(
     hashHaystack <<= 1
 
 
-sizetype qFindByteArray(
+sizetype FindByteArray(
     const char* haystack0, sizetype haystackLen, sizetype from,
     const char* needle, sizetype needleLen)
 {
@@ -176,7 +176,7 @@ sizetype qFindByteArray(
       hash function.
     */
     if (l > 500 && sl > 5)
-        return qFindByteArrayBoyerMoore(haystack0, haystackLen, from,
+        return FindByteArrayBoyerMoore(haystack0, haystackLen, from,
             needle, needleLen);
 
     /*

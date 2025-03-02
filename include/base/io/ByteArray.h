@@ -393,13 +393,6 @@ namespace base::io {
 
         [[nodiscard]] ByteArray repeated(sizetype times) const;
 
-        inline bool operator==(const QString& s2) const;
-        inline bool operator!=(const QString& s2) const;
-        inline bool operator<(const QString& s2) const;
-        inline bool operator>(const QString& s2) const;
-        inline bool operator<=(const QString& s2) const;
-        inline bool operator>=(const QString& s2) const;
-
         friend inline bool operator==(const ByteArray& a1, const ByteArray& a2) noexcept
         {
             return ByteArrayView(a1) == ByteArrayView(a2);
@@ -613,8 +606,7 @@ namespace base::io {
             inline sizetype count() const noexcept { return size(); }
 #endif
         inline sizetype length() const noexcept { return size(); }
-        QT_CORE_INLINE_SINCE(6, 4)
-            bool isNull() const noexcept;
+        inline bool isNull() const noexcept;
 
         inline const DataPointer& data_ptr() const { return d; }
         inline DataPointer& data_ptr() { return d; }
@@ -785,6 +777,57 @@ namespace base::io {
         return ByteArray(&a1, 1) += a2;
     }
 #endif // QT_USE_QSTRINGBUILDER
+
+    inline ByteArray& ByteArray::setNum(short n, int base)
+    {
+        return setNum(longlong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(ushort n, int base)
+    {
+        return setNum(ulonglong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(int n, int base)
+    {
+        return setNum(longlong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(uint n, int base)
+    {
+        return setNum(ulonglong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(long n, int base)
+    {
+        return setNum(longlong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(ulong n, int base)
+    {
+        return setNum(ulonglong(n), base);
+    }
+    inline ByteArray& ByteArray::setNum(float n, char format, int precision)
+    {
+        return setNum(double(n), format, precision);
+    }
+
+    inline bool ByteArray::isNull() const noexcept
+    {
+        return d->isNull();
+    }
+
+    template <typename T>
+    sizetype erase(ByteArray& ba, const T& t)
+    {
+        return ba.removeIf_helper([&t](const auto& e) { return t == e; });
+    }
+
+    template <typename Predicate>
+    sizetype erase_if(ByteArray& ba, Predicate pred)
+    {
+        return ba.removeIf_helper(pred);
+    }
+
+    ByteArray ByteArrayView::toByteArray() const
+    {
+        return ByteArray(data(), size());
+    }
 
     class ByteArray::FromBase64Result
     {

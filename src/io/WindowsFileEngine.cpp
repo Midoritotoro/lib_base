@@ -5,6 +5,7 @@
 #include <base/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
+
 namespace base::io {
 	WindowsFileEngine::WindowsFileEngine()
 	{}
@@ -339,8 +340,10 @@ namespace base::io {
 		return fread(outBuffer, 1, sizeInBytes, _desc);
 	}
 
-	ReadResult WindowsFileEngine::readAll()
+	ByteArray WindowsFileEngine::readAll()
 	{
+		measureExecutionTime("WindowsFileEngine::readAll()")
+
 		uchar* result = 0;
 		SSE2_ALIGNAS(16) uchar buffer[1024] = { 0 };
 
@@ -371,11 +374,7 @@ namespace base::io {
 			result += buffer[i];
 	}
 #endif
-
-		return {
-			.data = result,
-			.sizeInBytes = size
-		};
+		return ByteArray((char*)result);
 	}
 
 	sizetype WindowsFileEngine::fileSize(const std::string& path) {

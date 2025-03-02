@@ -3,6 +3,7 @@
 #include <base/system/Platform.h>
 #include <base/io/IOConfig.h>
 
+#include <base/io/ByteArray.h>
 #include <vector>
 
 
@@ -41,6 +42,6 @@ namespace base::io {
 			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 			_SAL2_In_ sizetype sizeInBytes) = 0;
 
-		virtual [[nodiscard]] ReadResult readAll() = 0;
+		virtual [[nodiscard]] ByteArray readAll() = 0;
 	};
 } // namespace base::io
