@@ -82,15 +82,30 @@ inline float bswap(float source)
     return bswapFloatHelper(source);
 }
 
-inline float bswap(float source)
-{
-    return bswapFloatHelper(source);
-}
-
 inline double bswap(double source)
 {
     return bswapFloatHelper(source);
 }
+
+/*
+ * bswap(const T src, const void *dest);
+ * Changes the byte order of \a src from big-endian to little-endian or vice versa
+ * and stores the result in \a dest.
+ * There is no alignment requirements for \a dest.
+*/
+template <typename T> inline void bswap(const T src, void* dest)
+{
+    ToUnaligned<T>(bswap(src), dest);
+}
+
+template <int Size> void* bswap(const void* source, sizetype count, void* dest) noexcept;
+template<> inline void* bswap<1>(const void* source, sizetype count, void* dest) noexcept
+{
+    return source != dest ? memcpy(dest, source, size_t(count)) : dest;
+}
+template<> void* bswap<2>(const void* source, sizetype count, void* dest) noexcept;
+template<> void* bswap<4>(const void* source, sizetype count, void* dest) noexcept;
+template<> void* bswap<8>(const void* source, sizetype count, void* dest) noexcept;
 
 
 #if BYTE_ORDER == BIG_ENDIAN
@@ -197,6 +212,34 @@ template <typename T> inline void FromLittleEndian(const void* source, sizetype 
 {
     if (source != dest) 
         memcpy(dest, source, count * sizeof(T));
+}
+
+template <typename T> inline T FromLittleEndian(const void* src)
+{
+    return FromLittleEndian(FromUnaligned<T>(src));
+}
+
+template <> inline uint8 FromLittleEndian<quint8>(const void* src)
+{
+    return static_cast<const quint8*>(src)[0];
+}
+template <> inline int8 FromLittleEndian<int8>(const void* src)
+{
+    return static_cast<const int8*>(src)[0];
+}
+
+template <class T> inline T FromBigEndian(const void* src)
+{
+    return FromBigEndian(FromUnaligned<T>(src));
+}
+
+template <> inline uint8 FromBigEndian<uint8>(const void* src)
+{
+    return static_cast<const uint8*>(src)[0];
+}
+template <> inline int8 FromBigEndian<int8>(const void* src)
+{
+    return static_cast<const int8*>(src)[0];
 }
 #endif // BYTE_ORDER == BIG_ENDIAN
 

@@ -12,11 +12,7 @@
 #include <base/io/ArrayDataOps.h>
 
 
-
 namespace base::io {
-    template <class T> struct TypedArrayData;
-
-
     template <class T>
     struct ArrayDataPointer
     {
@@ -433,7 +429,7 @@ namespace base::io {
             // Idea: * when growing backwards, adjust pointer to prepare free space at the beginning
             //       * when growing forward, adjust by the previous data pointer offset
             dataPtr += (position == ArrayData::GrowsAtBeginning)
-                ? n + std::max(0, (header->alloc - from.size - n) / 2)
+                ? n + qMax(0, (header->alloc - from.size - n) / 2)
                 : from.freeSpaceAtBegin();
             header->flags = from.flags();
             return ArrayDataPointer(header, dataPtr);

@@ -4,7 +4,9 @@
 #include <base/utility/Assert.h>
 
 #include <base/io/ArrayDataPointer.h>
+
 #include <base/utility/Math.h>
+#include <base/io/ArrayData.h>
 
 
 namespace base::io {

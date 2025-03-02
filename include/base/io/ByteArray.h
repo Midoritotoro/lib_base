@@ -18,6 +18,7 @@
 
 
 namespace base::io {
+    inline constexpr sizetype MaxAllocSize = (std::numeric_limits<sizetype>::max)();
     using ByteArrayData = ArrayDataPointer<char>;
 
 #  define ByteArrayLiteral(str) \

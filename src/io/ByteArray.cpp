@@ -60,7 +60,8 @@ template <typename StringType> struct StringAlgorithms
     static inline StringType trimmed_helper_inplace(const NakedStringType&, const Char*, const Char*)
     {
         // can't happen
-        AssertUncreachable();
+        AssertUnreachable();
+        return {};
     }
 
     struct TrimPositions {
@@ -102,7 +103,7 @@ template <typename StringType> struct StringAlgorithms
         const Char* src = str.cbegin();
         const Char* end = str.cend();
         NakedStringType result = isConst || !str.isDetached() ?
-            StringType(str.size(), Qt::Uninitialized) :
+            StringType(str.size(), base::io::Initialization::Uninitialized) :
             std::move(str);
 
         Char* dst = const_cast<Char*>(result.cbegin());
@@ -122,7 +123,7 @@ template <typename StringType> struct StringAlgorithms
             if (ptr != dst && ptr[-1] == 0x0020)
                 --ptr;
 
-        sizetype newlen = ptr - dst;
+        qsizetype newlen = ptr - dst;
         if (isConst && newlen == str.size() && unmodified) {
             // nothing happened, return the original
             return str;
@@ -525,8 +526,6 @@ bool base::io::algorithms::isValidUtf8(ByteArrayView s) noexcept
 __BASE_IO_NAMESPACE_BEGIN
 
 const char ByteArray::_empty = '\0';
-
-inline constexpr sizetype MaxAllocSize = (std::numeric_limits<sizetype>::max)();
 
 
 sizetype FindByteArray(
@@ -952,7 +951,7 @@ ByteArray qUncompress(const uchar* data, sizetype nbytes)
     if (nbytes < HeaderSize)
         return invalidCompressedData();
 
-    const auto expectedSize = FromBigEndian<>(data);
+    const auto expectedSize = FromBigEndian<CompressSizeHint_t>(data);
     if (nbytes == HeaderSize) {
         if (expectedSize != 0)
             return invalidCompressedData();
@@ -1199,7 +1198,7 @@ ByteArray& ByteArray::insert(sizetype i, ByteArrayView data)
 
     if (i >= d->size) {
         DataPointer detached{};  // construction is free
-        d.detachAndGrow(Data::GrowsAtEnd, (i - d.size) + size, &str, &detached);
+        d.detachAndGrow(ArrayData::GrowsAtEnd, (i - d.size) + size, &str, &detached);
         Assert(d.data() != nullptr);
         d->copyAppend(i - d->size, ' ');
         d->copyAppend(str, str + size);
@@ -1224,7 +1223,7 @@ ByteArray& ByteArray::insert(sizetype i, sizetype count, char ch)
 
     if (i >= d->size) {
         // handle this specially, as ArrayDataOps::insert() doesn't handle out of bounds positions
-        d.detachAndGrow(Data::GrowsAtEnd, (i - d.size) + count, nullptr, nullptr);
+        d.detachAndGrow(ArrayData::GrowsAtEnd, (i - d.size) + count, nullptr, nullptr);
         Assert(d.data() != nullptr);
         d->copyAppend(i - d->size, ' ');
         d->copyAppend(count, ch);
@@ -1250,7 +1249,7 @@ ByteArray& ByteArray::remove(sizetype pos, sizetype len)
         d.data()[d.size] = '\0';
     }
     else {
-        ByteArray copy{ size() - len, Qt::Uninitialized };
+        ByteArray copy{ size() - len, Initialization::Uninitialized };
         const auto toRemove_start = d.begin() + pos;
         copy.d->copyRanges({ {d.begin(), toRemove_start},
                            {toRemove_start + len, d.end()} });
