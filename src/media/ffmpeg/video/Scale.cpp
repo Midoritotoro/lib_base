@@ -222,11 +222,13 @@ void FrameScaler::convert(
 #if BYTE_ORDER == BIG_ENDIAN
                 dstp[0] = p_palette->palette[i][3];
                 dstp[1] = p_palette->palette[i][0];
+
                 dstp[2] = p_palette->palette[i][1];
                 dstp[3] = p_palette->palette[i][2];
 #else
                 dstp[0] = p_palette->palette[i][2];
                 dstp[1] = p_palette->palette[i][1];
+
                 dstp[2] = p_palette->palette[i][0];
                 dstp[3] = p_palette->palette[i][3];
 #endif
@@ -343,13 +345,17 @@ int FrameScaler::getParameters(ScalerConfiguration * p_cfg,
     {
         p_cfg->i_fmti = i_fmti;
         p_cfg->i_fmto = i_fmto;
+
         p_cfg->b_has_a = b_has_ai && b_has_ao;
         p_cfg->b_add_a = (!b_has_ai) && b_has_ao;
+
         p_cfg->b_copy = i_fmti == i_fmto &&
             p_fmti->i_visible_width == p_fmto->i_visible_width &&
             p_fmti->i_visible_height == p_fmto->i_visible_height;
+
         p_cfg->b_swap_uvi = b_swap_uvi;
         p_cfg->b_swap_uvo = b_swap_uvo;
+
         p_cfg->i_sws_flags = i_sws_flags;
     }
 
@@ -425,7 +431,7 @@ void FrameScaler::swapUV(
     tmp._planesDescription[1] = p_src->_planesDescription[2];
     tmp._planesDescription[2] = p_src->_planesDescription[1];
 
-    PictureCopyPixels(p_dst, &tmp);
+    p_dst->frameCopyPixels(p_dst, &tmp);
 }
 
 
@@ -469,6 +475,7 @@ int FrameScaler::initScaler(filter_t* p_filter)
 
     p_sys->desc_in = Chroma::FourccGetChromaDescription(p_fmti->i_chroma);
     p_sys->desc_out = Chroma::FourccGetChromaDescription(p_fmto->i_chroma);
+
     if (p_sys->desc_in == NULL || p_sys->desc_out == NULL)
         return EGENERIC;
 
@@ -477,7 +484,8 @@ int FrameScaler::initScaler(filter_t* p_filter)
 
     /* swscale does not like too small width */
     p_sys->i_extend_factor = 1;
-    while (std::min(p_fmti->i_visible_width, p_fmto->i_visible_width) * p_sys->i_extend_factor < MINIMUM_WIDTH)
+    while (std::min(p_fmti->i_visible_width, p_fmto->i_visible_width)
+        * p_sys->i_extend_factor < MINIMUM_WIDTH)
         p_sys->i_extend_factor++;
 
     const unsigned i_fmti_visible_width = p_fmti->i_visible_width * p_sys->i_extend_factor;
@@ -488,8 +496,11 @@ int FrameScaler::initScaler(filter_t* p_filter)
         const AVPixelFormat i_fmto = n == 0 ? cfg.i_fmto : AV_PIX_FMT_GRAY8;
         struct SwsContext* ctx;
 
-        ctx = sws_getContext(i_fmti_visible_width, p_fmti->i_visible_height, i_fmti,
-            i_fmto_visible_width, p_fmto->i_visible_height, i_fmto,
+        ctx = sws_getContext(
+            i_fmti_visible_width, 
+            p_fmti->i_visible_height, i_fmti,
+            i_fmto_visible_width,
+            p_fmto->i_visible_height, i_fmto,
             cfg.i_sws_flags,
             p_sys->p_filter, NULL, 0);
         if (n == 0)
@@ -499,18 +510,36 @@ int FrameScaler::initScaler(filter_t* p_filter)
     }
     if (p_sys->ctxA)
     {
-        p_sys->p_src_a = PictureNew(CODEC_GREY, i_fmti_visible_width, p_fmti->i_visible_height, 0, 1);
-        p_sys->p_dst_a = PictureNew(CODEC_GREY, i_fmto_visible_width, p_fmto->i_visible_height, 0, 1);
+        p_sys->p_src_a = Frame::FrameNew(
+            CODEC_GREY, 
+            i_fmti_visible_width, 
+            p_fmti->i_visible_height, 0, 1);
+        p_sys->p_dst_a = Frame::FrameNew(
+            CODEC_GREY, 
+            i_fmto_visible_width, 
+            p_fmto->i_visible_height, 0, 1);
     }
     if (p_sys->i_extend_factor != 1)
     {
-        p_sys->p_src_e = PictureNew(p_fmti->i_chroma, i_fmti_visible_width, p_fmti->i_visible_height, 0, 1);
-        p_sys->p_dst_e = PictureNew(p_fmto->i_chroma, i_fmto_visible_width, p_fmto->i_visible_height, 0, 1);
+        p_sys->p_src_e = Frame::FrameNew(
+            p_fmti->i_chroma, 
+            i_fmti_visible_width,
+            p_fmti->i_visible_height, 0, 1);
+        p_sys->p_dst_e = Frame::FrameNew(
+            p_fmto->i_chroma, 
+            i_fmto_visible_width,
+            p_fmto->i_visible_height, 0, 1);
 
         if (p_sys->p_src_e)
-            memset(p_sys->p_src_e->p[0].p_pixels, 0, p_sys->p_src_e->p[0].i_pitch * p_sys->p_src_e->p[0].i_lines);
+            memset(
+                p_sys->p_src_e->_planesDescription[0].p_pixels,
+                0, p_sys->p_src_e->_planesDescription[0].i_pitch * 
+                p_sys->p_src_e->_planesDescription[0].i_lines);
         if (p_sys->p_dst_e)
-            memset(p_sys->p_dst_e->p[0].p_pixels, 0, p_sys->p_dst_e->p[0].i_pitch * p_sys->p_dst_e->p[0].i_lines);
+            memset(
+                p_sys->p_dst_e->_planesDescription[0].p_pixels,
+                0, p_sys->p_dst_e->_planesDescription[0].i_pitch 
+                * p_sys->p_dst_e->_planesDescription[0].i_lines);
     }
 
     if (!p_sys->ctx ||
@@ -518,7 +547,7 @@ int FrameScaler::initScaler(filter_t* p_filter)
         (p_sys->i_extend_factor != 1 && (!p_sys->p_src_e || !p_sys->p_dst_e)))
     {
         qDebug() << "could not init SwScaler and/or allocate memory";
-        Clean(p_filter);
+        cleanMemory(p_filter);
         return EGENERIC;
     }
 
@@ -534,18 +563,24 @@ int FrameScaler::initScaler(filter_t* p_filter)
             */
         unsigned i_sar_num = p_fmti->i_sar_num * p_fmti->i_visible_width;
         unsigned i_sar_den = p_fmti->i_sar_den * p_fmto->i_visible_width;
+
         UnsignedReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
+
         i_sar_num *= p_fmto->i_visible_height;
         i_sar_den *= p_fmti->i_visible_height;
+
         UnsignedReduce(&i_sar_num, &i_sar_den, i_sar_num, i_sar_den, 65536);
+
         p_fmto->i_sar_num = i_sar_num;
         p_fmto->i_sar_den = i_sar_den;
     }
 
     p_sys->b_add_a = cfg.b_add_a;
     p_sys->b_copy = cfg.b_copy;
+
     p_sys->fmt_in = *p_fmti;
     p_sys->fmt_out = *p_fmto;
+
     p_sys->b_swap_uvi = cfg.b_swap_uvi;
     p_sys->b_swap_uvo = cfg.b_swap_uvo;
 
@@ -554,88 +589,96 @@ int FrameScaler::initScaler(filter_t* p_filter)
     return SUCCESS;
 }
 
-picture_t* Filter(filter_t* p_filter, picture_t* p_pic)
+Frame* FrameScaler::filter(
+    filter_t* p_filter, 
+    Frame* p_pic)
 {
     filter_sys_t* p_sys = (filter_sys_t*)p_filter->p_sys;
+
     const video_format_t* p_fmti = &p_filter->fmt_in.video;
     const video_format_t* p_fmto = &p_filter->fmt_out.video;
-    picture_t* p_pic_dst;
+
+    Frame* p_pic_dst = nullptr;
 
     /* Check if format properties changed */
-    if (Init(p_filter))
+    if (initScaler(p_filter))
     {
-        PictureRelease(p_pic);
+        p_pic->clean();
+        delete p_pic;
         return NULL;
     }
 
     /* Request output picture */
-    // p_pic_dst = FilterNewPicture(p_filter);
+    p_pic_dst->newFrameFromFormat(&p_filter->fmt_out.video);
     if (!p_pic_dst)
     {
-        PictureRelease(p_pic);
+        p_pic->clean();
+        delete p_pic;
         return NULL;
     }
 
     /* */
-    picture_t* p_src = p_pic;
-    picture_t* p_dst = p_pic_dst;
+    Frame* p_src = p_pic;
+    Frame* p_dst = p_pic_dst;
     if (p_sys->i_extend_factor != 1)
     {
         p_src = p_sys->p_src_e;
         p_dst = p_sys->p_dst_e;
 
-        CopyPad(p_src, p_pic);
+        copyPad(p_src, p_pic);
     }
 
     if (p_sys->b_copy && p_sys->b_swap_uvi == p_sys->b_swap_uvo)
-        PictureCopyPixels(p_dst, p_src);
+        p_dst->frameCopyPixels(p_dst, p_src);
     else if (p_sys->b_copy)
-        SwapUV(p_dst, p_src);
+        swapUV(p_dst, p_src);
     else
     {
         /* Even if alpha is unused, swscale expects the pointer to be set */
         const int n_planes = !p_sys->ctxA && (p_src->i_planes == 4 ||
             p_dst->i_planes == 4) ? 4 : 3;
-        Convert(p_filter, p_sys->ctx, p_dst, p_src, p_fmti->i_visible_height,
+        convert(p_filter, p_sys->ctx, p_dst, p_src, p_fmti->i_visible_height,
             n_planes, p_sys->b_swap_uvi, p_sys->b_swap_uvo);
     }
     if (p_sys->ctxA)
     {
         /* We extract the A plane to rescale it, and then we reinject it. */
         if (p_fmti->i_chroma == CODEC_RGBA || p_fmti->i_chroma == CODEC_BGRA)
-            ExtractA(p_sys->p_src_a, p_src, OFFSET_A);
+            extractA(p_sys->p_src_a, p_src, OFFSET_A);
         else if (p_fmti->i_chroma == CODEC_ARGB || p_fmti->i_chroma == CODEC_ABGR)
-            ExtractA(p_sys->p_src_a, p_src, 0);
+            extractA(p_sys->p_src_a, p_src, 0);
         else
-            PlaneCopyPixels(p_sys->p_src_a->p, p_src->p + A_PLANE);
+            p_dst->planeCopyPixels(p_sys->p_src_a->_planesDescription, p_src->_planesDescription + A_PLANE);
 
-        Convert(p_filter, p_sys->ctxA, p_sys->p_dst_a, p_sys->p_src_a,
+        convert(p_filter, p_sys->ctxA, p_sys->p_dst_a, p_sys->p_src_a,
             p_fmti->i_visible_height, 1, false, false);
         if (p_fmto->i_chroma == CODEC_RGBA || p_fmto->i_chroma == CODEC_BGRA)
-            InjectA(p_dst, p_sys->p_dst_a, OFFSET_A);
+            injectA(p_dst, p_sys->p_dst_a, OFFSET_A);
         else if (p_fmto->i_chroma == CODEC_ARGB || p_fmto->i_chroma == CODEC_ABGR)
-            InjectA(p_dst, p_sys->p_dst_a, 0);
+            injectA(p_dst, p_sys->p_dst_a, 0);
         else
-            PlaneCopyPixels(p_dst->p + A_PLANE, p_sys->p_dst_a->p);
+            p_dst->planeCopyPixels(p_dst->_planesDescription + A_PLANE, p_sys->p_dst_a->_planesDescription);
     }
     else if (p_sys->b_add_a)
     {
         /* We inject a complete opaque alpha plane */
         if (p_fmto->i_chroma == CODEC_RGBA || p_fmto->i_chroma == CODEC_BGRA)
-            FillA(&p_dst->p[0], OFFSET_A);
+            fillA(&p_dst->_planesDescription[0], OFFSET_A);
         else if (p_fmto->i_chroma == CODEC_ARGB || p_fmto->i_chroma == CODEC_ABGR)
-            FillA(&p_dst->p[0], 0);
+            fillA(&p_dst->_planesDescription[0], 0);
         else
-            FillA(&p_dst->p[A_PLANE], 0);
+            fillA(&p_dst->_planesDescription[A_PLANE], 0);
     }
 
     if (p_sys->i_extend_factor != 1)
     {
-        PictureCopyPixels(p_pic_dst, p_dst);
+        p_pic_dst->frameCopyPixels(p_pic_dst, p_dst);
     }
 
-    PictureCopyProperties(p_pic_dst, p_pic);
-    PictureRelease(p_pic);
+    p_pic_dst->frameCopyProperties(p_pic_dst, p_pic);
+
+    p_pic->clean();
+    delete p_pic;
 
     return p_pic_dst;
 }

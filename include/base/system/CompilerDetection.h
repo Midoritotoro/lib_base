@@ -163,7 +163,7 @@
 #      define COMPILER_CLASS_ENUM
 #    endif
 
-#    if __has_feature(cxx_constexpr) && Q_CC_CLANG > 302 /* CLANG 3.2 has bad/partial support */
+#    if __has_feature(cxx_constexpr) && CPP_CLANG > 302 /* CLANG 3.2 has bad/partial support */
 #      define COMPILER_CONSTEXPR
 #    endif
 

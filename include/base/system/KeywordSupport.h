@@ -132,7 +132,17 @@
 #  define always_inline         inline
 #endif
 
-#if _HAS_NODISCARD
+#ifndef HAS_NODISCARD
+    #ifndef __has_cpp_attribute
+        #define HAS_NODISCARD 0
+    #elif __has_cpp_attribute(nodiscard) >= 201603L
+        #define HAS_NODISCARD 1
+    #else
+        #define HAS_NODISCARD 0
+    #endif
+#endif // HAS_NODISCARD
+
+#if HAS_NODISCARD
 #  define NODISCARD [[nodiscard]]
 #else
 #  define NODISCARD
@@ -175,6 +185,7 @@
 #endif
 
 #define unused(x)                               ((void)(x))
+#define UNUSED(x)                               ((void)(x))
 
 #if defined(OS_WIN)
     #define aligned_malloc(size, alignment)		_aligned_malloc(size, alignment)
@@ -209,9 +220,13 @@
 #endif
 
 #if __has_cpp_attribute(gnu::malloc)
-#  define DECLARE_MALLOCLIKE [[nodiscard, gnu::malloc]]
+#  if HAS_NODISCARD
+#    define DECLARE_MALLOCLIKE [[NODISCARD, gnu::malloc]]
+#  else
+#    define DECLARE_MALLOCLIKE [[gnu::malloc]]
+#  endif
 #else
-#  define DECLARE_MALLOCLIKE [[nodiscard]]
+#  define DECLARE_MALLOCLIKE NODISCARD
 #endif
 
 #endif // __cplusplus

@@ -122,14 +122,6 @@ void Frame::setupFromFormat(const video_format_t* fmt)
     i_planes = p_dsc->plane_count;
 }
 
-struct picture_buffer_t
-{
-    int fd;
-    void* base;
-    size_t size;
-    off_t offset;
-};
-
 void Frame::newFrameFromFormat(const video_format_t* fmt)
 {
     
@@ -137,6 +129,72 @@ void Frame::newFrameFromFormat(const video_format_t* fmt)
 
 void Frame::clean() {
     free_null(_planesDescription->p_pixels);
+}
+
+void Frame::planeCopyPixels(
+    Frame::plane_t* p_dst, 
+    const Frame::plane_t * p_src)
+{
+    const unsigned i_width = std::min(
+        p_dst->i_visible_pitch,
+        p_src->i_visible_pitch);
+
+    const unsigned i_height = std::min(
+        p_dst->i_visible_lines,
+        p_src->i_visible_lines);
+
+    /* The 2x visible pitch check does two things:
+       1) Makes field plane_t's work correctly (see the deinterlacer module)
+       2) Moves less data if the pitch and visible pitch differ much.
+    */
+    if (p_src->i_pitch == p_dst->i_pitch &&
+        p_src->i_pitch < 2 * p_src->i_visible_pitch)
+    {
+        /* There are margins, but with the same width : perfect ! */
+        memcpy(p_dst->p_pixels, p_src->p_pixels,
+            p_src->i_pitch * i_height);
+    }
+    else
+    {
+        /* We need to proceed line by line */
+        uint8_t* p_in = p_src->p_pixels;
+        uint8_t* p_out = p_dst->p_pixels;
+
+        assert(p_in);
+        assert(p_out);
+
+        for (int i_line = i_height; i_line--; )
+        {
+            memcpy(p_out, p_in, i_width);
+            p_in += p_src->i_pitch;
+            p_out += p_dst->i_pitch;
+        }
+    }
+}
+
+void Frame::frameCopyProperties(
+    Frame* p_dst,
+    const Frame* p_src)
+{
+    p_dst->date = p_src->date;
+    p_dst->b_force = p_src->b_force;
+    p_dst->b_still = p_src->b_still;
+}
+
+void Frame::frameCopy(
+    Frame* p_dst,
+    const Frame* p_src)
+{
+    frameCopyPixels(p_dst, p_src);
+    frameCopyProperties(p_dst, p_src);
+}
+
+void Frame::frameCopyPixels(
+    Frame* p_dst,
+    const Frame* p_src)
+{
+    for (int i = 0; i < p_src->i_planes; i++)
+        planeCopyPixels(p_dst->_planesDescription + i, p_src->_planesDescription + i);
 }
 
 

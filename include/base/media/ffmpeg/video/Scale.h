@@ -85,7 +85,7 @@ class FrameScaler {
         unsigned offset);
 
     void fillA(
-        Frame* d,
+        Frame::plane_t* d,
         unsigned i_offset);
     void copyPad(
         Frame* p_dst,

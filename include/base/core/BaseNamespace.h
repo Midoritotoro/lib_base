@@ -10,6 +10,16 @@
 
 
 
+#ifndef __BASE_NAMESPACE_BEGIN
+#define __BASE_NAMESPACE_BEGIN namespace base {
+#endif // __BASE_NAMESPACE_BEGIN
+
+#ifndef __BASE_NAMESPACE_END
+#define __BASE_NAMESPACE_END }
+#endif // __BASE_NAMESPACE_END
+
+
+
 #ifndef __BASE_THREADS_NAMESPACE_BEGIN
 #define __BASE_THREADS_NAMESPACE_BEGIN namespace base {	INLINE_NAMESPACE namespace threads
 #endif // __BASE_THREADS_NAMESPACE_BEGIN

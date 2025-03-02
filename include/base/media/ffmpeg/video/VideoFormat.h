@@ -255,10 +255,9 @@ namespace base::media::ffmpeg::video {
     struct video_context
     {
         decoder_device* device;
-        const struct video_context_operations* ops;
-        enum video_context_type private_type;
+        const video_context_operations* ops;
+        video_context_type private_type;
         size_t private_size;
-        uint8_t _private[];
     };
 
     struct frame_t;

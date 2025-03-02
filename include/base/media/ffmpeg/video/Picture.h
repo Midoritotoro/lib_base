@@ -26,11 +26,13 @@ public:
 	void setupFromFormat(const video_format_t* fmt);
 	void newFrameFromFormat(const video_format_t* fmt);
 
+	NODISCARD static Frame* FrameNew(
+		fourcc_t i_chroma, int i_width,
+		int i_height, int i_sar_num,
+		int i_sar_den);
+
 	void clean();
 private:
-	/**
-	* The properties of the picture
-	*/
 	struct plane_t {
 		uint8_t* p_pixels;                        /**< Start of the plane's data */
 
@@ -47,6 +49,25 @@ private:
 
 	};
 
+	void planeCopyPixels(
+		plane_t* p_dst, 
+		const plane_t* p_src);
+
+    void frameCopyProperties(
+		Frame* p_dst,
+        const Frame* p_src);
+
+    void frameCopy(
+		Frame* p_dst,
+        const Frame* p_src);
+
+    void frameCopyPixels(
+        Frame* p_dst,
+        const Frame* p_src);
+	/**
+	* The properties of the picture
+	*/
+	
 	video_format_t format;
 
 	plane_t _planesDescription[PICTURE_PLANE_MAX];     /**< description of the planes */
