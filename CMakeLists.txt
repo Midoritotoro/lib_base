@@ -107,11 +107,11 @@ set(PRIVATE_SOURCES
     src/io/UnixFileSystemPath.cpp
     src/io/WindowsFileSystemPath.cpp
 
-    src/io/ByteArray.cpp
-    src/io/ArrayDataPointer.cpp
+    #src/io/ByteArray.cpp
+    #src/io/ArrayDataPointer.cpp
 
-    src/io/ArrayData.cpp
-    src/io/ByteArrayMatcher.cpp
+    #src/io/ArrayData.cpp
+    #src/io/ByteArrayMatcher.cpp
     src/core/ConcurrentAncillary.cpp
 
     src/core/Thread.cpp
@@ -231,23 +231,23 @@ set(PUBLIC_HEADERS
     include/base/core/WindowsThread.h
     include/base/core/UnixThread.h
 
-    include/base/io/ByteArray.h
-    include/base/io/ArrayDataPointer.h
+    #include/base/io/ByteArray.h
+    #include/base/io/ArrayDataPointer.h
 
     include/base/utility/ClassHelperMacros.h
     include/base/utility/Swap.h
 
     include/base/utility/TypeInfo.h
-    include/base/io/ArrayData.h
+#    include/base/io/ArrayData.h
 
     include/base/utility/BitOps.h
     include/base/utility/Random.h
 
     include/base/utility/MathConstants.h
-    include/base/io/ByteArrayView.h
+    #include/base/io/ByteArrayView.h
 
-    include/base/io/ByteArrayAlgorithms.h
-    include/base/io/ByteArrayPrivate.h
+    #include/base/io/ByteArrayAlgorithms.h
+    #include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
 
@@ -280,8 +280,8 @@ set(PUBLIC_HEADERS
     include/base/core/WindowsThreadPrivate.h
     include/base/utility/MacrosOverload.h
 
-    include/base/io/ByteArrayMatcher.h
-    include/base/io/MiscUtils.h
+  #  include/base/io/ByteArrayMatcher.h
+  #  include/base/io/MiscUtils.h
 )
 
 include(CMakePackageConfigHelpers)
@@ -381,12 +381,25 @@ if(LIB_BASE_ENABLE_FFMPEG)
     add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
 endif()
 
+string(REGEX REPLACE "(-march=[a-zA-Z0-9-]*)|(-mtune=[a-zA-Z0-9-]*)|(-msse[0-9,\\.]*)|(-mavx[a-z0-9]*)|(-mfma)|(-mamx-[a-z0-9]*)" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+	if((CMAKE_VS_PLATFORM_NAME STREQUAL "x64") OR (CMAKE_VS_PLATFORM_NAME STREQUAL "x86"))
+		include(cmake/x86_Simd.cmake)
+    endif()
+endif()
+
+
+if((CMAKE_SYSTEM_PROCESSOR STREQUAL "i686") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64"))
+		include(cmake/x86_Simd.cmake)
+endif()
+
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-O2 -Ot)
+        add_compile_options(-O3 -Ot)
     endif()
 
     target_compile_options(

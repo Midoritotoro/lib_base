@@ -340,7 +340,7 @@ namespace base::io {
 		return fread(outBuffer, 1, sizeInBytes, _desc);
 	}
 
-	ByteArray WindowsFileEngine::readAll()
+	ReadResult WindowsFileEngine::readAll()
 	{
 		measureExecutionTime("WindowsFileEngine::readAll()")
 
@@ -367,14 +367,17 @@ namespace base::io {
 		for (int i = 0; i < 16; ++i)
 			result += ((unsigned char*)&r)[i];
 #else
-	while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
-		size += readed;
+		while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
+			size += readed;
 
-		for (int i = 0; i < readed; ++i)
-			result += buffer[i];
-	}
+			for (int i = 0; i < readed; ++i)
+				result += buffer[i];
+		}
 #endif
-		return ByteArray((char*)result);
+		return {
+			.data = result,
+			.sizeInBytes = size
+		};
 	}
 
 	sizetype WindowsFileEngine::fileSize(const std::string& path) {

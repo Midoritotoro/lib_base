@@ -134,7 +134,7 @@ namespace base::io {
 		return _engine->read(outBuffer, sizeInBytes);
 	}
 
-	ByteArray File::readAll() {
+	ReadResult File::readAll() {
 		return _engine->readAll();
 	}
 

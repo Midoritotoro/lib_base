@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 		return -1;
 
 	auto readed = file.readAll();
-	qDebug() << "size: " << readed.size();
+	qDebug() << "size: " << readed.sizeInBytes;
 
 	return application.exec();
 }

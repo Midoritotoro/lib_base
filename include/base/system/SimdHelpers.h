@@ -5,31 +5,14 @@
 
 #include <base/system/KeywordSupport.h>
 
+#include <qconfig.h>
+
 
 #ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 
 #  define LIB_BASE_USE_COMPILER_ALIGNMENT
 #endif
 
 #define LIB_BASE_ENABLE(feature) (1/LIB_BASE_ENABLE_##feature == 1)
-
-#if defined(PROCESSOR_ARM) && defined(__ARM_NEON) || defined(__ARM_NEON__)
-#  include <arm_neon.h>
-#  define LIB_BASE_ENABLE_neon 1
-#else
-#  define LIB_BASE_ENABLE_neon -1
-#endif
-
-#if defined(PROCESSOR_MIPS) && (defined(__MIPS_DSP__) || (defined(__mips_dsp) && defined(PROCESSOR_MIPS_32)))
-#  define LIB_BASE_ENABLE_mips_dsp 1
-#else
-#  define LIB_BASE_ENABLE_mips_dsp -1
-#endif
-
-#if defined(PROCESSOR_MIPS) && (defined(__MIPS_DSPR2__) || (defined(__mips_dspr2) && defined(PROCESSOR_MIPS_32)))
-#  define LIB_BASE_ENABLE_mips_dspr2 1
-#else
-#  define LIB_BASE_ENABLE_mips_dspr2 -1
-#endif
 
 #if defined(PROCESSOR_X86) && defined(CPP_MSVC)
 
@@ -185,5 +168,3 @@
 #ifndef VECTORCALL
 	#define VECTORCALL
 #endif
-
-

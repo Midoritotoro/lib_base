@@ -19,6 +19,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(lib_base_test test.cpp)
 find_ffmpeg(lib_base_test)
+
+set(CMAKE_CXX_FLAGS "-march=native")
 target_link_libraries(
   lib_base_test PRIVATE
   lib_base::lib_base
