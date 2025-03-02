@@ -48,7 +48,7 @@ namespace base {
 	template <
 		typename Struct,
 		typename Member>
-	constexpr bool has_member = std::is_convertible_v<
+	inline constexpr bool has_member = std::is_convertible_v<
 		has_member_impl<Struct, Member>, void>;
 
 	template <typename T>
@@ -171,4 +171,19 @@ namespace base {
 			typename Base,
 			typename Derived>
 		constexpr inline bool is_virtual_base_of_v = is_virtual_base_of<Base, Derived>::value;
+
+		template <typename Iterator>
+		using IfIsInputIterator = typename std::enable_if<
+			std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::input_iterator_tag>::value,
+			bool>::type;
+
+		template <typename Iterator>
+		using IfIsForwardIterator = typename std::enable_if<
+			std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::forward_iterator_tag>::value,
+			bool>::type;
+
+		template <typename Iterator>
+		using IfIsNotForwardIterator = typename std::enable_if<
+			!std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::forward_iterator_tag>::value,
+			bool>::type;
 } // namespace base

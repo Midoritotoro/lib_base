@@ -3,15 +3,46 @@
 #include <base/utility/Flags.h>
 #include <base/system/Platform.h>
 
-
-struct CalculateGrowingBlockSizeResult
-{
-    sizetype size;
-    sizetype elementCount;
-};
+#include <base/core/AtomicInteger.h>
 
 
 namespace base::io {
+    enum CaseSensitivity {
+        CaseInsensitive,
+        CaseSensitive
+    };
+
+    struct CalculateGrowingBlockSizeResult
+    {
+        sizetype size;
+        sizetype elementCount;
+    };
+
+
+    template <typename T, typename Predicate>
+    T* uninitialized_remove_copy_if(T* first, T* last, T* out, Predicate& pred)
+    {
+        static_assert(std::is_nothrow_destructible_v<T>,
+            "This algorithm requires that T has a non-throwing destructor");
+        Assert(!q_points_into_range(out, first, last));
+
+        T* dest_begin = out;
+        try{
+            while (first != last) {
+                if (!pred(*first)) {
+                    new (std::addressof(*out)) T(*first);
+                    ++out;
+                }
+                ++first;
+            }
+        } catch(...) {
+            std::destroy(std::reverse_iterator(out), std::reverse_iterator(dest_begin));
+            throw;
+        }
+        return out;
+    }
+
+
     struct ArrayData
     {
         enum AllocationOption {
@@ -33,7 +64,7 @@ namespace base::io {
             return true;
         }
 
-        std::atomic<int> ref_;
+        AtomicInteger<int> ref_;
         ArrayOptions flags;
         sizetype alloc;
 
@@ -49,23 +80,23 @@ namespace base::io {
 
         bool ref() noexcept
         {
-            ref_.fetch_add(1, std::memory_order_acq_rel);
+            ref_.ref();
             return true;
         }
 
         bool deref() noexcept
         {
-            return ref_.fetch_sub(1, std::memory_order_acq_rel);
+            return ref_.deref();
         }
 
         bool isShared() const noexcept
         {
-            return ref_.load(std::memory_order_relaxed) != 1;
+            return ref_.loadRelaxed() != 1;
         }
 
         bool needsDetach() noexcept
         {
-            return ref_.load(std::memory_order_relaxed) > 1;
+            return ref_.loadRelaxed() > 1;
         }
 
         sizetype detachCapacity(sizetype newSize) const noexcept
@@ -102,7 +133,7 @@ namespace base::io {
             sizetype alignment) noexcept;
     };
 
-#if defined(PROCESSOR_X86_32) && defined(CC_GNU)
+#if defined(PROCESSOR_X86_32) && defined(CPP_GNU)
     inline constexpr size_t MaxPrimitiveAlignment = 2 * sizeof(void*);
 #else
     inline constexpr size_t MaxPrimitiveAlignment = alignof(std::max_align_t);

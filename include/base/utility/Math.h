@@ -6,6 +6,8 @@
 #include <base/utility/Assert.h>
 #include <base/utility/BitOps.h>
 
+#include <base/system/KeywordSupport.h>
+
 #include <cmath>
 #include <numeric>
 
@@ -210,5 +212,49 @@ namespace base {
         x = x * (1.5f - (0.5f * x * x * x));
 
         return x;
+    }
+
+    template<typename T, typename Cmp = std::less<>>
+    NODISCARD constexpr bool points_into_range(const T * p, const T * b, const T * e,
+        Cmp less = {}) noexcept
+    {
+        return !less(p, b) && less(p, e);
+    }
+
+    template <typename C, typename T>
+    NODISCARD constexpr bool points_into_range(const T& p, const C& c) noexcept
+    {
+        static_assert(std::is_same_v<decltype(std::data(c)), T>);
+        return points_into_range(p, std::data(c),
+            std::data(c) + std::distance(std::begin(c), std::end(c)));
+    }
+
+    template <typename To, typename From>
+    static constexpr auto saturate(From x)
+    {
+        static_assert(std::is_integral_v<To>);
+        static_assert(std::is_integral_v<From>);
+
+        MAYBE_UNUSED_ATTRIBUTE
+        constexpr auto Lo = (std::numeric_limits<To>::min)();
+        constexpr auto Hi = (std::numeric_limits<To>::max)();
+
+        if constexpr (std::is_signed_v<From> == std::is_signed_v<To>) {
+            // same signedness, we can accept regular integer conversion rules
+            return x < Lo ? Lo :
+                x > Hi ? Hi :
+                /*else*/  To(x);
+        }
+        else {
+            if constexpr (std::is_signed_v<From>) { // ie. !is_signed_v<To>
+                if (x < From{ 0 })
+                    return To{ 0 };
+            }
+
+            // from here on, x >= 0
+            using FromU = std::make_unsigned_t<From>;
+            using ToU = std::make_unsigned_t<To>;
+            return FromU(x) > ToU(Hi) ? Hi : To(x); // assumes Hi >= 0
+        }
     }
 } // namespace base

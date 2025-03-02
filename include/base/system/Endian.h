@@ -3,7 +3,7 @@
 #include <base/system/Platform.h>
 #include <base/core/BaseNamespace.h>
 
-__BASE_CORE_NAMESPACE_BEGIN
+__BASE_NAMESPACE_BEGIN
 
 template <typename T> always_inline void ToUnaligned(const T src, void* dest)
 {

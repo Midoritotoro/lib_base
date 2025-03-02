@@ -107,6 +107,8 @@ namespace base::io {
 		//! \return Размер файла в байтах
 		[[nodiscard]] sizetype fileSize() const noexcept;
 		static [[nodiscard]] sizetype fileSize(const std::string& path);
+
+		NODISCARD FILE* fileDescriptor() const noexcept;
 	private:
 		AbstractFileEngine* _engine = nullptr;
 	};

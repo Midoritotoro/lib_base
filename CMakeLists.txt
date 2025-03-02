@@ -107,11 +107,11 @@ set(PRIVATE_SOURCES
     src/io/UnixFileSystemPath.cpp
     src/io/WindowsFileSystemPath.cpp
 
-  #  src/io/ByteArray.cpp
-  #  src/io/ArrayDataPointer.cpp
+    src/io/ByteArray.cpp
+    src/io/ArrayDataPointer.cpp
 
-  #  src/io/ArrayData.cpp
-  #  src/io/ByteArrayMatcher.cpp
+    src/io/ArrayData.cpp
+    src/io/ByteArrayMatcher.cpp
     src/core/ConcurrentAncillary.cpp
 
     src/core/Thread.cpp
@@ -231,8 +231,8 @@ set(PUBLIC_HEADERS
     include/base/core/WindowsThread.h
     include/base/core/UnixThread.h
 
-  #  include/base/io/ByteArray.h
-  #  include/base/io/ArrayDataPointer.h
+    include/base/io/ByteArray.h
+    include/base/io/ArrayDataPointer.h
 
     include/base/utility/ClassHelperMacros.h
     include/base/utility/Swap.h
@@ -244,10 +244,10 @@ set(PUBLIC_HEADERS
     include/base/utility/Random.h
 
     include/base/utility/MathConstants.h
-  #  include/base/io/ByteArrayView.h
+    include/base/io/ByteArrayView.h
 
-  #  include/base/io/ByteArrayAlgorithms.h
-  #  include/base/io/ByteArrayPrivate.h
+    include/base/io/ByteArrayAlgorithms.h
+    include/base/io/ByteArrayPrivate.h
 
     include/base/system/Endian.h
 
@@ -279,6 +279,9 @@ set(PUBLIC_HEADERS
 
     include/base/core/WindowsThreadPrivate.h
     include/base/utility/MacrosOverload.h
+
+    include/base/io/ByteArrayMatcher.h
+    include/base/io/MiscUtils.h
 )
 
 include(CMakePackageConfigHelpers)

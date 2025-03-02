@@ -4,6 +4,7 @@
 #include <base/utility/Assert.h>
 
 #include <base/io/ArrayDataPointer.h>
+#include <base/utility/Math.h>
 
 
 namespace base::io {
@@ -415,7 +416,7 @@ namespace base::io {
                 return insertionPoint;
             }
 
-            void insert(qsizetype pos, const T* source, qsizetype n)
+            void insert(sizetype pos, const T* source, sizetype n)
             {
                 T* where = displace(pos, n);
 
@@ -427,7 +428,7 @@ namespace base::io {
                 }
             }
 
-            void insert(qsizetype pos, const T& t, qsizetype n)
+            void insert(sizetype pos, const T& t, sizetype n)
             {
                 T* where = displace(pos, n);
 
@@ -438,30 +439,30 @@ namespace base::io {
                 }
             }
 
-            void insertOne(qsizetype pos, T&& t)
+            void insertOne(sizetype pos, T&& t)
             {
                 T* where = displace(pos, 1);
                 new (where) T(std::move(t));
                 ++displaceFrom;
-                Q_ASSERT(displaceFrom == displaceTo);
+                Assert(displaceFrom == displaceTo);
             }
 
         };
 
 
-        void insert(qsizetype i, const T* data, qsizetype n)
+        void insert(sizetype i, const T* data, sizetype n)
         {
             const bool growsAtBegin = this->size != 0 && i == 0;
             const auto pos = growsAtBegin ? Data::GrowsAtBeginning : Data::GrowsAtEnd;
 
             DataPointer oldData;
             this->detachAndGrow(pos, n, &data, &oldData);
-            Q_ASSERT((pos == Data::GrowsAtBeginning && this->freeSpaceAtBegin() >= n) ||
+            Assert((pos == Data::GrowsAtBeginning && this->freeSpaceAtBegin() >= n) ||
                 (pos == Data::GrowsAtEnd && this->freeSpaceAtEnd() >= n));
 
             if (growsAtBegin) {
                 // copy construct items in reverse order at the begin
-                Q_ASSERT(this->freeSpaceAtBegin() >= n);
+                Assert(this->freeSpaceAtBegin() >= n);
                 while (n) {
                     --n;
                     new (this->begin() - 1) T(data[n]);
@@ -474,7 +475,7 @@ namespace base::io {
             }
         }
 
-        void insert(qsizetype i, qsizetype n, parameter_type t)
+        void insert(sizetype i, sizetype n, parameter_type t)
         {
             T copy(t);
 
@@ -482,12 +483,12 @@ namespace base::io {
             const auto pos = growsAtBegin ? Data::GrowsAtBeginning : Data::GrowsAtEnd;
 
             this->detachAndGrow(pos, n, nullptr, nullptr);
-            Q_ASSERT((pos == Data::GrowsAtBeginning && this->freeSpaceAtBegin() >= n) ||
+            Assert((pos == Data::GrowsAtBeginning && this->freeSpaceAtBegin() >= n) ||
                 (pos == Data::GrowsAtEnd && this->freeSpaceAtEnd() >= n));
 
             if (growsAtBegin) {
                 // copy construct items in reverse order at the begin
-                Q_ASSERT(this->freeSpaceAtBegin() >= n);
+                Assert(this->freeSpaceAtBegin() >= n);
                 while (n--) {
                     new (this->begin() - 1) T(copy);
                     --this->ptr;
@@ -500,7 +501,7 @@ namespace base::io {
         }
 
         template<typename... Args>
-        void emplace(qsizetype i, Args &&... args)
+        void emplace(sizetype i, Args &&... args)
         {
             bool detach = this->needsDetach();
             if (!detach) {
@@ -522,7 +523,7 @@ namespace base::io {
 
             this->detachAndGrow(pos, 1, nullptr, nullptr);
             if (growsAtBegin) {
-                Q_ASSERT(this->freeSpaceAtBegin());
+                Assert(this->freeSpaceAtBegin());
                 new (this->begin() - 1) T(std::move(tmp));
                 --this->ptr;
                 ++this->size;
@@ -559,8 +560,8 @@ namespace base::io {
         void reallocate(sizetype alloc, ArrayData::AllocationOption option)
         {
             auto pair = Data::reallocateUnaligned(this->d, this->ptr, alloc, option);
-            Q_CHECK_PTR(pair.second);
-            Q_ASSERT(pair.first != nullptr);
+            Assert(pair.second != nullptr);
+            Assert(pair.first != nullptr);
             this->d = pair.first;
             this->ptr = pair.second;
         }
@@ -609,7 +610,7 @@ namespace base::io {
             this->size += (e - b);
         }
 
-        void copyAppend(qsizetype n, parameter_type t) noexcept
+        void copyAppend(sizetype n, parameter_type t) noexcept
         {
             Assert(!this->isShared() || n == 0);
             Assert(this->freeSpaceAtEnd() >= n);
@@ -618,7 +619,7 @@ namespace base::io {
                 return;
 
             T* where = this->end();
-            this->size += qsizetype(n);
+            this->size += sizetype(n);
             while (n--)
                 *where++ = t;
         }
@@ -634,7 +635,7 @@ namespace base::io {
             Assert(!this->isShared());
             Assert(newSize < size_t(this->size));
 
-            this->size = qsizetype(newSize);
+            this->size = sizetype(newSize);
         }
 
         void destroyAll() noexcept
@@ -784,13 +785,13 @@ namespace base::io {
                 if (it == end)
                     return result;
 
-                QPodArrayOps<T> other(this->size);
+                PodArrayOps<T> other(this->size);
                 Assert(other.data() != nullptr);
 
                 auto dest = other.begin();
                 // std::uninitialized_copy will fallback to ::memcpy/memmove()
                 dest = std::uninitialized_copy(begin, it, dest);
-                dest = q_uninitialized_remove_copy_if(std::next(it), end, dest, pred);
+                dest = uninitialized_remove_copy_if(std::next(it), end, dest, pred);
                 other.size = std::distance(other.data(), dest);
                 result = this->size - other.size;
                 this->swap(other);
@@ -870,27 +871,27 @@ namespace base::io {
         TypeInfo<T>::isComplex&& TypeInfo<T>::isRelocatable
     >::type>
     {
-        typedef QMovableArrayOps<T> Type;
+        typedef MovableArrayOps<T> Type;
     };
 
     template <class T>
     struct CommonArrayOps : ArrayOpsSelector<T>::Type
     {
-        using Base = typename QArrayOpsSelector<T>::Type;
-        using Data = QTypedArrayData<T>;
-        using DataPointer = QArrayDataPointer<T>;
+        using Base = typename ArrayOpsSelector<T>::Type;
+        using Data = TypedArrayData<T>;
+        using DataPointer = ArrayDataPointer<T>;
         using parameter_type = typename Base::parameter_type;
 
     protected:
-        using Self = QCommonArrayOps<T>;
+        using Self = CommonArrayOps<T>;
 
     public:
         template<typename It>
-        void appendIteratorRange(It b, It e, QtPrivate::IfIsForwardIterator<It> = true)
+        void appendIteratorRange(It b, It e, IfIsForwardIterator<It> = true)
         {
             Assert(this->isMutable() || b == e);
             Assert(!this->isShared() || b == e);
-            const qsizetype distance = std::distance(b, e);
+            const sizetype distance = std::distance(b, e);
             Assert(distance >= 0 && distance <= this->allocatedCapacity() - this->size);
             unused(distance);
 
@@ -921,14 +922,14 @@ namespace base::io {
             if (b == e)
                 return;
             Assert(b < e);
-            const qsizetype n = e - b;
+            const sizetype n = e - b;
             DataPointer old;
 
             // points into range:
-            if (QtPrivate::q_points_into_range(b, *this))
-                this->detachAndGrow(QArrayData::GrowsAtEnd, n, &b, &old);
+            if (points_into_range(b, *this))
+                this->detachAndGrow(ArrayData::GrowsAtEnd, n, &b, &old);
             else
-                this->detachAndGrow(QArrayData::GrowsAtEnd, n, nullptr, nullptr);
+                this->detachAndGrow(ArrayData::GrowsAtEnd, n, nullptr, nullptr);
             Assert(this->freeSpaceAtEnd() >= n);
             // b might be updated so use [b, n)
             this->copyAppend(b, b + n);
@@ -936,8 +937,8 @@ namespace base::io {
     };
 
     template <class T>
-    struct QArrayDataOps
-        : QtPrivate::QCommonArrayOps<T>
+    struct ArrayDataOps
+        : CommonArrayOps<T>
     {
     };
 

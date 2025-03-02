@@ -162,6 +162,15 @@
 #  define UNLIKELY_ATTRIBUTE
 #endif
 
+
+#ifndef __has_cpp_attribute
+#  define MAYBE_UNUSED_ATTRIBUTE
+#elif __has_cpp_attribute(maybe_unused) >= 201603L
+#  define MAYBE_UNUSED_ATTRIBUTE   [[maybe_unused]]
+#else
+#  define MAYBE_UNUSED_ATTRIBUTE
+#endif
+
 #ifndef __has_cpp_attribute
 #  define _NODISCARD_MSG(_Msg)
 #elif __has_cpp_attribute(nodiscard) >= 201907L
@@ -221,7 +230,7 @@
 
 #if __has_cpp_attribute(gnu::malloc)
 #  if HAS_NODISCARD
-#    define DECLARE_MALLOCLIKE [[NODISCARD, gnu::malloc]]
+#    define DECLARE_MALLOCLIKE [[nodiscard, gnu::malloc]]
 #  else
 #    define DECLARE_MALLOCLIKE [[gnu::malloc]]
 #  endif

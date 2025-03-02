@@ -1,59 +1,51 @@
-// Copyright (C) 2016 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+#pragma once
 
-#ifndef QBYTEARRAYMATCHER_H
-#define QBYTEARRAYMATCHER_H
+#include <base/core/BaseNamespace.h>
 
-#include <QtCore/qbytearray.h>
-
-#include <QtCore/q20algorithm.h>
-#include <iterator>
-#include <limits>
-
-QT_BEGIN_NAMESPACE
+#include <base/io/ByteArrayView.h>
+#include <base/io/ByteArray.h>
 
 
-class QByteArrayMatcherPrivate;
+__BASE_IO_NAMESPACE_BEGIN
 
-class Q_CORE_EXPORT QByteArrayMatcher
+class ByteArrayMatcher
 {
 public:
-    QByteArrayMatcher();
-    explicit QByteArrayMatcher(const QByteArray &pattern);
-    explicit QByteArrayMatcher(QByteArrayView pattern)
-        : QByteArrayMatcher(pattern.data(), pattern.size())
+    ByteArrayMatcher();
+    explicit ByteArrayMatcher(const ByteArray &pattern);
+    explicit ByteArrayMatcher(ByteArrayView pattern)
+        : ByteArrayMatcher(pattern.data(), pattern.size())
     {}
-    explicit QByteArrayMatcher(const char *pattern, qsizetype length = -1);
-    QByteArrayMatcher(const QByteArrayMatcher &other);
-    ~QByteArrayMatcher();
+    explicit ByteArrayMatcher(const char *pattern, sizetype length = -1);
+    ByteArrayMatcher(const ByteArrayMatcher &other);
+    ~ByteArrayMatcher();
 
-    QByteArrayMatcher &operator=(const QByteArrayMatcher &other);
+    ByteArrayMatcher &operator=(const ByteArrayMatcher &other);
 
-    void setPattern(const QByteArray &pattern);
+    void setPattern(const ByteArray &pattern);
 
 #if QT_CORE_REMOVED_SINCE(6, 3)
     qsizetype indexIn(const QByteArray &ba, qsizetype from = 0) const;
 #else
     Q_WEAK_OVERLOAD
-    qsizetype indexIn(const QByteArray &ba, qsizetype from = 0) const
-    { return indexIn(QByteArrayView{ba}, from); }
+    sizetype indexIn(const ByteArray &ba, sizetype from = 0) const
+    { return indexIn(ByteArrayView{ba}, from); }
 #endif
-    qsizetype indexIn(const char *str, qsizetype len, qsizetype from = 0) const;
-    qsizetype indexIn(QByteArrayView data, qsizetype from = 0) const;
-    inline QByteArray pattern() const
+    sizetype indexIn(const char *str, sizetype len, sizetype from = 0) const;
+    sizetype indexIn(ByteArrayView data, sizetype from = 0) const;
+    inline ByteArray pattern() const
     {
         if (q_pattern.isNull())
-            return QByteArray(reinterpret_cast<const char*>(p.p), p.l);
+            return ByteArray(reinterpret_cast<const char*>(p.p), p.l);
         return q_pattern;
     }
 
 private:
-    QByteArrayMatcherPrivate *d;
-    QByteArray q_pattern;
+    ByteArray q_pattern;
     struct Data {
         uchar q_skiptable[256];
         const uchar *p;
-        qsizetype l;
+        sizetype l;
     };
     union {
         uint dummy[256];
@@ -61,24 +53,21 @@ private:
     };
 };
 
-class QStaticByteArrayMatcherBase
+class StaticByteArrayMatcherBase
 {
     alignas(16)
     struct Skiptable {
         uchar data[256];
     } m_skiptable;
 protected:
-    explicit constexpr QStaticByteArrayMatcherBase(const char *pattern, size_t n) noexcept
+    explicit constexpr StaticByteArrayMatcherBase(const char *pattern, size_t n) noexcept
         : m_skiptable(generate(pattern, n)) {}
     // compiler-generated copy/more ctors/assignment operators are ok!
-    ~QStaticByteArrayMatcherBase() = default;
+    ~StaticByteArrayMatcherBase() = default;
 
-#if QT_CORE_REMOVED_SINCE(6, 3) && QT_POINTER_SIZE != 4
-    Q_CORE_EXPORT int indexOfIn(const char *needle, uint nlen, const char *haystack, int hlen, int from) const noexcept;
-#endif
-    Q_CORE_EXPORT qsizetype indexOfIn(const char *needle, size_t nlen,
-                                      const char *haystack, qsizetype hlen,
-                                      qsizetype from) const noexcept;
+    sizetype indexOfIn(const char *needle, size_t nlen,
+                                      const char *haystack, sizetype hlen,
+                                      sizetype from) const noexcept;
 
 private:
     static constexpr Skiptable generate(const char *pattern, size_t n) noexcept
@@ -86,7 +75,7 @@ private:
         const auto uchar_max = (std::numeric_limits<uchar>::max)();
         uchar max = n > uchar_max ? uchar_max : uchar(n);
         Skiptable table = {};
-        q20::fill(std::begin(table.data), std::end(table.data), max);
+        std::fill(std::begin(table.data), std::end(table.data), max);
         pattern += n - max;
         while (max--)
             table.data[uchar(*pattern++)] = max;
@@ -95,34 +84,33 @@ private:
 };
 
 template <size_t N>
-class QStaticByteArrayMatcher : QStaticByteArrayMatcherBase
+class StaticByteArrayMatcher : StaticByteArrayMatcherBase
 {
     char m_pattern[N];
     // N includes the terminating '\0'!
-    static_assert(N > 2, "QStaticByteArrayMatcher makes no sense for finding a single-char pattern");
+    static_assert(N > 2, "StaticByteArrayMatcher makes no sense for finding a single-char pattern");
 public:
-    explicit constexpr QStaticByteArrayMatcher(const char (&patternToMatch)[N]) noexcept
-        : QStaticByteArrayMatcherBase(patternToMatch, N - 1), m_pattern()
+    explicit constexpr StaticByteArrayMatcher(const char (&patternToMatch)[N]) noexcept
+        : StaticByteArrayMatcher(patternToMatch, N - 1), m_pattern()
     {
         for (size_t i = 0; i < N; ++i)
             m_pattern[i] = patternToMatch[i];
     }
 
-    Q_WEAK_OVERLOAD
-    qsizetype indexIn(const QByteArray &haystack, qsizetype from = 0) const noexcept
+    WEAK_OVERLOAD
+    sizetype indexIn(const ByteArray &haystack, sizetype from = 0) const noexcept
     { return this->indexOfIn(m_pattern, N - 1, haystack.data(), haystack.size(), from); }
-    qsizetype indexIn(const char *haystack, qsizetype hlen, qsizetype from = 0) const noexcept
+    sizetype indexIn(const char *haystack, sizetype hlen, sizetype from = 0) const noexcept
     { return this->indexOfIn(m_pattern, N - 1, haystack, hlen, from); }
-    qsizetype indexIn(QByteArrayView haystack, qsizetype from = 0) const noexcept
+    sizetype indexIn(ByteArrayView haystack, sizetype from = 0) const noexcept
     { return this->indexOfIn(m_pattern, N - 1, haystack.data(), haystack.size(), from); }
 
-    QByteArray pattern() const { return QByteArray(m_pattern, qsizetype(N - 1)); }
+    ByteArray pattern() const { return ByteArray(m_pattern, sizetype(N - 1)); }
 };
 
 template <size_t N>
-constexpr QStaticByteArrayMatcher<N> qMakeStaticByteArrayMatcher(const char (&pattern)[N]) noexcept
-{ return QStaticByteArrayMatcher<N>(pattern); }
+constexpr StaticByteArrayMatcher<N> MakeStaticByteArrayMatcher(const char (&pattern)[N]) noexcept
+{ return StaticByteArrayMatcher<N>(pattern); }
 
-QT_END_NAMESPACE
 
-#endif // QBYTEARRAYMATCHER_H
+__BASE_IO_NAMESPACE_END

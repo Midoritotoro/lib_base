@@ -7,6 +7,9 @@
 #include <base/utility/Math.h>
 
 #include <base/system/Endian.h>
+#include <base/io/ByteArrayView.h>
+
+#include <base/io/ByteArrayMatcher.h>
 
 #include <zconf.h>
 #include <zlib.h>
@@ -17,111 +20,515 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <qxpfunctional.h>
+
+// / /  // 
+#include <qvarlengtharray.h>
+#include <qlocale.h>
+
+#include <qhash.h>
+#include <private/qlocale_data_p.h>
+#include <private/qlocale_tools_p.h>
+
+#include <base/io/MiscUtils.h>
 
 
-namespace base::io {
+template <typename StringType> struct StringAlgorithms
+{
+    typedef typename StringType::value_type Char;
+    typedef typename StringType::size_type size_type;
+    typedef typename std::remove_cv<StringType>::type NakedStringType;
+    static const bool isConst = std::is_const<StringType>::value;
+
+    static inline bool isSpace(char ch) { return ascii_isspace(ch); }
+    static inline bool isSpace(QChar ch) { return ch.isSpace(); }
+
+    // Surrogate pairs are not handled in either of the functions below. That is
+    // not a problem because there are no space characters (Zs, Zl, Zp) outside the
+    // Basic Multilingual Plane.
+
+    static inline StringType trimmed_helper_inplace(NakedStringType& str, const Char* begin, const Char* end)
+    {
+        // in-place trimming:
+        Char* data = const_cast<Char*>(str.cbegin());
+        if (begin != data)
+            memmove(data, begin, (end - begin) * sizeof(Char));
+        str.resize(end - begin);
+        return std::move(str);
+    }
+
+    static inline StringType trimmed_helper_inplace(const NakedStringType&, const Char*, const Char*)
+    {
+        // can't happen
+        AssertUncreachable();
+    }
+
+    struct TrimPositions {
+        const Char* begin;
+        const Char* end;
+    };
+    // Returns {begin, end} where:
+    // - "begin" refers to the first non-space character
+    // - if there is a sequence of one or more space chacaters at the end,
+    //   "end" refers to the first character in that sequence, otherwise
+    //   "end" is str.cend()
+    [[nodiscard]] static TrimPositions trimmed_helper_positions(const StringType& str)
+    {
+        const Char* begin = str.cbegin();
+        const Char* end = str.cend();
+        // skip white space from end
+        while (begin < end && isSpace(end[-1]))
+            --end;
+        // skip white space from start
+        while (begin < end && isSpace(*begin))
+            begin++;
+        return { begin, end };
+    }
+
+    static inline StringType trimmed_helper(StringType& str)
+    {
+        const auto [begin, end] = trimmed_helper_positions(str);
+        if (begin == str.cbegin() && end == str.cend())
+            return str;
+        if (!isConst && str.isDetached())
+            return trimmed_helper_inplace(str, begin, end);
+        return StringType(begin, end - begin);
+    }
+
+    static inline StringType simplified_helper(StringType& str)
+    {
+        if (str.isEmpty())
+            return str;
+        const Char* src = str.cbegin();
+        const Char* end = str.cend();
+        NakedStringType result = isConst || !str.isDetached() ?
+            StringType(str.size(), Qt::Uninitialized) :
+            std::move(str);
+
+        Char* dst = const_cast<Char*>(result.cbegin());
+        Char* ptr = dst;
+        bool unmodified = true;
+        forever{
+            while (src != end && isSpace(*src))
+                ++src;
+            while (src != end && !isSpace(*src))
+                *ptr++ = *src++;
+            if (src == end)
+                break;
+            if (*src != 0x0020)
+                unmodified = false;
+            *ptr++ = 0x0020;
+        }
+            if (ptr != dst && ptr[-1] == 0x0020)
+                --ptr;
+
+        sizetype newlen = ptr - dst;
+        if (isConst && newlen == str.size() && unmodified) {
+            // nothing happened, return the original
+            return str;
+        }
+        result.resize(newlen);
+        return result;
+    }
+};
+
+
+struct ValidUtf8Result {
+    bool isValidUtf8;
+    bool isValidAscii;
+};
+
+
+static inline const uchar* simdFindNonAscii(const uchar* src, const uchar* end, const uchar*& nextAscii)
+{
+#ifdef __AVX2__
+    // do 32 characters at a time
+    // (this is similar to simdTestMask in qstring.cpp)
+    const __m256i mask = _mm256_set1_epi8(char(0x80));
+    for (; end - src >= 32; src += 32) {
+        __m256i data = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src));
+        if (_mm256_testz_si256(mask, data))
+            continue;
+
+        uint n = _mm256_movemask_epi8(data);
+        Assert(n);
+
+        // find the next probable ASCII character
+        // we don't want to load 32 bytes again in this loop if we know there are non-ASCII
+        // characters still coming
+        nextAscii = src + qBitScanReverse(n) + 1;
+
+        // return the non-ASCII character
+        return src + qCountTrailingZeroBits(n);
+    }
+#endif
+
+    // do sixteen characters at a time
+    for (; end - src >= 16; src += 16) {
+        __m128i data = _mm_loadu_si128(reinterpret_cast<const __m128i*>(src));
+
+        // check if everything is ASCII
+        // movemask extracts the high bit of every byte, so n is non-zero if something isn't ASCII
+        uint n = _mm_movemask_epi8(data);
+        if (!n)
+            continue;
+
+        // find the next probable ASCII character
+        // we don't want to load 16 bytes again in this loop if we know there are non-ASCII
+        // characters still coming
+        nextAscii = src + base::__BitScanReverse(n) + 1;
+
+        // return the non-ASCII character
+        return src + base::CountTrailingZeroBits(n);
+    }
+
+    // do four characters at a time
+    for (; end - src >= 4; src += 4) {
+        base::uint32 data = base::FromUnaligned<base::uint32>(src);
+        data &= 0x80808080U;
+        if (!data)
+            continue;
+
+        // We don't try to guess which of the three bytes is ASCII and which
+        // one isn't. The chance that at least two of them are non-ASCII is
+        // better than 75%.
+        nextAscii = src;
+        return src;
+    }
+    nextAscii = end;
+    return src;
+}
+
+
+template <typename Traits, typename OutputPtr, typename InputPtr> inline
+int toUtf8(char16_t u, OutputPtr& dst, InputPtr& src, InputPtr end)
+{
+    if (!Traits::skipAsciiHandling && u < 0x80) {
+        // U+0000 to U+007F (US-ASCII) - one byte
+        Traits::appendByte(dst, uchar(u));
+        return 0;
+    }
+    else if (u < 0x0800) {
+        // U+0080 to U+07FF - two bytes
+        // first of two bytes
+        Traits::appendByte(dst, 0xc0 | uchar(u >> 6));
+    }
+    else {
+        if (!QChar::isSurrogate(u)) {
+            // U+0800 to U+FFFF (except U+D800-U+DFFF) - three bytes
+            if (!Traits::allowNonCharacters && QChar::isNonCharacter(u))
+                return Traits::Error;
+
+            // first of three bytes
+            Traits::appendByte(dst, 0xe0 | uchar(u >> 12));
+        }
+        else {
+            // U+10000 to U+10FFFF - four bytes
+            // need to get one extra codepoint
+            if (Traits::availableUtf16(src, end) == 0)
+                return Traits::EndOfString;
+
+            char16_t low = Traits::peekUtf16(src);
+            if (!QChar::isHighSurrogate(u))
+                return Traits::Error;
+            if (!QChar::isLowSurrogate(low))
+                return Traits::Error;
+
+            Traits::advanceUtf16(src);
+            char32_t ucs4 = QChar::surrogateToUcs4(u, low);
+
+            if (!Traits::allowNonCharacters && QChar::isNonCharacter(ucs4))
+                return Traits::Error;
+
+            // first byte
+            Traits::appendByte(dst, 0xf0 | (uchar(ucs4 >> 18) & 0xf));
+
+            // second of four bytes
+            Traits::appendByte(dst, 0x80 | (uchar(ucs4 >> 12) & 0x3f));
+
+            // for the rest of the bytes
+            u = char16_t(ucs4);
+        }
+
+        // second to last byte
+        Traits::appendByte(dst, 0x80 | (uchar(u >> 6) & 0x3f));
+    }
+
+    // last byte
+    Traits::appendByte(dst, 0x80 | (u & 0x3f));
+    return 0;
+}
+
+inline bool isContinuationByte(uchar b)
+{
+    return (b & 0xc0) == 0x80;
+}
+
+
+template <typename Traits, typename OutputPtr, typename InputPtr> inline
+qsizetype fromUtf8(uchar b, OutputPtr& dst, InputPtr& src, InputPtr end)
+{
+    qsizetype charsNeeded;
+    char32_t min_uc;
+    char32_t uc;
+
+    if (!Traits::skipAsciiHandling && b < 0x80) {
+        // US-ASCII
+        Traits::appendUtf16(dst, b);
+        return 1;
+    }
+
+    if (!Traits::isTrusted && Q_UNLIKELY(b <= 0xC1)) {
+        // an UTF-8 first character must be at least 0xC0
+        // however, all 0xC0 and 0xC1 first bytes can only produce overlong sequences
+        return Traits::Error;
+    }
+    else if (b < 0xe0) {
+        charsNeeded = 2;
+        min_uc = 0x80;
+        uc = b & 0x1f;
+    }
+    else if (b < 0xf0) {
+        charsNeeded = 3;
+        min_uc = 0x800;
+        uc = b & 0x0f;
+    }
+    else if (b < 0xf5) {
+        charsNeeded = 4;
+        min_uc = 0x10000;
+        uc = b & 0x07;
+    }
+    else {
+        // the last Unicode character is U+10FFFF
+        // it's encoded in UTF-8 as "\xF4\x8F\xBF\xBF"
+        // therefore, a byte higher than 0xF4 is not the UTF-8 first byte
+        return Traits::Error;
+    }
+
+    qptrdiff bytesAvailable = Traits::availableBytes(src, end);
+    if (Q_UNLIKELY(bytesAvailable < charsNeeded - 1)) {
+        // it's possible that we have an error instead of just unfinished bytes
+        if (bytesAvailable > 0 && !isContinuationByte(Traits::peekByte(src, 0)))
+            return Traits::Error;
+        if (bytesAvailable > 1 && !isContinuationByte(Traits::peekByte(src, 1)))
+            return Traits::Error;
+        return Traits::EndOfString;
+    }
+
+    // first continuation character
+    b = Traits::peekByte(src, 0);
+    if (!isContinuationByte(b))
+        return Traits::Error;
+    uc <<= 6;
+    uc |= b & 0x3f;
+
+    if (charsNeeded > 2) {
+        // second continuation character
+        b = Traits::peekByte(src, 1);
+        if (!isContinuationByte(b))
+            return Traits::Error;
+        uc <<= 6;
+        uc |= b & 0x3f;
+
+        if (charsNeeded > 3) {
+            // third continuation character
+            b = Traits::peekByte(src, 2);
+            if (!isContinuationByte(b))
+                return Traits::Error;
+            uc <<= 6;
+            uc |= b & 0x3f;
+        }
+    }
+
+    // we've decoded something; safety-check it
+    if (!Traits::isTrusted) {
+        if (uc < min_uc)
+            return Traits::Error;
+        if (QChar::isSurrogate(uc) || uc > QChar::LastValidCodePoint)
+            return Traits::Error;
+        if (!Traits::allowNonCharacters && QChar::isNonCharacter(uc))
+            return Traits::Error;
+    }
+
+    // write the UTF-16 sequence
+    if (!QChar::requiresSurrogates(uc)) {
+        // UTF-8 decoded and no surrogates are required
+        // detach if necessary
+        Traits::appendUtf16(dst, char16_t(uc));
+    }
+    else {
+        // UTF-8 decoded to something that requires a surrogate pair
+        Traits::appendUcs4(dst, uc);
+    }
+
+    Traits::advanceByte(src, charsNeeded - 1);
+    return charsNeeded;
+}
+
+namespace base {
+    struct Utf8BaseTraits
+    {
+        static const bool isTrusted = false;
+        static const bool allowNonCharacters = true;
+        static const bool skipAsciiHandling = false;
+        static const int Error = -1;
+        static const int EndOfString = -2;
+
+        static void appendByte(uchar*& ptr, uchar b)
+        {
+            *ptr++ = b;
+        }
+
+        static void appendByte(char8_t*& ptr, char8_t b)
+        {
+            *ptr++ = b;
+        }
+
+        static uchar peekByte(const uchar* ptr, sizetype n = 0)
+        {
+            return ptr[n];
+        }
+
+        static uchar peekByte(const char8_t* ptr, sizetype n = 0)
+        {
+            return ptr[n];
+        }
+
+        static ptrdiff availableBytes(const uchar* ptr, const uchar* end)
+        {
+            return end - ptr;
+        }
+
+        static ptrdiff availableBytes(const char8_t* ptr, const char8_t* end)
+        {
+            return end - ptr;
+        }
+
+        static void advanceByte(const uchar*& ptr, sizetype n = 1)
+        {
+            ptr += n;
+        }
+
+        static void advanceByte(const char8_t*& ptr, sizetype n = 1)
+        {
+            ptr += n;
+        }
+
+        static void appendUtf16(char16_t*& ptr, char16_t uc)
+        {
+            *ptr++ = char16_t(uc);
+        }
+
+        static constexpr inline char16_t highSurrogate(char32_t ucs4) noexcept
+        {
+            return char16_t((ucs4 >> 10) + 0xd7c0);
+        }
+        static constexpr inline char16_t lowSurrogate(char32_t ucs4) noexcept
+        {
+            return char16_t(ucs4 % 0x400 + 0xdc00);
+        }
+
+        static void appendUcs4(char16_t*& ptr, char32_t uc)
+        {
+            appendUtf16(ptr, highSurrogate(uc));
+            appendUtf16(ptr, lowSurrogate(uc));
+        }
+
+        static char16_t peekUtf16(const char16_t* ptr, sizetype n = 0) { return ptr[n]; }
+
+        static ptrdiff availableUtf16(const char16_t* ptr, const char16_t* end)
+        {
+            return end - ptr;
+        }
+
+        static void advanceUtf16(const char16_t*& ptr, sizetype n = 1) { ptr += n; }
+
+        static void appendUtf16(char32_t*& ptr, char16_t uc)
+        {
+            *ptr++ = char32_t(uc);
+        }
+
+        static void appendUcs4(char32_t*& ptr, char32_t uc)
+        {
+            *ptr++ = uc;
+        }
+    };
+
+    struct Utf8BaseTraitsNoAscii : public Utf8BaseTraits
+    {
+        static const bool skipAsciiHandling = true;
+    };
+
+    struct Utf8NoOutputTraits : public Utf8BaseTraitsNoAscii
+    {
+        struct NoOutput {};
+        static void appendUtf16(const NoOutput&, char16_t) {}
+        static void appendUcs4(const NoOutput&, char32_t) {}
+    };
+
+} 
+namespace base {
+    ValidUtf8Result isValidUtf8(base::io::ByteArrayView in)
+    {
+        const uchar* src = reinterpret_cast<const uchar*>(in.data());
+        const uchar* end = src + in.size();
+        const uchar* nextAscii = src;
+        bool isValidAscii = true;
+
+        while (src < end) {
+            if (src >= nextAscii)
+                src = simdFindNonAscii(src, end, nextAscii);
+            if (src == end)
+                break;
+
+            do {
+                uchar b = *src++;
+                if ((b & 0x80) == 0)
+                    continue;
+
+                isValidAscii = false;
+                base::Utf8NoOutputTraits::NoOutput output;
+                const qsizetype res = fromUtf8<base::Utf8NoOutputTraits>(b, output, src, end);
+                if (res < 0) {
+                    // decoding error
+                    return { false, false };
+                }
+            } while (src < nextAscii);
+        }
+
+        return { true, isValidAscii };
+    }
+} 
+
+int base::io::algorithms::compareMemory(ByteArrayView lhs, ByteArrayView rhs)
+{
+    if (!lhs.isNull() && !rhs.isNull()) {
+        int ret = memcmp(lhs.data(), rhs.data(), qMin(lhs.size(), rhs.size()));
+        if (ret != 0)
+            return ret;
+    }
+
+    // they matched qMin(l1, l2) bytes
+    // so the longer one is lexically after the shorter one
+    return lhs.size() == rhs.size() ? 0 : lhs.size() > rhs.size() ? 1 : -1;
+}
+
+/*!
+    \internal
+*/
+bool base::io::algorithms::isValidUtf8(ByteArrayView s) noexcept
+{
+    return base::isValidUtf8(s).isValidUtf8;
+}
+
+
+__BASE_IO_NAMESPACE_BEGIN
+
 const char ByteArray::_empty = '\0';
-
-constexpr inline char toHexUpper(char32_t value) noexcept
-{
-    return "0123456789ABCDEF"[value & 0xF];
-}
-
-constexpr inline char toHexLower(char32_t value) noexcept
-{
-    return "0123456789abcdef"[value & 0xF];
-}
-
-[[nodiscard]] constexpr inline bool isHexDigit(char32_t c) noexcept
-{
-    return (c >= '0' && c <= '9')
-        || (c >= 'A' && c <= 'F')
-        || (c >= 'a' && c <= 'f');
-}
-
-constexpr inline int fromHex(char32_t c) noexcept
-{
-    return ((c >= '0') && (c <= '9')) ? int(c - '0') :
-           ((c >= 'A') && (c <= 'F')) ? int(c - 'A' + 10) :
-           ((c >= 'a') && (c <= 'f')) ? int(c - 'a' + 10) :
-        /* otherwise */              -1;
-}
-
-constexpr inline char toOct(char32_t value) noexcept
-{
-    return char('0' + (value & 0x7));
-}
-
-[[nodiscard]] constexpr inline bool isOctalDigit(char32_t c) noexcept
-{
-    return c >= '0' && c <= '7';
-}
-
-constexpr inline int fromOct(char32_t c) noexcept
-{
-    return isOctalDigit(c) ? int(c - '0') : -1;
-}
-
-[[nodiscard]] constexpr inline bool isAsciiDigit(char32_t c) noexcept
-{
-    return c >= '0' && c <= '9';
-}
-
-constexpr inline bool isAsciiUpper(char32_t c) noexcept
-{
-    return c >= 'A' && c <= 'Z';
-}
-
-constexpr inline bool isAsciiLower(char32_t c) noexcept
-{
-    return c >= 'a' && c <= 'z';
-}
-
-constexpr inline bool isAsciiLetterOrNumber(char32_t c) noexcept
-{
-    return  isAsciiDigit(c) || isAsciiLower(c) || isAsciiUpper(c);
-}
-
-constexpr inline char toAsciiLower(char ch) noexcept
-{
-    return isAsciiUpper(ch) ? ch - 'A' + 'a' : ch;
-}
-
-constexpr inline char toAsciiUpper(char ch) noexcept
-{
-    return isAsciiLower(ch) ? ch - 'a' + 'A' : ch;
-}
-
-constexpr inline int caseCompareAscii(char lhs, char rhs) noexcept
-{
-    const char lhsLower = toAsciiLower(lhs);
-    const char rhsLower = toAsciiLower(rhs);
-    return int(uchar(lhsLower)) - int(uchar(rhsLower));
-}
-
-constexpr inline int isAsciiPrintable(char32_t ch) noexcept
-{
-    return ch >= ' ' && ch < 0x7f;
-}
-
-constexpr inline int base_lencmp(sizetype lhs, sizetype rhs) noexcept
-{
-    return lhs == rhs ? 0 :
-           lhs > rhs ? 1 :
-        /* else */  -1;
-}
 
 inline constexpr sizetype MaxAllocSize = (std::numeric_limits<sizetype>::max)();
 
-static constexpr inline uchar asciiUpper(uchar c)
-{
-    return c >= 'a' && c <= 'z' ? c & ~0x20 : c;
-}
 
-static constexpr inline uchar asciiLower(uchar c)
-{
-    return c >= 'A' && c <= 'Z' ? c | 0x20 : c;
-}
 sizetype FindByteArray(
     const char* haystack0, sizetype haystackLen, sizetype from,
     const char* needle0, sizetype needleLen);
@@ -184,7 +591,7 @@ int qstricmp(const char* str1, const char* str2)
         max += offset;
         do {
             uchar c = s1[offset];
-            if (int res = caseCompareAscii(c, s2[offset]))
+            if (int res = misc::caseCompareAscii(c, s2[offset]))
                 return res;
             if (!c)
                 return 0;
@@ -248,13 +655,16 @@ int qstrnicmp(const char* str1, const char* str2, size_t len)
         return s1 ? 1 : (s2 ? -1 : 0);
     for (; len--; ++s1, ++s2) {
         const uchar c = *s1;
-        if (int res = caseCompareAscii(c, *s2))
+        if (int res = misc::caseCompareAscii(c, *s2))
             return res;
         if (!c)                                // strings are equal
             break;
     }
     return 0;
 }
+
+
+
 
 int qstrnicmp(const char* str1, sizetype len1, const char* str2, sizetype len2)
 {
@@ -284,7 +694,7 @@ int qstrnicmp(const char* str1, sizetype len1, const char* str2, sizetype len2)
             if (!c)
                 return 1;
 
-            if (int res = caseCompareAscii(s1[i], c))
+            if (int res = misc::caseCompareAscii(s1[i], c))
                 return res;
         }
         return s2[i] ? -1 : 0;
@@ -293,7 +703,7 @@ int qstrnicmp(const char* str1, sizetype len1, const char* str2, sizetype len2)
         // not null-terminated
         const sizetype len = qMin(len1, len2);
         for (sizetype i = 0; i < len; ++i) {
-            if (int res = caseCompareAscii(s1[i], s2[i]))
+            if (int res = misc::caseCompareAscii(s1[i], s2[i]))
                 return res;
         }
         if (len1 == len2)
@@ -302,67 +712,6 @@ int qstrnicmp(const char* str1, sizetype len1, const char* str2, sizetype len2)
     }
 }
 
-/*!
-    \internal
- */
-int compareMemory(ByteArrayView lhs, ByteArrayView rhs)
-{
-    if (!lhs.isNull() && !rhs.isNull()) {
-        int ret = memcmp(lhs.data(), rhs.data(), qMin(lhs.size(), rhs.size()));
-        if (ret != 0)
-            return ret;
-    }
-
-    // they matched qMin(l1, l2) bytes
-    // so the longer one is lexically after the shorter one
-    return lhs.size() == rhs.size() ? 0 : lhs.size() > rhs.size() ? 1 : -1;
-}
-
-/*!
-    \internal
-*/
-bool QtPrivate::isValidUtf8(ByteArrayView s) noexcept
-{
-    return isValidUtf8(s).isValidUtf8;
-}
-
-// the CRC table below is created by the following piece of code
-#if 0
-static void createCRC16Table()                        // build CRC16 lookup table
-{
-    unsigned int i;
-    unsigned int j;
-    unsigned short crc_tbl[16];
-    unsigned int v0, v1, v2, v3;
-    for (i = 0; i < 16; i++) {
-        v0 = i & 1;
-        v1 = (i >> 1) & 1;
-        v2 = (i >> 2) & 1;
-        v3 = (i >> 3) & 1;
-        j = 0;
-#undef SET_BIT
-#define SET_BIT(x, b, v) (x) |= (v) << (b)
-        SET_BIT(j, 0, v0);
-        SET_BIT(j, 7, v0);
-        SET_BIT(j, 12, v0);
-        SET_BIT(j, 1, v1);
-        SET_BIT(j, 8, v1);
-        SET_BIT(j, 13, v1);
-        SET_BIT(j, 2, v2);
-        SET_BIT(j, 9, v2);
-        SET_BIT(j, 14, v2);
-        SET_BIT(j, 3, v3);
-        SET_BIT(j, 10, v3);
-        SET_BIT(j, 15, v3);
-        crc_tbl[i] = j;
-    }
-    printf("static const quint16 crc_tbl[16] = {\n");
-    for (int i = 0; i < 16; i += 4)
-        printf("    0x%04x, 0x%04x, 0x%04x, 0x%04x,\n", crc_tbl[i], crc_tbl[i + 1], crc_tbl[i + 2], crc_tbl[i + 3]);
-    printf("};\n");
-}
-#endif
-
 static const quint16 crc_tbl[16] = {
     0x0000, 0x1081, 0x2102, 0x3183,
     0x4204, 0x5285, 0x6306, 0x7387,
@@ -370,7 +719,7 @@ static const quint16 crc_tbl[16] = {
     0xc60c, 0xd68d, 0xe70e, 0xf78f
 };
 
-quint16 qChecksum(ByteArrayView data, Qt::ChecksumType standard)
+uint16 qChecksum(ByteArrayView data, Qt::ChecksumType standard)
 {
     quint16 crc = 0x0000;
     switch (standard) {
@@ -401,18 +750,18 @@ quint16 qChecksum(ByteArrayView data, Qt::ChecksumType standard)
 }
 
 #ifndef QT_NO_COMPRESS
-using CompressSizeHint_t = quint32; // 32-bit BE, historically
+using CompressSizeHint_t = uint32; // 32-bit BE, historically
 
 enum class ZLibOp : bool { Compression, Decompression };
 
-Q_DECL_COLD_FUNCTION
+DECL_COLD_FUNCTION
 static const char* zlibOpAsString(ZLibOp op)
 {
     switch (op) {
     case ZLibOp::Compression: return "qCompress";
     case ZLibOp::Decompression: return "qUncompress";
     }
-    Q_UNREACHABLE_RETURN(nullptr);
+    AssertUnreachable();
 }
 
 Q_DECL_COLD_FUNCTION
@@ -456,7 +805,7 @@ static ByteArray unexpectedZlibError(ZLibOp op, int err, const char* msg)
     return ByteArray();
 }
 
-static ByteArray xxflate(ZLibOp op, QArrayDataPointer<char> out, ByteArrayView input,
+static ByteArray xxflate(ZLibOp op, ArrayDataPointer<char> out, ByteArrayView input,
     qxp::function_ref<int(z_stream*) const> init,
     qxp::function_ref<int(z_stream*, size_t) const> processChunk,
     qxp::function_ref<void(z_stream*) const> deinit)
@@ -471,7 +820,7 @@ static ByteArray xxflate(ZLibOp op, QArrayDataPointer<char> out, ByteArrayView i
     zs.next_in = reinterpret_cast<uchar*>(const_cast<char*>(input.data())); // 1980s C API...
     if (const int err = init(&zs); err != Z_OK)
         return unexpectedZlibError(op, err, zs.msg);
-    const auto sg = qScopeGuard([&] { deinit(&zs); });
+    const auto sg = gsl::finally([&] { deinit(&zs); });
 
     using ZlibChunkSize_t = decltype(zs.avail_in);
     static_assert(!std::is_signed_v<ZlibChunkSize_t>);
@@ -494,7 +843,7 @@ static ByteArray xxflate(ZLibOp op, QArrayDataPointer<char> out, ByteArrayView i
 
             sizetype avail_out = capacity - out.size;
             if (avail_out == 0) {
-                out->reallocateAndGrow(QArrayData::GrowsAtEnd, 1); // grow to next natural capacity
+                out->reallocateAndGrow(ArrayData::GrowsAtEnd, 1); // grow to next natural capacity
                 if (out.data() == nullptr) // reallocation failed
                     return tooMuchData(op);
                 capacity = out.allocatedCapacity();
@@ -530,7 +879,7 @@ static ByteArray xxflate(ZLibOp op, QArrayDataPointer<char> out, ByteArrayView i
         return tooMuchData(op);
 
     case Z_BUF_ERROR:
-        unreachable(); // cannot happen - we supply a buffer that can hold the result,
+        AssertUnreachable(); // cannot happen - we supply a buffer that can hold the result,
         // or else error out early
 
     case Z_DATA_ERROR:   // can only happen on decompression
@@ -557,13 +906,13 @@ ByteArray qCompress(const uchar* data, sizetype nbytes, int compressionLevel)
     if (compressionLevel < -1 || compressionLevel > 9)
         compressionLevel = -1;
 
-    QArrayDataPointer out = [&] {
+    ArrayDataPointer out = [&] {
         constexpr sizetype SingleAllocLimit = 256 * 1024; // the maximum size for which we use
         sizetype capacity = HeaderSize;
         if (nbytes < SingleAllocLimit) {
             // use maximum size
             capacity += compressBound(uLong(nbytes)); // cannot overflow (both times)!
-            return QArrayDataPointer<char>(capacity);
+            return ArrayDataPointer<char>(capacity);
         }
 
 
@@ -571,13 +920,13 @@ ByteArray qCompress(const uchar* data, sizetype nbytes, int compressionLevel)
 
         capacity += std::max(sizetype(compressBound(uLong(SingleAllocLimit))),
             nbytes / MaxCompressionFactor);
-        return QArrayDataPointer<char>(capacity, 0, QArrayData::Grow);
+        return ArrayDataPointer<char>(capacity, 0, ArrayData::Grow);
         }();
 
     if (out.data() == nullptr) // allocation failed
         return tooMuchData(ZLibOp::Compression);
 
-    ToBigEndian(qt_saturate<CompressSizeHint_t>(nbytes), out.data());
+    ToBigEndian(saturate<CompressSizeHint_t>(nbytes), out.data());
     out.size = HeaderSize;
 
     return xxflate(ZLibOp::Compression, std::move(out), { data, nbytes },
@@ -603,7 +952,7 @@ ByteArray qUncompress(const uchar* data, sizetype nbytes)
     if (nbytes < HeaderSize)
         return invalidCompressedData();
 
-    const auto expectedSize = FromBigEndian<CompressSizeHint_t>(data);
+    const auto expectedSize = FromBigEndian<>(data);
     if (nbytes == HeaderSize) {
         if (expectedSize != 0)
             return invalidCompressedData();
@@ -621,7 +970,7 @@ ByteArray qUncompress(const uchar* data, sizetype nbytes)
     sizetype capacity = std::max(sizetype(expectedSize), // cannot overflow!
         nbytes);
 
-    QrrayDataPointer<char> d(capacity);
+    ArrayDataPointer<char> d(capacity);
     return xxflate(ZLibOp::Decompression, std::move(d), { data + HeaderSize, nbytes - HeaderSize },
         [](z_stream* zs) { return inflateInit(zs); },
         [](z_stream* zs, size_t) { return inflate(zs, Z_NO_FLUSH); },
@@ -699,21 +1048,21 @@ ByteArray::ByteArray(sizetype size, char ch)
     }
     else {
         d = DataPointer(size, size);
-        Q_CHECK_PTR(d.data());
+        Assert(d.data() != nullptr);
         memset(d.data(), ch, size);
         d.data()[size] = '\0';
     }
 }
 
 
-ByteArray::ByteArray(sizetype size, Qt::Initialization)
+ByteArray::ByteArray(sizetype size, Initialization)
 {
     if (size <= 0) {
         d = DataPointer::fromRawData(&_empty, 0);
     }
     else {
         d = DataPointer(size, size);
-        Q_CHECK_PTR(d.data());
+        Assert(d.data() != nullptr);
         d.data()[size] = '\0';
     }
 }
@@ -725,7 +1074,7 @@ void ByteArray::resize(sizetype size)
 
     const auto capacityAtEnd = capacity() - d.freeSpaceAtBegin();
     if (d->needsDetach() || size > capacityAtEnd)
-        reallocData(size, QArrayData::Grow);
+        reallocData(size, ArrayData::Grow);
     d.size = size;
     if (d->allocatedCapacity())
         d.data()[size] = 0;
@@ -747,7 +1096,7 @@ ByteArray& ByteArray::fill(char ch, sizetype size)
     return *this;
 }
 
-void ByteArray::reallocData(sizetype alloc, QArrayData::AllocationOption option)
+void ByteArray::reallocData(sizetype alloc, ArrayData::AllocationOption option)
 {
     if (!alloc) {
         d = DataPointer::fromRawData(&_empty, 0);
@@ -758,7 +1107,7 @@ void ByteArray::reallocData(sizetype alloc, QArrayData::AllocationOption option)
 
     if (d->needsDetach() || cannotUseReallocate) {
         DataPointer dd(alloc, qMin(alloc, d.size), option);
-        Q_CHECK_PTR(dd.data());
+        Assert(dd.data() != nullptr);
         if (dd.size > 0)
             ::memcpy(dd.data(), d.data(), dd.size);
         dd.data()[dd.size] = 0;
@@ -775,14 +1124,14 @@ void ByteArray::reallocGrowData(sizetype n)
         n = 1;
 
     if (d->needsDetach()) {
-        DataPointer dd(DataPointer::allocateGrow(d, n, QArrayData::GrowsAtEnd));
-        Q_CHECK_PTR(dd.data());
+        DataPointer dd(DataPointer::allocateGrow(d, n, ArrayData::GrowsAtEnd));
+        Assert(dd.data() != nullptr);
         dd->copyAppend(d.data(), d.data() + d.size);
         dd.data()[dd.size] = 0;
         d = dd;
     }
     else {
-        d->reallocate(d.constAllocatedCapacity() + n, QArrayData::Grow);
+        d->reallocate(d.constAllocatedCapacity() + n, ArrayData::Grow);
     }
 }
 
@@ -803,7 +1152,7 @@ ByteArray& ByteArray::append(const ByteArray& ba)
 {
     if (!ba.isNull()) {
         if (isNull()) {
-            if (Q_UNLIKELY(!ba.d.isMutable()))
+            if (UNLIKELY(!ba.d.isMutable()))
                 assign(ba); // fromRawData, so we do a deep copy
             else
                 operator=(ba);
@@ -817,7 +1166,7 @@ ByteArray& ByteArray::append(const ByteArray& ba)
 
 ByteArray& ByteArray::append(char ch)
 {
-    d.detachAndGrow(QArrayData::GrowsAtEnd, 1, nullptr, nullptr);
+    d.detachAndGrow(ArrayData::GrowsAtEnd, 1, nullptr, nullptr);
     d->copyAppend(1, ch);
     d.data()[d.size] = '\0';
     return *this;
@@ -851,14 +1200,14 @@ ByteArray& ByteArray::insert(sizetype i, ByteArrayView data)
     if (i >= d->size) {
         DataPointer detached{};  // construction is free
         d.detachAndGrow(Data::GrowsAtEnd, (i - d.size) + size, &str, &detached);
-        Q_CHECK_PTR(d.data());
+        Assert(d.data() != nullptr);
         d->copyAppend(i - d->size, ' ');
         d->copyAppend(str, str + size);
         d.data()[d.size] = '\0';
         return *this;
     }
 
-    if (!d->needsDetach() && QtPrivate::q_points_into_range(str, d)) {
+    if (!d->needsDetach() && points_into_range(str, d)) {
         QVarLengthArray a(str, str + size);
         return insert(i, a);
     }
@@ -874,9 +1223,9 @@ ByteArray& ByteArray::insert(sizetype i, sizetype count, char ch)
         return *this;
 
     if (i >= d->size) {
-        // handle this specially, as QArrayDataOps::insert() doesn't handle out of bounds positions
+        // handle this specially, as ArrayDataOps::insert() doesn't handle out of bounds positions
         d.detachAndGrow(Data::GrowsAtEnd, (i - d.size) + count, nullptr, nullptr);
-        Q_CHECK_PTR(d.data());
+        Assert(d.data() != nullptr);
         d->copyAppend(i - d->size, ' ');
         d->copyAppend(count, ch);
         d.data()[d.size] = '\0';
@@ -912,7 +1261,7 @@ ByteArray& ByteArray::remove(sizetype pos, sizetype len)
 
 ByteArray& ByteArray::replace(sizetype pos, sizetype len, ByteArrayView after)
 {
-    if (QtPrivate::q_points_into_range(after.data(), d)) {
+    if (points_into_range(after.data(), d)) {
         QVarLengthArray copy(after.data(), after.data() + after.size());
         return replace(pos, len, ByteArrayView{ copy });
     }
@@ -942,11 +1291,11 @@ ByteArray& ByteArray::replace(ByteArrayView before, ByteArrayView after)
         return *this;
 
     // protect against before or after being part of this
-    if (QtPrivate::q_points_into_range(a, d)) {
+    if (points_into_range(a, d)) {
         QVarLengthArray copy(a, a + asize);
         return replace(before, ByteArrayView{ copy });
     }
-    if (QtPrivate::q_points_into_range(b, d)) {
+    if (points_into_range(b, d)) {
         QVarLengthArray copy(b, b + bsize);
         return replace(ByteArrayView{ copy }, after);
     }
@@ -1050,16 +1399,16 @@ ByteArray& ByteArray::replace(char before, char after)
     return *this;
 }
 
-QList<ByteArray> ByteArray::split(char sep) const
+std::vector<ByteArray> ByteArray::split(char sep) const
 {
-    QList<ByteArray> list;
+    std::vector<ByteArray> list;
     sizetype start = 0;
     sizetype end;
     while ((end = indexOf(sep, start)) != -1) {
-        list.append(mid(start, end - start));
+        list.push_back(mid(start, end - start));
         start = end + 1;
     }
-    list.append(mid(start));
+    list.push_back(mid(start));
     return list;
 }
 
@@ -1117,7 +1466,7 @@ static inline sizetype findCharHelper(ByteArrayView haystack, sizetype from, cha
     return -1;
 }
 
-sizetype QtPrivate::findByteArray(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept
+sizetype algorithms::findByteArray(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept
 {
     const auto ol = needle.size();
     const auto l = haystack.size();
@@ -1134,13 +1483,13 @@ sizetype QtPrivate::findByteArray(ByteArrayView haystack, sizetype from, ByteArr
     if (from > l || ol + from > l)
         return -1;
 
-    return qFindByteArray(haystack.data(), haystack.size(), from, needle.data(), ol);
+    return FindByteArray(haystack.data(), haystack.size(), from, needle.data(), ol);
 }
 
 
 sizetype ByteArray::indexOf(char ch, sizetype from) const
 {
-    return qToByteArrayViewIgnoringNull(*this).indexOf(ch, from);
+    return ToByteArrayViewIgnoringNull(*this).indexOf(ch, from);
 }
 
 static sizetype lastIndexOfHelper(const char* haystack, sizetype l, const char* needle,
@@ -1196,7 +1545,7 @@ static inline sizetype lastIndexOfCharHelper(ByteArrayView haystack, sizetype fr
     return -1;
 }
 
-sizetype QtPrivate::lastIndexOf(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept
+sizetype algorithms::lastIndexOf(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept
 {
     if (haystack.isEmpty()) {
         if (needle.isEmpty() && from == 0)
@@ -1254,7 +1603,7 @@ sizetype ByteArray::count(char ch) const
 }
 
 
-bool QtPrivate::startsWith(ByteArrayView haystack, ByteArrayView needle) noexcept
+bool algorithms::startsWith(ByteArrayView haystack, ByteArrayView needle) noexcept
 {
     if (haystack.size() < needle.size())
         return false;
@@ -1263,7 +1612,7 @@ bool QtPrivate::startsWith(ByteArrayView haystack, ByteArrayView needle) noexcep
     return memcmp(haystack.data(), needle.data(), needle.size()) == 0;
 }
 
-bool QtPrivate::endsWith(ByteArrayView haystack, ByteArrayView needle) noexcept
+bool algorithms::endsWith(ByteArrayView haystack, ByteArrayView needle) noexcept
 {
     if (haystack.size() < needle.size())
         return false;
@@ -1373,22 +1722,22 @@ static ByteArray toCase_template(T& input, uchar(*lookup)(uchar))
 
 ByteArray ByteArray::toLower_helper(const ByteArray& a)
 {
-    return toCase_template(a, asciiLower);
+    return toCase_template(a, misc::asciiLower);
 }
 
 ByteArray ByteArray::toLower_helper(ByteArray& a)
 {
-    return toCase_template(a, asciiLower);
+    return toCase_template(a, misc::asciiLower);
 }
 
 ByteArray ByteArray::toUpper_helper(const ByteArray& a)
 {
-    return toCase_template(a, asciiUpper);
+    return toCase_template(a, misc::asciiUpper);
 }
 
 ByteArray ByteArray::toUpper_helper(ByteArray& a)
 {
-    return toCase_template(a, asciiUpper);
+    return toCase_template(a, misc::asciiUpper);
 }
 
 void ByteArray::clear()
@@ -1396,75 +1745,31 @@ void ByteArray::clear()
     d.clear();
 }
 
-#if !defined(QT_NO_DATASTREAM) || defined(QT_BOOTSTRAPPED)
-
-QDataStream& operator<<(QDataStream& out, const ByteArray& ba)
-{
-    if (ba.isNull() && out.version() >= 6) {
-        QDataStream::writesizetype(out, -1);
-        return out;
-    }
-    return out.writeBytes(ba.constData(), ba.size());
-}
-
-QDataStream& operator>>(QDataStream& in, ByteArray& ba)
-{
-    ba.clear();
-
-    qint64 size = QDataStream::readsizetype(in);
-    sizetype len = size;
-    if (size != len || size < -1) {
-        ba.clear();
-        in.setStatus(QDataStream::SizeLimitExceeded);
-        return in;
-    }
-    if (len == -1) { // null byte-array
-        ba = ByteArray();
-        return in;
-    }
-
-    constexpr sizetype Step = 1024 * 1024;
-    sizetype allocated = 0;
-
-    do {
-        sizetype blockSize = qMin(Step, len - allocated);
-        ba.resize(allocated + blockSize);
-        if (in.readRawData(ba.data() + allocated, blockSize) != blockSize) {
-            ba.clear();
-            in.setStatus(QDataStream::ReadPastEnd);
-            return in;
-        }
-        allocated += blockSize;
-    } while (allocated < len);
-
-    return in;
-}
-#endif // QT_NO_DATASTREAM
 
 ByteArray ByteArray::simplified_helper(const ByteArray& a)
 {
-    return QStringAlgorithms<const ByteArray>::simplified_helper(a);
+    return StringAlgorithms<const ByteArray>::simplified_helper(a);
 }
 
 ByteArray ByteArray::simplified_helper(ByteArray& a)
 {
-    return QStringAlgorithms<ByteArray>::simplified_helper(a);
+    return StringAlgorithms<ByteArray>::simplified_helper(a);
 }
 
 
 ByteArray ByteArray::trimmed_helper(const ByteArray& a)
 {
-    return QStringAlgorithms<const ByteArray>::trimmed_helper(a);
+    return StringAlgorithms<const ByteArray>::trimmed_helper(a);
 }
 
 ByteArray ByteArray::trimmed_helper(ByteArray& a)
 {
-    return QStringAlgorithms<ByteArray>::trimmed_helper(a);
+    return StringAlgorithms<ByteArray>::trimmed_helper(a);
 }
 
-ByteArrayView QtPrivate::trimmed(ByteArrayView view) noexcept
+ByteArrayView algorithms::trimmed(ByteArrayView view) noexcept
 {
-    const auto [start, stop] = QStringAlgorithms<ByteArrayView>::trimmed_helper_positions(view);
+    const auto [start, stop] = StringAlgorithms<ByteArrayView>::trimmed_helper_positions(view);
     return ByteArrayView(start, stop);
 }
 
@@ -1508,14 +1813,8 @@ ByteArray ByteArray::rightJustified(sizetype width, char fill, bool truncate) co
     return result;
 }
 
-auto QtPrivate::toSignedInteger(ByteArrayView data, int base) -> ParsedNumber<qlonglong>
+auto algorithms::toSignedInteger(ByteArrayView data, int base) -> ParsedNumber<longlong>
 {
-#if defined(QT_CHECK_RANGE)
-    if (base != 0 && (base < 2 || base > 36)) {
-        qWarning("ByteArray::toIntegral: Invalid base %d", base);
-        base = 10;
-    }
-#endif
     if (data.isEmpty())
         return {};
 
@@ -1525,14 +1824,8 @@ auto QtPrivate::toSignedInteger(ByteArrayView data, int base) -> ParsedNumber<ql
     return {};
 }
 
-auto QtPrivate::toUnsignedInteger(ByteArrayView data, int base) -> ParsedNumber<qulonglong>
+auto algorithms::toUnsignedInteger(ByteArrayView data, int base) -> ParsedNumber<ulonglong>
 {
-#if defined(QT_CHECK_RANGE)
-    if (base != 0 && (base < 2 || base > 36)) {
-        qWarning("ByteArray::toIntegral: Invalid base %d", base);
-        base = 10;
-    }
-#endif
     if (data.isEmpty())
         return {};
 
@@ -1544,44 +1837,44 @@ auto QtPrivate::toUnsignedInteger(ByteArrayView data, int base) -> ParsedNumber<
 
 qlonglong ByteArray::toLongLong(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<qlonglong>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<qlonglong>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 qulonglong ByteArray::toULongLong(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<qulonglong>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<qulonglong>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 
 int ByteArray::toInt(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<int>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<int>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 
 uint ByteArray::toUInt(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<uint>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<uint>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 long ByteArray::toLong(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<long>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<long>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 ulong ByteArray::toULong(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<ulong>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<ulong>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 short ByteArray::toShort(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<short>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<short>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 ushort ByteArray::toUShort(bool* ok, int base) const
 {
-    return QtPrivate::toIntegral<ushort>(qToByteArrayViewIgnoringNull(*this), ok, base);
+    return algorithms::toIntegral<ushort>(ToByteArrayViewIgnoringNull(*this), ok, base);
 }
 
 double ByteArray::toDouble(bool* ok) const
@@ -1589,12 +1882,12 @@ double ByteArray::toDouble(bool* ok) const
     return ByteArrayView(*this).toDouble(ok);
 }
 
-auto QtPrivate::toDouble(ByteArrayView a) noexcept -> ParsedNumber<double>
+auto algorithms::toDouble(ByteArrayView a) noexcept -> ParsedNumber<double>
 {
-    auto r = qt_asciiToDouble(a.data(), a.size(), WhitespacesAllowed);
+  /*  auto r = qt_asciiToDouble(a.data(), a.size(), WhitespacesAllowed);
     if (r.ok())
         return ParsedNumber{ r.result };
-    else
+    else*/
         return {};
 }
 
@@ -1603,9 +1896,9 @@ float ByteArray::toFloat(bool* ok) const
     return QLocaleData::convertDoubleToFloat(toDouble(ok), ok);
 }
 
-auto QtPrivate::toFloat(ByteArrayView a) noexcept -> ParsedNumber<float>
+auto algorithms::toFloat(ByteArrayView a) noexcept -> ParsedNumber<float>
 {
-    if (const auto r = toDouble(a)) {
+    if (const auto r = algorithms::toDouble(a)) {
         bool ok = true;
         const auto f = QLocaleData::convertDoubleToFloat(*r, &ok);
         if (ok)
@@ -1626,7 +1919,7 @@ ByteArray ByteArray::toBase64(Base64Options options) const
 
     const sizetype sz = size();
 
-    ByteArray tmp((sz + 2) / 3 * 4, Qt::Uninitialized);
+    ByteArray tmp((sz + 2) / 3 * 4, Initialization::Uninitialized);
 
     sizetype i = 0;
     char* out = tmp.data();
@@ -1675,12 +1968,6 @@ ByteArray ByteArray::toBase64(Base64Options options) const
 
 static char* qulltoa2(char* p, qulonglong n, int base)
 {
-#if defined(QT_CHECK_RANGE)
-    if (base < 2 || base > 36) {
-        qWarning("ByteArray::setNum: Invalid base %d", base);
-        base = 10;
-    }
-#endif
     constexpr char b = 'a' - 10;
     do {
         const int c = n % base;
@@ -1780,7 +2067,7 @@ ByteArray ByteArray::number(double n, char format, int precision)
 {
     QLocaleData::DoubleForm form = QLocaleData::DFDecimal;
 
-    switch (QtMiscUtils::toAsciiLower(format)) {
+    switch (misc::toAsciiLower(format)) {
     case 'f':
         form = QLocaleData::DFDecimal;
         break;
@@ -1791,13 +2078,10 @@ ByteArray ByteArray::number(double n, char format, int precision)
         form = QLocaleData::DFSignificantDigits;
         break;
     default:
-#if defined(QT_CHECK_RANGE)
-        qWarning("ByteArray::setNum: Invalid format char '%c'", format);
-#endif
         break;
     }
 
-    return qdtoAscii(n, form, precision, isUpperCaseAscii(format));
+    return ByteArray(qdtoAscii(n, form, precision, isUpperCaseAscii(format)));
 }
 
 ByteArray& ByteArray::setRawData(const char* data, sizetype size)
@@ -1913,7 +2197,7 @@ ByteArray::FromBase64Result ByteArray::fromBase64Encoding(ByteArray&& base64, Ba
 ByteArray::FromBase64Result ByteArray::fromBase64Encoding(const ByteArray& base64, Base64Options options)
 {
     const auto base64Size = base64.size();
-    ByteArray result((base64Size * 3) / 4, Qt::Uninitialized);
+    ByteArray result((base64Size * 3) / 4, Initialization::Uninitialized);
     const auto base64result = fromBase64_helper(base64.data(),
         base64Size,
         const_cast<char*>(result.constData()),
@@ -1931,13 +2215,13 @@ ByteArray ByteArray::fromBase64(const ByteArray& base64, Base64Options options)
 
 ByteArray ByteArray::fromHex(const ByteArray& hexEncoded)
 {
-    ByteArray res((hexEncoded.size() + 1) / 2, Qt::Uninitialized);
+    ByteArray res((hexEncoded.size() + 1) / 2, Initialization::Uninitialized);
     uchar* result = (uchar*)res.data() + res.size();
 
     bool odd_digit = true;
     for (sizetype i = hexEncoded.size() - 1; i >= 0; --i) {
         uchar ch = uchar(hexEncoded.at(i));
-        int tmp = QtMiscUtils::fromHex(ch);
+        int tmp = misc::fromHex(ch);
         if (tmp == -1)
             continue;
         if (odd_digit) {
@@ -1962,12 +2246,12 @@ ByteArray ByteArray::toHex(char separator) const
         return ByteArray();
 
     const sizetype length = separator ? (size() * 3 - 1) : (size() * 2);
-    ByteArray hex(length, Qt::Uninitialized);
+    ByteArray hex(length, Initialization::Uninitialized);
     char* hexData = hex.data();
     const uchar* data = (const uchar*)this->data();
     for (sizetype i = 0, o = 0; i < size(); ++i) {
-        hexData[o++] = QtMiscUtils::toHexLower(data[i] >> 4);
-        hexData[o++] = QtMiscUtils::toHexLower(data[i] & 0xf);
+        hexData[o++] = misc::toHexLower(data[i] >> 4);
+        hexData[o++] = misc::toHexLower(data[i] & 0xf);
 
         if ((separator) && (o < length))
             hexData[o++] = separator;
@@ -2081,8 +2365,8 @@ ByteArray ByteArray::toPercentEncoding(const ByteArray& exclude, const ByteArray
                 output = result.data();
             }
             output[length++] = percent;
-            output[length++] = QtMiscUtils::toHexUpper((c & 0xf0) >> 4);
-            output[length++] = QtMiscUtils::toHexUpper(c & 0xf);
+            output[length++] = misc::toHexUpper((c & 0xf0) >> 4);
+            output[length++] = misc::toHexUpper(c & 0xf);
         }
     }
     if (output)
@@ -2094,8 +2378,10 @@ ByteArray ByteArray::toPercentEncoding(const ByteArray& exclude, const ByteArray
 
 size_t qHash(const ByteArray::FromBase64Result& key, size_t seed) noexcept
 {
-    return HashMulti(seed, key.decoded, static_cast<int>(key.decodingStatus));
+    return qHashMulti(seed, key.decoded, static_cast<int>(key.decodingStatus));
 }
 
 #undef REHASH
-} // namespace base::io
+
+
+__BASE_IO_NAMESPACE_END

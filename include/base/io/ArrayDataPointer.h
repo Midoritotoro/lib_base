@@ -12,6 +12,7 @@
 #include <base/io/ArrayDataOps.h>
 
 
+
 namespace base::io {
     template <class T> struct TypedArrayData;
 
@@ -78,14 +79,14 @@ namespace base::io {
             return *this;
         }
 
-        ArrayDataPointer(QArrayDataPointer&& other) noexcept
+        ArrayDataPointer(ArrayDataPointer&& other) noexcept
             : d(std::exchange(other.d, nullptr)),
             ptr(std::exchange(other.ptr, nullptr)),
             size(std::exchange(other.size, 0))
         {
         }
 
-        MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(QArrayDataPointer)
+        MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(ArrayDataPointer)
 
             DataOps& operator*() noexcept
         {
@@ -132,81 +133,81 @@ namespace base::io {
 
         void swap(ArrayDataPointer& other) noexcept
         {
-            qt_ptr_swap(d, other.d);
-            qt_ptr_swap(ptr, other.ptr);
+            PtrSwap(d, other.d);
+            PtrSwap(ptr, other.ptr);
             std::swap(size, other.size);
         }
 
         void clear() noexcept(std::is_nothrow_destructible<T>::value)
         {
-            QArrayDataPointer tmp;
+            ArrayDataPointer tmp;
             swap(tmp);
         }
 
-        void detach(QArrayDataPointer* old = nullptr)
+        void detach(ArrayDataPointer* old = nullptr)
         {
             if (needsDetach())
-                reallocateAndGrow(QArrayData::GrowsAtEnd, 0, old);
+                reallocateAndGrow(ArrayData::GrowsAtEnd, 0, old);
         }
 
-        template <typename X> QArrayDataPointer<X> reinterpreted()&&
+        template <typename X> ArrayDataPointer<X> reinterpreted()&&
         {
             if (sizeof(T) != sizeof(X)) {
-                Q_ASSERT(!d->isShared());
+                Assert(!d->isShared());
                 d->alloc = d->alloc * sizeof(T) / sizeof(X);
             }
-            auto od = reinterpret_cast<QTypedArrayData<X> *>(std::exchange(d, nullptr));
+            auto od = reinterpret_cast<TypedArrayData<X> *>(std::exchange(d, nullptr));
             auto optr = reinterpret_cast<X*>(std::exchange(ptr, nullptr));
             return { od, optr, std::exchange(size, 0) };
         }
 
-        void detachAndGrow(QArrayData::GrowthPosition where, qsizetype n, const T** data,
-            QArrayDataPointer* old)
+        void detachAndGrow(ArrayData::GrowthPosition where, sizetype n, const T** data,
+            ArrayDataPointer* old)
         {
             const bool detach = needsDetach();
             bool readjusted = false;
             if (!detach) {
-                if (!n || (where == QArrayData::GrowsAtBeginning && freeSpaceAtBegin() >= n)
-                    || (where == QArrayData::GrowsAtEnd && freeSpaceAtEnd() >= n))
+                if (!n || (where == ArrayData::GrowsAtBeginning && freeSpaceAtBegin() >= n)
+                    || (where == ArrayData::GrowsAtEnd && freeSpaceAtEnd() >= n))
                     return;
                 readjusted = tryReadjustFreeSpace(where, n, data);
-                Q_ASSERT(!readjusted
-                    || (where == QArrayData::GrowsAtBeginning && freeSpaceAtBegin() >= n)
-                    || (where == QArrayData::GrowsAtEnd && freeSpaceAtEnd() >= n));
+                _ASSERT(!readjusted
+                    || (where == ArrayData::GrowsAtBeginning && freeSpaceAtBegin() >= n)
+                    || (where == ArrayData::GrowsAtEnd && freeSpaceAtEnd() >= n));
             }
 
             if (!readjusted)
                 reallocateAndGrow(where, n, old);
         }
 
-        Q_NEVER_INLINE void reallocateAndGrow(QArrayData::GrowthPosition where, qsizetype n,
-            QArrayDataPointer* old = nullptr)
+        never_inline void reallocateAndGrow(ArrayData::GrowthPosition where, sizetype n,
+            ArrayDataPointer* old = nullptr)
         {
             if constexpr (QTypeInfo<T>::isRelocatable && alignof(T) <= alignof(std::max_align_t)) {
-                if (where == QArrayData::GrowsAtEnd && !old && !needsDetach() && n > 0) {
-                    (*this)->reallocate(constAllocatedCapacity() - freeSpaceAtEnd() + n, QArrayData::Grow); // fast path
+                if (where == ArrayData::GrowsAtEnd && !old && !needsDetach() && n > 0) {
+                    (*this)->reallocate(constAllocatedCapacity() - freeSpaceAtEnd() + n, ArrayData::Grow); // fast path
                     return;
                 }
             }
 
-            QArrayDataPointer dp(allocateGrow(*this, n, where));
+            ArrayDataPointer dp(allocateGrow(*this, n, where));
             if (n > 0)
-                Q_CHECK_PTR(dp.data());
-            if (where == QArrayData::GrowsAtBeginning) {
-                Q_ASSERT(dp.freeSpaceAtBegin() >= n);
+                Assert(dp.data() != nullptr); // / / / / / / / /
+            if (where == ArrayData::GrowsAtBeginning) {
+                Assert(dp.freeSpaceAtBegin() >= n);
             }
             else {
-                Q_ASSERT(dp.freeSpaceAtEnd() >= n);
+                Assert(dp.freeSpaceAtEnd() >= n);
             }
             if (size) {
-                qsizetype toCopy = size;
+                sizetype toCopy = size;
                 if (n < 0)
                     toCopy += n;
                 if (needsDetach() || old)
                     dp->copyAppend(begin(), begin() + toCopy);
                 else
                     dp->moveAppend(begin(), begin() + toCopy);
-                Q_ASSERT(dp.size == toCopy);
+                Assert(dp.size == toCopy);
             }
 
             swap(dp);
@@ -214,18 +215,18 @@ namespace base::io {
                 old->swap(dp);
         }
 
-        bool tryReadjustFreeSpace(QArrayData::GrowthPosition pos, qsizetype n, const T** data = nullptr)
+        bool tryReadjustFreeSpace(ArrayData::GrowthPosition pos, sizetype n, const T** data = nullptr)
         {
-            Q_ASSERT(!this->needsDetach());
-            Q_ASSERT(n > 0);
-            Q_ASSERT((pos == QArrayData::GrowsAtEnd && this->freeSpaceAtEnd() < n)
-                || (pos == QArrayData::GrowsAtBeginning && this->freeSpaceAtBegin() < n));
+            Assert(!this->needsDetach());
+            Assert(n > 0);
+            Assert((pos == ArrayData::GrowsAtEnd && this->freeSpaceAtEnd() < n)
+                || (pos == ArrayData::GrowsAtBeginning && this->freeSpaceAtBegin() < n));
 
-            const qsizetype capacity = this->constAllocatedCapacity();
-            const qsizetype freeAtBegin = this->freeSpaceAtBegin();
-            const qsizetype freeAtEnd = this->freeSpaceAtEnd();
+            const sizetype capacity = this->constAllocatedCapacity();
+            const sizetype freeAtBegin = this->freeSpaceAtBegin();
+            const sizetype freeAtEnd = this->freeSpaceAtEnd();
 
-            qsizetype dataStartOffset = 0;
+            sizetype dataStartOffset = 0;
             // algorithm:
             //   a. GrowsAtEnd: relocate if space at begin AND size < (capacity * 2) / 3
             //      [all goes to free space at end]:
@@ -234,11 +235,11 @@ namespace base::io {
             //   b. GrowsAtBeginning: relocate if space at end AND size < capacity / 3
             //      [balance the free space]:
             //      new free space at begin = n + (total free space - n) / 2
-            if (pos == QArrayData::GrowsAtEnd && freeAtBegin >= n
+            if (pos == ArrayData::GrowsAtEnd && freeAtBegin >= n
                 && ((3 * this->size) < (2 * capacity))) {
                 // dataStartOffset = 0; - done in declaration
             }
-            else if (pos == QArrayData::GrowsAtBeginning && freeAtEnd >= n
+            else if (pos == ArrayData::GrowsAtBeginning && freeAtEnd >= n
                 && ((3 * this->size) < capacity)) {
                 // total free space == capacity - size
                 dataStartOffset = n + qMax(0, (capacity - this->size - n) / 2);
@@ -250,8 +251,8 @@ namespace base::io {
 
             relocate(dataStartOffset - freeAtBegin, data);
 
-            Q_ASSERT((pos == QArrayData::GrowsAtEnd && this->freeSpaceAtEnd() >= n)
-                || (pos == QArrayData::GrowsAtBeginning && this->freeSpaceAtBegin() >= n));
+            Assert((pos == ArrayData::GrowsAtEnd && this->freeSpaceAtEnd() >= n)
+                || (pos == ArrayData::GrowsAtBeginning && this->freeSpaceAtBegin() >= n));
             return true;
         }
 
@@ -260,7 +261,7 @@ namespace base::io {
             Relocates [begin(), end()) by \a offset and updates \a data if it is not
             \c nullptr and points into [begin(), end()).
         */
-        void relocate(qsizetype offset, const T** data = nullptr)
+        void relocate(sizetype offset, const T** data = nullptr)
         {
             T* res = this->ptr + offset;
             QtPrivate::q_relocate_overlap_n(this->ptr, this->size, res);
@@ -277,17 +278,17 @@ namespace base::io {
             constexpr bool IsFwdIt = std::is_convertible_v<
                 typename std::iterator_traits<InputIterator>::iterator_category,
                 std::forward_iterator_tag>;
-            constexpr bool IsIdentity = std::is_same_v<Projection, q20::identity>;
+            constexpr bool IsIdentity = std::is_same_v<Projection, identity>;
 
             if constexpr (IsFwdIt) {
-                const qsizetype n = std::distance(first, last);
+                const sizetype n = std::distance(first, last);
                 if (needsDetach() || n > constAllocatedCapacity()) {
-                    QArrayDataPointer allocated(detachCapacity(n));
+                    ArrayDataPointer allocated(detachCapacity(n));
                     swap(allocated);
                 }
             }
             else if (needsDetach()) {
-                QArrayDataPointer allocated(allocatedCapacity());
+                ArrayDataPointer allocated(allocatedCapacity());
                 swap(allocated);
                 // We don't want to copy data that we know we'll overwrite
             }
@@ -329,7 +330,7 @@ namespace base::io {
                         return;
                     }
                     // construct element in prepend buffer
-                    q20::construct_at(dst, std::invoke(proj, *first));
+                    ::std::construct_at(dst, std::invoke(proj, *first));
                     ++dst;
                     ++first;
                 }
@@ -348,7 +349,7 @@ namespace base::io {
                     else if constexpr (IsFwdIt && !IsIdentity
                         && std::is_nothrow_constructible_v<T, decltype(std::invoke(proj, *first))>) {
                         for (; first != last; ++dst, ++first)   // uninitialized_copy with projection
-                            q20::construct_at(dst, std::invoke(proj, *first));
+                            ::std::construct_at(dst, std::invoke(proj, *first));
                         break;
                     }
                     else {
@@ -365,15 +366,15 @@ namespace base::io {
             size = dst - begin();
         }
 
-        QArrayDataPointer sliced(qsizetype pos, qsizetype n) const&
+        ArrayDataPointer sliced(sizetype pos, sizetype n) const&
         {
-            QArrayDataPointer result(n);
+            ArrayDataPointer result(n);
             std::uninitialized_copy_n(begin() + pos, n, result.begin());
             result.size = n;
             return result;
         }
 
-        QArrayDataPointer sliced(qsizetype pos, qsizetype n)&&
+        ArrayDataPointer sliced(sizetype pos, sizetype n)&&
         {
             if (needsDetach())
                 return sliced(pos, n);
@@ -385,31 +386,31 @@ namespace base::io {
             return std::move(*this);
         }
 
-        // forwards from QArrayData
-        qsizetype allocatedCapacity() noexcept { return d ? d->allocatedCapacity() : 0; }
-        qsizetype constAllocatedCapacity() const noexcept { return d ? d->constAllocatedCapacity() : 0; }
+        // forwards from ArrayData
+        sizetype allocatedCapacity() noexcept { return d ? d->allocatedCapacity() : 0; }
+        sizetype constAllocatedCapacity() const noexcept { return d ? d->constAllocatedCapacity() : 0; }
         void ref() noexcept { if (d) d->ref(); }
         bool deref() noexcept { return !d || d->deref(); }
         bool isMutable() const noexcept { return d; }
         bool isShared() const noexcept { return !d || d->isShared(); }
-        bool isSharedWith(const QArrayDataPointer& other) const noexcept { return d && d == other.d; }
+        bool isSharedWith(const ArrayDataPointer& other) const noexcept { return d && d == other.d; }
         bool needsDetach() const noexcept { return !d || d->needsDetach(); }
-        qsizetype detachCapacity(qsizetype newSize) const noexcept { return d ? d->detachCapacity(newSize) : newSize; }
+        sizetype detachCapacity(sizetype newSize) const noexcept { return d ? d->detachCapacity(newSize) : newSize; }
         const typename Data::ArrayOptions flags() const noexcept { return d ? d->flags : Data::ArrayOptionDefault; }
-        void setFlag(typename Data::ArrayOptions f) noexcept { Q_ASSERT(d); d->flags |= f; }
+        void setFlag(typename Data::ArrayOptions f) noexcept { Assert(d); d->flags |= f; }
         void clearFlag(typename Data::ArrayOptions f) noexcept { if (d) d->flags &= ~f; }
 
         Data* d_ptr() noexcept { return d; }
         void setBegin(T* begin) noexcept { ptr = begin; }
 
-        qsizetype freeSpaceAtBegin() const noexcept
+        sizetype freeSpaceAtBegin() const noexcept
         {
             if (d == nullptr)
                 return 0;
             return this->ptr - Data::dataStart(d, alignof(typename Data::AlignmentDummy));
         }
 
-        qsizetype freeSpaceAtEnd() const noexcept
+        sizetype freeSpaceAtEnd() const noexcept
         {
             if (d == nullptr)
                 return 0;
@@ -417,53 +418,53 @@ namespace base::io {
         }
 
 
-        static QArrayDataPointer allocateGrow(const QArrayDataPointer& from, qsizetype n, QArrayData::GrowthPosition position)
+        static ArrayDataPointer allocateGrow(const ArrayDataPointer& from, sizetype n, ArrayData::GrowthPosition position)
         {
-            qsizetype minimalCapacity = qMax(from.size, from.constAllocatedCapacity()) + n;
+            sizetype minimalCapacity = std::max(from.size, from.constAllocatedCapacity()) + n;
 
-            minimalCapacity -= (position == QArrayData::GrowsAtEnd) ? from.freeSpaceAtEnd() : from.freeSpaceAtBegin();
-            qsizetype capacity = from.detachCapacity(minimalCapacity);
+            minimalCapacity -= (position == ArrayData::GrowsAtEnd) ? from.freeSpaceAtEnd() : from.freeSpaceAtBegin();
+            sizetype capacity = from.detachCapacity(minimalCapacity);
             const bool grows = capacity > from.constAllocatedCapacity();
-            auto [header, dataPtr] = Data::allocate(capacity, grows ? QArrayData::Grow : QArrayData::KeepSize);
+            auto [header, dataPtr] = Data::allocate(capacity, grows ? ArrayData::Grow : ArrayData::KeepSize);
             const bool valid = header != nullptr && dataPtr != nullptr;
             if (!valid)
-                return QArrayDataPointer(header, dataPtr);
+                return ArrayDataPointer(header, dataPtr);
 
             // Idea: * when growing backwards, adjust pointer to prepare free space at the beginning
             //       * when growing forward, adjust by the previous data pointer offset
-            dataPtr += (position == QArrayData::GrowsAtBeginning)
-                ? n + qMax(0, (header->alloc - from.size - n) / 2)
+            dataPtr += (position == ArrayData::GrowsAtBeginning)
+                ? n + std::max(0, (header->alloc - from.size - n) / 2)
                 : from.freeSpaceAtBegin();
             header->flags = from.flags();
-            return QArrayDataPointer(header, dataPtr);
+            return ArrayDataPointer(header, dataPtr);
         }
 
-        friend bool operator==(const QArrayDataPointer& lhs, const QArrayDataPointer& rhs) noexcept
+        friend bool operator==(const ArrayDataPointer& lhs, const ArrayDataPointer& rhs) noexcept
         {
             return lhs.data() == rhs.data() && lhs.size == rhs.size;
         }
 
-        friend bool operator!=(const QArrayDataPointer& lhs, const QArrayDataPointer& rhs) noexcept
+        friend bool operator!=(const ArrayDataPointer& lhs, const ArrayDataPointer& rhs) noexcept
         {
             return lhs.data() != rhs.data() || lhs.size != rhs.size;
         }
 
         Data* d;
         T* ptr;
-        qsizetype size;
+        sizetype size;
     };
 
     template <class T>
-    inline void swap(QArrayDataPointer<T>& p1, QArrayDataPointer<T>& p2) noexcept
+    inline void swap(ArrayDataPointer<T>& p1, ArrayDataPointer<T>& p2) noexcept
     {
         p1.swap(p2);
     }
 
 
-#define Q_ARRAY_LITERAL(Type, ...) \
-    ([]() -> QArrayDataPointer<Type> { \
+#define ARRAY_LITERAL(Type, ...) \
+    ([]() -> ArrayDataPointer<Type> { \
         static Type const data[] = { __VA_ARGS__ }; \
-        return QArrayDataPointer<Type>::fromRawData(const_cast<Type *>(data), std::size(data)); \
+        return ArrayDataPointer<Type>::fromRawData(const_cast<Type *>(data), std::size(data)); \
     }())
     /**/
 

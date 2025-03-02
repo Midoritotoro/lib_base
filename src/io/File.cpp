@@ -145,4 +145,8 @@ namespace base::io {
 	sizetype File::fileSize(const std::string& path) {
 		return FileEngine::fileSize(path);
 	}
+
+	FILE* File::fileDescriptor() const noexcept {
+		return _engine->fileDescriptor();
+	}
 } // namespace base::io

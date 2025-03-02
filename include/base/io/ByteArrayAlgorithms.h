@@ -5,32 +5,28 @@
 
 #include <base/system/Platform.h>
 
-
 namespace base::io {
+    
     class ByteArrayView;
+    namespace algorithms {
+        [[nodiscard]] bool startsWith(ByteArrayView haystack, ByteArrayView needle) noexcept;
 
-    namespace QtPrivate {
+        [[nodiscard]] bool endsWith(ByteArrayView haystack, ByteArrayView needle) noexcept;
 
-        [[nodiscard]] DECL_PURE_FUNCTION
-            bool startsWith(ByteArrayView haystack, ByteArrayView needle) noexcept;
+        [[nodiscard]]
+        sizetype findByteArray(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept;
 
-        [[nodiscard]] DECL_PURE_FUNCTION
-            bool endsWith(ByteArrayView haystack, ByteArrayView needle) noexcept;
+        [[nodiscard]]
+        sizetype lastIndexOf(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept;
 
-        [[nodiscard]] DECL_PURE_FUNCTION
-            qsizetype findByteArray(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept;
-
-        [[nodiscard]] DECL_PURE_FUNCTION
-            qsizetype lastIndexOf(ByteArrayView haystack, sizetype from, ByteArrayView needle) noexcept;
-
-        [[nodiscard]] DECL_PURE_FUNCTION
-            qsizetype count(ByteArrayView haystack, ByteArrayView needle) noexcept;
+        [[nodiscard]]
+        sizetype count(ByteArrayView haystack, ByteArrayView needle) noexcept;
 
         [[nodiscard]] int compareMemory(ByteArrayView lhs, ByteArrayView rhs);
 
-        [[nodiscard]] DECL_PURE_FUNCTION ByteArrayView trimmed(ByteArrayView s) noexcept;
+        [[nodiscard]] ByteArrayView trimmed(ByteArrayView s) noexcept;
 
-        [[nodiscard]] DECL_PURE_FUNCTION bool isValidUtf8(ByteArrayView s) noexcept;
+        [[nodiscard]] bool isValidUtf8(ByteArrayView s) noexcept;
 
         template <typename T>
         class ParsedNumber
@@ -53,10 +49,10 @@ namespace base::io {
             T value_or(U&& u) const { return *this ? m_value : T(std::forward<U>(u)); }
         };
 
-        [[nodiscard]] DECL_PURE_FUNCTION ParsedNumber<double> toDouble(ByteArrayView a) noexcept;
-        [[nodiscard]] DECL_PURE_FUNCTION ParsedNumber<float> toFloat(ByteArrayView a) noexcept;
-        [[nodiscard]] DECL_PURE_FUNCTION ParsedNumber<qlonglong> toSignedInteger(ByteArrayView data, int base);
-        [[nodiscard]] DECL_PURE_FUNCTION ParsedNumber<qulonglong> toUnsignedInteger(ByteArrayView data, int base);
+        [[nodiscard]] ParsedNumber<double> toDouble(ByteArrayView a) noexcept;
+        [[nodiscard]] ParsedNumber<float> toFloat(ByteArrayView a) noexcept;
+        [[nodiscard]] ParsedNumber<longlong> toSignedInteger(ByteArrayView data, int base);
+        [[nodiscard]] ParsedNumber<ulonglong> toUnsignedInteger(ByteArrayView data, int base);
 
         // QByteArrayView has incomplete type here, and we can't include qbytearrayview.h,
         // since it includes qbytearrayalgorithms.h. Use the ByteArrayView template type as
@@ -78,8 +74,7 @@ namespace base::io {
                 return 0;
             return T(*val);
         }
-
-    } // namespace QtPrivate
+    } // algorithms
 
     /*****************************************************************************
       Safe and portable C string functions; extensions to standard string.h

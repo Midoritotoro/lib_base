@@ -10,6 +10,8 @@
 #include <base/media/MediaCommon.h>
 #include <base/qt/ui/BaseWidget.h>
 
+#include <base/core/Thread.h>
+
 __BASE_QT_STYLE_NAMESPACE_BEGIN
 
 struct MediaPlayerStyle: public StyleBase {

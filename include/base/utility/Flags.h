@@ -18,16 +18,16 @@ namespace base {
 		struct flags_zero_helper_struct {
 		};
 
-		using flags_zero_helper = void(base::details::flags_zero_helper_struct::*)();
+		using flags_zero_helper = void(flags_zero_helper_struct::*)();
 
 		template <typename ExtendedEnum,
-			typename Enum = typename base::extended_flags<ExtendedEnum>::type>
+			typename Enum = typename extended_flags<ExtendedEnum>::type>
 		inline constexpr auto extended_flag_convert(ExtendedEnum value) {
 			return static_cast<Enum>(value);
 		}
 
 		template <typename ExtendedEnum,
-			typename Enum = typename base::extended_flags<ExtendedEnum>::type>
+			typename Enum = typename extended_flags<ExtendedEnum>::type>
 		inline constexpr auto extended_flags_convert(ExtendedEnum value) {
 			return flags<Enum>(extended_flag_convert(value));
 		}
@@ -416,10 +416,11 @@ inline constexpr auto operator~(ExtendedEnum b) {
 	return ~base::details::extended_flags_convert(b);
 }
 
+using base::flags;
 
 #define DECLARE_FLAGS(_Flags, _Enum) \
-	typedef base::flags<_Enum> _Flags; \
+	typedef flags<_Enum> _Flags; \
 	inline constexpr bool is_flag_type(_Enum) { return true; }
 
 #define DECLARE_FLAGS_ENUM(_Flags, _Enum) \
-	typedef base::flags<_Enum> _Flags;
+	typedef flags<_Enum> _Flags;

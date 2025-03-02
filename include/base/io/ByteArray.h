@@ -12,6 +12,7 @@
 #include <base/io/ArrayData.h>
 
 #include <base/io/ByteArrayView.h>
+#include <base/io/ByteArrayAlgorithms.h>
 
 #include <atomic>
 
@@ -22,6 +23,10 @@ namespace base::io {
 #  define ByteArrayLiteral(str) \
     (ByteArray(ByteArrayData(nullptr, const_cast<char *>(str), sizeof(str) - 1))) \
     /**/
+    enum class Initialization {
+        Uninitialized
+    };
+
 
     class ByteArray
     {
@@ -49,7 +54,7 @@ namespace base::io {
         };
         DECLARE_FLAGS(Base64Options, Base64Option)
 
-            enum class Base64DecodingStatus {
+        enum class Base64DecodingStatus {
             Ok,
             IllegalInputLength,
             IllegalCharacter,
@@ -59,6 +64,7 @@ namespace base::io {
         inline constexpr ByteArray() noexcept;
         ByteArray(const char*, sizetype size = -1);
         ByteArray(sizetype size, char c);
+        ByteArray(sizetype size, Initialization);
 
         inline ByteArray(const ByteArray&) noexcept;
         inline ~ByteArray();
@@ -84,10 +90,9 @@ namespace base::io {
         inline void reserve(sizetype size);
         inline void squeeze();
 
-#ifndef QT_NO_CAST_FROM_BYTEARRAY
         inline operator const char* () const;
         inline operator const void* () const;
-#endif
+
         inline char* data();
         inline const char* data() const noexcept;
         const char* constData() const noexcept { return data(); }
@@ -110,7 +115,7 @@ namespace base::io {
         sizetype indexOf(char c, sizetype from = 0) const;
         sizetype indexOf(ByteArrayView bv, sizetype from = 0) const
         {
-            return QtPrivate::findByteArray(ToByteArrayViewIgnoringNull(*this), from, bv);
+            return algorithms::findByteArray(ToByteArrayViewIgnoringNull(*this), from, bv);
         }
 
         sizetype lastIndexOf(char c, sizetype from = -1) const;
@@ -120,7 +125,7 @@ namespace base::io {
         }
         sizetype lastIndexOf(ByteArrayView bv, sizetype from) const
         {
-            return QtPrivate::lastIndexOf(ToByteArrayViewIgnoringNull(*this), from, bv);
+            return algorithms::lastIndexOf(ToByteArrayViewIgnoringNull(*this), from, bv);
         }
 
         inline bool contains(char c) const;
@@ -128,10 +133,13 @@ namespace base::io {
         sizetype count(char c) const;
         sizetype count(ByteArrayView bv) const
         {
-            return QtPrivate::count(ToByteArrayViewIgnoringNull(*this), bv);
+            return algorithms::count(ToByteArrayViewIgnoringNull(*this), bv);
         }
 
-        inline int compare(ByteArrayView a, Qt::CaseSensitivity cs = Qt::CaseSensitive) const noexcept;
+        inline int compare(ByteArrayView a, CaseSensitivity cs = CaseSensitive) const noexcept {
+            return cs == CaseSensitive ? algorithms::compareMemory(*this, a) :
+                qstrnicmp(data(), size(), a.data(), a.size());
+        }
 
         [[nodiscard]] ByteArray left(sizetype n) const&
         {
@@ -203,18 +211,17 @@ namespace base::io {
         {
             verify(0, len); return std::move(*this).first(size() - len);
         }
-#endif
 
         bool startsWith(ByteArrayView bv) const
         {
-            return QtPrivate::startsWith(qToByteArrayViewIgnoringNull(*this), bv);
+            return algorithms::startsWith(ToByteArrayViewIgnoringNull(*this), bv);
         }
         bool startsWith(char c) const { return size() > 0 && front() == c; }
 
         bool endsWith(char c) const { return size() > 0 && back() == c; }
         bool endsWith(ByteArrayView bv) const
         {
-            return QtPrivate::endsWith(qToByteArrayViewIgnoringNull(*this), bv);
+            return algorithms::endsWith(ToByteArrayViewIgnoringNull(*this), bv);
         }
 
         bool isUpper() const;
@@ -222,13 +229,13 @@ namespace base::io {
 
         [[nodiscard]] bool isValidUtf8() const noexcept
         {
-            return QtPrivate::isValidUtf8(qToByteArrayViewIgnoringNull(*this));
+            return algorithms::isValidUtf8(ToByteArrayViewIgnoringNull(*this));
         }
 
         void truncate(sizetype pos);
         void chop(sizetype n);
 
-#if !defined(Q_QDOC)
+
         [[nodiscard]] ByteArray toLower() const&
         {
             return toLower_helper(*this);
@@ -261,12 +268,6 @@ namespace base::io {
         {
             return simplified_helper(*this);
         }
-#else
-        [[nodiscard]] ByteArray toLower() const;
-        [[nodiscard]] ByteArray toUpper() const;
-        [[nodiscard]] ByteArray trimmed() const;
-        [[nodiscard]] ByteArray simplified() const;
-#endif
 
         [[nodiscard]] ByteArray leftJustified(sizetype width, char fill = ' ', bool truncate = false) const;
         [[nodiscard]] ByteArray rightJustified(sizetype width, char fill = ' ', bool truncate = false) const;
@@ -387,26 +388,27 @@ namespace base::io {
             return append(a);
         }
 
-        QList<ByteArray> split(char sep) const;
+        std::vector<ByteArray> split(char sep) const;
 
         [[nodiscard]] ByteArray repeated(sizetype times) const;
 
-#if !defined(QT_NO_CAST_FROM_ASCII) && !defined(QT_RESTRICTED_CAST_FROM_ASCII)
-        QT_ASCII_CAST_WARN inline bool operator==(const QString& s2) const;
-        QT_ASCII_CAST_WARN inline bool operator!=(const QString& s2) const;
-        QT_ASCII_CAST_WARN inline bool operator<(const QString& s2) const;
-        QT_ASCII_CAST_WARN inline bool operator>(const QString& s2) const;
-        QT_ASCII_CAST_WARN inline bool operator<=(const QString& s2) const;
-        QT_ASCII_CAST_WARN inline bool operator>=(const QString& s2) const;
-#endif
+        inline bool operator==(const QString& s2) const;
+        inline bool operator!=(const QString& s2) const;
+        inline bool operator<(const QString& s2) const;
+        inline bool operator>(const QString& s2) const;
+        inline bool operator<=(const QString& s2) const;
+        inline bool operator>=(const QString& s2) const;
+
         friend inline bool operator==(const ByteArray& a1, const ByteArray& a2) noexcept
         {
             return ByteArrayView(a1) == ByteArrayView(a2);
         }
+
         friend inline bool operator==(const ByteArray& a1, const char* a2) noexcept
         {
             return ByteArrayView(a1) == ByteArrayView(a2);
         }
+
         friend inline bool operator==(const char* a1, const ByteArray& a2) noexcept
         {
             return ByteArrayView(a1) == ByteArrayView(a2);
@@ -425,51 +427,51 @@ namespace base::io {
         }
         friend inline bool operator<(const ByteArray& a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) < 0;
+            return algorithms::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) < 0;
         }
         friend inline bool operator<(const ByteArray& a1, const char* a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) < 0;
+            return algorithms::compareMemory(a1, a2) < 0;
         }
         friend inline bool operator<(const char* a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) < 0;
+            return algorithms::compareMemory(a1, a2) < 0;
         }
         friend inline bool operator<=(const ByteArray& a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) <= 0;
+            return algorithms::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) <= 0;
         }
         friend inline bool operator<=(const ByteArray& a1, const char* a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) <= 0;
+            return algorithms::compareMemory(a1, a2) <= 0;
         }
         friend inline bool operator<=(const char* a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) <= 0;
+            return algorithms::compareMemory(a1, a2) <= 0;
         }
         friend inline bool operator>(const ByteArray& a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) > 0;
+            return algorithms::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) > 0;
         }
         friend inline bool operator>(const ByteArray& a1, const char* a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) > 0;
+            return algorithms::compareMemory(a1, a2) > 0;
         }
         friend inline bool operator>(const char* a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) > 0;
+            return algorithms::compareMemory(a1, a2) > 0;
         }
         friend inline bool operator>=(const ByteArray& a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) >= 0;
+            return algorithms::compareMemory(ByteArrayView(a1), ByteArrayView(a2)) >= 0;
         }
         friend inline bool operator>=(const ByteArray& a1, const char* a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) >= 0;
+            return algorithms::compareMemory(a1, a2) >= 0;
         }
         friend inline bool operator>=(const char* a1, const ByteArray& a2) noexcept
         {
-            return QtPrivate::compareMemory(a1, a2) >= 0;
+            return algorithms::compareMemory(a1, a2) >= 0;
         }
 
         // Check isEmpty() instead of isNull() for backwards compatibility.
@@ -535,21 +537,6 @@ namespace base::io {
         [[nodiscard]] static ByteArray fromHex(const ByteArray& hexEncoded);
         [[nodiscard]] static ByteArray fromPercentEncoding(const ByteArray& pctEncoded, char percent = '%');
 
-#if defined(Q_OS_DARWIN) || defined(Q_QDOC)
-        static ByteArray fromCFData(CFDataRef data);
-        static ByteArray fromRawCFData(CFDataRef data);
-        CFDataRef toCFData() const Q_DECL_CF_RETURNS_RETAINED;
-        CFDataRef toRawCFData() const Q_DECL_CF_RETURNS_RETAINED;
-        static ByteArray fromNSData(const NSData* data);
-        static ByteArray fromRawNSData(const NSData* data);
-        NSData* toNSData() const Q_DECL_NS_RETURNS_AUTORELEASED;
-        NSData* toRawNSData() const Q_DECL_NS_RETURNS_AUTORELEASED;
-#endif
-
-#if defined(Q_OS_WASM) || defined(Q_QDOC)
-        static ByteArray fromEcmaUint8Array(emscripten::val uint8array);
-        emscripten::val toEcmaUint8Array();
-#endif
 
         typedef char* iterator;
         typedef const char* const_iterator;
@@ -636,7 +623,7 @@ namespace base::io {
         explicit inline ByteArray(DataPointer&& dd) : d(std::move(dd)) {}
 
     private:
-        void reallocData(sizetype alloc, QArrayData::AllocationOption option);
+        void reallocData(sizetype alloc, ArrayData::AllocationOption option);
         void reallocGrowData(sizetype n);
         void expand(sizetype i);
 
@@ -668,13 +655,11 @@ namespace base::io {
         }
 
         friend class QString;
-        friend Q_CORE_EXPORT ByteArray Uncompress(const uchar* data, sizetype nbytes);
+        friend ByteArray Uncompress(const uchar* data, sizetype nbytes);
 
         template <typename T> friend sizetype erase(ByteArray& ba, const T& t);
         template <typename Predicate> friend sizetype erase_if(ByteArray& ba, Predicate pred);
     };
-
-    Q_DECLARE_OPERATORS_FOR_FLAGS(ByteArray::Base64Options)
 
         inline constexpr ByteArray::ByteArray() noexcept {}
     inline ByteArray::~ByteArray() {}
@@ -714,7 +699,7 @@ namespace base::io {
     }
     inline void ByteArray::detach()
     {
-        if (d->needsDetach()) reallocData(size(), QArrayData::KeepSize);
+        if (d->needsDetach()) reallocData(size(), ArrayData::KeepSize);
     }
     inline bool ByteArray::isDetached() const
     {
@@ -728,9 +713,9 @@ namespace base::io {
     inline void ByteArray::reserve(sizetype asize)
     {
         if (d->needsDetach() || asize > capacity() - d->freeSpaceAtBegin())
-            reallocData(qMax(size(), asize), QArrayData::KeepSize);
+            reallocData(qMax(size(), asize), ArrayData::KeepSize);
         if (d->constAllocatedCapacity())
-            d->setFlag(Data::CapacityReserved);
+            d->setFlag(ArrayData::CapacityReserved);
     }
 
     inline void ByteArray::squeeze()
@@ -738,9 +723,9 @@ namespace base::io {
         if (!d.isMutable())
             return;
         if (d->needsDetach() || size() < capacity())
-            reallocData(size(), QArrayData::KeepSize);
+            reallocData(size(), ArrayData::KeepSize);
         if (d->constAllocatedCapacity())
-            d->clearFlag(Data::CapacityReserved);
+            d->clearFlag(ArrayData::CapacityReserved);
     }
 
     inline char& ByteArray::operator[](sizetype i)
@@ -764,11 +749,6 @@ namespace base::io {
     inline bool ByteArray::contains(ByteArrayView bv) const
     {
         return indexOf(bv) != -1;
-    }
-    inline int ByteArray::compare(ByteArrayView a, Qt::CaseSensitivity cs) const noexcept
-    {
-        return cs == Qt::CaseSensitive ? QtPrivate::compareMemory(*this, a) :
-            qstrnicmp(data(), size(), a.data(), a.size());
     }
 #if !defined(QT_USE_QSTRINGBUILDER)
     inline ByteArray operator+(const ByteArray& a1, const ByteArray& a2)
@@ -804,6 +784,41 @@ namespace base::io {
         return ByteArray(&a1, 1) += a2;
     }
 #endif // QT_USE_QSTRINGBUILDER
+
+    class ByteArray::FromBase64Result
+    {
+    public:
+        ByteArray decoded;
+        ByteArray::Base64DecodingStatus decodingStatus;
+
+        void swap(ByteArray::FromBase64Result& other) noexcept
+        {
+            decoded.swap(other.decoded);
+            std::swap(decodingStatus, other.decodingStatus);
+        }
+
+        explicit operator bool() const noexcept { return decodingStatus == ByteArray::Base64DecodingStatus::Ok; }
+
+        ByteArray& operator*() & noexcept { return decoded; }
+        const ByteArray& operator*() const& noexcept { return decoded; }
+        ByteArray&& operator*() && noexcept { return std::move(decoded); }
+
+        friend inline bool operator==(const ByteArray::FromBase64Result& lhs, const ByteArray::FromBase64Result& rhs) noexcept
+        {
+            if (lhs.decodingStatus != rhs.decodingStatus)
+                return false;
+
+            if (lhs.decodingStatus == ByteArray::Base64DecodingStatus::Ok && lhs.decoded != rhs.decoded)
+                return false;
+
+            return true;
+        }
+
+        friend inline bool operator!=(const ByteArray::FromBase64Result& lhs, const ByteArray::FromBase64Result& rhs) noexcept
+        {
+            return !(lhs == rhs);
+        }
+    };
 
 
 } // namespace base

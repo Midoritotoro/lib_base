@@ -156,7 +156,7 @@ namespace base::io {
 	}
 
 	std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
-		/*static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
+		static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
 		SystemAssert(descriptor != nullptr, err, "");
 
 		int fd = _fileno(descriptor);
@@ -167,7 +167,7 @@ namespace base::io {
 
 		std::vector<char> buffer(MAX_PATH);
 		DWORD length = GetFinalPathNameByHandleA(
-			handle, buffer.data(), MAX_PATH,
+			handle.handle(), buffer.data(), MAX_PATH,
 			FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
 		SystemAssert(length != 0, err, "");
@@ -175,27 +175,16 @@ namespace base::io {
 		if (length > MAX_PATH) {
 			buffer.resize(length);
 			length = GetFinalPathNameByHandleA(
-				handle, buffer.data(), length, 
+				handle.handle(), buffer.data(), length,
 				FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
 			SystemAssert(length != 0, err, "");
 		}
 
-		std::string wpath(buffer.data());
-		SystemAssert(!wpath.empty(), err, "");
+		std::string path(buffer.data());
+		SystemAssert(!path.empty(), err, "");
 
-		int size_needed = WideCharToMultiByte(
-			CP_UTF8, 0, &wpath[0], (int)wpath.size(),
-			NULL, 0, NULL, NULL);
-
-		std::string path(size_needed, 0);
-
-		WideCharToMultiByte(
-			CP_UTF8, 0, &wpath[0], (int)wpath.size(),
-			&path[0], size_needed, NULL, NULL);
-
-		return path;*/
-		return "";
+		return path;
 	}
 
 	void WindowsFileEngine::close() {

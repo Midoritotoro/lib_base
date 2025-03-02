@@ -3,6 +3,8 @@
 #include <base/core/AbstractThread.h>
 #include <base/utility/ClassHelperMacros.h>
 
+#include <base/utility/TypeTraits.h>
+
 #if defined(OS_WIN)
 	#include <base/core/WindowsThread.h>
 	using ThreadPlatformImplementation = base::WindowsThread;
@@ -46,6 +48,26 @@ namespace base {
 				std::forward<Function>(_routine),
 				std::forward<Args>(args)...);
 		} 
+
+		// For methods
+		template <
+			class Owner,
+			class Method,
+			class ... Args>
+		inline void start(
+			Owner* _owner,
+			Method&& _routine,
+			Args&& ... args)
+		{
+			static_assert(std::is_invocable_r_v<void, Method, Owner*, Args...>,
+				"Method must be a callable type that can be called with Owner* as the first argument.");
+			_impl->start(
+				std::bind(
+					std::forward<Method>(_routine),
+					_owner,
+					std::forward<Args>(args)...)
+			);
+		}
 
 		[[nodiscard]] ThreadPlatformImplementation* impl() const noexcept;
 		
