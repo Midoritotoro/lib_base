@@ -1,85 +1,78 @@
 #pragma once 
 
 #include <base/io/AbstractFileEngine.h>
+#include <base/io/WindowsSmartHandle.h>
+
 
 #if defined(OS_WIN)
 
-namespace base::io {
-	class WindowsFileEngine final: public AbstractFileEngine {
-		public:
-			WindowsFileEngine();
-			WindowsFileEngine(const std::string& path);
+__BASE_IO_NAMESPACE_BEGIN
 
-			WindowsFileEngine(
-				not_null<FILE*> file,
-				bool tryToExtractPathFromDescriptor = false);
+class WindowsFileEngine final: public AbstractFileEngine {
+	public:
+		WindowsFileEngine();
+		WindowsFileEngine(const std::string& path);
 
-			WindowsFileEngine(
-				not_null<FILE*> file,
-				const std::string& path);
+		virtual ~WindowsFileEngine();
 
-			virtual ~WindowsFileEngine();
+		void setFileName(const std::string& path) override;
+		[[nodiscard]] bool isOpened() const noexcept override;
 
-			void setFileName(const std::string& path) override;
-			void setFileDescriptor(not_null<FILE*> file) override;
+		[[nodiscard]] std::string path() const noexcept override;
 
-			[[nodiscard]] bool isOpened() const noexcept override;
+		static [[nodiscard]] bool exists(const std::string& path);
 
-			[[nodiscard]] FILE* fileDescriptor() const noexcept override;
-			[[nodiscard]] std::string path() const noexcept override;
+		static void find(
+			const std::string& path,
+			std::vector<std::string>& output,
+			const FileFilter& filter = {},
+			bool recurse = true);
 
-			static [[nodiscard]] bool exists(const std::string& path);
+		static void find(
+			std::vector<std::string>& output,
+			const FileFilter& filter = {},
+			bool recurse = true);
 
-			static void find(
-				const std::string& path,
-				std::vector<std::string>& output,
-				const FileFilter& filter = {},
-				bool recurse = true);
+		void close() override;
 
-			static void find(
-				std::vector<std::string>& output,
-				const FileFilter& filter = {},
-				bool recurse = true);
+		[[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) override;
 
-			void close() override;
+		[[nodiscard]] bool open(
+			const std::string& path,
+			FileOpenModes mode) override;
+		[[nodiscard]] bool open(
+			const std::string& path,
+			int mode) override;
 
-			[[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) override;
+		[[nodiscard]] bool rename(const std::string& newFileName) override;
+		static bool rename(
+			const std::string& oldFileName,
+			const std::string& newFileName);
 
-			[[nodiscard]] bool open(
-				const std::string& path,
-				FileOpenModes mode) override;
-			[[nodiscard]] bool open(
-				const std::string& path,
-				const std::string& mode) override;
+		[[nodiscard]] bool rewind(int64 position) override;
+		[[nodiscard]] bool rewind(FilePositions position) override;
 
-			[[nodiscard]] bool rename(const std::string& newFileName) override;
-			static bool rename(
-				const std::string& oldFileName,
-				const std::string& newFileName);
+		void remove() override;
+		static void remove(const std::string& path);
 
-			[[nodiscard]] bool rewind(int64 position) override;
-			[[nodiscard]] bool rewind(FilePositions position) override;
+		static [[nodiscard]] bool write(
+			const std::string& path,
+			void* inBuffer,
+			sizetype sizeInBytes,
+			FileOpenModes mode);
 
-			void remove() override;
-			static void remove(const std::string& path);
+		[[nodiscard]] sizetype read(
+			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
+			_SAL2_In_ sizetype sizeInBytes) override;
 
-			static [[nodiscard]] bool write(
-				const std::string& path,
-				void* inBuffer,
-				sizetype sizeInBytes,
-				const char* mode);
+		[[nodiscard]] ReadResult readAll() override;
 
-			[[nodiscard]] sizetype read(
-				_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
-				_SAL2_In_ sizetype sizeInBytes) override;
+		static [[nodiscard]] sizetype fileSize(const std::string& path);
+	private:
+		io::WindowsSmartHandle _handle;
+		std::string _path = "";
+};
 
-			[[nodiscard]] ReadResult readAll() override;
-
-			static [[nodiscard]] sizetype fileSize(const std::string& path);
-		private:
-			FILE* _desc = nullptr;
-			std::string _path = "";
-	};
-} // namespace base::io
+__BASE_IO_NAMESPACE_END
 
 #endif

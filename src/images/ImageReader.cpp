@@ -164,7 +164,7 @@ namespace base::images {
 	//	ImageContext context;
 		
 		io::File file = io::File(data->path.value());
-		const auto isOpened = file.open(io::FileOpenMode::Read | io::FileOpenMode::Binary);
+		const auto isOpened = file.open(io::FileOpenMode::Read);
 
 		ImagesAssert(isOpened, "base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл изображения. ", nullptr);
 

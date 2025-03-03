@@ -381,7 +381,7 @@ if(LIB_BASE_ENABLE_FFMPEG)
     add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
 endif()
 
-string(REGEX REPLACE "(-march=[a-zA-Z0-9-]*)|(-mtune=[a-zA-Z0-9-]*)|(-msse[0-9,\\.]*)|(-mavx[a-z0-9]*)|(-mfma)|(-mamx-[a-z0-9]*)" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+#string(REGEX REPLACE "(-march=[a-zA-Z0-9-]*)|(-mtune=[a-zA-Z0-9-]*)|(-msse[0-9,\\.]*)|(-mavx[a-z0-9]*)|(-mfma)|(-mamx-[a-z0-9]*)" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
 	if((CMAKE_VS_PLATFORM_NAME STREQUAL "x64") OR (CMAKE_VS_PLATFORM_NAME STREQUAL "x86"))

@@ -12,14 +12,6 @@ namespace base::io {
 		File();
 		File(const std::string& path);
 
-		File(
-			not_null<FILE*> file,
-			bool tryToExtractPathFromDescriptor = false);
-
-		File(
-			not_null<FILE*> file,
-			const std::string& path);
-
 		~File();
 
 		static [[nodiscard]] bool exists(const std::string& path);
@@ -53,12 +45,8 @@ namespace base::io {
 		[[nodiscard]] bool open(
 			const std::string& path,
 			FileOpenModes mode);
-		[[nodiscard]] bool open(
-			const std::string& path,
-			const char* mode);
 
 		[[nodiscard]] bool open(FileOpenModes mode);
-		[[nodiscard]] bool open(const char* mode);
 
 		[[nodiscard]] bool rename(const std::string& newFileName);
 		static [[nodiscard]] bool rename(
@@ -81,7 +69,7 @@ namespace base::io {
 			const std::string& path,
 			void* inBuffer,
 			sizetype sizeInBytes,
-			const char* mode);
+			FileOpenModes mode);
 		
 		//!
 		//! \brief Читает sizeInBytes байт в outBuffer.
@@ -107,8 +95,6 @@ namespace base::io {
 		//! \return Размер файла в байтах
 		[[nodiscard]] sizetype fileSize() const noexcept;
 		static [[nodiscard]] sizetype fileSize(const std::string& path);
-
-		NODISCARD FILE* fileDescriptor() const noexcept;
 	private:
 		AbstractFileEngine* _engine = nullptr;
 	};

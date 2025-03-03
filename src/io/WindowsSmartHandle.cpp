@@ -49,6 +49,11 @@ namespace base::io {
 		return _deleteCallback;
 	}
 
+	void WindowsSmartHandle::forceDelete() {
+		if (_handle != nullptr)
+			_deleteCallback(_handle);
+	}
+
 	bool WindowsSmartHandle::isValid() const noexcept {
 		return 
 			(_handle != nullptr 

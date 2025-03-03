@@ -6,18 +6,9 @@
 
 namespace base::io {
     enum class FileOpenMode : uchar {
-        Read = 0x01,    // "r"
-        Write = 0x02,   // "w"
-        Append = 0x04,  // "a"
-        ReadEx = 0x10,  // "r+"
-        WriteEx = 0x20, // "w+"
-        AppendEx = 0x40 // "a+"
-#if defined(OS_WIN)
-        ,
-        // Так как в cstdlib fopen() флаг "b" игнорируется в системах POSIX,
-        // то и использовать его там смысла нет. В Windows флаг "b" отключает обработку '\n' и '\x1A'.
-        Binary = 0x80 // "b"
-#endif
+        Read = 0x01,
+        Write = 0x02,
+        Append = 0x04,
     };
 
     enum FilePosition : uchar {
@@ -30,8 +21,8 @@ namespace base::io {
 
     struct FileFilter {
         std::string nameContains;
-        sizetype minimumSize = 0;
-        sizetype maximumSize = 0;
+        sizetype minimumSize = 0; // In bytes
+        sizetype maximumSize = 0; // In bytes
     };
 
     struct ReadResult {

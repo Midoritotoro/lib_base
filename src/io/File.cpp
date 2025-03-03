@@ -2,6 +2,10 @@
 
 #include <base/system/SystemTools.h>
 
+
+
+__BASE_IO_NAMESPACE_BEGIN
+
 #if defined(OS_WIN)
 	#include <base/io/WindowsFileEngine.h>
 	using FileEngine = base::io::WindowsFileEngine;
@@ -10,143 +14,113 @@
 	using FileEngine = base::io::UnixFileEngine;
 #endif
 
+File::File():
+	_engine(new FileEngine())
+{}
 
-namespace base::io {
-	File::File():
-		_engine(new FileEngine())
-	{}
+File::File(const std::string& path) :
+	_engine(new FileEngine(path))
+{}
 
-	File::File(const std::string& path) :
-		_engine(new FileEngine(path))
-	{}
+File::~File() {
+	if (_engine != nullptr)
+		delete _engine;
+}
 
-	File::File(
-		not_null<FILE*> file,
-		bool tryToExtractPathFromDescriptor
-	):
-		_engine(new FileEngine(file, tryToExtractPathFromDescriptor))
-	{}
+bool File::exists(const std::string& path) {
+	return FileEngine::exists(path);
+}
 
-	File::File(
-		not_null<FILE*> file,
-		const std::string& path
-	):
-		_engine(new FileEngine(file, path))
-	{}
+void File::find(
+	const std::string& path,
+	std::vector<std::string>& output,
+	const FileFilter& filter,
+	bool recurse)
+{
+	FileEngine::find(path, output, filter, recurse);
+}
 
-	File::~File() {
-		if (_engine != nullptr)
-			delete _engine;
-	}
+void File::find(
+	std::vector<std::string>& output,
+	const FileFilter& filter,
+	bool recurse)
+{
+	FileEngine::find(output, filter, recurse);
+}
 
-	bool File::exists(const std::string& path) {
-		return FileEngine::exists(path);
-	}
+void File::close() {
+	_engine->close();
+}
 
-	void File::find(
-		const std::string& path,
-		std::vector<std::string>& output,
-		const FileFilter& filter,
-		bool recurse)
-	{
-		FileEngine::find(path, output, filter, recurse);
-	}
+bool File::open(
+	const std::string& path,
+	FileOpenModes format)
+{
+	return _engine->open(path, format);
+}
 
-	void File::find(
-		std::vector<std::string>& output,
-		const FileFilter& filter,
-		bool recurse)
-	{
-		FileEngine::find(output, filter, recurse);
-	}
+bool File::open(FileOpenModes format) {
+	return _engine->open(_engine->path(), format);
+}
 
-	void File::close() {
-		_engine->close();
-	}
+bool File::rename(const std::string& newFileName) {
+	return _engine->rename(newFileName);
+}
 
-	bool File::open(
-		const std::string& path,
-		FileOpenModes format)
-	{
-		return _engine->open(path, format);
-	}
+bool File::rename(
+	const std::string& oldFileName,
+	const std::string& newFileName)
+{
+	return FileEngine::rename(oldFileName, newFileName);
+}
 
-	bool File::open(
-		const std::string& path,
-		const char* format)
-	{
-		return _engine->open(path, format);
-	}
+bool File::rewind(int64 position) {
+	return _engine->rewind(position);
+}
 
-	bool File::open(FileOpenModes format) {
-		return _engine->open(_engine->path(), format);
-	}
+bool File::rewind(FilePositions position) {
+	return _engine->rewind(position);
+}
 
-	bool File::open(const char* format) {
-		return _engine->open(_engine->path(), format);
-	}
+void File::remove() {
+	if (_engine->isOpened())
+		close();
 
-	bool File::rename(const std::string& newFileName) {
-		return _engine->rename(newFileName);
-	}
+	_engine->remove();
+}
 
-	bool File::rename(
-		const std::string& oldFileName,
-		const std::string& newFileName)
-	{
-		return FileEngine::rename(oldFileName, newFileName);
-	}
+void File::remove(const std::string& path) {
+	FileEngine::remove(path);
+}
 
-	bool File::rewind(int64 position) {
-		return _engine->rewind(position);
-	}
+bool File::write(
+	const std::string& path,
+	void* inBuffer,
+	sizetype sizeInBytes,
+	FileOpenModes mode)
+{
+	return FileEngine::write(
+		path, inBuffer, 
+		sizeInBytes, mode);
+}
 
-	bool File::rewind(FilePositions position) {
-		return _engine->rewind(position);
-	}
+sizetype File::read(
+	_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
+	_SAL2_In_ sizetype sizeInBytes)
+{
+	return _engine->read(outBuffer, sizeInBytes);
+}
 
-	void File::remove() {
-		if (_engine->isOpened())
-			close();
+ReadResult File::readAll() {
+	return _engine->readAll();
+}
 
-		_engine->remove();
-	}
+sizetype File::fileSize() const noexcept {
+	return FileEngine::fileSize(_engine->path());
+}
 
-	void File::remove(const std::string& path) {
-		FileEngine::remove(path);
-	}
+sizetype File::fileSize(const std::string& path) {
+	return FileEngine::fileSize(path);
+}
 
-	bool File::write(
-		const std::string& path,
-		void* inBuffer,
-		sizetype sizeInBytes,
-		const char* mode)
-	{
-		return FileEngine::write(
-			path, inBuffer, 
-			sizeInBytes, mode);
-	}
-
-	sizetype File::read(
-		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
-		_SAL2_In_ sizetype sizeInBytes)
-	{
-		return _engine->read(outBuffer, sizeInBytes);
-	}
-
-	ReadResult File::readAll() {
-		return _engine->readAll();
-	}
-
-	sizetype File::fileSize() const noexcept {
-		return FileEngine::fileSize(_engine->path());
-	}
-
-	sizetype File::fileSize(const std::string& path) {
-		return FileEngine::fileSize(path);
-	}
-
-	FILE* File::fileDescriptor() const noexcept {
-		return _engine->fileDescriptor();
-	}
-} // namespace base::io
+__BASE_IO_NAMESPACE_END

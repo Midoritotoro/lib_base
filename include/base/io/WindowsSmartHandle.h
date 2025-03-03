@@ -20,6 +20,8 @@ namespace base::io {
 		void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
 		[[nodiscard]] Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
 
+		void forceDelete();
+
 		[[nodiscard]] bool isValid() const noexcept;
 
 		void setAutoDelete(bool autoDelete);

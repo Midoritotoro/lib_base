@@ -75,11 +75,17 @@ int main(int argc, char* argv[]) {
 	//_mediaPlayer->setMedia(videoPath);
 
 	base::io::File file; 
-	if (!file.open("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4", "rb"))
+	if (!file.open("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4", base::io::FileOpenMode::Read))
 		return -1;
 
 	auto readed = file.readAll();
-	qDebug() << "size: " << readed.sizeInBytes;
+	//auto r = QFile("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4");
+
+	//r.open(QFile::ReadWrite);
+//
+
+	file.write("D:/warthunder.mp4", readed.data, readed.sizeInBytes, base::io::FileOpenMode::Write);
+//	qDebug() << "size: " << readed.sizeInBytes;
 
 	return application.exec();
 }

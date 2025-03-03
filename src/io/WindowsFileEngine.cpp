@@ -5,30 +5,14 @@
 #include <base/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
+#define WIN_EXTENDED_PATH_KEY "\\?"
+#define WIN_EXTENDED_PATH_KEY_SIZE 3
 
 namespace base::io {
 	WindowsFileEngine::WindowsFileEngine()
 	{}
 
 	WindowsFileEngine::WindowsFileEngine(const std::string& path) :
-		_path(path)
-	{}
-
-	WindowsFileEngine::WindowsFileEngine(
-		not_null<FILE*> file,
-		bool tryToExtractPathFromDescriptor
-	):
-		_desc(file)
-	{
-		if (tryToExtractPathFromDescriptor)
-			_path = absolutePathFromDescriptor(_desc);
-	}
-
-	WindowsFileEngine::WindowsFileEngine(
-		not_null<FILE*> file,
-		const std::string& path
-	):
-		_desc(file),
 		_path(path)
 	{}
 
@@ -40,16 +24,8 @@ namespace base::io {
 		_path = path;
 	}
 
-	void WindowsFileEngine::setFileDescriptor(not_null<FILE*> file) {
-		_desc = file;
-	}
-
 	bool WindowsFileEngine::isOpened() const noexcept {
-		return (_desc != nullptr);
-	}
-
-	FILE* WindowsFileEngine::fileDescriptor() const noexcept {
-		return _desc;
+		return (_handle.handle() != nullptr);
 	}
 
 	std::string WindowsFileEngine::path() const noexcept {
@@ -190,79 +166,67 @@ namespace base::io {
 
 	void WindowsFileEngine::close() {
 		if (isOpened())
-			fclose(_desc);
+			_handle.forceDelete();
 	}
 
 	bool WindowsFileEngine::open(
 		const std::string& path,
 		FileOpenModes mode)
 	{
-		std::string modeStr;
+		int _mode;
 
 		if (mode & FileOpenMode::Read)
-			modeStr = "r";
+			_mode |= GENERIC_READ;
 
 		else if (mode & FileOpenMode::Write)
-			modeStr = "w";
+			_mode |= GENERIC_WRITE;
 
 		else if (mode & FileOpenMode::Append)
-			modeStr = "a";
+			_mode = FILE_APPEND_DATA;
 
-		else if (mode & FileOpenMode::ReadEx)
-			modeStr = "r+";
+		else
+			AssertUnreachable();
 
-		else if (mode & FileOpenMode::WriteEx)
-			modeStr = "r+";
-
-		else if (mode & FileOpenMode::AppendEx)
-			modeStr = "r+";
-
-		if (mode & FileOpenMode::Binary)
-			if (modeStr.size() == 1)
-				modeStr.append("b");
-			else if (modeStr.size() == 2) {
-				modeStr[1] = 'b';
-				modeStr[2] = '+';
-			}
-
-		return open(path, modeStr);
+		return open(path, _mode);
 	}
 
 	bool WindowsFileEngine::open(
 		const std::string& path,
-		const std::string& mode)
+		int mode)
 	{
-		if (path.empty() || mode.empty())
+		measureExecutionTime("WindowsFileEngine::open")
+
+		if (path.empty())
 			return false;
 
-		/*const auto openAlreadyOpened = (path == _path && isOpened());
-		AssertReturn(openAlreadyOpened != false, "base::io::WindowsFileEngine::open: Попытка открыть уже открытый файл. ", false);*/
+		char* correctExtendedPath = nullptr;
 
-		#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-			wchar_t wMode[64];
-			wchar_t wFilename[1024];
+		if (path.substr(0, 3) != WIN_EXTENDED_PATH_KEY) {
+			correctExtendedPath = new char[path.size() + WIN_EXTENDED_PATH_KEY_SIZE];
 
-			if (ConvertUnicodeToWChar(wFilename, ARRAY_SIZE(wFilename), path.c_str()) == 0)
-				return false;
+			strcpy(correctExtendedPath, WIN_EXTENDED_PATH_KEY);
+			strcpy(correctExtendedPath + WIN_EXTENDED_PATH_KEY_SIZE, path.c_str());
+		}
 
-			if (ConvertUnicodeToWChar(wMode, ARRAY_SIZE(wFilename), mode.c_str()) == 0)
-				return false;
+		correctExtendedPath = new char[path.size()];
+		strcpy(correctExtendedPath, path.c_str());
 
-		#if defined(_MSC_VER) && _MSC_VER >= 1400
-			if (0 != _wfopen_s(&_desc, wFilename, wMode))
-						_desc = 0;
-		#else
-			_desc = _wfopen(wFilename, wMode);
-		#endif
+		DWORD creationFlags = 0;
 
-		#elif defined(_MSC_VER) && _MSC_VER >= 1400
-			if (0 != fopen_s(&_desc, path.c_str(), mode.c_str()))
-				_desc = 0;
-		#else
-			_desc = fopen(path.c_str(), mode.c_str());
-		#endif
+		if (mode & GENERIC_READ && mode & ~GENERIC_WRITE && mode &~ FILE_APPEND_DATA)
+			creationFlags = OPEN_EXISTING;
 
-		return (_desc != nullptr);
+		else if (mode & GENERIC_WRITE || mode & FILE_APPEND_DATA)
+			creationFlags = CREATE_ALWAYS;
+
+		_handle = CreateFileA(
+			correctExtendedPath, mode, 0, nullptr,
+			creationFlags, FILE_ATTRIBUTE_NORMAL,
+			nullptr);
+
+		IOAssert(_handle.handle() != nullptr, "base::WindowsFileEngine::open: Не удается открыть файл. ", false);
+
+		return (_handle.handle() != nullptr);
 	}
 
 	bool WindowsFileEngine::rename(const std::string& newFileName) {
@@ -285,16 +249,25 @@ namespace base::io {
 	}
 
 	bool WindowsFileEngine::rewind(int64 position) {
-		IOAssert(_desc != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr. ", false);
-		return (fseek(_desc, position, SEEK_CUR) == 0);
+		IOAssert(_handle.handle() != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr. ", false);
+		return (SetFilePointer(
+			_handle.handle(), position, nullptr, FILE_CURRENT)
+			!= INVALID_SET_FILE_POINTER);
 	}
 
 	bool WindowsFileEngine::rewind(FilePositions position) {
 		switch (position) {
+
 			case FilePosition::FileBegin:
-				return (fseek(_desc, SEEK_SET, SEEK_CUR) == 0);
+				return (SetFilePointer(
+					_handle.handle(), 0, nullptr, FILE_BEGIN)
+					!= INVALID_SET_FILE_POINTER);
+
 			case FilePosition::FileEnd:
-				return (fseek(_desc, SEEK_END, SEEK_CUR) == 0);
+				return (SetFilePointer(
+					_handle.handle(), 0, nullptr, FILE_END)
+					!= INVALID_SET_FILE_POINTER);
+
 			default:
 				AssertUnreachable();
 		}
@@ -325,35 +298,87 @@ namespace base::io {
 		const std::string& path,
 		void* inBuffer,
 		sizetype sizeInBytes,
-		const char* mode)
+		FileOpenModes mode)
 	{
-		FILE* file = fopen(path.c_str(), mode);
-		IOAssert(file != nullptr, "base::io::WindowsFileEngine::write: Не удается открыыть файл. ", false);
+		if (path.empty())
+			return false;
 
-		return (fwrite(inBuffer, 1, sizeInBytes, file) == sizeInBytes);
+		char* correctExtendedPath = nullptr;
+
+		if (path.substr(0, 3) != WIN_EXTENDED_PATH_KEY) {
+			correctExtendedPath = new char[path.size() + WIN_EXTENDED_PATH_KEY_SIZE];
+
+			strcpy(correctExtendedPath, WIN_EXTENDED_PATH_KEY);
+			strcpy(correctExtendedPath + WIN_EXTENDED_PATH_KEY_SIZE, path.c_str());
+		}
+
+		correctExtendedPath = new char[path.size()];
+		strcpy(correctExtendedPath, path.c_str());
+
+		DWORD creationFlags = 0;
+
+		if (mode & FileOpenMode::Write || mode & FileOpenMode::Append)
+			creationFlags = CREATE_ALWAYS;
+
+		WindowsSmartHandle _handle = CreateFileA(
+			correctExtendedPath, mode, 0, nullptr,
+			creationFlags, FILE_ATTRIBUTE_NORMAL,
+			nullptr);
+
+		IOAssert(_handle.handle() != nullptr, "base::io::WindowsFileEngine::write: Не удается открыыть файл. ", false);
+
+		_handle.setAutoDelete(true);
+		_handle.setDeleteCallback(CloseHandle);
+
+		DWORD numberOfWrittenBytes = 0;
+		const auto success = WriteFile(
+			_handle.handle(), inBuffer, 
+			sizeInBytes, &numberOfWrittenBytes, nullptr);
+
+		return ((success != 0) && (numberOfWrittenBytes == sizeInBytes));
 	}
 
 	sizetype WindowsFileEngine::read(
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes)
 	{
-		return fread(outBuffer, 1, sizeInBytes, _desc);
+		DWORD readedBytes = 0;
+		const auto readResult = ReadFile(
+			_handle.handle(), outBuffer, 
+			sizeInBytes, &readedBytes, nullptr);
+
+		return (readResult != 0);
 	}
 
 	ReadResult WindowsFileEngine::readAll()
 	{
 		measureExecutionTime("WindowsFileEngine::readAll()")
+		IOAssert(_handle.handle() != nullptr, "base::WindowsFileEngine::readAll: Попытка чтения из файла с нулевым дескриптором. ", {});
 
 		uchar* result = 0;
-		SSE2_ALIGNAS(16) uchar buffer[1024] = { 0 };
 
-		sizetype readed = 0;
+		SIMD_ALIGNAS(
+#if LIB_BASE_ENABLE(sse4_2)
+		BASE_SIMD_SSE4_2_ALIGNMENT
+#elif LIB_BASE_ENABLE(sse4_1)
+		BASE_SIMD_SSE4_1_ALIGNMENT
+#elif LIB_BASE_ENABLE(ssse3)
+		BASE_SIMD_SSSE3_ALIGNMENT
+#elif LIB_BASE_ENABLE(sse2)
+		BASE_SIMD_SSE2_ALIGNMENT
+#endif
+		) uchar buffer[1024] = { 0 };
+
+		DWORD readed = 0;
 		sizetype size = 0;
 
 #if defined(LIB_BASE_ENABLE_sse2)
 		__m128i r = _mm_set1_epi8(0);
 
-		while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
+		while ((ReadFile(
+			_handle.handle(), buffer, sizeof(buffer),
+			&readed, nullptr)) != 0)
+		{
 			size += readed;
 
 			for (int i = 0; i < readed; i += 16) {
@@ -367,7 +392,10 @@ namespace base::io {
 		for (int i = 0; i < 16; ++i)
 			result += ((unsigned char*)&r)[i];
 #else
-		while ((readed = fread(buffer, 1, sizeof(buffer), _desc)) > 0) {
+		while ((ReadFile(
+			_handle.handle(), buffer, 
+			sizeof(buffer), &readed, nullptr)) != 0) 
+		{
 			size += readed;
 
 			for (int i = 0; i < readed; ++i)
