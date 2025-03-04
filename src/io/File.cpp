@@ -95,13 +95,12 @@ void File::remove(const std::string& path) {
 
 bool File::write(
 	const std::string& path,
-	void* inBuffer,
-	sizetype sizeInBytes,
-	FileOpenModes mode)
+	const char* inBuffer,
+	sizetype sizeInBytes)
 {
 	return FileEngine::write(
 		path, inBuffer, 
-		sizeInBytes, mode);
+		sizeInBytes);
 }
 
 ReadResult File::read(sizetype sizeInBytes) {

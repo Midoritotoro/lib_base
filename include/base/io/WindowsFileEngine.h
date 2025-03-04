@@ -59,9 +59,8 @@ class WindowsFileEngine final:
 
 		static NODISCARD bool write(
 			const std::string& path,
-			void* inBuffer,
-			sizetype sizeInBytes,
-			FileOpenModes mode);
+			const char* inBuffer,
+			sizetype sizeInBytes);
 
 		NODISCARD ReadResult read(sizetype sizeInBytes) override;
 		NODISCARD ReadResult readAll() override;
@@ -103,7 +102,7 @@ class WindowsFileEngine final:
 			sizetype* successfullyReadedBytes);
 
 		NODISCARD bool readNoSimd(
-			uchar* outBuffer,
+			ReadResult* outBuffer,
 			uchar* tempOutBuffer,
 			sizetype sizeInBytesRequiredForReading,
 			sizetype* successfullyReadedBytes

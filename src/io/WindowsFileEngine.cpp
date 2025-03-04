@@ -9,7 +9,7 @@
 #define WIN_EXTENDED_PATH_KEY_SIZE		3
 
 #define WIN_READ_BUFFER_SIZE			1024
-#define WIN_MAX_READ_BUFFER_SIZE		(32 * 1024 * 1024)
+#define WIN_MAX_READ_BUFFER_SIZE		(32 * 1024 * 1024) // 32 мБ
 
 __BASE_IO_NAMESPACE_BEGIN
 
@@ -289,9 +289,8 @@ void WindowsFileEngine::remove(const std::string& path) {
 
 bool WindowsFileEngine::write(
 	const std::string& path,
-	void* inBuffer,
-	sizetype sizeInBytes,
-	FileOpenModes mode)
+	const char* inBuffer,
+	sizetype sizeInBytes)
 {
 	if (path.empty())
 		return false;
@@ -303,21 +302,43 @@ bool WindowsFileEngine::write(
 	DWORD creationFlags = CREATE_ALWAYS;
 
 	WindowsSmartHandle _handle = CreateFileA(
-		correctPath.c_str(), mode, 0, nullptr,
+		correctPath.c_str(), GENERIC_WRITE, 0, nullptr,
 		creationFlags, FILE_ATTRIBUTE_NORMAL,
 		nullptr);
 
-	IOAssert(_handle.handle() != nullptr, "base::io::WindowsFileEngine::write: Не удается открыыть файл. ", false);
+	IOAssert(_handle.isValid(), "base::io::WindowsFileEngine::write: Не удается открыыть файл. ", false);
 
 	_handle.setAutoDelete(true);
 	_handle.setDeleteCallback(CloseHandle);
 
-	DWORD numberOfWrittenBytes = 0;
-	const auto success = WriteFile(
-		_handle.handle(), inBuffer, 
-		sizeInBytes, &numberOfWrittenBytes, nullptr);
+	sizetype bytesToWrite = sizeInBytes;
+	sizetype totalWritten = 0;
 
-	return ((success != 0) && (numberOfWrittenBytes == sizeInBytes));
+	do {
+		const auto currentBlockSize = DWORD(
+			std::min(bytesToWrite,
+			sizetype(WIN_READ_BUFFER_SIZE)));
+
+		DWORD bytesWritten = 0;
+
+		if (!WriteFile(_handle.handle(), inBuffer + totalWritten, 
+			currentBlockSize, &bytesWritten, NULL)) 
+		{
+			if (totalWritten == 0)
+				return false;
+			
+			break;
+		}
+
+		if (bytesWritten == 0)
+			break;
+
+		totalWritten += bytesWritten;
+		bytesToWrite -= bytesWritten;
+
+	} while (totalWritten < sizeInBytes);
+
+	return (totalWritten == sizeInBytes);
 }
 
 ReadResult WindowsFileEngine::read(sizetype sizeInBytes)
@@ -340,8 +361,6 @@ ReadResult WindowsFileEngine::readAll()
 	ReadResult result = {};
 	read(ReadType::All, &result);
 
-	std::cout << result.sizeInBytes;
-	
 	return result;
 }
 
@@ -457,7 +476,7 @@ bool WindowsFileEngine::readSSE4_2(
 }
 
 bool WindowsFileEngine::readNoSimd(
-	uchar* outBuffer,
+	ReadResult* outBuffer,
 	uchar* tempOutBuffer,
 	sizetype sizeInBytesRequiredForReading,
 	sizetype* successfullyReadedBytes) 
@@ -469,10 +488,11 @@ bool WindowsFileEngine::readNoSimd(
 		nullptr);
 
 	for (sizetype i = 0; i < *successfullyReadedBytes; ++i)
-		outBuffer += tempOutBuffer[i];
+		outBuffer->data += tempOutBuffer[i];
 
 	memset(tempOutBuffer, 0, sizeInBytesRequiredForReading);
-	
+	outBuffer->sizeInBytes += *successfullyReadedBytes;
+
 	std::cout << "WindowsFileEngine::readNoSimd: " << readResult << " readed bytes: " 
 		<< *successfullyReadedBytes << "handle value: " << (_handle.handle() != nullptr) 
 		<< " sizeInBytesRequiredForReading: " << sizeInBytesRequiredForReading << " LastError: " << GetLastError() << '\n';
@@ -488,31 +508,18 @@ bool WindowsFileEngine::read(
 	sizetype sizeInBytes)
 {
 	auto fileSizeForRead = fileSize();
+	auto availableBytesForRead = 0;
 
 	sizetype readedBytes = 0;
-	Fn<bool(sizetype, sizetype)> readContinueCondition = nullptr;
+	
 
 	switch (type) {
 		case ReadType::Value:
-			readContinueCondition = std::move([=](
-				sizetype _readed, 
-				sizetype _sizeInBytesForReading) -> bool 
-			{
-				return (_readed < fileSizeForRead);
-			});
+			availableBytesForRead = std::min(sizeInBytes, fileSizeForRead);
 			break;
 
 		case ReadType::All:
-			readContinueCondition = std::move([=](
-				sizetype _readed, 
-				sizetype _sizeInBytesForReading) -> bool 
-			{
-				UNUSED(_readed);
-				UNUSED(_sizeInBytesForReading);
-
-				return true;
-			});
-
+			availableBytesForRead = fileSizeForRead;
 			break;
 
 		default:
@@ -523,53 +530,50 @@ bool WindowsFileEngine::read(
 		? WIN_MAX_READ_BUFFER_SIZE 
 		: sizeInBytes;
 
-//#if LIB_BASE_ENABLE(sse4_2)
-//	__m512i outVectorizedResult = _mm512_set1_epi8(0);
-//	SIMD_ALIGNAS(BASE_SIMD_SSE4_2_ALIGNMENT)
-//#elif LIB_BASE_ENABLE(sse4_1)
-//	__m512i outVectorizedResult = _mm512_set1_epi8(0);
-//	SIMD_ALIGNAS(BASE_SIMD_SSE4_1_ALIGNMENT)
-//#elif LIB_BASE_ENABLE(ssse3)
-//	__m256i outVectorizedResult = _mm256_set1_epi8(0);
-//	SIMD_ALIGNAS(BASE_SIMD_SSSE3_ALIGNMENT)
-//#elif LIB_BASE_ENABLE(sse2)
-//	__m128i outVectorizedResult = _mm_set1_epi8(0);
-//	SIMD_ALIGNAS(BASE_SIMD_SSE2_ALIGNMENT)
-//#endif
+#if LIB_BASE_ENABLE(sse4_2)
+	__m512i outVectorizedResult = _mm512_set1_epi8(0);
+	SIMD_ALIGNAS(BASE_SIMD_SSE4_2_ALIGNMENT)
+#elif LIB_BASE_ENABLE(sse4_1)
+	__m512i outVectorizedResult = _mm512_set1_epi8(0);
+	SIMD_ALIGNAS(BASE_SIMD_SSE4_1_ALIGNMENT)
+#elif LIB_BASE_ENABLE(ssse3)
+	__m256i outVectorizedResult = _mm256_set1_epi8(0);
+	SIMD_ALIGNAS(BASE_SIMD_SSSE3_ALIGNMENT)
+#elif LIB_BASE_ENABLE(sse2)
+	__m128i outVectorizedResult = _mm_set1_epi8(0);
+	SIMD_ALIGNAS(BASE_SIMD_SSE2_ALIGNMENT)
+#endif
 
 	uchar* buffer = new uchar[sizeInBytesForReading];
 	sizetype size = 0;
 
-//#if LIB_BASE_ENABLE(sse4_2)
-//	while (readSSE4_2(&outVectorizedResult, buffer,
-//		outBuffer->data, sizeInBytesForReading, &readedBytes)
-//		&& readContinueCondition())
-// 	   availableBytesForRead -= readedBytes;
-//#elif LIB_BASE_ENABLE(sse4_1)
-//	while (readSSE4_1(&outVectorizedResult, buffer,
-//		outBuffer->data, sizeInBytesForReading, &readedBytes)
-//		&& readContinueCondition())
-// 	   availableBytesForRead -= readedBytes;
-//#elif LIB_BASE_ENABLE(ssse3)
-//	while (readSSE3(&outVectorizedResult, buffer,
-//		outBuffer->data, sizeInBytesForReading, &readedBytes)
-//		&& readContinueCondition())
-// 	   availableBytesForRead -= readedBytes;
-//#elif LIB_BASE_ENABLE(sse2)
-//	while (readSSE2(&outVectorizedResult, buffer,
-//		outBuffer->data, sizeInBytesForReading, &readedBytes)
-//		&& readContinueCondition())
-// 	   availableBytesForRead -= readedBytes;
-//#else
+#if LIB_BASE_ENABLE(sse4_2)
+	while (readSSE4_2(&outVectorizedResult, &buffer[0],
+		outBuffer->data, sizeInBytesForReading, &readedBytes)
+		&& availableBytesForRead > 0)
+ 	   availableBytesForRead -= readedBytes;
+#elif LIB_BASE_ENABLE(sse4_1)
+	while (readSSE4_1(&outVectorizedResult, &buffer[0],
+		outBuffer->data, sizeInBytesForReading, &readedBytes)
+		&& availableBytesForRead > 0)
+ 	   availableBytesForRead -= readedBytes;
+#elif LIB_BASE_ENABLE(ssse3)
+	while (readSSE3(&outVectorizedResult, &buffer[0],
+		outBuffer->data, sizeInBytesForReading, &readedBytes)
+		&& availableBytesForRead > 0)
+ 	   availableBytesForRead -= readedBytes;
+#elif LIB_BASE_ENABLE(sse2)
+	while (readSSE2(&outVectorizedResult, &buffer[0],
+		outBuffer->data, sizeInBytesForReading, &readedBytes)
+		&& availableBytesForRead > 0)
+ 	   availableBytesForRead -= readedBytes;
+#else
 
-	sizetype av = fileSizeForRead;
 	while (readNoSimd(
-		outBuffer->data, buffer, sizeInBytesForReading,
-		&readedBytes) && readContinueCondition(readedBytes, sizeInBytesForReading)) {
-		av -= sizeInBytesForReading;
-		std::cout << "fs:  " << fileSizeForRead << " readed: " << readedBytes << " av: " << av << '\n';
-	}
-//#endif
+		outBuffer, &buffer[0], sizeInBytesForReading,
+		&readedBytes) && availableBytesForRead > 0)
+		availableBytesForRead -= readedBytes;
+#endif
 
 
 	return true;

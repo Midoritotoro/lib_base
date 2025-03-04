@@ -48,9 +48,8 @@ public:
 
 	static NODISCARD bool write(
 		const std::string& path,
-		void* inBuffer,
-		sizetype sizeInBytes,
-		FileOpenModes mode);
+		const char* inBuffer,
+		sizetype sizeInBytes);
 		
 	NODISCARD ReadResult read(sizetype sizeInBytes);
 	NODISCARD ReadResult readAll();

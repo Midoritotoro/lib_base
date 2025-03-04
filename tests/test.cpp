@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 	auto readed = file.readAll();
 	qDebug() << "totalSize: " << readed.sizeInBytes << " File::fileSize: " << base::io::File::fileSize("D:/War Thunder.mp4");
 
-	file.write("D:/warthunder.mp4", readed.data, readed.sizeInBytes, base::io::FileOpenMode::Write);
+	file.write("D:/warthunder.mp4", (char*)readed.data, readed.sizeInBytes);
 
 	return 0;
 //	return application.exec();
