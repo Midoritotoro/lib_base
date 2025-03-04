@@ -31,7 +31,7 @@
 #    define __SSE4_2__                      1
 #    define __POPCNT__                      1
 
-#    ifndef __AVX__
+#    if !defined(__AVX__) && __has_include(<immintrin.h>) // AVX
 #      define __AVX__                       1
 #    endif
 

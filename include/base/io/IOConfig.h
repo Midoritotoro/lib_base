@@ -4,32 +4,34 @@
 #include <base/utility/Flags.h>
 
 
-namespace base::io {
-    enum class FileOpenMode : uchar {
-        Read = 0x01,
-        Write = 0x02,
-        Append = 0x04,
-    };
+__BASE_IO_NAMESPACE_BEGIN
 
-    enum FilePosition : uchar {
-        FileBegin = 0x01, // SEEK_SET
-        FileEnd = 0x02    // SEEK_END
-    };
+enum class FileOpenMode : uchar {
+    Read = 0x01,
+    Write = 0x02,
+    Append = 0x04,
+};
 
-    DECLARE_FLAGS(FileOpenModes, FileOpenMode);
-    DECLARE_FLAGS_ENUM(FilePositions, FilePosition);
+enum FilePosition : uchar {
+    FileBegin = 0x01,
+    FileEnd = 0x02
+};
 
-    struct FileFilter {
-        std::string nameContains;
-        sizetype minimumSize = 0; // In bytes
-        sizetype maximumSize = 0; // In bytes
-    };
+DECLARE_FLAGS(FileOpenModes, FileOpenMode);
+DECLARE_FLAGS_ENUM(FilePositions, FilePosition);
 
-    struct ReadResult {
-        uchar* data = nullptr;
-        sizetype sizeInBytes = 0;
-    };
-} // namespace base::io
+struct FileFilter {
+    std::string nameContains;
+    sizetype minimumSize = 0; // In bytes
+    sizetype maximumSize = 0; // In bytes
+};
+
+struct ReadResult {
+    uchar* data = nullptr;
+    sizetype sizeInBytes = 0;
+};
+
+__BASE_IO_NAMESPACE_END
 
 
 #if defined(OS_MAC) || defined(OS_LINUX)

@@ -3,9 +3,6 @@
 #include <base/system/SystemTools.h>
 
 
-
-__BASE_IO_NAMESPACE_BEGIN
-
 #if defined(OS_WIN)
 	#include <base/io/WindowsFileEngine.h>
 	using FileEngine = base::io::WindowsFileEngine;
@@ -13,6 +10,9 @@ __BASE_IO_NAMESPACE_BEGIN
 	#include <base/io/UnixFileEngine.h>
 	using FileEngine = base::io::UnixFileEngine;
 #endif
+
+__BASE_IO_NAMESPACE_BEGIN
+
 
 File::File():
 	_engine(new FileEngine())

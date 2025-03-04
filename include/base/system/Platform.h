@@ -6,6 +6,7 @@
 #include <base/core/BaseExport.h>
 
 #include <base/utility/CommonMacros.h>
+#include <base/core/BaseNamespace.h>
 
 #include <cstdint>
 #include <cstdio>
