@@ -63,43 +63,64 @@ class WindowsFileEngine final:
 			sizetype sizeInBytes,
 			FileOpenModes mode);
 
-		NODISCARD sizetype read(
-			_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
-			_SAL2_In_ sizetype sizeInBytes) override;
-
+		NODISCARD ReadResult read(sizetype sizeInBytes) override;
 		NODISCARD ReadResult readAll() override;
 
 		static NODISCARD sizetype fileSize(const std::string& path);
+		NODISCARD sizetype fileSize() const noexcept;
 	private:
-		NODISCARD sizetype readSSE2(
+		enum ReadType : uchar {
+			Value,
+			All
+		};
+
+		NODISCARD bool readSSE2(
 			__m128i* outVector,
 			uchar* tempOutBuffer,
-			void* outBuffer,
-			sizetype sizeInBytes);
+			uchar* outBuffer,
+			sizetype sizeInBytesRequiredForReading,
+			sizetype* successfullyReadedBytes);
 
-		NODISCARD sizetype readSSSE3(
+		NODISCARD bool readSSSE3(
 			__m256i* outVector,
 			uchar* tempOutBuffer,
-			void* outBuffer,
-			sizetype sizeInBytes);
+			uchar* outBuffer,
+			sizetype sizeInBytesRequiredForReading,
+			sizetype* successfullyReadedBytes);
 
-		NODISCARD sizetype readSSE4_1(
+		NODISCARD bool readSSE4_1(
 			__m512i* outVector,
 			uchar* tempOutBuffer,
-			void* outBuffer,
-			sizetype sizeInBytes);
+			uchar* outBuffer,
+			sizetype sizeInBytesRequiredForReading,
+			sizetype* successfullyReadedBytes);
 
-		NODISCARD sizetype readSSE4_2(
+		NODISCARD bool readSSE4_2(
 			__m512i* outVector,
 			uchar* tempOutBuffer,
-			void* outBuffer,
-			sizetype sizeInBytes);
+			uchar* outBuffer,
+			sizetype sizeInBytesRequiredForReading,
+			sizetype* successfullyReadedBytes);
 
+		NODISCARD bool readNoSimd(
+			uchar* outBuffer,
+			uchar* tempOutBuffer,
+			sizetype sizeInBytesRequiredForReading,
+			sizetype* successfullyReadedBytes
+		);
 
+		NODISCARD bool read(
+			ReadType type,
+			ReadResult* outBuffer,
+			sizetype sizeInBytes = 0);
 
+		// Расширение до 32768 символов в пути
+		static void expandPath(std::string& path);
 
 		io::WindowsSmartHandle _handle;
 		std::string _path = "";
+
+		SECURITY_ATTRIBUTES _securityAttributes;
 };
 
 __BASE_IO_NAMESPACE_END

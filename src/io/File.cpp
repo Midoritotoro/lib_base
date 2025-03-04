@@ -104,11 +104,8 @@ bool File::write(
 		sizeInBytes, mode);
 }
 
-sizetype File::read(
-	_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
-	_SAL2_In_ sizetype sizeInBytes)
-{
-	return _engine->read(outBuffer, sizeInBytes);
+ReadResult File::read(sizetype sizeInBytes) {
+	return _engine->read(sizeInBytes);
 }
 
 ReadResult File::readAll() {

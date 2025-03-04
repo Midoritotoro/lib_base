@@ -47,22 +47,23 @@ public:
 
 
 int main(int argc, char* argv[]) {
-	QApplication application(argc, argv);
-	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
+//	QApplication application(argc, argv);
+//	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
+	setlocale(LC_ALL, "");
 
-	base::concurrent::invokeAsync([&]() {
-		const auto ratio = application.devicePixelRatio();
-		const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
+	//base::concurrent::invokeAsync([&]() {
+	//	const auto ratio = application.devicePixelRatio();
+	//	const auto useRatio = std::clamp(qCeil(ratio), 1, 3);
 
-		base::qt::style::SetDevicePixelRatio(useRatio);
+	//	base::qt::style::SetDevicePixelRatio(useRatio);
 
-		base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
-		base::qt::style::internal::StartFonts();
+	//	base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
+	//	base::qt::style::internal::StartFonts();
 
-		base::qt::style::RegisterStyles();
+	//	base::qt::style::RegisterStyles();
 
-		base::qt::style::Start();
-	});
+	//	base::qt::style::Start();
+	//});
 
 	//// QString videoPath = "C:\\Users\\danya\\Downloads\\videotestvertical.mp4";
 	//QString videoPath = "C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4";
@@ -75,17 +76,14 @@ int main(int argc, char* argv[]) {
 	//_mediaPlayer->setMedia(videoPath);
 
 	base::io::File file; 
-	if (!file.open("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4", base::io::FileOpenMode::Read))
+	if (!file.open("D:/War Thunder.mp4", base::io::FileOpenMode::Read))
 		return -1;
 
 	auto readed = file.readAll();
-	//auto r = QFile("C:\\Users\\danya\\Downloads\\War Thunder - В бою 2025-01-02 22-41-32.mp4");
-
-	//r.open(QFile::ReadWrite);
-//
+	qDebug() << "totalSize: " << readed.sizeInBytes << " File::fileSize: " << base::io::File::fileSize("D:/War Thunder.mp4");
 
 	file.write("D:/warthunder.mp4", readed.data, readed.sizeInBytes, base::io::FileOpenMode::Write);
-//	qDebug() << "size: " << readed.sizeInBytes;
 
-	return application.exec();
+	return 0;
+//	return application.exec();
 }

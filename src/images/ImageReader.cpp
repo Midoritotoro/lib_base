@@ -169,7 +169,7 @@ namespace base::images {
 		ImagesAssert(isOpened, "base::images::ImageReaderPrivate::createFormatHandler: Не удается открыть файл изображения. ", nullptr);
 
 		uchar* header = new uchar[IMAGE_HEADER_SIZE_IN_BYTES];
-		sizetype res = file.read(header, IMAGE_HEADER_SIZE_IN_BYTES);
+		header = file.read(IMAGE_HEADER_SIZE_IN_BYTES).data;
 		//sizetype res = file.read(context.buffer_start, sizeof(context.buffer_start));
 		//if (res != 0) {
 		//	context.img_buffer = context.buffer_start;

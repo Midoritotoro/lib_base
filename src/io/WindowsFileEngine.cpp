@@ -9,6 +9,7 @@
 #define WIN_EXTENDED_PATH_KEY_SIZE		3
 
 #define WIN_READ_BUFFER_SIZE			1024
+#define WIN_MAX_READ_BUFFER_SIZE		(32 * 1024 * 1024)
 
 __BASE_IO_NAMESPACE_BEGIN
 
@@ -137,20 +138,20 @@ void WindowsFileEngine::find(
 
 std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
 	static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
-	SystemAssert(descriptor != nullptr, err, "");
+	IOAssert(descriptor != nullptr, err, "");
 
 	int fd = _fileno(descriptor);
-	SystemAssert(fd != -1, err, "");
+	IOAssert(fd != -1, err, "");
 
 	WindowsSmartHandle handle = (HANDLE)_get_osfhandle(fd);
-	SystemAssert(handle != INVALID_HANDLE_VALUE, err, "");
+	IOAssert(handle != INVALID_HANDLE_VALUE, err, "");
 
 	std::vector<char> buffer(MAX_PATH);
 	DWORD length = GetFinalPathNameByHandleA(
 		handle.handle(), buffer.data(), MAX_PATH,
 		FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
-	SystemAssert(length != 0, err, "");
+	IOAssert(length != 0, err, "");
 
 	if (length > MAX_PATH) {
 		buffer.resize(length);
@@ -158,11 +159,11 @@ std::string WindowsFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
 			handle.handle(), buffer.data(), length,
 			FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
 
-		SystemAssert(length != 0, err, "");
+		IOAssert(length != 0, err, "");
 	}
 
 	std::string path(buffer.data());
-	SystemAssert(!path.empty(), err, "");
+	IOAssert(!path.empty(), err, "");
 
 	return path;
 }
@@ -197,39 +198,29 @@ bool WindowsFileEngine::open(
 	const std::string& path,
 	int mode)
 {
-	measureExecutionTime("WindowsFileEngine::open")
-
 	if (path.empty())
 		return false;
 
-	char* correctExtendedPath = nullptr;
-
-	if (path.substr(0, 3) != WIN_EXTENDED_PATH_KEY) {
-		correctExtendedPath = new char[path.size() + WIN_EXTENDED_PATH_KEY_SIZE];
-
-		strcpy(correctExtendedPath, WIN_EXTENDED_PATH_KEY);
-		strcpy(correctExtendedPath + WIN_EXTENDED_PATH_KEY_SIZE, path.c_str());
-	}
-
-	correctExtendedPath = new char[path.size()];
-	strcpy(correctExtendedPath, path.c_str());
+	_path = path;
+	if (path.size() > MAX_PATH && path.substr(0, 3) != WIN_EXTENDED_PATH_KEY)
+		expandPath(_path);
 
 	DWORD creationFlags = 0;
 
-	if (mode & GENERIC_READ && mode & ~GENERIC_WRITE && mode &~ FILE_APPEND_DATA)
+	if (mode & GENERIC_READ && mode & ~GENERIC_WRITE && mode & ~FILE_APPEND_DATA)
 		creationFlags = OPEN_EXISTING;
-
+	
 	else if (mode & GENERIC_WRITE || mode & FILE_APPEND_DATA)
 		creationFlags = CREATE_ALWAYS;
+	
 
 	_handle = CreateFileA(
-		correctExtendedPath, mode, 0, nullptr,
+		_path.c_str(), mode, 0, nullptr,
 		creationFlags, FILE_ATTRIBUTE_NORMAL,
 		nullptr);
 
-	IOAssert(_handle.handle() != nullptr, "base::WindowsFileEngine::open: Не удается открыть файл. ", false);
-
-	return (_handle.handle() != nullptr);
+	IOAssert(_handle.isValid(), "base::WindowsFileEngine::open: Не удается открыть файл. ", false);
+	return _handle.isValid();
 }
 
 bool WindowsFileEngine::rename(const std::string& newFileName) {
@@ -246,13 +237,12 @@ bool WindowsFileEngine::rename(
 	if (MoveFileA(oldFileName.c_str(), newFileName.c_str()) != 0)
 		return true;
 
-	IOAssert(false, "base::io::WindowsFileEngine::rename: Ошибка в WinApi при переименовании файла. ", false);
-
+	IOAssert(false, "base::io::WindowsFileEngine::rename: Ошибка при переименовании файла. ", false);
 	return false;
 }
 
 bool WindowsFileEngine::rewind(int64 position) {
-	IOAssert(_handle.handle() != nullptr, "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr. ", false);
+	IOAssert(_handle.isValid(), "base::io::WindowsFileEngine::rewind: Попытка переместить указатель файла, дескриптор которого равен nullptr. ", false);
 	return (SetFilePointer(
 		_handle.handle(), position, nullptr, FILE_CURRENT)
 		!= INVALID_SET_FILE_POINTER);
@@ -289,8 +279,8 @@ void WindowsFileEngine::remove(const std::string& path) {
 	if (DeleteFileA(path.c_str()) == false) {
 		DWORD dwLastError = GetLastError();
 
-		const bool notFoundError	 = (dwLastError & ERROR_FILE_NOT_FOUND);
-		const bool accessDeniedError = (dwLastError & ERROR_ACCESS_DENIED);
+		const auto notFoundError	 = (dwLastError & ERROR_FILE_NOT_FOUND);
+		const auto accessDeniedError = (dwLastError & ERROR_ACCESS_DENIED);
 
 		IOAssert(notFoundError, "base::io::WindowsFileEngine::remove: Невозможно удалить несуществующий файл. ", (void)0);
 		IOAssert(accessDeniedError, "base::io::WindowsFileEngine::remove: Недостаточно прав для удаления файла. ", (void)0);
@@ -306,25 +296,14 @@ bool WindowsFileEngine::write(
 	if (path.empty())
 		return false;
 
-	char* correctExtendedPath = nullptr;
+	std::string correctPath = path;
+	if (path.size() > MAX_PATH && path.substr(0, 3) != WIN_EXTENDED_PATH_KEY)
+		expandPath(correctPath);
 
-	if (path.substr(0, 3) != WIN_EXTENDED_PATH_KEY) {
-		correctExtendedPath = new char[path.size() + WIN_EXTENDED_PATH_KEY_SIZE];
-
-		strcpy(correctExtendedPath, WIN_EXTENDED_PATH_KEY);
-		strcpy(correctExtendedPath + WIN_EXTENDED_PATH_KEY_SIZE, path.c_str());
-	}
-
-	correctExtendedPath = new char[path.size()];
-	strcpy(correctExtendedPath, path.c_str());
-
-	DWORD creationFlags = 0;
-
-	if (mode & FileOpenMode::Write || mode & FileOpenMode::Append)
-		creationFlags = CREATE_ALWAYS;
+	DWORD creationFlags = CREATE_ALWAYS;
 
 	WindowsSmartHandle _handle = CreateFileA(
-		correctExtendedPath, mode, 0, nullptr,
+		correctPath.c_str(), mode, 0, nullptr,
 		creationFlags, FILE_ATTRIBUTE_NORMAL,
 		nullptr);
 
@@ -341,82 +320,29 @@ bool WindowsFileEngine::write(
 	return ((success != 0) && (numberOfWrittenBytes == sizeInBytes));
 }
 
-sizetype WindowsFileEngine::read(
-	_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
-	_SAL2_In_ sizetype sizeInBytes)
+ReadResult WindowsFileEngine::read(sizetype sizeInBytes)
 {
-	DWORD readedBytes = 0;
-	const auto readResult = ReadFile(
-		_handle.handle(), outBuffer, 
-		sizeInBytes, &readedBytes, nullptr);
+	IOAssert(_handle.isValid(), "base::WindowsFileEngine::readAll: Попытка чтения из файла с нулевым дескриптором. ", {});
 
-	return (readResult != 0);
+	ReadResult result = {};
+
+	read(ReadType::Value, &result, 
+		std::min(fileSize(), sizeInBytes));
+
+	return result;
 }
 
 ReadResult WindowsFileEngine::readAll()
 {
 	measureExecutionTime("WindowsFileEngine::readAll()")
-	IOAssert(_handle.handle() != nullptr, "base::WindowsFileEngine::readAll: Попытка чтения из файла с нулевым дескриптором. ", {});
+	IOAssert(_handle.isValid(), "base::WindowsFileEngine::readAll: Попытка чтения из файла с нулевым дескриптором. ", {});
 
-	uchar* result = 0;
+	ReadResult result = {};
+	read(ReadType::All, &result);
 
-#if LIB_BASE_ENABLE(sse4_2)
-	__m512i outVectorizedResult = _mm512_set1_epi8(0);
-	SIMD_ALIGNAS(BASE_SIMD_SSE4_2_ALIGNMENT)
-#elif LIB_BASE_ENABLE(sse4_1)
-	__m512i outVectorizedResult = _mm512_set1_epi8(0);
-	SIMD_ALIGNAS(BASE_SIMD_SSE4_1_ALIGNMENT)
-#elif LIB_BASE_ENABLE(ssse3)
-	__m256i outVectorizedResult = _mm256_set1_epi8(0);
-	SIMD_ALIGNAS(BASE_SIMD_SSSE3_ALIGNMENT)
-#elif LIB_BASE_ENABLE(sse2)
-	__m128i outVectorizedResult = _mm_set1_epi8(0);
-	SIMD_ALIGNAS(BASE_SIMD_SSE2_ALIGNMENT)
-#endif
-	uchar buffer[WIN_READ_BUFFER_SIZE] = { 0 };
-
-	DWORD readed = 0;
-	sizetype size = 0;
-
-#if LIB_BASE_ENABLE(sse4_2)
-
-#elif LIB_BASE_ENABLE(sse4_1)
-
-#elif LIB_BASE_ENABLE(ssse3)
-
-#elif LIB_BASE_ENABLE(sse2)
-
-	while ((ReadFile(
-		_handle.handle(), buffer, sizeof(buffer),
-		&readed, nullptr)) != 0)
-	{
-		size += readed;
-
-		for (int i = 0; i < readed; i += 16) {
-			__m128i a = _mm_load_si128((const __m128i*)(buffer + i));
-			r = _mm_add_epi8(a, r);
-		}
-
-		memset(buffer, 0, sizeof(buffer));
-	}
-
-	for (int i = 0; i < 16; ++i)
-		result += ((unsigned char*)&r)[i];
-#else // No simd
-	while ((ReadFile(
-		_handle.handle(), buffer, 
-		sizeof(buffer), &readed, nullptr)) != 0) 
-	{
-		size += readed;
-
-		for (int i = 0; i < readed; ++i)
-			result += buffer[i];
-	}
-#endif
-	return {
-		.data = result,
-		.sizeInBytes = size
-	};
+	std::cout << result.sizeInBytes;
+	
+	return result;
 }
 
 sizetype WindowsFileEngine::fileSize(const std::string& path) {
@@ -434,56 +360,223 @@ sizetype WindowsFileEngine::fileSize(const std::string& path) {
 	return std::max(fileSize.QuadPart, LONGLONG(0));
 }
 
-sizetype WindowsFileEngine::readSSE2(
+sizetype WindowsFileEngine::fileSize() const noexcept {
+	return fileSize(_path);
+}
+
+bool WindowsFileEngine::readSSE2(
 	__m128i* outVector,
 	uchar* tempOutBuffer,
-	void* outBuffer,
-	sizetype sizeInBytes)
+	uchar* outBuffer,
+	sizetype sizeInBytesRequiredForReading,
+	sizetype* successfullyReadedBytes)
 {
-	const auto result = ReadFile(
-		_handle.handle(), buffer, sizeof(buffer),
-		&readed, nullptr));
+	const auto readResult = ReadFile(
+		_handle.handle(), tempOutBuffer, 
+		sizeInBytesRequiredForReading,
+		reinterpret_cast<LPDWORD>(successfullyReadedBytes),
+		nullptr);
 
-	{
-		size += readed;
-
-		for (int i = 0; i < readed; i += 16) {
-			__m128i a = _mm_load_si128((const __m128i*)(buffer + i));
-			r = _mm_add_epi8(a, r);
-		}
-
-		memset(buffer, 0, sizeof(buffer));
+	for (int i = 0; i < *successfullyReadedBytes; i += 16) {
+		__m128i a = _mm_load_si128((const __m128i*)(tempOutBuffer + i));
+		*outVector = _mm_add_epi8(a, *outVector);
 	}
 
+	memset(outBuffer, 0, sizeInBytesRequiredForReading);
+
 	for (int i = 0; i < 16; ++i)
-		result += ((unsigned char*)&r)[i];
+		tempOutBuffer += ((uchar*)outVector)[i];
+
+	return (readResult != 0);
 }
 
-sizetype WindowsFileEngine::readSSSE3(
+bool WindowsFileEngine::readSSSE3(
 	__m256i* outVector,
 	uchar* tempOutBuffer,
-	void* outBuffer,
-	sizetype sizeInBytes)
+	uchar* outBuffer,
+	sizetype sizeInBytesRequiredForReading,
+	sizetype* successfullyReadedBytes)
 {
+	const auto readResult = ReadFile(
+		_handle.handle(), tempOutBuffer,
+		sizeInBytesRequiredForReading,
+		reinterpret_cast<LPDWORD>(successfullyReadedBytes),
+		nullptr);
 
+	for (int i = 0; i < *successfullyReadedBytes; i += 32) {
+		__m256i a = _mm256_load_si256((const __m256i*)(tempOutBuffer + i));
+		*outVector = _mm256_add_epi8(a, *outVector);
+	}
+
+	memset(outBuffer, 0, sizeInBytesRequiredForReading);
+
+	for (int i = 0; i < 32; ++i)
+		tempOutBuffer += ((uchar*)outVector)[i];
+
+	return (readResult != 0);
 }
 
-sizetype WindowsFileEngine::readSSE4_1(
+bool WindowsFileEngine::readSSE4_1(
 	__m512i* outVector,
 	uchar* tempOutBuffer,
-	void* outBuffer,
-	sizetype sizeInBytes)
+	uchar* outBuffer,
+	sizetype sizeInBytesRequiredForReading,
+	sizetype* successfullyReadedBytes)
 {
+	const auto readResult = ReadFile(
+		_handle.handle(), tempOutBuffer,
+		sizeInBytesRequiredForReading,
+		reinterpret_cast<LPDWORD>(successfullyReadedBytes),
+		nullptr);
 
+	for (int i = 0; i < *successfullyReadedBytes; i += 64) {
+		__m512i a = _mm512_load_si512((const __m512i*)(tempOutBuffer + i));
+		*outVector = _mm512_add_epi8(a, *outVector);
+	}
+
+	memset(tempOutBuffer, 0, sizeInBytesRequiredForReading);
+
+	for (int i = 0; i < 64; ++i)
+		outBuffer += ((uchar*)outVector)[i];
+
+	return (readResult != 0);
 }
 
-sizetype WindowsFileEngine::readSSE4_2(
+bool WindowsFileEngine::readSSE4_2(
 	__m512i* outVector,
 	uchar* tempOutBuffer,
-	void* outBuffer,
+	uchar* outBuffer,
+	sizetype sizeInBytesRequiredForReading,
+	sizetype* successfullyReadedBytes)
+{
+	// В данном случае используются инструкции, идентичные для SSE4_1 и SSE4_2
+	return readSSE4_1(
+		outVector, tempOutBuffer,
+		outBuffer, sizeInBytesRequiredForReading,
+		successfullyReadedBytes);
+}
+
+bool WindowsFileEngine::readNoSimd(
+	uchar* outBuffer,
+	uchar* tempOutBuffer,
+	sizetype sizeInBytesRequiredForReading,
+	sizetype* successfullyReadedBytes) 
+{
+	const auto readResult = ReadFile(
+		_handle.handle(), tempOutBuffer,
+		sizeInBytesRequiredForReading, 
+		reinterpret_cast<LPDWORD>(successfullyReadedBytes),
+		nullptr);
+
+	for (sizetype i = 0; i < *successfullyReadedBytes; ++i)
+		outBuffer += tempOutBuffer[i];
+
+	memset(tempOutBuffer, 0, sizeInBytesRequiredForReading);
+	
+	std::cout << "WindowsFileEngine::readNoSimd: " << readResult << " readed bytes: " 
+		<< *successfullyReadedBytes << "handle value: " << (_handle.handle() != nullptr) 
+		<< " sizeInBytesRequiredForReading: " << sizeInBytesRequiredForReading << " LastError: " << GetLastError() << '\n';
+
+	return (readResult != 0);
+}
+
+
+
+bool WindowsFileEngine::read(
+	ReadType type,
+	ReadResult* outBuffer,
 	sizetype sizeInBytes)
 {
+	auto fileSizeForRead = fileSize();
 
+	sizetype readedBytes = 0;
+	Fn<bool(sizetype, sizetype)> readContinueCondition = nullptr;
+
+	switch (type) {
+		case ReadType::Value:
+			readContinueCondition = std::move([=](
+				sizetype _readed, 
+				sizetype _sizeInBytesForReading) -> bool 
+			{
+				return (_readed < fileSizeForRead);
+			});
+			break;
+
+		case ReadType::All:
+			readContinueCondition = std::move([=](
+				sizetype _readed, 
+				sizetype _sizeInBytesForReading) -> bool 
+			{
+				UNUSED(_readed);
+				UNUSED(_sizeInBytesForReading);
+
+				return true;
+			});
+
+			break;
+
+		default:
+			AssertUnreachable();
+	}
+
+	const sizetype sizeInBytesForReading = (sizeInBytes == 0) 
+		? WIN_MAX_READ_BUFFER_SIZE 
+		: sizeInBytes;
+
+//#if LIB_BASE_ENABLE(sse4_2)
+//	__m512i outVectorizedResult = _mm512_set1_epi8(0);
+//	SIMD_ALIGNAS(BASE_SIMD_SSE4_2_ALIGNMENT)
+//#elif LIB_BASE_ENABLE(sse4_1)
+//	__m512i outVectorizedResult = _mm512_set1_epi8(0);
+//	SIMD_ALIGNAS(BASE_SIMD_SSE4_1_ALIGNMENT)
+//#elif LIB_BASE_ENABLE(ssse3)
+//	__m256i outVectorizedResult = _mm256_set1_epi8(0);
+//	SIMD_ALIGNAS(BASE_SIMD_SSSE3_ALIGNMENT)
+//#elif LIB_BASE_ENABLE(sse2)
+//	__m128i outVectorizedResult = _mm_set1_epi8(0);
+//	SIMD_ALIGNAS(BASE_SIMD_SSE2_ALIGNMENT)
+//#endif
+
+	uchar* buffer = new uchar[sizeInBytesForReading];
+	sizetype size = 0;
+
+//#if LIB_BASE_ENABLE(sse4_2)
+//	while (readSSE4_2(&outVectorizedResult, buffer,
+//		outBuffer->data, sizeInBytesForReading, &readedBytes)
+//		&& readContinueCondition())
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(sse4_1)
+//	while (readSSE4_1(&outVectorizedResult, buffer,
+//		outBuffer->data, sizeInBytesForReading, &readedBytes)
+//		&& readContinueCondition())
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(ssse3)
+//	while (readSSE3(&outVectorizedResult, buffer,
+//		outBuffer->data, sizeInBytesForReading, &readedBytes)
+//		&& readContinueCondition())
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(sse2)
+//	while (readSSE2(&outVectorizedResult, buffer,
+//		outBuffer->data, sizeInBytesForReading, &readedBytes)
+//		&& readContinueCondition())
+// 	   availableBytesForRead -= readedBytes;
+//#else
+
+	sizetype av = fileSizeForRead;
+	while (readNoSimd(
+		outBuffer->data, buffer, sizeInBytesForReading,
+		&readedBytes) && readContinueCondition(readedBytes, sizeInBytesForReading)) {
+		av -= sizeInBytesForReading;
+		std::cout << "fs:  " << fileSizeForRead << " readed: " << readedBytes << " av: " << av << '\n';
+	}
+//#endif
+
+
+	return true;
+}
+
+void WindowsFileEngine::expandPath(std::string& path) {
+	path = WIN_EXTENDED_PATH_KEY + path;
 }
 
 __BASE_IO_NAMESPACE_END
