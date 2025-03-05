@@ -127,6 +127,15 @@ set(PRIVATE_SOURCES
     src/core/ThreadsData.cpp
 
     src/core/MutexLocker.cpp
+    src/io/FileInfo.cpp
+
+    src/io/WindowsFileInfo.cpp
+    src/io/UnixFileInfo.cpp
+
+    src/io/Directory.cpp
+    src/io/WindowsDirectory.cpp
+
+    src/io/UnixDirectory.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -267,8 +276,15 @@ set(PUBLIC_HEADERS
     include/base/core/WindowsThreadPrivate.h
     include/base/utility/MacrosOverload.h
 
-  #  include/base/io/ByteArrayMatcher.h
-  #  include/base/io/MiscUtils.h
+    include/base/io/FileInfo.h
+
+    include/base/io/WindowsFileInfo.h
+    include/base/io/UnixFileInfo.h
+
+    include/base/io/Directory.h
+    include/base/io/WindowsDirectory.h
+
+    include/base/io/UnixDirectory.h
 )
 
 include(CMakePackageConfigHelpers)
