@@ -1,200 +1,181 @@
-FileInfo::FileInfo(const std::string& path)
+#include <base/io/WindowsFileInfo.h>
 
-}
+__BASE_IO_NAMESPACE_BEGIN
 
-FileInfo::~FileInfo()
+WindowsFileInfo::WindowsFileInfo(const std::string& path)
 {
 }
 
-
-FileInfo& FileInfo::operator=(const FileInfo& fileinfo)
+std::string WindowsFileInfo::absoluteFilePath() const
 {
-
 }
 
-void FileInfo::setFile(const std::string& path)
+std::string WindowsFileInfo::canonicalFilePath() const
 {
 
 }
 
-void FileInfo::setFile(const QFileDevice& file)
+std::string WindowsFileInfo::absolutePath() const
 {
 
 }
 
-void FileInfo::setFile(const QDir& dir, const std::string& path)
+std::string WindowsFileInfo::canonicalPath() const
 {
 
 }
 
-std::string FileInfo::absoluteFilePath() const
-{
-}
-
-std::string FileInfo::canonicalFilePath() const
+std::string WindowsFileInfo::path() const
 {
 
 }
 
-std::string FileInfo::absolutePath() const
+bool WindowsFileInfo::isRelative() const
 {
 
 }
 
-std::string FileInfo::canonicalPath() const
+bool WindowsFileInfo::makeAbsolute()
 {
 
 }
 
-std::string FileInfo::path() const
+bool WindowsFileInfo::exists() const
 {
 
 }
 
-bool FileInfo::isRelative() const
+bool WindowsFileInfo::exists(const std::string& path)
 {
 
 }
 
-bool FileInfo::makeAbsolute()
+void WindowsFileInfo::refresh()
 {
 
 }
 
-bool FileInfo::exists() const
+std::string WindowsFileInfo::filePath() const
 {
 
 }
 
-bool FileInfo::exists(const std::string& path)
+std::string WindowsFileInfo::fileName() const
+{
+}
+
+std::string WindowsFileInfo::bundleName() const
 {
 
 }
 
-void FileInfo::refresh()
+std::string WindowsFileInfo::baseName() const
 {
 
 }
 
-std::string FileInfo::filePath() const
+std::string WindowsFileInfo::completeBaseName() const
 {
 
 }
 
-std::string FileInfo::fileName() const
-{
-}
-
-std::string FileInfo::bundleName() const
+std::string WindowsFileInfo::completeSuffix() const
 {
 
 }
 
-std::string FileInfo::baseName() const
+std::string WindowsFileInfo::suffix() const
 {
 
 }
 
-std::string FileInfo::completeBaseName() const
+Directory WindowsFileInfo::dir() const
 {
 
 }
 
-std::string FileInfo::completeSuffix() const
+Directory WindowsFileInfo::absoluteDir() const
 {
 
 }
 
-std::string FileInfo::suffix() const
-{
-
-}
-
-Dir FileInfo::dir() const
-{
-
-}
-
-Dir FileInfo::absoluteDir() const
-{
-
-}
-
-bool FileInfo::isReadable() const
+bool WindowsFileInfo::isReadable() const
 {
 
 }
 
 
-bool FileInfo::isWritable() const
+bool WindowsFileInfo::isWritable() const
 {
 
 }
 
-bool FileInfo::isExecutable() const
+bool WindowsFileInfo::isExecutable() const
 {
 
 }
 
-bool FileInfo::isHidden() const
+bool WindowsFileInfo::isHidden() const
 {
 
 }
 
-bool FileInfo::isNativePath() const
+bool WindowsFileInfo::isNativePath() const
 {
 
 }
 
-bool FileInfo::isFile() const
-{
-
-}
-
-
-bool FileInfo::isDir() const
-{
-
-}
-
-bool FileInfo::isBundle() const
+bool WindowsFileInfo::isFile() const
 {
 
 }
 
 
-bool FileInfo::isSymLink() const
+bool WindowsFileInfo::isDir() const
+{
+
+}
+
+bool WindowsFileInfo::isBundle() const
 {
 
 }
 
 
-bool FileInfo::isSymbolicLink() const
+bool WindowsFileInfo::isSymLink() const
 {
 
 }
 
-bool FileInfo::isShortcut() const
+
+bool WindowsFileInfo::isSymbolicLink() const
 {
 
 }
 
-bool FileInfo::isAlias() const
+bool WindowsFileInfo::isShortcut() const
 {
 
 }
 
-bool FileInfo::isJunction() const
+bool WindowsFileInfo::isAlias() const
 {
 
 }
 
-bool FileInfo::isRoot() const
+bool WindowsFileInfo::isJunction() const
 {
 
 }
 
-int64 FileInfo::size() const
+bool WindowsFileInfo::isRoot() const
 {
 
 }
+
+int64 WindowsFileInfo::size() const
+{
+
+}
+
+__BASE_IO_NAMESPACE_END

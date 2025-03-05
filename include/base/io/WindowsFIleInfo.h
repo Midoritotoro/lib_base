@@ -3,6 +3,8 @@
 #include <base/system/Platform.h>
 #include <base/core/BaseNamespace.h>
 
+#include <base/io/Directory.h>
+
 __BASE_IO_NAMESPACE_BEGIN
 
 #ifdef OS_WIN
@@ -35,8 +37,8 @@ public:
     NODISCARD std::string absolutePath() const;
     NODISCARD std::string canonicalPath() const;
 
-    NODISCARD QDir dir() const;
-    NODISCARD QDir absoluteDir() const;
+    NODISCARD Directory dir() const;
+    NODISCARD Directory absoluteDir() const;
 
     NODISCARD bool isReadable() const;
     NODISCARD bool isWritable() const;

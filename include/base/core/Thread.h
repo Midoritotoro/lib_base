@@ -21,13 +21,13 @@ namespace base {
 		~Thread();
 
 	    void setPriority(AbstractThread::Priority priority);
-		[[nodiscard]] AbstractThread::Priority priority() const noexcept;
+		NODISCARD AbstractThread::Priority priority() const noexcept;
 
 		void setTerminateOnClose(bool terminateOnClose);
-		bool terminateOnClose() const noexcept;
+		NODISCARD bool terminateOnClose() const noexcept;
 
-		[[nodiscard]] bool isFinished() const noexcept;
-		[[nodiscard]] bool isRunning() const noexcept;
+		NODISCARD bool isFinished() const noexcept;
+		NODISCARD bool isRunning() const noexcept;
 
 		void waitMs(int ms);
 		void waitS(int sec);
@@ -69,10 +69,10 @@ namespace base {
 			);
 		}
 
-		[[nodiscard]] ThreadPlatformImplementation* impl() const noexcept;
+		NODISCARD ThreadPlatformImplementation* impl() const noexcept;
 		
-		static [[nodiscard]] int getIdealThreadCount() noexcept;
-		static [[nodiscard]] Thread* currentThread() noexcept;
+		static NODISCARD int getIdealThreadCount() noexcept;
+		static NODISCARD Thread* currentThread() noexcept;
 
 		DISABLE_COPY(Thread)
 	private:

@@ -13,46 +13,22 @@ __BASE_IO_NAMESPACE_BEGIN
 
 
 FileInfo::FileInfo(const std::string& path)
-
-}
-
-FileInfo::~FileInfo()
 {
-}
-
-
-FileInfo& FileInfo::operator=(const FileInfo& fileinfo)
-{
-
-}
-
-void FileInfo::setFile(const std::string& path)
-{
-
-}
-
-void FileInfo::setFile(const QFileDevice& file)
-{
-
-}
-
-void FileInfo::setFile(const QDir& dir, const std::string& path)
-{
-
 }
 
 std::string FileInfo::absoluteFilePath() const
 {
+	return "";
 }
 
 std::string FileInfo::canonicalFilePath() const
 {
-
+	return "";
 }
 
 std::string FileInfo::absolutePath() const
 {
- 
+	return "";
 }
 
 std::string FileInfo::canonicalPath() const
@@ -124,12 +100,12 @@ std::string FileInfo::suffix() const
 
 }
 
-Dir FileInfo::dir() const
+Directory FileInfo::dir() const
 {
 
 }
 
-Dir FileInfo::absoluteDir() const
+Directory FileInfo::absoluteDir() const
 {
 
 }

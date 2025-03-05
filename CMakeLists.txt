@@ -136,6 +136,11 @@ set(PRIVATE_SOURCES
     src/io/WindowsDirectory.cpp
 
     src/io/UnixDirectory.cpp
+
+    src/core/WindowsStandardPaths.cpp
+    src/core/StandardPaths.cpp
+
+    src/core/UnixStandardPaths.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -285,6 +290,11 @@ set(PUBLIC_HEADERS
     include/base/io/WindowsDirectory.h
 
     include/base/io/UnixDirectory.h
+
+    include/base/core/WindowsStandardPaths.h
+    include/base/core/StandardPaths.h
+
+    include/base/core/UnixStandardPaths.h
 )
 
 include(CMakePackageConfigHelpers)

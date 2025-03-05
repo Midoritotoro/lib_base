@@ -73,41 +73,6 @@ class WindowsFileEngine final:
 			All
 		};
 
-		NODISCARD bool readSSE2(
-			__m128i* outVector,
-			uchar* tempOutBuffer,
-			uchar* outBuffer,
-			sizetype sizeInBytesRequiredForReading,
-			sizetype* successfullyReadedBytes);
-
-		NODISCARD bool readSSSE3(
-			__m256i* outVector,
-			uchar* tempOutBuffer,
-			uchar* outBuffer,
-			sizetype sizeInBytesRequiredForReading,
-			sizetype* successfullyReadedBytes);
-
-		NODISCARD bool readSSE4_1(
-			__m512i* outVector,
-			uchar* tempOutBuffer,
-			uchar* outBuffer,
-			sizetype sizeInBytesRequiredForReading,
-			sizetype* successfullyReadedBytes);
-
-		NODISCARD bool readSSE4_2(
-			__m512i* outVector,
-			uchar* tempOutBuffer,
-			uchar* outBuffer,
-			sizetype sizeInBytesRequiredForReading,
-			sizetype* successfullyReadedBytes);
-
-		NODISCARD bool readNoSimd(
-			ReadResult* outBuffer,
-			uchar* tempOutBuffer,
-			sizetype sizeInBytesRequiredForReading,
-			sizetype* successfullyReadedBytes
-		);
-
 		NODISCARD bool read(
 			ReadType type,
 			ReadResult* outBuffer,
