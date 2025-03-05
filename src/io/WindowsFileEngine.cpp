@@ -14,11 +14,15 @@
 __BASE_IO_NAMESPACE_BEGIN
 
 WindowsFileEngine::WindowsFileEngine()
-{}
+{
+	_handle.setAutoDelete(true);
+}
 
 WindowsFileEngine::WindowsFileEngine(const std::string& path) :
 	_path(path)
-{}
+{
+	_handle.setAutoDelete(true);
+}
 
 WindowsFileEngine::~WindowsFileEngine() {
 	close();
@@ -347,19 +351,18 @@ ReadResult WindowsFileEngine::read(sizetype sizeInBytes)
 
 	ReadResult result = {};
 
-	read(ReadType::Value, &result, 
-		std::min(fileSize(), sizeInBytes));
+	UNUSED(read(ReadType::Value, &result, 
+		std::min(fileSize(), sizeInBytes)));
 
 	return result;
 }
 
 ReadResult WindowsFileEngine::readAll()
 {
-	measureExecutionTime("WindowsFileEngine::readAll()")
 	IOAssert(_handle.isValid(), "base::WindowsFileEngine::readAll: Попытка чтения из файла с нулевым дескриптором. ", {});
 
 	ReadResult result = {};
-	read(ReadType::All, &result);
+	UNUSED(read(ReadType::All, &result));
 
 	return result;
 }
@@ -454,6 +457,7 @@ bool WindowsFileEngine::readSSE4_1(
 	}
 
 	memset(tempOutBuffer, 0, sizeInBytesRequiredForReading);
+	
 
 	for (int i = 0; i < 64; ++i)
 		outBuffer += ((uchar*)outVector)[i];
@@ -491,12 +495,6 @@ bool WindowsFileEngine::readNoSimd(
 		outBuffer->data += tempOutBuffer[i];
 
 	memset(tempOutBuffer, 0, sizeInBytesRequiredForReading);
-	outBuffer->sizeInBytes += *successfullyReadedBytes;
-
-	std::cout << "WindowsFileEngine::readNoSimd: " << readResult << " readed bytes: " 
-		<< *successfullyReadedBytes << "handle value: " << (_handle.handle() != nullptr) 
-		<< " sizeInBytesRequiredForReading: " << sizeInBytesRequiredForReading << " LastError: " << GetLastError() << '\n';
-
 	return (readResult != 0);
 }
 
@@ -507,11 +505,10 @@ bool WindowsFileEngine::read(
 	ReadResult* outBuffer,
 	sizetype sizeInBytes)
 {
-	auto fileSizeForRead = fileSize();
-	auto availableBytesForRead = 0;
+	const auto fileSizeForRead = fileSize();
 
+	sizetype availableBytesForRead = 0;
 	sizetype readedBytes = 0;
-	
 
 	switch (type) {
 		case ReadType::Value:
@@ -545,38 +542,43 @@ bool WindowsFileEngine::read(
 #endif
 
 	uchar* buffer = new uchar[sizeInBytesForReading];
+	buffer[sizeInBytesForReading - 1] = '\0';
+
 	sizetype size = 0;
 
-#if LIB_BASE_ENABLE(sse4_2)
-	while (readSSE4_2(&outVectorizedResult, &buffer[0],
-		outBuffer->data, sizeInBytesForReading, &readedBytes)
-		&& availableBytesForRead > 0)
- 	   availableBytesForRead -= readedBytes;
-#elif LIB_BASE_ENABLE(sse4_1)
-	while (readSSE4_1(&outVectorizedResult, &buffer[0],
-		outBuffer->data, sizeInBytesForReading, &readedBytes)
-		&& availableBytesForRead > 0)
- 	   availableBytesForRead -= readedBytes;
-#elif LIB_BASE_ENABLE(ssse3)
-	while (readSSE3(&outVectorizedResult, &buffer[0],
-		outBuffer->data, sizeInBytesForReading, &readedBytes)
-		&& availableBytesForRead > 0)
- 	   availableBytesForRead -= readedBytes;
-#elif LIB_BASE_ENABLE(sse2)
-	while (readSSE2(&outVectorizedResult, &buffer[0],
-		outBuffer->data, sizeInBytesForReading, &readedBytes)
-		&& availableBytesForRead > 0)
- 	   availableBytesForRead -= readedBytes;
-#else
+//#if LIB_BASE_ENABLE(sse4_2)
+//	while (readSSE4_2(&outVectorizedResult, &buffer[0],
+//		&outBuffer->data[0], sizeInBytesForReading, &readedBytes)
+//		&& availableBytesForRead > 0)
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(sse4_1)
+//	while (readSSE4_1(&outVectorizedResult, &buffer[0],
+//		&outBuffer->data[0], sizeInBytesForReading, &readedBytes)
+//		&& availableBytesForRead > 0)
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(ssse3)
+//	while (readSSE3(&outVectorizedResult, &buffer[0],
+//		&outBuffer->data[0], sizeInBytesForReading, &readedBytes)
+//		&& availableBytesForRead > 0)
+// 	   availableBytesForRead -= readedBytes;
+//#elif LIB_BASE_ENABLE(sse2)
+//	while (readSSE2(&outVectorizedResult, &buffer[0],
+//		&outBuffer->data[0], sizeInBytesForReading, &readedBytes)
+//		&& availableBytesForRead > 0)
+// 	   availableBytesForRead -= readedBytes;
+//#else
 
 	while (readNoSimd(
 		outBuffer, &buffer[0], sizeInBytesForReading,
 		&readedBytes) && availableBytesForRead > 0)
 		availableBytesForRead -= readedBytes;
-#endif
+// #endif
 
 
-	return true;
+	outBuffer->sizeInBytes = fileSizeForRead - availableBytesForRead;
+
+	return ((availableBytesForRead == 0) 
+		&& (readedBytes == fileSizeForRead));
 }
 
 void WindowsFileEngine::expandPath(std::string& path) {

@@ -238,4 +238,10 @@
 #  define DECLARE_MALLOCLIKE NODISCARD
 #endif
 
+#if defined(CPP_MSVC)
+#  define RESTRICT  __declspec(restrict)
+#elif defined(CPP_GNU) || defined (CPP_CLANG)
+#  define RESTRICT  __restrict__ 
+#endif 
+
 #endif // __cplusplus

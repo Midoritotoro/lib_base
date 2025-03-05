@@ -76,13 +76,18 @@ int main(int argc, char* argv[]) {
 	//_mediaPlayer->setMedia(videoPath);
 
 	base::io::File file; 
-	if (!file.open("D:/War Thunder.mp4", base::io::FileOpenMode::Read))
+	if (!file.open("C:\\Users\\danya\\Downloads\\Telegram Desktop\\codmsnd.mp4", base::io::FileOpenMode::Read))
 		return -1;
+	//{
+	//	measureExecutionTime("read From out")
+		auto readed = file.readAll();
+		//qDebug() << "totalSize: " << readed.sizeInBytes << " File::fileSize: " << base::io::File::fileSize("D:/War Thunder.mp4");
+	//}
 
-	auto readed = file.readAll();
-	qDebug() << "totalSize: " << readed.sizeInBytes << " File::fileSize: " << base::io::File::fileSize("D:/War Thunder.mp4");
+	//for (base::sizetype i = 0; i < readed.sizeInBytes; ++i)
+		std::cout << *(char*)readed.data[0] << '\n';
 
-	file.write("D:/warthunder.mp4", (char*)readed.data, readed.sizeInBytes);
+	file.close();
 
 	return 0;
 //	return application.exec();

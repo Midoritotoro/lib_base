@@ -50,8 +50,10 @@ namespace base::io {
 	}
 
 	void WindowsSmartHandle::forceDelete() {
-		if (_handle != nullptr)
+		if (isValid())
 			_deleteCallback(_handle);
+
+		_handle = INVALID_HANDLE_VALUE;
 	}
 
 	bool WindowsSmartHandle::isValid() const noexcept {
