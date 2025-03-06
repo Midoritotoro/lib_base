@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/concurrent/win/WinapiSemaphore.h>
+#include <base/core/async/WinapiSemaphore.h>
 
 namespace base::concurrent {
 

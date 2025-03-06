@@ -1,8 +1,8 @@
 #pragma once
 
-#include <base/concurrent/common/CommonConfig.h>
+#include <base/core/async/CommonConfig.h>
 
-#include <base/concurrent/common/CommonQueue.h>
+#include <base/core/async/CommonQueue.h>
 #include <atomic>
 
 

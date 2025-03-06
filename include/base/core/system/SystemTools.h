@@ -1,9 +1,11 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 #include <vector>
 
 
-namespace base::system::utility {
-	std::vector<std::string> GetAllProcesses();
-} // namespace base::system::utility
+__BASE_SYSTEM_NAMESPACE_BEGIN
+
+std::vector<std::string> GetAllProcesses();
+
+__BASE_SYSTEM_NAMESPACE_END

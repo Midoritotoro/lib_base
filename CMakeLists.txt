@@ -52,19 +52,19 @@ set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
    
 set(PRIVATE_SOURCES 
-    src/utility/Math.cpp
-    src/utility/TFunctions.cpp
+    src/core/utility/Math.cpp
+    src/core/utility/TFunctions.cpp
 
-    src/AutoRunUtils.cpp
-    src/Time.cpp
+    src/core/system/AutoRunUtils.cpp
+    src/core/system/Time.cpp
 
-    src/concurrent/common/CommonAsync.cpp
-    src/concurrent/common/CommonQueue.cpp
+    src/core/async/CommonAsync.cpp
+    src/core/async/CommonQueue.cpp
 
-    src/concurrent/win/WinapiAsync.cpp
-    src/concurrent/win/WinapiList.cpp
+    src/core/async/WinapiAsync.cpp
+    src/core/async/WinapiList.cpp
 
-    src/concurrent/win/WinapiSemaphore.cpp
+    src/core/async/WinapiSemaphore.cpp
 
 	src/images/ImagesBuffer.cpp
     src/images/ImagesPrepare.cpp
@@ -90,107 +90,102 @@ set(PRIVATE_SOURCES
     src/images/filters/ImageFilter.cpp
     src/images/ImageReader.cpp
 
-    src/system/SystemInfo.cpp
-    src/io/File.cpp
+    src/core/system/SystemInfo.cpp
+    src/core/io/File.cpp
 
-    src/io/WindowsFileEngine.cpp
-    src/io/UnixFileEngine.cpp
+    src/core/io/WindowsFileEngine.cpp
+    src/core/io/UnixFileEngine.cpp
 
-    src/system/SystemTools.cpp
-    src/io/Compressor.cpp
+    src/core/system/SystemTools.cpp
+    src/core/io/Compressor.cpp
 
-    src/io/WindowsSmartHandle.cpp
+    src/core/io/WindowsSmartHandle.cpp
 
-    src/system/WindowsSystemInfo.cpp
-    src/system/UnixSystemInfo.cpp
+    src/core/system/WindowsSystemInfo.cpp
+    src/core/system/UnixSystemInfo.cpp
 
-    src/io/UnixFileSystemPath.cpp
-    src/io/WindowsFileSystemPath.cpp
+    src/core/io/UnixFileSystemPath.cpp
+    src/core/io/WindowsFileSystemPath.cpp
 
-    src/core/ConcurrentAncillary.cpp
+    src/core/thread/Thread.cpp
+    src/core/thread/AtomicInteger.cpp
 
-    src/core/Thread.cpp
-    src/core/AtomicInteger.cpp
+    src/core/thread/WindowsAtomic.cpp
+    src/core/thread/UnixAtomic.cpp
 
-    src/core/WindowsAtomic.cpp
-    src/core/UnixAtomic.cpp
+    src/core/thread/WindowsThread.cpp
+    src/core/thread/UnixThread.cpp
 
-    src/core/WindowsThread.cpp
-    src/core/UnixThread.cpp
+    src/core/thread/WindowsMutex.cpp
+    src/core/thread/UnixMutex.cpp
 
-    src/core/WindowsMutex.cpp
-    src/core/UnixMutex.cpp
+    src/core/thread/Mutex.cpp
 
-    src/core/Mutex.cpp
+    src/core/thread/ThreadsData.h
+    src/core/thread/ThreadsData.cpp
 
-    src/core/ThreadsData.h
-    src/core/ThreadsData.cpp
+    src/core/thread/MutexLocker.cpp
+    src/core/io/FileInfo.cpp
 
-    src/core/MutexLocker.cpp
-    src/io/FileInfo.cpp
+    src/core/io/WindowsFileInfo.cpp
+    src/core/io/UnixFileInfo.cpp
 
-    src/io/WindowsFileInfo.cpp
-    src/io/UnixFileInfo.cpp
+    src/core/io/Directory.cpp
+    src/core/io/WindowsDirectory.cpp
 
-    src/io/Directory.cpp
-    src/io/WindowsDirectory.cpp
+    src/core/io/UnixDirectory.cpp
 
-    src/io/UnixDirectory.cpp
+    src/core/system/WindowsStandardPaths.cpp
+    src/core/system/StandardPaths.cpp
 
-    src/core/WindowsStandardPaths.cpp
-    src/core/StandardPaths.cpp
-
-    src/core/UnixStandardPaths.cpp
+    src/core/system/UnixStandardPaths.cpp
 )
 
 set(PUBLIC_HEADERS 
-    include/base/utility/Assert.h
+    include/base/core/utility/Assert.h
     include/base/core/BaseNamespace.h
 
-    include/base/utility/Algorithm.h
-    include/base/concurrent/Concurrent.h
+    include/base/core/utility/Algorithm.h
+    include/base/core/async/Concurrent.h
 
-    include/base/system/SystemConfig.h
+    include/base/core/system/SystemConfig.h
 
-    include/base/utility/Flags.h
-    include/base/system/Time.h
+    include/base/core/utility/Flags.h
+    include/base/core/system/Time.h
 
-    include/base/system/Platform.h
-    include/base/utility/OverflowCheck.h
+    include/base/core/arch/Platform.h
+    include/base/core/utility/OverflowCheck.h
 
-    include/base/system/Windows.h
-    include/base/system/ProcessorDetection.h
+    include/base/core/system/Windows.h
+    include/base/core/arch/ProcessorDetection.h
 
-    include/base/concurrent/common/CommonConfig.h
-    include/base/concurrent/common/CommonGuards.h
+    include/base/core/async/CommonConfig.h
+    include/base/core/async/CommonGuards.h
 
-    include/base/concurrent/common/CommonAsync.h
+    include/base/core/async/CommonAsync.h
 
-    include/base/concurrent/common/CommonAsyncGuarded.h
+    include/base/core/async/CommonAsyncGuarded.h
 
-    include/base/concurrent/common/CommonQueue.h
+    include/base/core/async/CommonQueue.h
 
-    include/base/concurrent/common/CommonSync.h
-    include/base/concurrent/common/CommonUtils.h
+    include/base/core/async/CommonSync.h
+    include/base/core/async/CommonUtils.h
 
-    include/base/concurrent/win/WinapiAsync.h
+    include/base/core/async/WinapiAsync.h
 
-    include/base/concurrent/win/WinapiDll.h
+    include/base/core/async/WinapiDll.h
 
-    include/base/concurrent/win/WinapiList.h
-    include/base/concurrent/win/WinapiSemaphore.h
+    include/base/core/async/WinapiList.h
+    include/base/core/async/WinapiSemaphore.h
 
     include/base/core/BaseExport.h
-    include/base/utility/TypeWrapper.h
+    include/base/core/system/SystemTools.h
 
-    include/base/system/SystemTools.h
-
-    include/base/utility/TypeTraits.h
+    include/base/core/utility/TypeTraits.h
     include/base/images/ImagesBlur.h
 
 	include/base/images/ImagesBuffer.h
     include/base/images/ImagesPrepare.h
-
 
     include/base/images/Images.h
     include/base/images/ImagesIntegral.h
@@ -212,92 +207,88 @@ set(PUBLIC_HEADERS
     include/base/images/ImagesUtility.h
 
     include/base/core/Types.h
-    include/base/system/SimdHelpers.h
+    include/base/core/arch/SimdHelpers.h
 
     include/base/images/ImagesImage.h
 
-    include/base/system/SystemDetection.h
-    include/base/system/CompilerDetection.h
+    include/base/core/arch/SystemDetection.h
+    include/base/core/arch/CompilerDetection.h
 
-    include/base/io/WindowsFileEngine.h
-    include/base/io/UnixFileEngine.h
+    include/base/core/io/WindowsFileEngine.h
+    include/base/core/io/UnixFileEngine.h
 
-    include/base/io/File.h
-    include/base/system/SystemInfo.h
+    include/base/core/io/File.h
+    include/base/core/system/SystemInfo.h
 
-    include/base/io/WindowsSmartHandle.h
-    include/base/io/Compressor.h
+    include/base/core/io/WindowsSmartHandle.h
+    include/base/core/io/Compressor.h
 
-    include/base/io/FileSystemPath.h
-    include/base/io/IOConfig.h
+    include/base/core/io/FileSystemPath.h
+    include/base/core/io/IOConfig.h
 
-    include/base/system/SystemString.h
-    include/base/system/SystemStaticCodeAnalysis.h
+    include/base/core/system/SystemString.h
+    include/base/core/arch/StaticCodeAnalysis.h
 
-    include/base/system/WindowsSystemInfo.h
-    include/base/system/UnixSystemInfo.h
+    include/base/core/system/WindowsSystemInfo.h
+    include/base/core/system/UnixSystemInfo.h
 
-    include/base/core/WindowsThread.h
-    include/base/core/UnixThread.h
+    include/base/core/thread/WindowsThread.h
+    include/base/core/thread/UnixThread.h
 
+    include/base/core/utility/ClassHelperMacros.h
+    include/base/core/utility/Swap.h
 
-    include/base/utility/ClassHelperMacros.h
-    include/base/utility/Swap.h
+    include/base/core/utility/TypeInfo.h
 
-    include/base/utility/TypeInfo.h
+    include/base/core/utility/BitOps.h
+    include/base/core/utility/Random.h
 
-    include/base/utility/BitOps.h
-    include/base/utility/Random.h
+    include/base/core/utility/MathConstants.h
+    include/base/core/arch/Endian.h
 
-    include/base/utility/MathConstants.h
-    include/base/system/Endian.h
+    include/base/core/thread/Thread.h
+    include/base/core/thread/AtomicInteger.h
 
-    include/base/core/ConcurrentAncillary.h
+    include/base/core/thread/AbstractAtomic.h
+    include/base/core/thread/WindowsAtomic.h
 
-    include/base/core/Thread.h
-    include/base/core/AtomicInteger.h
+    include/base/core/thread/UnixAtomic.h
+    include/base/core/thread/CommonAtomicOperations.h
 
-    include/base/core/AbstractAtomic.h
-    include/base/core/WindowsAtomic.h
+    include/base/core/thread/AtomicConfig.h
 
-    include/base/core/UnixAtomic.h
-    include/base/core/CommonAtomicOperations.h
+    include/base/core/thread/WindowsMutex.h
+    include/base/core/thread/UnixMutex.h
 
-    include/base/core/AtomicConfig.h
-    include/base/utility/Foreach.h
+    include/base/core/thread/Mutex.h
+    include/base/core/thread/AbstractMutex.h
 
-    include/base/core/WindowsMutex.h
-    include/base/core/UnixMutex.h
+    include/base/core/arch/YieldCpu.h
+    include/base/core/thread/ThreadsConfig.h
 
-    include/base/core/Mutex.h
-    include/base/core/AbstractMutex.h
+    include/base/core/arch/KeywordSupport.h
+    include/base/core/thread/MutexLocker.h
 
-    include/base/core/YieldCpu.h
-    include/base/core/ThreadsConfig.h
+    include/base/core/thread/WindowsThreadPrivate.h
+    include/base/core/utility/MacrosOverload.h
 
-    include/base/system/KeywordSupport.h
-    include/base/core/MutexLocker.h
+    include/base/core/io/FileInfo.h
 
-    include/base/core/WindowsThreadPrivate.h
-    include/base/utility/MacrosOverload.h
+    include/base/core/io/WindowsFileInfo.h
+    include/base/core/io/UnixFileInfo.h
 
-    include/base/io/FileInfo.h
+    include/base/core/io/Directory.h
+    include/base/core/io/WindowsDirectory.h
 
-    include/base/io/WindowsFileInfo.h
-    include/base/io/UnixFileInfo.h
+    include/base/core/io/UnixDirectory.h
 
-    include/base/io/Directory.h
-    include/base/io/WindowsDirectory.h
+    include/base/core/system/WindowsStandardPaths.h
+    include/base/core/system/StandardPaths.h
 
-    include/base/io/UnixDirectory.h
+    include/base/core/system/UnixStandardPaths.h
+    include/base/core/io/AbstractFileInfo.h
 
-    include/base/core/WindowsStandardPaths.h
-    include/base/core/StandardPaths.h
-
-    include/base/core/UnixStandardPaths.h
-    include/base/core/AbstractFileInfo.h
-
-    include/base/core/AbstractStandardPaths.h
+    include/base/core/system/AbstractStandardPaths.h
 )
 
 include(CMakePackageConfigHelpers)

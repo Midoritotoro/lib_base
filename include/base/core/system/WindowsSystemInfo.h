@@ -1,15 +1,17 @@
 #pragma once
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 
 #if defined(OS_WIN)
 
-namespace base::system {
-	class WindowsSystemInfo {
-	public:
-		static [[nodiscard]] int GetCpuCount();
-	};
-} // namespace base::system
+__BASE_SYSTEM_NAMESPACE_BEGIN
+
+class WindowsSystemInfo {
+public:
+	static NODISCARD int GetCpuCount();
+};
+
+__BASE_SYSTEM_NAMESPACE_END
 
 #endif

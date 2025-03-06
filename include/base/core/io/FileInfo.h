@@ -1,16 +1,16 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 #include <base/core/BaseNamespace.h>
 
-#include <base/io/Directory.h>
+#include <base/core/io/Directory.h>
 #include <string>
 
 #if defined(OS_WIN) 
-	#include <base/io/WindowsFileInfo.h>
+	#include <base/core/io/WindowsFileInfo.h>
 	using PlatformFileInfoImplementation = base::io::WindowsFileInfo;
 #elif defined(OS_MAC) || defined(OS_LINUX)
-	#include <base/io/UnixFileInfo.h>
+	#include <base/core/io/UnixFileInfo.h>
 	using PlatformFileInfoImplementation = base::io::UnixFileInfo;
 #endif
 

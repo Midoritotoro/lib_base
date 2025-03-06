@@ -1,11 +1,11 @@
 #pragma once
 
-#include <base/concurrent/common/CommonConfig.h>
+#include <base/core/async/CommonConfig.h>
 
 #ifdef USE_WINAPI_LIST
 
-#include <base/concurrent/common/CommonUtils.h>
-#include <base/concurrent/win/WinapiSemaphore.h>
+#include <base/core/async/CommonUtils.h>
+#include <base/core/async/WinapiSemaphore.h>
 
 namespace base::concurrent::details {
 

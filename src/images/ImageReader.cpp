@@ -9,7 +9,7 @@
 
 #include <base/images/formats/PngHandler.h>
 
-#include <base/io/File.h>
+#include <base/core/io/File.h>
 
 #include <turbojpeg.h>
 #include <png.h>

@@ -1,47 +1,49 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 #include <base/core/Types.h>
 
-#include <base/utility/ClassHelperMacros.h>
+#include <base/core/utility/ClassHelperMacros.h>
 
 #if defined(OS_WIN)
 
-namespace base::io {
-	class WindowsSmartHandle {
-	public:
-		WindowsSmartHandle();
-		WindowsSmartHandle(
-			HANDLE handle,
-			Fn<BOOL(HANDLE)> deleteCallback = CloseHandle);
+__BASE_IO_NAMESPACE_BEGIN
 
-		~WindowsSmartHandle();
+class WindowsSmartHandle {
+public:
+	WindowsSmartHandle();
+	WindowsSmartHandle(
+		HANDLE handle,
+		Fn<BOOL(HANDLE)> deleteCallback = CloseHandle);
 
-		void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
-		[[nodiscard]] Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
+	~WindowsSmartHandle();
 
-		void forceDelete();
+	void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
+	[[nodiscard]] Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
 
-		[[nodiscard]] bool isValid() const noexcept;
+	void forceDelete();
 
-		void setAutoDelete(bool autoDelete);
-		[[nodiscard]] bool autoDelete() const noexcept;
+	[[nodiscard]] bool isValid() const noexcept;
 
-		WindowsSmartHandle& operator=(HANDLE handle);
-		bool operator==(HANDLE handle);
+	void setAutoDelete(bool autoDelete);
+	[[nodiscard]] bool autoDelete() const noexcept;
 
-		void setHandle(
-			not_null<HANDLE> handle, 
-			bool autoDeletePrevious = true);
-		[[nodiscard]] HANDLE handle() const noexcept;
+	WindowsSmartHandle& operator=(HANDLE handle);
+	bool operator==(HANDLE handle);
 
-		DISABLE_COPY(WindowsSmartHandle);
-	private:
-		HANDLE _handle = nullptr;
-		Fn<BOOL(HANDLE)> _deleteCallback = CloseHandle;
+	void setHandle(
+		not_null<HANDLE> handle, 
+		bool autoDeletePrevious = true);
+	[[nodiscard]] HANDLE handle() const noexcept;
 
-		bool _autoDelete = false;
-	};
-} // namespace base::io
+	DISABLE_COPY(WindowsSmartHandle);
+private:
+	HANDLE _handle = nullptr;
+	Fn<BOOL(HANDLE)> _deleteCallback = CloseHandle;
+
+	bool _autoDelete = false;
+};
+
+__BASE_IO_NAMESPACE_END
 
 #endif

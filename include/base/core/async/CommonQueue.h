@@ -1,9 +1,9 @@
 #pragma once
 
-#include <base/concurrent/common/CommonConfig.h>
+#include <base/core/async/CommonConfig.h>
 
-#include <base/concurrent/win/WinapiList.h>
-#include <base/concurrent/common/CommonUtils.h>
+#include <base/core/async/WinapiList.h>
+#include <base/core/async/CommonUtils.h>
 
 #include <atomic>
 

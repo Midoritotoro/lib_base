@@ -1,12 +1,12 @@
 #pragma once 
 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #if defined (OS_LINUX) || defined(OS_MAC)
 
-namespace base::system {
+__BASE_SYSTEM_NAMESPACE_BEGIN
 
-} // namespace base::system
+__BASE_SYSTEM_NAMESPACE_END
 
 #endif

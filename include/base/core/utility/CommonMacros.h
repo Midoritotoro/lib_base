@@ -1,12 +1,12 @@
 #pragma once
 
 #include <cstdio>
-#include <base/system/CompilerDetection.h>
+#include <base/core/arch/CompilerDetection.h>
 
-#include <base/utility/MacrosOverload.h>
+#include <base/core/utility/MacrosOverload.h>
 
 #include <gsl/gsl>
-#include <base/system/Time.h>
+#include <base/core/system/Time.h>
 
 #include <iostream>
 

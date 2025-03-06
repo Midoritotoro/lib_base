@@ -1,6 +1,6 @@
 ﻿#pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #include <cstdlib>
 #include <cassert>

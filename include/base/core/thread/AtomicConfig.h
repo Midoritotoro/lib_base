@@ -11,35 +11,35 @@
 #include <atomic>
 #include <type_traits>
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
-namespace base {
+__BASE_THREAD_NAMESPACE_BEGIN
 
-	template <int N>
-	struct AtomicTraits
-	{
-		static inline bool isLockFree();
+template <int N>
+struct AtomicTraits
+{
+	static inline bool isLockFree();
+};
+
+template<int Size>
+struct AtomicOpsSupport
+{
+	enum {
+		IsSupported = (Size == sizeof(int) || Size == sizeof(ptrdiff))
 	};
+};
 
-	template<int Size>
-	struct AtomicOpsSupport
-	{
-		enum {
-			IsSupported = (Size == sizeof(int) || Size == sizeof(ptrdiff))
-		};
-	};
+template <typename T> struct AtomicAdditiveType
+{
+	typedef T AdditiveT;
+	static const int AddScale = 1;
+};
 
-	template <typename T> struct AtomicAdditiveType
-	{
-		typedef T AdditiveT;
-		static const int AddScale = 1;
-	};
-
-	template <typename T> struct AtomicAdditiveType<T*>
-	{
-		typedef ptrdiff AdditiveT;
-		static const int AddScale = sizeof(T);
-	};
+template <typename T> struct AtomicAdditiveType<T*>
+{
+	typedef ptrdiff AdditiveT;
+	static const int AddScale = sizeof(T);
+};
 
 
 #define ATOMIC_INT32_IS_SUPPORTED
@@ -242,4 +242,4 @@ namespace base {
 	}
 #  endif
 
-} // namespace base
+__BASE_THREAD_NAMESPACE_END

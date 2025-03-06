@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 #include <base/core/BaseNamespace.h>
 
-#include <base/io/Directory.h>
+#include <base/core/io/Directory.h>
 
 __BASE_IO_NAMESPACE_BEGIN
 

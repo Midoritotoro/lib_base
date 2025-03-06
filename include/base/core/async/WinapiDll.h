@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/concurrent/common/CommonConfig.h>
+#include <base/core/async/CommonConfig.h>
 
 #ifdef USE_WINAPI
 

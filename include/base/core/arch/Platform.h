@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include <base/system/SystemConfig.h>
+#include <base/core/system/SystemConfig.h>
 
 #include <base/core/Types.h>
 #include <base/core/BaseExport.h>
 
-#include <base/utility/CommonMacros.h>
+#include <base/core/utility/CommonMacros.h>
 #include <base/core/BaseNamespace.h>
 
 #include <cstdint>

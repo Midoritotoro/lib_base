@@ -1,7 +1,7 @@
 ﻿#pragma once 
 
-#include <base/system/SystemDetection.h>
-#include <base/system/CompilerDetection.h>
+#include <base/core/arch/SystemDetection.h>
+#include <base/core/arch/CompilerDetection.h>
 
 #include <string>
 
@@ -9,7 +9,7 @@
 WARNING_DISABLE_MSVC(4005)
 
 #if defined(OS_WIN)
-    #include <base/system/Windows.h>
+    #include <base/core/system/Windows.h>
     #include <winnt.h>
     
     #if !defined(PROCESSOR_X86_32)
@@ -61,7 +61,8 @@ WARNING_DISABLE_MSVC(4005)
     {
         return WideCharToMultiByte(
             CP_UTF8, 0, input, -1,
-            buffer, (int)bufferlen, NULL, NULL);
+            buffer, (int)bufferlen,
+            nullptr, nullptr);
     }
 
     inline [[nodiscard]] int ConvertUnicodeToWChar(

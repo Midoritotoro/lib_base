@@ -1,8 +1,8 @@
-#include <base/io/WindowsFileEngine.h>
+#include <base/core/io/WindowsFileEngine.h>
 
 #if defined(OS_WIN)
 
-#include <base/io/WindowsSmartHandle.h>
+#include <base/core/io/WindowsSmartHandle.h>
 #include <base/system/SystemTools.h>
 
 #define WIN_EXTENDED_PATH_KEY			"\\?"

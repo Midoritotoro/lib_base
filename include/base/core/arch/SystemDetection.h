@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
 #  define OS_APPLE
 #  if defined(TARGET_OS_MAC) && TARGET_OS_MAC

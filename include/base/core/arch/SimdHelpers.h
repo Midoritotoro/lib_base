@@ -1,11 +1,9 @@
 #pragma once
 
-#include <base/system/SystemDetection.h>
-#include <base/system/CompilerDetection.h>
+#include <base/core/arch/SystemDetection.h>
+#include <base/core/arch/CompilerDetection.h>
 
-#include <base/system/KeywordSupport.h>
-
-#include <qconfig.h>
+#include <base/core/arch/KeywordSupport.h>
 
 
 #ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 

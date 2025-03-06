@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/utility/TypeTraits.h>
-#include <base/utility/Flags.h>
+#include <base/core/utility/TypeTraits.h>
+#include <base/core/utility/Flags.h>
 
 
 template <typename T>
@@ -71,7 +71,6 @@ public: \
 #define DECLARE_TYPEINFO(TYPE, FLAGS) \
 template<> \
 DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
-
 
 template<typename T> class base::flags;
 template<typename T>

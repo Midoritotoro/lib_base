@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #ifdef OS_WIN
-	#include <base/io/WindowsSmartHandle.h>
+	#include <base/core/io/WindowsSmartHandle.h>
 #endif
 
 // Отключает все внутренние исключения

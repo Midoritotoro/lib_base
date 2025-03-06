@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/system/CompilerDetection.h>
+#include <base/core/arch/CompilerDetection.h>
 
 #ifdef __cplusplus 
 

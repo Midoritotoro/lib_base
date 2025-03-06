@@ -1,38 +1,40 @@
 #pragma once
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #include <string>
 #include <ctime>
 
 
-namespace base::Time {
-	using time_t = std::int64_t;
-	using profileTime_t = std::int64_t;
+__BASE_TIME_NAMESPACE_BEGIN
 
-	namespace details {
+using time_t = std::int64_t;
+using profileTime_t = std::int64_t;
 
-		using innerTime_t = std::int64_t;
-		using innerProfile_t = std::int64_t;
+namespace details {
 
-		void init();
+	using innerTime_t = std::int64_t;
+	using innerProfile_t = std::int64_t;
 
-		[[nodiscard]] innerTime_t currentValue();
-		[[nodiscard]] time_t convert(innerTime_t value);
+	void init();
 
-		[[nodiscard]] innerProfile_t currentProfileValue();
-		[[nodiscard]] profileTime_t convertProfile(innerProfile_t);
+	[[nodiscard]] innerTime_t currentValue();
+	[[nodiscard]] time_t convert(innerTime_t value);
 
-	} // namespace details
+	[[nodiscard]] innerProfile_t currentProfileValue();
+	[[nodiscard]] profileTime_t convertProfile(innerProfile_t);
 
-	[[nodiscard]] time_t now();
-	[[nodiscard]] profileTime_t profile();
+} // namespace details
 
-	bool adjustTime();
+[[nodiscard]] time_t now();
+[[nodiscard]] profileTime_t profile();
 
-	[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
+bool adjustTime();
 
-	[[nodiscard]] int minutes(int64_t unixTime);
-	[[nodiscard]] int hours(int64_t unixTime);
-	[[nodiscard]] int seconds(int64_t unixTime);
-} // namespace base::Time
+[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
+
+[[nodiscard]] int minutes(int64_t unixTime);
+[[nodiscard]] int hours(int64_t unixTime);
+[[nodiscard]] int seconds(int64_t unixTime);
+
+__BASE_TIME_NAMESPACE_END

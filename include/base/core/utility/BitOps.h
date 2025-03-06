@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 #include <base/core/BaseNamespace.h>
 
 #if __has_include(<bit>) && __cplusplus > 201703L
@@ -462,9 +462,7 @@ static always_inline uint __BitScanReverse(unsigned v) noexcept
     return std::bit_width(v) - 1;
 #else
     uint result = CountLeadingZeroBits(v);
-    // Now Invert the result: clz will count *down* from the msb to the lsb, so the msb index is 31
-    // and the lsb index is 0. The result for _bit_scan_reverse is expected to be the index when
-    // counting up: msb index is 0 (because it starts there), and the lsb index is 31.
+
     result ^= sizeof(unsigned) * 8 - 1;
     return result;
 #endif

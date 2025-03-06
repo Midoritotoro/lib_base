@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/system/Platform.h>
-#include <base/utility/Flags.h>
+#include <base/core/arch/Platform.h>
+#include <base/core/utility/Flags.h>
 
 
 __BASE_IO_NAMESPACE_BEGIN

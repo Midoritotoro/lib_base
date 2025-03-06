@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/system/Platform.h>
-#include <base/io/IOConfig.h>
+#include <base/core/arch/Platform.h>
+#include <base/core/io/IOConfig.h>
 
 #include <base/core/BaseNamespace.h>
 #include <vector>

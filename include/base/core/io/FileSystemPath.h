@@ -1,13 +1,15 @@
 #pragma once
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
-namespace base::io {
-	#if defined(OS_WIN)
-		#include <base/io/WindowsFileSystemPath.h>
-		using FileSystemPath = base::io::WindowsFileSystemPath;
-	#elif defined(OS_MAC) || defined(OS_LINUX)
-		#include <base/io/UnixFileSystemPath.h>
-		using FileSystemPath = base::io::UnixFileSystemPath;
-	#endif
-} // namespace base::io
+__BASE_IO_NAMESPACE_BEGIN
+
+#if defined(OS_WIN)
+	#include <base/core/io/WindowsFileSystemPath.h>
+	using FileSystemPath = base::io::WindowsFileSystemPath;
+#elif defined(OS_MAC) || defined(OS_LINUX)
+	#include <base/core/io/UnixFileSystemPath.h>
+	using FileSystemPath = base::io::UnixFileSystemPath;
+#endif
+
+__BASE_IO_NAMESPACE_END

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 namespace base::system {
 	class SystemInfo {
@@ -21,6 +21,6 @@ namespace base::system {
 #  endif
         };
 
-        static [[nodiscard]] int GetCpuCount();
+        static NODISCARD int GetCpuCount();
 	};
 } // namespace base::system

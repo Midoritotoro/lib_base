@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #ifdef CPP_MSVC_ONLY
 // MSVC определяет _YIELD_PROCESSOR() в <xatomic.h>
