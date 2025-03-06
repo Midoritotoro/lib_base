@@ -6,6 +6,13 @@
 #include <base/io/Directory.h>
 #include <string>
 
+#if defined(OS_WIN) 
+	#include <base/io/WindowsFileInfo.h>
+	using PlatformFileInfoImplementation = base::io::WindowsFileInfo;
+#elif defined(OS_MAC) || defined(OS_LINUX)
+	#include <base/io/UnixFileInfo.h>
+	using PlatformFileInfoImplementation = base::io::UnixFileInfo;
+#endif
 
 __BASE_IO_NAMESPACE_BEGIN
 
@@ -68,6 +75,8 @@ public:
     NODISCARD bool isBundle() const;
 
     NODISCARD int64 size() const;
+private:
+    PlatformFileInfoImplementation* _private = nullptr;
 };
 
 __BASE_IO_NAMESPACE_END

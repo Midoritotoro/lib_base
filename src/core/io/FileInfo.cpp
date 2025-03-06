@@ -1,24 +1,15 @@
 #include <base/io/FileInfo.h>
-#include <base/system/Platform.h>
-
-#if defined(OS_WIN) 
-	#include <base/io/WindowsFileInfo.h>
-	using PlatformFileInfoImplementation = base::io::WindowsFileInfo;
-#elif defined(OS_MAC) || defined(OS_LINUX)
-	#include <base/io/UnixFileInfo.h>
-	using PlatformFileInfoImplementation = base::io::UnixFileInfo;
-#endif
 
 __BASE_IO_NAMESPACE_BEGIN
 
 
-FileInfo::FileInfo(const std::string& path)
-{
-}
+FileInfo::FileInfo(const std::string& path):
+	_private(new PlatformFileInfoImplementation(path))
+{}
 
 std::string FileInfo::absoluteFilePath() const
 {
-	return "";
+	return _private->av;
 }
 
 std::string FileInfo::canonicalFilePath() const

@@ -240,21 +240,20 @@ namespace base {
         constexpr auto Hi = (std::numeric_limits<To>::max)();
 
         if constexpr (std::is_signed_v<From> == std::is_signed_v<To>) {
-            // same signedness, we can accept regular integer conversion rules
             return x < Lo ? Lo :
                 x > Hi ? Hi :
-                /*else*/  To(x);
+                To(x);
         }
         else {
-            if constexpr (std::is_signed_v<From>) { // ie. !is_signed_v<To>
+            if constexpr (std::is_signed_v<From>) {
                 if (x < From{ 0 })
                     return To{ 0 };
             }
 
-            // from here on, x >= 0
             using FromU = std::make_unsigned_t<From>;
             using ToU = std::make_unsigned_t<To>;
-            return FromU(x) > ToU(Hi) ? Hi : To(x); // assumes Hi >= 0
+
+            return FromU(x) > ToU(Hi) ? Hi : To(x);
         }
     }
 } // namespace base

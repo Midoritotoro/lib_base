@@ -295,6 +295,9 @@ set(PUBLIC_HEADERS
     include/base/core/StandardPaths.h
 
     include/base/core/UnixStandardPaths.h
+    include/base/core/AbstractFileInfo.h
+
+    include/base/core/AbstractStandardPaths.h
 )
 
 include(CMakePackageConfigHelpers)
