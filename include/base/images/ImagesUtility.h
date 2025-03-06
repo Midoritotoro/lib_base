@@ -3,21 +3,24 @@
 #include <base/images/Images.h>
 
 
-namespace base::images::Utility {
+__BASE_IMAGES_NAMESPACE_BEGIN
+
 #ifdef LIB_BASE_ENABLE_QT 
-    int GetChannelsCountByFormat(const QImage& image);
-    [[nodiscard]] int GetChannelsCountByBytes(const QImage& image);
+	NODISCARD int GetChannelsCountByFormat(const QImage& image);
+	NODISCARD int GetChannelsCountByBytes(const QImage& image);
 #endif
-	[[nodiscard]] bool IsJpeg(const char* ext);
-	[[nodiscard]] bool IsPng(const char* ext);
 
-	[[nodiscard]] bool IsBmp(const char* ext);
-	[[nodiscard]] bool IsFormatSupported(const char* format);
+NODISCARD bool IsJpeg(const char* ext);
+NODISCARD bool IsPng(const char* ext);
 
-	[[nodiscard]] bool IsFormatsEqual(
-		const char* firstFormat,
-		const char* secondFormat);
+NODISCARD bool IsBmp(const char* ext);
+NODISCARD bool IsFormatSupported(const char* format);
 
-	std::string GetExtensionFromPath(const std::string& path);
-	int32 CountBytesPerLine(ImageData* data);
-} // namespace base::images
+NODISCARD bool IsFormatsEqual(
+	const char* firstFormat,
+	const char* secondFormat);
+
+std::string GetExtensionFromPath(const std::string& path);
+int32 CountBytesPerLine(ImageData* data);
+
+__BASE_IMAGES_NAMESPACE_END

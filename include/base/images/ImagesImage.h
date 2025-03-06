@@ -3,104 +3,106 @@
 #include <base/images/Images.h>
 
 
-namespace base::images {
-	class IntegralImage;
-	class Image {
-	public:
-		Image();
-		Image(const char* path);
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-		Image(Image&& image) noexcept;
-		Image(const IntegralImage& image);
+class IntegralImage;
+class Image {
+public:
+	Image();
+	Image(const char* path);
 
-		Image(uchar* data);
+	Image(Image&& image) noexcept;
+	Image(const IntegralImage& image);
 
-		Image(const Size<int32>& size);
-		Image(int32 width, int32 height);
+	Image(uchar* data);
 
-		Image(
-			uchar* data,
-			int32 width, int32 height);
-		Image(
-			uchar* data,
-			const Size<int32>& size);
+	Image(const Size<int32>& size);
+	Image(int32 width, int32 height);
 
-		Image(ImageData* data);
+	Image(
+		uchar* data,
+		int32 width, int32 height);
+	Image(
+		uchar* data,
+		const Size<int32>& size);
+
+	Image(ImageData* data);
 
 #ifdef LIB_BASE_ENABLE_QT
-		Image(QImage&& image);
+	Image(QImage&& image);
 #endif
 
-		~Image();
+	~Image();
 
-		Image& operator=(const Image& other) = default;
+	Image& operator=(const Image& other) = default;
 
-		bool operator==(const Image& other);
-		bool operator!=(const Image& other);
+	bool operator==(const Image& other);
+	bool operator!=(const Image& other);
 
-		void loadFromData(const uchar* data, sizetype length);
+	void loadFromData(const uchar* data, sizetype length);
 
-		void loadFromFile(const char* path);
+	void loadFromFile(const char* path);
 
-		// Alias to loadFromFile
-		void load(const char* path);
+	// Alias to loadFromFile
+	void load(const char* path);
 
-		void resize(int32 width, int32 height);
-		void resize(Size<int32> size);
+	void resize(int32 width, int32 height);
+	void resize(Size<int32> size);
 
-		static [[nodiscard]] std::vector<const char*> supportedFormats() noexcept;
+	static NODISCARD std::vector<const char*> supportedFormats() noexcept;
 
-		//!
-		//! \brief
-		//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)
-		void setJpegQuality(ushort quality);
-		[[nodiscard]] ushort jpegQuality() const noexcept;
+	//!
+	//! \brief
+	//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)
+	void setJpegQuality(ushort quality);
+	NODISCARD ushort jpegQuality() const noexcept;
 
-		//!
-		//! \brief
-		//! \param format - jpg(jpeg), png, bmp
-		void convertToFormat(const char* format);
-		[[nodiscard]] const char* format() const noexcept;
+	//!
+	//! \brief
+	//! \param format - jpg(jpeg), png, bmp
+	void convertToFormat(const char* format);
+	NODISCARD const char* format() const noexcept;
 
-		void setFilter(Filter filter);
-		[[nodiscard]] Filter filter() const noexcept;
+	void setFilter(Filter filter);
+	NODISCARD Filter filter() const noexcept;
 
-		[[nodiscard]] bool hasFilter() const noexcept;
+	NODISCARD bool hasFilter() const noexcept;
 
-		void save(const char* path);
-		[[nodiscard]] Image convertToColorSpace(ColorSpace space) const;
+	void save(const char* path);
+	NODISCARD Image convertToColorSpace(ColorSpace space) const;
 
-		[[nodiscard]] Rect<int32> rect() const noexcept;
-		[[nodiscard]] Size<int32> size() const noexcept;
+	NODISCARD Rect<int32> rect() const noexcept;
+	NODISCARD Size<int32> size() const noexcept;
 
-		[[nodiscard]] int32 width() const noexcept;
-		[[nodiscard]] int32 height() const noexcept;
+	NODISCARD int32 width() const noexcept;
+	NODISCARD int32 height() const noexcept;
 
-		[[nodiscard]] int32 bytesPerLine() const noexcept;
+	NODISCARD int32 bytesPerLine() const noexcept;
 
-		[[nodiscard]] uchar* bytesData();
-		[[nodiscard]] ImageData* data_ptr();
+	NODISCARD uchar* bytesData();
+	NODISCARD ImageData* data_ptr();
 
-		[[nodiscard]] uchar* scanLine(int i);
-		[[nodiscard]] const uchar* scanLine(int i) const;
+	NODISCARD uchar* scanLine(int i);
+	NODISCARD const uchar* scanLine(int i) const;
 
-		[[nodiscard]] bool isNull() const noexcept;
-		[[nodiscard]] Rgb pixel(int x, int y) const;
+	NODISCARD bool isNull() const noexcept;
+	NODISCARD Rgb pixel(int x, int y) const;
 
-		[[nodiscard]] int32 depth() const noexcept;
-		[[nodiscard]] ushort channels() const noexcept;
+	NODISCARD int32 depth() const noexcept;
+	NODISCARD ushort channels() const noexcept;
 
-		[[nodiscard]] int32 sizeInBytes() const noexcept;
-		[[nodiscard]] sizetype dataLength() const noexcept;
+	NODISCARD int32 sizeInBytes() const noexcept;
+	NODISCARD sizetype dataLength() const noexcept;
 
-		[[nodiscard]] int32 bitsPerChannel() const noexcept;
-		[[nodiscard]] ColorSpace colorSpace() const noexcept;
+	NODISCARD int32 bitsPerChannel() const noexcept;
+	NODISCARD ColorSpace colorSpace() const noexcept;
 
-		[[nodiscard]] bool hasPath() const noexcept;
-		[[nodiscard]] const char* path() const noexcept;
-	private:
-		bool isEqual(const Image& other) const;
+	NODISCARD bool hasPath() const noexcept;
+	NODISCARD const char* path() const noexcept;
+private:
+	bool isEqual(const Image& other) const;
 
-		ImageData* _data = nullptr;
-	};
-} // namespace base::images
+	ImageData* _data = nullptr;
+};
+
+__BASE_IMAGES_NAMESPACE_END

@@ -4,7 +4,7 @@
     #include <base/qt/common/Types.h>
 #endif
 
-#include <base/system/ProcessorDetection.h>
+#include <base/core/arch/ProcessorDetection.h>
 #include <base/core/BaseNamespace.h>
 
 #include <functional>

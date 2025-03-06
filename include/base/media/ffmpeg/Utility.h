@@ -37,79 +37,81 @@ extern "C" {
 #define FFMPEG_HAVE_DURATION (LIBAVUTIL_VERSION_INT >= \
 	AV_VERSION_INT(58, 02, 100))
 
-namespace base::media::ffmpeg {
-	class AvErrorWrap {
-	public:
-		AvErrorWrap(int code = 0) : _code(code) {
-		}
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
+class AvErrorWrap {
+public:
+	AvErrorWrap(int code = 0) : _code(code) {
+	}
 
-		[[nodiscard]] bool failed() const {
-			return (_code < 0);
-		}
-		[[nodiscard]] explicit operator bool() const {
-			return failed();
-		}
+	[[nodiscard]] bool failed() const {
+		return (_code < 0);
+	}
+	[[nodiscard]] explicit operator bool() const {
+		return failed();
+	}
 
-		[[nodiscard]] int code() const {
-			return _code;
-		}
+	[[nodiscard]] int code() const {
+		return _code;
+	}
 
-		[[nodiscard]] std::string text() const {
-			char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
-			return std::string(av_make_error_string(
-				string,
-				sizeof(string),
-				_code));
-		}
+	[[nodiscard]] std::string text() const {
+		char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
+		return std::string(av_make_error_string(
+			string,
+			sizeof(string),
+			_code));
+	}
 
-	private:
-		int _code = 0;
-	};
+private:
+	int _code = 0;
+};
 
-	class Packet {
-	public:
-		Packet() = default;
-		Packet(Packet&& other) : _data(std::exchange(other._data, {})) {}
+class Packet {
+public:
+	Packet() = default;
+	Packet(Packet&& other) : _data(std::exchange(other._data, {})) {}
 
-		Packet& operator=(Packet&& other) noexcept {
-			if (this != &other) {
-				release();
-				_data = std::exchange(other._data, {});
-			}
-			return *this;
-		}
-
-		~Packet() {
+	Packet& operator=(Packet&& other) noexcept {
+		if (this != &other) {
 			release();
+			_data = std::exchange(other._data, {});
 		}
+		return *this;
+	}
 
-		[[nodiscard]] AVPacket& fields() {
-			if (!_data)
-				_data = av_packet_alloc();
-			return *_data;
-		}
+	~Packet() {
+		release();
+	}
 
-		[[nodiscard]] const AVPacket& fields() const {
-			if (!_data)
-				_data = av_packet_alloc();
-			return *_data;
-		}
+	[[nodiscard]] AVPacket& fields() {
+		if (!_data)
+			_data = av_packet_alloc();
+		return *_data;
+	}
 
-		[[nodiscard]] bool empty() const {
-			return !_data || !fields().data;
-		}
+	[[nodiscard]] const AVPacket& fields() const {
+		if (!_data)
+			_data = av_packet_alloc();
+		return *_data;
+	}
 
-		void release() {
-			av_packet_free(&_data);
-		}
+	[[nodiscard]] bool empty() const {
+		return !_data || !fields().data;
+	}
 
-	private:
-		mutable AVPacket* _data = nullptr;
-	};
-}
+	void release() {
+		av_packet_free(&_data);
+	}
 
-namespace base::media::ffmpeg {
-	constexpr auto kAvioBlockSize = 4096;
+private:
+	mutable AVPacket* _data = nullptr;
+};
+
+__BASE_MEDIA_FFMPEG_NAMESPACE_END
+
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
+
+constexpr auto kAvioBlockSize = 4096;
 
 struct IODeleter {
 	void operator()(AVIOContext* value);
@@ -268,4 +270,4 @@ struct EnqueuedFrame {
 	}
 };
 
-} // namespace base::media::ffmpeg::video
+__BASE_MEDIA_FFMPEG_NAMESPACE_END

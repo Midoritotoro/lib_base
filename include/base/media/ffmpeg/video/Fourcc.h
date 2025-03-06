@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/media/ffmpeg/video/FourccCodecs.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 #include <base/core/BaseNamespace.h>
 
@@ -16,32 +16,32 @@ enum es_format_category_e {
 	DATA_ES,
 };
 
-[[nodiscard]] int FourccCmp(
+NODISCARD int FourccCmp(
 	const void* key,
 	const void* ent);
 
-[[nodiscard]] fourcc_t FourccLookup(
+NODISCARD fourcc_t FourccLookup(
 	fourcc_t fourcc,
 	const char** dsc,
 	const struct fourcc_mapping* mapv, size_t mapc,
 	const struct fourcc_desc* dscv, size_t dscc);
 
-[[nodiscard]] fourcc_t FourccLookupVideo(
+NODISCARD fourcc_t FourccLookupVideo(
 	fourcc_t fourcc,
 	const char** dsc);
 
-[[nodiscard]] fourcc_t FourccLookupAudio(
+NODISCARD fourcc_t FourccLookupAudio(
 	fourcc_t fourcc,
 	const char** dsc);
-[[nodiscard]] fourcc_t FourccLookupSpu(
+NODISCARD fourcc_t FourccLookupSpu(
 	fourcc_t fourcc,
 	const char** dsc);
 
-[[nodiscard]] fourcc_t FourccLookupCat(
+NODISCARD fourcc_t FourccLookupCat(
 	fourcc_t fourcc,
 	const char** dsc,
 	int cat);
-[[nodiscard]] fourcc_t FourccGetCodec(int cat, fourcc_t fourcc);
+NODISCARD fourcc_t FourccGetCodec(int cat, fourcc_t fourcc);
 
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

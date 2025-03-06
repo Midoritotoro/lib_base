@@ -3,21 +3,23 @@
 #include <base/images/formats/AbstractFormatHandler.h>
 
 
-namespace base::images {
-	class PngHandler final : public AbstractFormatHandler {
-	public:
-		void write(
-			ImageData* data,
-			const char* path) override;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-		void read(ImageData* data) override;
+class PngHandler final : public AbstractFormatHandler {
+public:
+	void write(
+		ImageData* data,
+		const char* path) override;
 
-		void convertToFormat(
-			ImageData* data,
-			const char* format) override;
+	void read(ImageData* data) override;
 
-		[[nodiscard]] const char* format() const noexcept override;
-	private:
+	void convertToFormat(
+		ImageData* data,
+		const char* format) override;
 
-	};
-} // namespace base::images
+	NODISCARD const char* format() const noexcept override;
+private:
+
+};
+
+__BASE_IMAGES_NAMESPACE_END

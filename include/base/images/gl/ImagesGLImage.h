@@ -4,16 +4,18 @@
 #include <string>
 
 
-namespace base::images {
-	class IntegralImage;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	class GLImage final {
-	public:
+class IntegralImage;
+
+class GLImage final {
+public:
 
 #if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL) || defined(LIB_BASE_FOUND_QT_OPENGL)
-		void paint();
+	void paint();
 #endif
-	private:
-	//	GLImageData* _data = nullptr;
-	};
-} // namespace base::images
+private:
+//	GLImageData* _data = nullptr;
+};
+
+__BASE_IMAGES_NAMESPACE_END

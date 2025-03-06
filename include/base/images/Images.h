@@ -1,14 +1,14 @@
 ﻿#pragma once 
 
-#include <base/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 #include <base/images/ImagesRgb.h>
 #include <base/images/ImagesGeometry.h>
 
 #include <base/core/Types.h>
 
-#include <base/utility/OverflowCheck.h>
-#include <base/utility/Assert.h>
+#include <base/core/utility/OverflowCheck.h>
+#include <base/core/utility/Assert.h>
 
 // Отключает все внутренние исключения
 // #define LIB_BASE_IMAGES_NO_FAILURE
@@ -22,50 +22,52 @@
 #endif
 
 
-namespace base::images {
-	class GLImage;
-	class Image;
-	class AbstractFormatHandler;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	enum class Filter : uchar {
-		None = 0x00,
-		BradleyThreshold = 0x01
-	};
+class GLImage;
+class Image;
+class AbstractFormatHandler;
 
-	enum class ColorSpace : uchar {
-		Invalid = 0x00,
-		BGR = 0x01,
-		Mono = 0x02,
-		RGB = 0x04,
-		RGBA = 0x08,
-		/*YCbCr = 0x08,
-		YUV = 0x10,
-		CMY = 0x20,
-		CMYK = 0x40,
-		HSL = 0x80,
-		HSV = 0xFF*/
-	};
+enum class Filter : uchar {
+	None = 0x00,
+	BradleyThreshold = 0x01
+};
 
-	struct ImageData {
-		int32 width = 0;
-		int32 height = 0;
+enum class ColorSpace : uchar {
+	Invalid = 0x00,
+	BGR = 0x01,
+	Mono = 0x02,
+	RGB = 0x04,
+	RGBA = 0x08,
+	/*YCbCr = 0x08,
+	YUV = 0x10,
+	CMY = 0x20,
+	CMYK = 0x40,
+	HSL = 0x80,
+	HSV = 0xFF*/
+};
 
-		uchar* data = nullptr;
-		ushort channels = 0;
+struct ImageData {
+	int32 width = 0;
+	int32 height = 0;
 
-		int32 depth;
-		int32 bytesPerLine = 0;
+	uchar* data = nullptr;
+	ushort channels = 0;
 
-		int32 sizeInBytes = 0;
-		sizetype dataLength = 0;
+	int32 depth;
+	int32 bytesPerLine = 0;
 
-		int32 bitsPerChannel = 0;
-		ColorSpace colorSpace;
+	int32 sizeInBytes = 0;
+	sizetype dataLength = 0;
 
-		std::optional<const char*> path;
-		std::optional<ushort> jpegQuality;
+	int32 bitsPerChannel = 0;
+	ColorSpace colorSpace;
 
-		AbstractFormatHandler* handler = nullptr;
-		Filter filter = Filter::None;
-	};
-} // namespace base::images
+	std::optional<const char*> path;
+	std::optional<ushort> jpegQuality;
+
+	AbstractFormatHandler* handler = nullptr;
+	Filter filter = Filter::None;
+};
+
+__BASE_IMAGES_NAMESPACE_END

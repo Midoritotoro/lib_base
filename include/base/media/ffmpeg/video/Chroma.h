@@ -1,7 +1,8 @@
 #pragma once
 
 #include <base/media/ffmpeg/video/VideoFormat.h>
-#include <base/utility/Math.h>
+#include <base/core/utility/Math.h>
+
 #include <base/core/BaseNamespace.h>
 
 extern "C" {
@@ -28,15 +29,15 @@ public:
         unsigned pixel_bits;        /* Number of bits actually used bits per pixel for a plane */
     };
 
-    [[nodiscard]] static int GetChroma(
+    NODISCARD static int GetChroma(
         video_format_t* fmt,
         enum AVPixelFormat i_ffmpeg_chroma);
 
-    [[nodiscard]] static enum AVPixelFormat FindFfmpegChroma(
+    NODISCARD static enum AVPixelFormat FindFfmpegChroma(
         fourcc_t fourcc,
         bool* uv_flipped);
 
-    [[nodiscard]] static const ChromaDescription*
+    NODISCARD static const ChromaDescription*
         FourccGetChromaDescription(fourcc_t i_fourcc);
 };
 

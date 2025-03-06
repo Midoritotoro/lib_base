@@ -1,40 +1,43 @@
 #pragma once 
 
-
 #include <base/core/Types.h>
+#include <base/core/BaseNamespace.h>
 
 #if defined(LIB_BASE_ENABLE_QT)
+
 #include <QImage>
 
 
-namespace base::images {
-	inline constexpr auto kImageFormat = QImage::Format_ARGB32_Premultiplied;
-	inline constexpr auto kMaxScaleByAspectRatio = 16;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	inline constexpr auto kPixelBytesSize = 4;
-	inline constexpr auto kAlignImageBy = 64;
+inline constexpr auto kImageFormat = QImage::Format_ARGB32_Premultiplied;
+inline constexpr auto kMaxScaleByAspectRatio = 16;
 
-	void AlignedImageBufferCleanupHandler(void* data);
-	[[nodiscard]] bool IsAlignedImage(const QImage& image);
+inline constexpr auto kPixelBytesSize = 4;
+inline constexpr auto kAlignImageBy = 64;
 
-	void UnPremultiplyLine(
-		uchar* dst,
-		const uchar* src, 
-		int intsCount);
-	void PremultiplyLine(
-		uchar* dst,
-		const uchar* src,
-		int intsCount);
+void AlignedImageBufferCleanupHandler(void* data);
+NODISCARD bool IsAlignedImage(const QImage& image);
 
-	void UnPremultiply(
-		QImage& dst,
-		const QImage& src);
-	void PremultiplyInplace(QImage& image);
+void UnPremultiplyLine(
+	uchar* dst,
+	const uchar* src, 
+	int intsCount);
+void PremultiplyLine(
+	uchar* dst,
+	const uchar* src,
+	int intsCount);
 
-	[[nodiscard]] bool GoodStorageForFrame(
-		const QImage& storage,
-		QSize size);
-	[[nodiscard]] QImage CreateFrameStorage(QSize size);
-} // namespace base::images
+void UnPremultiply(
+	QImage& dst,
+	const QImage& src);
+void PremultiplyInplace(QImage& image);
+
+NODISCARD bool GoodStorageForFrame(
+	const QImage& storage,
+	QSize size);
+NODISCARD QImage CreateFrameStorage(QSize size);
+
+__BASE_IMAGES_NAMESPACE_END
 
 #endif

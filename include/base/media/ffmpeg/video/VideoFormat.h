@@ -279,9 +279,9 @@ struct frame_t
     uint32_t    i_flags;
     unsigned    i_nb_samples; /* Used for audio */
 
-    tick_t  i_pts;
-    tick_t  i_dts;
-    tick_t  i_length;
+    uint64  i_pts;
+    uint64  i_dts;
+    uint64  i_length;
 
 
     const frame_callbacks* cbs;
@@ -299,10 +299,10 @@ struct frame_t
 //
 //void VideoFormatClean(video_format_t* p_src);
 
-[[nodiscard]] bool VideoFormatIsSameChroma(
+NODISCARD bool VideoFormatIsSameChroma(
 	const video_format_t* f1,
 	const video_format_t* f2);
-[[nodiscard]] bool VideoFormatIsSimilar(
+NODISCARD bool VideoFormatIsSimilar(
 	const video_format_t* f1,
 	const video_format_t* f2);
 //

@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
-#include <base/system/Platform.h>
-#include <base/system/SystemInfo.h>
+#include <base/core/arch/Platform.h>
+#include <base/core/arch/SystemInfo.h>
 
 #include <base/core/BaseNamespace.h>
 

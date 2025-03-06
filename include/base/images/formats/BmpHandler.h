@@ -1,22 +1,24 @@
 #pragma once 
 
 #include <base/images/formats/AbstractFormatHandler.h>
-#include <base/io/File.h>
+#include <base/core/io/File.h>
 
 
-namespace base::images {
-	class BmpHandler final: public AbstractFormatHandler {
-	public:
-		void write(
-			ImageData* data,
-			const char* path) override;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-		void read(ImageData* data) override;
+class BmpHandler final: public AbstractFormatHandler {
+public:
+	void write(
+		ImageData* data,
+		const char* path) override;
 
-		void convertToFormat(
-			ImageData* data,
-			const char* format) override;
+	void read(ImageData* data) override;
 
-		[[nodiscard]] const char* format() const noexcept override;
-	};
-} // namespace base::images
+	void convertToFormat(
+		ImageData* data,
+		const char* format) override;
+
+	NODISCARD const char* format() const noexcept override;
+};
+
+__BASE_IMAGES_NAMESPACE_END

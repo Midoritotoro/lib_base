@@ -10,7 +10,7 @@ extern "C" {
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
-[[nodiscard]] int GetSwsColorspace(const video_format_t* format)
+NODISCARD int GetSwsColorspace(const video_format_t* format)
 {
     /* We currently map bt2020, bt709 and bt601, all other are unspecified */
     switch (format->space)

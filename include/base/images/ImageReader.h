@@ -2,16 +2,18 @@
 
 #include <base/images/Images.h>
 
-namespace base::images {
-	class Image;
-	class ImageReaderPrivate;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	class ImageReader {
-	public:
-		ImageReader(const char* path);
+class Image;
+class ImageReaderPrivate;
 
-		void read(Image* image);
-	private:
-		ImageReaderPrivate* _private = nullptr;
-	};
-}
+class ImageReader {
+public:
+	ImageReader(const char* path);
+
+	void read(Image* image);
+private:
+	ImageReaderPrivate* _private = nullptr;
+};
+
+__BASE_IMAGES_NAMESPACE_END

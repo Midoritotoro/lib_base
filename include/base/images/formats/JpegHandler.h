@@ -3,22 +3,24 @@
 #include <base/images/formats/AbstractFormatHandler.h>
 
 
-namespace base::images {
-	class PngHandler;
-	class BmpHandler;
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	class JpegHandler final : public AbstractFormatHandler {
-	public:
-		void write(
-			ImageData* data,
-			const char* path) override;
+class PngHandler;
+class BmpHandler;
 
-		void read(ImageData* data) override;
+class JpegHandler final : public AbstractFormatHandler {
+public:
+	void write(
+		ImageData* data,
+		const char* path) override;
 
-		void convertToFormat(
-			ImageData* data,
-			const char* format) override;
+	void read(ImageData* data) override;
 
-		virtual [[nodiscard]] const char* format() const noexcept;
-	};
-} // namespace base::images
+	void convertToFormat(
+		ImageData* data,
+		const char* format) override;
+
+	virtual NODISCARD const char* format() const noexcept;
+};
+
+__BASE_IMAGES_NAMESPACE_END
