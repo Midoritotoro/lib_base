@@ -2,29 +2,34 @@
 
 #include <QPushButton>
 
+#include <base/core/BaseNamespace.h>
+#include <base/core/arch/KeywordSupport.h>
+
 class EnhancedSlider;
 
-namespace base::qt::ui {
-	class VolumeController : public QPushButton
-	{
-		Q_OBJECT
-	public:
-		VolumeController(QWidget* parent = nullptr);
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		[[nodiscard]] bool isSpeakerOn() const noexcept;
+class VolumeController : public QPushButton
+{
+	Q_OBJECT
+public:
+	VolumeController(QWidget* parent = nullptr);
 
-		void setSpeakerEnabled(bool enabled);
-		void setVolume(int volume);
-	protected:
-		void paintEvent(QPaintEvent* event) override;
-	private:
-		void paintSpeakerOff(QPainter& painter);
-		void paintSpeakerOn(QPainter& painter);
+	NODISCARD bool isSpeakerOn() const noexcept;
 
-		EnhancedSlider* _volumeSlider = nullptr;
-		QImage _speakerOn, _speakerSmallOn, _speakerOff;
+	void setSpeakerEnabled(bool enabled);
+	void setVolume(int volume);
+protected:
+	void paintEvent(QPaintEvent* event) override;
+private:
+	void paintSpeakerOff(QPainter& painter);
+	void paintSpeakerOn(QPainter& painter);
 
-		bool _isSpeakerOn, _isVolumeValueSmall;
-		int _previousVolume;
-	};
-} // namespace base::qt::ui
+	EnhancedSlider* _volumeSlider = nullptr;
+	QImage _speakerOn, _speakerSmallOn, _speakerOff;
+
+	bool _isSpeakerOn, _isVolumeValueSmall;
+	int _previousVolume;
+};
+
+__BASE_QT_UI_NAMESPACE_END

@@ -1,15 +1,18 @@
 #pragma once 
 
 #include <QString>
+#include <base/core/BaseNamespace.h>
 
-[[nodiscard]] inline QByteArray operator""_q(
+__BASE_QT_NAMESPACE_BEGIN
+
+NODISCARD inline QByteArray operator""_q(
 	const char* data,
 	std::size_t size)
 {
 	return QByteArray::fromRawData(data, size);
 }
 
-[[nodiscard]] inline QString operator""_q(
+NODISCARD inline QString operator""_q(
 	const char16_t* data,
 	std::size_t size) 
 {
@@ -17,3 +20,6 @@
 		reinterpret_cast<const QChar*>(data),
 		size);
 }
+
+__BASE_QT_NAMESPACE_END
+

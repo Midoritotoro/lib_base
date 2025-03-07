@@ -1,40 +1,44 @@
 #pragma once 
 
 #include <base/core/Types.h>
+#include <base/core/arch/KeywordSupport.h>
+
 #include <QString>
 
 #include <QSize>
 #include <QPixmap>
 
 
-namespace base::media {
-	enum class Type : uchar {
-		Photo = 0x01,
-		Video = 0x02,
-		Audio = 0x04,
-		Unknown = 0x08
-	};
+__BASE_MEDIA_NAMESPACE_BEGIN
 
-	enum class Quality : uchar {
-		Low = 0x01,
-		Medium = 0x02,
-		High = 0x04,
-		Ultra = 0x08,
-	};
+enum class Type : uchar {
+	Photo = 0x01,
+	Video = 0x02,
+	Audio = 0x04,
+	Unknown = 0x08
+};
 
-	[[nodiscard]] int QualityToSwscaleFlags(Quality quality);
-	[[nodiscard]] Type detectMediaType(const QString& path);
+enum class Quality : uchar {
+	Low = 0x01,
+	Medium = 0x02,
+	High = 0x04,
+	Ultra = 0x08,
+};
+
+NODISCARD int QualityToSwscaleFlags(Quality quality);
+NODISCARD Type detectMediaType(const QString& path);
 	
-	[[nodiscard]] QPixmap FindPreviewInCache(const QString& key);
-	[[nodiscard]] QSize MediaResolution(
-		const QString& path,
-		Type type = Type::Unknown);
+NODISCARD QPixmap FindPreviewInCache(const QString& key);
+NODISCARD QSize MediaResolution(
+	const QString& path,
+	Type type = Type::Unknown);
 
-	[[nodiscard]] QPixmap MediaPreview(
-		const QString& path,
-		Quality quality = Quality::Medium);
-	[[nodiscard]] QPixmap GenerateThumbnail(
-		const QString& path,
-		const QSize& targetSize,
-		Quality quality = Quality::Medium);
-} // namespace Media
+NODISCARD QPixmap MediaPreview(
+	const QString& path,
+	Quality quality = Quality::Medium);
+NODISCARD QPixmap GenerateThumbnail(
+	const QString& path,
+	const QSize& targetSize,
+	Quality quality = Quality::Medium);
+
+__BASE_MEDIA_NAMESPACE_END

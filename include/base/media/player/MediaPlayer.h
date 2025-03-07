@@ -10,7 +10,8 @@
 #include <base/media/MediaCommon.h>
 #include <base/qt/ui/BaseWidget.h>
 
-#include <base/core/Thread.h>
+#include <base/core/thread/Thread.h>
+
 
 __BASE_QT_STYLE_NAMESPACE_BEGIN
 
@@ -31,12 +32,12 @@ public:
 
 	void setMedia(const QString& path);
 
-	[[nodiscard]] int getVideoControlsHeight() const noexcept;
+	NODISCARD int getVideoControlsHeight() const noexcept;
 
-	[[nodiscard]] QSize occupiedMediaSpace() const noexcept;
-	[[nodiscard]] QPoint mediaPosition() const noexcept;
+	NODISCARD QSize occupiedMediaSpace() const noexcept;
+	NODISCARD QPoint mediaPosition() const noexcept;
 
-	[[nodiscard]] Manager::State playbackState() const noexcept;
+	NODISCARD Manager::State playbackState() const noexcept;
 
 	void setFullScreen();
 	void setNormal();

@@ -7,6 +7,8 @@
 #include <base/core/arch/ProcessorDetection.h>
 #include <base/core/BaseNamespace.h>
 
+#include <base/core/arch/KeywordSupport.h>
+
 #include <functional>
 #include <gsl/gsl>
 

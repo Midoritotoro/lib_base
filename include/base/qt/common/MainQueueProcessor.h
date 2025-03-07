@@ -1,19 +1,22 @@
 #pragma once 
 
 #include <QObject>
+#include <base/core/BaseNamespace.h>
 
 
-namespace base::qt::common {
-	class MainQueueProcessor : public QObject {
-	public:
-		MainQueueProcessor();
-		~MainQueueProcessor();
+__BASE_QT_COMMON_NAMESPACE_BEGIN
 
-	protected:
-		bool event(QEvent* event) override;
+class MainQueueProcessor : public QObject {
+public:
+	MainQueueProcessor();
+	~MainQueueProcessor();
 
-	private:
-		void acquire();
-		void release();
-	};
-} // namespace base::qt::common
+protected:
+	bool event(QEvent* event) override;
+
+private:
+	void acquire();
+	void release();
+};
+
+__BASE_QT_COMMON_NAMESPACE_END

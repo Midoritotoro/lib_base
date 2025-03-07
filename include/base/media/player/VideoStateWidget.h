@@ -2,25 +2,31 @@
 
 #include <QPushButton>
 
-namespace base::qt::ui {
-    class VideoStateWidget : public QPushButton {
-        Q_OBJECT
-    public:
-        enum class State {
-            Play,
-            Pause,
-            Repeat
-        };
+#include <base/core/arch/KeywordSupport.h>
+#include <base/core/BaseNamespace.h>
 
-        VideoStateWidget(QWidget* parent = nullptr);
 
-        void setState(State state);
-        [[nodiscard]] State state() const noexcept;
-    protected:
-        void paintEvent(QPaintEvent* event) override;
-    private:
-        QImage _pause, _play, _repeat;
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-        State _state;
+class VideoStateWidget : public QPushButton {
+    Q_OBJECT
+public:
+    enum class State {
+        Play,
+        Pause,
+        Repeat
     };
-} // namespace base::qt::ui
+
+    VideoStateWidget(QWidget* parent = nullptr);
+
+    void setState(State state);
+    NODISCARD State state() const noexcept;
+protected:
+    void paintEvent(QPaintEvent* event) override;
+private:
+    QImage _pause, _play, _repeat;
+
+    State _state;
+};
+
+__BASE_QT_UI_NAMESPACE_END

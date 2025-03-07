@@ -1,101 +1,105 @@
 #pragma once
 
 #include <base/qt/common/ClickHandler.h>
+#include <base/core/BaseNamespace.h>
+
 #include <QString>
 
 
-namespace base::qt::common {
-	class TextClickHandler : public ClickHandler {
-	public:
-		TextClickHandler(bool fullDisplayed = true)
-			: _fullDisplayed(fullDisplayed) {
-		}
+__BASE_QT_COMMON_NAMESPACE_BEGIN
 
-		QString copyToClipboardText() const override {
-			return url();
-		}
+class TextClickHandler : public ClickHandler {
+public:
+	TextClickHandler(bool fullDisplayed = true)
+		: _fullDisplayed(fullDisplayed) {
+	}
 
-		QString tooltip() const override {
-			return _fullDisplayed ? QString() : readable();
-		}
+	QString copyToClipboardText() const override {
+		return url();
+	}
 
-		void setFullDisplayed(bool full) {
-			_fullDisplayed = full;
-		}
+	QString tooltip() const override {
+		return _fullDisplayed ? QString() : readable();
+	}
 
-	protected:
-		virtual QString readable() const;
+	void setFullDisplayed(bool full) {
+		_fullDisplayed = full;
+	}
 
-		bool _fullDisplayed;
+protected:
+	virtual QString readable() const;
 
-	};
+	bool _fullDisplayed;
 
-	class UrlClickHandler : public TextClickHandler {
-	public:
-		UrlClickHandler(const QString& url, bool fullDisplayed = true);
+};
 
-		[[nodiscard]] QString originalUrl() const {
-			return _originalUrl;
-		}
+class UrlClickHandler : public TextClickHandler {
+public:
+	UrlClickHandler(const QString& url, bool fullDisplayed = true);
+
+	NODISCARD QString originalUrl() const {
+		return _originalUrl;
+	}
 		 
 
-		QString copyToClipboardContextItemText() const override;
+	QString copyToClipboardContextItemText() const override;
 
-		QString dragText() const override {
-			return url();
+	QString dragText() const override {
+		return url();
+	}
+
+	TextEntity getTextEntity() const override;
+
+	static void Open(QString url, QVariant context = {});
+	void onClick(ClickContext context) const override {
+		const auto button = context.button;
+		if (button == Qt::LeftButton || button == Qt::MiddleButton) {
+			Open(url(), context.other);
 		}
+	}
 
-		TextEntity getTextEntity() const override;
+	NODISCARD static bool IsEmail(const QString& url) {
+		const auto at = url.indexOf('@'), slash = url.indexOf('/');
+		return ((at > 0) && (slash < 0 || slash > at));
+	}
+	NODISCARD static QString EncodeForOpening(const QString& originalUrl);
+	NODISCARD static bool IsSuspicious(const QString& url);
+	NODISCARD static QString ShowEncoded(const QString& url);
 
-		static void Open(QString url, QVariant context = {});
-		void onClick(ClickContext context) const override {
-			const auto button = context.button;
-			if (button == Qt::LeftButton || button == Qt::MiddleButton) {
-				Open(url(), context.other);
-			}
+protected:
+	QString url() const override {
+		return EncodeForOpening(_originalUrl);
+	}
+	QString readable() const override {
+		return _readable;
+	}
+
+private:
+	NODISCARD bool isEmail() const {
+		return IsEmail(_originalUrl);
+	}
+
+	QString _originalUrl, _readable;
+
+};
+
+class HiddenUrlClickHandler : public UrlClickHandler {
+public:
+	HiddenUrlClickHandler(QString url) : UrlClickHandler(url, false) {
+	}
+	QString copyToClipboardText() const override;
+	QString copyToClipboardContextItemText() const override;
+	QString dragText() const override;
+
+	static void Open(QString url, QVariant context = {});
+	void onClick(ClickContext context) const override {
+		const auto button = context.button;
+		if (button == Qt::LeftButton || button == Qt::MiddleButton) {
+			Open(url(), context.other);
 		}
+	}
 
-		[[nodiscard]] static bool IsEmail(const QString& url) {
-			const auto at = url.indexOf('@'), slash = url.indexOf('/');
-			return ((at > 0) && (slash < 0 || slash > at));
-		}
-		[[nodiscard]] static QString EncodeForOpening(const QString& originalUrl);
-		[[nodiscard]] static bool IsSuspicious(const QString& url);
-		[[nodiscard]] static QString ShowEncoded(const QString& url);
+	TextEntity getTextEntity() const override;
+};
 
-	protected:
-		QString url() const override {
-			return EncodeForOpening(_originalUrl);
-		}
-		QString readable() const override {
-			return _readable;
-		}
-
-	private:
-		[[nodiscard]] bool isEmail() const {
-			return IsEmail(_originalUrl);
-		}
-
-		QString _originalUrl, _readable;
-
-	};
-
-	class HiddenUrlClickHandler : public UrlClickHandler {
-	public:
-		HiddenUrlClickHandler(QString url) : UrlClickHandler(url, false) {
-		}
-		QString copyToClipboardText() const override;
-		QString copyToClipboardContextItemText() const override;
-		QString dragText() const override;
-
-		static void Open(QString url, QVariant context = {});
-		void onClick(ClickContext context) const override {
-			const auto button = context.button;
-			if (button == Qt::LeftButton || button == Qt::MiddleButton) {
-				Open(url(), context.other);
-			}
-		}
-
-		TextEntity getTextEntity() const override;
-	};
-} // namespace base::qt::common
+__BASE_QT_COMMON_NAMESPACE_END

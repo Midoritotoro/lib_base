@@ -120,6 +120,16 @@
 
 
 
+#ifndef __BASE_QT_NAMESPACE_BEGIN 
+#define __BASE_QT_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace qt {
+#endif // __BASE_QT_NAMESPACE_BEGIN
+
+#ifndef __BASE_QT_NAMESPACE_END
+#define __BASE_QT_NAMESPACE_END }}
+#endif // __BASE_QT_NAMESPACE_END
+
+
+
 #ifndef __BASE_QT_COMMON_NAMESPACE_BEGIN 
 #define __BASE_QT_COMMON_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace qt { INLINE_NAMESPACE namespace common {
 #endif // __BASE_QT_COMMON_NAMESPACE_BEGIN
@@ -147,6 +157,16 @@
 #ifndef __BASE_QT_STYLE_NAMESPACE_END
 #define __BASE_QT_STYLE_NAMESPACE_END }}}
 #endif // __BASE_QT_STYLE_NAMESPACE_END
+
+
+
+#ifndef __BASE_QT_TEXT_NAMESPACE_BEGIN 
+#define __BASE_QT_TEXT_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace qt { INLINE_NAMESPACE namespace text {
+#endif // __BASE_QT_TEXT_NAMESPACE_BEGIN
+
+#ifndef __BASE_QT_TEXT_NAMESPACE_END
+#define __BASE_QT_TEXT_NAMESPACE_END }}}
+#endif // __BASE_QT_TEXT_NAMESPACE_END
 
 
 

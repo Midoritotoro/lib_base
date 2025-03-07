@@ -9,54 +9,56 @@
 #include <base/media/player/SpeedButton.h>
 
 
-namespace base::qt::ui {
-	class VolumeController;
-	class FullScreenButton;
+___BASE_QT_UI_NAMESPACE_BEGIN
 
-	class MediaPlayerPanel : public QWidget {
-		Q_OBJECT
-	private:
-		VideoStateWidget* _videoStateWidget = nullptr;
-		EnhancedSlider* _playbackSlider = nullptr, * _volumeSlider = nullptr;
-		QLabel* _timeLabel = nullptr, * _remainingTimeLabel = nullptr;
+class VolumeController;
+class FullScreenButton;
 
-		FullScreenButton* _fullScreenButton = nullptr;
-		SpeedController* _speedButton = nullptr;
+class MediaPlayerPanel : public QWidget {
+	Q_OBJECT
+private:
+	VideoStateWidget* _videoStateWidget = nullptr;
+	EnhancedSlider* _playbackSlider = nullptr, * _volumeSlider = nullptr;
+	QLabel* _timeLabel = nullptr, * _remainingTimeLabel = nullptr;
 
-		QString _fullScreenToImagePath;
+	FullScreenButton* _fullScreenButton = nullptr;
+	SpeedController* _speedButton = nullptr;
 
-		VolumeController* _volumeToggle = nullptr;
-		int _previousVolumeSliderValue = 0, _mediaPlayerPanelWidth = 0;
-	public:
-		MediaPlayerPanel(QWidget* parent = nullptr);
+	QString _fullScreenToImagePath;
 
-		void updateTimeText(
-			int mediaPosition,
-			int mediaDuration);
-		void updateStateWidget(VideoStateWidget::State state);
+	VolumeController* _volumeToggle = nullptr;
+	int _previousVolumeSliderValue = 0, _mediaPlayerPanelWidth = 0;
+public:
+	MediaPlayerPanel(QWidget* parent = nullptr);
 
-		[[nodiscard]] EnhancedSlider* playbackSlider() const noexcept;
-		[[nodiscard]] SpeedController* speedController() const noexcept;
+	void updateTimeText(
+		int mediaPosition,
+		int mediaDuration);
+	void updateStateWidget(VideoStateWidget::State state);
 
-		void setVideoSliderMaximum(int value);
-		void setVolume(int value);
-	Q_SIGNALS:
-		void videoRepeatClicked();
-		void videoPlayClicked();
-		void videoPauseClicked();
+	NODISCARD EnhancedSlider* playbackSlider() const noexcept;
+	NODISCARD SpeedController* speedController() const noexcept;
 
-		void needsFullScreen();
-		void needsNormal();
-		void needsChangeVolume(int volume);
-	protected:
-		void paintEvent(QPaintEvent* event) override;
-		void resizeEvent(QResizeEvent* event) override;
-	private:
-		void updateSize();
-		void updateTimeSize();
+	void setVideoSliderMaximum(int value);
+	void setVolume(int value);
+Q_SIGNALS:
+	void videoRepeatClicked();
+	void videoPlayClicked();
+	void videoPauseClicked();
 
-		void updateControlsGeometry();
+	void needsFullScreen();
+	void needsNormal();
+	void needsChangeVolume(int volume);
+protected:
+	void paintEvent(QPaintEvent* event) override;
+	void resizeEvent(QResizeEvent* event) override;
+private:
+	void updateSize();
+	void updateTimeSize();
 
-		int contentHeight() const noexcept;
-	};
-} // namespace base::qt::ui
+	void updateControlsGeometry();
+
+	int contentHeight() const noexcept;
+};
+
+___BASE_QT_UI_NAMESPACE_END

@@ -10,162 +10,163 @@
 #include <QClipboard>
 
 
-namespace base::qt::text {
-	const auto kTagBold = u"**"_q;
-	const auto kTagItalic = u"__"_q;
+__BASE_QT_TEXT_NAMESPACE_BEGIN
 
-	const auto kTagUnderline = u"^^"_q;
-	const auto kTagStrikeOut = u"~~"_q;
+const auto kTagBold = u"**"_q;
+const auto kTagItalic = u"__"_q;
 
-	const auto kTagCode = u"`"_q;
-	const auto kTagPre = u"```"_q;
+const auto kTagUnderline = u"^^"_q;
+const auto kTagStrikeOut = u"~~"_q;
 
-	const auto kTagBlockquote = u">"_q;
-	const auto kTagBlockquoteCollapsed = u">^"_q;
-	constexpr auto kTagSeparator = '\\';
+const auto kTagCode = u"`"_q;
+const auto kTagPre = u"```"_q;
 
-	inline const auto kMentionTagStart = QLatin1String("mention://");
+const auto kTagBlockquote = u">"_q;
+const auto kTagBlockquoteCollapsed = u">^"_q;
+constexpr auto kTagSeparator = '\\';
+
+inline const auto kMentionTagStart = QLatin1String("mention://");
 
 
-	struct TextWithTags {
-		struct Tag {
-			int offset = 0;
-			int length = 0;
-			QString id;
+struct TextWithTags {
+	struct Tag {
+		int offset = 0;
+		int length = 0;
+		QString id;
 
-			friend inline auto operator<=>(const Tag&, const Tag&) = default;
-			friend inline bool operator==(const Tag&, const Tag&) = default;
-		};
-		using Tags = QVector<Tag>;
-
-		QString text;
-		Tags tags;
-
-		[[nodiscard]] bool empty() const {
-			return text.isEmpty();
-		}
-
-		friend inline auto operator<=>(
-			const TextWithTags&,
-			const TextWithTags&) = default;
-		friend inline bool operator==(
-			const TextWithTags&,
-			const TextWithTags&) = default;
+		friend inline auto operator<=>(const Tag&, const Tag&) = default;
+		friend inline bool operator==(const Tag&, const Tag&) = default;
 	};
+	using Tags = QVector<Tag>;
 
-	[[nodiscard]] Qt::LayoutDirection Direction(
-		const QString& str,
-		int from,
-		int to);
+	QString text;
+	Tags tags;
 
-	[[nodiscard]] bool IsParagraphSeparator(QChar ch);
-	[[nodiscard]] bool IsWordSeparator(QChar ch);
+	NODISCARD bool empty() const {
+		return text.isEmpty();
+	}
 
-	[[nodiscard]] bool IsSpace(QChar ch);
-	[[nodiscard]] bool IsNewline(QChar ch);
+	friend inline auto operator<=>(
+		const TextWithTags&,
+		const TextWithTags&) = default;
+	friend inline bool operator==(
+		const TextWithTags&,
+		const TextWithTags&) = default;
+};
 
-	[[nodiscard]] bool IsBad(QChar ch);
-	[[nodiscard]] bool IsTrimmed(QChar ch);
+NODISCARD Qt::LayoutDirection Direction(
+	const QString& str,
+	int from,
+	int to);
 
-	[[nodiscard]] bool IsDiacritic(QChar ch);
-	[[nodiscard]] bool IsMentionLink(QStringView link);
+NODISCARD bool IsParagraphSeparator(QChar ch);
+NODISCARD bool IsWordSeparator(QChar ch);
 
-	[[nodiscard]] bool IsSeparateTag(QStringView tag);
-	[[nodiscard]] bool IsValidMarkdownLink(QStringView link);
+NODISCARD bool IsSpace(QChar ch);
+NODISCARD bool IsNewline(QChar ch);
 
-	namespace details {
-		struct ContainerImplHelper {
-			enum CutResult { 
-				Null,
-				Empty,
-				Full,
-				Subset 
-			};
+NODISCARD bool IsBad(QChar ch);
+NODISCARD bool IsTrimmed(QChar ch);
 
-			[[nodiscard]] static constexpr CutResult mid(
-				qsizetype originalLength,
-				qsizetype* _position,
-				qsizetype* _length);
+NODISCARD bool IsDiacritic(QChar ch);
+NODISCARD bool IsMentionLink(QStringView link);
+
+NODISCARD bool IsSeparateTag(QStringView tag);
+NODISCARD bool IsValidMarkdownLink(QStringView link);
+
+namespace details {
+	struct ContainerImplHelper {
+		enum CutResult { 
+			Null,
+			Empty,
+			Full,
+			Subset 
 		};
 
-	struct ToUpperType {
-		inline QString operator()(const QString& text) const {
-			return text.toUpper();
-		}
-		inline QString operator()(QString&& text) const {
-			return std::move(text).toUpper();
-		}
+		NODISCARD static constexpr CutResult mid(
+			qsizetype originalLength,
+			qsizetype* _position,
+			qsizetype* _length);
 	};
 
-	} // namespace details
+struct ToUpperType {
+	inline QString operator()(const QString& text) const {
+		return text.toUpper();
+	}
+	inline QString operator()(QString&& text) const {
+		return std::move(text).toUpper();
+	}
+};
 
-	inline constexpr auto Upper = details::ToUpperType{};
+} // namespace details
 
-	[[nodiscard]] TextWithEntities WithSingleEntity(
-		const QString& text,
-		EntityType type,
-		const QString& data = QString());
+inline constexpr auto Upper = details::ToUpperType{};
 
-	[[nodiscard]] TextWithEntities Bold(const QString& text);
-	[[nodiscard]] TextWithEntities Semibold(const QString& text);
-	[[nodiscard]] TextWithEntities Italic(const QString& text);
-	[[nodiscard]] TextWithEntities Link(
-		const QString& text,
-		const QString& url = u"internal:action"_q);
+NODISCARD TextWithEntities WithSingleEntity(
+	const QString& text,
+	EntityType type,
+	const QString& data = QString());
 
-	[[nodiscard]] TextWithEntities Link(const QString& text, int index);
-	[[nodiscard]] TextWithEntities Link(
-		TextWithEntities text,
-		const QString& url = u"internal:action"_q);
-	[[nodiscard]] TextWithEntities Link(TextWithEntities text, int index);
+NODISCARD TextWithEntities Bold(const QString& text);
+NODISCARD TextWithEntities Semibold(const QString& text);
+NODISCARD TextWithEntities Italic(const QString& text);
+NODISCARD TextWithEntities Link(
+	const QString& text,
+	const QString& url = u"internal:action"_q);
 
-	[[nodiscard]] TextWithEntities Colorized(
-		const QString& text,
-		int index = 0);
-	[[nodiscard]] TextWithEntities Colorized(
-		TextWithEntities text,
-		int index = 0);
+NODISCARD TextWithEntities Link(const QString& text, int index);
+NODISCARD TextWithEntities Link(
+	TextWithEntities text,
+	const QString& url = u"internal:action"_q);
+NODISCARD TextWithEntities Link(TextWithEntities text, int index);
 
-	[[nodiscard]] TextWithEntities Wrapped(
-		TextWithEntities text,
-		EntityType type,
-		const QString& data = QString());
+NODISCARD TextWithEntities Colorized(
+	const QString& text,
+	int index = 0);
+NODISCARD TextWithEntities Colorized(
+	TextWithEntities text,
+	int index = 0);
 
-	[[nodiscard]] TextWithEntities RichLangValue(const QString& text);
-	[[nodiscard]] TextWithEntities WithEntities(const QString& text);
+NODISCARD TextWithEntities Wrapped(
+	TextWithEntities text,
+	EntityType type,
+	const QString& data = QString());
 
-	[[nodiscard]] QString TagsMimeType();
-	[[nodiscard]] QString TagsTextMimeType();
+NODISCARD TextWithEntities RichLangValue(const QString& text);
+NODISCARD TextWithEntities WithEntities(const QString& text);
 
-	[[nodiscard]] QString MentionEntityData(QStringView link);
-	[[nodiscard]] QList<QStringView> SplitTags(QStringView tag);
+NODISCARD QString TagsMimeType();
+NODISCARD QString TagsTextMimeType();
 
-	[[nodiscard]] QString JoinTag(const QList<QStringView>& list);
-	[[nodiscard]] QString TagWithRemoved(const QString& tag, const QString& removed);
-	[[nodiscard]] QString TagWithAdded(const QString& tag, const QString& added);
+NODISCARD QString MentionEntityData(QStringView link);
+NODISCARD QList<QStringView> SplitTags(QStringView tag);
 
-	[[nodiscard]] EntitiesInText ConvertTextTagsToEntities(const TextWithTags::Tags& tags);
+NODISCARD QString JoinTag(const QList<QStringView>& list);
+NODISCARD QString TagWithRemoved(const QString& tag, const QString& removed);
+NODISCARD QString TagWithAdded(const QString& tag, const QString& added);
 
-	[[nodiscard]] QString ExpandCustomLinks(const TextWithTags& text);
-	[[nodiscard]] QStringView StringViewMid(
-		QStringView view,
-		qsizetype pos,
-		qsizetype n = -1);
+NODISCARD EntitiesInText ConvertTextTagsToEntities(const TextWithTags::Tags& tags);
 
-	[[nodiscard]] QByteArray SerializeTags(const TextWithTags::Tags& tags);
+NODISCARD QString ExpandCustomLinks(const TextWithTags& text);
+NODISCARD QStringView StringViewMid(
+	QStringView view,
+	qsizetype pos,
+	qsizetype n = -1);
+
+NODISCARD QByteArray SerializeTags(const TextWithTags::Tags& tags);
 
 
-	[[nodiscard]] TextWithTags::Tags ConvertEntitiesToTextTags(
-		const EntitiesInText& entities);
+NODISCARD TextWithTags::Tags ConvertEntitiesToTextTags(
+	const EntitiesInText& entities);
 
-	std::unique_ptr<QMimeData> MimeDataFromText(
-		TextWithTags&& text,
-		const QString& expanded);
-	std::unique_ptr<QMimeData> MimeDataFromText(const TextForMimeData& text);
-	std::unique_ptr<QMimeData> MimeDataFromText(TextWithTags&& text);
+std::unique_ptr<QMimeData> MimeDataFromText(
+	TextWithTags&& text,
+	const QString& expanded);
+std::unique_ptr<QMimeData> MimeDataFromText(const TextForMimeData& text);
+std::unique_ptr<QMimeData> MimeDataFromText(TextWithTags&& text);
 
-	void SetClipboardText(
-		const TextForMimeData& text,
-		QClipboard::Mode mode = QClipboard::Clipboard);
+void SetClipboardText(
+	const TextForMimeData& text,
+	QClipboard::Mode mode = QClipboard::Clipboard);
 
-} // namespace base::qt::text
+__BASE_QT_TEXT_NAMESPACE_END

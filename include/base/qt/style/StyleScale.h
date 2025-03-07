@@ -3,31 +3,35 @@
 #include <xtr1common>
 #include <cmath>
 
+#include <base/core/Types.h>
 
-namespace base::qt::style {
-	inline constexpr auto kScaleMin = 50;
-	inline constexpr auto kScaleMax = 300;
-	inline constexpr auto kScaleDefault = 100;
 
-	[[nodiscard]] int DevicePixelRatio();
-	void SetDevicePixelRatio(int ratio);
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-	[[nodiscard]] int Scale();
-	void SetScale(int scale);
+inline constexpr auto kScaleMin = 50;
+inline constexpr auto kScaleMax = 300;
+inline constexpr auto kScaleDefault = 100;
 
-	template <typename T>
-	[[nodiscard]] inline T ConvertScale(T value, int scale) {
-		if (value < 0.)
-			return -ConvertScale(-value, scale);
+NODISCARD int DevicePixelRatio();
+void SetDevicePixelRatio(int ratio);
 
-		const auto result = T(std::round(
-			(double(value) * scale / 100.) - 0.01));
+NODISCARD int Scale();
+void SetScale(int scale);
 
-		return (!std::is_integral_v<T> || !value || result) ? result : 1;
-	}
+template <typename T>
+NODISCARD inline T ConvertScale(T value, int scale) {
+	if (value < 0.)
+		return -ConvertScale(-value, scale);
 
-	template <typename T>
-	[[nodiscard]] inline T ConvertScale(T value) {
-		return ConvertScale(value, Scale());
-	}
-} // namespace base::qt::style
+	const auto result = T(std::round(
+		(double(value) * scale / 100.) - 0.01));
+
+	return (!std::is_integral_v<T> || !value || result) ? result : 1;
+}
+
+template <typename T>
+NODISCARD inline T ConvertScale(T value) {
+	return ConvertScale(value, Scale());
+}
+
+__BASE_QT_STYLE_NAMESPACE_END

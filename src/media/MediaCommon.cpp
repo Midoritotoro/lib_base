@@ -6,7 +6,7 @@
 #include <QMimeDataBase>
 #include <QFile>
 
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 #include <base/qt/style/StyleScale.h>
 
 #include <QPixmapCache>
@@ -15,148 +15,150 @@
 WARNING_DISABLE_MSVC(26813)
 
 
-namespace base::media {
-	namespace {
-		inline constexpr auto kPreviewPrefix = "_p";
-	} // namespace 
+__BASE_MEDIA_NAMESPACE_BEGIN
 
-	[[nodiscard]] int QualityToSwscaleFlags(Quality quality) {
-		switch (quality) {
-		case Quality::Low:
-			return SWS_POINT;
+namespace {
+	inline constexpr auto kPreviewPrefix = "_p";
+} // namespace 
 
-		case Quality::Medium:
-			return SWS_BICUBIC;
+NODISCARD int QualityToSwscaleFlags(Quality quality) {
+	switch (quality) {
+	case Quality::Low:
+		return SWS_POINT;
 
-		case Quality::High:
-			return SWS_BILINEAR;
+	case Quality::Medium:
+		return SWS_BICUBIC;
 
-		case Quality::Ultra:
-			return SWS_SINC;
+	case Quality::High:
+		return SWS_BILINEAR;
 
-		default:
-			return SWS_BICUBIC;
-		}
+	case Quality::Ultra:
+		return SWS_SINC;
 
-		AssertUnreachable();
+	default:
+		return SWS_BICUBIC;
 	}
 
-	Type detectMediaType(const QString& filePath) {
-		const auto mimeType = QMimeDatabase().mimeTypeForFile(filePath).name();
+	AssertUnreachable();
+}
 
-		if (mimeType.contains("video"))
-			return Type::Video;
-		else if (mimeType.contains("image"))
-			return Type::Photo;
-		else if (mimeType.contains("audio"))
-			return Type::Audio;
+Type detectMediaType(const QString& filePath) {
+	const auto mimeType = QMimeDatabase().mimeTypeForFile(filePath).name();
 
-		return Type::Unknown;
+	if (mimeType.contains("video"))
+		return Type::Video;
+	else if (mimeType.contains("image"))
+		return Type::Photo;
+	else if (mimeType.contains("audio"))
+		return Type::Audio;
+
+	return Type::Unknown;
+}
+
+QPixmap FindPreviewInCache(const QString& key) {
+	auto temp = QPixmap();
+	QPixmapCache::find(key, &temp);
+
+	return temp;
+}
+
+QSize MediaResolution(
+	const QString& path,
+	Type type)
+{
+	const auto ms = Time::now();
+	const auto timer = gsl::finally([=] { qDebug() << "MediaResolution: " << Time::now() - ms << " ms"; });
+
+	const auto mediaType = type == Type::Unknown
+		? detectMediaType(path)
+		: type;
+
+	switch (mediaType) {
+		case Type::Photo:
+			return QPixmap(path).size();
+
+		case Type::Video:
+			return ffmpeg::ThumbnailGenerator::resolution(path);
 	}
 
-	QPixmap FindPreviewInCache(const QString& key) {
-		auto temp = QPixmap();
-		QPixmapCache::find(key, &temp);
+	return QSize();
+}
 
-		return temp;
-	}
+QPixmap MediaPreview(
+	const QString& path,
+	Quality quality)
+{
+	if (const auto _preview = FindPreviewInCache(kPreviewPrefix + path);
+		_preview.isNull() == false)
+		return _preview;
 
-	QSize MediaResolution(
-		const QString& path,
-		Type type)
-	{
-		const auto ms = Time::now();
-		const auto timer = gsl::finally([=] { qDebug() << "MediaResolution: " << Time::now() - ms << " ms"; });
+	auto preview = QPixmap();
 
-		const auto mediaType = type == Type::Unknown
-			? detectMediaType(path)
-			: type;
+	switch (detectMediaType(path)) {
+		case Type::Photo:
+			preview = QPixmap(path);
+			break;
 
-		switch (mediaType) {
-			case Type::Photo:
-				return QPixmap(path).size();
+		case Type::Video:
+			preview = images::PixmapFast(
+				std::move(
+					ffmpeg::ThumbnailGenerator::generate(path,
+						quality)));
+			break;
 
-			case Type::Video:
-				return ffmpeg::ThumbnailGenerator::resolution(path);
-		}
-
-		return QSize();
-	}
-
-	QPixmap MediaPreview(
-		const QString& path,
-		Quality quality)
-	{
-		if (const auto _preview = FindPreviewInCache(kPreviewPrefix + path);
-			_preview.isNull() == false)
-			return _preview;
-
-		auto preview = QPixmap();
-
-		switch (detectMediaType(path)) {
-			case Type::Photo:
-				preview = QPixmap(path);
-				break;
-
-			case Type::Video:
-				preview = images::PixmapFast(
-					std::move(
-						ffmpeg::ThumbnailGenerator::generate(path,
-							quality)));
-				break;
-
-			case Type::Audio:
-				return QPixmap();
-
-			case Type::Unknown:
-				return QPixmap();
-		}
-
-		if (QPixmapCache::cacheLimit() > 0)
-			QPixmapCache::insert(kPreviewPrefix + path, preview);
-
-		return preview;
-	}
-
-	QPixmap GenerateThumbnail(
-		const QString& path,
-		const QSize& targetSize,
-		Quality quality)
-	{
-		if (targetSize.isNull())
+		case Type::Audio:
 			return QPixmap();
 
-		auto thumbnail = QPixmap();
-
-		if (QPixmapCache::find(path, &thumbnail))
-			return thumbnail;
-	
-		auto thumbnailImage = MediaPreview(path).toImage();
-		if (thumbnailImage.isNull())
+		case Type::Unknown:
 			return QPixmap();
+	}
 
-		thumbnailImage = images::Prepare(
-			std::move(thumbnailImage),
-			qt::common::GetMinimumSizeWithAspectRatio(
-				thumbnailImage.size(),
-				targetSize.width()));
+	if (QPixmapCache::cacheLimit() > 0)
+		QPixmapCache::insert(kPreviewPrefix + path, preview);
 
-		if (qt::common::PartiallyEqual(thumbnailImage.size(),
-			targetSize, 1) == false)
-			return QPixmap();
+	return preview;
+}
 
-		thumbnailImage = images::Opaque(std::move(thumbnailImage));
-		thumbnail = images::PixmapFast(std::move(thumbnailImage));
+QPixmap GenerateThumbnail(
+	const QString& path,
+	const QSize& targetSize,
+	Quality quality)
+{
+	if (targetSize.isNull())
+		return QPixmap();
 
-		if (QPixmapCache::cacheLimit() > 0) {
-			auto mediaPreview = QPixmap();
+	auto thumbnail = QPixmap();
 
-			if (QPixmapCache::find(kPreviewPrefix + path, &mediaPreview))
-				QPixmapCache::remove(kPreviewPrefix + path);
-
-			QPixmapCache::insert(path, thumbnail);
-		}
-
+	if (QPixmapCache::find(path, &thumbnail))
 		return thumbnail;
+	
+	auto thumbnailImage = MediaPreview(path).toImage();
+	if (thumbnailImage.isNull())
+		return QPixmap();
+
+	thumbnailImage = images::Prepare(
+		std::move(thumbnailImage),
+		qt::common::GetMinimumSizeWithAspectRatio(
+			thumbnailImage.size(),
+			targetSize.width()));
+
+	if (qt::common::PartiallyEqual(thumbnailImage.size(),
+		targetSize, 1) == false)
+		return QPixmap();
+
+	thumbnailImage = images::Opaque(std::move(thumbnailImage));
+	thumbnail = images::PixmapFast(std::move(thumbnailImage));
+
+	if (QPixmapCache::cacheLimit() > 0) {
+		auto mediaPreview = QPixmap();
+
+		if (QPixmapCache::find(kPreviewPrefix + path, &mediaPreview))
+			QPixmapCache::remove(kPreviewPrefix + path);
+
+		QPixmapCache::insert(path, thumbnail);
 	}
-} // namespace Media
+
+	return thumbnail;
+}
+
+__BASE_MEDIA_NAMESPACE_END

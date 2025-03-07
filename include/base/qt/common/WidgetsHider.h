@@ -11,140 +11,144 @@
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 
+#include <base/core/BaseNamespace.h>
 
-namespace base::qt::ui {
-    class WidgetsHider : public QObject
+
+__BASE_QT_UI_NAMESPACE_BEGIN
+
+class WidgetsHider : public QObject
+{
+    Q_OBJECT
+public:
+    using DurationT = int;
+
+    explicit inline WidgetsHider(bool showAnimation, bool hideAnimation, const QWidgetList& qWidgetList = QWidgetList{})
+        : _inactivityDuration{ DurationT{4000} }
+        , _qWidgetList(qWidgetList)
+        , _showAnimation(showAnimation)
+        , _hideAnimation(hideAnimation)
+        , _animationDuration(DurationT{ 2000 })
     {
-        Q_OBJECT
-    public:
-        using DurationT = int;
-
-        explicit inline WidgetsHider(bool showAnimation, bool hideAnimation, const QWidgetList& qWidgetList = QWidgetList{})
-            : _inactivityDuration{ DurationT{4000} }
-            , _qWidgetList(qWidgetList)
-            , _showAnimation(showAnimation)
-            , _hideAnimation(hideAnimation)
-            , _animationDuration(DurationT{ 2000 })
-        {
-            QCoreApplication::instance()->installEventFilter(this);
-            _timer.setSingleShot(true);
-            _timer.callOnTimeout(
+        QCoreApplication::instance()->installEventFilter(this);
+        _timer.setSingleShot(true);
+        _timer.callOnTimeout(
+            [this]() {
+                ControlVisibility(false);
+            }
+        );
+        if (hideAnimation) {
+            _animationTimer.setSingleShot(true);
+            _animationTimer.callOnTimeout(
                 [this]() {
-                    ControlVisibility(false);
-                }
-            );
-            if (hideAnimation) {
-                _animationTimer.setSingleShot(true);
-                _animationTimer.callOnTimeout(
-                    [this]() {
-                        ControlAnimationVisibility(false);
-                    });
-            }
+                    ControlAnimationVisibility(false);
+                });
         }
+    }
 
-        inline void SetInactivityDuration(DurationT msecs) {
-            _inactivityDuration = msecs;
-        }
+    inline void SetInactivityDuration(DurationT msecs) {
+        _inactivityDuration = msecs;
+    }
 
-        inline void SetAnimationDuration(DurationT msecs) {
-            _animationDuration = msecs;
-        }
+    inline void SetAnimationDuration(DurationT msecs) {
+        _animationDuration = msecs;
+    }
 
-        inline void removeWidget(QWidget* widget) {
-            const auto index = _qWidgetList.indexOf(widget);
-            if (index != -1)
-                _qWidgetList.remove(index);
-        }
+    inline void removeWidget(QWidget* widget) {
+        const auto index = _qWidgetList.indexOf(widget);
+        if (index != -1)
+            _qWidgetList.remove(index);
+    }
 
-        inline void addWidget(QWidget* widget) {
-            const auto index = _qWidgetList.indexOf(widget);
-            if (index == -1)
-                _qWidgetList.append(widget);
-        }
+    inline void addWidget(QWidget* widget) {
+        const auto index = _qWidgetList.indexOf(widget);
+        if (index == -1)
+            _qWidgetList.append(widget);
+    }
 
-        inline void resetTimer() {
-            ControlVisibility(true);
+    inline void resetTimer() {
+        ControlVisibility(true);
 
+        if (_inactivityDuration != DurationT{})
+            _timer.start(_inactivityDuration);
+
+        if (_showAnimation || _hideAnimation) {
+            ControlAnimationVisibility(true);
             if (_inactivityDuration != DurationT{})
-                _timer.start(_inactivityDuration);
+                _animationTimer.start(_animationDuration);
+        }
+    }
 
-            if (_showAnimation || _hideAnimation) {
-                ControlAnimationVisibility(true);
-                if (_inactivityDuration != DurationT{})
-                    _animationTimer.start(_animationDuration);
-            }
+Q_SIGNALS:
+    void widgetsHidden();
+    void widgetsShowed();
+private:
+    std::atomic<DurationT> _inactivityDuration, _animationDuration;
+    QTimer _timer, _animationTimer;
+    QWidgetList _qWidgetList;
+    bool _showAnimation, _hideAnimation;
+
+    inline bool eventFilter(QObject* pWatched, QEvent* pEvent) override {
+        if (pEvent->type() == QEvent::MouseMove
+            || pEvent->type() == QEvent::MouseButtonPress) {
+
+            resetTimer();
         }
 
-    Q_SIGNALS:
-        void widgetsHidden();
-        void widgetsShowed();
-    private:
-        std::atomic<DurationT> _inactivityDuration, _animationDuration;
-        QTimer _timer, _animationTimer;
-        QWidgetList _qWidgetList;
-        bool _showAnimation, _hideAnimation;
+        return QObject::eventFilter(pWatched, pEvent);
+    }
 
-        inline bool eventFilter(QObject* pWatched, QEvent* pEvent) override {
-            if (pEvent->type() == QEvent::MouseMove
-                || pEvent->type() == QEvent::MouseButtonPress) {
+    void showAnimation(QWidget* widget) {
+        QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
+        widget->setGraphicsEffect(effect);
 
-                resetTimer();
-            }
+        QPropertyAnimation* fadeInAnimation = new QPropertyAnimation(effect, "opacity");
 
-            return QObject::eventFilter(pWatched, pEvent);
-        }
+        fadeInAnimation->setDuration(_animationDuration);
+        fadeInAnimation->setStartValue(0);
+        fadeInAnimation->setEndValue(0.9);
 
-        void showAnimation(QWidget* widget) {
-            QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
-            widget->setGraphicsEffect(effect);
+        fadeInAnimation->setEasingCurve(QEasingCurve::InBack);
+        fadeInAnimation->start(QPropertyAnimation::DeleteWhenStopped);
+    }
 
-            QPropertyAnimation* fadeInAnimation = new QPropertyAnimation(effect, "opacity");
+    void hideAnimation(QWidget* widget) {
+        QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
+        widget->setGraphicsEffect(effect);
 
-            fadeInAnimation->setDuration(_animationDuration);
-            fadeInAnimation->setStartValue(0);
-            fadeInAnimation->setEndValue(0.9);
+        QPropertyAnimation* fadeOutAnimation = new QPropertyAnimation(effect, "opacity");
 
-            fadeInAnimation->setEasingCurve(QEasingCurve::InBack);
-            fadeInAnimation->start(QPropertyAnimation::DeleteWhenStopped);
-        }
+        fadeOutAnimation->setDuration(_animationDuration);
+        fadeOutAnimation->setStartValue(0.9);
+        fadeOutAnimation->setEndValue(0);
 
-        void hideAnimation(QWidget* widget) {
-            QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
-            widget->setGraphicsEffect(effect);
+        fadeOutAnimation->setEasingCurve(QEasingCurve::InBack);
+        fadeOutAnimation->start(QPropertyAnimation::DeleteWhenStopped);
 
-            QPropertyAnimation* fadeOutAnimation = new QPropertyAnimation(effect, "opacity");
+    }
 
-            fadeOutAnimation->setDuration(_animationDuration);
-            fadeOutAnimation->setStartValue(0.9);
-            fadeOutAnimation->setEndValue(0);
+    inline void ControlAnimationVisibility(bool Show) {
+        foreach(QWidget * widget, _qWidgetList)
+            widget->setVisible(Show);
+        Show ? emit widgetsShowed() : emit widgetsHidden();
+    }
 
-            fadeOutAnimation->setEasingCurve(QEasingCurve::InBack);
-            fadeOutAnimation->start(QPropertyAnimation::DeleteWhenStopped);
-
-        }
-
-        inline void ControlAnimationVisibility(bool Show) {
-            foreach(QWidget * widget, _qWidgetList)
-                widget->setVisible(Show);
-            Show ? emit widgetsShowed() : emit widgetsHidden();
-        }
-
-        inline void ControlVisibility(bool Show) {
-            foreach(QWidget * widget, _qWidgetList) {
-                if (Show)
-                    if (_hideAnimation)
-                        hideAnimation(widget);
-                    else
-                        widget->setVisible(Show);
+    inline void ControlVisibility(bool Show) {
+        foreach(QWidget * widget, _qWidgetList) {
+            if (Show)
+                if (_hideAnimation)
+                    hideAnimation(widget);
                 else
-                    if (_showAnimation)
-                        showAnimation(widget);
-                    else
-                        widget->setVisible(Show);
-            }
-
-            if (!_hideAnimation && !_showAnimation)
-                Show ? emit widgetsShowed() : emit widgetsHidden();
+                    widget->setVisible(Show);
+            else
+                if (_showAnimation)
+                    showAnimation(widget);
+                else
+                    widget->setVisible(Show);
         }
-    };
-} // namespace base::qt::ui
+
+        if (!_hideAnimation && !_showAnimation)
+            Show ? emit widgetsShowed() : emit widgetsHidden();
+    }
+};
+
+__BASE_QT_UI_NAMESPACE_END

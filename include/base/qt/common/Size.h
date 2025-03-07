@@ -8,62 +8,63 @@
 #include <QApplication>
 #include <QScreen>
 
-#include <gsl/gsl>
-#include "Windows.h"
+#include <base/core/Types.h>
 
 
-namespace base::qt::common {
-	[[nodiscard]] inline QSize TextSize(
-		const QString& text,
-		const QFontMetrics& metrics)
-	{
-		return metrics.size(0, text);
-	}
+__BASE_QT_COMMON_NAMESPACE_BEGIN
 
-	[[nodiscard]] inline QSize TextSize(
-		const QString& text,
-		const QFont& font)
-	{
-		return text.isEmpty() 
-			? QSize()
-			: TextSize(text, QFontMetrics(font));
-	}
+NODISCARD inline QSize TextSize(
+	const QString& text,
+	const QFontMetrics& metrics)
+{
+	return metrics.size(0, text);
+}
 
-	[[nodiscard]] inline QSize GetMinimumSizeWithAspectRatio(
-		const QSize& imageSize,
-		int targetWidth)
-	{
-		Expects(imageSize.width() > 0);
+NODISCARD inline QSize TextSize(
+	const QString& text,
+	const QFont& font)
+{
+	return text.isEmpty() 
+		? QSize()
+		: TextSize(text, QFontMetrics(font));
+}
 
-		return QSize(targetWidth, targetWidth *
-			imageSize.height() / imageSize.width());
-	}
+NODISCARD inline QSize GetMinimumSizeWithAspectRatio(
+	const QSize& imageSize,
+	int targetWidth)
+{
+	Expects(imageSize.width() > 0);
 
-	[[nodiscard]] inline bool PartiallyEqual(
-		const QSize& first,
-		const QSize& second,
-		int maxDifference)
-	{
-		const auto widthDifference = qMax(
-			first.width(), second.width())
-			- qMin(first.width(), second.width());
+	return QSize(targetWidth, targetWidth *
+		imageSize.height() / imageSize.width());
+}
 
-		const auto heightDifference = qMax(
-			first.height(), second.height())
-			- qMin(first.height(), second.height());
+NODISCARD inline bool PartiallyEqual(
+	const QSize& first,
+	const QSize& second,
+	int maxDifference)
+{
+	const auto widthDifference = qMax(
+		first.width(), second.width())
+		- qMin(first.width(), second.width());
 
-		return (widthDifference + heightDifference) <= maxDifference;
-	}
+	const auto heightDifference = qMax(
+		first.height(), second.height())
+		- qMin(first.height(), second.height());
 
-	[[nodiscard]] inline int FontHeight(const QFont& font) {
-		return QFontMetrics(font).height();
-	}
+	return (widthDifference + heightDifference) <= maxDifference;
+}
 
-	[[nodiscard]] inline QSize ScreenResolution() {
-		return QApplication::primaryScreen()->availableGeometry().size();
-	}
+NODISCARD inline int FontHeight(const QFont& font) {
+	return QFontMetrics(font).height();
+}
 
-	[[nodiscard]] inline int ScreenRefreshRate() {
-		return QApplication::primaryScreen()->refreshRate();
-	}
-} // namespace core::utility
+NODISCARD inline QSize ScreenResolution() {
+	return QApplication::primaryScreen()->availableGeometry().size();
+}
+
+NODISCARD inline int ScreenRefreshRate() {
+	return QApplication::primaryScreen()->refreshRate();
+}
+
+__BASE_QT_COMMON_NAMESPACE_END

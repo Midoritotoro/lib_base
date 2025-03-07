@@ -17,39 +17,41 @@
 #include <base/qt/style/StyleFont.h>
 
 
-namespace base::qt::style {
-	enum class CornersRoundMode {
-		All,
-		Top,
-		Bottom
-	};
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-	[[nodiscard]] bool RightToLeft();
-	void SetRightToLeft(bool _rightToLeft);
+enum class CornersRoundMode {
+	All,
+	Top,
+	Bottom
+};
 
-	[[nodiscard]] Qt::LayoutDirection LayoutDirection();
+NODISCARD bool RightToLeft();
+void SetRightToLeft(bool _rightToLeft);
 
-	void RoundCorners(
-		QPainter& painter,
-		const QSize& widgetSize,
-		int borderRadius,
-		CornersRoundMode roundType);
-	void RoundCorners(
-		QPainter& painter,
-		const QSize& widgetSize,
-		int borderRadius);
+NODISCARD Qt::LayoutDirection LayoutDirection();
 
-	void RoundTopCorners(
-		QPainter& painter,
-		const QSize& widgetSize,
-		int borderRadius);
-	void RoundBottomCorners(
-		QPainter& painter,
-		const QSize& widgetSize,
-		int borderRadius);
+void RoundCorners(
+	QPainter& painter,
+	const QSize& widgetSize,
+	int borderRadius,
+	CornersRoundMode roundType);
+void RoundCorners(
+	QPainter& painter,
+	const QSize& widgetSize,
+	int borderRadius);
 
-	void Start();
-	void Stop();
+void RoundTopCorners(
+	QPainter& painter,
+	const QSize& widgetSize,
+	int borderRadius);
+void RoundBottomCorners(
+	QPainter& painter,
+	const QSize& widgetSize,
+	int borderRadius);
 
-	void RegisterStyles();
-} // namespace base::qt::style
+void Start();
+void Stop();
+
+void RegisterStyles();
+
+__BASE_QT_STYLE_NAMESPACE_END
