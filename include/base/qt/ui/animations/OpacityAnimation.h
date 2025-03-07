@@ -3,29 +3,31 @@
 #include <base/qt/ui/animations/AnimationManager.h>
 
 
-namespace base::qt::ui::animations {
-	class OpacityAnimation : public AnimationBase {
-	public: 
-		OpacityAnimation();
-		OpacityAnimation& operator=(const OpacityAnimation& other) = default;
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_BEGIN
 
-		void start(
-			float from,
-			float to,
-			Time::time_t duration = kDefaultAnimationDuration,
-			Time::time_t updateTimeout = MinimumAnimationUpdateTimeout());
+class OpacityAnimation : public AnimationBase {
+public: 
+	OpacityAnimation();
+	OpacityAnimation& operator=(const OpacityAnimation& other) = default;
 
-		void stop();
+	void start(
+		float from,
+		float to,
+		Time::time_t duration = kDefaultAnimationDuration,
+		Time::time_t updateTimeout = MinimumAnimationUpdateTimeout());
 
-		void restart();
-		void restartAfterFinished();
+	void stop();
 
-		[[nodiscard]] bool animating() const noexcept;
-	private: 
-		float _opacityFrom = 1.f;
-		float _opacityTo = 1.f;
+	void restart();
+	void restartAfterFinished();
 
-		AnimationManager* _animationManager = nullptr;
-		friend class AnimationManager;
-	};
-} // namespace base::qt::ui::animations
+	[[nodiscard]] bool animating() const noexcept;
+private: 
+	float _opacityFrom = 1.f;
+	float _opacityTo = 1.f;
+
+	AnimationManager* _animationManager = nullptr;
+	friend class AnimationManager;
+};
+
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_END

@@ -1,17 +1,19 @@
 #pragma once 
 
-#include <base/io/WindowsSmartHandle.h>
+#include <base/core/io/WindowsSmartHandle.h>
 
-namespace base {
-	class Thread;
+__BASE_THREAD_NAMESPACE_BEGIN
 
-	class ThreadsData {
-	public:
+class Thread;
+
+class ThreadsData {
+public:
 #ifdef OS_WIN
-		static [[nodiscard]] Thread* threadById(sizetype id);
-		static [[nodiscard]] Thread* threadByHandle(const io::WindowsSmartHandle& handle);
+	static [[nodiscard]] Thread* threadById(sizetype id);
+	static [[nodiscard]] Thread* threadByHandle(const io::WindowsSmartHandle& handle);
 #endif
 
-		static [[nodiscard]] bool insert(Thread* thread);
-	};
-} // namespace base::threads
+	static [[nodiscard]] bool insert(Thread* thread);
+};
+
+__BASE_THREAD_NAMESPACE_END

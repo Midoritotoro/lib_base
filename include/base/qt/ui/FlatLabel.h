@@ -12,187 +12,189 @@
 #include <base/qt/text/String.h>
 
 
-namespace base::qt::ui {
-	namespace {
-		inline constexpr auto phraseContextCopySelected = "Копировать текст";
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		inline constexpr text::TextParseOptions _labelOptions = {
-			text::TextParseMultiline | text::TextParseLinks | text::TextParseHashtags
-			| text::TextParseMentions | text::TextParseBotCommands | text::TextParseMarkdown,
-			0,
-			0,
-			Qt::LayoutDirectionAuto
-		};
-	} // namespace
+namespace {
+	inline constexpr auto phraseContextCopySelected = "Копировать текст";
 
-
-	class FlatLabel :
-		public CoreWidget<style::FlatLabel>,
-		public common::ClickHandlerHost
-	{
-	public:
-		struct ContextMenuRequest {
-			PopupMenu* menu;
-			text::TextSelection selection;
-			common::ClickHandlerPtr link;
-			bool uponSelection = false;
-			bool fullSelection = false;
-		};
-
-		FlatLabel(QWidget* parent = nullptr);
-
-		[[nodiscard]] QSize sizeHint() const override;
-		[[nodiscard]] QSize minimumSizeHint() const override;
-
-		[[nodiscard]] int textMaxWidth() const noexcept;
-		[[nodiscard]] bool hasLinks() const noexcept;
-
-		[[nodiscard]] int fullHeight() const noexcept;
-
-		void setText(const QString& text);
-		[[nodiscard]] const text::String& text() const noexcept;
-
-		void setSelectable(bool selectable);
-		[[nodiscard]] bool selectable() const noexcept;
-
-		void setDoubleClickSelectsParagraph(bool doubleClickSelectsParagraph);
-		[[nodiscard]] bool doubleClickSelectsParagraph() const noexcept;
-
-		void setBreakEverywhere(bool breakEverywhere);
-		[[nodiscard]] bool breakEverywhere() const noexcept;
-
-		void setOpacity(float opacity);
-		[[nodiscard]] float opacity() const noexcept;
-
-		void setTextAlignment(Qt::Alignment alignment);
-		[[nodiscard]] Qt::Alignment alignment() const noexcept;
-
-		void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
-		[[nodiscard]] style::CornersRoundMode cornerRoundMode() const noexcept;
-
-		void setStyle(
-			const SelfStyle* style,
-			bool repaint = true) override;
-
-		void setContextMenuHook(Fn<void(ContextMenuRequest)> hook);
-
-		void setLink(
-			quint16 index,
-			const common::ClickHandlerPtr& lnk);
-		void setLinksTrusted();
-
-		using ClickHandlerFilter = Fn<bool(const common::ClickHandlerPtr&, Qt::MouseButton)>;
-		void setClickHandlerFilter(ClickHandlerFilter&& filter);
-
-		void overrideLinkClickHandler(Fn<void()> handler);
-		void overrideLinkClickHandler(Fn<void(QString url)> handler);
-
-		void init();
-
-		QMargins getMargins() const override;
-
-		[[nodiscard]] int verticalMargins() const override;
-		[[nodiscard]] int horizontalMargins() const override;
-	protected:
-		void paintEvent(QPaintEvent* event) override;
-		void mouseMoveEvent(QMouseEvent* event) override;
-		void mousePressEvent(QMouseEvent* event) override;
-
-		void mouseReleaseEvent(QMouseEvent* event) override;
-		void mouseDoubleClickEvent(QMouseEvent* event) override;
-
-		void focusOutEvent(QFocusEvent* event) override;
-		void focusInEvent(QFocusEvent* event) override;
-
-		void keyPressEvent(QKeyEvent* event) override;
-		void contextMenuEvent(QContextMenuEvent* event) override;
-
-		bool event(QEvent* e) override;
-		void touchEvent(QTouchEvent* e);
-	private:
-		int resizeGetHeight(int newWidth);
-
-		enum class ContextMenuReason {
-			FromEvent,
-			FromTouch,
-		};
-
-		void showContextMenu(
-			QContextMenuEvent* event,
-			ContextMenuReason reason);
-		void fillContextMenu(ContextMenuRequest request);
-
-		[[nodiscard]] int countTextWidth() const noexcept;
-		[[nodiscard]] int countTextHeight(int textWidth);
-
-		void refreshSize();
-		void refreshCursor(bool uponSymbol);
-
-		void textUpdated();
-
-		void copyContextText();
-		void copySelectedText();
-
-		text::TextState dragActionUpdate();
-
-		text::TextState dragActionStart(const QPoint& p, Qt::MouseButton button);
-		text::TextState dragActionFinish(const QPoint& p, Qt::MouseButton button);
-
-		void updateHover(const text::TextState& state);
-		text::TextState getTextState(const QPoint& m) const;
-
-		void touchSelect();
-		void executeDrag();
-
-		enum DragAction {
-			NoDrag = 0x00,
-			PrepareDrag = 0x01,
-			Dragging = 0x02,
-			Selecting = 0x04,
-		};
-
-		style::align _alignment = style::alignLeft;
-		text::String _text;
-
-		float _opacity = 1.;
-		bool _selectable;
-
-		int _allowedWidth = 0;
-		int _textWidth = 0;
-
-		int _fullTextHeight = 0;
-
-		style::cursor _cursor = style::cursorDefault;
-
-		text::TextSelection _selection, _savedSelection;
-		text::TextSelection::Type _selectionType = text::TextSelection::Type::Letters;
-
-		PopupMenu* _contextMenu = nullptr;
-
-		Fn<void(ContextMenuRequest)> _contextMenuHook = nullptr;
-		style::CornersRoundMode _cornersRoundMode;
-
-		ClickHandlerFilter _clickHandlerFilter;
-		QString _contextCopyText;
-
-		DragAction _dragAction = NoDrag;
-
-		QPoint _dragStartPosition;
-		uint16 _dragSymbol = 0;
-
-		bool _dragWasInactive = false;
-		bool _doubleClickSelectsParagraph = true;
-
-		bool _touchSelect = false;
-		bool _breakEverywhere = false;
-
-		QPoint _lastMousePos;
-		QPoint _touchStart, _touchPrevPos, _touchPos;
-
-		QPoint _trippleClickPoint;
-		common::Timer _trippleClickTimer;
-
-		bool _touchInProgress = false;
-		common::Timer _touchSelectTimer;
+	inline constexpr text::TextParseOptions _labelOptions = {
+		text::TextParseMultiline | text::TextParseLinks | text::TextParseHashtags
+		| text::TextParseMentions | text::TextParseBotCommands | text::TextParseMarkdown,
+		0,
+		0,
+		Qt::LayoutDirectionAuto
 	};
-} // namespace base::qt::ui
+} // namespace
+
+
+class FlatLabel :
+	public CoreWidget<style::FlatLabel>,
+	public common::ClickHandlerHost
+{
+public:
+	struct ContextMenuRequest {
+		PopupMenu* menu;
+		text::TextSelection selection;
+		common::ClickHandlerPtr link;
+		bool uponSelection = false;
+		bool fullSelection = false;
+	};
+
+	FlatLabel(QWidget* parent = nullptr);
+
+	NODISCARD QSize sizeHint() const override;
+	NODISCARD QSize minimumSizeHint() const override;
+
+	NODISCARD int textMaxWidth() const noexcept;
+	NODISCARD bool hasLinks() const noexcept;
+
+	NODISCARD int fullHeight() const noexcept;
+
+	void setText(const QString& text);
+	NODISCARD const text::String& text() const noexcept;
+
+	void setSelectable(bool selectable);
+	NODISCARD bool selectable() const noexcept;
+
+	void setDoubleClickSelectsParagraph(bool doubleClickSelectsParagraph);
+	NODISCARD bool doubleClickSelectsParagraph() const noexcept;
+
+	void setBreakEverywhere(bool breakEverywhere);
+	NODISCARD bool breakEverywhere() const noexcept;
+
+	void setOpacity(float opacity);
+	NODISCARD float opacity() const noexcept;
+
+	void setTextAlignment(Qt::Alignment alignment);
+	NODISCARD Qt::Alignment alignment() const noexcept;
+
+	void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
+	NODISCARD style::CornersRoundMode cornerRoundMode() const noexcept;
+
+	void setStyle(
+		const SelfStyle* style,
+		bool repaint = true) override;
+
+	void setContextMenuHook(Fn<void(ContextMenuRequest)> hook);
+
+	void setLink(
+		quint16 index,
+		const common::ClickHandlerPtr& lnk);
+	void setLinksTrusted();
+
+	using ClickHandlerFilter = Fn<bool(const common::ClickHandlerPtr&, Qt::MouseButton)>;
+	void setClickHandlerFilter(ClickHandlerFilter&& filter);
+
+	void overrideLinkClickHandler(Fn<void()> handler);
+	void overrideLinkClickHandler(Fn<void(QString url)> handler);
+
+	void init();
+
+	QMargins getMargins() const override;
+
+	NODISCARD int verticalMargins() const override;
+	NODISCARD int horizontalMargins() const override;
+protected:
+	void paintEvent(QPaintEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+
+	void mouseReleaseEvent(QMouseEvent* event) override;
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
+
+	void focusOutEvent(QFocusEvent* event) override;
+	void focusInEvent(QFocusEvent* event) override;
+
+	void keyPressEvent(QKeyEvent* event) override;
+	void contextMenuEvent(QContextMenuEvent* event) override;
+
+	bool event(QEvent* e) override;
+	void touchEvent(QTouchEvent* e);
+private:
+	int resizeGetHeight(int newWidth);
+
+	enum class ContextMenuReason {
+		FromEvent,
+		FromTouch,
+	};
+
+	void showContextMenu(
+		QContextMenuEvent* event,
+		ContextMenuReason reason);
+	void fillContextMenu(ContextMenuRequest request);
+
+	NODISCARD int countTextWidth() const noexcept;
+	NODISCARD int countTextHeight(int textWidth);
+
+	void refreshSize();
+	void refreshCursor(bool uponSymbol);
+
+	void textUpdated();
+
+	void copyContextText();
+	void copySelectedText();
+
+	text::TextState dragActionUpdate();
+
+	text::TextState dragActionStart(const QPoint& p, Qt::MouseButton button);
+	text::TextState dragActionFinish(const QPoint& p, Qt::MouseButton button);
+
+	void updateHover(const text::TextState& state);
+	text::TextState getTextState(const QPoint& m) const;
+
+	void touchSelect();
+	void executeDrag();
+
+	enum DragAction {
+		NoDrag = 0x00,
+		PrepareDrag = 0x01,
+		Dragging = 0x02,
+		Selecting = 0x04,
+	};
+
+	style::align _alignment = style::alignLeft;
+	text::String _text;
+
+	float _opacity = 1.;
+	bool _selectable;
+
+	int _allowedWidth = 0;
+	int _textWidth = 0;
+
+	int _fullTextHeight = 0;
+
+	style::cursor _cursor = style::cursorDefault;
+
+	text::TextSelection _selection, _savedSelection;
+	text::TextSelection::Type _selectionType = text::TextSelection::Type::Letters;
+
+	PopupMenu* _contextMenu = nullptr;
+
+	Fn<void(ContextMenuRequest)> _contextMenuHook = nullptr;
+	style::CornersRoundMode _cornersRoundMode;
+
+	ClickHandlerFilter _clickHandlerFilter;
+	QString _contextCopyText;
+
+	DragAction _dragAction = NoDrag;
+
+	QPoint _dragStartPosition;
+	uint16 _dragSymbol = 0;
+
+	bool _dragWasInactive = false;
+	bool _doubleClickSelectsParagraph = true;
+
+	bool _touchSelect = false;
+	bool _breakEverywhere = false;
+
+	QPoint _lastMousePos;
+	QPoint _touchStart, _touchPrevPos, _touchPos;
+
+	QPoint _trippleClickPoint;
+	common::Timer _trippleClickTimer;
+
+	bool _touchInProgress = false;
+	common::Timer _touchSelectTimer;
+};
+
+__BASE_QT_UI_NAMESPACE_END

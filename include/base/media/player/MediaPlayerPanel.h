@@ -9,7 +9,7 @@
 #include <base/media/player/SpeedButton.h>
 
 
-___BASE_QT_UI_NAMESPACE_BEGIN
+__BASE_QT_UI_NAMESPACE_BEGIN
 
 class VolumeController;
 class FullScreenButton;
@@ -61,4 +61,4 @@ private:
 	int contentHeight() const noexcept;
 };
 
-___BASE_QT_UI_NAMESPACE_END
+__BASE_QT_UI_NAMESPACE_END

@@ -1,141 +1,143 @@
-#include <base/system/Time.h>
+#include <base/core/system/Time.h>
 
 #include <atomic>
 #include <limits>
 
 WARNING_DISABLE_MSVC(4996)
 
-namespace base::Time {
-	namespace details {
-		namespace {
+__BASE_TIME_NAMESPACE_BEGIN
 
-			time_t LastAdjustmentTime;
-			std::time_t LastAdjustmentUnixtime;
+namespace details {
+	namespace {
 
-			using seconds_type = std::uint32_t;
-			std::atomic<seconds_type> AdjustSeconds;
+		time_t LastAdjustmentTime;
+		std::time_t LastAdjustmentUnixtime;
 
-			innerTime_t StartValue;
-			innerProfile_t StartProfileValue;
+		using seconds_type = std::uint32_t;
+		std::atomic<seconds_type> AdjustSeconds;
 
-			double Frequency;
-			double ProfileFrequency;
+		innerTime_t StartValue;
+		innerProfile_t StartProfileValue;
 
-			struct StaticInit {
-				StaticInit();
-			};
+		double Frequency;
+		double ProfileFrequency;
 
-			StaticInit::StaticInit() {
-				StartValue = currentValue();
-				StartProfileValue = currentProfileValue();
+		struct StaticInit {
+			StaticInit();
+		};
 
-				init();
-				LastAdjustmentUnixtime = ::time(nullptr);
-			}
+		StaticInit::StaticInit() {
+			StartValue = currentValue();
+			StartProfileValue = currentProfileValue();
 
-			StaticInit StaticInitObject;
+			init();
+			LastAdjustmentUnixtime = ::time(nullptr);
+		}
 
-			bool adjustTime() {
-				const auto now = Time::now();
-				const auto delta = (now - LastAdjustmentTime);
+		StaticInit StaticInitObject;
 
-				const auto unixtime = ::time(nullptr);
+		bool adjustTime() {
+			const auto now = Time::now();
+			const auto delta = (now - LastAdjustmentTime);
 
-				const auto real = (unixtime - LastAdjustmentUnixtime);
-				const auto seconds = (time_t(real) * 1000 - delta) / 1000;
+			const auto unixtime = ::time(nullptr);
 
-				LastAdjustmentUnixtime = unixtime;
-				LastAdjustmentTime = now;
+			const auto real = (unixtime - LastAdjustmentUnixtime);
+			const auto seconds = (time_t(real) * 1000 - delta) / 1000;
 
-				if (seconds <= 0)
-					return false;
-				
-				auto current = seconds_type(0);
+			LastAdjustmentUnixtime = unixtime;
+			LastAdjustmentTime = now;
 
-				static constexpr auto maxTime = std::numeric_limits<seconds_type>::max();
-
-				while (true) {
-					if (time_t(current) + seconds > time_t(maxTime))
-						return false;
-
-					const auto next = current + seconds_type(seconds);
-					if (AdjustSeconds.compare_exchange_weak(current, next))
-						return true;
-				}
-
+			if (seconds <= 0)
 				return false;
+				
+			auto current = seconds_type(0);
+
+			static constexpr auto maxTime = std::numeric_limits<seconds_type>::max();
+
+			while (true) {
+				if (time_t(current) + seconds > time_t(maxTime))
+					return false;
+
+				const auto next = current + seconds_type(seconds);
+				if (AdjustSeconds.compare_exchange_weak(current, next))
+					return true;
 			}
 
-			time_t computeAdjustment() {
-				return time_t (AdjustSeconds.load()) * 1000;
-			}
-
-			profileTime_t computeProfileAdjustment() {
-				return computeAdjustment() * 1000;
-			}
-		} // namespace 
-
-		void init() {
-			LARGE_INTEGER value;
-			QueryPerformanceFrequency(&value);
-			Frequency = 1000. / double(value.QuadPart);
-			ProfileFrequency = 1000000. / double(value.QuadPart);
+			return false;
 		}
 
-		innerTime_t currentValue() {
-			LARGE_INTEGER value;
-			QueryPerformanceCounter(&value);
-			return value.QuadPart;
+		time_t computeAdjustment() {
+			return time_t (AdjustSeconds.load()) * 1000;
 		}
 
-		time_t convert(innerTime_t value) {
-			return time_t(value * Frequency);
+		profileTime_t computeProfileAdjustment() {
+			return computeAdjustment() * 1000;
 		}
+	} // namespace 
 
-		innerProfile_t currentProfileValue() {
-			LARGE_INTEGER value;
-			QueryPerformanceCounter(&value);
-			return value.QuadPart;
-		}
-
-		profileTime_t convertProfile(innerProfile_t value) {
-			return profileTime_t(value * ProfileFrequency);
-		}
-
-	} // namespace details
-
-	time_t now() {
-		const auto elapsed = details::currentValue() - details::StartValue;
-		return details::convert(elapsed) + details::computeAdjustment();
+	void init() {
+		LARGE_INTEGER value;
+		QueryPerformanceFrequency(&value);
+		Frequency = 1000. / double(value.QuadPart);
+		ProfileFrequency = 1000000. / double(value.QuadPart);
 	}
 
-	profileTime_t profile() {
-		const auto elapsed = details::currentProfileValue()
-			- details::StartProfileValue;
-		return details::convertProfile(elapsed)
-			+ details::computeProfileAdjustment();
+	innerTime_t currentValue() {
+		LARGE_INTEGER value;
+		QueryPerformanceCounter(&value);
+		return value.QuadPart;
 	}
 
-	bool adjustTime() {
-		return details::adjustTime();
+	time_t convert(innerTime_t value) {
+		return time_t(value * Frequency);
 	}
 
-	std::string formattedUnixTime(int64_t unixTime) {
-		char buffer[20];
-		strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&unixTime));
-
-		return buffer;
+	innerProfile_t currentProfileValue() {
+		LARGE_INTEGER value;
+		QueryPerformanceCounter(&value);
+		return value.QuadPart;
 	}
 
-	int minutes(int64_t unixTime) {
-		return localtime(&unixTime)->tm_min;
+	profileTime_t convertProfile(innerProfile_t value) {
+		return profileTime_t(value * ProfileFrequency);
 	}
 
-	int hours(int64_t unixTime) {
-		return localtime(&unixTime)->tm_hour;
-	}
+} // namespace details
 
-	int seconds(int64_t unixTime) {
-		return localtime(&unixTime)->tm_sec;
-	}
-} // namespace base::Time
+time_t now() {
+	const auto elapsed = details::currentValue() - details::StartValue;
+	return details::convert(elapsed) + details::computeAdjustment();
+}
+
+profileTime_t profile() {
+	const auto elapsed = details::currentProfileValue()
+		- details::StartProfileValue;
+	return details::convertProfile(elapsed)
+		+ details::computeProfileAdjustment();
+}
+
+bool adjustTime() {
+	return details::adjustTime();
+}
+
+std::string formattedUnixTime(int64_t unixTime) {
+	char buffer[20];
+	strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&unixTime));
+
+	return buffer;
+}
+
+int minutes(int64_t unixTime) {
+	return localtime(&unixTime)->tm_min;
+}
+
+int hours(int64_t unixTime) {
+	return localtime(&unixTime)->tm_hour;
+}
+
+int seconds(int64_t unixTime) {
+	return localtime(&unixTime)->tm_sec;
+}
+
+__BASE_TIME_NAMESPACE_END

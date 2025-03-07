@@ -1,53 +1,55 @@
 #include <base/qt/ui/animations/HorizontalGrowthAnimation.h>
-#include <base/concurrent/Concurrent.h>
+#include <base/core/async/Concurrent.h>
 
 
-namespace base::qt::ui::animations {
-	HorizontalGrowthAnimation::HorizontalGrowthAnimation() {
-		_animationType = AnimationType::HorizontalGrowth;
-	}
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_BEGIN
 
-	void HorizontalGrowthAnimation::start(
-		QRect rect,
-		Direction direction,
-		Time::time_t duration,
-		Time::time_t updateTimeout)
-	{
-		Expects(duration != 0);
-		Expects(rect.isEmpty() == false);
+HorizontalGrowthAnimation::HorizontalGrowthAnimation() {
+	_animationType = AnimationType::HorizontalGrowth;
+}
 
-		_rect = rect;
-		_targetWidth = _rect.width();
+void HorizontalGrowthAnimation::start(
+	QRect rect,
+	Direction direction,
+	Time::time_t duration,
+	Time::time_t updateTimeout)
+{
+	Expects(duration != 0);
+	Expects(rect.isEmpty() == false);
 
-		_duration = duration;
-		_direction = direction;
+	_rect = rect;
+	_targetWidth = _rect.width();
 
-		_updateTimeout = std::clamp(updateTimeout,
-			MinimumAnimationUpdateTimeout(),
-			MaximumAnimationUpdateTimeout());
+	_duration = duration;
+	_direction = direction;
 
-		_animationManager->start(this);
-	}
+	_updateTimeout = std::clamp(updateTimeout,
+		MinimumAnimationUpdateTimeout(),
+		MaximumAnimationUpdateTimeout());
 
-	void HorizontalGrowthAnimation::stop() {
-		_animationManager->stop();
-	}
+	_animationManager->start(this);
+}
 
-	void HorizontalGrowthAnimation::restart() {
-	}
+void HorizontalGrowthAnimation::stop() {
+	_animationManager->stop();
+}
 
-	void HorizontalGrowthAnimation::restartAfterFinished() {
-		concurrent::invokeAsync([=] {
-			while (animating());
-			restart();
-		});
-	}
+void HorizontalGrowthAnimation::restart() {
+}
 
-	bool HorizontalGrowthAnimation::animating() const noexcept {
-		return _animationManager->animating();
-	}
+void HorizontalGrowthAnimation::restartAfterFinished() {
+	concurrent::invokeAsync([=] {
+		while (animating());
+		restart();
+	});
+}
 
-	QRectF HorizontalGrowthAnimation::rect() const noexcept {
-		return _rect;
-	}
-} // namespace base::qt::ui::animations
+bool HorizontalGrowthAnimation::animating() const noexcept {
+	return _animationManager->animating();
+}
+
+QRectF HorizontalGrowthAnimation::rect() const noexcept {
+	return _rect;
+}
+
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_END

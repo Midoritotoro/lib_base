@@ -3,21 +3,23 @@
 #include <base/qt/ui/ScrollArea.h>
 
 
-namespace base::qt::ui {
-	class ContinuousScroll final : public ScrollArea {
-		Q_OBJECT
-	public:
-		ContinuousScroll(QWidget* parent = nullptr);
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		void setTrackingContent(bool value);
-	Q_SIGNALS:
-		void addContentRequest();
-	protected:
-		void wheelEvent(QWheelEvent* event) override;
-	private:
-		void reconnect();
+class ContinuousScroll final : public ScrollArea {
+	Q_OBJECT
+public:
+	ContinuousScroll(QWidget* parent = nullptr);
 
-		bool _tracking = false;
-		QMetaObject::Connection _connection;
-	};
-} // namespace base::qt::ui
+	void setTrackingContent(bool value);
+Q_SIGNALS:
+	void addContentRequest();
+protected:
+	void wheelEvent(QWheelEvent* event) override;
+private:
+	void reconnect();
+
+	bool _tracking = false;
+	QMetaObject::Connection _connection;
+};
+
+__BASE_QT_UI_NAMESPACE_END

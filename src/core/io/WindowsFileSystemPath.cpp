@@ -1,4 +1,4 @@
-#include <base/io/WindowsFileSystemPath.h>
+#include <base/core/io/WindowsFileSystemPath.h>
 
 #include <algorithm>
 #include <tuple>
@@ -50,63 +50,64 @@ static std::tuple<std::string, std::string, std::string> splitroot(const std::st
         return std::make_tuple(empty, empty, p);
 }
 
+__BASE_IO_NAMESPACE_BEGIN
 
-namespace base::io {
-    bool WindowsFileSystemPath::isAbsolutePath(const std::string& path) {
-        std::string altsep = "/";
+bool WindowsFileSystemPath::isAbsolutePath(const std::string& path) {
+    std::string altsep = "/";
 
-        std::string colon_sep = ":\\";
-        std::string double_sep = "\\\\";
+    std::string colon_sep = ":\\";
+    std::string double_sep = "\\\\";
 
-        std::string s = path.substr(0, std::min((size_t)3, path.length()));
+    std::string s = path.substr(0, std::min((size_t)3, path.length()));
 
-        std::transform(s.begin(), s.end(), s.begin(), [&altsep](unsigned char c) {
-            return (altsep.find(c) != std::string::npos) ? sep[0] : c;
-        });
+    std::transform(s.begin(), s.end(), s.begin(), [&altsep](unsigned char c) {
+        return (altsep.find(c) != std::string::npos) ? sep[0] : c;
+    });
 
-        return (s.length() >= colon_sep.length() && s.substr(1, colon_sep.length() - 1) ==
-            colon_sep.substr(1) && s[0] >= 'A' && s[0] <= 'Z') ||
-            (s.length() >= double_sep.length() &&
-            s.substr(0, double_sep.length()) == double_sep);
-    }
+    return (s.length() >= colon_sep.length() && s.substr(1, colon_sep.length() - 1) ==
+        colon_sep.substr(1) && s[0] >= 'A' && s[0] <= 'Z') ||
+        (s.length() >= double_sep.length() &&
+        s.substr(0, double_sep.length()) == double_sep);
+}
 
-    bool WindowsFileSystemPath::isRelativePath(const std::string& path) {
-        return !isAbsolutePath(path);
-    }
+bool WindowsFileSystemPath::isRelativePath(const std::string& path) {
+    return !isAbsolutePath(path);
+}
 
-    std::pair<std::string, std::string>
-        WindowsFileSystemPath::split(const std::string& p)
-    {
-        std::string seps = "\\/";
-        std::tuple<std::string, std::string, std::string> root_parts = splitroot(p);
+std::pair<std::string, std::string>
+    WindowsFileSystemPath::split(const std::string& p)
+{
+    std::string seps = "\\/";
+    std::tuple<std::string, std::string, std::string> root_parts = splitroot(p);
 
-        std::string d = std::get<0>(root_parts);
-        std::string r = std::get<1>(root_parts);
+    std::string d = std::get<0>(root_parts);
+    std::string r = std::get<1>(root_parts);
 
-        std::string path = std::get<2>(root_parts);
+    std::string path = std::get<2>(root_parts);
 
-        size_t i = path.length();
+    size_t i = path.length();
 
-        while (i > 0 && seps.find(path[i - 1]) == std::string::npos)
-            --i;
+    while (i > 0 && seps.find(path[i - 1]) == std::string::npos)
+        --i;
 
-        std::string head = path.substr(0, i);
-        std::string tail = path.substr(i);
+    std::string head = path.substr(0, i);
+    std::string tail = path.substr(i);
 
-        size_t endpos = head.find_last_not_of(seps);
+    size_t endpos = head.find_last_not_of(seps);
 
-        std::string::npos != endpos
-            ? head = head.substr(0, endpos + 1)
-            : head = "";
+    std::string::npos != endpos
+        ? head = head.substr(0, endpos + 1)
+        : head = "";
 
-        return std::make_pair(d + r + head, tail);
-    }
+    return std::make_pair(d + r + head, tail);
+}
 
-    std::string WindowsFileSystemPath::directoryName(const std::string& path) {
-        return split(path).first;
-    }
+std::string WindowsFileSystemPath::directoryName(const std::string& path) {
+    return split(path).first;
+}
 
-    std::string WindowsFileSystemPath::baseName(const std::string& path) {
-        return split(path).second;
-    }
-} // namespace base::io
+std::string WindowsFileSystemPath::baseName(const std::string& path) {
+    return split(path).second;
+}
+
+__BASE_IO_NAMESPACE_END

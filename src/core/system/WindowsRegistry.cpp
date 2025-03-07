@@ -1,6 +1,6 @@
 #include <base/core/WindowsRegistry.h> 
 
 
-namespace base {
+__BASE_SYSTEM_NAMESPACE_BEGIN
 
-} // namespace base
+__BASE_SYSTEM_NAMESPACE_END

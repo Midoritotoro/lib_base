@@ -6,61 +6,63 @@
 #include <QVBoxLayout>
 
 
-namespace base::qt::ui {
-	class InnerWidget : public QWidget {
-		Q_OBJECT
-	public:
-		InnerWidget(QWidget* parent = nullptr);
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		void setOpacity(double opacity);
-		[[nodiscard]] double opacity() const noexcept;
+class InnerWidget : public QWidget {
+	Q_OBJECT
+public:
+	InnerWidget(QWidget* parent = nullptr);
 
-		void setBackgroundColor(const QColor& color);
-		[[nodiscard]] QColor backgroundColor() const noexcept;
-	protected:
-		void paintEvent(QPaintEvent* event) override;
-	private:
-		double _opacity = 1.;
-		QColor _backgroundColor = Qt::black;
-	};
+	void setOpacity(double opacity);
+	[[nodiscard]] double opacity() const noexcept;
 
-	class ScrollArea : public QScrollArea {
-	public:
-		ScrollArea(QWidget* parent = nullptr);
+	void setBackgroundColor(const QColor& color);
+	[[nodiscard]] QColor backgroundColor() const noexcept;
+protected:
+	void paintEvent(QPaintEvent* event) override;
+private:
+	double _opacity = 1.;
+	QColor _backgroundColor = Qt::black;
+};
 
-		int scrollHeight() const;
-		int scrollTopMax() const;
-		int scrollTop() const;
+class ScrollArea : public QScrollArea {
+public:
+	ScrollArea(QWidget* parent = nullptr);
 
-		bool focusNextPrevChild(bool next) override;
-		void setOpacity(double opacity);
+	int scrollHeight() const;
+	int scrollTopMax() const;
+	int scrollTop() const;
 
-		[[nodiscard]] int computeScrollTo(int toTop, int toBottom);
+	bool focusNextPrevChild(bool next) override;
+	void setOpacity(double opacity);
 
-		void scrollToY(int toTop, int toBottom = -1);
-		void scrolled();
+	[[nodiscard]] int computeScrollTo(int toTop, int toBottom);
 
-		void scrollToWidget(not_null<QWidget*> widget);
+	void scrollToY(int toTop, int toBottom = -1);
+	void scrolled();
 
-		void disableScroll(bool dis);
+	void scrollToWidget(not_null<QWidget*> widget);
 
-		void addItem(QWidget* item, Qt::Alignment align = Qt::AlignLeft | Qt::AlignTop);
+	void disableScroll(bool dis);
 
-		void setWidget(InnerWidget* widget);
-		[[nodiscard]] InnerWidget* widget() const noexcept;
-	protected:
-		bool viewportEvent(QEvent* event) override;
-		void keyPressEvent(QKeyEvent* event) override;
+	void addItem(QWidget* item, Qt::Alignment align = Qt::AlignLeft | Qt::AlignTop);
 
-		void paintEvent(QPaintEvent* event) override;
-	private:
-		[[nodiscard]] int itemsHeight() const;
-		bool _disabled = false;
+	void setWidget(InnerWidget* widget);
+	[[nodiscard]] InnerWidget* widget() const noexcept;
+protected:
+	bool viewportEvent(QEvent* event) override;
+	void keyPressEvent(QKeyEvent* event) override;
 
-		int _verticalValue;
-		int _itemsHeight = 0;
-		double _opacity = 1.;
+	void paintEvent(QPaintEvent* event) override;
+private:
+	[[nodiscard]] int itemsHeight() const;
+	bool _disabled = false;
 
-		QVBoxLayout* _scrollLayout = nullptr;
-	};
-} // namespace base::qt::ui
+	int _verticalValue;
+	int _itemsHeight = 0;
+	double _opacity = 1.;
+
+	QVBoxLayout* _scrollLayout = nullptr;
+};
+
+__BASE_QT_UI_NAMESPACE_END

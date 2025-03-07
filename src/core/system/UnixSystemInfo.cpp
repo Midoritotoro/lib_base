@@ -1,10 +1,10 @@
-#include <base/system/UnixSystemInfo.h>
+#include <base/core/system/UnixSystemInfo.h>
 
 
 #if defined (OS_LINUX) || defined(OS_MAC)
 
-namespace base::system {
+__BASE_SYSTEM_NAMESPACE_BEGIN
 
-} // namespace base::system
+__BASE_SYSTEM_NAMESPACE_END
 
 #endif

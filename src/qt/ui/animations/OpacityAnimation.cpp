@@ -1,58 +1,60 @@
 #include <base/qt/ui/animations/OpacityAnimation.h>
-#include <base/utility/Assert.h>
+#include <base/core/utility/Assert.h>
 
-#include <base/concurrent/Concurrent.h>
+#include <base/core/async/Concurrent.h>
 
 
-namespace base::qt::ui::animations {
-	OpacityAnimation::OpacityAnimation() {
-		_animationType = AnimationType::Opacity;
-		_animationManager = new AnimationManager();
-	}
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_BEGIN
 
-	void OpacityAnimation::start(
-		float from,
-		float to,
-		Time::time_t duration,
-		Time::time_t updateTimeout) 
-	{
-		Expects(duration != 0);
-		Expects(from != to);
-		_opacity = from;
+OpacityAnimation::OpacityAnimation() {
+	_animationType = AnimationType::Opacity;
+	_animationManager = new AnimationManager();
+}
 
-		_opacityFrom = from;
-		_opacityTo = to;
+void OpacityAnimation::start(
+	float from,
+	float to,
+	Time::time_t duration,
+	Time::time_t updateTimeout) 
+{
+	Expects(duration != 0);
+	Expects(from != to);
+	_opacity = from;
 
-		_duration = duration;
-		_updateTimeout = std::clamp(updateTimeout,
-			MinimumAnimationUpdateTimeout(),
-			MaximumAnimationUpdateTimeout());
+	_opacityFrom = from;
+	_opacityTo = to;
 
-		_animationManager->start(this);
-	}
+	_duration = duration;
+	_updateTimeout = std::clamp(updateTimeout,
+		MinimumAnimationUpdateTimeout(),
+		MaximumAnimationUpdateTimeout());
 
-	void OpacityAnimation::stop() {
-		_animationManager->stop();
-	}
+	_animationManager->start(this);
+}
 
-	void OpacityAnimation::restart() {
-		_opacity = _opacityFrom;
+void OpacityAnimation::stop() {
+	_animationManager->stop();
+}
 
-		if (animating() == false)
-			return _animationManager->start(this);
+void OpacityAnimation::restart() {
+	_opacity = _opacityFrom;
 
-		stop();
-		_animationManager->start(this);
-	}
+	if (animating() == false)
+		return _animationManager->start(this);
 
-	void OpacityAnimation::restartAfterFinished() {
-		concurrent::invokeAsync([=] {
-			while (animating());
-			restart();
-		});
-	}
+	stop();
+	_animationManager->start(this);
+}
 
-	bool OpacityAnimation::animating() const noexcept {
-		return _animationManager->animating();
-	}
-} // namespace base::qt::ui::animations
+void OpacityAnimation::restartAfterFinished() {
+	concurrent::invokeAsync([=] {
+		while (animating());
+		restart();
+	});
+}
+
+bool OpacityAnimation::animating() const noexcept {
+	return _animationManager->animating();
+}
+
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_END

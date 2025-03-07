@@ -1,45 +1,47 @@
 #pragma once 
 
-#include <base/system/Time.h>
+#include <base/core/system/Time.h>
 #include <base/qt/common/Size.h>
 
 #include <base/core/Types.h>
 
 
-namespace base::qt::ui::animations {
-	inline constexpr auto kDefaultAnimationDuration = Time::time_t(500);
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_BEGIN
 
-	[[nodiscard]] always_inline Time::time_t MinimumAnimationUpdateTimeout() {
-		return Time::time_t(1000) / common::ScreenRefreshRate();
-	}
+inline constexpr auto kDefaultAnimationDuration = Time::time_t(500);
 
-	[[nodiscard]] always_inline Time::time_t MaximumAnimationUpdateTimeout() {
-		return Time::time_t(100);
-	}
+NODISCARD always_inline Time::time_t MinimumAnimationUpdateTimeout() {
+	return Time::time_t(1000) / common::ScreenRefreshRate();
+}
 
-	enum class AnimationType : uchar {
-		Opacity = 0x01,
-		HorizontalGrowth = 0x02,
-		VerticalGrowth = 0x04,
-		CombinedGrowth = 0x08
-	};
+NODISCARD always_inline Time::time_t MaximumAnimationUpdateTimeout() {
+	return Time::time_t(100);
+}
 
-	class AnimationBase {
-	public:
-		void setAnimationCallback(Fn<void()> callback);
-		void call();
+enum class AnimationType : uchar {
+	Opacity = 0x01,
+	HorizontalGrowth = 0x02,
+	VerticalGrowth = 0x04,
+	CombinedGrowth = 0x08
+};
 
-		[[nodiscard]] AnimationType animationType() const noexcept;
-		[[nodiscard]] float opacity() const noexcept;
-	protected:
-		Fn<void()> _animationCallback;
+class AnimationBase {
+public:
+	void setAnimationCallback(Fn<void()> callback);
+	void call();
 
-		Time::time_t _duration;
-		Time::time_t _updateTimeout;
+	NODISCARD AnimationType animationType() const noexcept;
+	NODISCARD float opacity() const noexcept;
+protected:
+	Fn<void()> _animationCallback;
 
-		float _opacity = 1.f;
+	Time::time_t _duration;
+	Time::time_t _updateTimeout;
 
-		AnimationType _animationType;
-		friend class AnimationManager;
-	};
-} // namespace base::qt::ui::animations
+	float _opacity = 1.f;
+
+	AnimationType _animationType;
+	friend class AnimationManager;
+};
+
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_END

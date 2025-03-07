@@ -1,14 +1,14 @@
-#include <base/core/AtomicInteger.h>
+#include <base/core/thread/AtomicInteger.h>
 
 
 #if defined(OS_WIN)
-	#include <base/core/WindowsAtomic.h>
-	using PlatformAtomicImplementation = base::WindowsAtomic;
+	#include <base/core/thread/WindowsAtomic.h>
+	using PlatformAtomicImplementation = base::thread::WindowsAtomic;
 #else
-	#include<base/core/UnixAtomic.h>
-	using PlatformAtomicImplementation = base::UnixAtomic;
+	#include<base/core/thread/UnixAtomic.h>
+	using PlatformAtomicImplementation = base::thread::UnixAtomic;
 #endif
 
-namespace base {
-    
-} // namespace base
+__BASE_THREAD_NAMESPACE_BEGIN
+
+__BASE_THREAD_NAMESPACE_END

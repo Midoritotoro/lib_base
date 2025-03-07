@@ -1,8 +1,8 @@
-#include <base/concurrent/common/CommonQueue.h>
+#include <base/core/async/CommonQueue.h>
 
 #ifdef USE_COMMON_QUEUE
 
-#include <base/concurrent/win/WinapiAsync.h>
+#include <base/core/async/WinapiAsync.h>
 
 
 namespace base::concurrent {

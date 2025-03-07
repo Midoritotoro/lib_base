@@ -3,7 +3,7 @@
 #if defined(OS_WIN)
 
 #include <base/core/io/WindowsSmartHandle.h>
-#include <base/system/SystemTools.h>
+#include <base/core/system/SystemTools.h>
 
 #define WIN_EXTENDED_PATH_KEY			"\\?"
 #define WIN_EXTENDED_PATH_KEY_SIZE		3

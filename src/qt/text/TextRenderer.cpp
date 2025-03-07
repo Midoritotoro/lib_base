@@ -19,12 +19,13 @@
 #include <src/qt/text/Types.h>
 
 #include <base/qt/common/BasicClickHandlers.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 #include <cmath>
 
 
-namespace base::qt::text {
+__BASE_QT_TEXT_NAMESPACE_BEGIN
+
 namespace {
 	const QString kQEllipsis = u"..."_q;
 	constexpr auto kMaxItemLength = 4096;
@@ -1542,4 +1543,5 @@ void Renderer::fillParagraphBg(int paddingBottom) {
 	}
 	_quoteLineTop = _y + _lineHeight + paddingBottom;
 }
-} // namespace base::qt::text
+
+__BASE_QT_TEXT_NAMESPACE_END

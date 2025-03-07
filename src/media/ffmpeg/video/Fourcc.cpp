@@ -1,7 +1,6 @@
 #include <base/media/ffmpeg/video/Fourcc.h>
 
 
-
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 
 int FourccCmp(

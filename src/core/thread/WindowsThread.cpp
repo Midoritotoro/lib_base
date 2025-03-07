@@ -1,147 +1,149 @@
-#include <base/core/WindowsThread.h>
+#include <base/core/thread/WindowsThread.h>
 
 #ifdef OS_WIN
 
-#include <src/core/ThreadsData.h>
-#include <base/core/ThreadsConfig.h>
+#include <src/core/thread/ThreadsData.h>
+#include <base/core/thread/ThreadsConfig.h>
 
 
-namespace base {
-    WindowsThread::WindowsThread():
-        _mutex(std::make_unique<WindowsMutex>(this))
-    {}
+__BASE_THREAD_NAMESPACE_BEGIN
 
-    WindowsThread::~WindowsThread() {
-        __terminateOnClose
-            ? terminate()
-            : close();
-    }
+WindowsThread::WindowsThread():
+    _mutex(std::make_unique<WindowsMutex>(this))
+{}
 
-    void WindowsThread::setPriority(Priority priority) {
-        if (joinable())
-            MutexLocker mutex(_mutex.get());
+WindowsThread::~WindowsThread() {
+    __terminateOnClose
+        ? terminate()
+        : close();
+}
 
-        int prio = WinPriorityFromInternal(priority);
-        _priority = priority;
+void WindowsThread::setPriority(Priority priority) {
+    if (joinable())
+        MutexLocker mutex(_mutex.get());
 
-        ThreadsAssert(_handle.handle() != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
+    int prio = WinPriorityFromInternal(priority);
+    _priority = priority;
 
-        if (!SetThreadPriority(_handle.handle(), prio))
-            printf("base::Thread::setPriority: Не удалось установить приоритет потока\n");
-    }
+    ThreadsAssert(_handle.handle() != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
 
-    AbstractThread::Priority WindowsThread::priority() const noexcept {
-        return _priority;
-    }
+    if (!SetThreadPriority(_handle.handle(), prio))
+        printf("base::Thread::setPriority: Не удалось установить приоритет потока\n");
+}
 
-    bool WindowsThread::isFinished() const noexcept {
-        return !_isRunning;
-    }
+AbstractThread::Priority WindowsThread::priority() const noexcept {
+    return _priority;
+}
 
-    bool WindowsThread::isRunning() const noexcept {
-        return _isRunning;
-    }
+bool WindowsThread::isFinished() const noexcept {
+    return !_isRunning;
+}
 
-    io::WindowsSmartHandle WindowsThread::currentThreadHandle() noexcept {
-        return GetCurrentThread();
-    }
+bool WindowsThread::isRunning() const noexcept {
+    return _isRunning;
+}
 
-    sizetype WindowsThread::currentThreadId() noexcept {
-        return GetCurrentThreadId();
-    }
+io::WindowsSmartHandle WindowsThread::currentThreadHandle() noexcept {
+    return GetCurrentThread();
+}
 
-    void WindowsThread::setTerminateOnClose(bool _terminateOnClose) {
-        if (joinable())
-            MutexLocker mutex(_mutex.get());
+sizetype WindowsThread::currentThreadId() noexcept {
+    return GetCurrentThreadId();
+}
 
-        _handle.setAutoDelete(!_terminateOnClose);
-        __terminateOnClose = _terminateOnClose;
-    }
+void WindowsThread::setTerminateOnClose(bool _terminateOnClose) {
+    if (joinable())
+        MutexLocker mutex(_mutex.get());
 
-    bool WindowsThread::terminateOnClose() const noexcept {
-        return __terminateOnClose;
-    }
+    _handle.setAutoDelete(!_terminateOnClose);
+    __terminateOnClose = _terminateOnClose;
+}
 
-    void WindowsThread::waitMs(sizetype milliseconds) {
-        Sleep(milliseconds);
-    }
+bool WindowsThread::terminateOnClose() const noexcept {
+    return __terminateOnClose;
+}
 
-    const io::WindowsSmartHandle& WindowsThread::handle() const noexcept {
-        return _handle;
-    }
+void WindowsThread::waitMs(sizetype milliseconds) {
+    Sleep(milliseconds);
+}
 
-    sizetype WindowsThread::threadId() const noexcept {
-        return _threadId;
-    }
+const io::WindowsSmartHandle& WindowsThread::handle() const noexcept {
+    return _handle;
+}
 
-    bool WindowsThread::joinable() const noexcept {
-        return (_threadId != 0);
-    }
+sizetype WindowsThread::threadId() const noexcept {
+    return _threadId;
+}
 
-    int WindowsThread::HardwareConcurrency() noexcept {
-        return _Thrd_hardware_concurrency();
-    }
+bool WindowsThread::joinable() const noexcept {
+    return (_threadId != 0);
+}
 
-    void WindowsThread::join() {
-        ThreadsAssert(joinable() != false, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
+int WindowsThread::HardwareConcurrency() noexcept {
+    return _Thrd_hardware_concurrency();
+}
 
-        checkWaitForSingleObject(
-            WaitForSingleObject(
-                _handle.handle(), INFINITE));
-    }
+void WindowsThread::join() {
+    ThreadsAssert(joinable() != false, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
 
-    void WindowsThread::terminate() {
-        if (joinable())
-            MutexLocker mutex(_mutex.get());
+    checkWaitForSingleObject(
+        WaitForSingleObject(
+            _handle.handle(), INFINITE));
+}
 
-        _isRunning = false;
+void WindowsThread::terminate() {
+    if (joinable())
+        MutexLocker mutex(_mutex.get());
 
-        const auto result = WindowsThreadPrivate::TerminateImplementation(&_handle);
-        ThreadsAssert(result != 0, "base::threads::WindowsThread: Ошибка при попытке убить поток. ", unused(0));
-    }
+    _isRunning = false;
 
-    void WindowsThread::close() {
-        if (joinable())
-            MutexLocker mutex(_mutex.get());
+    const auto result = WindowsThreadPrivate::TerminateImplementation(&_handle);
+    ThreadsAssert(result != 0, "base::threads::WindowsThread: Ошибка при попытке убить поток. ", unused(0));
+}
 
-        _isRunning = false;
-        WindowsThreadPrivate::CloseImplementation(&_handle);
-    }
+void WindowsThread::close() {
+    if (joinable())
+        MutexLocker mutex(_mutex.get());
 
-    void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
-        ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));
-    }
+    _isRunning = false;
+    WindowsThreadPrivate::CloseImplementation(&_handle);
+}
+
+void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
+    ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));
+}
      
-    int WindowsThread::WinPriorityFromInternal(Priority _Priority) {
-        switch (_Priority) {
-            case WindowsThread::IdlePriority:
-                return THREAD_PRIORITY_IDLE;
+int WindowsThread::WinPriorityFromInternal(Priority _Priority) {
+    switch (_Priority) {
+        case WindowsThread::IdlePriority:
+            return THREAD_PRIORITY_IDLE;
 
-            case WindowsThread::LowestPriority:
-                return THREAD_PRIORITY_LOWEST;
+        case WindowsThread::LowestPriority:
+            return THREAD_PRIORITY_LOWEST;
 
-            case WindowsThread::LowPriority:
-                return THREAD_PRIORITY_BELOW_NORMAL;
+        case WindowsThread::LowPriority:
+            return THREAD_PRIORITY_BELOW_NORMAL;
 
-            case WindowsThread::NormalPriority:
-                return THREAD_PRIORITY_NORMAL;
+        case WindowsThread::NormalPriority:
+            return THREAD_PRIORITY_NORMAL;
 
-            case WindowsThread::HighPriority:
-                return THREAD_PRIORITY_ABOVE_NORMAL;
+        case WindowsThread::HighPriority:
+            return THREAD_PRIORITY_ABOVE_NORMAL;
 
-            case WindowsThread::HighestPriority:
-                return THREAD_PRIORITY_HIGHEST;
+        case WindowsThread::HighestPriority:
+            return THREAD_PRIORITY_HIGHEST;
 
-            case WindowsThread::TimeCriticalPriority:
-                return THREAD_PRIORITY_TIME_CRITICAL;
+        case WindowsThread::TimeCriticalPriority:
+            return THREAD_PRIORITY_TIME_CRITICAL;
 
-            case WindowsThread::InheritPriority:
-                return GetThreadPriority(GetCurrentThread());
-        }
-
-        AssertUnreachable();
-        return EGENERIC;
+        case WindowsThread::InheritPriority:
+            return GetThreadPriority(GetCurrentThread());
     }
-} // namespace base
+
+    AssertUnreachable();
+    return EGENERIC;
+}
+
+__BASE_THREAD_NAMESPACE_END
 
 #endif

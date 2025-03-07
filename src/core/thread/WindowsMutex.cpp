@@ -1,51 +1,53 @@
-#include <base/core/WindowsMutex.h>
+#include <base/core/thread/WindowsMutex.h>
 
 
 #ifdef OS_WIN
 
-#include <base/core/ThreadsConfig.h>
+#include <base/core/thread/ThreadsConfig.h>
 
 
-namespace base {
-	WindowsMutex::WindowsMutex(not_null<WindowsThread*> thread):
-		_thread(thread)
-	{
-		_handle = CreateMutexA(
-			nullptr, false, nullptr);
+__BASE_THREAD_NAMESPACE_BEGIN
 
-		AssertLog(_handle.handle() != nullptr, "base::thread::WindowsMutex: Не удалось создать мьютекс. ");
-	}
+WindowsMutex::WindowsMutex(not_null<WindowsThread*> thread):
+	_thread(thread)
+{
+	_handle = CreateMutexA(
+		nullptr, false, nullptr);
 
-	WindowsMutex::~WindowsMutex() {
-		if (_unlockOnDelete)
-			unlock();
-	}
+	AssertLog(_handle.handle() != nullptr, "base::thread::WindowsMutex: Не удалось создать мьютекс. ");
+}
 
-	bool WindowsMutex::lock() {
-		_isLocked = true;
-		WaitForSingleObject(_handle.handle(), INFINITE);
+WindowsMutex::~WindowsMutex() {
+	if (_unlockOnDelete)
+		unlock();
+}
 
-		return _isLocked;
-	}
+bool WindowsMutex::lock() {
+	_isLocked = true;
+	WaitForSingleObject(_handle.handle(), INFINITE);
 
-	void WindowsMutex::setUnlockOnDelete(bool unlockOnDel) {
-		_unlockOnDelete = unlockOnDel;
-	}
+	return _isLocked;
+}
 
-	bool WindowsMutex::unlockOnDelete() const noexcept {
-		return _unlockOnDelete;
-	}
+void WindowsMutex::setUnlockOnDelete(bool unlockOnDel) {
+	_unlockOnDelete = unlockOnDel;
+}
 
-	bool WindowsMutex::unlock() {
-		_isLocked = false;
+bool WindowsMutex::unlockOnDelete() const noexcept {
+	return _unlockOnDelete;
+}
 
-		ReleaseMutex(_handle.handle());
-		return _isLocked;
-	}
+bool WindowsMutex::unlock() {
+	_isLocked = false;
 
-	bool WindowsMutex::isLocked() const noexcept {
-		return _isLocked;
-	}
-} // namespace base
+	ReleaseMutex(_handle.handle());
+	return _isLocked;
+}
+
+bool WindowsMutex::isLocked() const noexcept {
+	return _isLocked;
+}
+
+__BASE_THREAD_NAMESPACE_END
 
 #endif

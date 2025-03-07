@@ -1,16 +1,17 @@
 #include <base/images/gl/ImagesGLImage.h>
-#include <base/utility/OverflowCheck.h>
+#include <base/core/utility/OverflowCheck.h>
 
-#include <base/utility/Assert.h>
+#include <base/core/utility/Assert.h>
 
 #ifdef LIB_BASE_ENABLE_QT
-	#include <base/images/ImagesUtility.h>
+	#include <base//images/ImagesUtility.h>
 #endif
 
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 
-namespace base::images {
+__BASE_IMAGES_NAMESPACE_BEGIN
+
 #if defined(LIB_BASE_ENABLE_OPENGL) || defined(LIB_BASE_ENABLE_QT_OPENGL) || defined(LIB_BASE_FOUND_QT_OPENGL)
 	void GLImage::paint() {
 	#ifdef LIB_BASE_ENABLE_OPENGL
@@ -22,4 +23,5 @@ namespace base::images {
 	#endif
 	}
 #endif
-} // namespace base::images
+
+__BASE_IMAGES_NAMESPACE_END

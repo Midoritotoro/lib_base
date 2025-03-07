@@ -1,15 +1,16 @@
-#include <base/system/WindowsSystemInfo.h>
+#include <base/core/system/WindowsSystemInfo.h>
 
 
 #if defined(OS_WIN)
 
-namespace base::system {
-	int WindowsSystemInfo::GetCpuCount() {
-		SYSTEM_INFO sysInfo;
-		GetSystemInfo(&sysInfo);
+__BASE_SYSTEM_NAMESPACE_BEGIN
 
-		return sysInfo.dwNumberOfProcessors;
-	}
-} // namespace base::system
+int WindowsSystemInfo::GetCpuCount() {
+	SYSTEM_INFO sysInfo;
+	GetSystemInfo(&sysInfo);
 
+	return sysInfo.dwNumberOfProcessors;
+}
+
+__BASE_SYSTEM_NAMESPACE_END
 #endif

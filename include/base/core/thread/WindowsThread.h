@@ -8,6 +8,8 @@
 #include <base/core/thread/AtomicInteger.h>
 #include <base/core/thread/WindowsThreadPrivate.h>
 
+#include <base/core/thread/WindowsMutex.h>
+
 
 __BASE_THREAD_NAMESPACE_BEGIN
 

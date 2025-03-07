@@ -1,10 +1,10 @@
 #pragma once 
 
 #include <base/qt/style/StyleCore.h>
-#include <base/utility/TypeTraits.h>
+#include <base/core/utility/TypeTraits.h>
 
 #include <base/qt/ui/Utility.h>
-#include <base/utility/Assert.h>
+#include <base/core/utility/Assert.h>
 
 #include <QSurfaceFormat>
 
@@ -21,7 +21,7 @@ __BASE_QT_UI_NAMESPACE_BEGIN
 class BaseQWidgetHelper;
 
 namespace {
-	[[nodiscard]] std::vector<QPointer<QWidget>>
+	NODISCARD std::vector<QPointer<QWidget>>
 		GetChildWidgets(not_null<QWidget*> widget)
 	{
 		const auto& children = widget->children();
@@ -137,27 +137,27 @@ public:
 		}();
 	}
 
-	[[nodiscard]] QRect rectNoMargins() {
+	NODISCARD QRect rectNoMargins() {
 		return rect().marginsRemoved(getMargins());
 	};
 
-	[[nodiscard]] QSize sizeNoMargins() {
+	NODISCARD QSize sizeNoMargins() {
 		return rectNoMargins().size();
 	}
 
-	[[nodiscard]] int heightNoMargins() {
+	NODISCARD int heightNoMargins() {
 		return rectNoMargins().height();
 	}
 
-	[[nodiscard]] int widthNoMargins() {
+	NODISCARD int widthNoMargins() {
 		return rectNoMargins().width();
 	}
 
-	virtual [[nodiscard]] QRect visibleArea() {
+	virtual NODISCARD QRect visibleArea() {
 		return QRect();
 	}
 
-	virtual [[nodiscard]] QRect hiddenArea() {
+	virtual NODISCARD QRect hiddenArea() {
 		return QRect();
 	}
 };
@@ -181,11 +181,11 @@ protected:
 public:
 	using Parent::Parent;
 
-	[[nodiscard]] QRect visibleArea() {
+	NODISCARD QRect visibleArea() {
 		return Parent::visibleRegion().boundingRect();
 	}
 
-	[[nodiscard]] QRect hiddenArea() {
+	NODISCARD QRect hiddenArea() {
 		const auto selfRect = Parent::rect();
 		const auto selfVisibleRect = visibleArea();
 
@@ -213,7 +213,7 @@ public:
 			Parent::update();
 	};
 
-	virtual [[nodiscard]] const SelfStyle* style()  {
+	virtual NODISCARD const SelfStyle* style()  {
 		return _style;
 	};
 protected:

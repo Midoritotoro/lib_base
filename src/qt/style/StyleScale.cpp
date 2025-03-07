@@ -2,25 +2,27 @@
 #include <algorithm>
 
 
-namespace base::qt::style {
-	namespace {
-		auto devicePixelRatioValue = 1;
-		auto scaleValue = kScaleDefault;
-	} // namespace
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-	int DevicePixelRatio() {
-		return devicePixelRatioValue;
-	}
+namespace {
+	auto devicePixelRatioValue = 1;
+	auto scaleValue = kScaleDefault;
+} // namespace
 
-	void SetDevicePixelRatio(int ratio) {
-		devicePixelRatioValue = std::clamp(ratio, 1, kScaleMax / kScaleMin);
-	}
+int DevicePixelRatio() {
+	return devicePixelRatioValue;
+}
 
-	int Scale() {
-		return scaleValue;
-	}
+void SetDevicePixelRatio(int ratio) {
+	devicePixelRatioValue = std::clamp(ratio, 1, kScaleMax / kScaleMin);
+}
 
-	void SetScale(int scale) {
-		scaleValue = scale;
-	}
-} // namespace base::qt::style
+int Scale() {
+	return scaleValue;
+}
+
+void SetScale(int scale) {
+	scaleValue = scale;
+}
+
+__BASE_QT_STYLE_NAMESPACE_END

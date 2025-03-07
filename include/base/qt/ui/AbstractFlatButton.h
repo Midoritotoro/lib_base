@@ -11,124 +11,127 @@
 #include <QGuiApplication>
 
 
-namespace base::qt::style {
-    namespace flatButton {
-        inline constexpr auto borderWidth = 2;
-        inline constexpr auto _spacing = 8;
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-        inline constexpr auto menuButtonAngle = qDegreesToRadians(qreal(42));
-        inline constexpr auto badgeAngle = menuButtonAngle;
+namespace flatButton {
+    inline constexpr auto borderWidth = 2;
+    inline constexpr auto _spacing = 8;
 
-        inline constexpr QMargins borderMargins = { 
-			borderWidth, borderWidth, borderWidth, borderWidth
-        };
+    inline constexpr auto menuButtonAngle = qDegreesToRadians(qreal(42));
+    inline constexpr auto badgeAngle = menuButtonAngle;
 
-        inline constexpr QMargins buttonMargins = { 4, 8, 4, 4 };
-        inline constexpr QMargins iconMargins = { 8, 8, 8, 8 };
+    inline constexpr QMargins borderMargins = { 
+		borderWidth, borderWidth, borderWidth, borderWidth
+    };
 
-        inline constexpr QSize badgeSize = { 12, 12 };
-        inline constexpr QSize menuButtonSize = { 14, 14 };
+    inline constexpr QMargins buttonMargins = { 4, 8, 4, 4 };
+    inline constexpr QMargins iconMargins = { 8, 8, 8, 8 };
 
-        [[nodiscard]] QFont badgeFont();
+    inline constexpr QSize badgeSize = { 12, 12 };
+    inline constexpr QSize menuButtonSize = { 14, 14 };
 
-        [[nodiscard]] QString bageText(qint64 value);
-        [[nodiscard]] QString bageText(quint64 value);
+    NODISCARD QFont badgeFont();
 
-        [[nodiscard]] QString bageText(const QString& value);
-        [[nodiscard]] QString bageText(const QChar value);
+    NODISCARD QString bageText(qint64 value);
+    NODISCARD QString bageText(quint64 value);
 
-        [[nodiscard]] bool hasBadge(const QVariant& value);
+    NODISCARD QString bageText(const QString& value);
+    NODISCARD QString bageText(const QChar value);
 
-		[[nodiscard]] constexpr int spacing() noexcept;
-		[[nodiscard]] const int spacing(const QSize& textSize) noexcept;
+    NODISCARD bool hasBadge(const QVariant& value);
 
-		[[nodiscard]] QSize buttonMinSize(Qt::ToolButtonStyle buttonStyle) noexcept;
+	NODISCARD constexpr int spacing() noexcept;
+	NODISCARD const int spacing(const QSize& textSize) noexcept;
+
+	NODISCARD QSize buttonMinSize(Qt::ToolButtonStyle buttonStyle) noexcept;
        
-		[[nodiscard]] QColor buttonColor(const QPalette& palette, QStyle::State state) noexcept;
-		[[nodiscard]] QColor iconColor(QStyle::State state);
-    } // namespace flatButton
-} // namespace style
+	NODISCARD QColor buttonColor(const QPalette& palette, QStyle::State state) noexcept;
+	NODISCARD QColor iconColor(QStyle::State state);
+} // namespace flatButton
 
+__BASE_QT_STYLE_NAMESPACE_END
 
-namespace base::qt::ui {
-	class AbstractFlatButton : 
-		public BaseWidget<
-			QAbstractButton,
-			style::FlatButton> 
-	{
-	public:
-		AbstractFlatButton(QWidget* parent = nullptr);
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		void setFitToText(bool fit);
-		[[nodiscard]] bool fitToText();
+class AbstractFlatButton : 
+	public BaseWidget<
+		QAbstractButton,
+		style::FlatButton> 
+{
+public:
+	AbstractFlatButton(QWidget* parent = nullptr);
 
-		void setText(const QString& text);
-		[[nodiscard]] QString text() const noexcept;
+	void setFitToText(bool fit);
+	NODISCARD bool fitToText();
 
-		void setStyle(
-			const SelfStyle* style,
-			bool repaint = true) override;
+	void setText(const QString& text);
+	NODISCARD QString text() const noexcept;
 
-		void setOpacity(float opacity);
-		[[nodiscard]] float opacity() const noexcept;
+	void setStyle(
+		const SelfStyle* style,
+		bool repaint = true) override;
 
-		void setIconSize(const QSize& size);
-		void setIcon(const QIcon& _icon);
+	void setOpacity(float opacity);
+	NODISCARD float opacity() const noexcept;
 
-		void setBadgeValue(const QVariant& value);
-		[[nodiscard]] QVariant badgeValue() const;
+	void setIconSize(const QSize& size);
+	void setIcon(const QIcon& _icon);
 
-		void setAutoRaise(bool on);
-		[[nodiscard]] bool autoRaise() const;
+	void setBadgeValue(const QVariant& value);
+	NODISCARD QVariant badgeValue() const;
 
-		[[nodiscard]] QSize sizeHint() const override;
-		[[nodiscard]] QSize minimumSizeHint() const override;
+	void setAutoRaise(bool on);
+	NODISCARD bool autoRaise() const;
 
-		void setToolButtonStyle(Qt::ToolButtonStyle style);
-		[[nodiscard]] Qt::ToolButtonStyle buttonStyle() const noexcept;
+	NODISCARD QSize sizeHint() const override;
+	NODISCARD QSize minimumSizeHint() const override;
 
-		[[nodiscard]] bool hasIcon() const noexcept;
-		[[nodiscard]] bool hasText() const noexcept;
-	protected:
-		bool event(QEvent* _event) override = 0;
-		void mousePressEvent(QMouseEvent* _event) override = 0;
-		void paintEvent(QPaintEvent*) override = 0;
+	void setToolButtonStyle(Qt::ToolButtonStyle style);
+	NODISCARD Qt::ToolButtonStyle buttonStyle() const noexcept;
 
-		virtual void drawBackground(
-			QPainter& painter,
-			const QStyleOptionComplex& option,
-			const QRect& iconRect) = 0;
-		virtual void drawBadge(
-			QPainter& painter,
-			const QStyleOptionComplex& option) = 0;
+	NODISCARD bool hasIcon() const noexcept;
+	NODISCARD bool hasText() const noexcept;
+protected:
+	bool event(QEvent* _event) override = 0;
+	void mousePressEvent(QMouseEvent* _event) override = 0;
+	void paintEvent(QPaintEvent*) override = 0;
 
-		virtual void drawIcon(
-			QPainter& painter,
-			const QIcon& icon,
-			const QStyleOption& option) = 0;
+	virtual void drawBackground(
+		QPainter& painter,
+		const QStyleOptionComplex& option,
+		const QRect& iconRect) = 0;
+	virtual void drawBadge(
+		QPainter& painter,
+		const QStyleOptionComplex& option) = 0;
 
-		virtual void updateHoverControl(const QPoint& pos) = 0;
-		virtual void drawText(
-			QPainter& painter,
-			const QStyleOptionComplex& option,
-			const QString& text) = 0;
+	virtual void drawIcon(
+		QPainter& painter,
+		const QIcon& icon,
+		const QStyleOption& option) = 0;
 
-		[[nodiscard]] QRect iconRect() const noexcept;
-		[[nodiscard]] QRect textRect(const QRect& iconRect) const noexcept;
-		[[nodiscard]] QRect badgeRect(const QRect& iconRect) const noexcept;
-	private:
-		QString _text;
+	virtual void updateHoverControl(const QPoint& pos) = 0;
+	virtual void drawText(
+		QPainter& painter,
+		const QStyleOptionComplex& option,
+		const QString& text) = 0;
 
-		mutable QSize _sizeHint;
+	NODISCARD QRect iconRect() const noexcept;
+	NODISCARD QRect textRect(const QRect& iconRect) const noexcept;
+	NODISCARD QRect badgeRect(const QRect& iconRect) const noexcept;
+private:
+	QString _text;
 
-		QVariant _badgeValue;
+	mutable QSize _sizeHint;
 
-		QMenu* _menu = nullptr;
-		Qt::ToolButtonStyle _buttonStyle;
+	QVariant _badgeValue;
 
-		bool _autoRaise;
-		bool _fitToText;
+	QMenu* _menu = nullptr;
+	Qt::ToolButtonStyle _buttonStyle;
 
-		float _opacity = 1.f;
-	};
-} // namespace base::qt::ui
+	bool _autoRaise;
+	bool _fitToText;
+
+	float _opacity = 1.f;
+};
+
+__BASE_QT_UI_NAMESPACE_END

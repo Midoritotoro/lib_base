@@ -5,93 +5,95 @@
 
 #include <QEvent>
 
-#include <base/concurrent/Concurrent.h>
-#include <base/utility/Assert.h>
+#include <base/core/async/Concurrent.h>
+#include <base/core/utility/Assert.h>
 
 
-namespace base::qt::common {
-	namespace {
+__BASE_QT_COMMON_NAMESPACE_BEGIN
 
-		auto ProcessorEventType() {
-			static const auto Result = QEvent::Type(QEvent::registerEventType());
-			return Result;
+namespace {
+
+	auto ProcessorEventType() {
+		static const auto Result = QEvent::Type(QEvent::registerEventType());
+		return Result;
+	}
+
+	QMutex ProcessorMutex;
+	MainQueueProcessor* ProcessorInstance = nullptr;
+
+	enum class ProcessState : int {
+		Processed,
+		FillingUp,
+		Waiting,
+	};
+
+	std::atomic<ProcessState> MainQueueProcessState/* = ProcessState(0)*/;
+	void (*MainQueueProcessCallback)(void*)/* = nullptr*/;
+	void* MainQueueProcessArgument/* = nullptr*/;
+
+	void PushToMainQueueGeneric(void (*callable)(void*), void* argument) {
+		auto expected = ProcessState::Processed;
+		const auto fill = MainQueueProcessState.compare_exchange_strong(
+			expected,
+			ProcessState::FillingUp);
+		if (fill) {
+			MainQueueProcessCallback = callable;
+			MainQueueProcessArgument = argument;
+			MainQueueProcessState.store(ProcessState::Waiting);
 		}
 
-		QMutex ProcessorMutex;
-		MainQueueProcessor* ProcessorInstance = nullptr;
+		auto event = std::make_unique<QEvent>(ProcessorEventType());
+		QMutexLocker lock(&ProcessorMutex);
 
-		enum class ProcessState : int {
-			Processed,
-			FillingUp,
-			Waiting,
-		};
+		if (ProcessorInstance)
+			QCoreApplication::postEvent(ProcessorInstance, event.release());
+	}
 
-		std::atomic<ProcessState> MainQueueProcessState/* = ProcessState(0)*/;
-		void (*MainQueueProcessCallback)(void*)/* = nullptr*/;
-		void* MainQueueProcessArgument/* = nullptr*/;
+	void DrainMainQueueGeneric() {
+		if (MainQueueProcessState.load() != ProcessState::Waiting)
+			return;
 
-		void PushToMainQueueGeneric(void (*callable)(void*), void* argument) {
-			auto expected = ProcessState::Processed;
-			const auto fill = MainQueueProcessState.compare_exchange_strong(
-				expected,
-				ProcessState::FillingUp);
-			if (fill) {
-				MainQueueProcessCallback = callable;
-				MainQueueProcessArgument = argument;
-				MainQueueProcessState.store(ProcessState::Waiting);
-			}
+		const auto callback = MainQueueProcessCallback;
+		const auto argument = MainQueueProcessArgument;
 
-			auto event = std::make_unique<QEvent>(ProcessorEventType());
-			QMutexLocker lock(&ProcessorMutex);
+		MainQueueProcessState.store(ProcessState::Processed);
 
-			if (ProcessorInstance)
-				QCoreApplication::postEvent(ProcessorInstance, event.release());
-		}
+		callback(argument);
+	}
 
-		void DrainMainQueueGeneric() {
-			if (MainQueueProcessState.load() != ProcessState::Waiting)
-				return;
+} // namespace
 
-			const auto callback = MainQueueProcessCallback;
-			const auto argument = MainQueueProcessArgument;
+MainQueueProcessor::MainQueueProcessor() {
+	acquire();
+	concurrent::init_main_queue(PushToMainQueueGeneric);
+	DrainMainQueueGeneric();
+}
 
-			MainQueueProcessState.store(ProcessState::Processed);
-
-			callback(argument);
-		}
-
-	} // namespace
-
-	MainQueueProcessor::MainQueueProcessor() {
-		acquire();
-		concurrent::init_main_queue(PushToMainQueueGeneric);
+bool MainQueueProcessor::event(QEvent* event) {
+	if (event->type() == ProcessorEventType()) {
 		DrainMainQueueGeneric();
+		return true;
 	}
 
-	bool MainQueueProcessor::event(QEvent* event) {
-		if (event->type() == ProcessorEventType()) {
-			DrainMainQueueGeneric();
-			return true;
-		}
+	return QObject::event(event);
+}
 
-		return QObject::event(event);
-	}
+void MainQueueProcessor::acquire() {
+	Expects(ProcessorInstance == nullptr);
 
-	void MainQueueProcessor::acquire() {
-		Expects(ProcessorInstance == nullptr);
+	QMutexLocker lock(&ProcessorMutex);
+	ProcessorInstance = this;
+}
 
-		QMutexLocker lock(&ProcessorMutex);
-		ProcessorInstance = this;
-	}
+void MainQueueProcessor::release() {
+	Expects(ProcessorInstance == this);
 
-	void MainQueueProcessor::release() {
-		Expects(ProcessorInstance == this);
+	QMutexLocker lock(&ProcessorMutex);
+	ProcessorInstance = nullptr;
+}
 
-		QMutexLocker lock(&ProcessorMutex);
-		ProcessorInstance = nullptr;
-	}
+MainQueueProcessor::~MainQueueProcessor() {
+	release();
+}
 
-	MainQueueProcessor::~MainQueueProcessor() {
-		release();
-	}
-} // namespace base::qt::common
+__BASE_QT_COMMON_NAMESPACE_END

@@ -4,108 +4,109 @@
 #include <QString>
 
 
-namespace base::qt::style {
-	namespace {
-		QString _sliderStyle = "";
-		QString _scrollAreaStyle = "";
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 
-		void loadStyles() {
-			const auto sliderStyle = ":/src/css/SliderStyle.css";
-			const auto scrollAreaStyle = ":/src/css/ScrollAreaStyle.css";
+namespace {
+	QString _sliderStyle = "";
+	QString _scrollAreaStyle = "";
 
-			auto file = QFile(sliderStyle);
+	void loadStyles() {
+		const auto sliderStyle = ":/src/css/SliderStyle.css";
+		const auto scrollAreaStyle = ":/src/css/ScrollAreaStyle.css";
 
-			if (file.open(QFile::ReadOnly))
-				_sliderStyle = file.readAll();
+		auto file = QFile(sliderStyle);
 
-			file.setFileName(scrollAreaStyle);
+		if (file.open(QFile::ReadOnly))
+			_sliderStyle = file.readAll();
 
-			if (file.open(QFile::ReadOnly))
-				_scrollAreaStyle = file.readAll();
+		file.setFileName(scrollAreaStyle);
+
+		if (file.open(QFile::ReadOnly))
+			_scrollAreaStyle = file.readAll();
+	}
+} // namespace
+
+QString SliderStyle() {
+	return _sliderStyle;
+}
+
+QString ScrollAreaStyle() {
+	return _scrollAreaStyle;
+}
+
+void initStyles() {
+	loadStyles();
+
+	defaultTextStyle = new TextStyle{
+		._font = font(13, 0, 0),
+		.lineHeight = 14,
+
+		.linkUnderLine = true,
+		.blockquote = {} };
+
+	defaultFlatLabelStyle = new FlatLabel{ StyleBase {
+
+		.borderRadius = 10,
+		.borderWidth = 1,
+
+		.textStyle = defaultTextStyle,
+		.textPalette = &defaultTextPalette,
+
+		.margin = margins{ 10, 10, 10, 10 },
+		.colorBg = color(24, 37, 51),
+
+		._size = StyleSize{
+			.maximumWidth = 0,//style::maximumMessageWidth,
+			.maximumHeight = 0,//style::maximumTextHeight,
+
+			.minimumWidth = style::minimumMessageWidth,
+			.minimumHeight = style::minimumMessageHeight,
 		}
-	} // namespace
+	} };
 
-	QString SliderStyle() {
-		return _sliderStyle;
-	}
+	defaultPopupMenuStyle = new PopupMenu{ StyleBase{
 
-	QString ScrollAreaStyle() {
-		return _scrollAreaStyle;
-	}
+		.borderRadius = 10,
+		.borderWidth = 1,
 
-	void initStyles() {
-		loadStyles();
+		.textStyle = defaultTextStyle,
+		.textPalette = &defaultTextPalette,
 
-		defaultTextStyle = new TextStyle{
-		   ._font = font(13, 0, 0),
-		   .lineHeight = 14,
+		.margin = { 0, 0, 0, 0 },
+		.colorBg = color(24, 37, 51),
 
-		   .linkUnderLine = true,
-		   .blockquote = {} };
+		._size = StyleSize {
+			.maximumWidth = 150,
+			.maximumHeight = 210,
 
-		defaultFlatLabelStyle = new FlatLabel{ StyleBase {
+			.minimumWidth = 64,
+			.minimumHeight = 30,
+		}
+	} };
 
-			.borderRadius = 10,
-			.borderWidth = 1,
+	defaultFlatButtonStyle = new FlatButton{ StyleBase {
+		.borderRadius = 10,
+		.borderWidth = 1,
 
-			.textStyle = defaultTextStyle,
-			.textPalette = &defaultTextPalette,
+		.textStyle = defaultTextStyle,
+		.textPalette = &defaultTextPalette,
 
-			.margin = margins{ 10, 10, 10, 10 },
-			.colorBg = color(24, 37, 51),
+		.margin = margins{ 0, 0, 0, 0 },
+		.colorBg = color(24, 37, 51),
+		}
+	};
 
-			._size = StyleSize{
-				.maximumWidth = 0,//style::maximumMessageWidth,
-				.maximumHeight = 0,//style::maximumTextHeight,
+	defaultActionStyle = new style::MenuAction{ StyleBase {
+		.borderRadius = 0,
+		.borderWidth = 0,
 
-				.minimumWidth = style::minimumMessageWidth,
-				.minimumHeight = style::minimumMessageHeight,
-			}
-		}};
+		.textStyle = style::defaultTextStyle,
+		.textPalette = &style::defaultTextPalette,
 
-		defaultPopupMenuStyle = new PopupMenu{ StyleBase{
+		.margin = style::margins{ 0, 0, 0, 0 },
+		.colorBg = style::color(24, 37, 51),
+		}
+	};
+}
 
-			.borderRadius = 10,
-			.borderWidth = 1,
-
-			.textStyle = defaultTextStyle,
-			.textPalette = &defaultTextPalette,
-
-			.margin = { 0, 0, 0, 0 },
-			.colorBg = color(24, 37, 51),
-
-			._size = StyleSize {
-				.maximumWidth = 150,
-				.maximumHeight = 210,
-
-				.minimumWidth = 64,
-				.minimumHeight = 30,
-			}
-		}};
-
-		defaultFlatButtonStyle = new FlatButton{ StyleBase {
-			.borderRadius = 10,
-			.borderWidth = 1,
-
-			.textStyle = defaultTextStyle,
-			.textPalette = &defaultTextPalette,
-
-			.margin = margins{ 0, 0, 0, 0 },
-			.colorBg = color(24, 37, 51),
-			}
-		};
-
-		defaultActionStyle = new style::MenuAction{ StyleBase {
-			.borderRadius = 0,
-			.borderWidth = 0,
-
-			.textStyle = style::defaultTextStyle,
-			.textPalette = &style::defaultTextPalette,
-
-			.margin = style::margins{ 0, 0, 0, 0 },
-			.colorBg = style::color(24, 37, 51),
-			}
-		};
-
-	}
-} // namespace base::qt::style
+__BASE_QT_STYLE_NAMESPACE_END

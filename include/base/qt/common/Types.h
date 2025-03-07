@@ -1,7 +1,9 @@
 #pragma once 
 
 #include <QString>
+
 #include <base/core/BaseNamespace.h>
+#include <base/core/arch/KeywordSupport.h>
 
 __BASE_QT_NAMESPACE_BEGIN
 

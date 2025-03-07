@@ -4,46 +4,48 @@
 #include <cmath>
 
 
-namespace base::qt::text {
-	using Words = std::vector<Word>;
+__BASE_QT_TEXT_NAMESPACE_BEGIN
 
-	class Word final {
-	public:
-		Word() = default;
-		Word( // !newline
-			uint16 position,
-			bool unfinished,
-			QFixed width,
-			QFixed rbearing);
+using Words = std::vector<Word>;
 
-		Word(uint16 position, int newlineBlockIndex);
+class Word final {
+public:
+	Word() = default;
+	Word( // !newline
+		uint16 position,
+		bool unfinished,
+		QFixed width,
+		QFixed rbearing);
 
-		[[nodiscard]] bool newline() const;
-		[[nodiscard]] int newlineBlockIndex() const;
-		[[nodiscard]] bool unfinished() const;
+	Word(uint16 position, int newlineBlockIndex);
 
-		[[nodiscard]] uint16 position() const;
-		[[nodiscard]] QFixed f_rbearing() const;
-		[[nodiscard]] QFixed f_width() const;
+	[[nodiscard]] bool newline() const;
+	[[nodiscard]] int newlineBlockIndex() const;
+	[[nodiscard]] bool unfinished() const;
 
-		[[nodiscard]] QFixed f_rpadding() const;
-		void add_rpadding(QFixed padding);
-	private:
-		uint16 _position = 0;
+	[[nodiscard]] uint16 position() const;
+	[[nodiscard]] QFixed f_rbearing() const;
+	[[nodiscard]] QFixed f_width() const;
 
-		uint16 _rbearing_modulus : 13 = 0;
-		uint16 _rbearing_positive : 1 = 0;
+	[[nodiscard]] QFixed f_rpadding() const;
+	void add_rpadding(QFixed padding);
+private:
+	uint16 _position = 0;
 
-		uint16 _unfinished : 1 = 0;
-		uint16 _newline : 1 = 0;
+	uint16 _rbearing_modulus : 13 = 0;
+	uint16 _rbearing_positive : 1 = 0;
 
-		QFixed _rpadding;
+	uint16 _unfinished : 1 = 0;
+	uint16 _newline : 1 = 0;
 
-		union {
-			int _qfixedwidth;
-			int _newlineBlockIndex;
-		};
+	QFixed _rpadding;
+
+	union {
+		int _qfixedwidth;
+		int _newlineBlockIndex;
 	};
+};
 
-	[[nodiscard]] uint16 CountPosition(Words::const_iterator iterator);
-} // namespace base::qt::text
+[[nodiscard]] uint16 CountPosition(Words::const_iterator iterator);
+
+__BASE_QT_TEXT_NAMESPACE_END

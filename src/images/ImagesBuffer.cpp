@@ -2,120 +2,122 @@
 
 #if defined(LIB_BASE_ENABLE_QT)
 
-namespace base::images {
-	void AlignedImageBufferCleanupHandler(void* data) {
-		const auto buffer = static_cast<uchar*>(data);
-		delete[] buffer;
-	}
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-	[[nodiscard]] bool IsAlignedImage(const QImage& image) {
-		return !(reinterpret_cast<uintptr_t>(image.bits()) % kAlignImageBy)
-			&& !(image.bytesPerLine() % kAlignImageBy);
-	}
+void AlignedImageBufferCleanupHandler(void* data) {
+	const auto buffer = static_cast<uchar*>(data);
+	delete[] buffer;
+}
 
-	void UnPremultiplyLine(
-		uchar* dst,
-		const uchar* src,
-		int intsCount) 
-	{
-		[[maybe_unused]] const auto udst = reinterpret_cast<uint*>(dst);
-		const auto usrc = reinterpret_cast<const uint*>(src);
+[[nodiscard]] bool IsAlignedImage(const QImage& image) {
+	return !(reinterpret_cast<uintptr_t>(image.bits()) % kAlignImageBy)
+		&& !(image.bytesPerLine() % kAlignImageBy);
+}
 
-		for (auto i = 0; i != intsCount; ++i)
-			udst[i] = qUnpremultiply(usrc[i]);
-	}
+void UnPremultiplyLine(
+	uchar* dst,
+	const uchar* src,
+	int intsCount) 
+{
+	[[maybe_unused]] const auto udst = reinterpret_cast<uint*>(dst);
+	const auto usrc = reinterpret_cast<const uint*>(src);
 
-	void PremultiplyLine(
-		uchar* dst,
-		const uchar* src,
-		int intsCount)
-	{
-		const auto udst = reinterpret_cast<uint*>(dst);
-		[[maybe_unused]] const auto usrc = reinterpret_cast<const uint*>(src);
+	for (auto i = 0; i != intsCount; ++i)
+		udst[i] = qUnpremultiply(usrc[i]);
+}
 
-		for (auto i = 0; i != intsCount; ++i)
-			udst[i] = qPremultiply(usrc[i]);
-	}
+void PremultiplyLine(
+	uchar* dst,
+	const uchar* src,
+	int intsCount)
+{
+	const auto udst = reinterpret_cast<uint*>(dst);
+	[[maybe_unused]] const auto usrc = reinterpret_cast<const uint*>(src);
 
-	void UnPremultiply(
-		QImage& dst,
-		const QImage& src)
-	{
-		if (!GoodStorageForFrame(dst, src.size()))
-			dst = CreateFrameStorage(src.size());
+	for (auto i = 0; i != intsCount; ++i)
+		udst[i] = qPremultiply(usrc[i]);
+}
 
-		const auto srcPerLine = src.bytesPerLine();
-		const auto dstPerLine = dst.bytesPerLine();
+void UnPremultiply(
+	QImage& dst,
+	const QImage& src)
+{
+	if (!GoodStorageForFrame(dst, src.size()))
+		dst = CreateFrameStorage(src.size());
 
-		const auto width = src.width();
-		const auto height = src.height();
+	const auto srcPerLine = src.bytesPerLine();
+	const auto dstPerLine = dst.bytesPerLine();
 
-		auto srcBytes = src.bits();
-		auto dstBytes = dst.bits();
+	const auto width = src.width();
+	const auto height = src.height();
 
-		if (srcPerLine != width * 4 || dstPerLine != width * 4)
-			for (auto i = 0; i != height; ++i) {
-				UnPremultiplyLine(dstBytes, srcBytes, width);
+	auto srcBytes = src.bits();
+	auto dstBytes = dst.bits();
 
-				srcBytes += srcPerLine;
-				dstBytes += dstPerLine;
-			}
-		else
-			UnPremultiplyLine(dstBytes, srcBytes, width * height);
-	}
+	if (srcPerLine != width * 4 || dstPerLine != width * 4)
+		for (auto i = 0; i != height; ++i) {
+			UnPremultiplyLine(dstBytes, srcBytes, width);
 
-	void PremultiplyInplace(QImage& image) {
-		const auto perLine = image.bytesPerLine();
-		auto bytes = image.bits();
+			srcBytes += srcPerLine;
+			dstBytes += dstPerLine;
+		}
+	else
+		UnPremultiplyLine(dstBytes, srcBytes, width * height);
+}
 
-		const auto width = image.width();
-		const auto height = image.height();
+void PremultiplyInplace(QImage& image) {
+	const auto perLine = image.bytesPerLine();
+	auto bytes = image.bits();
 
-		if (perLine != width * 4)
-			for (auto i = 0; i != height; ++i) {
-				PremultiplyLine(bytes, bytes, width);
-				bytes += perLine;
-			}
-		else
-			PremultiplyLine(bytes, bytes, width * height);
-	}
+	const auto width = image.width();
+	const auto height = image.height();
 
-	bool GoodStorageForFrame(
-		const QImage& storage,
-		QSize size)
-	{
-		return !storage.isNull()
-			&& (storage.format() == kImageFormat)
-			&& (storage.size() == size)
-			&& storage.isDetached()
-			&& IsAlignedImage(storage);
-	}
+	if (perLine != width * 4)
+		for (auto i = 0; i != height; ++i) {
+			PremultiplyLine(bytes, bytes, width);
+			bytes += perLine;
+		}
+	else
+		PremultiplyLine(bytes, bytes, width * height);
+}
 
-	QImage CreateFrameStorage(QSize size) {
-		const auto width = size.width();
-		const auto height = size.height();
+bool GoodStorageForFrame(
+	const QImage& storage,
+	QSize size)
+{
+	return !storage.isNull()
+		&& (storage.format() == kImageFormat)
+		&& (storage.size() == size)
+		&& storage.isDetached()
+		&& IsAlignedImage(storage);
+}
 
-		const auto widthAlign = kAlignImageBy / kPixelBytesSize;
-		const auto neededWidth = width + ((width % widthAlign)
-			? (widthAlign - (width % widthAlign))
-			: 0);
+QImage CreateFrameStorage(QSize size) {
+	const auto width = size.width();
+	const auto height = size.height();
 
-		const auto perLine = neededWidth * kPixelBytesSize;
+	const auto widthAlign = kAlignImageBy / kPixelBytesSize;
+	const auto neededWidth = width + ((width % widthAlign)
+		? (widthAlign - (width % widthAlign))
+		: 0);
 
-		const auto buffer = new uchar[perLine * height + kAlignImageBy];
-		const auto cleanupData = static_cast<void*>(buffer);
+	const auto perLine = neededWidth * kPixelBytesSize;
 
-		const auto address = reinterpret_cast<uintptr_t>(buffer);
-		const auto alignedBuffer = buffer + ((address % kAlignImageBy)
-			? (kAlignImageBy - (address % kAlignImageBy))
-			: 0);
+	const auto buffer = new uchar[perLine * height + kAlignImageBy];
+	const auto cleanupData = static_cast<void*>(buffer);
 
-		return QImage(
-			alignedBuffer, width, height,
-			perLine, kImageFormat,
-			AlignedImageBufferCleanupHandler,
-			cleanupData);
-	}
-} // namespace base::images
+	const auto address = reinterpret_cast<uintptr_t>(buffer);
+	const auto alignedBuffer = buffer + ((address % kAlignImageBy)
+		? (kAlignImageBy - (address % kAlignImageBy))
+		: 0);
+
+	return QImage(
+		alignedBuffer, width, height,
+		perLine, kImageFormat,
+		AlignedImageBufferCleanupHandler,
+		cleanupData);
+}
+
+__BASE_IMAGES_NAMESPACE_END
 
 #endif

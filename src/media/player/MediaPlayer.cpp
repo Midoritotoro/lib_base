@@ -14,7 +14,7 @@
 #include <base/media/player/VideoStateWidget.h>
 
 #include <base/images/ImagesPrepare.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 
 namespace {

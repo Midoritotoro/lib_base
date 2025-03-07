@@ -4,101 +4,103 @@
 #include <src/qt/text/Types.h>
 
 
-namespace base::qt::text {
-	static constexpr TextSelection AllTextSelection = { 0, 0xFFFF };
-	using EntitiesInText = QVector<EntityInText>;
+__BASE_QT_TEXT_NAMESPACE_BEGIN
 
-	struct TextWithEntities {
-		QString text;
-		EntitiesInText entities;
+static constexpr TextSelection AllTextSelection = { 0, 0xFFFF };
+using EntitiesInText = QVector<EntityInText>;
 
-		[[nodiscard]] bool empty() const;
-		void reserve(int size, int entitiesCount = 0);
+struct TextWithEntities {
+	QString text;
+	EntitiesInText entities;
 
-		TextWithEntities& append(TextWithEntities&& other);
-		TextWithEntities& append(const TextWithEntities& other);
+	[[nodiscard]] bool empty() const;
+	void reserve(int size, int entitiesCount = 0);
 
-		TextWithEntities& append(const QString& other);
-		TextWithEntities& append(QLatin1String other);
-		TextWithEntities& append(QChar other);
+	TextWithEntities& append(TextWithEntities&& other);
+	TextWithEntities& append(const TextWithEntities& other);
 
-		[[nodiscard]] static TextWithEntities Simple(const QString& simple);
+	TextWithEntities& append(const QString& other);
+	TextWithEntities& append(QLatin1String other);
+	TextWithEntities& append(QChar other);
 
-		friend inline auto operator<=>(
-			const TextWithEntities&,
-			const TextWithEntities&) = default;
-		friend inline bool operator==(
-			const TextWithEntities&,
-			const TextWithEntities&) = default;
-	};
+	[[nodiscard]] static TextWithEntities Simple(const QString& simple);
 
-	struct TextForMimeData {
-		QString expanded;
-		TextWithEntities rich;
+	friend inline auto operator<=>(
+		const TextWithEntities&,
+		const TextWithEntities&) = default;
+	friend inline bool operator==(
+		const TextWithEntities&,
+		const TextWithEntities&) = default;
+};
 
-		[[nodiscard]] bool empty() const;
-		void reserve(int size, int entitiesCount = 0);
+struct TextForMimeData {
+	QString expanded;
+	TextWithEntities rich;
 
-		[[nodiscard]] TextForMimeData& append(TextForMimeData&& other);
-		[[nodiscard]] TextForMimeData& append(TextWithEntities&& other);
-		[[nodiscard]] TextForMimeData& append(const QString& other);
+	[[nodiscard]] bool empty() const;
+	void reserve(int size, int entitiesCount = 0);
 
-		[[nodiscard]] TextForMimeData& append(QLatin1String other);
-		[[nodiscard]] TextForMimeData& append(QChar other);
+	[[nodiscard]] TextForMimeData& append(TextForMimeData&& other);
+	[[nodiscard]] TextForMimeData& append(TextWithEntities&& other);
+	[[nodiscard]] TextForMimeData& append(const QString& other);
 
-		[[nodiscard]] static TextForMimeData Rich(TextWithEntities&& rich);
-		[[nodiscard]] static TextForMimeData Simple(const QString& simple);
-	};
+	[[nodiscard]] TextForMimeData& append(QLatin1String other);
+	[[nodiscard]] TextForMimeData& append(QChar other);
 
-	class EntityInText {
-	public:
-		EntityInText(
-			EntityType type,
-			int offset,
-			int length,
-			const QString& data = QString());
+	[[nodiscard]] static TextForMimeData Rich(TextWithEntities&& rich);
+	[[nodiscard]] static TextForMimeData Simple(const QString& simple);
+};
 
-		static [[nodiscard]] int FirstMonospaceOffset(
-			const EntitiesInText& entities,
-			int textLength);
+class EntityInText {
+public:
+	EntityInText(
+		EntityType type,
+		int offset,
+		int length,
+		const QString& data = QString());
 
-		[[nodiscard]] EntityType type() const;
-		[[nodiscard]] int offset() const;
+	static [[nodiscard]] int FirstMonospaceOffset(
+		const EntitiesInText& entities,
+		int textLength);
 
-		[[nodiscard]] int length() const;
-		[[nodiscard]] QString data() const;
+	[[nodiscard]] EntityType type() const;
+	[[nodiscard]] int offset() const;
 
-		void extendToLeft(int extent);
-		void shrinkFromRight(int shrink);
+	[[nodiscard]] int length() const;
+	[[nodiscard]] QString data() const;
 
-		void shiftLeft(int shift);
-		void shiftRight(int shift);
+	void extendToLeft(int extent);
+	void shrinkFromRight(int shrink);
 
-		void updateTextEnd(int textEnd);
-		explicit operator bool() const {
-			return type() != EntityType::Invalid;
-		}
-	private:
-		EntityType _type = EntityType::Invalid;
+	void shiftLeft(int shift);
+	void shiftRight(int shift);
 
-		int _offset = 0;
-		int _length = 0;
+	void updateTextEnd(int textEnd);
+	explicit operator bool() const {
+		return type() != EntityType::Invalid;
+	}
+private:
+	EntityType _type = EntityType::Invalid;
 
-		QString _data;
-	};
+	int _offset = 0;
+	int _length = 0;
 
-	struct EntityLinkData {
-		QString text;
-		QString data;
+	QString _data;
+};
 
-		EntityType type = EntityType::Invalid;
-		EntityLinkShown shown = EntityLinkShown::Full;
+struct EntityLinkData {
+	QString text;
+	QString data;
 
-		friend inline auto operator<=>(
-			const EntityLinkData&,
-			const EntityLinkData&) = default;
-		friend inline bool operator==(
-			const EntityLinkData&,
-			const EntityLinkData&) = default;
-	};
-} // namespace base::qt::text
+	EntityType type = EntityType::Invalid;
+	EntityLinkShown shown = EntityLinkShown::Full;
+
+	friend inline auto operator<=>(
+		const EntityLinkData&,
+		const EntityLinkData&) = default;
+	friend inline bool operator==(
+		const EntityLinkData&,
+		const EntityLinkData&) = default;
+};
+
+__BASE_QT_TEXT_NAMESPACE_END

@@ -1,44 +1,46 @@
-#include <base/core/Mutex.h>
+#include <base/core/thread/Mutex.h>
 
-#include <base/core/Thread.h>
+#include <base/core/thread/Thread.h>
 
 #if defined(OS_WIN)
-	#include <base/core/WindowsMutex.h>
-	using PlatformMutexImplementation = base::WindowsMutex;
+	#include <base/core/thread/WindowsMutex.h>
+	using PlatformMutexImplementation = base::thread::WindowsMutex;
 #elif defined(OS_MAC) || defined(OS_LINUX)
-	#include <base/core/UnixMutex.h>
-	using PlatformMutexImplementation = base::UnixMutex;
+	#include <base/core/thread/UnixMutex.h>
+	using PlatformMutexImplementation = base::thread::UnixMutex;
 #endif
 
 
-namespace base {
-	Mutex::Mutex(not_null<Thread*> thread) {
-		_impl = new PlatformMutexImplementation(
-			reinterpret_cast<ThreadPlatformImplementation*>(thread->impl()));
-	}
+__BASE_THREAD_NAMESPACE_BEGIN
 
-	Mutex::~Mutex() {
-		delete _impl;
-		_impl = nullptr;
-	}
+Mutex::Mutex(not_null<Thread*> thread) {
+	_impl = new PlatformMutexImplementation(
+		reinterpret_cast<ThreadPlatformImplementation*>(thread->impl()));
+}
 
-	void Mutex::setUnlockOnDelete(bool unlockOnDel) {
-		_impl->setUnlockOnDelete(unlockOnDel);
-	}
+Mutex::~Mutex() {
+	delete _impl;
+	_impl = nullptr;
+}
 
-	bool Mutex::unlockOnDelete() const noexcept {
-		return _impl->unlockOnDelete();
-	}
+void Mutex::setUnlockOnDelete(bool unlockOnDel) {
+	_impl->setUnlockOnDelete(unlockOnDel);
+}
 
-	bool Mutex::lock() {
-		return _impl->lock();
-	}
+bool Mutex::unlockOnDelete() const noexcept {
+	return _impl->unlockOnDelete();
+}
 
-	bool Mutex::unlock() {
-		return _impl->unlock();
-	}
+bool Mutex::lock() {
+	return _impl->lock();
+}
 
-	bool Mutex::isLocked() const noexcept {
-		return _impl->isLocked();
-	}
-} // namespace base
+bool Mutex::unlock() {
+	return _impl->unlock();
+}
+
+bool Mutex::isLocked() const noexcept {
+	return _impl->isLocked();
+}
+
+__BASE_THREAD_NAMESPACE_END

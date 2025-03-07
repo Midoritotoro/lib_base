@@ -13,11 +13,10 @@ extern "C" {
 
 #include <qDebug>
 
-#include <base/system/Time.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/system/Time.h>
+#include <base/core/utility/Algorithm.h>
 
-
-namespace base::media::ffmpeg {
+__BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
 
 void IODeleter::operator()(AVIOContext* value) {
 	if (value) {
@@ -398,4 +397,5 @@ SwresamplePointer MakeSwresamplePointer(
 #endif // DA_FFMPEG_NEW_CHANNEL_LAYOUT
 		});
 }
-} // namespace base::media::ffmpeg::video
+
+__BASE_MEDIA_FFMPEG_NAMESPACE_END

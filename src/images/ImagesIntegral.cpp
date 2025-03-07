@@ -2,94 +2,96 @@
 #include <base/images/ImagesImage.h>
 
 #include <base/images/filters/ImageFilter.h>
-#include <base/system/Platform.h>
+#include <base/core/system/Platform.h>
 
 
-namespace base::images {
-    IntegralImage::IntegralImage() {
-       //// const char* out = "D:/pp.bmp"; error
-       // const char* out = "D:/pp.png"; 
-       // const char* in = "C:\\Users\\danya\\Downloads\\bmphqi.bmp";
+__BASE_IMAGES_NAMESPACE_BEGIN
 
-       // QImage image(in);
+IntegralImage::IntegralImage() {
+    //// const char* out = "D:/pp.bmp"; error
+    // const char* out = "D:/pp.png"; 
+    // const char* in = "C:\\Users\\danya\\Downloads\\bmphqi.bmp";
 
-       // {
-       //     measureExecutionTime("IntegralImage: ")
-       //     ImageFilter(&image).filter(Filter::BradleyThreshold);
-       // }
+    // QImage image(in);
 
-       // {
-       //     measureExecutionTime("Image::save: ")
-       //     image.save(out);
-       // }
+    // {
+    //     measureExecutionTime("IntegralImage: ")
+    //     ImageFilter(&image).filter(Filter::BradleyThreshold);
+    // }
 
-       //// qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
-    }
+    // {
+    //     measureExecutionTime("Image::save: ")
+    //     image.save(out);
+    // }
 
-    IntegralImage::IntegralImage(const std::vector<std::vector<int32>>& image) :
-        _integralImage(image)
-    {}
+    //// qDebug() << image.width() << image.height() << strlen((char*)image.data_ptr()->data) << image.bytesPerLine() << image.depth();
+}
 
-    IntegralImage::IntegralImage(const Image& image) :
-        _integralImage(integralImageFromImage(image))
-    {}
+IntegralImage::IntegralImage(const std::vector<std::vector<int32>>& image) :
+    _integralImage(image)
+{}
 
-    const std::vector<std::vector<int32>>& IntegralImage::toVector() const noexcept {
-        return _integralImage;
-    }
+IntegralImage::IntegralImage(const Image& image) :
+    _integralImage(integralImageFromImage(image))
+{}
 
-    int32 IntegralImage::width() const noexcept {
-        return _integralImage[0].size();
-    }
+const std::vector<std::vector<int32>>& IntegralImage::toVector() const noexcept {
+    return _integralImage;
+}
 
-    int32 IntegralImage::height() const noexcept {
-        return _integralImage.size();
-    }
+int32 IntegralImage::width() const noexcept {
+    return _integralImage[0].size();
+}
 
-    Size<int32> IntegralImage::size() const noexcept {
-        return Size<int32>(width(), height());
-    }
+int32 IntegralImage::height() const noexcept {
+    return _integralImage.size();
+}
 
-    Point<int32> IntegralImage::randomFreePositionForSize(const Size<int32>& size) const {
-        return { 0, 0 };
-    }
+Size<int32> IntegralImage::size() const noexcept {
+    return Size<int32>(width(), height());
+}
 
-    std::vector<int>& IntegralImage::operator[](const size_t position) noexcept {
-        return _integralImage[position];
-    }
+Point<int32> IntegralImage::randomFreePositionForSize(const Size<int32>& size) const {
+    return { 0, 0 };
+}
 
-    IntegralImage& IntegralImage::operator=(const std::vector<std::vector<int>>& other) noexcept {
-        _integralImage = other;
-        return *this;
-    }
+std::vector<int>& IntegralImage::operator[](const size_t position) noexcept {
+    return _integralImage[position];
+}
 
-    IntegralImage& IntegralImage::operator=(const Image& image) noexcept {
-        _integralImage = integralImageFromImage(image);
-        return *this;
-    }
+IntegralImage& IntegralImage::operator=(const std::vector<std::vector<int>>& other) noexcept {
+    _integralImage = other;
+    return *this;
+}
 
-    bool IntegralImage::operator==(const IntegralImage& other) const noexcept {
-        return _integralImage == other._integralImage;
-    }
+IntegralImage& IntegralImage::operator=(const Image& image) noexcept {
+    _integralImage = integralImageFromImage(image);
+    return *this;
+}
 
-    bool IntegralImage::operator==(const std::vector<std::vector<int32>>& other) const noexcept {
-        return _integralImage == other;
-    }
+bool IntegralImage::operator==(const IntegralImage& other) const noexcept {
+    return _integralImage == other._integralImage;
+}
 
-    std::vector<std::vector<int32>> IntegralImage::integralImageFromImage(const Image& image) {
-        if (image.isNull())
-            return {};
+bool IntegralImage::operator==(const std::vector<std::vector<int32>>& other) const noexcept {
+    return _integralImage == other;
+}
 
-        const auto columns = image.width();
-        const auto rows = image.height();
+std::vector<std::vector<int32>> IntegralImage::integralImageFromImage(const Image& image) {
+    if (image.isNull())
+        return {};
 
-        auto result = std::vector<std::vector<int>>(rows, std::vector<int>(columns));
+    const auto columns = image.width();
+    const auto rows = image.height();
 
-        for (auto row = 0; row < rows; row++)
-            for (auto column = 0; column < columns; column++)
-                result[row][column] = result[row][column] + result[row][column]
-                - result[row][column] + image.pixel(column, row);
+    auto result = std::vector<std::vector<int>>(rows, std::vector<int>(columns));
 
-        return result;
-    }
-} // namespace base::images
+    for (auto row = 0; row < rows; row++)
+        for (auto column = 0; column < columns; column++)
+            result[row][column] = result[row][column] + result[row][column]
+            - result[row][column] + image.pixel(column, row);
+
+    return result;
+}
+
+__BASE_IMAGES_NAMESPACE_END

@@ -1,56 +1,58 @@
 #include <base/qt/ui/animations/CombinedGrowthAnimation.h>
-#include <base/concurrent/Concurrent.h>
+#include <base/core/async/Concurrent.h>
 
 
-namespace base::qt::ui::animations {
-	CombinedGrowthAnimation::CombinedGrowthAnimation() {
-		_animationType = AnimationType::CombinedGrowth;
-		_animationManager = new AnimationManager();
-	}
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_BEGIN
 
-	void CombinedGrowthAnimation::start(
-		QRect rect,
-		Direction direction,
-		Corner start,
-		Time::time_t duration,
-		Time::time_t updateTimeout)
-	{
-		Expects(duration != 0);
-		Expects(rect.isEmpty() == false);
+CombinedGrowthAnimation::CombinedGrowthAnimation() {
+	_animationType = AnimationType::CombinedGrowth;
+	_animationManager = new AnimationManager();
+}
 
-		_rect = rect;
+void CombinedGrowthAnimation::start(
+	QRect rect,
+	Direction direction,
+	Corner start,
+	Time::time_t duration,
+	Time::time_t updateTimeout)
+{
+	Expects(duration != 0);
+	Expects(rect.isEmpty() == false);
 
-		_direction = direction;
+	_rect = rect;
 
-		_duration = duration;
-		_startCorner = start;
+	_direction = direction;
 
-		_updateTimeout = std::clamp(updateTimeout,
-			MinimumAnimationUpdateTimeout(),
-			MaximumAnimationUpdateTimeout());
+	_duration = duration;
+	_startCorner = start;
 
-		_animationManager->start(this);
-	}
+	_updateTimeout = std::clamp(updateTimeout,
+		MinimumAnimationUpdateTimeout(),
+		MaximumAnimationUpdateTimeout());
 
-	void CombinedGrowthAnimation::stop() {
-		_animationManager->stop();
-	}
+	_animationManager->start(this);
+}
 
-	void CombinedGrowthAnimation::restart() {
-	}
+void CombinedGrowthAnimation::stop() {
+	_animationManager->stop();
+}
 
-	void CombinedGrowthAnimation::restartAfterFinished() {
-		concurrent::invokeAsync([=] {
-			while (animating());
-			restart();
-		});
-	}
+void CombinedGrowthAnimation::restart() {
+}
 
-	bool CombinedGrowthAnimation::animating() const noexcept {
-		return _animationManager->animating();
-	}
+void CombinedGrowthAnimation::restartAfterFinished() {
+	concurrent::invokeAsync([=] {
+		while (animating());
+		restart();
+	});
+}
 
-	QRectF CombinedGrowthAnimation::rect() const noexcept {
-		return _rect;
-	}
-} // namespace base::qt::ui::animations
+bool CombinedGrowthAnimation::animating() const noexcept {
+	return _animationManager->animating();
+}
+
+QRectF CombinedGrowthAnimation::rect() const noexcept {
+	return _rect;
+}
+
+__BASE_QT_UI_ANIMATIONS_NAMESPACE_END

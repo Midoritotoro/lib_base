@@ -4,62 +4,64 @@
 #include <base/qt/text/TextUtility.h>
 
 
-namespace base::qt::text {
-	PreClickHandler::PreClickHandler(
-		not_null<String*> text,
-		uint16 offset,
-		uint16 length)
-		: _text(text)
-		, _offset(offset)
-		, _length(length)
-	{}
+__BASE_QT_TEXT_NAMESPACE_BEGIN
 
-	not_null<String*> PreClickHandler::text() const {
-		return _text;
-	}
+PreClickHandler::PreClickHandler(
+	not_null<String*> text,
+	uint16 offset,
+	uint16 length)
+	: _text(text)
+	, _offset(offset)
+	, _length(length)
+{}
 
-	void PreClickHandler::setText(not_null<String*> text) {
-		_text = text;
-	}
+not_null<String*> PreClickHandler::text() const {
+	return _text;
+}
 
-	void PreClickHandler::onClick(common::ClickContext context) const {
-		if (context.button != Qt::LeftButton)
-			return;
+void PreClickHandler::setText(not_null<String*> text) {
+	_text = text;
+}
 
-		const auto till = uint16(_offset + _length);
-		auto text = _text->toTextForMimeData({ _offset, till });
+void PreClickHandler::onClick(common::ClickContext context) const {
+	if (context.button != Qt::LeftButton)
+		return;
 
-		if (text.empty())
-			return;
-		else if (!text.rich.text.endsWith('\n'))
-			text.rich.text.append('\n');
-		if (!text.expanded.endsWith('\n'))
-			text.expanded.append('\n');
+	const auto till = uint16(_offset + _length);
+	auto text = _text->toTextForMimeData({ _offset, till });
 
-		SetClipboardText(std::move(text));
-	}
+	if (text.empty())
+		return;
+	else if (!text.rich.text.endsWith('\n'))
+		text.rich.text.append('\n');
+	if (!text.expanded.endsWith('\n'))
+		text.expanded.append('\n');
 
-	BlockquoteClickHandler::BlockquoteClickHandler(
-		not_null<String*> text,
-		int quoteIndex)
-		: _text(text)
-		, _quoteIndex(quoteIndex)
-	{}
+	SetClipboardText(std::move(text));
+}
 
-	not_null<String*> BlockquoteClickHandler::text() const {
-		return _text;
-	}
+BlockquoteClickHandler::BlockquoteClickHandler(
+	not_null<String*> text,
+	int quoteIndex)
+	: _text(text)
+	, _quoteIndex(quoteIndex)
+{}
 
-	void BlockquoteClickHandler::setText(not_null<String*> text) {
-		_text = text;
-	}
+not_null<String*> BlockquoteClickHandler::text() const {
+	return _text;
+}
 
-	void BlockquoteClickHandler::onClick(common::ClickContext context) const {
-		if (context.button != Qt::LeftButton)
-			return;
+void BlockquoteClickHandler::setText(not_null<String*> text) {
+	_text = text;
+}
 
-		_text->setBlockquoteExpanded(
-			_quoteIndex,
-			!_text->blockquoteExpanded(_quoteIndex));
-	}
-} // namespace base::qt::text
+void BlockquoteClickHandler::onClick(common::ClickContext context) const {
+	if (context.button != Qt::LeftButton)
+		return;
+
+	_text->setBlockquoteExpanded(
+		_quoteIndex,
+		!_text->blockquoteExpanded(_quoteIndex));
+}
+
+__BASE_QT_TEXT_NAMESPACE_END

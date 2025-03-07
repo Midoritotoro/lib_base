@@ -1,7 +1,7 @@
 #include <base/qt/style/StyleFont.h>
 
 #include <base/core/Types.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 #include <base/qt/style/StyleCore.h>
 
@@ -11,7 +11,7 @@
 #include <QResource>
 #include <QDir>
 
-#include <base/utility/Math.h>
+#include <base/core/utility/Math.h>
 
 
 void style_InitFontsResource() {
@@ -20,7 +20,7 @@ void style_InitFontsResource() {
 #endif
 }
 
-namespace base::qt::style {
+__BASE_QT_STYLE_NAMESPACE_BEGIN
 	namespace {
 		QString Custom;
 	} // namespace
@@ -37,10 +37,11 @@ namespace base::qt::style {
 	QString CustomFont() {
 		return Custom;
 	}
-} // namespace  base::qt::style
+__BASE_QT_STYLE_NAMESPACE_END
 
 
-namespace base::qt::style::internal {
+__BASE_QT_STYLE_NAMESPACE_BEGIN
+namespace internal {
 	struct ResolvedFont {
 		ResolvedFont(FontResolveResult result, FontVariants* modified);
 
@@ -162,7 +163,7 @@ namespace base::qt::style::internal {
 					.ascent = metrics.ascent(),
 					.height = metrics.height(),
 				};
-			};
+				};
 
 			const auto family = font.family();
 			const auto basic = u"Open Sans"_q;
@@ -182,7 +183,7 @@ namespace base::qt::style::internal {
 				constexpr auto kCount = int(std::size(Test)) - 1;
 
 				auto heights = std::array<double, kCount>{};
-				for (auto i = 0; i != kCount; ++i) 
+				for (auto i = 0; i != kCount; ++i)
 					heights[i] = -metrics.boundingRect(QChar(Test[i])).y();
 
 				std::ranges::sort(heights);
@@ -193,9 +194,9 @@ namespace base::qt::style::internal {
 				auto result = 0.;
 				for (auto i = from; i != till; ++i)
 					result += heights[i];
-				
+
 				return result / (till - from);
-			};
+				};
 
 			const auto desired = Height(basicMetrics);
 			const auto desiredFull = basicMetrics.tightBoundingRect(Full);
@@ -215,7 +216,7 @@ namespace base::qt::style::internal {
 					.ascent = basicMetrics.ascent(),
 					.height = tightHeight + heightAdd,
 				};
-			};
+				};
 
 			auto current = Height(metrics);
 
@@ -226,7 +227,7 @@ namespace base::qt::style::internal {
 
 			const auto adjustedByFont = [&](const QFont& font) {
 				return adjusted(font.pixelSize(), QFontMetricsF(font));
-			};
+				};
 
 			const auto max = std::min(kMaxSizeShift, startSize - 1);
 
@@ -280,7 +281,7 @@ namespace base::qt::style::internal {
 		[[nodiscard]] FontResolveResult ResolveFont(
 			const QString& family,
 			FontFlags flags,
-			int size) 
+			int size)
 		{
 			auto font = QFont(QFont().family());
 
@@ -288,7 +289,7 @@ namespace base::qt::style::internal {
 			const auto system = !monospace && (family == SystemFontTag());
 			const auto overriden = !monospace && !system && !family.isEmpty();
 
-			if (monospace) 
+			if (monospace)
 				font.setFamily(MonospaceFont());
 			else if (overriden)
 				font.setFamily(family);
@@ -326,8 +327,8 @@ namespace base::qt::style::internal {
 				.font = font,
 				.ascent = metrics.ascent,
 				.height = metrics.height,
-				.iascent = int(base::SafeRound(metrics.ascent)),
-				.iheight = int(base::SafeRound(metrics.height)),
+				.iascent = int(SafeRound(metrics.ascent)),
+				.iheight = int(SafeRound(metrics.height)),
 				.requestedFamily = index,
 				.requestedSize = size,
 				.requestedFlags = flags,
@@ -371,20 +372,20 @@ namespace base::qt::style::internal {
 		return i->second;
 	}
 
-	FontData::FontData(const FontResolveResult& result, FontVariants* modified):
+	FontData::FontData(const FontResolveResult& result, FontVariants* modified) :
 		f(result.font)
 		, _m(f)
 		, _size(result.requestedSize)
 		, _family(result.requestedFamily)
-		, _flags(result.requestedFlags) 
+		, _flags(result.requestedFlags)
 	{
 		if (modified)
 			memcpy(&_modified, modified, sizeof(_modified));
 
 		_modified[int(_flags)] = Font(this);
 
-		height = int(base::SafeRound(result.height));
-		ascent = int(base::SafeRound(result.ascent));
+		height = int(SafeRound(result.height));
+		ascent = int(SafeRound(result.ascent));
 
 		descent = height - ascent;
 
@@ -407,7 +408,7 @@ namespace base::qt::style::internal {
 	QString FontData::elided(
 		const QString& str,
 		int width,
-		Qt::TextElideMode mode) const 
+		Qt::TextElideMode mode) const
 	{
 		return _m.elidedText(str, mode, width);
 	}
@@ -456,7 +457,7 @@ namespace base::qt::style::internal {
 		return _modified[newFlags];
 	}
 
-	Font::Font(Qt::Initialization) 
+	Font::Font(Qt::Initialization)
 	{}
 
 	Font::Font(
@@ -470,13 +471,13 @@ namespace base::qt::style::internal {
 	Font::Font(
 		int size,
 		FontFlags flags,
-		int family) 
+		int family)
 	{
 		init(size, flags, family, 0);
 	}
 
-	Font::Font(FontData* data): 
-		_data(data) 
+	Font::Font(FontData* data) :
+		_data(data)
 	{}
 
 	Font::Font(
@@ -501,7 +502,7 @@ namespace base::qt::style::internal {
 		return _data != nullptr;
 	}
 
-	Font::operator const QFont&() const {
+	Font::operator const QFont& () const {
 		Expects(_data != nullptr);
 		return _data->f;
 	}
@@ -543,13 +544,13 @@ namespace base::qt::style::internal {
 		FontFlags flags,
 		int size
 	)
-		: _data(ResolveFont(custom, flags, size), nullptr) 
+		: _data(ResolveFont(custom, flags, size), nullptr)
 	{
 		_font._data = &_data;
 	}
 
 	OwnedFont::OwnedFont(const OwnedFont& other)
-		: _data(other._data) 
+		: _data(other._data)
 	{
 		_font._data = &_data;
 	}
@@ -570,15 +571,20 @@ namespace base::qt::style::internal {
 	FontData* OwnedFont::get() const {
 		return _font.get();
 	}
-} // namespace base::qt::style::internal
+} // internal 
 
-namespace base::qt::style {
-	const FontResolveResult* FindAdjustResult(const QFont& font) {
-		const auto key = internal::QtFontKey(font);
-		const auto i = internal::QtFontsKeys.find(key);
+__BASE_QT_STYLE_NAMESPACE_END
 
-		return (i != end(internal::QtFontsKeys))
-			? &internal::FontsByKey[i->second]->result
-			: nullptr;
-	}
-} // namespace base::qt::style
+
+__BASE_QT_STYLE_NAMESPACE_BEGIN
+
+const FontResolveResult* FindAdjustResult(const QFont& font) {
+	const auto key = internal::QtFontKey(font);
+	const auto i = internal::QtFontsKeys.find(key);
+
+	return (i != end(internal::QtFontsKeys))
+		? &internal::FontsByKey[i->second]->result
+		: nullptr;
+}
+
+__BASE_QT_STYLE_NAMESPACE_END

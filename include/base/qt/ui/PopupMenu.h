@@ -13,61 +13,63 @@
 #include <QAction>
 
 
-namespace base::qt::ui {
-	class PopupMenu : 
-		public BaseWidget<
-			QWidget,
-			style::PopupMenu>
-	{
-	public:
-		using Action = FlatButton;
-		using Actions = std::vector<Action*>;
+__BASE_QT_UI_NAMESPACE_BEGIN
 
-		PopupMenu(
-			QWidget* parent = nullptr,
-			const style::PopupMenu* menuStyle = style::defaultPopupMenuStyle,
-			const style::MenuAction* actionStyle = style::defaultActionStyle);
-		~PopupMenu();
+class PopupMenu : 
+	public BaseWidget<
+		QWidget,
+		style::PopupMenu>
+{
+public:
+	using Action = FlatButton;
+	using Actions = std::vector<Action*>;
 
-		[[nodiscard]] QSize sizeHint() const override;
-		[[nodiscard]] QSize minimumSizeHint() const override;
+	PopupMenu(
+		QWidget* parent = nullptr,
+		const style::PopupMenu* menuStyle = style::defaultPopupMenuStyle,
+		const style::MenuAction* actionStyle = style::defaultActionStyle);
+	~PopupMenu();
 
-		void addAction(
-			const QString& title,
-			Fn<void()> callback,
-			const style::icon* icon = nullptr);
-		[[nodiscard]] Action* action(int index) const;
+	[[nodiscard]] QSize sizeHint() const override;
+	[[nodiscard]] QSize minimumSizeHint() const override;
 
-		void setOpacity(float opacity);
-		[[nodiscard]] float opacity() const noexcept;
+	void addAction(
+		const QString& title,
+		Fn<void()> callback,
+		const style::icon* icon = nullptr);
+	[[nodiscard]] Action* action(int index) const;
 
-		void setDeleteOnHide(bool deleteOnHide);
-		[[nodiscard]] bool deleteOnHide() const noexcept;
+	void setOpacity(float opacity);
+	[[nodiscard]] float opacity() const noexcept;
 
-		[[nodiscard]] bool empty() const noexcept;
-		void popup(const QPoint& point);
+	void setDeleteOnHide(bool deleteOnHide);
+	[[nodiscard]] bool deleteOnHide() const noexcept;
 
-		void hideMenu(bool animated = true);
-		void addSeparator();
-	protected:
-		void paintEvent(QPaintEvent* event) override;
-		void hideEvent(QHideEvent* event) override;
+	[[nodiscard]] bool empty() const noexcept;
+	void popup(const QPoint& point);
 
-		void focusOutEvent(QFocusEvent* event) override;
-		bool event(QEvent* _event) override;
-	private:
-		void updateGeometry();
+	void hideMenu(bool animated = true);
+	void addSeparator();
+protected:
+	void paintEvent(QPaintEvent* event) override;
+	void hideEvent(QHideEvent* event) override;
 
-		const style::MenuAction* _actionSt = nullptr;
+	void focusOutEvent(QFocusEvent* event) override;
+	bool event(QEvent* _event) override;
+private:
+	void updateGeometry();
 
-		Actions _actions;
+	const style::MenuAction* _actionSt = nullptr;
 
-		animations::CombinedGrowthAnimation _animation;
-		animations::OpacityAnimation _opacityAnimation;
+	Actions _actions;
 
-		std::unique_ptr<effects::BlurBehindEffect> _blur = nullptr;
+	animations::CombinedGrowthAnimation _animation;
+	animations::OpacityAnimation _opacityAnimation;
 
-		float _opacity = 1.f;
-		bool _deleteOnHide;
-	};
-} // namespace base::qt::ui
+	std::unique_ptr<effects::BlurBehindEffect> _blur = nullptr;
+
+	float _opacity = 1.f;
+	bool _deleteOnHide;
+};
+
+__BASE_QT_UI_NAMESPACE_END
