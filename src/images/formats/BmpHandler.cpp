@@ -12,9 +12,9 @@ void BmpHandler::write(
 	const char* path)
 {
 	int32 success = 0;
-	std::string outputImageFormat = Utility::GetExtensionFromPath(path);
+	std::string outputImageFormat = GetExtensionFromPath(path);
 
-	if (Utility::IsFormatsEqual(data->handler->format(), outputImageFormat.c_str()) == false) {
+	if (IsFormatsEqual(data->handler->format(), outputImageFormat.c_str()) == false) {
 		convertToFormat(data, outputImageFormat.c_str());
 		return data->handler->write(data, path);
 	}
@@ -33,20 +33,20 @@ void BmpHandler::convertToFormat(
 	ImageData* data,
 	const char* format)
 {
-	if (Utility::IsFormatsEqual(data->handler->format(), format))
+	if (IsFormatsEqual(data->handler->format(), format))
 		return;
 
-	if (Utility::IsPng(format)) {
+	if (IsPng(format)) {
 		data->handler = new PngHandler();
 	// convert to Png
 	}
 		
-	else if (Utility::IsJpeg(format)) {
+	else if (IsJpeg(format)) {
 		data->handler = new JpegHandler();
 		// convert to jpeg
 	}
 
-	AssertLog(Utility::IsFormatSupported(format),
+	AssertLog(IsFormatSupported(format),
 		std::string("base::images::BmpHandler::convertToFormat: \""
 			+ std::string(format) + "\"" + std::string(" is not supported")).c_str());
 }

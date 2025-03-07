@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/system/CompilerDetection.h>
-#include <base/system/SystemDetection.h>
+#include <base/core/arch/CompilerDetection.h>
+#include <base/core/arch/SystemDetection.h>
 
 
 #if defined(OS_WIN) && defined(CPP_MSVC)

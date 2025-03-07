@@ -2,7 +2,7 @@
 #include <base/images/ImagesImage.h>
 
 #include <base/images/filters/ImageFilter.h>
-#include <base/core/system/Platform.h>
+#include <base/core/arch/Platform.h>
 
 
 __BASE_IMAGES_NAMESPACE_BEGIN

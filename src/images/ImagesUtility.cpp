@@ -1,7 +1,7 @@
 #include <base/images/ImagesUtility.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
-#include <base/utility/OverflowCheck.h>
+#include <base/core/utility/OverflowCheck.h>
 #include <iostream>
 #include <regex>
 

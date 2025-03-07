@@ -90,6 +90,7 @@ int Compressor::Decompress(
     err = deflateEnd(&stream);
     return err;
 }
-} // namespace base::io
 
 __BASE_IO_NAMESPACE_END
+
+#endif

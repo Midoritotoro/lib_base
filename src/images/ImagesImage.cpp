@@ -90,7 +90,7 @@ Image::Image(QImage&& image) :
 
 	_data->sizeInBytes = image.sizeInBytes();
 
-	_data->channels = Utility::GetChannelsCountByFormat(image);
+	_data->channels = GetChannelsCountByFormat(image);
 
 	_data->width = image.width();
 	_data->height = image.height();
