@@ -2,39 +2,53 @@
 
 
 #include <base/core/string/StringConfig.h>
+#include <type_traits>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+std::string 
+
 template <
-	class Char = NativeChar,
-	std::enable_if_t<
+	typename Char = NativeChar,
+	typename = std::enable_if_t<
 		std::is_same_v<Char, wchar_t> 
-		|| std::is_same_v<Char, char>>
+		|| std::is_same_v<Char, char>>>
 class String {
 public:
 	String();
+	~String();
 
 	String(const String& string);
-	String(const Char* chars);
+	String(const Char* chs);
 
+	String(const wchar_t* wch);
+	String(const char* ch);
 
+	String(const std::string& str);
+	String(const std::wstring& str)
 
-	~String();
+	NODISCARD constexpr Char& operator[](const sizetype index) noexcept;
+	NODISCARD constexpr Char at(const sizetype index) noexcept;
+
+	NODISCARD NativeString toNativeString() const noexcept;
+
+	NODISCARD std::wstring toStdWString() const noexcept;
+	NODISCARD std::string toStdString() const noexcept;
+
+	NODISCARD constexpr sizetype size() const noexcept;
+	NODISCARD constexpr sizetype length() const noexcept;
+
+	NODISCARD constexpr void append(const Char* ch) noexcept;
+	NODISCARD constexpr void insert(
+		const Char* ch,
+		sizetype index) noexcept;
+
+	NODISCARD constexpr Char pop() noexcept;
+	NODISCARD constexpr 
 private:
 	Char* data = nullptr;
 };
-//#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
-//    #define base_strstr             wcsstr
-//    #define base_strcmp             wcscmp
-//    #define base_strlen(string)     wcslen(string) - 1     
-//    #define base_toupper            towupper
-//#else
-//    #define base_strstr             strstr
-//    #define base_strcmp             strcmp
-//    #define base_strlen             strlen
-//    #define base_toupper            toupper
-//#endif
-//
+
 //#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
 //    inline [[nodiscard]] int ConvertWCharToUnicode(
 //        char* buffer,

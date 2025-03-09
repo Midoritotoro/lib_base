@@ -288,6 +288,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/string/StringConfig.h
     include/base/core/string/String.h
+
+    include/base/core/string/StringIterator.h
 )
 
 include(CMakePackageConfigHelpers)

@@ -26,6 +26,8 @@ WARNING_DISABLE_MSVC(4005)
 #endif
 
 
+__BASE_STRING_NAMESPACE_BEGIN
+
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     using NativeString      =   std::wstring;
     using NativeStringView  =   std::wstring_view;
@@ -36,6 +38,7 @@ WARNING_DISABLE_MSVC(4005)
     using NativeChar        =   char;
 #endif
 
+__BASE_STRING_NAMESPACE_END
 
 #define ENGLISH_ALPHABET_ASCII_START        97
 #define ENGLISH_ALPHABET_ASCII_END          122
