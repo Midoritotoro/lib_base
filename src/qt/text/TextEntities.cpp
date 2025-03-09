@@ -1,7 +1,7 @@
 #include <src/qt/text/TextEntities.h>
 
 #include <base/qt/text/String.h>
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 
 
 __BASE_QT_TEXT_NAMESPACE_BEGIN

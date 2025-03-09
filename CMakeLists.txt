@@ -104,9 +104,6 @@ set(PRIVATE_SOURCES
     src/core/system/WindowsSystemInfo.cpp
     src/core/system/UnixSystemInfo.cpp
 
-    src/core/io/UnixFileSystemPath.cpp
-    src/core/io/WindowsFileSystemPath.cpp
-
     src/core/thread/Thread.cpp
     src/core/thread/AtomicInteger.cpp
 
@@ -139,6 +136,7 @@ set(PRIVATE_SOURCES
     src/core/system/StandardPaths.cpp
 
     src/core/system/UnixStandardPaths.cpp
+    src/core/string/String.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -223,10 +221,7 @@ set(PUBLIC_HEADERS
     include/base/core/io/WindowsSmartHandle.h
     include/base/core/io/Compressor.h
 
-    include/base/core/io/FileSystemPath.h
     include/base/core/io/IOConfig.h
-
-    include/base/core/system/SystemString.h
     include/base/core/arch/StaticCodeAnalysis.h
 
     include/base/core/system/WindowsSystemInfo.h
@@ -289,14 +284,16 @@ set(PUBLIC_HEADERS
     include/base/core/io/AbstractFileInfo.h
 
     include/base/core/system/AbstractStandardPaths.h
+    include/base/core/io/AbstractDirectory.h
+
+    include/base/core/string/StringConfig.h
+    include/base/core/string/String.h
 )
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-
 add_library(lib_base ${PUBLIC_HEADERS})
-
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)

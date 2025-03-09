@@ -378,7 +378,7 @@ sizetype WindowsFileEngine::fileSize(const std::string& path) {
 	LARGE_INTEGER fileSize = { 0 };
 	WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
 
-	if (GetFileAttributesExA(path.c_str(), GetFileExInfoStandard, &fileAttributeData)) {
+	if (GetFileAttributesExA(path.c_str(), GetFileExMaxInfoLevel, &fileAttributeData)) {
 		fileSize.LowPart = fileAttributeData.nFileSizeLow;
 		fileSize.HighPart = fileAttributeData.nFileSizeHigh;
 	}

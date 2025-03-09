@@ -60,6 +60,16 @@
 
 
 
+#ifndef __BASE_STRING_NAMESPACE_BEGIN 
+#define __BASE_STRING_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace string {
+#endif // __BASE_STRING_NAMESPACE_BEGIN
+
+#ifndef __BASE_STRING_NAMESPACE_END 
+#define __BASE_STRING_NAMESPACE_END }}
+#endif // __BASE_STRING_NAMESPACE_END
+
+
+
 #ifndef __BASE_SYSTEM_NAMESPACE_BEGIN 
 #define __BASE_SYSTEM_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace system { 
 #endif // __BASE_SYSTEM_NAMESPACE_BEGIN

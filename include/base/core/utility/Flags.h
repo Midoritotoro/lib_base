@@ -114,6 +114,21 @@ public:
 		return !(*this < b);
 	}
 
+	constexpr inline bool testFlag(Enum flag) const noexcept {
+		return testFlags(flag);
+	}
+	constexpr inline bool testFlags(flags flags) const noexcept { 
+		return flags._value ? ((_value & flags._value) == flags._value) : _value == 0;
+	}
+
+	constexpr inline bool testAnyFlag(Enum flag) const noexcept { 
+		return testAnyFlags(flag); 
+	}
+
+	constexpr inline bool testAnyFlags(QFlags flags) const noexcept {
+		return (_value & flags._value) != 0;
+	}
+
 private:
 	Type _value = 0;
 

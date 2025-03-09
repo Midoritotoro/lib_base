@@ -4,10 +4,12 @@
 #include <base/core/BaseNamespace.h>
 
 #include <base/core/io/Directory.h>
-
-__BASE_IO_NAMESPACE_BEGIN
+#include <string>
+#include <tuple>
 
 #ifdef OS_WIN
+
+__BASE_IO_NAMESPACE_BEGIN
 
 class WindowsFileInfo {
 public:
@@ -49,7 +51,7 @@ public:
     NODISCARD bool isNativePath() const;
 
     NODISCARD bool isRelative() const;
-    NODISCARD inline bool isAbsolute() const { return !isRelative(); }
+    NODISCARD bool isAbsolute() const;
 
     NODISCARD bool makeAbsolute();
 
@@ -68,8 +70,20 @@ public:
     NODISCARD bool isBundle() const;
 
     NODISCARD int64 size() const;
+private:
+    using PathHeadTail = std::pair<std::string, std::string>;
+    using PathParts    = std::tuple<std::string, std::string, std::string>;
+
+    NODISCARD PathParts
+        splitRoot(const std::string& path) const;
+
+    NODISCARD PathHeadTail
+        splitPath(const std::string& path) const;
+
+    std::string _path = "";
+    WIN32_FILE_ATTRIBUTE_DATA _data;
 };
 
-#endif 
+__BASE_IO_NAMESPACE_BEGIN
 
-__BASE_IO_NAMESPACE_END
+#endif 
