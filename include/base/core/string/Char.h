@@ -7,6 +7,7 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 class Char {
+public:
     enum SpecialCharacter {
         Null = 0x0000,
         Tabulation = 0x0009,
@@ -66,60 +67,60 @@ class Char {
         Symbol_Other              //   So
     };
 
-    constexpr IMPLICIT Char() noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char() noexcept:
         ucs(0) 
     {}
 
-    constexpr IMPLICIT Char(ushort rc) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(ushort rc) noexcept:
         ucs(rc) 
     {}
 
-    constexpr IMPLICIT Char(uchar c, uchar r) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(uchar c, uchar r) noexcept:
         ucs(char16_t((r << 8) | c))
     {}
 
-    constexpr IMPLICIT Char(short rc) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(short rc) noexcept:
         ucs(char16_t(rc)) 
     {}
 
-    constexpr IMPLICIT Char(uint rc) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(uint rc) noexcept:
         ucs((Assert(rc <= 0xffff), char16_t(rc))) 
     {}
 
-    constexpr IMPLICIT Char(int rc) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(int rc) noexcept:
         Char(uint(rc)) 
     {}
 
-    constexpr IMPLICIT Char(SpecialCharacter s) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(SpecialCharacter s) noexcept:
         ucs(char16_t(s)) 
     {}
 
-    constexpr IMPLICIT Char(CharacterHelper ch) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(CharacterHelper ch) noexcept:
         ucs(ch.unicode())
     {}
 
-    constexpr IMPLICIT Char(char16_t ch) noexcept: 
+    CONSTEXPR_CXX20 IMPLICIT Char(char16_t ch) noexcept: 
         ucs(ch)
     {}
 #if defined(OS_WIN)
-    constexpr IMPLICIT Char(wchar_t ch) noexcept:
+    CONSTEXPR_CXX20 IMPLICIT Char(wchar_t ch) noexcept:
         ucs(char16_t(ch))
     {}
 #endif
 
-    constexpr IMPLICIT Char(char c) noexcept: 
+    CONSTEXPR_CXX20 IMPLICIT Char(char c) noexcept: 
         ucs(uchar(c)) 
     {}
 
-    constexpr IMPLICIT Char(uchar c) noexcept :
+    CONSTEXPR_CXX20 IMPLICIT Char(uchar c) noexcept :
         ucs(c)
     {}
 
-    static constexpr Char fromUcs2(char16_t c) noexcept {
+    static CONSTEXPR_CXX20 Char fromUcs2(char16_t c) noexcept {
         return Char{c}; 
     }
 
-    static constexpr inline auto fromUcs4(char32_t c) noexcept;
+    static CONSTEXPR_CXX20 inline auto fromUcs4(char32_t c) noexcept;
 
     inline Category category() const noexcept { 
         return Char::category(ucs);
@@ -157,23 +158,23 @@ class Char {
         return Char(Char::toCaseFolded(ucs)); 
     }
 
-    constexpr inline char toLatin1() const noexcept {
+    CONSTEXPR_CXX20 inline char toLatin1() const noexcept {
         return ucs > 0xff ? '\0' : char(ucs);
     }
 
-    constexpr inline char16_t unicode() const noexcept {
+    CONSTEXPR_CXX20 inline char16_t unicode() const noexcept {
         return ucs; 
     }
 
-    constexpr inline char16_t& unicode() noexcept {
+    CONSTEXPR_CXX20 inline char16_t& unicode() noexcept {
         return ucs; 
     }
 
-    static constexpr Char fromLatin1(char c) noexcept { 
+    static CONSTEXPR_CXX20 Char fromLatin1(char c) noexcept { 
         return CharacterHelper(c);
     }
 
-    constexpr inline bool isNull() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isNull() const noexcept { 
         return ucs == 0;
     }
 
@@ -181,7 +182,7 @@ class Char {
         return Char::isPrint(ucs);
     }
 
-    constexpr inline bool isSpace() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isSpace() const noexcept { 
         return Char::isSpace(ucs); 
     }
 
@@ -197,67 +198,67 @@ class Char {
         return Char::isSymbol(ucs);
     }
 
-    constexpr inline bool isLetter() const noexcept {
+    CONSTEXPR_CXX20 inline bool isLetter() const noexcept {
         return Char::isLetter(ucs);
     }
 
-    constexpr inline bool isNumber() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isNumber() const noexcept { 
         return Char::isNumber(ucs);
     }
 
-    constexpr inline bool isLetterOrNumber() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isLetterOrNumber() const noexcept { 
         return Char::isLetterOrNumber(ucs);
     }
 
-    constexpr inline bool isDigit() const noexcept {
+    CONSTEXPR_CXX20 inline bool isDigit() const noexcept {
         return Char::isDigit(ucs); 
     }
 
-    constexpr inline bool isLower() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isLower() const noexcept { 
         return Char::isLower(ucs);
     }
 
-    constexpr inline bool isUpper() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isUpper() const noexcept { 
         return Char::isUpper(ucs); 
     }
 
-    constexpr inline bool isTitleCase() const noexcept {
+    CONSTEXPR_CXX20 inline bool isTitleCase() const noexcept {
         return Char::isTitleCase(ucs); 
     }
 
-    constexpr inline bool isNonCharacter() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isNonCharacter() const noexcept { 
         return Char::isNonCharacter(ucs);
     }
 
-    constexpr inline bool isHighSurrogate() const noexcept {
+    CONSTEXPR_CXX20 inline bool isHighSurrogate() const noexcept {
         return Char::isHighSurrogate(ucs); 
     }
 
-    constexpr inline bool isLowSurrogate() const noexcept {
+    CONSTEXPR_CXX20 inline bool isLowSurrogate() const noexcept {
         return Char::isLowSurrogate(ucs);
     }
 
-    constexpr inline bool isSurrogate() const noexcept { 
+    CONSTEXPR_CXX20 inline bool isSurrogate() const noexcept { 
         return Char::isSurrogate(ucs); 
     }
 
-    constexpr inline uchar cell() const noexcept {
+    CONSTEXPR_CXX20 inline uchar cell() const noexcept {
         return uchar(ucs & 0xff);
     }
 
-    constexpr inline uchar row() const noexcept {
+    CONSTEXPR_CXX20 inline uchar row() const noexcept {
         return uchar((ucs >> 8) & 0xff); 
     }
 
-    constexpr inline void setCell(uchar acell) noexcept {
+    CONSTEXPR_CXX20 inline void setCell(uchar acell) noexcept {
         ucs = char16_t((ucs & 0xff00) + acell);
     }
 
-    constexpr inline void setRow(uchar arow) noexcept {
+    CONSTEXPR_CXX20 inline void setRow(uchar arow) noexcept {
         ucs = char16_t((char16_t(arow) << 8) + (ucs & 0xff));
     }
 
-    static constexpr inline
+    static CONSTEXPR_CXX20 inline
         bool isNonCharacter(char32_t ucs4) noexcept
     {
         return ucs4 >= 0xfdd0 && 
@@ -265,31 +266,31 @@ class Char {
             (ucs4 & 0xfffe) == 0xfffe);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isHighSurrogate(char32_t ucs4) noexcept
     {
         return (ucs4 & 0xfffffc00) == 0xd800; // 0xd800 + up to 1023 (0x3ff)
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isLowSurrogate(char32_t ucs4) noexcept
     {
         return (ucs4 & 0xfffffc00) == 0xdc00; // 0xdc00 + up to 1023 (0x3ff)
     }
 
-    static constexpr inline
+    static CONSTEXPR_CXX20 inline
         bool isSurrogate(char32_t ucs4) noexcept
     {
         return (ucs4 - 0xd800u < 2048u);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool requiresSurrogates(char32_t ucs4) noexcept
     {
         return (ucs4 >= 0x10000);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         char32_t surrogateToUcs4(
             char16_t high,
             char16_t low) noexcept
@@ -299,7 +300,7 @@ class Char {
         return (char32_t(high) << 10) + low - 0x35fdc00;
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         char32_t surrogateToUcs4(
             Char high,
             Char low) noexcept
@@ -307,13 +308,13 @@ class Char {
         return surrogateToUcs4(high.ucs, low.ucs);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         char16_t highSurrogate(char32_t ucs4) noexcept
     {
         return char16_t((ucs4 >> 10) + 0xd7c0);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         char16_t lowSurrogate(char32_t ucs4) noexcept
     {
         return char16_t(ucs4 % 0x400 + 0xdc00);
@@ -342,7 +343,7 @@ class Char {
 
     static bool FASTCALL 
         isPrint(char32_t ucs4) noexcept DECL_CONST_FUNCTION;
-    static constexpr inline bool
+    static CONSTEXPR_CXX20 inline bool
         isSpace(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         // note that [0x09..0x0d] + 0x85 are exceptional Cc-s and must be handled explicitly
@@ -360,7 +361,7 @@ class Char {
     static bool FASTCALL 
         isSymbol(char32_t ucs4) noexcept DECL_CONST_FUNCTION;
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isLetter(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 >= 'A' && ucs4 <= 'z' 
@@ -368,14 +369,14 @@ class Char {
             || (ucs4 > 127 && Char::isLetter_helper(ucs4));
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isNumber(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 <= '9' && ucs4 >= '0') 
             || (ucs4 > 127 && Char::isNumber_helper(ucs4));
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isLetterOrNumber(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 >= 'A' && ucs4 <= 'z' 
@@ -384,7 +385,7 @@ class Char {
             || (ucs4 > 127 && Char::isLetterOrNumber_helper(ucs4));
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isDigit(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 <= '9' && ucs4 >= '0') 
@@ -392,7 +393,7 @@ class Char {
                 == Number_DecimalDigit);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isLower(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 <= 'z' && ucs4 >= 'a') 
@@ -400,7 +401,7 @@ class Char {
                 == Letter_Lowercase);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isUpper(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return (ucs4 <= 'Z' && ucs4 >= 'A') 
@@ -408,7 +409,7 @@ class Char {
                 == Letter_Uppercase);
     }
 
-    static constexpr inline 
+    static CONSTEXPR_CXX20 inline 
         bool isTitleCase(char32_t ucs4) noexcept DECL_CONST_FUNCTION
     {
         return ucs4 > 127 && Char::category(ucs4) 
@@ -418,7 +419,7 @@ class Char {
     static Category FASTCALL 
         category(char32_t ucs4) noexcept DECL_CONST_FUNCTION;
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator==(
             Char c1,
             Char c2) noexcept 
@@ -426,7 +427,7 @@ class Char {
         return c1.ucs == c2.ucs; 
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator< (
             Char c1,
             Char c2) noexcept 
@@ -434,7 +435,7 @@ class Char {
         return c1.ucs < c2.ucs; 
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator!=(
             Char c1,
             Char c2) noexcept 
@@ -442,7 +443,7 @@ class Char {
         return !operator==(c1, c2);
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator>=(
             Char c1, 
             Char c2) noexcept 
@@ -450,7 +451,7 @@ class Char {
         return !operator< (c1, c2);
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator> (
             Char c1,
             Char c2) noexcept 
@@ -458,7 +459,7 @@ class Char {
         return  operator< (c2, c1);
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator<=(
             Char c1,
             Char c2) noexcept
@@ -466,7 +467,7 @@ class Char {
         return !operator< (c2, c1);
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator==(
             Char lhs, 
             std::nullptr_t) noexcept 
@@ -474,14 +475,14 @@ class Char {
         return lhs.isNull(); 
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator< (
             Char, 
             std::nullptr_t) noexcept {
         return false; 
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator==(
             std::nullptr_t,
             Char rhs) noexcept 
@@ -489,7 +490,7 @@ class Char {
         return rhs.isNull();
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator< (
             std::nullptr_t, 
             Char rhs) noexcept 
@@ -497,7 +498,7 @@ class Char {
         return !rhs.isNull(); 
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator!=(
             Char lhs,
             std::nullptr_t) noexcept 
@@ -505,7 +506,7 @@ class Char {
         return !operator==(lhs, nullptr);
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator>=(
             Char lhs,
             std::nullptr_t) noexcept
@@ -513,7 +514,7 @@ class Char {
         return !operator< (lhs, nullptr);
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator> (
             Char lhs,
             std::nullptr_t) noexcept
@@ -521,7 +522,7 @@ class Char {
         return operator< (nullptr, lhs);
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator<=(
             Char lhs,
             std::nullptr_t) noexcept 
@@ -529,7 +530,7 @@ class Char {
         return !operator< (nullptr, lhs); 
     }
 
-    friend constexpr inline
+    friend CONSTEXPR_CXX20 inline
         bool operator!=(
             std::nullptr_t,
             Char rhs) noexcept
@@ -537,7 +538,7 @@ class Char {
         return !operator==(nullptr, rhs); 
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator>=(
             std::nullptr_t,
             Char rhs) noexcept
@@ -545,7 +546,7 @@ class Char {
         return !operator< (nullptr, rhs); 
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator> (
             std::nullptr_t,
             Char rhs) noexcept 
@@ -553,7 +554,7 @@ class Char {
         return  operator< (rhs, nullptr);
     }
 
-    friend constexpr inline 
+    friend CONSTEXPR_CXX20 inline 
         bool operator<=(
             std::nullptr_t, 
             Char rhs) noexcept
