@@ -137,6 +137,8 @@ set(PRIVATE_SOURCES
 
     src/core/system/UnixStandardPaths.cpp
     src/core/string/String.cpp
+
+    src/core/string/Char.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -290,6 +292,9 @@ set(PUBLIC_HEADERS
     include/base/core/string/String.h
 
     include/base/core/string/StringIterator.h
+    include/base/core/string/Char.h
+
+    include/base/core/string/CharacterHelper.h
 )
 
 include(CMakePackageConfigHelpers)

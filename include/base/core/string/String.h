@@ -6,15 +6,13 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-std::string 
+template <typename Char>
+class StringIterator;
 
-template <
-	typename Char = NativeChar,
-	typename = std::enable_if_t<
-		std::is_same_v<Char, wchar_t> 
-		|| std::is_same_v<Char, char>>>
 class String {
 public:
+	using Iterator = StringIterator<Char>;
+
 	String();
 	~String();
 
@@ -27,26 +25,32 @@ public:
 	String(const std::string& str);
 	String(const std::wstring& str)
 
-	NODISCARD constexpr Char& operator[](const sizetype index) noexcept;
-	NODISCARD constexpr Char at(const sizetype index) noexcept;
+	NODISCARD CONSTEXPR_CXX20 Char& operator[](const sizetype index) noexcept;
+	NODISCARD CONSTEXPR_CXX20 Char at(const sizetype index) noexcept;
 
 	NODISCARD NativeString toNativeString() const noexcept;
 
 	NODISCARD std::wstring toStdWString() const noexcept;
 	NODISCARD std::string toStdString() const noexcept;
 
-	NODISCARD constexpr sizetype size() const noexcept;
-	NODISCARD constexpr sizetype length() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 sizetype size() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 sizetype length() const noexcept;
 
-	NODISCARD constexpr void append(const Char* ch) noexcept;
-	NODISCARD constexpr void insert(
+	NODISCARD CONSTEXPR_CXX20 void append(const Char* ch) noexcept;
+	NODISCARD CONSTEXPR_CXX20 void insert(
 		const Char* ch,
 		sizetype index) noexcept;
 
-	NODISCARD constexpr Char pop() noexcept;
-	NODISCARD constexpr 
+	NODISCARD CONSTEXPR_CXX20 Char pop() noexcept;
+
+	NODISCARD CONSTEXPR_CXX20 Iterator begin() noexcept;
+	NODISCARD CONSTEXPR_CXX20 Iterator end() noexcept;
+
+	NODISCARD CONSTEXPR_CXX20 sizetype find(const Char* chs) noexcept;
+	NODISCARD CONSTEXPR_CXX20 sizetype findLastOf(const Char* chs) noexcept;
 private:
-	Char* data = nullptr;
+	Char* _data = nullptr;
+	friend class StringIterator;
 };
 
 //#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)

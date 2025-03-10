@@ -238,6 +238,28 @@
 #  define DECLARE_MALLOCLIKE NODISCARD
 #endif
 
+#ifndef BASE_HAS_CXX17
+#  if __cplusplus >= 201703L
+#    define BASE_HAS_CXX17 1
+#  else
+#    define BASE_HAS_CXX17 0
+#  endif
+#endif
+
+#ifndef BASE_HAS_CXX20
+#  if BASE_HAS_CXX17 && __cplusplus >= 202002L
+#    define BASE_HAS_CXX20 1
+#  else
+#    define BASE_HAS_CXX20 0
+#  endif
+#endif
+
+#if BASE_HAS_CXX20
+#  define CONSTEXPR_CXX20 constexpr
+#else
+#  define CONSTEXPR_CXX20 
+#endif
+
 #if defined(CPP_MSVC)
 #  define RESTRICT  __declspec(restrict)
 #elif defined(CPP_GNU) || defined (CPP_CLANG)
