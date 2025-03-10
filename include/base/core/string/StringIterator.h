@@ -6,7 +6,6 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-// std::string
 class StringIterator {
 public:
 	CONSTEXPR_CXX20 NODISCARD_CTOR StringIterator(const String* str):
@@ -19,11 +18,11 @@ public:
 		_currentChar(other._currentChar)
 	{}
 
-	~StringIterator() {
+	CONSTEXPR_CXX20 ~StringIterator() {
 		delete _currentChar;
 	}
 
-	inline CONSTEXPR_CXX20 Char operator*() noexcept {
+	CONSTEXPR_CXX20 Char& operator*() noexcept {
 #ifdef _DEBUG
 		AssertLog(_container != nullptr, "base::string::StringIterator::operator*: Попытка доступа к элементу удаленной строки. ");
 #endif
@@ -31,45 +30,51 @@ public:
 		return *_currentChar;
 	}
 
-	inline CONSTEXPR_CXX20 StringIterator operator--() noexcept {
-		StringIterator temp = *this;
-		--*this;
-		return temp;
-	}
-
-	inline CONSTEXPR_CXX20 StringIterator operator--(int) noexcept {
+	CONSTEXPR_CXX20 StringIterator& operator--() noexcept {
 #ifdef _DEBUG
-	AssertLog(_currentChar, "cannot decrement value-initialized string iterator");
+		AssertLog(_currentChar, "cannot decrement value-initialized string iterator");
 
-	AssertLog(_container, "cannot decrement string iterator because the iterator was "
-		"invalidated (e.g. reallocation occurred, or the string was destroyed)");
+		AssertLog(_container, "cannot decrement string iterator because the iterator was "
+			"invalidated (e.g. reallocation occurred, or the string was destroyed)");
 
-	AssertLog(_container.data() < _currentChar, "cannot decrement string iterator before begin");
+		AssertLog(_container->constData() < _currentChar, "cannot decrement string iterator before begin");
 #endif
 
 		--_currentChar;
 		return *this;
 	}
 
-	inline CONSTEXPR_CXX20 StringIterator operator++() noexcept {
+	CONSTEXPR_CXX20 StringIterator operator--(int) noexcept {
 		StringIterator temp = *this;
-		++*this;
+		--*this;
 		return temp;
 	}
 
-	inline CONSTEXPR_CXX20 StringIterator operator++(int) noexcept {
+	CONSTEXPR_CXX20 StringIterator& operator++() noexcept {
 #ifdef _DEBUG
-		AssertLog(checkOffsetExclusive(_currentChar), "base::string::StringIterator::operator--(int): Индекс вне диапазона. ");
+		AssertLog(_currentChar, "cannot decrement value-initialized string iterator");
+
+		AssertLog(_container, "cannot decrement string iterator because the iterator was "
+			"invalidated (e.g. reallocation occurred, or the string was destroyed)");
+
+		AssertLog(_container->constData() < _currentChar, "cannot decrement string iterator before begin");
 #endif
 
 		++_currentChar;
 		return *this;
 	}
 
+	CONSTEXPR_CXX20 StringIterator operator++(int) noexcept {
+		StringIterator temp = *this;
+		++*this;
+		return temp;
+	}
+
 	CONSTEXPR_CXX20 StringIterator& operator+=(const sizetype _Off) noexcept {
 #if _DEBUG
-		AssertLog(checkOffset(_currentChar), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
-#endif // _ITERATOR_DEBUG_LEVEL >= 1
+		AssertLog(checkOffset(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
+#endif
+
 		_currentChar += _Off;
 		return *this;
 	}
@@ -98,10 +103,10 @@ public:
 
 	CONSTEXPR_CXX20 NODISCARD sizetype operator-(const StringIterator& _Right) const noexcept {
 		compareStrings(_Right);
-		return static_cast<sizetype>(_Ptr - _Right._Ptr);
+		return static_cast<sizetype>(_currentChar - _Right._currentChar);
 	}
 
-	CONSTEXPR_CXX20 NODISCARD reference operator[](const sizetype _Off) const noexcept {
+	CONSTEXPR_CXX20 NODISCARD Char& operator[](const sizetype _Off) const noexcept {
 		return *(*this + _Off);
 	}
 
@@ -111,40 +116,40 @@ public:
 		return (_currentChar <=> other._currentChar);
 	}
 #else
-	inline CONSTEXPR_CXX20 bool operator=(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator=(const StringIterator& other) noexcept {
 		_container		= other._container;
 		_currentChar	= other._currentChar;
 	}
 
-	inline CONSTEXPR_CXX20 bool operator==(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator==(const StringIterator& other) noexcept {
 		compareStrings(other);
 		return (_currentChar == other._currentChar);
 	}
 
-	inline CONSTEXPR_CXX20 bool operator!=(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator!=(const StringIterator& other) noexcept {
 		return !(*this == other);
 	}
 
-	inline CONSTEXPR_CXX20 bool operator<(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator<(const StringIterator& other) noexcept {
 		compareStrings(other);
 		return (_currentChar < other._currentChar);
 	}
 
-	inline CONSTEXPR_CXX20 bool operator>(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator>(const StringIterator& other) noexcept {
 		return !(*this < other)
 	}
 
-	inline CONSTEXPR_CXX20 bool operator<=(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator<=(const StringIterator& other) noexcept {
 		compareStrings(other);
 		return (_currentChar <= other._currentChar);
 	}
 
-	inline CONSTEXPR_CXX20 bool operator>=(const StringIterator& other) noexcept {
+	CONSTEXPR_CXX20 bool operator>=(const StringIterator& other) noexcept {
 		return !(*this <= other);
 	}
 #endif
 private:
-	inline CONSTEXPR_CXX20 void compareStrings(const StringIterator& other) noexcept {
+	inline CONSTEXPR_CXX20 void compareStrings(const StringIterator& other) const noexcept {
 #ifdef _DEBUG
 	AssertLog(_container == other._container,
 		"base::string::StringIterator::compareStrings: Невозможно сравнить итераторы различных объектов String. ");
@@ -154,7 +159,7 @@ private:
 	}
 
 	// false if out of range
-	inline CONSTEXPR_CXX20 NODISCARD bool checkOffset(sizetype offset) noexcept {
+	inline CONSTEXPR_CXX20 NODISCARD bool checkOffset(sizetype offset) const noexcept {
 		const auto containerDataStart	= _container->data();
 		const auto containerDataEnd		= containerDataStart + _container->size();
 
@@ -163,7 +168,7 @@ private:
 	}
 
 	// false if out of range
-	inline CONSTEXPR_CXX20 NODISCARD bool checkOffsetExclusive(sizetype offset) noexcept {
+	inline CONSTEXPR_CXX20 NODISCARD bool checkOffsetExclusive(sizetype offset) const noexcept {
 		const auto containerDataStart	= _container->data();
 		const auto containerDataEnd		= containerDataStart + _container->size();
 
