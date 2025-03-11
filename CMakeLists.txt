@@ -295,6 +295,7 @@ set(PUBLIC_HEADERS
     include/base/core/string/Char.h
 
     include/base/core/string/CharacterHelper.h
+    include/base/core/string/StringConstIterator.h
 )
 
 include(CMakePackageConfigHelpers)

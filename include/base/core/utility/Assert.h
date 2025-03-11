@@ -80,7 +80,7 @@ static inline constexpr [[nodiscard]]
 
 
 #define Assert(condition) AssertLog(condition, "\"" #condition "\"")
-#define AssertUnreachable() assert(!"unreachable", UNREACHABLE())
+#define AssertUnreachable() Assert(!"unreachable", UNREACHABLE())
 
 
 #define StaticAssert(cond) static_assert(bool(cond), stringify(cond))
@@ -113,5 +113,18 @@ static inline constexpr [[nodiscard]]
 	__LINE__))
 
 #ifdef _DEBUG
+
+#define DebugAssertReturn	AssertReturn
+#define DebugAssert			Assert
+
+#define DebugAssertLog		AssertLog
 #define AssertIsDebug(...)
+
+#else 
+
+#define DebugAssertReturn(condition, message, return_value)
+#define DebugAssert(condition)
+
+#define DebugAssertLog(condition, message)
+
 #endif // _DEBUG

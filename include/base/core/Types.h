@@ -21,25 +21,25 @@ using gsl::not_null;
 template <typename Signature>
 using Fn = std::function<Signature>;
 
-using uchar = unsigned char;
-using ushort = unsigned short;
+using uchar     = unsigned char;
+using ushort    = unsigned short;
 
-using uint = unsigned int;
-using ulong = unsigned long;
+using uint      = unsigned int;
+using ulong     = unsigned long;
 
-using int8 = signed char;			
-using uint8 = unsigned char;		
+using int8      = signed char;			
+using uint8     = unsigned char;		
 
-using int16 = short;			
-using uint16 = unsigned short;		
+using int16     = short;			
+using uint16    = unsigned short;		
 
-using int32 = int;					
-using uint32 = unsigned int;		
+using int32     = int;					
+using uint32    = unsigned int;		
 
-using int64 = long long;		
-using uint64 = unsigned long long;
+using int64     = long long;		
+using uint64    = unsigned long long;
 
-using longlong = int64;
+using longlong  = int64;
 using ulonglong = uint64;
 
 template <int>      struct IntegerForSize;
@@ -52,15 +52,14 @@ template <>         struct IntegerForSize<8> { typedef uint64 Unsigned; typedef 
 
 template <class T>  struct IntegerForSizeof : IntegerForSize<sizeof(T)> { };
 
-typedef IntegerForSize<PROCESSOR_WORDSIZE>::Signed registerint;
-typedef IntegerForSize<PROCESSOR_WORDSIZE>::Unsigned registeruint;
+using registerint   = IntegerForSize<PROCESSOR_WORDSIZE>::Signed;
+using registeruint  = IntegerForSize<PROCESSOR_WORDSIZE>::Unsigned;
 
-typedef IntegerForSizeof<void*>::Unsigned uintptr;
-typedef IntegerForSizeof<void*>::Signed ptrdiff;
+using uintptr       = IntegerForSizeof<void*>::Unsigned;
+using ptrdiff       = IntegerForSizeof<void*>::Signed;
 
-typedef ptrdiff qintptr;
-
-using sizetype = IntegerForSizeof<std::size_t>::Signed;
+using intptr        = ptrdiff;
+using sizetype      = IntegerForSizeof<std::size_t>::Signed;
 
 __BASE_NAMESPACE_END
 

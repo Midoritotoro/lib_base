@@ -13,11 +13,15 @@ public:
         ch(c) 
     {}
 
-    CONSTEXPR_CXX20 inline char toChar() const noexcept { 
+    CONSTEXPR_CXX20 inline NODISCARD
+        char toChar() const noexcept
+    { 
         return ch; 
     }
 
-    CONSTEXPR_CXX20 inline char16_t unicode() const noexcept { 
+    CONSTEXPR_CXX20 inline NODISCARD
+        char16_t unicode() const noexcept
+    { 
         return char16_t(uchar(ch));
     }
 
@@ -74,14 +78,14 @@ public:
             char lhs, 
             CharacterHelper rhs) noexcept 
     {
-        return lhs == rhs.toLatin1(); 
+        return lhs == rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool 
         operator!=(
             char lhs, CharacterHelper rhs) noexcept
     {
-        return lhs != rhs.toLatin1(); 
+        return lhs != rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -89,7 +93,7 @@ public:
             char lhs,
             CharacterHelper rhs) noexcept 
     { 
-        return lhs <= rhs.toLatin1(); 
+        return lhs <= rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -97,7 +101,7 @@ public:
             char lhs,
             CharacterHelper rhs) noexcept
     { 
-        return lhs >= rhs.toLatin1();
+        return lhs >= rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool
@@ -105,7 +109,7 @@ public:
             char lhs,
             CharacterHelper rhs) noexcept
     { 
-        return lhs < rhs.toLatin1(); 
+        return lhs < rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -113,7 +117,7 @@ public:
             char lhs,
             CharacterHelper rhs) noexcept 
     { 
-        return lhs > rhs.toLatin1(); 
+        return lhs > rhs.toChar();
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -121,7 +125,7 @@ public:
             CharacterHelper lhs, 
             char rhs) noexcept 
     {
-        return lhs.toLatin1() == rhs;
+        return lhs.toChar() == rhs;
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -129,7 +133,7 @@ public:
             CharacterHelper lhs, 
             char rhs) noexcept 
     { 
-        return lhs.toLatin1() != rhs;
+        return lhs.toChar() != rhs;
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -137,7 +141,7 @@ public:
             CharacterHelper lhs,
             char rhs) noexcept
     { 
-        return lhs.toLatin1() <= rhs;
+        return lhs.toChar() <= rhs;
     }
 
     friend CONSTEXPR_CXX20 inline bool
@@ -145,7 +149,7 @@ public:
             CharacterHelper lhs, 
             char rhs) noexcept
     { 
-        return lhs.toLatin1() >= rhs;
+        return lhs.toChar() >= rhs;
     }
 
     friend CONSTEXPR_CXX20 inline bool 
@@ -153,7 +157,7 @@ public:
             CharacterHelper lhs, 
             char rhs) noexcept 
     { 
-        return lhs.toLatin1() < rhs;
+        return lhs.toChar() < rhs;
     }
 
     friend CONSTEXPR_CXX20 inline bool
@@ -161,7 +165,7 @@ public:
             CharacterHelper lhs, 
             char rhs) noexcept 
     {
-        return lhs.toLatin1() > rhs; 
+        return lhs.toChar() > rhs;
     }
 private:
     char ch;
