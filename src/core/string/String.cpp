@@ -85,14 +85,6 @@ Char String::pop() noexcept {
 
 }
 
-StringIterator String::begin() const noexcept {
-
-}
-
-StringIterator String::end() const noexcept {
-
-}
-
 sizetype String::find(const Char* chs) const noexcept {
 
 }
@@ -114,13 +106,6 @@ sizetype String::findLastNotOf(const Char* chs) const noexcept {
 }
 
 sizetype String::findFirstNotOf(const Char* chs) const noexcept {
-
-}
-
-void String::erase(
-	const ConstIterator first,
-	const ConstIterator last)
-{
 
 }
 
@@ -204,11 +189,134 @@ void String::push_back(Char c) {
 	append(c); 
 }
 
-void push_back(const QString& s) { append(s); }
-void push_front(QChar c) { prepend(c); }
-void push_front(const QString& s) { prepend(s); }
+void String::push_back(const String& s) { 
+	append(s);
+}
 
-iterator erase(const_iterator first, const_iterator last);
-inline iterator erase(const_iterator it) { return erase(it, it + 1); }
+void String::push_front(Char c) {
+	prepend(c);
+}
+
+void String::push_front(const String& s) {
+	prepend(s); 
+}
+
+String::Iterator String::erase(
+	ConstIterator first, 
+	ConstIterator last)
+{
+
+}
+
+String::Iterator String::erase(ConstIterator it) { 
+	return erase(it, it + 1); 
+}
+
+
+Char String::front() const { 
+	return at(0); 
+}
+
+Char& String::front() {
+	return Char();
+}
+
+Char String::back() const { 
+	return at(size() - 1); 
+}
+
+Char& String::back() {
+
+}
+
+void String::resize(sizetype size) {
+
+}
+
+void String::resize(
+	sizetype size,
+	Char fill)
+{
+
+}
+
+sizetype String::indexOf(
+	Char ch,
+	sizetype from,
+	CaseSensitivity caseSensitivity) const
+{
+
+}
+
+sizetype String::indexOf(
+	const String& string,
+	sizetype from,
+	CaseSensitivity caseSensitivity) const
+{
+}
+
+
+sizetype String::lastIndexOf(
+	Char ch,
+	CaseSensitivity caseSensitivity) const noexcept
+{
+	return lastIndexOf(ch, -1, caseSensitivity);
+}
+
+sizetype String::lastIndexOf(
+	Char ch,
+	sizetype from,
+	CaseSensitivity caseSensitivity) const
+{
+
+}
+
+sizetype String::lastIndexOf(
+	const String& string,
+	CaseSensitivity caseSensitivity) const
+{
+	return lastIndexOf(s, size(), cs);
+}
+
+sizetype String::lastIndexOf(
+	const String& string,
+	sizetype from,
+	CaseSensitivity caseSensitivity) const
+{
+
+}
+
+bool String::contains(Char ch, CaseSensitivity caseSensitivity) const {
+
+}
+
+bool String::contains(
+	const String& string,
+	CaseSensitivity caseSensitivity) const 
+{
+
+}
+
+sizetype String::count(
+	Char c,
+	CaseSensitivity caseSensitivity) const
+{
+
+}
+
+sizetype String::count(
+	const String& string,
+	CaseSensitivity caseSensitivity) const
+{
+
+}
+
+String& String::fill(
+	Char c,
+	sizetype size)
+{
+
+}
+
 
 __BASE_STRING_NAMESPACE_END

@@ -296,6 +296,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/string/CharacterHelper.h
     include/base/core/string/StringConstIterator.h
+
+    include/base/core/memory/AbstractMemoryAllocator.h
 )
 
 include(CMakePackageConfigHelpers)

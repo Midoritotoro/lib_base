@@ -13,20 +13,29 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 class String {
 public:
-    using iterator                  = StringIterator;
-    using const_iterator            = StringConstIterator;
+    using iterator                  = StringIterator<String>;
+    using const_iterator            = StringConstIterator<String>;
+
     using Iterator                  = iterator;
     using ConstIterator             = const_iterator;
+
     using reverse_iterator          = std::reverse_iterator<iterator>;
     using const_reverse_iterator    = std::reverse_iterator<const_iterator>;
+
+	using ReverseIterator			= reverse_iterator;
+	using ConstReverseIterator		= const_reverse_iterator;
   
     using size_type                 = sizetype;
     using difference_type           = ptrdiff;
+
     using const_reference           = const Char&;
     using reference                 = Char&;
+
     using pointer                   = Char*;
     using const_pointer             = const Char*;
+
     using value_type                = Char;
+	using CaseSensitivity			= Char::CaseSensitivity;
 
 	CONSTEXPR_CXX20 String();
 	~String();
@@ -45,16 +54,14 @@ public:
 	NODISCARD sizetype size() const noexcept;
 	NODISCARD sizetype length() const noexcept;
 
+	NODISCARD sizetype capacity() const noexcept;
+
 	NODISCARD void append(Char ch) noexcept;
 	NODISCARD void insert(
 		Char ch,
 		sizetype index) noexcept;
 
 	NODISCARD Char pop() noexcept;
-
-	NODISCARD StringIterator begin() const noexcept;
-	NODISCARD StringIterator end() const noexcept;
-
 	NODISCARD sizetype find(const Char* chs) const noexcept;
 
 	NODISCARD sizetype findLastOf(const Char* chs) const noexcept;
@@ -63,37 +70,32 @@ public:
 	NODISCARD sizetype findLastNotOf(const Char* chs) const noexcept;
 	NODISCARD sizetype findFirstNotOf(const Char* chs) const noexcept;
 
-	iterator erase(
-		const StringIterator& first,
-		const StringIterator& last);
-	void clear();
-
 	NODISCARD bool isEmpty() const noexcept;
 	NODISCARD bool isNull() const noexcept;
 
 	NODISCARD Char* data() const noexcept;
 	NODISCARD const Char* constData() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 iterator begin() noexcept;
+	NODISCARD CONSTEXPR_CXX20 Iterator begin() noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator begin() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 const_iterator begin() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_iterator cbegin() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_iterator constBegin() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator cbegin() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator constBegin() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 iterator end() noexcept;
+	NODISCARD CONSTEXPR_CXX20 Iterator end() noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator end() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 const_iterator end() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_iterator cend() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_iterator constEnd() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator cend() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstIterator constEnd() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 reverse_iterator rbegin() noexcept;
-	NODISCARD CONSTEXPR_CXX20 reverse_iterator rend() noexcept;
+	NODISCARD CONSTEXPR_CXX20 ReverseIterator rbegin() noexcept;
+	NODISCARD CONSTEXPR_CXX20 ReverseIterator rend() noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 const_reverse_iterator rbegin() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_reverse_iterator rend() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstReverseIterator rbegin() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstReverseIterator rend() const noexcept;
 
-	NODISCARD CONSTEXPR_CXX20 const_reverse_iterator crbegin() const noexcept;
-	NODISCARD CONSTEXPR_CXX20 const_reverse_iterator crend() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstReverseIterator crbegin() const noexcept;
+	NODISCARD CONSTEXPR_CXX20 ConstReverseIterator crend() const noexcept;
 
 	void push_back(Char c);
 	void push_back(const String& s);
@@ -101,10 +103,69 @@ public:
 	void push_front(Char c);
 	void push_front(const String& s);
 
-	NODISCARD iterator erase(
-		const_iterator first, 
-		const_iterator last);
-	NODISCARD iterator erase(const_iterator it);
+	void clear();
+
+	NODISCARD Iterator erase(
+		ConstIterator first,
+		ConstIterator last);
+	NODISCARD Iterator erase(ConstIterator it);
+
+
+	NODISCARD Char front() const;
+	NODISCARD Char& front();
+
+	NODISCARD Char back() const;
+	NODISCARD Char& back();
+
+	void resize(sizetype size);
+	void resize(
+		sizetype size,
+		Char fill);
+
+
+	NODISCARD sizetype indexOf(
+		Char ch,
+		sizetype from = 0, 
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+	NODISCARD sizetype indexOf(
+		const String& string,
+		sizetype from = 0, 
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+
+	NODISCARD sizetype lastIndexOf(
+		Char c,
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const noexcept;
+	NODISCARD sizetype lastIndexOf(
+		Char c, 
+		sizetype from, 
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+
+	NODISCARD sizetype lastIndexOf(
+		const String& string,
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+	NODISCARD sizetype lastIndexOf(
+		const String& string,
+		sizetype from,
+		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+
+
+	NODISCARD bool contains(
+		Char ch, 
+		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+	NODISCARD bool contains(
+		const String& string,
+		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+;
+	NODISCARD sizetype count(
+		Char ch, 
+		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+	NODISCARD sizetype count(
+		const String& string,
+		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+
+	NODISCARD String& fill(
+		Char ch, 
+		sizetype size = -1);
 private:
 	std::vector<Char> _data; // ѕотом заменю на кастомный контейнер
 };
