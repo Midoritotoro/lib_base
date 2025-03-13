@@ -9,81 +9,88 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <class _String = String>
+template <class _String>
 class StringIterator: 
     public StringConstIterator<_String>
 {
-    using BaseClass         = StringConstIterator<_String>
 public:
+    using BaseClass         = StringConstIterator<_String>
     using iterator_category = std::random_access_iterator_tag;
 
     using value_type        = typename _String::value_type;
     using difference_type   = typename _String::difference_type;
 
     using pointer           = typename _String::pointer;
+    using size_type         = typename _String::size_type;
+
     using reference         = value_type&;
 
     using BaseClass::BaseClass;
 
-
-    _NODISCARD _CONSTEXPR20 reference operator*() const noexcept {
+    NODISCARD CONSTEXPR_CXX20 reference operator*() const noexcept {
         return const_cast<reference>(BaseClass::operator*());
     }
 
-    _CONSTEXPR20 Self& operator++() noexcept {
+    CONSTEXPR_CXX20 StringIterator& operator++() noexcept {
         BaseClass::operator++();
         return *this;
     }
 
-    _CONSTEXPR20 StringIterator operator++(int) noexcept {
-        StringIterator _Tmp = *this;
+    CONSTEXPR_CXX20 StringIterator operator++(int) noexcept {
+        StringIterator temp = *this;
         BaseClass::operator++();
-        return _Tmp;
+
+        return temp;
     }
 
-    _CONSTEXPR20 StringIterator& operator--() noexcept {
+    CONSTEXPR_CXX20 StringIterator& operator--() noexcept {
         BaseClass::operator--();
         return *this;
     }
 
-    _CONSTEXPR20 StringIterator operator--(int) noexcept {
-        StringIterator _Tmp = *this;
+    CONSTEXPR_CXX20 StringIterator operator--(int) noexcept {
+        StringIterator temp = *this;
         BaseClass::operator--();
-        return _Tmp;
+
+        return temp;
     }
 
-    _CONSTEXPR20 StringIterator& operator+=(const difference_type _Off) noexcept {
-        BaseClass::operator+=(_Off);
+    CONSTEXPR_CXX20 StringIterator& operator+=(const difference_type offset) noexcept {
+        BaseClass::operator+=(offset);
         return *this;
     }
 
-    _NODISCARD _CONSTEXPR20 StringIterator operator+(const difference_type _Off) const noexcept {
-        StringIterator _Tmp = *this;
-        _Tmp += _Off;
-        return _Tmp;
+    NODISCARD CONSTEXPR_CXX20 StringIterator operator+(const difference_type offset) const noexcept {
+        StringIterator temp = *this;
+        temp += offset;
+
+        return temp;
     }
 
-    _NODISCARD_FRIEND _CONSTEXPR20 StringIterator operator+(
-        const difference_type _Off, StringIterator _Next) noexcept {
-        _Next += _Off;
-        return _Next;
+    NODISCARD friend CONSTEXPR_CXX20 StringIterator operator+(
+        const difference_type offset,
+        StringIterator next) noexcept
+    {
+        next += offset;
+        return next;
     }
 
-    _CONSTEXPR20 StringIterator& operator-=(const difference_type _Off) noexcept {
-        BaseClass::operator-=(_Off);
+    CONSTEXPR_CXX20 StringIterator& operator-=(const difference_type offset) noexcept {
+        BaseClass::operator-=(offset);
         return *this;
     }
 
     using BaseClass::operator-;
 
-    _NODISCARD _CONSTEXPR20 StringIterator operator-(const difference_type _Off) const noexcept {
-        StringIterator _Tmp = *this;
-        _Tmp -= _Off;
-        return _Tmp;
+    NODISCARD CONSTEXPR_CXX20 StringIterator operator-(const difference_type offset) const noexcept {
+        StringIterator temp = *this;
+        temp -= offset;
+
+        return temp;
     }
 
-    _NODISCARD _CONSTEXPR20 reference operator[](const difference_type _Off) const noexcept {
-        return const_cast<reference>(BaseClass::operator[](_Off));
+    NODISCARD CONSTEXPR_CXX20 reference operator[](const difference_type offset) const noexcept {
+        return const_cast<reference>(BaseClass::operator[](offset));
     }
 };
 

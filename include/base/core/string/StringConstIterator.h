@@ -1,15 +1,12 @@
 #pragma once 
 
-
 #include <base/core/string/StringConfig.h>
-#include <base/core/string/String.h>
-
 #include <xmemory>
 
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <class _String = String>
+template <class _String>
 class StringConstIterator {
 public:
 	using iterator_category	= std::random_access_iterator_tag;
@@ -18,9 +15,11 @@ public:
 	using difference_type	= typename _String::difference_type;
 
 	using pointer			= typename _String::const_pointer;
+	using size_type			= typename _String::size_type;
+
 	using reference			= const value_type&;
 
-	inline CONSTEXPR_CXX20 NODISCARD_CTOR StringConstIterator(const String* str) :
+	inline CONSTEXPR_CXX20 NODISCARD_CTOR StringConstIterator(const _String* str) :
 		_container(str),
 		_currentChar(str->data())
 	{}
@@ -77,7 +76,7 @@ public:
 		return temp;
 	}
 
-	CONSTEXPR_CXX20 StringConstIterator& operator+=(const sizetype _Off) noexcept {
+	CONSTEXPR_CXX20 StringConstIterator& operator+=(const size_type _Off) noexcept {
 		DebugAssertLog(checkOffset(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
 
 		_currentChar += _Off;
@@ -85,7 +84,7 @@ public:
 	}
 
 	CONSTEXPR_CXX20 NODISCARD StringConstIterator
-		operator+(const sizetype offset) const noexcept
+		operator+(const size_type offset) const noexcept
 	{
 		StringConstIterator temp = *this;
 		temp += offset;
@@ -95,30 +94,30 @@ public:
 
 	friend CONSTEXPR_CXX20 NODISCARD
 		StringConstIterator operator+(
-			const sizetype offset,
+			const size_type offset,
 			StringConstIterator next) noexcept
 	{
 		next += offset;
 		return next;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD StringConstIterator& operator-=(const sizetype offset) noexcept {
+	CONSTEXPR_CXX20 NODISCARD StringConstIterator& operator-=(const size_type offset) noexcept {
 		return *this += -offset;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD StringConstIterator operator-(const sizetype offset) const noexcept {
+	CONSTEXPR_CXX20 NODISCARD StringConstIterator operator-(const size_type offset) const noexcept {
 		StringConstIterator temp = *this;
 		temp -= offset;
 
 		return temp;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD sizetype operator-(const StringConstIterator& _Right) const noexcept {
+	CONSTEXPR_CXX20 NODISCARD size_type operator-(const StringConstIterator& _Right) const noexcept {
 		compareStrings(_Right);
-		return static_cast<sizetype>(_currentChar - _Right._currentChar);
+		return static_cast<size_type>(_currentChar - _Right._currentChar);
 	}
 
-	CONSTEXPR_CXX20 NODISCARD Char& operator[](const sizetype _Off) const noexcept {
+	CONSTEXPR_CXX20 NODISCARD reference operator[](const size_type _Off) const noexcept {
 		return *(*this + _Off);
 	}
 
@@ -172,7 +171,7 @@ private:
 
 	// false if out of range
 	inline CONSTEXPR_CXX20 NODISCARD
-		bool checkOffset(sizetype offset) const noexcept
+		bool checkOffset(size_type offset) const noexcept
 	{
 		const auto containerDataStart = _container->data();
 		const auto containerDataEnd = containerDataStart + _container->size();
@@ -183,7 +182,7 @@ private:
 
 	// false if out of range
 	inline CONSTEXPR_CXX20 NODISCARD
-		bool checkOffsetExclusive(sizetype offset) const noexcept
+		bool checkOffsetExclusive(size_type offset) const noexcept
 	{
 		const auto containerDataStart = _container->data();
 		const auto containerDataEnd = containerDataStart + _container->size();

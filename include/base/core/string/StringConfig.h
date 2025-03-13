@@ -38,6 +38,16 @@ __BASE_STRING_NAMESPACE_BEGIN
     using NativeChar        =   char;
 #endif
 
+
+
+enum _CaseSensitivity : uchar {
+    CaseSensitive,
+    CaseInsensitive
+};
+
+DECLARE_FLAGS_ENUM(CaseSensitivity, _CaseSensitivity)
+
+
 __BASE_STRING_NAMESPACE_END
 
 #define ENGLISH_ALPHABET_ASCII_START        97

@@ -8,11 +8,6 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 class Char {
 public:
-    enum CaseSensitivity : uchar {
-        CaseSensitive,
-        CaseInsensitive
-    }; 
-
     enum SpecialCharacter {
         Null = 0x0000,
         Tabulation = 0x0009,

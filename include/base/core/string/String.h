@@ -1,11 +1,8 @@
 #pragma once 
 
-#include <base/core/string/StringConfig.h>
 #include <base/core/string/Char.h>
 
 #include <base/core/string/StringIterator.h>
-#include <base/core/string/StringConstIterator.h>
-
 #include <base/core/utility/TypeTraits.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
@@ -35,7 +32,13 @@ public:
     using const_pointer             = const Char*;
 
     using value_type                = Char;
-	using CaseSensitivity			= Char::CaseSensitivity;
+
+	enum _SplitBehavior : uchar {
+		KeepEmptyParts = 0,
+		SkipEmptyParts = 0x1,
+	};
+
+	DECLARE_FLAGS_ENUM(SplitBehavior, _SplitBehavior)
 
 	CONSTEXPR_CXX20 String();
 	~String();
@@ -44,6 +47,8 @@ public:
 	String(const Char* chs);
 
 	NODISCARD Char& operator[](const sizetype index) noexcept;
+	NODISCARD const Char& operator[](const sizetype index) const noexcept;
+
 	NODISCARD Char at(const sizetype index) const noexcept;
 
 	NODISCARD NativeString toNativeString() const noexcept;
@@ -56,19 +61,25 @@ public:
 
 	NODISCARD sizetype capacity() const noexcept;
 
-	NODISCARD void append(Char ch) noexcept;
-	NODISCARD void insert(
-		Char ch,
-		sizetype index) noexcept;
-
 	NODISCARD Char pop() noexcept;
-	NODISCARD sizetype find(const Char* chs) const noexcept;
 
-	NODISCARD sizetype findLastOf(const Char* chs) const noexcept;
-	NODISCARD sizetype findFirstOf(const Char* chs) const noexcept;
+	NODISCARD sizetype find(const String& string) const noexcept;
+	NODISCARD sizetype find(Char ch) const noexcept;
 
-	NODISCARD sizetype findLastNotOf(const Char* chs) const noexcept;
-	NODISCARD sizetype findFirstNotOf(const Char* chs) const noexcept;
+	NODISCARD std::vector<sizetype> findAll(const String& string) const noexcept;
+	NODISCARD std::vector<sizetype> findAll(Char ch) const noexcept;
+
+	NODISCARD sizetype findLastOf(const String& string) const noexcept;
+	NODISCARD sizetype findLastOf(Char ch) const noexcept;
+
+	NODISCARD sizetype findFirstOf(const String& string) const noexcept;
+	NODISCARD sizetype findFirstOf(Char ch) const noexcept;
+
+	NODISCARD sizetype findLastNotOf(const String& string) const noexcept;
+	NODISCARD sizetype findLastNotOf(Char ch) const noexcept;
+
+	NODISCARD sizetype findFirstNotOf(const String& string) const noexcept;
+	NODISCARD sizetype findFirstNotOf(Char ch) const noexcept;
 
 	NODISCARD bool isEmpty() const noexcept;
 	NODISCARD bool isNull() const noexcept;
@@ -122,51 +133,154 @@ public:
 		sizetype size,
 		Char fill);
 
-
 	NODISCARD sizetype indexOf(
 		Char ch,
 		sizetype from = 0, 
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity cs = CaseSensitive) const;
 	NODISCARD sizetype indexOf(
 		const String& string,
 		sizetype from = 0, 
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity cs = CaseSensitive) const;
 
 	NODISCARD sizetype lastIndexOf(
 		Char c,
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const noexcept;
+		CaseSensitivity cs = CaseSensitive) const noexcept;
 	NODISCARD sizetype lastIndexOf(
 		Char c, 
 		sizetype from, 
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity cs = CaseSensitive) const;
 
 	NODISCARD sizetype lastIndexOf(
 		const String& string,
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity cs = CaseSensitive) const;
 	NODISCARD sizetype lastIndexOf(
 		const String& string,
 		sizetype from,
-		CaseSensitivity cs = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity cs = CaseSensitive) const;
 
 
 	NODISCARD bool contains(
 		Char ch, 
-		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity caseSensitivity = CaseSensitive) const;
 	NODISCARD bool contains(
 		const String& string,
-		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity caseSensitivity = CaseSensitive) const;
 ;
 	NODISCARD sizetype count(
 		Char ch, 
-		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity caseSensitivity = CaseSensitive) const;
 	NODISCARD sizetype count(
 		const String& string,
-		CaseSensitivity caseSensitivity = CaseSensitivity::CaseSensitive) const;
+		CaseSensitivity caseSensitivity = CaseSensitive) const;
 
 	NODISCARD String& fill(
 		Char ch, 
 		sizetype size = -1);
+
+	String& insert(
+		sizetype index,
+		Char ch);
+	String& insert(
+		sizetype index,
+		const Char* ch,
+		sizetype length);
+
+	String& insert(
+		sizetype index,
+		const String& string);
+
+	String& append(Char ch);
+	String& append(
+		const Char* ch,
+		sizetype length);
+
+	String& append(const String& string);
+
+	String& prepend(Char ch);
+	String& prepend(
+		const Char* ch, 
+		sizetype len);
+
+	String& prepend(const String& string);
+
+	String& remove(
+		sizetype index,
+		sizetype length);
+
+	String& remove(
+		Char ch, 
+		CaseSensitivity caseSensitivity = CaseSensitive);
+	String& remove(
+		const String& string, 
+		CaseSensitivity caseSensitivity = CaseSensitive);
+
+	String& removeAt(sizetype pos);
+
+	String& removeFirst();
+	String& removeLast();
+
+	String& replace(
+		sizetype index, 
+		sizetype length, 
+		Char after);
+
+	String& replace(
+		sizetype index,
+		sizetype length, 
+		const Char* ch, 
+		sizetype slen);
+	String& replace(
+		sizetype index,
+		sizetype length, 
+		const String& after);
+
+	String& replace(
+		Char before,
+		Char after,
+		CaseSensitivity caseSensitivity = CaseSensitive);
+	String& replace(
+		const Char* before,
+		sizetype beforeLength, 
+		const Char* after, 
+		sizetype afterLength, 
+		CaseSensitivity caseSensitivity = CaseSensitive);
+
+	String& replace(
+		const String& before,
+		const String& after,
+		CaseSensitivity caseSensitivity = CaseSensitive);
+	String& replace(
+		Char ch, 
+		const String& after, 
+		CaseSensitivity caseSensitivity = CaseSensitive);
+
+	using StringList = std::vector<String>;
+
+	NODISCARD StringList split(
+		const String& sep,
+		SplitBehavior behavior = KeepEmptyParts,
+		CaseSensitivity cs = CaseSensitive) const;
+
+	NODISCARD StringList split(
+		Char sep, 
+		SplitBehavior behavior = KeepEmptyParts,
+		CaseSensitivity caseSensibity = CaseSensitive) const;
+
 private:
+	
+	
+#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+	NODISCARD int ConvertWCharToUnicode(
+		char* buffer,
+		size_t bufferlen,
+		const wchar_t* input);
+
+	NODISCARD int ConvertUnicodeToWChar(
+		wchar_t* buffer,
+		size_t bufferlen,
+		const char* input);
+#endif
+
 	std::vector<Char> _data; // ѕотом заменю на кастомный контейнер
 };
 
