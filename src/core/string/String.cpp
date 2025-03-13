@@ -4,21 +4,19 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 #define DEFAULT_BUF_SIZE 1024
 
-String::String() {
-
-}
+String::String() 
+{}
 
 String::~String() {
 
 }
 
-String::String(const String& string) {
+String::String(const String& string) :
+	_data(string._data)
+{}
 
-}
-
-String::String(const Char* chs) {
-
-}
+String::String(const Char* chs): 
+{}
 
 Char& String::operator[](const sizetype index) noexcept {
 	return _data[index];
@@ -102,7 +100,6 @@ sizetype String::find(Char ch) const noexcept {
 
 
 }
-
 
 std::vector<sizetype> String::findAll(const String& string) const noexcept {
 
@@ -268,19 +265,11 @@ void String::resize(sizetype size) {
 }
 
 void String::resize(
-	sizetype size,
-	Char fill)
+	sizetype _size,
+	Char _fill)
 {
-	_data.resize(size);
-
-	const auto fillFunc = [=](Char ch) {
-		UNUSED(ch);
-		return fill;
-		};
-
-	std::transform(
-		_data.cbegin(), _data.cend(),
-		_data.begin(), fillFunc);
+	_data.resize(_size);
+	fill(_fill, size());
 }
 
 sizetype String::indexOf(
@@ -417,18 +406,23 @@ String& String::insert(
 }
 
 String& String::append(Char ch) {
-
+	_data.push_back(ch);
+	return *this;
 }
 
 String& String::append(
 	const Char* ch,
 	sizetype length)
 {
-
+	_data.push_back(*ch);
+	return *this;
 }
 
 String& String::append(const String& string) {
+	for (sizetype i = 0; i < string.size(); ++i)
+		_data.push_back(string[i]);
 
+	return *this;
 }
 
 String& String::prepend(Char ch) {

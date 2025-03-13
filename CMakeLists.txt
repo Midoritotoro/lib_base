@@ -139,6 +139,9 @@ set(PRIVATE_SOURCES
     src/core/string/String.cpp
 
     src/core/string/Char.cpp
+
+    src/core/string/UnicodeTables.h
+    src/core/string/UnicodeTables.cpp
 )
 
 set(PUBLIC_HEADERS 
