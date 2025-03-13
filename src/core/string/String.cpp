@@ -247,7 +247,6 @@ String::Iterator String::erase(ConstIterator it) {
 	return erase(it, it + 1); 
 }
 
-
 Char String::front() const { 
 	return at(0); 
 }
@@ -289,7 +288,16 @@ sizetype String::indexOf(
 	sizetype from,
 	CaseSensitivity caseSensitivity) const
 {
+	const auto _Size = size();
 
+	if (from < 0 || from > _Size)
+		return -1;
+
+	for (sizetype i = from; i < _Size; ++i)
+		if (_data[i] == ch)
+			return i;
+
+	return -1;
 }
 
 sizetype String::indexOf(
@@ -297,14 +305,26 @@ sizetype String::indexOf(
 	sizetype from,
 	CaseSensitivity caseSensitivity) const
 {
-}
+	const auto _Size			= size();
+	const auto searchStringSize = string.size();
 
+	if (searchStringSize == 1)
+		return indexOf(string[0]);
+
+	if (_Size < searchStringSize)
+		return -1;
+
+	for (sizetype i = from; i < _Size; ++i) {
+		// ...
+	}
+}
 
 sizetype String::lastIndexOf(
 	Char ch,
 	CaseSensitivity caseSensitivity) const noexcept
 {
-	return lastIndexOf(ch, -1, caseSensitivity);
+	return lastIndexOf(
+		ch, size(), caseSensitivity);
 }
 
 sizetype String::lastIndexOf(
@@ -312,7 +332,12 @@ sizetype String::lastIndexOf(
 	sizetype from,
 	CaseSensitivity caseSensitivity) const
 {
+	const auto _Size = size();
 
+	if (_Size <= 0 || _Size < from || from < 0)
+		return -1;
+
+	// for (sizetype i = from; i 
 }
 
 sizetype String::lastIndexOf(
