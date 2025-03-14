@@ -27,6 +27,36 @@ public:
         LastValidCodePoint = 0x10ffff
     };
 
+    enum Direction
+    {
+        DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
+        DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN,
+        DirLRI, DirRLI, DirFSI, DirPDI
+    };
+
+    enum Decomposition
+    {
+        NoDecomposition,
+        Canonical,
+        Font,
+        NoBreak,
+        Initial,
+        Medial,
+        Final,
+        Isolated,
+        Circle,
+        Super,
+        Sub,
+        Vertical,
+        Wide,
+        Narrow,
+        Small,
+        Square,
+        Compat,
+        Fraction
+    };
+
+
     enum Category
     {
         Mark_NonSpacing,          //   Mn

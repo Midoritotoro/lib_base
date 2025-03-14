@@ -8,8 +8,6 @@
     #include <sal.h>
 #endif
 
-
-// Игнор SAL в случае компилятора, отличного от MSVC
 #if defined(OS_WIN) && defined(CPP_MSVC)
     #ifndef _SAL2_In_reads_bytes_
         #define _SAL2_In_reads_bytes_		        _In_reads_bytes_

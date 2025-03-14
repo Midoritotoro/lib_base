@@ -142,6 +142,14 @@ set(PRIVATE_SOURCES
 
     src/core/string/UnicodeTables.h
     src/core/string/UnicodeTables.cpp
+
+    src/core/container/Map.cpp
+    src/core/container/Set.cpp
+
+    src/core/container/FlatMap.cpp
+    src/core/container/List.cpp
+
+    src/core/container/Vector.cpp
 )
 
 set(PUBLIC_HEADERS 
@@ -300,7 +308,17 @@ set(PUBLIC_HEADERS
     include/base/core/string/CharacterHelper.h
     include/base/core/string/StringConstIterator.h
 
-    include/base/core/memory/AbstractMemoryAllocator.h
+    include/base/core/memory/MemoryAllocator.h
+
+    include/base/core/container/Map.h
+    include/base/core/container/Set.h
+
+    include/base/core/container/FlatMap.h
+    include/base/core/container/List.h
+
+    include/base/core/container/Vector.h
+
+    include/base/core/memory/Memory.h
 )
 
 include(CMakePackageConfigHelpers)

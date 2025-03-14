@@ -43,14 +43,35 @@
 #endif
 
 #if defined(OS_WIN) && defined(CPP_MSVC)
+
+#ifndef STDCALL
 #  define STDCALL       __stdcall
+#endif
+
+#ifndef __CDECL
 #  define __CDECL       __cdecl
+#endif
+
 #elif defined(CPP_GNU)
+
+#ifndef STDCALL
 #  define STDCALL       __attribute__((__stdcall__))
-#  define CDECL         __attribute__((__cdecl__))
+#endif
+
+#ifndef __CDECL
+#  define __CDECL       __attribute__((__cdecl__))
+#endif
+
 #else 
-#  define STDCALL       
+
+#ifndef STDCALL
+#  define STDCALL      
+#endif
+
+#ifndef __CDECL
 #  define __CDECL       
+#endif 
+
 #endif
 
 #ifndef NORETURN
@@ -109,7 +130,7 @@
 #  define WEAK_OVERLOAD template <typename = void>
 #endif
 
-#if defined(CPP_GNU) && !defined(__INSURE__)
+#if defined(CPP_GNU) && !defined(__INSURE__) && !defined(ATTRIBUTE_FORMAT_PRINTF)
 #  if defined(CPP_MINGW) && !defined(CPP_CLANG)
 #    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
          __attribute__((format(gnu_printf, (A), (B))))
@@ -118,18 +139,44 @@
          __attribute__((format(printf, (A), (B))))
 #  endif
 #else
+
+#ifndef ATTRIBUTE_FORMAT_PRINTF
 #  define ATTRIBUTE_FORMAT_PRINTF(A, B)
 #endif
 
+#endif
+
 #ifdef CPP_MSVC
+
+#ifndef never_inline
 #  define never_inline          __declspec(noinline)
+#endif
+
+#ifndef always_inline
 #  define always_inline         __forceinline
+#endif
+
 #elif defined(CPP_GNU)
+
+#ifndef never_inline
 #  define never_inline          __attribute__((noinline))
+#endif
+
+#ifndef always_inline
 #  define always_inline         inline __attribute__((always_inline))
+#endif 
+
 #else
 #  define never_inline
 #  define always_inline         inline
+#endif
+
+#ifndef ALWAYS_INLINE
+#  define ALWAYS_INLINE         always_inline
+#endif
+
+#ifndef NEVER_INLINE
+#  define NEVER_INLINE          never_inline
 #endif
 
 #ifndef HAS_NODISCARD
@@ -143,58 +190,145 @@
 #endif // HAS_NODISCARD
 
 #if HAS_NODISCARD
-#  define NODISCARD [[nodiscard]]
+#  ifndef NODISCARD
+#    define NODISCARD [[nodiscard]]
+#  endif
 #else
 #  define NODISCARD
 #endif
 
 #ifndef __has_cpp_attribute
-#  define LIKELY_ATTRIBUTE
-#  define UNLIKELY_ATTRIBUTE
+
+#ifndef likely_attribute
+#  define likely_attribute
+#endif
+
+#ifndef unlikely_attribute
+#  define unlikely_attribute
+#endif
+
 #elif __has_cpp_attribute(likely) >= 201803L && __has_cpp_attribute(unlikely) >= 201803L
-#  define LIKELY_ATTRIBUTE   [[likely]]
-#  define UNLIKELY_ATTRIBUTE [[unlikely]]
+
+#ifndef likely_attribute
+#  define likely_attribute   [[likely]]
+#endif 
+
+#ifndef unlikely_attribute
+#  define unlikely_attribute [[unlikely]]
+#endif
+
 #elif defined(CPP_CLANG)
-#  define LIKELY_ATTRIBUTE   [[__likely__]]
-#  define UNLIKELY_ATTRIBUTE [[__unlikely__]]
-#else
-#  define LIKELY_ATTRIBUTE
-#  define UNLIKELY_ATTRIBUTE
+
+#ifndef likely_attribute
+#  define likely_attribute   [[__likely__]]
 #endif
 
+#ifndef unlikely_attribute
+#  define unlikely_attribute [[__unlikely__]]
+#endif 
 
-#ifndef __has_cpp_attribute
-#  define MAYBE_UNUSED_ATTRIBUTE
-#elif __has_cpp_attribute(maybe_unused) >= 201603L
-#  define MAYBE_UNUSED_ATTRIBUTE   [[maybe_unused]]
 #else
-#  define MAYBE_UNUSED_ATTRIBUTE
+
+#ifndef likely_attribute
+#  define likely_attribute
+#endif 
+
+#ifndef unlikely_attribute
+#  define unlikely_attribute
+#endif 
+
+#endif
+
+#ifndef LIKELY_ATTRIBUTE
+#  define LIKELY_ATTRIBUTE likely_attribute
+#endif
+
+#ifndef UNLIKELY_ATTRIBUTE
+#  define UNLIKELY_ATTRIBUTE unlikely_attribute
+#endif
+
+#ifndef __has_cpp_attribute && !defined(maybe_unused_attribute)
+#  define maybe_unused_attribute
+#elif __has_cpp_attribute(maybe_unused) >= 201603L && !defined(maybe_unused_attribute)
+#  define maybe_unused_attribute   [[maybe_unused]]
+#else
+
+#ifndef maybe_unused_attribute
+#  define maybe_unused_attribute
+#endif
+
+#endif
+
+#ifndef MAYBE_UNUSED_ATTRIBUTE
+#  define MAYBE_UNUSED_ATTRIBUTE maybe_unused_attribute
+#endif
+
+#ifndef __has_cpp_attribute && !defined(nodiscard_msg)
+#  define nodiscard_msg(_Msg)
+#elif __has_cpp_attribute(nodiscard) >= 201907L && !defined(nodiscard_msg)
+#  define nodiscard_msg(_Msg) [[nodiscard(_Msg)]]
+#elif __has_cpp_attribute(nodiscard) >= 201603L && !defined(nodiscard_msg)
+#  define nodiscard_msg(_Msg) [[nodiscard]]
+#else
+
+#ifndef nodiscard_msg
+#  define nodiscard_msg(_Msg)
+#endif
+
+#endif
+
+#ifndef NODISCARD_MSG
+#  define NODISCARD_MSG nodiscard_msg
 #endif
 
 #ifndef __has_cpp_attribute
-#  define _NODISCARD_MSG(_Msg)
+
+#ifndef nodiscard_ctor
+#  define nodiscard_ctor
+#endif
+
+#ifndef nodiscard_ctor_msg
+#  define nodiscard_ctor_msg(_Msg)
+#endif
+
 #elif __has_cpp_attribute(nodiscard) >= 201907L
-#  define NODISCARD_MSG(_Msg) [[nodiscard(_Msg)]]
-#elif __has_cpp_attribute(nodiscard) >= 201603L
-#  define NODISCARD_MSG(_Msg) [[nodiscard]]
+
+#ifndef nodiscard_ctor
+#  define nodiscard_ctor           NODISCARD
+#endif
+
+#ifndef nodiscard_ctor_msg
+#  define nodiscard_ctor_msg(_Msg) NODISCARD_MSG(_Msg)
+#endif
+
 #else
-#  define NODISCARD_MSG(_Msg)
+
+#ifndef nodiscard_ctor
+#  define nodiscard_ctor
+#endif 
+
+#ifndef nodiscard_ctor_msg
+#  define nodiscard_ctor_msg(_Msg)
+#endif 
+
 #endif
 
 
-#ifndef __has_cpp_attribute
-#  define NODISCARD_CTOR
-#  define NODISCARD_CTOR_MSG(_Msg)
-#elif __has_cpp_attribute(nodiscard) >= 201907L
-#  define NODISCARD_CTOR           NODISCARD
-#  define NODISCARD_CTOR_MSG(_Msg) NODISCARD_MSG(_Msg)
-#else
-#  define NODISCARD_CTOR
-#  define NODISCARD_CTOR_MSG(_Msg)
+#ifndef NODISCARD_CTOR
+#  define NODISCARD_CTOR nodiscard_ctor
 #endif
 
-#define unused(x)                               ((void)(x))
-#define UNUSED(x)                               ((void)(x))
+#ifndef NODISCARD_CTOR_MSG
+#  define NODISCARD_CTOR_MSG nodiscard_ctor_msg
+#endif
+
+#ifndef unused
+#  define unused(x)                             ((void)(x))
+#endif 
+
+#ifndef UNUSED
+#  define UNUSED                                unused
+#endif
 
 #if defined(OS_WIN)
     #define aligned_malloc(size, alignment)		_aligned_malloc(size, alignment)
@@ -238,6 +372,22 @@
 #  define DECLARE_MALLOCLIKE NODISCARD
 #endif
 
+#if defined(CPP_MSVC) && !defined(declare_memory_allocator)
+#  define declare_memory_allocator __declspec(allocator)
+#elif defined (CPP_GNU) && !defined(declare_memory_allocator)
+#  define declare_memory_allocator __attribute__((malloc))
+#else 
+
+#ifndef declare_memory_allocator
+#  define declare_memory_allocator
+#endif 
+
+#endif
+
+#ifndef DECLARE_MEMORY_ALLOCATOR
+#  define DECLARE_MEMORY_ALLOCATOR declare_memory_allocator
+#endif
+
 #ifndef BASE_HAS_CXX17
 #  if __cplusplus >= 201703L
 #    define BASE_HAS_CXX17 1
@@ -254,16 +404,33 @@
 #  endif
 #endif
 
-#if BASE_HAS_CXX20
-#  define CONSTEXPR_CXX20 constexpr
-#else
-#  define CONSTEXPR_CXX20 
+#ifndef constexpr_cxx20
+#  if BASE_HAS_CXX20
+#    define constexpr_cxx20 constexpr
+#  else
+#  ifndef 
+#    define constexpr_cxx20 
+#  endif
 #endif
 
-#if defined(CPP_MSVC)
-#  define RESTRICT  __declspec(restrict)
-#elif defined(CPP_GNU) || defined (CPP_CLANG)
-#  define RESTRICT  __restrict__ 
-#endif 
+#ifndef CONSTEXPR_CXX20
+#  define CONSTEXPR_CXX20 constexpr_cxx20
+#endif
+
+#ifndef base_restrict
+#  if defined(CPP_MSVC)
+#    define base_restrict  __declspec(restrict)
+#  elif defined(CPP_GNU) || defined (CPP_CLANG)
+#    define base_restrict  __restrict__ 
+#  endif 
+#endif
+
+#ifndef RESTRICT
+#  define RESTRICT base_restrict
+#endif
+
+#ifndef restrict
+#  define restrict base_restrict
+#endif
 
 #endif // __cplusplus
