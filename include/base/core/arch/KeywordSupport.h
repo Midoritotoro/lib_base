@@ -433,4 +433,14 @@
 #  define restrict base_restrict
 #endif
 
+// Warnings
+
+#ifndef NODISCARD_RETURN_RAW_PTR
+#  define NODISCARD_RETURN_RAW_PTR \
+        NODISCARD_MSG("This function allocates memory and returns a raw pointer. " \
+                   "Discarding the return value will cause a memory leak.")
+#else 
+#  define NODISCARD_RETURN_RAW_PTR 
+#endif
+
 #endif // __cplusplus

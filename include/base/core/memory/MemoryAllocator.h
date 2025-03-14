@@ -6,46 +6,58 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
+
+template <typename Type>
 class MemoryAllocator {
-	void* malloc(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
+public:
+	using value_type		= Type;
 
-	void* mallocz(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
-	ALLOC_SIZE(1, 2) void* malloc_array(sizetype nmemb, sizetype size);
+	using difference_type	= ptrdiff;
+	using size_type			= sizetype;
 
-	void* calloc(sizetype nmemb, sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1, 2);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR 
+		DECLARE_MEMORY_ALLOCATOR Type* Allocate(sizetype bytes)
+		MALLOC_ATTRIBUTE ALLOC_SIZE(1);
 
-	void* realloc(void* ptr, sizetype size) ALLOC_SIZE(2);
+	//void* malloc(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
 
-	int reallocp(void* ptr, sizetype size);
+	//void* mallocz(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
+	//ALLOC_SIZE(1, 2) void* malloc_array(sizetype nmemb, sizetype size);
 
-	void* realloc_f(void* ptr, sizetype nelem, sizetype elsize);
+	//void* calloc(sizetype nmemb, sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1, 2);
 
-	ALLOC_SIZE(2, 3) void* realloc_array(void* ptr, sizetype nmemb, sizetype size);
+	//void* realloc(void* ptr, sizetype size) ALLOC_SIZE(2);
 
-	int reallocp_array(void* ptr, sizetype nmemb, sizetype size);
+	//int reallocp(void* ptr, sizetype size);
 
-	void* fast_realloc(void* ptr, unsigned int* size, sizetype min_size);
-	void fast_malloc(void* ptr, unsigned int* size, sizetype min_size);
+	//void* realloc_f(void* ptr, sizetype nelem, sizetype elsize);
 
-	void fast_mallocz(void* ptr, unsigned int* size, sizetype min_size);
+	//ALLOC_SIZE(2, 3) void* realloc_array(void* ptr, sizetype nmemb, sizetype size);
 
-	void free(void* ptr);
+	//int reallocp_array(void* ptr, sizetype nmemb, sizetype size);
 
-	void freep(void* ptr);
+	//void* fast_realloc(void* ptr, unsigned int* size, sizetype min_size);
+	//void fast_malloc(void* ptr, unsigned int* size, sizetype min_size);
 
-	void* memdup(const void* p, sizetype size);
-	void memcpy_backptr(uint8_t* dst, int back, int cnt);
+	//void fast_mallocz(void* ptr, unsigned int* size, sizetype min_size);
 
-	void dynarray_add(void* tab_ptr, int* nb_ptr, void* elem);
+	//void free(void* ptr);
 
-	int dynarray_add_nofree(void* tab_ptr, int* nb_ptr, void* elem);
+	//void freep(void* ptr);
 
-	void* dynarray2_add(void** tab_ptr, int* nb_ptr, sizetype elem_size,
-		const uint8_t* elem_data);
+	//void* memdup(const void* p, sizetype size);
+	//void memcpy_backptr(uint8_t* dst, int back, int cnt);
 
-	int size_mult(sizetype a, sizetype b, sizetype* r);
+	//void dynarray_add(void* tab_ptr, int* nb_ptr, void* elem);
 
-	void max_alloc(sizetype max);
+	//int dynarray_add_nofree(void* tab_ptr, int* nb_ptr, void* elem);
+
+	//void* dynarray2_add(void** tab_ptr, int* nb_ptr, sizetype elem_size,
+	//	const uint8_t* elem_data);
+
+	//int size_mult(sizetype a, sizetype b, sizetype* r);
+
+	//void max_alloc(sizetype max);
 };
 
 __BASE_MEMORY_NAMESPACE_END
