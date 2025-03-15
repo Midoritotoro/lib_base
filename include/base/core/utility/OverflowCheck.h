@@ -34,7 +34,7 @@ always_inline static NODISCARD
 #endif
 }
 
-    always_inline static NODISCARD
+always_inline static NODISCARD
         bool UnsignedLongLongAddOverflow(
         unsigned long long a,
         unsigned long long b,

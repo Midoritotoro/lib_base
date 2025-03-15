@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
+
 #include <base/core/memory/Memory.h>
 #include <base/core/memory/MemoryAllocatorStrategy.h>
 
@@ -8,9 +9,17 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 
 
 template <
-	typename _Type,
-	class _AllocatorStrategy_>
+	class _AllocatorStrategy_,
+	typename _Type>
 class MemoryAllocator {
+	static_assert(!std::is_const_v<_Type>, "The C++ Standard forbids containers of const elements "
+		"because allocator<const T> is ill-formed.");
+
+	static_assert(!std::is_function_v<_Type>, "The C++ Standard forbids allocators for function elements "
+		"because of [allocator.requirements].");
+
+	static_assert(!std::is_reference_v<_Type>, "The C++ Standard forbids allocators for reference elements "
+		"because of [allocator.requirements].");
 public:
 	using _AllocatorStrategyForType		= _AllocatorStrategy_<_Type>;
 	using value_type					= _Type;
@@ -18,11 +27,22 @@ public:
 	using difference_type				= ptrdiff;
 	using size_type						= sizetype;
 
+
+	CONSTEXPR_CXX20 ~MemoryAllocator() noexcept = default;
+
+	constexpr MemoryAllocator() noexcept = default;
+	CONSTEXPR_CXX20 MemoryAllocator(const MemoryAllocator& other) noexcept = default;
+
+	template <class _Other>
+	constexpr MemoryAllocator(const MemoryAllocator<_Other>&) noexcept = default;
+
+	CONSTEXPR_CXX20 MemoryAllocator& operator=(const allocator&) noexcept = default;
+
 	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
 		inline DECLARE_MEMORY_ALLOCATOR 
 		value_type* Allocate(size_type bytes) ALLOC_SIZE(1) // malloc
 	{
-		return _AllocatorStrategyFprType::Allocate(bytes);
+		return _AllocatorStrategyForType::Allocate(bytes);
 	}
 
 	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
@@ -40,7 +60,6 @@ public:
 	{
 		return _AllocatorStrategyForType::AllocateArray(bytes);
 	}
-
 
 	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
 		inline DECLARE_MEMORY_ALLOCATOR 
@@ -104,7 +123,6 @@ public:
 			pointer, size, minimumSize);
 	}
 
-
 	CONSTEXPR_CXX20 inline
 		DECLARE_MEMORY_ALLOCATOR
 		void FastMalloc(
@@ -155,6 +173,20 @@ public:
 		return _AllocatorStrategyForType::MemoryDuplicate(
 			pointer, size);
 	}
+};
+
+template <typename _Type>
+class DefaultMemoryAllocator :
+	public MemoryAllocator<DefaultMemoryAllocatorStrategy, _Type>
+{
+
+};
+
+template <typename _Type>
+class RawMemoryAllocator:
+	public MemoryAllocator<RawMemoryAllocatorStrategy, _Type>
+{
+
 };
 
 __BASE_MEMORY_NAMESPACE_END

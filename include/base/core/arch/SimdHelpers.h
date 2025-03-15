@@ -21,6 +21,7 @@
 #  endif
 // Костыль с __has_include
 #  if (defined(_M_AVX) || defined(__AVX__) || __has_include(<nmmintrin.h>)) // SSE4.2)
+#    include <nmmintrin.h>
 #    define __SSE3__                        1
 
 #    define __SSSE3__                       1
@@ -147,3 +148,5 @@
 #else 
 #  define BASE_SIMD_SSE2_ALIGNMENT		0
 #endif
+
+#define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT
