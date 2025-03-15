@@ -319,6 +319,7 @@ set(PUBLIC_HEADERS
     include/base/core/container/Vector.h
 
     include/base/core/memory/Memory.h
+    include/base/core/memory/MemoryAllocatorStrategy.h
 )
 
 include(CMakePackageConfigHelpers)

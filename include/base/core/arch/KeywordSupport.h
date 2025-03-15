@@ -373,9 +373,11 @@
 #endif
 
 #if defined(CPP_MSVC) && !defined(declare_memory_allocator)
-#  define declare_memory_allocator __declspec(allocator)
+#  define declare_memory_allocator      __declspec(allocator)
 #elif defined (CPP_GNU) && !defined(declare_memory_allocator)
-#  define declare_memory_allocator __attribute__((malloc))
+#  if CPP_GNU > 310
+#    define declare_memory_allocator    __attribute__((malloc))
+#  endif
 #else 
 
 #ifndef declare_memory_allocator

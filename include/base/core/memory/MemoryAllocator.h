@@ -2,62 +2,159 @@
 
 #include <base/core/arch/Platform.h>
 #include <base/core/memory/Memory.h>
-
+#include <base/core/memory/MemoryAllocatorStrategy.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 
-template <typename Type>
+template <
+	typename _Type,
+	class _AllocatorStrategy_>
 class MemoryAllocator {
 public:
-	using value_type		= Type;
+	using _AllocatorStrategyForType		= _AllocatorStrategy_<_Type>;
+	using value_type					= _Type;
 
-	using difference_type	= ptrdiff;
-	using size_type			= sizetype;
+	using difference_type				= ptrdiff;
+	using size_type						= sizetype;
 
-	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR 
-		DECLARE_MEMORY_ALLOCATOR Type* Allocate(sizetype bytes)
-		MALLOC_ATTRIBUTE ALLOC_SIZE(1);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR 
+		value_type* Allocate(size_type bytes) ALLOC_SIZE(1) // malloc
+	{
+		return _AllocatorStrategyFprType::Allocate(bytes);
+	}
 
-	//void* malloc(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR 
+		value_type* AllocateZ(size_type bytes) ALLOC_SIZE(1) // mallocz
+	{
+		return _AllocatorStrategyForType::AllocateZ(bytes);
+	}
 
-	//void* mallocz(sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1);
-	//ALLOC_SIZE(1, 2) void* malloc_array(sizetype nmemb, sizetype size);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR ALLOC_SIZE(1, 2) 
+		value_type* AllocateArray( // malloc_array
+			sizetype nmemb,
+			sizetype bytes)
+	{
+		return _AllocatorStrategyForType::AllocateArray(bytes);
+	}
 
-	//void* calloc(sizetype nmemb, sizetype size) MALLOC_ATTRIBUTE ALLOC_SIZE(1, 2);
 
-	//void* realloc(void* ptr, sizetype size) ALLOC_SIZE(2);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR 
+		value_type* AllocateArrayAligned(
+			sizetype nmemb, 
+			sizetype size) ALLOC_SIZE(1, 2) // calloc
+	{
 
-	//int reallocp(void* ptr, sizetype size);
+	}
 
-	//void* realloc_f(void* ptr, sizetype nelem, sizetype elsize);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR 
+		value_type* ReAllocate(
+			value_type* pointer,
+			sizetype size) ALLOC_SIZE(2) // realloc
+	{
+		return _AllocatorStrategyForType::ReAllocate(
+			pointer, size);
+	}
 
-	//ALLOC_SIZE(2, 3) void* realloc_array(void* ptr, sizetype nmemb, sizetype size);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR
+	value_type* ReAllocateFromAny(
+		void* pointer,
+		sizetype size) ALLOC_SIZE(2)
+	{
+		return _AllocatorStrategyForType::ReAllocateFromAny(
+			pointer, size);
+	}
 
-	//int reallocp_array(void* ptr, sizetype nmemb, sizetype size);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline ALLOC_SIZE(2, 3) DECLARE_MEMORY_ALLOCATOR
+		value_type* ReallocateArray(
+			value_type* pointer,
+			sizetype nmemb,
+			sizetype size)
+	{
+		return _AllocatorStrategyForType::ReallocateArray(
+			pointer, nmemb, size);
+	}
 
-	//void* fast_realloc(void* ptr, unsigned int* size, sizetype min_size);
-	//void fast_malloc(void* ptr, unsigned int* size, sizetype min_size);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline ALLOC_SIZE(2, 3) DECLARE_MEMORY_ALLOCATOR
+		value_type* ReallocateArrayFromAny(
+			void* pointer, 
+			sizetype nmemb, 
+			sizetype size)
+	{
+		return _AllocatorStrategyForType::ReallocateArray(
+			pointer, nmemb, size);
+	}
 
-	//void fast_mallocz(void* ptr, unsigned int* size, sizetype min_size);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		inline DECLARE_MEMORY_ALLOCATOR 
+		value_type* FastReallocate(
+			value_type* pointer,
+			uint* size,
+			sizetype minimumSize)
+	{
+		return _AllocatorStrategyForType::FastReallocate(
+			pointer, size, minimumSize);
+	}
 
-	//void free(void* ptr);
 
-	//void freep(void* ptr);
+	CONSTEXPR_CXX20 inline
+		DECLARE_MEMORY_ALLOCATOR
+		void FastMalloc(
+			value_type* pointer,
+			uint* size, 
+			sizetype minimumSize)
+	{
+		_AllocatorStrategyForType::FastMalloc(
+			pointer, size, minimumSize);
+	}
 
-	//void* memdup(const void* p, sizetype size);
-	//void memcpy_backptr(uint8_t* dst, int back, int cnt);
+	CONSTEXPR_CXX20 inline
+		DECLARE_MEMORY_ALLOCATOR
+	void FastMallocZeros(
+		value_type* pointer,
+		uint* size,
+		sizetype minimumSize)
+	{
+		_AllocatorStrategyForType::FastMallocZeros(
+			pointer, size, minimumSize);
+	}
 
-	//void dynarray_add(void* tab_ptr, int* nb_ptr, void* elem);
+	CONSTEXPR_CXX20 inline
+		void Deallocate(value_type* pointer)
+	{
+		 _AllocatorStrategyForType::Deallocate(pointer);
+	}
 
-	//int dynarray_add_nofree(void* tab_ptr, int* nb_ptr, void* elem);
+	CONSTEXPR_CXX20 inline
+		void Free(value_type* pointer)
+	{
+		_AllocatorStrategyForType::Deallocate(pointer);
+	}
 
-	//void* dynarray2_add(void** tab_ptr, int* nb_ptr, sizetype elem_size,
-	//	const uint8_t* elem_data);
+	CONSTEXPR_CXX20 inline
+		void FreeNull(value_type* pointer)
+	{
+		_AllocatorStrategyForType::Deallocate(pointer);
+		pointer = nullptr;
+	}
 
-	//int size_mult(sizetype a, sizetype b, sizetype* r);
-
-	//void max_alloc(sizetype max);
+	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
+		DECLARE_MEMORY_ALLOCATOR inline 
+		value_type* MemoryDuplicate(
+			const value_type* pointer,
+			sizetype size)
+	{
+		return _AllocatorStrategyForType::MemoryDuplicate(
+			pointer, size);
+	}
 };
 
 __BASE_MEMORY_NAMESPACE_END
