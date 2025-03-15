@@ -33,18 +33,17 @@ public:
 	{
 		value_type* pointer = nullptr;
 
-		if (bytes <= 0 || bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
+		if (bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
 			return nullptr;
 
 #if defined(OS_MAC) || defined(OS_LINUX)
 		if (bytes)
 			if (posix_memalign(&pointer, MEMORY_DEFAULT_ALIGNMENT, bytes))
 				pointer = nullptr;
-#elif defined (OS_WIN)
-		pointer = aligned_malloc(bytes, MEMORY_DEFAULT_ALIGNMENT);
 #else
-		pointer = malloc(bytes);
+		pointer = aligned_malloc(bytes, MEMORY_DEFAULT_ALIGNMENT);
 #endif
+
 		if (!pointer && !bytes) {
 			bytes = 1;
 			pointer = Allocate(1);
@@ -101,7 +100,7 @@ public:
 	{
 		value_type* resultPointer = nullptr;
 
-		if (bytes <= 0 || bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
+		if (bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
 			return nullptr;
 
 		return aligned_realloc(
