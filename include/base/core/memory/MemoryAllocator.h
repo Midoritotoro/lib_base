@@ -8,20 +8,19 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _AllocatorStrategy_>
 class MemoryAllocator {
-	static_assert(!std::is_const_v<_Type>, "The C++ Standard forbids containers of const elements "
+	static_assert(!std::is_const_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids containers of const elements "
 		"because allocator<const T> is ill-formed.");
 
-	static_assert(!std::is_function_v<_Type>, "The C++ Standard forbids allocators for function elements "
+	static_assert(!std::is_function_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids allocators for function elements "
 		"because of [allocator.requirements].");
 
-	static_assert(!std::is_reference_v<_Type>, "The C++ Standard forbids allocators for reference elements "
+	static_assert(!std::is_reference_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids allocators for reference elements "
 		"because of [allocator.requirements].");
 public:
-	using _AllocatorStrategyForType		= _AllocatorStrategy_<_Type>;
-	using value_type					= _AllocatorStrategyForType::value_type;
+	using value_type					= _AllocatorStrategy_::value_type;
 
-	using difference_type				= _AllocatorStrategyForType::difference_type;
-	using size_type						= _AllocatorStrategyForType::size_type;
+	using difference_type				= _AllocatorStrategy_::difference_type;
+	using size_type						= _AllocatorStrategy_::size_type;
 
 
 	CONSTEXPR_CXX20 ~MemoryAllocator() noexcept = default;
@@ -37,7 +36,7 @@ public:
 	NODISCARD_RETURN_RAW_PTR inline
 	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
 	value_type* Allocate(size_type bytes) {
-		return _AllocatorStrategyForType::Allocate(bytes);
+		return _AllocatorStrategy_::Allocate(bytes);
 	}
 
 	NODISCARD_RETURN_RAW_PTR inline
@@ -45,13 +44,13 @@ public:
 	value_type* AllocateAligned(
 		size_type bytes,
 		size_type alignment = MEMORY_DEFAULT_ALIGNMENT) {
-		return _AllocatorStrategyForType::AllocateAligned(bytes, alignment);
+		return _AllocatorStrategy_::AllocateAligned(bytes, alignment);
 	}
 
 	NODISCARD_RETURN_RAW_PTR inline
 	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
 	value_type* AllocateZeros(size_type bytes) {
-		return _AllocatorStrategyForType::AllocateZeros(bytes);
+		return _AllocatorStrategy_::AllocateZeros(bytes);
 	}
 
 	NODISCARD_RETURN_RAW_PTR inline
@@ -60,7 +59,7 @@ public:
 		size_type numberOfElements,
 		size_type singleElementSize)
 	{
-		return _AllocatorStrategyForType::AllocateArray(
+		return _AllocatorStrategy_::AllocateArray(
 			numberOfElements, singleElementSize);
 	}
 
@@ -71,7 +70,7 @@ public:
 		size_type singleElementSize,
 		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
 	{
-		return _AllocatorStrategyForType::AllocateArrayAligned(
+		return _AllocatorStrategy_::AllocateArrayAligned(
 			numberOfElements, singleElementSize, alignment);
 	}
 
@@ -81,7 +80,7 @@ public:
 		value_type* pointer,
 		size_type size)
 	{
-		return _AllocatorStrategyForType::ReAllocate(
+		return _AllocatorStrategy_::ReAllocate(
 			pointer, size);
 	}
 
@@ -92,7 +91,7 @@ public:
 		size_type size,
 		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
 	{
-		return _AllocatorStrategyForType::ReAllocateAligned(
+		return _AllocatorStrategy_::ReAllocateAligned(
 			pointer, size, MEMORY_DEFAULT_ALIGNMENT);
 	}
 
@@ -103,7 +102,7 @@ public:
 		size_type numberOfElements,
 		size_type singleElementSize)
 	{
-		return _AllocatorStrategyForType::ReallocateArray(
+		return _AllocatorStrategy_::ReallocateArray(
 			pointer, numberOfElements, singleElementSize);
 	}
 
@@ -114,7 +113,7 @@ public:
 		uint* size,
 		sizetype minimumSize)
 	{
-		return _AllocatorStrategyForType::ReallocateFast(
+		return _AllocatorStrategy_::ReallocateFast(
 			pointer, size, minimumSize);
 	}
 
@@ -124,7 +123,7 @@ public:
 		uint* size, 
 		sizetype minimumSize)
 	{
-		_AllocatorStrategyForType::AllocateFast(
+		_AllocatorStrategy_::AllocateFast(
 			pointer, size, minimumSize);
 	}
 
@@ -134,18 +133,18 @@ public:
 		uint* size,
 		sizetype minimumSize)
 	{
-		_AllocatorStrategyForType::AllocateZerosFast(
+		_AllocatorStrategy_::AllocateZerosFast(
 			pointer, size, minimumSize);
 	}
 
 	inline CONSTEXPR_CXX20
 	void Deallocate(value_type* pointer) {
-		 _AllocatorStrategyForType::Deallocate(pointer);
+		 _AllocatorStrategy_::Deallocate(pointer);
 	}
 
 	inline CONSTEXPR_CXX20
 	void Free(value_type* pointer) {
-		_AllocatorStrategyForType::Free(pointer);
+		_AllocatorStrategy_::Free(pointer);
 	}
 
 	inline CONSTEXPR_CXX20
@@ -160,7 +159,7 @@ public:
 
 	inline CONSTEXPR_CXX20
 	void FreeNull(value_type* pointer) {
-		_AllocatorStrategyForType::FreeNull(pointer);
+		_AllocatorStrategy_::FreeNull(pointer);
 	}
 
 	inline CONSTEXPR_CXX20
@@ -168,7 +167,7 @@ public:
 		value_type* value = nullptr;
 
 		memcpy(&value, pointer, sizeof(value));
-		memcpy(pointer, &reinterpret_cast<value_type*>({ nullptr }), sizeof(value));
+		memcpy(pointer, &reinterpret_cast<value_type*>(nullptr), sizeof(value));
 
 		FreeAligned(value);
 	}
@@ -184,7 +183,7 @@ public:
 		const value_type* pointer,
 		sizetype size)
 	{
-		return _AllocatorStrategyForType::MemoryDuplicate(
+		return _AllocatorStrategy_::MemoryDuplicate(
 			pointer, size);
 	}
 };

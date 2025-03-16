@@ -18,21 +18,21 @@ public:
 	using size_type = sizetype;
 	using _AtomicOperationsForSize = thread::AtomicOperations<size_type>;
 
-	//~DefaultMemoryAllocatorStrategy() = delete;
-	//DefaultMemoryAllocatorStrategy() = delete;
+	~DefaultMemoryAllocatorStrategy() = delete;
+	DefaultMemoryAllocatorStrategy() = delete;
 
-	//template <class _OtherType>
-	//DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy<_OtherType>&) = delete;
-	//DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy& other) = delete;
+	template <class _OtherType>
+	DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy<_OtherType>&) = delete;
+	DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy& other) = delete;
 
-	//DefaultMemoryAllocatorStrategy& operator=(const DefaultMemoryAllocatorStrategy&) = delete;
+	DefaultMemoryAllocatorStrategy& operator=(const DefaultMemoryAllocatorStrategy&) = delete;
 
 
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
 	CLANG_CONSTEXPR_CXX20 // Clang и MSVC реализуют P0784R7 по-разному; см. GH-1532
 	value_type* Allocate(size_type bytes) {
-		return ::operator new(bytes);
+		return reinterpret_cast<value_type*>(::operator new(bytes));
 	}
 	
 #ifdef __cpp_aligned_new
@@ -46,11 +46,11 @@ public:
 #  ifdef CPP_CLANG
 #    if BASE_HAS_CXX20
 		if (is_constant_evaluated())
-			return ::operator new(bytes);
+			return reinterpret_cast<value_type*>(::operator new(bytes));
 		else
 #    endif
 #  endif
-			return ::operator new(bytes, std::align_val_t{ alignment });
+			return reinterpret_cast<value_type*>(::operator new(bytes, std::align_val_t{ alignment }));
 	}
 #else 
 	static NODISCARD_RETURN_RAW_PTR
@@ -134,7 +134,7 @@ public:
 	{
 		value_type* resultPointer = nullptr;
 
-		if (bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
+		if (bytes > _AtomicOperationsForSize::loadRelaxed(MaximumAllocationSize))
 			return nullptr;
 
 		return realloc(pointer, bytes + !bytes);
@@ -150,7 +150,7 @@ public:
 	{
 		value_type* resultPointer = nullptr;
 
-		if (bytes > _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize))
+		if (bytes > _AtomicOperationsForSize::loadRelaxed(MaximumAllocationSize))
 			return nullptr;
 
 		return aligned_realloc(
@@ -206,7 +206,7 @@ public:
 		if (minimumSize <= *size)
 			return pointer;
 
-		maximumSize = _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize);
+		maximumSize = _AtomicOperationsForSize::loadRelaxed(MaximumAllocationSize);
 		maximumSize = std::min(maximumSize, UINT_MAX);
 
 		if (minimumSize > maximumSize) {
@@ -246,7 +246,7 @@ public:
 			// Assert(value || !minimumSize);
 			return;
 
-		maximumSize = _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize);
+		maximumSize = _AtomicOperationsForSize::loadRelaxed(MaximumAllocationSize);
 		/* *size is an unsigned, so the real maximum is <= UINT_MAX. */
 		maximumSize = std::min(maximumSize, UINT_MAX);
 
@@ -328,7 +328,7 @@ public:
 		value_type* value = nullptr;
 
 		memcpy(&value, pointer, sizeof(value));
-		memcpy(pointer, &reinterpret_cast<value_type*>({ nullptr }), sizeof(value));
+		memcpy(pointer, &reinterpret_cast<value_type*>(nullptr), sizeof(value));
 
 		Free(value);
 	}
@@ -341,7 +341,7 @@ public:
 		value_type* value = nullptr;
 
 		memcpy(&value, pointer, sizeof(value));
-		memcpy(pointer, &reinterpret_cast<value_type*>({ nullptr }), sizeof(value));
+		memcpy(pointer, &reinterpret_cast<value_type*>(nullptr), sizeof(value));
 
 		FreeAligned(value);
 	}
@@ -364,7 +364,7 @@ public:
 		return outPointer;
 	}
 private:
-	static constexpr std::atomic<size_type> MaximumAllocationSize = INT_MAX;
+	static constexpr inline std::atomic<int> MaximumAllocationSize = INT_MAX;
 };
 
 __BASE_MEMORY_NAMESPACE_END

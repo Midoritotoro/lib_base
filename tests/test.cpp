@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
 	//_mediaPlayer->setMedia(videoPath);
 
-	base::memory::MemoryAllocator<base::memory::DefaultMemoryAllocatorStrategy<test>> p;
+	base::memory::MemoryAllocator<base::memory::RawMemoryAllocatorStrategy<test>> p;
 	test* p_val = p.Allocate(sizeof(test));
 
 	std::cout << "(p_val == nullptr): " << (p_val == nullptr) << std::endl;
