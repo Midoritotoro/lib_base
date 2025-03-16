@@ -5,6 +5,8 @@
 #include <base/core/string/StringIterator.h>
 #include <base/core/utility/TypeTraits.h>
 
+#include <vector>
+
 __BASE_STRING_NAMESPACE_BEGIN
 
 class StringView;
@@ -242,7 +244,7 @@ public:
 	NODISCARD bool contains(
 		const String& string,
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
-;
+
 	NODISCARD sizetype count(
 		Char ch, 
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
@@ -358,7 +360,7 @@ private:
 		const char* input);
 #endif
 
-	std::vector<Char> _data; // Потом заменю на кастомный контейнер
+	std::vector<Char> _data; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 };
 
 NODISCARD CONSTEXPR_CXX20 auto Char::fromUcs4(char32_t c) noexcept

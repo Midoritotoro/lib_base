@@ -18,6 +18,9 @@ public:
 	using size_type = sizetype;
 	using _AtomicOperationsForSize = thread::AtomicOperations<size_type>;
 
+	using pointer = value_type*;
+	using const_pointer = const value_type*;
+
 	~DefaultMemoryAllocatorStrategy() = delete;
 	DefaultMemoryAllocatorStrategy() = delete;
 

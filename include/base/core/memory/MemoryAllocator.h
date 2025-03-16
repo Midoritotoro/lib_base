@@ -17,10 +17,13 @@ class MemoryAllocator {
 	static_assert(!std::is_reference_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids allocators for reference elements "
 		"because of [allocator.requirements].");
 public:
-	using value_type					= _AllocatorStrategy_::value_type;
+	using pointer						= typename _AllocatorStrategy_::pointer;
+	using const_pointer					= typename _AllocatorStrategy_::const_pointer;
 
-	using difference_type				= _AllocatorStrategy_::difference_type;
-	using size_type						= _AllocatorStrategy_::size_type;
+	using value_type					= typename _AllocatorStrategy_::value_type;
+
+	using difference_type				= typename _AllocatorStrategy_::difference_type;
+	using size_type						= typename _AllocatorStrategy_::size_type;
 
 
 	CONSTEXPR_CXX20 ~MemoryAllocator() noexcept = default;

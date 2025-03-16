@@ -14,7 +14,7 @@ struct test {
 	int value = 0;
 	float f = 0.f;
 	double val = 0.f;
-};
+} __declspec(align(16));
 
 int main(int argc, char* argv[]) {
 //	QApplication application(argc, argv);
@@ -43,18 +43,6 @@ int main(int argc, char* argv[]) {
 	//_mediaPlayer->setFullScreen();
 
 	//_mediaPlayer->setMedia(videoPath);
-
-	base::memory::MemoryAllocator<base::memory::RawMemoryAllocatorStrategy<test>> p;
-	test* p_val = p.Allocate(sizeof(test));
-
-	std::cout << "(p_val == nullptr): " << (p_val == nullptr) << std::endl;
-
-	p_val->value = 12.4;
-	p_val->f = p_val->value * 1.4;
-	p_val->val = p_val->f / p_val->value;
-
-
-	std::cout << p_val->value << p_val->f << p_val->val << std::endl;
 
 	return 0;
 //	return application.exec();
