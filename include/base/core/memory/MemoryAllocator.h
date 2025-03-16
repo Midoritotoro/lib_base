@@ -1,9 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-
 #include <base/core/memory/Memory.h>
-#include <base/core/memory/MemoryAllocatorStrategy.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -54,7 +52,7 @@ public:
 
 	CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
 		inline DECLARE_MEMORY_ALLOCATOR ALLOC_SIZE(1, 2) 
-		value_type* AllocateArray( // malloc_array
+		value_type* AllocateArray(
 			sizetype nmemb,
 			sizetype bytes)
 	{
@@ -65,7 +63,7 @@ public:
 		inline DECLARE_MEMORY_ALLOCATOR 
 		value_type* AllocateArrayAligned(
 			sizetype nmemb, 
-			sizetype size) ALLOC_SIZE(1, 2) // calloc
+			sizetype size) ALLOC_SIZE(1, 2)
 	{
 
 	}
@@ -175,6 +173,13 @@ public:
 	}
 };
 
+__BASE_MEMORY_NAMESPACE_END
+
+#include <base/core/memory/RawMemoryAllocatorStrategy.h>
+#include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
+
+__BASE_MEMORY_NAMESPACE_BEGIN
+
 template <typename _Type>
 class DefaultMemoryAllocator :
 	public MemoryAllocator<DefaultMemoryAllocatorStrategy, _Type>
@@ -183,7 +188,7 @@ class DefaultMemoryAllocator :
 };
 
 template <typename _Type>
-class RawMemoryAllocator:
+class RawMemoryAllocator :
 	public MemoryAllocator<RawMemoryAllocatorStrategy, _Type>
 {
 

@@ -7,9 +7,10 @@
 #include <string>
 #include <tuple>
 
-#ifdef OS_WIN
 
 __BASE_IO_NAMESPACE_BEGIN
+
+#ifdef OS_WIN
 
 class WindowsFileInfo {
 public:
@@ -84,6 +85,7 @@ private:
     WIN32_FILE_ATTRIBUTE_DATA _data;
 };
 
-__BASE_IO_NAMESPACE_BEGIN
-
 #endif 
+
+
+__BASE_IO_NAMESPACE_END

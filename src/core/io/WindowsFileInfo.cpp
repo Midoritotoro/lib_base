@@ -4,13 +4,6 @@
 
 #include <array>
 
-
-#ifdef OS_WIN 
-
-__BASE_IO_NAMESPACE_BEGIN
-
-// Path constants
-
 #define WIN_ALTSEP      "/"
 #define WIN_ALTSEP_LEN  2
 
@@ -18,10 +11,14 @@ __BASE_IO_NAMESPACE_BEGIN
 
 #define WIN_SEP         "//"
 #define WIN_SEP_LEN     3
-    
+
 #define WIN_COLON       ":"
 
 #define WIN_UNC_PREFIX  "\\\\?\\UNC\\"
+
+__BASE_IO_NAMESPACE_BEGIN
+
+#ifdef OS_WIN 
 
 
 static constexpr NODISCARD bool IsSlash(const char* ch) {
@@ -50,19 +47,19 @@ WindowsFileInfo::WindowsFileInfo(const std::string& path):
 }
 
 std::string WindowsFileInfo::absoluteFilePath() const {
-
+    return "";
 }
 
 std::string WindowsFileInfo::canonicalFilePath() const {
-
+    return "";
 }
 
 std::string WindowsFileInfo::absolutePath() const {
-
+    return "";
 }
 
 std::string WindowsFileInfo::canonicalPath() const {
-
+    return "";
 }
 
 std::string WindowsFileInfo::path() const {
@@ -73,7 +70,7 @@ bool WindowsFileInfo::isRelative() const {
     const auto first = _path.data();
     const auto last = _path.data() + _path.size();
 
-    
+    return false;
 }
 
 bool WindowsFileInfo::isAbsolute() const {
@@ -81,7 +78,7 @@ bool WindowsFileInfo::isAbsolute() const {
 }
 
 bool WindowsFileInfo::makeAbsolute() {
-
+    return false;
 }
 
 bool WindowsFileInfo::exists() const {
@@ -128,7 +125,7 @@ std::string WindowsFileInfo::completeBaseName() const {
 }
 
 std::string WindowsFileInfo::completeSuffix() const {
-
+    return "";
 }
 
 std::string WindowsFileInfo::suffix() const {
@@ -140,22 +137,20 @@ std::string WindowsFileInfo::suffix() const {
     return _path.substr(suffixStart, _path.size() - suffixStart);
 }
 
-// "D:/dir/file.cpp"
-
 Directory WindowsFileInfo::dir() const {
     return Directory(splitPath(_path).first);
 }
 
 Directory WindowsFileInfo::absoluteDir() const {
-
+    return Directory("");
 }
 
 bool WindowsFileInfo::isReadable() const {
-    
+    return false;
 }
 
 bool WindowsFileInfo::isWritable() const {
-
+    return false;
 }
 
 bool WindowsFileInfo::isExecutable() const {
@@ -173,7 +168,7 @@ bool WindowsFileInfo::isHidden() const {
 }
 
 bool WindowsFileInfo::isNativePath() const {
-
+    return false;
 }
 
 bool WindowsFileInfo::isFile() const {
@@ -189,27 +184,27 @@ bool WindowsFileInfo::isBundle() const {
 }
 
 bool WindowsFileInfo::isSymLink() const {
-
+    return false;
 }
 
 bool WindowsFileInfo::isSymbolicLink() const {
-
+    return false;
 }
 
 bool WindowsFileInfo::isShortcut() const {
-
+    return false;
 }
 
 bool WindowsFileInfo::isAlias() const {
- 
+    return false;
 }
 
 bool WindowsFileInfo::isJunction() const {
-    
+    return false;
 }
 
 bool WindowsFileInfo::isRoot() const {
-   
+    return false;
 }
 
 int64 WindowsFileInfo::size() const {
@@ -295,6 +290,6 @@ WindowsFileInfo::PathHeadTail
         tail);
 }
 
-__BASE_IO_NAMESPACE_END
+#endif 
 
-#endif
+__BASE_IO_NAMESPACE_END

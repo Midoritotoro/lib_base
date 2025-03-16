@@ -125,7 +125,7 @@ public:
 		return testAnyFlags(flag); 
 	}
 
-	constexpr inline bool testAnyFlags(QFlags flags) const noexcept {
+	constexpr inline bool testAnyFlags(flags flags) const noexcept {
 		return (_value & flags._value) != 0;
 	}
 

@@ -137,31 +137,31 @@ enum class IdnaStatus : unsigned int {
 };
 
 GraphemeBreakClass FASTCALL graphemeBreakClass(char32_t ucs4) noexcept;
-inline GraphemeBreakClass graphemeBreakClass(QChar ch) noexcept
+inline GraphemeBreakClass graphemeBreakClass(Char ch) noexcept
 {
     return graphemeBreakClass(ch.unicode());
 }
 
 WordBreakClass FASTCALL wordBreakClass(char32_t ucs4) noexcept;
-inline WordBreakClass wordBreakClass(QChar ch) noexcept
+inline WordBreakClass wordBreakClass(Char ch) noexcept
 {
     return wordBreakClass(ch.unicode());
 }
 
 SentenceBreakClass FASTCALL sentenceBreakClass(char32_t ucs4) noexcept;
-inline SentenceBreakClass sentenceBreakClass(QChar ch) noexcept
+inline SentenceBreakClass sentenceBreakClass(Char ch) noexcept
 {
     return sentenceBreakClass(ch.unicode());
 }
 
 LineBreakClass FASTCALL lineBreakClass(char32_t ucs4) noexcept;
-inline LineBreakClass lineBreakClass(QChar ch) noexcept
+inline LineBreakClass lineBreakClass(Char ch) noexcept
 {
     return lineBreakClass(ch.unicode());
 }
 
 IdnaStatus FASTCALL idnaStatus(char32_t ucs4) noexcept;
-inline IdnaStatus idnaStatus(QChar ch) noexcept
+inline IdnaStatus idnaStatus(Char ch) noexcept
 {
     return idnaStatus(ch.unicode());
 }
@@ -173,7 +173,7 @@ inline IdnaStatus idnaStatus(QChar ch) noexcept
 //}
 
 EastAsianWidth FASTCALL eastAsianWidth(char32_t ucs4) noexcept;
-inline EastAsianWidth eastAsianWidth(QChar ch) noexcept
+inline EastAsianWidth eastAsianWidth(Char ch) noexcept
 {
     return eastAsianWidth(ch.unicode());
 }

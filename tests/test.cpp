@@ -1,32 +1,14 @@
-﻿#include <QApplication>
-#include <QWidget>
-
-#include <base/core/AtomicInteger.h>
-#include <base/core/Thread.h>
-
-#include <base/core/BaseNamespace.h>
-
-#include <stdio.h>
-#include <corecrt.h>
-
-#include <base/qt/style/StyleCore.h>
-#include <base/qt/common/MainQueueProcessor.h>
+﻿
+#include <base/core/thread/AtomicInteger.h>
+#include <base/core/thread/Thread.h>
 
 #include <base/core/io/File.h>
-#include <thread>
-
-#include <base/qt/ui/FlatLabel.h>
-
-#include <base/utility/CommonMacros.h>
-#include <memory>
-
-#include <base/core/Thread.h>
+#include <base/core/utility/CommonMacros.h>
 #include <iostream>
-
-#include <base/media/player/MediaPlayer.h>
-#include <base/concurrent/Concurrent.h>
-
-#include <qDebug>
+//
+//#include <base/media/player/MediaPlayer.h>
+//
+//#include <qDebug>
 
 
 class P {
@@ -75,19 +57,7 @@ int main(int argc, char* argv[]) {
 
 	//_mediaPlayer->setMedia(videoPath);
 
-	base::io::File file; 
-	if (!file.open("C:\\Users\\danya\\Downloads\\Telegram Desktop\\codmsnd.mp4", base::io::FileOpenMode::Read))
-		return -1;
-	//{
-	//	measureExecutionTime("read From out")
-		auto readed = file.readAll();
-		//qDebug() << "totalSize: " << readed.sizeInBytes << " File::fileSize: " << base::io::File::fileSize("D:/War Thunder.mp4");
-	//}
-
-	//for (base::sizetype i = 0; i < readed.sizeInBytes; ++i)
-		std::cout << *(char*)readed.data[0] << '\n';
-
-	file.close();
+	
 
 	return 0;
 //	return application.exec();

@@ -38,8 +38,6 @@ __BASE_STRING_NAMESPACE_BEGIN
     using NativeChar        =   char;
 #endif
 
-
-
 enum _CaseSensitivity : uchar {
     CaseSensitive,
     CaseInsensitive

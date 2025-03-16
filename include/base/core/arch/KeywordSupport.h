@@ -169,6 +169,7 @@
 #else
 #  define never_inline
 #  define always_inline         inline
+
 #endif
 
 #ifndef ALWAYS_INLINE
@@ -398,7 +399,6 @@
 #  if BASE_HAS_CXX20
 #    define constexpr_cxx20 constexpr
 #  else
-#  ifndef 
 #    define constexpr_cxx20 
 #  endif
 #endif
@@ -419,8 +419,14 @@
 #  define RESTRICT base_restrict
 #endif
 
-#ifndef restrict
-#  define restrict base_restrict
+#ifdef CPP_CLANG
+#  define clang_constexpr_cxx20 constexpr_cxx20
+#else
+#  define clang_constexpr_cxx20 
+#endif
+
+#ifndef CLANG_CONSTEXPR_CXX20
+#  define CLANG_CONSTEXPR_CXX20 clang_constexpr_cxx20
 #endif
 
 // Warnings

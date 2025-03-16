@@ -24,12 +24,12 @@ option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
-option(LIB_BASE_ENABLE_QT "" ON)
+option(LIB_BASE_ENABLE_QT "" OFF)
 
 option(LIB_BASE_ENABLE_OPENGL "" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "" ON)
+option(LIB_BASE_ENABLE_FFMPEG "" OFF)
 
-option(LIB_BASE_ENABLE_ZLIB "" ON)
+option(LIB_BASE_ENABLE_ZLIB "" OFF)
 
 if (UNIX)
     option(LIB_BASE_ENABLE_PHTHREAD "" OFF)
@@ -41,12 +41,12 @@ set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 set(LIB_BASE_BUILD_TESTS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT ON)
+set(LIB_BASE_ENABLE_QT OFF)
 
 set(LIB_BASE_ENABLE_OPENGL OFF)
-set(LIB_BASE_ENABLE_FFMPEG ON)
+set(LIB_BASE_ENABLE_FFMPEG OFF)
 
-set(LIB_BASE_ENABLE_ZLIB ON)
+set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
@@ -142,14 +142,6 @@ set(PRIVATE_SOURCES
 
     src/core/string/UnicodeTables.h
     src/core/string/UnicodeTables.cpp
-
-    src/core/container/Map.cpp
-    src/core/container/Set.cpp
-
-    src/core/container/FlatMap.cpp
-    src/core/container/List.cpp
-
-    src/core/container/Vector.cpp
 )
 
 set(PUBLIC_HEADERS 

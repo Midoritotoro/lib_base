@@ -19,9 +19,8 @@
 #    define __SSE__ 1
 #    define __SSE2__ 1
 #  endif
-// Костыль с __has_include
-#  if (defined(_M_AVX) || defined(__AVX__) || __has_include(<nmmintrin.h>)) // SSE4.2)
-#    include <nmmintrin.h>
+
+#  if (defined(_M_AVX) || defined(__AVX__))
 #    define __SSE3__                        1
 
 #    define __SSSE3__                       1

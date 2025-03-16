@@ -4,19 +4,32 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 #define DEFAULT_BUF_SIZE 1024
 
-String::String() 
+CONSTEXPR_CXX20 String::String()
 {}
 
-String::~String() {
+CONSTEXPR_CXX20 String::~String() {
 
 }
 
-String::String(const String& string) :
+CONSTEXPR_CXX20 String::String(const String& string) :
 	_data(string._data)
 {}
 
-String::String(const Char* chs): 
-{}
+CONSTEXPR_CXX20 String::String(
+	const Char* chs,
+	size_type length)
+{
+	for (size_type i = 0; i < length; ++i)
+		_data.push_back(chs[i]);
+}
+
+CONSTEXPR_CXX20 String::String(
+	Iterator first,
+	Iterator last)
+{
+	for (auto i = first; i < last; ++i)
+		_data.push_back(*i);
+}
 
 Char& String::operator[](const sizetype index) noexcept {
 	return _data[index];
@@ -47,10 +60,11 @@ std::wstring String::toStdWString() const noexcept {
 			_data.data() + iterations * DEFAULT_BUF_SIZE, 
 			DEFAULT_BUF_SIZE)
 	}*/
+	return {};
 }
 
 std::string String::toStdString() const noexcept {
-
+	return {};
 }
 
 sizetype String::size() const noexcept {
@@ -90,6 +104,8 @@ sizetype String::find(const String& string) const noexcept {
 	for (sizetype i = 0; i < _Size; i += searchStringSize) {
 		
 	}
+
+	return {};
 }
 
 sizetype String::find(Char ch) const noexcept {
@@ -98,47 +114,47 @@ sizetype String::find(Char ch) const noexcept {
 	if (_Size <= 0)
 		return -1;
 
-
+	return {};
 }
 
 std::vector<sizetype> String::findAll(const String& string) const noexcept {
-
+	return {};
 }
 
 std::vector<sizetype> String::findAll(Char ch) const noexcept {
-
+	return {};
 }
 
 sizetype String::findLastOf(const String& string) const noexcept {
-
+	return {};
 }
 
 sizetype String::findLastOf(Char ch) const noexcept {
-
+	return {};
 }
 
 sizetype String::findFirstOf(const String& string) const noexcept {
-
+	return {};
 }
 
 sizetype String::findFirstOf(Char ch) const noexcept {
-
+	return {};
 }
 
 sizetype String::findLastNotOf(const String& string) const noexcept {
-
+	return {};
 }
 
 sizetype String::findLastNotOf(Char ch) const noexcept {
-
+	return {};
 }
 
 sizetype String::findFirstNotOf(const String& string) const noexcept {
-
+	return {};
 }
 
 sizetype String::findFirstNotOf(Char ch) const noexcept {
-
+	return {};
 }
 
 void String::clear() {
@@ -161,59 +177,59 @@ const Char* String::constData() const noexcept {
 	return nullptr;
 }
 
-String::Iterator String::begin() noexcept {
+CONSTEXPR_CXX20 String::Iterator String::begin() noexcept {
 	return Iterator(this);
 }
 
-String::ConstIterator String::begin() const noexcept {
+CONSTEXPR_CXX20 String::ConstIterator String::begin() const noexcept {
 	return ConstIterator(this);
 }
 
-String::ConstIterator String::cbegin() const noexcept {
+CONSTEXPR_CXX20 String::ConstIterator String::cbegin() const noexcept {
 	return ConstIterator(this);
 }
 
-String::ConstIterator String::constBegin() const noexcept {
+CONSTEXPR_CXX20 String::ConstIterator String::constBegin() const noexcept {
 	return ConstIterator(this);
 }
 
-String::Iterator String::end() noexcept  {
+CONSTEXPR_CXX20 String::Iterator String::end() noexcept  {
 	return (Iterator(this) + size());
 }
 
-String::ConstIterator String::end() const noexcept {
+CONSTEXPR_CXX20 String::ConstIterator String::end() const noexcept {
 	return (ConstIterator(this) + size());
 }
 
-String::ConstIterator String::cend() const {
+CONSTEXPR_CXX20 String::ConstIterator String::cend() const {
 	return (ConstIterator(this) + size());
 }
 
-String::ConstIterator String::constEnd() const noexcept {
+CONSTEXPR_CXX20 String::ConstIterator String::constEnd() const noexcept {
 	return (ConstIterator(this) + size());
 }
 
-String::ReverseIterator String::rbegin() noexcept {
+CONSTEXPR_CXX20 String::ReverseIterator String::rbegin() noexcept {
 	return ReverseIterator(end());
 }
 
-String::ReverseIterator String::rend() noexcept {
+CONSTEXPR_CXX20 String::ReverseIterator String::rend() noexcept {
 	return ReverseIterator(begin());
 }
 
-String::ConstReverseIterator String::rbegin() const noexcept {
+CONSTEXPR_CXX20 String::ConstReverseIterator String::rbegin() const noexcept {
 	return ConstReverseIterator(end());
 }
 
-String::ConstReverseIterator String::rend() const noexcept {
+CONSTEXPR_CXX20 String::ConstReverseIterator String::rend() const noexcept {
 	return ConstReverseIterator(begin());
 }
 
-String::ConstReverseIterator String::crbegin() const noexcept {
+CONSTEXPR_CXX20 String::ConstReverseIterator String::crbegin() const noexcept {
 	return ConstReverseIterator(end());
 }
 
-String::ConstReverseIterator String::crend() const noexcept {
+CONSTEXPR_CXX20 String::ConstReverseIterator String::crend() const noexcept {
 	return ConstReverseIterator(begin());
 }
 
@@ -237,7 +253,7 @@ String::Iterator String::erase(
 	ConstIterator first, 
 	ConstIterator last)
 {
-	
+	return Iterator(this);
 }
 
 String::Iterator String::erase(ConstIterator it) { 
@@ -343,49 +359,49 @@ sizetype String::lastIndexOf(
 	sizetype from,
 	CaseSensitivity caseSensitivity) const
 {
-
+	return {};
 }
 
 bool String::contains(
 	Char ch, 
 	CaseSensitivity caseSensitivity) const 
 {
-
+	return {};
 }
 
 bool String::contains(
 	const String& string,
 	CaseSensitivity caseSensitivity) const 
 {
-
+	return {};
 }
 
 sizetype String::count(
 	Char ch,
 	CaseSensitivity caseSensitivity) const
 {
-
+	return {};
 }
 
 sizetype String::count(
 	const String& string,
 	CaseSensitivity caseSensitivity) const
 {
-
+	return {};
 }
 
 String& String::fill(
 	Char ch,
 	sizetype size)
 {
-
+	return *this;
 }
 
 String& String::insert(
 	sizetype index,
 	Char ch)
 {
-
+	return *this;
 }
 
 String& String::insert(
@@ -393,7 +409,7 @@ String& String::insert(
 	const Char* ch,
 	sizetype length)
 {
-
+	return *this;
 }
 
 String& String::insert(
@@ -444,21 +460,21 @@ String& String::remove(
 	sizetype index,
 	sizetype length)
 {
-
+	return *this;
 }
 
 String& String::remove(
 	Char ch,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String& String::remove(
 	const String& string,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String& String::removeAt(sizetype pos) {
@@ -484,7 +500,7 @@ String& String::replace(
 	sizetype length,
 	Char after)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -493,7 +509,7 @@ String& String::replace(
 	const Char* ch,
 	sizetype slen)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -501,7 +517,7 @@ String& String::replace(
 	sizetype length,
 	const String& after)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -509,7 +525,7 @@ String& String::replace(
 	Char after,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -519,7 +535,7 @@ String& String::replace(
 	sizetype afterLength,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -527,7 +543,7 @@ String& String::replace(
 	const String& after,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String& String::replace(
@@ -535,7 +551,7 @@ String& String::replace(
 	const String& after,
 	CaseSensitivity caseSensitivity)
 {
-
+	return *this;
 }
 
 String::StringList String::split(
@@ -543,7 +559,7 @@ String::StringList String::split(
 	SplitBehavior behavior,
 	CaseSensitivity caseSensibity) const
 {
-
+	return {};
 }
 
 String::StringList String::split(
@@ -551,7 +567,7 @@ String::StringList String::split(
 	SplitBehavior behavior,
 	CaseSensitivity caseSensibity) const
 {
-
+	return {};
 }
 
 #if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)

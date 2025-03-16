@@ -14,7 +14,7 @@ class StringIterator:
     public StringConstIterator<_String>
 {
 public:
-    using BaseClass         = StringConstIterator<_String>
+    using BaseClass = StringConstIterator<_String>;
     using iterator_category = std::random_access_iterator_tag;
 
     using value_type        = typename _String::value_type;

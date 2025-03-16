@@ -1,8 +1,6 @@
 #include <base/media/ffmpeg/video/Scale.h>
 
-#include <cassert>
 #include <cstdlib>
-#include <malloc.h>
 
 #include <base/system/SystemInfo.h>
 #include <base/media/ffmpeg/video/ColorSpace.h>
@@ -12,6 +10,7 @@ extern "C" {
 }
 
 #include <qDebug>
+
 
 #define ALLOW_YUVP  (false)
 #define OFFSET_A    (3)
