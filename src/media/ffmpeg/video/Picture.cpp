@@ -2,7 +2,7 @@
 #include <base/media/ffmpeg/video/Fourcc.h>
 
 #include <base/media/ffmpeg/video/Chroma.h>
-#include <base/system/SystemConfig.h>
+#include <base/core/system/SystemConfig.h>
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 

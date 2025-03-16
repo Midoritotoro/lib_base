@@ -1,37 +1,24 @@
-﻿
-#include <base/core/thread/AtomicInteger.h>
+﻿#include <base/core/thread/AtomicInteger.h>
 #include <base/core/thread/Thread.h>
 
 #include <base/core/io/File.h>
 #include <base/core/utility/CommonMacros.h>
-#include <iostream>
-//
+
+#include <base/core/string/String.h>
+#include <base/core/memory/MemoryAllocator.h>
+
+#include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
 //#include <base/media/player/MediaPlayer.h>
-//
-//#include <qDebug>
 
-
-class P {
-public: 
-	int worker(base::sizetype end) {
-		for (base::sizetype i = 0; i < end; ++i) {
-			printf("ffifhefj\n");
-		}
-		return 10;
-	}
-
-	static void worker2(base::sizetype end) {
-		for (base::sizetype i = 0; i < end; ++i) {
-			printf("ffifhefj\n");
-		}
-	}
+struct test {
+	int value = 0;
+	float f = 0.f;
+	double val = 0.f;
 };
-
 
 int main(int argc, char* argv[]) {
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
-	setlocale(LC_ALL, "");
 
 	//base::concurrent::invokeAsync([&]() {
 	//	const auto ratio = application.devicePixelRatio();
@@ -57,7 +44,17 @@ int main(int argc, char* argv[]) {
 
 	//_mediaPlayer->setMedia(videoPath);
 
-	
+	base::memory::MemoryAllocator<base::memory::DefaultMemoryAllocatorStrategy<test>> p;
+	test* p_val = p.Allocate(sizeof(test));
+
+	std::cout << "(p_val == nullptr): " << (p_val == nullptr) << std::endl;
+
+	p_val->value = 12.4;
+	p_val->f = p_val->value * 1.4;
+	p_val->val = p_val->f / p_val->value;
+
+
+	std::cout << p_val->value << p_val->f << p_val->val << std::endl;
 
 	return 0;
 //	return application.exec();

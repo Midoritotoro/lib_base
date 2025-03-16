@@ -1,5 +1,5 @@
 #include <base/media/ffmpeg/video/VideoFormat.h>
-#include <base/utility/Math.h>
+#include <base/core/utility/Math.h>
 
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN

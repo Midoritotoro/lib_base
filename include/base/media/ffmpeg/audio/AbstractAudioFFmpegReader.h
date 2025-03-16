@@ -1,3 +1,5 @@
+#pragma once
+
 #include <base/media/ffmpeg/audio/AbstractAudioReader.h>
 
 //#include <al.h>

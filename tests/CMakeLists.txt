@@ -4,8 +4,8 @@ project(lib_baseTests LANGUAGES CXX)
 if (PROJECT_IS_TOP_LEVEL)
     find_package(lib_base REQUIRED COMPONENTS
         lib_base 
-     #  lib_baseQt 
-     #  lib_baseFFmpeg 
+        lib_baseQt 
+        lib_baseFFmpeg 
    )
 endif()
 
@@ -18,12 +18,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 add_executable(lib_base_test test.cpp)
-# find_ffmpeg(lib_base_test)
+find_ffmpeg(lib_base_test)
 
-# set(CMAKE_CXX_FLAGS "-march=native")
+set(CMAKE_CXX_FLAGS "-march=native")
 target_link_libraries(
   lib_base_test PRIVATE
   lib_base::lib_base
- # lib_base::lib_baseQt
- # lib_base::lib_baseFFmpeg
+  lib_base::lib_baseQt
+  lib_base::lib_baseFFmpeg
 )

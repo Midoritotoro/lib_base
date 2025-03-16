@@ -4,6 +4,7 @@
 #include <base/core/thread/CommonAtomicOperations.h>
 
 #include <base/core/utility/TypeTraits.h>
+#include <base/core/memory/Memory.h>
 
 
 __BASE_MEMORY_NAMESPACE_BEGIN
@@ -17,23 +18,23 @@ public:
 	using size_type = sizetype;
 	using _AtomicOperationsForSize = thread::AtomicOperations<size_type>;
 
-	~DefaultMemoryAllocatorStrategy() = delete;
-	DefaultMemoryAllocatorStrategy() = delete;
+	//~DefaultMemoryAllocatorStrategy() = delete;
+	//DefaultMemoryAllocatorStrategy() = delete;
 
-	template <class _OtherType>
-	DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy<_OtherType>&) = delete;
-	DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy& other) = delete;
+	//template <class _OtherType>
+	//DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy<_OtherType>&) = delete;
+	//DefaultMemoryAllocatorStrategy(const DefaultMemoryAllocatorStrategy& other) = delete;
 
-	DefaultMemoryAllocatorStrategy& operator=(const DefaultMemoryAllocatorStrategy&) = delete;
+	//DefaultMemoryAllocatorStrategy& operator=(const DefaultMemoryAllocatorStrategy&) = delete;
 
 
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
 	CLANG_CONSTEXPR_CXX20 // Clang и MSVC реализуют P0784R7 по-разному; см. GH-1532
-	value_type* Allocate(size_type bytes) ALLOC_SIZE(1) {
+	value_type* Allocate(size_type bytes) {
 		return ::operator new(bytes);
 	}
-
+	
 #ifdef __cpp_aligned_new
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
@@ -64,11 +65,10 @@ public:
 	}
 #endif 
 
-
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
 	CLANG_CONSTEXPR_CXX20
-	value_type* AllocateZeros(size_type bytes) ALLOC_SIZE(1)
+	value_type* AllocateZeros(size_type bytes)
 	{
 		value_type* pointer = Allocate(bytes);
 
@@ -83,7 +83,7 @@ public:
 	CLANG_CONSTEXPR_CXX20
 	value_type* AllocateZerosAligned(
 		size_type bytes,
-		size_type alignment) ALLOC_SIZE(1)
+		size_type alignment)
 	{
 		value_type* pointer = AllocateAligned(
 			bytes, alignment);
@@ -97,9 +97,9 @@ public:
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
 	CLANG_CONSTEXPR_CXX20
-		value_type* AllocateArray(
-			size_type numberOfElements,
-			size_type singleElementSize) ALLOC_SIZE(1, 2)
+	value_type* AllocateArray(
+		size_type numberOfElements,
+		size_type singleElementSize)
 	{
 		size_type result = 0;
 
@@ -115,7 +115,7 @@ public:
 	value_type* AllocateArrayAligned(
 		size_type numberOfElements,
 		size_type singleElementSize,
-		size_type alignment) ALLOC_SIZE(1, 2)
+		size_type alignment)
 	{
 		size_type result = 0;
 
@@ -130,7 +130,7 @@ public:
 	CLANG_CONSTEXPR_CXX20
 	value_type* ReAllocate(
 		value_type* pointer,
-		size_type bytes) ALLOC_SIZE(2)
+		size_type bytes)
 	{
 		value_type* resultPointer = nullptr;
 
@@ -146,7 +146,7 @@ public:
 	value_type* ReAllocateAligned(
 		value_type* pointer,
 		size_type bytes,
-		size_type alignment) ALLOC_SIZE(2)
+		size_type alignment)
 	{
 		value_type* resultPointer = nullptr;
 
@@ -164,7 +164,7 @@ public:
 	value_type* ReallocateArray(
 		value_type* pointer,
 		size_type numberOfElements,
-		size_type singleElementSize) ALLOC_SIZE(2, 3)
+		size_type singleElementSize)
 	{
 		size_type result = 0;
 
@@ -181,7 +181,7 @@ public:
 		value_type* pointer,
 		size_type numberOfElements,
 		size_type singleElementSize,
-		size_type alignment) ALLOC_SIZE(2, 3)
+		size_type alignment)
 	{
 		size_type result = 0;
 
@@ -364,7 +364,7 @@ public:
 		return outPointer;
 	}
 private:
-	static std::atomic<size_type> MaximumAllocationSize = INT_MAX;
+	static constexpr std::atomic<size_type> MaximumAllocationSize = INT_MAX;
 };
 
 __BASE_MEMORY_NAMESPACE_END

@@ -6,16 +6,10 @@
 #include <QWheelEvent>
 #include <QPainter>
 
-#include <base/system/Time.h>
+#include <base/core/system/Time.h>
 
 #include <base/qt/style/StyleWidgets.h>
 #include <base/qt/style/StyleScale.h>
-
-#include <base/system/Windows.h>
-#include <QWindow>
-
-#include <qpa/qplatformnativeinterface.h>
-#include <cmath>
 
 
 //namespace {

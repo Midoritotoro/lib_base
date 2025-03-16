@@ -1,6 +1,6 @@
 #include <base/qt/text/TextUtility.h>
 
-#include <base/utility/Algorithm.h>
+#include <base/core/utility/Algorithm.h>
 #include <QIODevice>
 
 #include <QRegularExpression>

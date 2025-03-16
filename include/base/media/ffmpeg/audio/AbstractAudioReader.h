@@ -1,5 +1,6 @@
-#include <base/media/ffmpeg/audio/AbstractAudioLoader.h>
+#pragma once
 
+#include <base/media/ffmpeg/audio/AbstractAudioLoader.h>
 
 namespace base::media::ffmpeg::audio {
 

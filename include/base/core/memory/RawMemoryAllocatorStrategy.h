@@ -3,6 +3,8 @@
 #include <base/core/utility/OverflowCheck.h>
 #include <base/core/thread/CommonAtomicOperations.h>
 
+#include <base/core/memory/Memory.h>
+
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -24,9 +26,10 @@ public:
 
 	RawMemoryAllocatorStrategy& operator=(const RawMemoryAllocatorStrategy&) = delete;
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* Allocate(size_type bytes) ALLOC_SIZE(1)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* Allocate(size_type bytes)
 	{
 		value_type* pointer = nullptr;
 
@@ -43,11 +46,12 @@ public:
 		return pointer;
 
 	}
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* AllocateAligned(
-			size_type bytes,
-			size_type alignment) ALLOC_SIZE(1)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* AllocateAligned(
+		size_type bytes,
+		size_type alignment)
 	{
 		value_type* pointer = nullptr;
 
@@ -56,10 +60,10 @@ public:
 
 #if defined(OS_MAC) || defined(OS_LINUX)
 		if (bytes)
-			if (posix_memalign(&pointer, MEMORY_DEFAULT_ALIGNMENT, bytes))
+			if (posix_memalign(&pointer, alignment, bytes))
 				pointer = nullptr;
 #else
-		pointer = aligned_malloc(bytes, MEMORY_DEFAULT_ALIGNMENT);
+		pointer = aligned_malloc(bytes, alignment);
 #endif
 
 		if (!pointer && !bytes) {
@@ -70,9 +74,10 @@ public:
 		return pointer;
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-	value_type* AllocateZeros(size_type bytes) ALLOC_SIZE(1)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* AllocateZeros(size_type bytes)
 	{
 		value_type* pointer = Allocate(bytes);
 
@@ -82,11 +87,12 @@ public:
 		return pointer;
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR ALLOC_SIZE(1, 2)
-		value_type* AllocateArray( 
-			size_type numberOfElements,
-			size_type singleElementSize)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* AllocateArray( 
+		size_type numberOfElements,
+		size_type singleElementSize)
 	{
 		size_type result = 0;
 
@@ -96,12 +102,13 @@ public:
 		return Allocate(result);
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR ALLOC_SIZE(1, 2)
-		value_type* AllocateArrayAligned(
-			size_type numberOfElements,
-			size_type singleElementSize,
-			size_type alignment)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* AllocateArrayAligned(
+		size_type numberOfElements,
+		size_type singleElementSize,
+		size_type alignment)
 	{
 		size_type result = 0;
 
@@ -111,11 +118,12 @@ public:
 		return AllocateAligned(result, alignment);
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* ReAllocate(
-			value_type* pointer,
-			size_type bytes) ALLOC_SIZE(2)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* ReAllocate(
+		value_type* pointer,
+		size_type bytes)
 	{
 		value_type* resultPointer = nullptr;
 
@@ -123,14 +131,16 @@ public:
 			return nullptr;
 
 		return realloc(pointer, bytes + !bytes);
+	}
 	
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* ReAllocateAligned(
-			value_type* pointer,
-			size_type bytes,
-			size_type alignment) ALLOC_SIZE(2)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* ReAllocateAligned(
+		value_type* pointer,
+		size_type bytes,
+		size_type alignment)
 	{
 		value_type* resultPointer = nullptr;
 
@@ -139,24 +149,16 @@ public:
 
 		return aligned_realloc(
 			pointer, bytes + !bytes,
-			DEFAULT_MEMORY_ALIGNMENT);
+			alignment);
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* ReAllocateFromAny(
-			void* pointer,
-			size_type bytes) ALLOC_SIZE(2)
-	{
-		return ReAllocate(reinterpret_cast<value_type*>(pointer), bytes);
-	}
-
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline ALLOC_SIZE(2, 3) DECLARE_MEMORY_ALLOCATOR
-		value_type* ReallocateArray(
-			value_type* pointer,
-			size_type numberOfElements,
-			size_type singleElementSize)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* ReallocateArray(
+		value_type* pointer,
+		size_type numberOfElements,
+		size_type singleElementSize)
 	{
 		size_type result = 0;
 
@@ -166,13 +168,14 @@ public:
 		return ReAllocate(pointer, result);
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline ALLOC_SIZE(2, 3) DECLARE_MEMORY_ALLOCATOR
-		value_type* ReallocateArrayAligned(
-			value_type* pointer,
-			size_type numberOfElements,
-			size_type singleElementSize,
-			size_type alignment)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* ReallocateArrayAligned(
+		value_type* pointer,
+		size_type numberOfElements,
+		size_type singleElementSize,
+		size_type alignment)
 	{
 		size_type result = 0;
 
@@ -183,25 +186,13 @@ public:
 			pointer, result, alignment);
 	}
 
-
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline ALLOC_SIZE(2, 3) DECLARE_MEMORY_ALLOCATOR
-	value_type* ReallocateArrayFromAny(
-		void* pointer,
-		size_type numberOfElements,
-		size_type singleElementSize)
-	{
-		return ReallocateArray(
-			reinterpret_cast<value_type*>(pointer),
-			numberOfElements, singleElementSize);
-	}
-
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		inline DECLARE_MEMORY_ALLOCATOR
-		value_type* FastReallocate(
-			value_type* pointer,
-			uint* size,
-			size_type minimumSize)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* ReallocateFast(
+		value_type* pointer,
+		uint* size,
+		size_type minimumSize)
 	{
 		size_type maximumSize = 0;
 
@@ -230,9 +221,10 @@ public:
 		return pointer;
 	}
 
-	static CONSTEXPR_CXX20 inline
-		DECLARE_MEMORY_ALLOCATOR
-	void FastMalloc(
+	static
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void AllocateFast(
 		value_type* pointer,
 		uint* size,
 		size_type minimumSize,
@@ -279,7 +271,7 @@ public:
 
 	static CONSTEXPR_CXX20 inline
 		DECLARE_MEMORY_ALLOCATOR
-	void FastMallocZeros(
+	void AllocateZerosFast(
 		value_type* pointer,
 		uint* size,
 		size_type minimumSize)
@@ -288,21 +280,38 @@ public:
 			minimumSize, true);
 	}
 
-	static CONSTEXPR_CXX20 inline
-		void Deallocate(value_type* pointer)
-	{
-		aligned_free(pointer);
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void Deallocate(value_type* pointer) {
+		free(pointer);
 	}
 
-	static CONSTEXPR_CXX20 inline
-		void Free(value_type* pointer)
-	{
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void Free(value_type* pointer) {
 		Deallocate(pointer);
 	}
 
-	static CONSTEXPR_CXX20 inline
-		void FreeNull(value_type* pointer)
-	{
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void DeallocateAligned(value_type* pointer) {
+		aligned_free(pointer);
+	}
+
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void FreeAligned(value_type* pointer) {
+		DeallocateAligned(pointer);
+	}
+
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void FreeNull(value_type* pointer) {
 		value_type* value = nullptr;
 
 		memcpy(&value, pointer, sizeof(value));
@@ -311,11 +320,24 @@ public:
 		Free(value);
 	}
 
-	static CONSTEXPR_CXX20 NODISCARD_RETURN_RAW_PTR
-		DECLARE_MEMORY_ALLOCATOR inline
-		value_type* MemoryDuplicate(
-			const value_type* pointer,
-			sizetype size)
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	void FreeNullAligned(value_type* pointer) {
+		value_type* value = nullptr;
+
+		memcpy(&value, pointer, sizeof(value));
+		memcpy(pointer, &reinterpret_cast<value_type*>({ nullptr }), sizeof(value));
+
+		FreeAligned(value);
+	}
+
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* MemoryDuplicate(
+		const value_type* pointer,
+		sizetype size)
 	{
 		if (!pointer)
 			return nullptr;
@@ -328,8 +350,7 @@ public:
 		return outPointer;
 	}
 private:
-	static std::atomic<size_type> MaximumAllocationSize = INT_MAX;
+	static constexpr std::atomic<size_type> MaximumAllocationSize = INT_MAX;
 };
 
 __BASE_MEMORY_NAMESPACE_END
-

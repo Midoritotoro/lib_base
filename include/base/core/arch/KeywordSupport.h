@@ -2,6 +2,8 @@
 
 #include <base/core/arch/CompilerDetection.h>
 
+WARNING_DISABLE_MSVC(4067)
+
 #ifdef __cplusplus 
 
 #ifndef OUTOFLINE_TEMPLATE

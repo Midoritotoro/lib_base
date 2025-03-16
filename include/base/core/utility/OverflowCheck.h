@@ -109,6 +109,16 @@ always_inline static NODISCARD
 }
 
 always_inline static NODISCARD
+bool SizetypeMultiplyOverflow(
+    sizetype a,
+    sizetype b,
+    sizetype* res)
+{
+    * res = a * b;
+    return b > 0 && a > (ULLONG_MAX / b);
+}
+
+always_inline static NODISCARD
     bool SignedMultiplyOverflow(
         int a,
         int b,
@@ -154,9 +164,19 @@ always_inline static NODISCARD
         int a,
         int b,
         int* res)
-    {
-        return SignedMultiplyOverflow(a, b, res);
-    }
+{
+    return SignedMultiplyOverflow(a, b, res);
+}
+
+always_inline static
+NODISCARD
+bool MultiplyOverflow(
+    sizetype a,
+    sizetype b,
+    sizetype* res)
+{
+    return SizetypeMultiplyOverflow(a, b, res);
+}
 
 always_inline static NODISCARD
     bool AdditionOverflow(
@@ -200,6 +220,22 @@ inline NODISCARD
     return MultiplyOverflow(count, size, &size)
         ? nullptr
         : malloc(count);
+}
+
+template <
+    typename _Integer_,
+    std::enable_if_t<std::is_integral_v<_Integer_>>>
+always_inline static
+NODISCARD constexpr
+bool AnyMultiplyOverflow(
+    _Integer_ a,
+    _Integer_ b,
+    _Integer_* res) noexcept
+{
+    using _Limits_ = std::numeric_limits<_Integer_>;
+
+    *res = a * b;
+    return b > 0 && a > (_Limits_::max() / b);
 }
 
 __BASE_NAMESPACE_END

@@ -1,4 +1,6 @@
-#include <base/system/Time.h>
+#pragma once
+
+#include <base/core/system/Time.h>
 #include <base/media/ffmpeg/Utility.h>
 
 #include <deque>

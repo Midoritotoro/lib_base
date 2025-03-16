@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include <base/system/SystemInfo.h>
+#include <base/core/system/SystemInfo.h>
 #include <base/media/ffmpeg/video/ColorSpace.h>
 
 extern "C" {
