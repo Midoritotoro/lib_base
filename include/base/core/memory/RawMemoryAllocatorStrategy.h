@@ -1,7 +1,5 @@
 #pragma once 
 
-#include <base/core/arch/Platform.h> 
-
 #include <base/core/utility/OverflowCheck.h>
 #include <base/core/thread/CommonAtomicOperations.h>
 
@@ -192,12 +190,12 @@ public:
 		memcpy(&value, pointer, sizeof(value));
 
 		if (minimumSize <= *size)
-			//Assert(value || !minimumSize);
+			// Assert(value || !minimumSize);
 			return;
 
 		maximumSize = _AtomicOperationsForSize::loadRelaxed(&MaximumAllocationSize);
 		/* *size is an unsigned, so the real maximum is <= UINT_MAX. */
-		maximumSize = FFMIN(maximumSize, UINT_MAX);
+		maximumSize = std::min(maximumSize, UINT_MAX);
 
 		if (minimumSize > maximumSize) {
 			FreeNull(pointer);
@@ -251,10 +249,10 @@ public:
 	static CONSTEXPR_CXX20 inline
 		void FreeNull(value_type* pointer)
 	{
-		void* value = nullptr;
+		value_type* value = nullptr;
 
 		memcpy(&value, pointer, sizeof(value));
-		memcpy(pointer, &(void*){ NULL }, sizeof(value));
+		memcpy(pointer, &reinterpret_cast<value_type*>({ nullptr }), sizeof(value));
 
 		Free(value);
 	}
@@ -265,12 +263,10 @@ public:
 			const value_type* pointer,
 			sizetype size)
 	{
-		value_type* outPointer = nullptr;
-
 		if (!pointer)
 			return nullptr;
 
-		outPointer = Allocate(size);
+		value_type* outPointer = Allocate(size);
 
 		if (outPointer)
 			memcpy(outPointer, pointer, size);
@@ -281,10 +277,5 @@ private:
 	static std::atomic<size_type> MaximumAllocationSize = INT_MAX;
 };
 
-template <typename _Type>
-class DefaultMemoryAllocatorStrategy {
-public:
-
-};
-
 __BASE_MEMORY_NAMESPACE_END
+

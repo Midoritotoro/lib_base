@@ -175,17 +175,23 @@ constexpr inline bool is_virtual_base_of_v = is_virtual_base_of<Base, Derived>::
 
 template <typename Iterator>
 using IfIsInputIterator = typename std::enable_if<
-	std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::input_iterator_tag>::value,
+	std::is_convertible<typename 
+	std::iterator_traits<Iterator>::iterator_category, 
+	std::input_iterator_tag>::value,
 	bool>::type;
 
 template <typename Iterator>
 using IfIsForwardIterator = typename std::enable_if<
-	std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::forward_iterator_tag>::value,
+	std::is_convertible<typename 
+	std::iterator_traits<Iterator>::iterator_category,
+	std::forward_iterator_tag>::value,
 	bool>::type;
 
 template <typename Iterator>
 using IfIsNotForwardIterator = typename std::enable_if<
-	!std::is_convertible<typename std::iterator_traits<Iterator>::iterator_category, std::forward_iterator_tag>::value,
+	!std::is_convertible<typename 
+	std::iterator_traits<Iterator>::iterator_category,
+	std::forward_iterator_tag>::value,
 	bool>::type;
 
 __BASE_NAMESPACE_END

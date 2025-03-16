@@ -330,24 +330,6 @@
 #  define UNUSED                                unused
 #endif
 
-#if defined(OS_WIN) && !defined(aligned_malloc)
-#  define aligned_malloc		                _aligned_malloc
-#elif !defined(aligned_malloc)
-#  define aligned_malloc(size, alignment)		malloc(size)
-#endif
-
-#if defined(OS_WIN) && !defined(aligned_realloc)
-#  define aligned_realloc                       _aligned_realloc
-#elif !defined(aligned_realloc)
-#  define _aligned_realloc(block, size, align)  realloc(block, size)
-#endif
-
-#if defined (OS_WIN) && !defined(aligned_free)
-#  define aligned_free(ptr)                     _aligned_free(ptr)
-#elif !defined(aligned_free)
-#  define aligned_free(ptr)                     free(ptr)
-#endif
-
 #if defined (CPP_GNU) || defined (CPP_CLANG)
 
 #  define LIKELY(p)                             __builtin_expect(!!(p), 1)

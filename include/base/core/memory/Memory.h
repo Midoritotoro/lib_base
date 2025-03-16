@@ -15,6 +15,24 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #    define ALLOC_SIZE(...)
 #endif
 
+#if defined(OS_WIN) && !defined(aligned_malloc)
+#  define aligned_malloc		                _aligned_malloc
+#elif !defined(aligned_malloc)
+#  define aligned_malloc(size, alignment)		malloc(size)
+#endif
+
+#if defined(OS_WIN) && !defined(aligned_realloc)
+#  define aligned_realloc                       _aligned_realloc
+#elif !defined(aligned_realloc)
+#  define aligned_realloc(block, size, align)   realloc(block, size)
+#endif
+
+#if defined (OS_WIN) && !defined(aligned_free)
+#  define aligned_free(ptr)                     _aligned_free(ptr)
+#elif !defined(aligned_free)
+#  define aligned_free(ptr)                     free(ptr)
+#endif
+
 #ifndef MEMORY_DEFAULT_ALIGNMENT
 #  define MEMORY_DEFAULT_ALIGNMENT MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT
 #endif
