@@ -190,6 +190,23 @@ public:
 		return _AllocatorStrategy_::MemoryDuplicate(
 			pointer, size);
 	}
+	
+	// STL
+	inline CONSTEXPR_CXX20 void deallocate(
+	value_type* const pointer, 
+	BASE_GUARDOVERFLOW const size_type count) 
+	{
+		Assert(pointer != nullptr || count == 0, "null pointer cannot point to a block of non-zero size");
+		Deallocate(pointer);
+	}
+
+	inline NODISCARD_RETURN_RAW_PTR 
+	CONSTEXPR_CXX20 DECLARE_MEMORY_ALLOCATOR 
+	pointer allocate(BASE_GUARDOVERFLOW const size_type bytes) 
+	{
+		static_assert(sizeof(value_type) > 0, "value_type must be complete before calling allocate.");
+		return Allocate(bytes);
+	}
 };
 
 template <typename _Type>

@@ -317,6 +317,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/container/VectorIterator.h
     include/base/core/container/VectorConstIterator.h
+
+    include/base/core/memory/MemoryUtility.h
 )
 
 include(CMakePackageConfigHelpers)
@@ -444,7 +446,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             /utf-8
 
             /MP
-            /EHsc   
+            /EHsc
+            
+            /guard:cf
 
             /w15038 
             /w14265 

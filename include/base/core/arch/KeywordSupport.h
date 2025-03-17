@@ -439,6 +439,12 @@ WARNING_DISABLE_MSVC(4067)
 #  define CLANG_CONSTEXPR_CXX20 clang_constexpr_cxx20
 #endif
 
+#if defined(OS_WIN) && defined(CPP_MSVC)
+#  define BASE_GUARDOVERFLOW _CRT_GUARDOVERFLOW
+#else
+#  define BASE_GUARDOVERFLOW 
+#endif
+
 // Warnings
 
 #ifndef NODISCARD_RETURN_RAW_PTR

@@ -269,7 +269,6 @@ public:
 			minimumSize = 0;
 
 		*size = minimumSize;
-		return;
 	}
 
 	static CONSTEXPR_CXX20 inline

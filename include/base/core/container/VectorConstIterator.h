@@ -192,7 +192,7 @@ private:
 			&& _currentElement + offset <= containerDataEnd);
 	}
 
-	const _Vector _container		= nullptr;
+	const _Vector* _container		= nullptr;
 	const_pointer _currentElement	= nullptr;
 };
 

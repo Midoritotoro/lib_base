@@ -314,11 +314,17 @@ public:
 
 	inline NODISCARD bool resize(const SizeType capacity) {
 		const auto bytesRequired = capacity * sizeof(ValueType);
-		if (bytesRequired <= 0)
+		if (UNLIKELY(bytesRequired <= 0))
 			return false;
 
 		_Allocator_ allocator = {};
-		allocator.Allocate(bytesRequired);
+
+		const auto memory = allocator.Allocate(bytesRequired);
+
+		if (UNLIKELY(memory == nullptr))
+			return false;
+
+
 	}
 
 	inline void insert(
