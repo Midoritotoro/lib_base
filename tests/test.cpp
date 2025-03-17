@@ -8,6 +8,9 @@
 #include <base/core/memory/MemoryAllocator.h>
 
 #include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
+#include <base/core/container/Vector.h>
+
+
 //#include <base/media/player/MediaPlayer.h>
 
 struct test {
@@ -17,6 +20,11 @@ struct test {
 } __declspec(align(16));
 
 int main(int argc, char* argv[]) {
+	base::container::Vector<float> vec;
+	vec.push_back(3);
+
+
+
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
