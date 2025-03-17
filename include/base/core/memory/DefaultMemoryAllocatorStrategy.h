@@ -71,6 +71,19 @@ public:
 	static NODISCARD_RETURN_RAW_PTR
 	inline DECLARE_MEMORY_ALLOCATOR
 	CLANG_CONSTEXPR_CXX20
+	value_type* AllocateAtLeast(size_type bytes)
+	{
+		value_type* pointer = Allocate(bytes);
+
+		if (pointer)
+			memset(pointer, 0, bytes);
+
+		return pointer;
+	}
+
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
 	value_type* AllocateZeros(size_type bytes)
 	{
 		value_type* pointer = Allocate(bytes);

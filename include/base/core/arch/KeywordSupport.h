@@ -397,6 +397,14 @@ WARNING_DISABLE_MSVC(4067)
 #  endif
 #endif
 
+#ifndef BASE_HAS_CXX23
+#  if BASE_HAS_CXX20 && __cplusplus > 202002L
+#    define BASE_HAS_CXX23 1
+#  else
+#    define BASE_HAS_CXX23 0
+#  endif
+#endif
+
 #ifndef constexpr_cxx20
 #  if BASE_HAS_CXX20
 #    define constexpr_cxx20 constexpr

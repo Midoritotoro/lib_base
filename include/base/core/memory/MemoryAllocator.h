@@ -46,7 +46,8 @@ public:
 	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
 	value_type* AllocateAligned(
 		size_type bytes,
-		size_type alignment = MEMORY_DEFAULT_ALIGNMENT) {
+		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
+	{
 		return _AllocatorStrategy_::AllocateAligned(bytes, alignment);
 	}
 
