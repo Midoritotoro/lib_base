@@ -9,11 +9,22 @@
 #include <base/core/container/VectorIterator.h> 
 #include <base/core/memory/MemoryUtility.h>
 
-#include <base/core/container/VectorAlgorithm.h>
-
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
+struct _Vector_Scalar_Algorithm_Tag_	{ };
+struct _Vector_SIMD_Algorithm_Tag_		{ };
+
+enum class _Vector_SIMD_Algorithm_Alignment : sizetype { };
+
+static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
+	_Vector_SIMD_Algorithm_Alignment
+#if LIB_BASE_SIMD_ENABLE
+	{ MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT };
+#else
+	{ 0 }
+#endif
+	;
 
 template <
 	typename _Element_,
@@ -80,110 +91,117 @@ public:
 		return SizeType(_current - _start);
 	}
 
-	inline NODISCARD SizeType capacity() const noexcept {
+	constexpr inline NODISCARD SizeType capacity() const noexcept {
 		return SizeType(_end - _start);
 	}
 
-	inline NODISCARD bool isEmpty() const noexcept {
+	constexpr inline NODISCARD bool isEmpty() const noexcept {
 		return (length() == 0);
 	}
 
-	inline NODISCARD Pointer data() const noexcept {
+	constexpr inline NODISCARD Pointer data() const noexcept {
 		return _start;
 	}
 
-	inline NODISCARD const Char* data() const noexcept {
+	constexpr inline NODISCARD ConstPointer data() const noexcept {
 		return _start;
 	}
 
-	inline NODISCARD const Char* constData() const noexcept {
+	constexpr inline NODISCARD ConstPointer constData() const noexcept {
 		return _start;
 	}
 
-	inline CONSTEXPR_CXX20 Iterator begin() noexcept {
+	constexpr inline NODISCARD Iterator begin() noexcept {
 		return Iterator(this);
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator begin() const noexcept {
+	constexpr inline NODISCARD ConstIterator begin() const noexcept {
 		return ConstIterator(this);
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator cbegin() const noexcept {
+	constexpr inline NODISCARD ConstIterator cbegin() const noexcept {
 		return ConstIterator(this);
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator constBegin() const noexcept {
+	constexpr inline NODISCARD ConstIterator constBegin() const noexcept {
 		return ConstIterator(this);
 	}
 
-	inline CONSTEXPR_CXX20 Iterator end() noexcept {
+	constexpr inline NODISCARD Iterator end() noexcept {
 		return Iterator(this) + size();
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator end() const noexcept {
+	constexpr inline NODISCARD ConstIterator end() const noexcept {
 		return ConstIterator(this) + size();
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator cend() const {
+	constexpr inline NODISCARD ConstIterator cend() const {
 		return ConstIterator(this) + size();
 	}
 
-	inline CONSTEXPR_CXX20 ConstIterator constEnd() const noexcept {
+	constexpr inline NODISCARD ConstIterator constEnd() const noexcept {
 		return ConstIterator(this) + size();
 	}
 
-	inline CONSTEXPR_CXX20 ReverseIterator rbegin() noexcept {
+	constexpr inline NODISCARD ReverseIterator rbegin() noexcept {
 		return ReverseIterator(begin());
 	}
 
-	inline CONSTEXPR_CXX20 ReverseIterator rend() noexcept {
+	constexpr inline NODISCARD ReverseIterator rend() noexcept {
 		return ReverseIterator(end());
 	}
 
-	inline CONSTEXPR_CXX20 ConstReverseIterator rbegin() const noexcept {
+	constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept {
 		return ConstReverseIterator(begin());
 	}
 
-	inline CONSTEXPR_CXX20 ConstReverseIterator rend() const noexcept {
+	constexpr inline NODISCARD ConstReverseIterator rend() const noexcept {
 		return ConstReverseIterator(end());
 	}
 
-	inline CONSTEXPR_CXX20 ConstReverseIterator crbegin() const noexcept {
+	constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept {
 		return ConstReverseIterator(begin());
 	}
 
-	inline CONSTEXPR_CXX20 ConstReverseIterator crend() const noexcept {
+	constexpr inline NODISCARD ConstReverseIterator crend() const noexcept {
 		return ConstReverseIterator(end());
 	}
 
-	inline NODISCARD ValueType front() const noexcept {
+	constexpr inline NODISCARD ValueType front() const noexcept {
 		return at(0);
 	}
 
-	inline NODISCARD Reference front() noexcept {
+	constexpr inline NODISCARD Reference front() noexcept {
 		return at(0);
 	}
 
-	inline NODISCARD ValueType back() const noexcept {
+	constexpr inline NODISCARD ValueType back() const noexcept {
 		return at(size() - 1);
 	}
 
-	inline NODISCARD Reference back() noexcept {
+	constexpr inline NODISCARD Reference back() noexcept {
 		return at(size() - 1);
 	}
 protected:
-	Pointer _start = nullptr;
-	Pointer _end = nullptr;
+	Pointer _start	 = nullptr;
+	Pointer _end	 = nullptr;
 
 	Pointer _current = nullptr;
 };
 
 template <
-	typename _Element_,
-	class _Allocator_		= memory::RawMemoryAllocator<_Element_>,
-	class _AlgorithmTag_	= _Vector_Scalar_Algorithm_Tag_>
-class Vector: 
-	public VectorBase<_Element_, _Allocator_> 
+	typename	_Element_,
+	class		_Allocator_,
+	class		_AlgorithmTag_>
+class Vector :
+	public VectorBase<_Element_, _Allocator_>
+{};
+
+template <
+	typename	_Element_,
+	class		_Allocator_>
+class Vector<_Element_, _Allocator_, _Vector_Scalar_Algorithm_Tag_>:
+	public VectorBase<_Element_, _Allocator_>
 {
 public:
 	using _MyBase_					= VectorBase<_Element_, _Allocator_>;
@@ -411,6 +429,14 @@ public:
 
 	}
 };
+
+template <
+	typename _Element_,
+	class _Allocator_>
+class Vector<_Element_, _Allocator_, _Vector_SIMD_Algorithm_Tag_> :
+	public VectorBase<_Element_, _Allocator_>
+{};
+
 //
 //template <class _Allocator_>
 //class Vector<bool, _Allocator_> {

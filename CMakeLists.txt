@@ -319,7 +319,7 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorConstIterator.h
 
     include/base/core/memory/MemoryUtility.h
-    include/base/core/container/VectorAlgorithm.h
+    include/base/core/container/STLCompatibleContainerBase.h
 )
 
 include(CMakePackageConfigHelpers)
