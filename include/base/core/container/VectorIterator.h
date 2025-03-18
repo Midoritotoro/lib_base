@@ -6,7 +6,7 @@ __BASE_CONTAINER_NAMESPACE_BEGIN
 
 template <class _Vector>
 class VectorIterator :
-    public StringConstIterator<_Vector>
+    public VectorConstIterator<_Vector>
 {
 public:
     using BaseClass         = StringConstIterator<_Vector>;

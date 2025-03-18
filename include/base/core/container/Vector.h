@@ -9,36 +9,207 @@
 #include <base/core/container/VectorIterator.h> 
 #include <base/core/memory/MemoryUtility.h>
 
+#include <base/core/container/VectorAlgorithm.h>
+
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
+
 
 template <
 	typename _Element_,
 	class _Allocator_ = memory::RawMemoryAllocator<_Element_>>
-class Vector {
+class VectorBase {
 public:
-	using pointer					= typename _Allocator_::pointer;
-    using const_pointer				= typename _Allocator_::const_pointer;
+	using pointer = typename _Allocator_::pointer;
+	using const_pointer = typename _Allocator_::const_pointer;
 
-    using size_type					= typename _Allocator_::size_type;
-    using difference_type			= typename _Allocator_::difference_type;
+	using size_type = typename _Allocator_::size_type;
+	using difference_type = typename _Allocator_::difference_type;
 
-    using value_type				= _Element_;
-    using allocator_type			= _Allocator_;
+	using value_type = _Element_;
+	using allocator_type = _Allocator_;
 
-    using reference					= value_type&;
-    using const_reference			= const value_type&;
+	using reference = value_type&;
+	using const_reference = const value_type&;
 
-    using iterator					= VectorIterator<value_type>;
-    using const_iterator			= VectorConstIterator<value_type>;
+	using iterator = VectorIterator<VectorBase<
+		_Element_, _Allocator_>>;
 
-	using reverse_iterator			= std::reverse_iterator<iterator>;
-	using const_reverse_iterator	= std::reverse_iterator<const_iterator>;
+	using const_iterator = VectorConstIterator<VectorBase<
+		_Element_, _Allocator_>>;
 
-    using Iterator					= iterator;
-    using ConstIterator				= const_iterator;
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    using ValueType					= value_type;
+	using Iterator = iterator;
+	using ConstIterator = const_iterator;
+
+	using ValueType = value_type;
+	using SizeType = size_type;
+
+	using Reference = reference;
+	using ConstReference = const_reference;
+
+	using Pointer = pointer;
+	using ConstPointer = const_pointer;
+
+	using ReverseIterator = reverse_iterator;
+	using ConstReverseIterator = const_reverse_iterator;
+
+	constexpr inline Reference operator[](const SizeType offset) noexcept {
+		return *(_current + offset);
+	}
+
+	constexpr inline NODISCARD Reference at(const SizeType index) noexcept {
+		const auto isValidOffset = (_current + offset > _start
+			&& _current + offset < _end);
+
+		DebugAssertLog(!isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ");
+		return (*this)[index];
+	}
+
+	constexpr inline NODISCARD ValueType at(const SizeType index) const noexcept {
+		return at(index);
+	}
+
+	constexpr inline NODISCARD SizeType size() const noexcept {
+		return length();
+	}
+
+	constexpr inline NODISCARD SizeType length() const noexcept {
+		return SizeType(_current - _start);
+	}
+
+	inline NODISCARD SizeType capacity() const noexcept {
+		return SizeType(_end - _start);
+	}
+
+	inline NODISCARD bool isEmpty() const noexcept {
+		return (length() == 0);
+	}
+
+	inline NODISCARD Pointer data() const noexcept {
+		return _start;
+	}
+
+	inline NODISCARD const Char* data() const noexcept {
+		return _start;
+	}
+
+	inline NODISCARD const Char* constData() const noexcept {
+		return _start;
+	}
+
+	inline CONSTEXPR_CXX20 Iterator begin() noexcept {
+		return Iterator(this);
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator begin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator cbegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator constBegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	inline CONSTEXPR_CXX20 Iterator end() noexcept {
+		return Iterator(this) + size();
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator end() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator cend() const {
+		return ConstIterator(this) + size();
+	}
+
+	inline CONSTEXPR_CXX20 ConstIterator constEnd() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	inline CONSTEXPR_CXX20 ReverseIterator rbegin() noexcept {
+		return ReverseIterator(begin());
+	}
+
+	inline CONSTEXPR_CXX20 ReverseIterator rend() noexcept {
+		return ReverseIterator(end());
+	}
+
+	inline CONSTEXPR_CXX20 ConstReverseIterator rbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	inline CONSTEXPR_CXX20 ConstReverseIterator rend() const noexcept {
+		return ConstReverseIterator(end());
+	}
+
+	inline CONSTEXPR_CXX20 ConstReverseIterator crbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	inline CONSTEXPR_CXX20 ConstReverseIterator crend() const noexcept {
+		return ConstReverseIterator(end());
+	}
+
+	inline NODISCARD ValueType front() const noexcept {
+		return at(0);
+	}
+
+	inline NODISCARD Reference front() noexcept {
+		return at(0);
+	}
+
+	inline NODISCARD ValueType back() const noexcept {
+		return at(size() - 1);
+	}
+
+	inline NODISCARD Reference back() noexcept {
+		return at(size() - 1);
+	}
+protected:
+	Pointer _start = nullptr;
+	Pointer _end = nullptr;
+
+	Pointer _current = nullptr;
+};
+
+template <
+	typename _Element_,
+	class _Allocator_		= memory::RawMemoryAllocator<_Element_>,
+	class _AlgorithmTag_	= _Vector_Scalar_Algorithm_Tag_>
+class Vector: 
+	public VectorBase<_Element_, _Allocator_> 
+{
+public:
+	using _MyBase_					= VectorBase<_Element_, _Allocator_>;
+
+	using pointer					= typename _MyBase_::pointer;
+	using const_pointer				= typename _MyBase_::const_pointer;
+
+	using size_type					= typename _MyBase_::size_type;
+	using difference_type			= typename _MyBase_::difference_type;
+
+	using value_type				= typename _MyBase_::value_type;
+	using allocator_type			= typename _MyBase_::allocator_type;
+
+	using reference					= typename _MyBase_::reference;
+	using const_reference			= typename _MyBase_::const_reference;
+
+	using iterator					= typename _MyBase_::iterator;
+	using const_iterator			= typename _MyBase_::const_iterator;
+
+	using reverse_iterator			= typename _MyBase_::reverse_iterator;
+	using const_reverse_iterator	= typename _MyBase_::const_reverse_iterator;
+
+	using Iterator					= iterator;
+	using ConstIterator				= const_iterator;
+
+	using ValueType					= value_type;
 	using SizeType					= size_type;
 
 	using Reference					= reference;
@@ -49,7 +220,6 @@ public:
 
 	using ReverseIterator			= reverse_iterator;
 	using ConstReverseIterator		= const_reverse_iterator;
-	
 
     constexpr Vector() noexcept {};
     constexpr ~Vector() noexcept = default;
@@ -62,7 +232,7 @@ public:
 		if (_Capacity < elementsSize) {
 			const auto isEnoughMemory = resize(elementsSize);
 			if (UNLIKELY(isEnoughMemory == false))
-				AssertReturn(false, "base::Not enough memory to expand the Vector\n", UNUSED(0));
+				AssertReturn(false, "base::container::Vector: Not enough memory to expand the Vector\n", UNUSED(0));
 		}
 
 		for (SizeType i = 0; i < elementsSize; ++i) {
@@ -108,129 +278,45 @@ public:
     inline void append(const ValueType& element) {
 
     }
-    
-	constexpr inline NODISCARD SizeType size() const noexcept {
-		return length();
-	}
-
-	constexpr inline NODISCARD SizeType length() const noexcept {
-		return SizeType(_current - _start);
-	}
-
-	inline NODISCARD SizeType capacity() const noexcept {
-		return SizeType(_end - _start);
-	}
-	
+   	
 	inline NODISCARD ValueType pop() noexcept {
-
+		
 	}
 
 	inline NODISCARD SizeType find(ConstReference element) const noexcept {
-
+		return _Algorithm_::find(element);
 	}
 
 	inline NODISCARD Vector<size_type> 
 		findAll(ConstReference element) const noexcept
 	{
-
+		return _Algorithm_::findAll(element);
 	}
 	
 	inline NODISCARD size_type
 		findLastOf(ConstReference element) const noexcept
 	{
-
+		return _Algorithm_::findLastOf(element);
 	}
 
 	inline NODISCARD size_type 
 		findFirstOf(const_reference element) const noexcept
 	{
-
+		return _Algorithm_::findFirstOf(element);
 	}
 
 	inline NODISCARD size_type
 		findLastNotOf(const_reference element) const noexcept
 	{
-
+		return _Algorithm_::findLastNotOf(element);
 	}
 	
 	inline NODISCARD size_type 
 		findFirstNotOf(const_reference element) const noexcept
 	{
-
+		return _Algorithm_::findFirstNotOf(element);
 	}
 
-	inline NODISCARD bool isEmpty() const noexcept {
-
-	}
-
-	inline NODISCARD Pointer data() const noexcept {
-		return 
-	}
-
-	inline NODISCARD const Char* data() const noexcept {
-		return
-	}
-
-	inline NODISCARD const Char* constData() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 Iterator begin() noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator begin() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator cbegin() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator constBegin() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 Iterator end() noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator end() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator cend() const {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstIterator constEnd() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ReverseIterator rbegin() noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ReverseIterator rend() noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstReverseIterator rbegin() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstReverseIterator rend() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstReverseIterator crbegin() const noexcept {
-
-	}
-
-	inline CONSTEXPR_CXX20 ConstReverseIterator crend() const noexcept {
-
-	}
-	
 	inline void clear() {
 		UNUSED(erase(constBegin(), constEnd()));
 	}
@@ -244,22 +330,6 @@ public:
 
 	inline NODISCARD Iterator erase(ConstIterator it) {
 
-	}
-
-	inline NODISCARD value_type front() const {
-		return at(0);
-	}
-
-	inline NODISCARD reference front() {
-		return at(0);
-	}
-
-	inline NODISCARD value_type back() const {
-		return at(size() - 1);
-	}
-
-	inline NODISCARD reference back() {
-		return at(size() - 1);
 	}
 
 	inline NODISCARD bool resize(
@@ -277,44 +347,44 @@ public:
 		const_reference element,
 		size_type from = 0) const noexcept
 	{
-
+		return _Algorithm_::indexOf(element, from);
 	}
 
 	inline NODISCARD size_type lastIndexOf(
 		const_reference element,
 		size_type from = 0) const noexcept
 	{
-
+		return _Algorithm_::lastIndexOf(element, from);
 	}
 
 	inline NODISCARD bool contains(
 		const_reference element,
 		size_type from = 0) const noexcept
 	{
-
+		return _Algorithm_::contains(element, from);
 	}
 
 	inline NODISCARD bool contains(
 		const Vector<value_type> subVector,
 		size_type from = 0) const noexcept
 	{
-
+		return _Algorithm_::contains(subVector, from);
 	}
 	
 	inline NODISCARD size_type count(
 		const_reference element) const noexcept
 	{
-
+		return _Algorithm_::count(element);
 	}
 	
 	inline NODISCARD size_type count(
 		const Vector<value_type>& subVector) const noexcept
 	{
-
+		return _Algorithm_::count(subVector);
 	}
 	
 	inline void fill(const_reference fill) noexcept {
-		
+		return _Algorithm_::fill(subVector);
 	}
 
 	inline NODISCARD bool resize(const SizeType _Capacity) {
@@ -328,8 +398,6 @@ public:
 
 		if (UNLIKELY(memory == nullptr))
 			return false;
-
-		
 	}
 
 	inline void insert(
@@ -342,46 +410,42 @@ public:
 	inline void prepend(const_reference element) noexcept {
 
 	}
-private:
-	Pointer _start		= nullptr;
-	Pointer _end		= nullptr;
-
-	Pointer _current	= nullptr;
 };
-
-template <class _Allocator_>
-class Vector<bool, _Allocator_> {
-public:
-	using value_type = bool;
-	using allocator_type = _Allocator_;
-
-	using reference = value_type&;
-	using const_reference = const value_type&;
-
-	using iterator = VectorIterator<value_type>;
-	using const_iterator = VectorConstIterator<value_type>;
-
-	using reverse_iterator = std::reverse_iterator<iterator>;
-	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
-	using pointer = typename _Allocator_::pointer;
-	using const_pointer = typename _Allocator_::const_pointer;
-
-	using size_type = typename _Allocator_::size_type;
-	using difference_type = typename _Allocator_::difference_type;
-
-	using Iterator = iterator;
-	using ConstIterator = const_iterator;
-
-	using ValueType = value_type;
-
-	using ReverseIterator = reverse_iterator;
-	using ConstReverseIterator = const_reverse_iterator;
-
-private:
-	ValueType* _start	= nullptr;
-	ValueType* _end		= nullptr;
-	SizeType _length	= 0;
-};
+//
+//template <class _Allocator_>
+//class Vector<bool, _Allocator_> {
+//public:
+//	using value_type = bool;
+//	using allocator_type = _Allocator_;
+//
+//	using reference = value_type&;
+//	using const_reference = const value_type&;
+//
+//	using iterator = VectorIterator<value_type>;
+//	using const_iterator = VectorConstIterator<value_type>;
+//
+//	using reverse_iterator = std::reverse_iterator<iterator>;
+//	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+//
+//	using pointer = typename _Allocator_::pointer;
+//	using const_pointer = typename _Allocator_::const_pointer;
+//
+//	using size_type = typename _Allocator_::size_type;
+//	using difference_type = typename _Allocator_::difference_type;
+//
+//	using Iterator = iterator;
+//	using ConstIterator = const_iterator;
+//
+//	using ValueType = value_type;
+//
+//	using ReverseIterator = reverse_iterator;
+//	using ConstReverseIterator = const_reverse_iterator;
+//
+//private:
+//	ValueType* _start	= nullptr;
+//	ValueType* _end		= nullptr;
+//
+//	SizeType _length	= 0;
+//};
 
 __BASE_CONTAINER_NAMESPACE_END

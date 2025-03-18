@@ -52,45 +52,53 @@
 #  endif
 # endif
 
+#define LIB_BASE_HAS_SIMD_SUPPORT 0
 
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_sse2 1
 #else
 #  define LIB_BASE_ENABLE_sse2 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE3__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_sse3 1
 #else
 #  define LIB_BASE_ENABLE_sse3 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSSE3__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_ssse3 1
 #else
 #  define LIB_BASE_ENABLE_ssse3 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_1__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_sse4_1 1
 #else
 #  define LIB_BASE_ENABLE_sse4_1 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_2__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_sse4_2 1
 #else
 #  define LIB_BASE_ENABLE_sse4_2 -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__AVX__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_avx 1
 #else
 #  define LIB_BASE_ENABLE_avx -1
 #endif
 
 #if defined(PROCESSOR_X86) && defined(__AVX2__)
+#  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_avx2 1
 #else
 #  define LIB_BASE_ENABLE_avx2 -1
@@ -149,3 +157,5 @@
 #endif
 
 #define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT
+
+

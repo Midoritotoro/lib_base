@@ -3,7 +3,8 @@
 #include <base/core/arch/Platform.h>
 
 #ifdef CPP_MSVC_ONLY
-// MSVC определяет _YIELD_PROCESSOR() в <xatomic.h>
+// MSVC определяет _YIELD_PROCESSOR()(_mm_pause) в <xatomic.h>
+// Компилятор иногда распознает _mm_pause как интринсик
 #  ifdef __cplusplus
 #    include <atomic>
 extern "C"
