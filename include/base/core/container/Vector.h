@@ -7,6 +7,7 @@
 #include <base/core/memory/MemoryAllocator.h>
 
 #include <base/core/container/VectorIterator.h> 
+#include <base/core/memory/MemoryUtility.h>
 
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
@@ -86,7 +87,7 @@ public:
     }
 
     inline Vector(
-        const SizeType capacity,
+        const SizeType _Capacity,
         const ValueType& fill)
     {
 
@@ -231,7 +232,7 @@ public:
 	}
 	
 	inline void clear() {
-
+		UNUSED(erase(constBegin(), constEnd()));
 	}
 
 	inline NODISCARD Iterator erase(
@@ -246,26 +247,30 @@ public:
 	}
 
 	inline NODISCARD value_type front() const {
-
+		return at(0);
 	}
 
 	inline NODISCARD reference front() {
-
+		return at(0);
 	}
 
 	inline NODISCARD value_type back() const {
-
+		return at(size() - 1);
 	}
 
 	inline NODISCARD reference back() {
-
+		return at(size() - 1);
 	}
 
 	inline NODISCARD bool resize(
 		size_type size,
-		const_reference fill)
+		const_reference _Fill)
 	{
+		const auto resizeSuccess = resize(size);
+		const auto fillSuccess   = fill(_Fill);
 
+		const auto success		 = (resizeSuccess == true && fillSuccess == true);
+		return success;
 	}
 
     inline NODISCARD size_type indexOf(
@@ -312,8 +317,8 @@ public:
 		
 	}
 
-	inline NODISCARD bool resize(const SizeType capacity) {
-		const auto bytesRequired = capacity * sizeof(ValueType);
+	inline NODISCARD bool resize(const SizeType _Capacity) {
+		const auto bytesRequired = _Capacity * sizeof(ValueType);
 		if (UNLIKELY(bytesRequired <= 0))
 			return false;
 
@@ -324,7 +329,7 @@ public:
 		if (UNLIKELY(memory == nullptr))
 			return false;
 
-
+		
 	}
 
 	inline void insert(
