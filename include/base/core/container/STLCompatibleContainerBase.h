@@ -6,16 +6,18 @@
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
 template <
-	typename _Iterator_>
+	typename _Element_,
+	class	 _Iterator_,
+	class	 _ConstIterator_>
 class STLCompatibleContainerBase {
 public:
-	using pointer				= typename _Iterator_::pointer;
-	using const_pointer			= typename _Iterator_::const_pointer;
+	using pointer				= _Element_*;
+	using const_pointer			= const _Element_*;
 
 	using size_type				= typename _Iterator_::size_type;
 	using difference_type		= typename _Iterator_::difference_type;
 
-	using value_type			= typename _Iterator_::value_type;
+	using value_type			= _Element_;
 
 	using reference				= value_type&;
 	using const_reference		= const value_type&;
@@ -62,11 +64,15 @@ public:
 	}
 
 	constexpr inline NODISCARD SizeType length() const noexcept {
-		return SizeType(_current - _start);
+		return static_cast<SizeType>(_current - _start);
 	}
 
 	constexpr inline NODISCARD SizeType capacity() const noexcept {
-		return SizeType(_end - _start);
+		return static_cast<SizeType>(_end - _start);
+	}
+
+	constexpr inline NODISCARD SizeType unusedCapacity() const noexcept {
+		return (capacity() - size());
 	}
 
 	constexpr inline NODISCARD bool isEmpty() const noexcept {

@@ -320,6 +320,11 @@ set(PUBLIC_HEADERS
 
     include/base/core/memory/MemoryUtility.h
     include/base/core/container/STLCompatibleContainerBase.h
+
+    include/base/core/container/Pair.h
+    include/base/core/container/CompressedPair.h
+
+    include/base/core/container/VectorizedUtility.h
 )
 
 include(CMakePackageConfigHelpers)

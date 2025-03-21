@@ -445,6 +445,12 @@ WARNING_DISABLE_MSVC(4067)
 #  define BASE_GUARDOVERFLOW 
 #endif
 
+#if defined(OS_WIN) && defined(CPP_MSVC)
+#  define DECLARE_NOALIAS __declspec(noalias)
+#else 
+#  define DECLARE_NOALIAS 
+#endif
+
 // Warnings
 
 #ifndef NODISCARD_RETURN_RAW_PTR
