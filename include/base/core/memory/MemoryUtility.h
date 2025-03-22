@@ -23,7 +23,7 @@ template <typename _Type_>
 CONSTEXPR_ADRESSOF NODISCARD inline _Type_* AdressOf(_Type_* value) noexcept {
     // http://eel.is/c++draft/pointer.conversion#1:
     static_assert(!std::is_function_v<_Type_>, "AdressOf must not be used on function types");
-    return _value;
+    return value;
 }
 
 template <typename _Type_>
@@ -203,7 +203,7 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     const auto lastAdress        = CheckedToConstChar(last);
 
     const auto _Size             = static_cast<sizetype>(last - first);
-    const auto _Dest             = memmove(destAdress, firstAdress, _Size);
+    const auto _Dest             = memmove(destinationAdress, firstAdress, _Size);
 
     const auto success           = (_Dest = destinationAdress);
     return success;

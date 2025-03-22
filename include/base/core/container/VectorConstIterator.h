@@ -10,15 +10,15 @@ public:
 	using iterator_category = std::random_access_iterator_tag;
 
 	using value_type		= typename _Vector::value_type;
-	using difference_type	= typename _Vector::difference_type;
+	using difference_type	= sizetype;
 
-	using pointer			= typename _Vector::const_pointer;
-	using size_type			= typename _Vector::size_type;
+	using pointer			= const value_type*;
+	using const_pointer		= pointer;
 
-	using reference			= const value_type&;
+	using size_type			= sizetype;
+
+	using reference			= value_type&;
 	using const_reference	= reference;
-
-	using const_pointer = pointer;
 
 	inline CONSTEXPR_CXX20 NODISCARD_CTOR VectorConstIterator(const _Vector* vector) :
 		_container(vector),
@@ -35,17 +35,17 @@ public:
 	}
 
 	CONSTEXPR_CXX20 const_reference operator*() const noexcept {
-		DebugAssertLog(_container != nullptr, "base::container::VectorConstIterator::operator*: Попытка доступа к элементу удаленного вектора. ");
+	//	DebugAssertLog(_container != nullptr, "base::container::VectorConstIterator::operator*: Попытка доступа к элементу удаленного вектора. ");
 		return *_currentElement;
 	}
 
 	CONSTEXPR_CXX20 VectorConstIterator& operator--() noexcept {
-		DebugAssertLog(_currentElement, "cannot decrement value-initialized string iterator");
+	//	DebugAssertLog(_currentElement, "cannot decrement value-initialized string iterator");
 
-		DebugAssertLog(_container, "cannot decrement string iterator because the iterator was "
-			"invalidated (e.g. reallocation occurred, or the string was destroyed)");
+	//	DebugAssertLog(_container, "cannot decrement string iterator because the iterator was "
+	//		"invalidated (e.g. reallocation occurred, or the string was destroyed)");
 
-		DebugAssertLog(_container->constData() < _currentElement, "cannot decrement string iterator before begin");
+	//	DebugAssertLog(_container->constData() < _currentElement, "cannot decrement string iterator before begin");
 
 		--_currentElement;
 		return *this;
@@ -59,12 +59,12 @@ public:
 	}
 
 	CONSTEXPR_CXX20 VectorConstIterator& operator++() noexcept {
-		DebugAssertLog(_currentElement, "cannot decrement value-initialized string iterator");
+	//	DebugAssertLog(_currentElement, "cannot decrement value-initialized string iterator");
 
-		DebugAssertLog(_container, "cannot decrement string iterator because the iterator was "
-			"invalidated (e.g. reallocation occurred, or the string was destroyed)");
+	//	DebugAssertLog(_container, "cannot decrement string iterator because the iterator was "
+	//		"invalidated (e.g. reallocation occurred, or the string was destroyed)");
 
-		DebugAssertLog(_container->constData() < _currentElement, "cannot decrement string iterator before begin");
+	//	DebugAssertLog(_container->constData() < _currentElement, "cannot decrement string iterator before begin");
 
 		++_currentElement;
 		return *this;
@@ -78,7 +78,7 @@ public:
 	}
 
 	CONSTEXPR_CXX20 VectorConstIterator& operator+=(const size_type _Off) noexcept {
-		DebugAssertLog(checkOffset(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
+		//DebugAssertLog(checkOffset(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
 
 		_currentElement += _Off;
 		return *this;
@@ -166,8 +166,8 @@ private:
 	inline CONSTEXPR_CXX20 void
 		compareVectors(const VectorConstIterator& other) const noexcept
 	{
-		DebugAssertLog(_container == other._container,
-			"base::string::StringIterator::compareStrings: Невозможно сравнить итераторы различных объектов String. ");
+	//	DebugAssertLog(_container == other._container,
+		//	"base::string::StringIterator::compareStrings: Невозможно сравнить итераторы различных объектов String. ");
 	}
 
 	// false if out of range

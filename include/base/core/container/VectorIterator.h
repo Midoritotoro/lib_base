@@ -9,14 +9,14 @@ class VectorIterator :
     public VectorConstIterator<_Vector>
 {
 public:
-    using BaseClass         = StringConstIterator<_Vector>;
+    using BaseClass         = VectorConstIterator<_Vector>;
     using iterator_category = std::random_access_iterator_tag;
 
-    using value_type        = typename _Vector::value_type;
-    using difference_type   = typename _Vector::difference_type;
+    using value_type        = typename BaseClass::value_type;
+    using difference_type   = sizetype;
 
-    using pointer           = typename _Vector::pointer;
-    using size_type         = typename _Vector::size_type;
+    using pointer           = value_type*;
+    using size_type         = sizetype;
 
     using reference         = value_type&;
     using const_reference   = const value_type&;

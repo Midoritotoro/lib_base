@@ -13,6 +13,9 @@
 
 //#include <base/media/player/MediaPlayer.h>
 
+using namespace base;
+using namespace base::container;
+
 struct test {
 	int value = 0;
 	float f = 0.f;
@@ -20,10 +23,11 @@ struct test {
 } __declspec(align(16));
 
 int main(int argc, char* argv[]) {
-	base::container::Vector<float> vec;
+	Vector<_Vector_Scalar_Algorithm_Tag_, float> vec;
 	vec.push_back(3);
 
-
+	for (sizetype i = 0; i < vec.size(); ++i)
+		std::cout << vec[i] << std::endl;
 
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();

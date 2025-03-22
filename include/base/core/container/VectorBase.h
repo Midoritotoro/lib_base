@@ -34,38 +34,31 @@ template <
 	typename _Element_,
 	class _Allocator_ = memory::RawMemoryAllocator<_Element_>>
 class VectorBase : 
-	public STLCompatibleContainerBase<
-		_Element_,
-		VectorIterator<
-			VectorBase<_Element_, _Allocator_>>,
-		VectorConstIterator<
-			VectorBase<_Element_, _Allocator_>>>
+	public STLCompatibleContainerBase<_Element_>
 {
 public:
-	using _MyVectorBase_ = STLCompatibleContainerBase<
-		_Element_,
-		VectorIterator<
-			VectorBase<_Element_, _Allocator_>>,
-		VectorConstIterator<
-			VectorBase<_Element_, _Allocator_>>>;
-	
-	using pointer					= typename _MyVectorBase_::pointer;									
-	using const_pointer				= typename _MyVectorBase_::const_pointer;	
+	CONSTEXPR_CXX20 VectorBase() noexcept {};
+	CONSTEXPR_CXX20 ~VectorBase() noexcept {};
 
-	using size_type					= typename _MyVectorBase_::size_type;								
-	using difference_type			= typename _MyVectorBase_::difference_type;		
+	using value_type				= _Element_;
+	using allocator_type			= _Allocator_;
 
-	using value_type				= typename _MyVectorBase_::value_type;								
-	using allocator_type			= _Allocator_;			
+	using pointer					= value_type*;
+	using const_pointer				= const pointer;
+
+	using _MyVectorBase_			= STLCompatibleContainerBase<_Element_>;
+
+	using size_type					= typename _MyVectorBase_::size_type;
+	using difference_type			= typename _MyVectorBase_::difference_type;
 
 	using reference					= value_type&;														
 	using const_reference			= const value_type&;		
 
-	using iterator					= typename _MyVectorBase_::iterator;									
-	using const_iterator			= typename _MyVectorBase_::const_iterator;		
+	using iterator					= VectorIterator<VectorBase<_Element_, _Allocator_>>;
+	using const_iterator			= VectorConstIterator<VectorBase<_Element_, _Allocator_>>;
 
-	using reverse_iterator			= typename _MyVectorBase_::reverse_iterator;					
-	using const_reverse_iterator	= typename _MyVectorBase_::const_reverse_iterator;	
+	using reverse_iterator			= std::reverse_iterator<iterator>;					
+	using const_reverse_iterator	= std::reverse_iterator<const_iterator>;
 
 	using Iterator					= iterator;															
 	using ConstIterator				= const_iterator;	
@@ -83,16 +76,72 @@ public:
 	using ConstReverseIterator		= const_reverse_iterator;
 
 	static constexpr sizetype _Buffer_For_Resizing_Length = 16; // ... 
+
+	constexpr inline NODISCARD Iterator begin() noexcept {
+		return Iterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator begin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator cbegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator constBegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD Iterator end() noexcept {
+		return Iterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator end() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator cend() const {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator constEnd() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ReverseIterator rbegin() noexcept {
+		return ReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ReverseIterator rend() noexcept {
+		return ReverseIterator(end());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator rend() const noexcept {
+		return ConstReverseIterator(end());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator crend() const noexcept {
+		return ConstReverseIterator(end());
+	}
 };
 
 template <
 	class		_AlgorithmTag_,
 	typename	_Element_,
-	class		_Allocator_>
+	class		_Allocator_ = memory::RawMemoryAllocator<_Element_>>
 class Vector :
-	public VectorBase<_Element_, _Allocator_>
-{
-	
-};
+	public VectorBase<
+		_Element_,
+		_Allocator_>
+{};
 
 __BASE_CONTAINER_NAMESPACE_END

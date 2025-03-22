@@ -52,8 +52,6 @@
 #  endif
 # endif
 
-#define LIB_BASE_HAS_SIMD_SUPPORT 0
-
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <immintrin.h>
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
@@ -154,6 +152,11 @@
 #  endif
 #else 
 #  define BASE_SIMD_SSE2_ALIGNMENT		0
+#endif
+
+
+#ifndef LIB_BASE_HAS_SIMD_SUPPORT
+#  define LIB_BASE_HAS_SIMD_SUPPORT 0
 #endif
 
 #define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT

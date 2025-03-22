@@ -6,30 +6,30 @@
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
 template <
-	typename _Element_,
-	class	 _Iterator_,
-	class	 _ConstIterator_>
+	typename _Element_>
+	//class	 _Iterator_,
+	//class	 _ConstIterator_>
 class STLCompatibleContainerBase {
 public:
 	using pointer				= _Element_*;
 	using const_pointer			= const _Element_*;
 
-	using size_type				= typename _Iterator_::size_type;
-	using difference_type		= typename _Iterator_::difference_type;
+	using size_type				= sizetype;
+	using difference_type		= sizetype;
 
 	using value_type			= _Element_;
 
 	using reference				= value_type&;
 	using const_reference		= const value_type&;
 
-	using iterator				= _Iterator_;
-	using const_iterator		= _ConstIterator_;
+	//using iterator				= _Iterator_;
+	//using const_iterator		= _ConstIterator_;
 
-	using reverse_iterator = std::reverse_iterator<iterator>;
-	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	//using reverse_iterator = std::reverse_iterator<iterator>;
+	//using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-	using Iterator = iterator;
-	using ConstIterator = const_iterator;
+	//using Iterator = iterator;
+	//using ConstIterator = const_iterator;
 
 	using ValueType = value_type;
 	using SizeType = size_type;
@@ -40,19 +40,19 @@ public:
 	using Pointer = pointer;
 	using ConstPointer = const_pointer;
 
-	using ReverseIterator = reverse_iterator;
-	using ConstReverseIterator = const_reverse_iterator;
+	//using ReverseIterator = reverse_iterator;
+	//using ConstReverseIterator = const_reverse_iterator;
 
 	constexpr inline Reference operator[](const SizeType offset) noexcept {
 		return *(_current + offset);
 	}
 
-	constexpr inline NODISCARD Reference at(const SizeType index) noexcept {
+	constexpr inline NODISCARD Reference at(const SizeType offset) noexcept {
 		const auto isValidOffset = (_current + offset > _start
 			&& _current + offset < _end);
 
 		DebugAssertLog(!isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ");
-		return (*this)[index];
+		return (*this)[offset];
 	}
 
 	constexpr inline NODISCARD ValueType at(const SizeType index) const noexcept {
@@ -91,61 +91,61 @@ public:
 		return _start;
 	}
 
-	constexpr inline NODISCARD Iterator begin() noexcept {
-		return Iterator(this);
-	}
+	//constexpr inline NODISCARD Iterator begin() noexcept {
+	//	return Iterator(this);
+	//}
 
-	constexpr inline NODISCARD ConstIterator begin() const noexcept {
-		return ConstIterator(this);
-	}
+	//constexpr inline NODISCARD ConstIterator begin() const noexcept {
+	//	return ConstIterator(this);
+	//}
 
-	constexpr inline NODISCARD ConstIterator cbegin() const noexcept {
-		return ConstIterator(this);
-	}
+	//constexpr inline NODISCARD ConstIterator cbegin() const noexcept {
+	//	return ConstIterator(this);
+	//}
 
-	constexpr inline NODISCARD ConstIterator constBegin() const noexcept {
-		return ConstIterator(this);
-	}
+	//constexpr inline NODISCARD ConstIterator constBegin() const noexcept {
+	//	return ConstIterator(this);
+	//}
 
-	constexpr inline NODISCARD Iterator end() noexcept {
-		return Iterator(this) + size();
-	}
+	//constexpr inline NODISCARD Iterator end() noexcept {
+	//	return Iterator(this) + size();
+	//}
 
-	constexpr inline NODISCARD ConstIterator end() const noexcept {
-		return ConstIterator(this) + size();
-	}
+	//constexpr inline NODISCARD ConstIterator end() const noexcept {
+	//	return ConstIterator(this) + size();
+	//}
 
-	constexpr inline NODISCARD ConstIterator cend() const {
-		return ConstIterator(this) + size();
-	}
+	//constexpr inline NODISCARD ConstIterator cend() const {
+	//	return ConstIterator(this) + size();
+	//}
 
-	constexpr inline NODISCARD ConstIterator constEnd() const noexcept {
-		return ConstIterator(this) + size();
-	}
+	//constexpr inline NODISCARD ConstIterator constEnd() const noexcept {
+	//	return ConstIterator(this) + size();
+	//}
 
-	constexpr inline NODISCARD ReverseIterator rbegin() noexcept {
-		return ReverseIterator(begin());
-	}
+	//constexpr inline NODISCARD ReverseIterator rbegin() noexcept {
+	//	return ReverseIterator(begin());
+	//}
 
-	constexpr inline NODISCARD ReverseIterator rend() noexcept {
-		return ReverseIterator(end());
-	}
+	//constexpr inline NODISCARD ReverseIterator rend() noexcept {
+	//	return ReverseIterator(end());
+	//}
 
-	constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept {
-		return ConstReverseIterator(begin());
-	}
+	//constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept {
+	//	return ConstReverseIterator(begin());
+	//}
 
-	constexpr inline NODISCARD ConstReverseIterator rend() const noexcept {
-		return ConstReverseIterator(end());
-	}
+	//constexpr inline NODISCARD ConstReverseIterator rend() const noexcept {
+	//	return ConstReverseIterator(end());
+	//}
 
-	constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept {
-		return ConstReverseIterator(begin());
-	}
+	//constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept {
+	//	return ConstReverseIterator(begin());
+	//}
 
-	constexpr inline NODISCARD ConstReverseIterator crend() const noexcept {
-		return ConstReverseIterator(end());
-	}
+	//constexpr inline NODISCARD ConstReverseIterator crend() const noexcept {
+	//	return ConstReverseIterator(end());
+	//}
 
 	constexpr inline NODISCARD ValueType front() const noexcept {
 		return at(0);

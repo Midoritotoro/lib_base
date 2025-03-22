@@ -9,59 +9,54 @@
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
-struct min_max_t {
-    int8_t minimum;
-    int8_t maximum;
+struct MinMaxInt8Bit {
+    int8_t minimum = 0;
+    int8_t maximum = 0;
 };
 
-struct _Min_max_1u {
-    uint8_t _Min;
-    uint8_t _Max;
+struct MinMaxUInt8Bit {
+    uint8_t minimum = 0;
+    uint8_t maximum = 0;
 };
 
-struct _Min_max_2i {
-    int16_t _Min;
-    int16_t _Max;
+struct MinMaxInt16Bit {
+    int16_t minimum = 0;
+    int16_t maximum = 0;
 };
 
-struct _Min_max_2u {
-    uint16_t _Min;
-    uint16_t _Max;
+struct MinMaxUInt16Bit {
+    uint16_t minimum = 0;
+    uint16_t maximum = 0;
 };
 
-struct _Min_max_4i {
-    int32_t _Min;
-    int32_t _Max;
+struct MinMaxInt32Bit {
+    int32_t minimum = 0;
+    int32_t maximum = 0;
 };
 
-struct _Min_max_4u {
-    uint32_t _Min;
-    uint32_t _Max;
+struct MinMaxUInt32Bit {
+    uint32_t minimum = 0;
+    uint32_t maximum = 0;
 };
 
-struct _Min_max_8i {
-    int64_t _Min;
-    int64_t _Max;
+struct MinMaxInt64Bit {
+    int64_t minimum = 0;
+    int64_t maximum = 0;
 };
 
-struct _Min_max_8u {
-    uint64_t _Min;
-    uint64_t _Max;
+struct MinMaxUInt64Bit {
+    uint64_t minimum = 0;
+    uint64_t maximum = 0;
 };
 
-struct _Min_max_f {
-    float _Min;
-    float _Max;
+struct MinMaxFloat {
+    float minimum = 0;
+    float maximum = 0;
 };
 
-struct _Min_max_d {
-    double _Min;
-    double _Max;
-};
-
-struct _Min_max_p {
-    void* _Min;
-    void* _Max;
+struct MinMaxDouble {
+    double minimum = 0;
+    double maximum = 0;
 };
 
 namespace {
@@ -116,7 +111,7 @@ DECLARE_NOALIAS void __CDECL MaxInteger16x8(
 	const void* _Start,
 	const void* _End) noexcept
 {
-	const auto _Loaded = _mm_loadu_epi16(_Start);
+	
 }
 
 #endif // LIB_BASE_HAS_SIMD_SUPPORT

@@ -7,10 +7,15 @@
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
 template <
-	typename _Element_,
-	class _Allocator_>
-class Vector<_Vector_SIMD_Algorithm_Tag_, _Element_, _Allocator_> :
-	public VectorBase<_Element_, _Allocator_>
+	typename	_Element_,
+	class		_Allocator_>
+class Vector<
+	_Vector_SIMD_Algorithm_Tag_,
+	_Element_,
+	_Allocator_>:
+		public VectorBase<
+			_Element_, 
+			_Allocator_>
 {
 public:
 	using _MyBase_ = VectorBase<_Element_, _Allocator_>;
@@ -50,7 +55,7 @@ public:
 
 
 	inline NODISCARD bool resize(const SizeType _Capacity) {
-		const auto bytesRequired = _Capacity * sizeof(ValueType);
+		/*const auto bytesRequired = _Capacity * sizeof(ValueType);
 		if (UNLIKELY(bytesRequired <= 0))
 			return false;
 
@@ -64,25 +69,27 @@ public:
 		const auto blockStart = memory;
 		const auto blockEnd = memory + _Capacity;
 
-		UNUSED(memory::UnInitializedCopy(
-			_MyBase_::begin(), _MyBase_::end(),
+		UNUSED(memory::MemoryCopyCommon(
+			begin(), end(),
 			blockStart, blockEnd));
 
 		_start = blockStart;
 		_end = blockEnd;
 
-		_current = nullptr;
+		_current = nullptr;*/
+		return false;
 	}
 
 	inline NODISCARD bool resize(
 		size_type size,
 		const_reference _Fill)
 	{
-		const auto resizeSuccess = resize(size);
+		/*const auto resizeSuccess = resize(size);
 		const auto fillSuccess = fill(_Fill);
 
 		const auto success = (resizeSuccess == true && fillSuccess == true);
-		return success;
+		return success;*/
+		return false;
 	}
 };
 

@@ -9,9 +9,14 @@ __BASE_CONTAINER_NAMESPACE_BEGIN
 template <
 	typename	_Element_,
 	class		_Allocator_>
-class Vector<_Vector_Scalar_Algorithm_Tag_, _Element_, _Allocator_>:
-	public VectorBase<_Element_, _Allocator_>
-{
+class Vector<
+	_Vector_Scalar_Algorithm_Tag_, 
+	_Element_,
+	_Allocator_>:
+		public VectorBase<
+			_Element_,
+			_Allocator_>
+	{
 public:
 	using _MyBase_	= VectorBase<_Element_, _Allocator_>;
 
@@ -22,7 +27,7 @@ public:
 	using difference_type			= typename _MyBase_::difference_type;
 
 	using value_type				= typename _MyBase_::value_type;
-	using allocator_type			= typename _MyBase_::_Allocator_;
+	using allocator_type			= typename _MyBase_::allocator_type;
 
 	using reference					= typename _MyBase_::value_type&;
 	using const_reference			= const typename _MyBase_::value_type&;
@@ -51,7 +56,7 @@ public:
     constexpr Vector() noexcept {};
     constexpr ~Vector() noexcept = default;
 
-    constexpr inline Vector(std::initializer_list<ValueType> elements) noexcept {
+    CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept {
 		const auto _Capacity		= capacity();
 		const auto _UnusedCapacity	= unusedCapacity();
 
@@ -66,27 +71,27 @@ public:
 		}
     }
 
-    inline Vector(const Vector<ValueType>& other) {
+	CONSTEXPR_CXX20 inline Vector(const Vector& other) {
 		const auto _Capacity = other.capacity();
 		TryResize(_Capacity);
 
 		if (memory::MemoryCopy(_start, other._start, _Capacity) == false)
-			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов");
+			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
-    inline Vector(const std::vector<ValueType>& vector) {
+	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector) {
 		const auto _Capacity = vector.capacity();
 		TryResize(_Capacity);
 
 		if (memory::MemoryCopy(_start, vector.data(), _Capacity) == false)
-			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов");
+			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
     }
 
-    inline Vector(const SizeType capacity) {
+	CONSTEXPR_CXX20 inline Vector(const SizeType capacity) {
 		TryResize(capacity);
     }
 
-    inline Vector(
+	CONSTEXPR_CXX20 inline Vector(
         const SizeType _Capacity,
         const ValueType& _Fill)
     {
@@ -94,27 +99,27 @@ public:
 		fill(_Fill);
     }
     
-    inline Vector(Vector<ValueType>&& rOther) noexcept {
+	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept {
 
     }
 
-    inline void push_back(const ValueType& element) {
+	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
 
 		
 		++_current;
 
-		memory::MemoryMove(_current, )
+	//	memory::MemoryMove(_current, )
     }
 
-    inline void push_front(const ValueType& element) {
+	CONSTEXPR_CXX20 inline void push_front(const ValueType& element) {
 
     }
 
-    inline void append(const ValueType& element) {
+	CONSTEXPR_CXX20 inline void append(const ValueType& element) {
 
     }
    	
-	inline NODISCARD ValueType pop() noexcept {
+	CONSTEXPR_CXX20 inline NODISCARD ValueType pop() noexcept {
 		const auto value = back();
 		remveAt(size() - 1);
 
@@ -286,7 +291,7 @@ public:
 		const auto blockStart	= memory;
 		const auto blockEnd		= memory + _Capacity;
 
-		UNUSED(memory::UnInitializedCopy(
+		UNUSED(memory::MemoryCopyCommon(
 			begin(), end(),
 			blockStart, blockEnd));
 
@@ -311,7 +316,7 @@ private:
 		const auto isEnoughMemory = resize(newCapacity);
 
 		if (UNLIKELY(isEnoughMemory == false))
-			AssertReturn(false, "base::container::Vector: Not enough memory to expand the Vector\n", UNUSED(0));
+			AssertReturn(false, "base::container::Vector: Not enough memory to expand the Vector.\n ", UNUSED(0));
 	}
 
 	inline void InsertToAdress(

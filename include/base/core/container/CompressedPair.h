@@ -30,9 +30,9 @@ public:
         _Other2&&... secondValue) noexcept(
             std::conjunction_v<
                 std::is_nothrow_default_constructible<_Type1_>,
-            std::is_nothrow_constructible<
-                _Type2_,
-                _Other2...>>): 
+                std::is_nothrow_constructible<
+                    _Type2_,
+                    _Other2...>>): 
         _Type1_(), 
         _secondValue(std::forward<_Other2>(secondValue)...)
     {}
@@ -46,19 +46,34 @@ public:
                 std::is_nothrow_constructible<
                     _Type1_,
                     _Other1>,
-            std::is_nothrow_constructible<
-                _Type2_,
-                _Other2...>>): 
+                std::is_nothrow_constructible<
+                    _Type2_,
+                    _Other2...>>): 
         _Type1_(std::forward<_Other1>(firstValue)),
         _secondValue(std::forward<_Other2>(secondValue)...)
     {}
 
-    inline constexpr NODISCARD _Type1_& getFirst() noexcept {
+    inline constexpr NODISCARD _Type1_& first() noexcept {
         return *this;
     }
 
-    inline constexpr NODISCARD const _Type1_& getFirst() const noexcept {
+    inline constexpr NODISCARD const _Type1_& first() const noexcept {
         return *this;
+    }
+
+    inline constexpr NODISCARD _Type2_& second() noexcept {
+        return _secondValue;
+    }
+
+    inline constexpr NODISCARD const _Type2_& second() const noexcept {
+        return _secondValue;
+    }
+
+    inline constexpr NODISCARD void swap(
+        CompressedPair<_Type1_, _Type2_>& other) noexcept
+    {
+        // Ќе имеет смысла трогать пустое значение типа _Type1_
+        std::swap(_secondValue, other._secondValue);
     }
 };
 
@@ -76,9 +91,9 @@ public:
         _Other2&&... secondValue) noexcept(
             std::conjunction_v<
                 std::is_nothrow_default_constructible<_Type1_>,
-            std::is_nothrow_constructible<
-                _Type2_, 
-                _Other2...>>): 
+                std::is_nothrow_constructible<
+                    _Type2_, 
+                    _Other2...>>): 
         _firstValue(),
         _secondValue(std::forward<_Other2>(secondValue)...)
     {}
@@ -92,20 +107,38 @@ public:
                 std::is_nothrow_constructible<
                     _Type1_,
                     _Other1>,
-            std::is_nothrow_constructible<
-                _Type2_,
-                _Other2...>>): 
+                std::is_nothrow_constructible<
+                    _Type2_,
+                    _Other2...>>): 
         _firstValue(std::forward<_Other1>(firstValue)),
         _secondValue(std::forward<_Other2>(secondValue)...)
     {}
 
-    inline constexpr NODISCARD _Type1_& getFirst() noexcept {
+
+    inline constexpr NODISCARD _Type1_& first() noexcept {
         return _firstValue;
     }
 
-    inline constexpr NODISCARD const _Type1_& getFirst() const noexcept {
+    inline constexpr NODISCARD const _Type1_& first() const noexcept {
         return _firstValue;
     }
+
+    inline constexpr NODISCARD _Type2_& second() noexcept {
+        return _secondValue;
+    }
+
+    inline constexpr NODISCARD const _Type2_& second() const noexcept {
+        return _secondValue;
+    }
+
+    inline constexpr NODISCARD void swap(
+        CompressedPair<_Type1_, _Type2_, false>& other) noexcept
+    {
+        std::swap(_firstValue, other._firstValue);
+        std::swap(_secondValue, other._secondValue);
+    }
 };
+
+
 
 __BASE_CONTAINER_NAMESPACE_END
