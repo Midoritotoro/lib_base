@@ -325,6 +325,9 @@ set(PUBLIC_HEADERS
     include/base/core/container/CompressedPair.h
 
     include/base/core/container/VectorizedUtility.h
+
+    include/base/core/container/VectorBase.h
+    include/base/core/container/SimdOptimizedVector.h
 )
 
 include(CMakePackageConfigHelpers)

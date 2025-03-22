@@ -22,31 +22,42 @@ template <
         && !std::is_final_v<_Type1_>>
 class CompressedPair final : private _Type1_ {
 public:
-    _Type2_ _Myval2;
-
-    using _Mybase = _Type1_;
+    _Type2_ _secondValue;
 
     template <class... _Other2>
-    inline constexpr explicit CompressedPair(_Zero_then_variadic_args_, _Other2&&... _Val2) noexcept(
-        std::conjunction_v<std::is_nothrow_default_constructible<_Type1_>,
-        std::is_nothrow_constructible<_Type2_, _Other2...>>)
-        : 
+    inline constexpr explicit CompressedPair(
+        _Zero_then_variadic_args_,
+        _Other2&&... secondValue) noexcept(
+            std::conjunction_v<
+                std::is_nothrow_default_constructible<_Type1_>,
+            std::is_nothrow_constructible<
+                _Type2_,
+                _Other2...>>): 
         _Type1_(), 
-        _Myval2(std::forward<_Other2>(_Val2)...) {}
+        _secondValue(std::forward<_Other2>(secondValue)...)
+    {}
 
     template <class _Other1, class... _Other2>
-    inline constexpr CompressedPair(_One_then_variadic_args_, _Other1&& _Val1, _Other2&&... _Val2) noexcept(
-        std::conjunction_v<std::is_nothrow_constructible<_Type1_, _Other1>,
-        std::is_nothrow_constructible<_Type2_, _Other2...>>)
-        : 
-        _Type1_(std::forward<_Other1>(_Val1)), 
-        _Myval2(std::forward<_Other2>(_Val2)...) {}
+    inline constexpr CompressedPair(
+        _One_then_variadic_args_,
+        _Other1&& firstValue, 
+        _Other2&&... secondValue) noexcept(
+            std::conjunction_v<
+                std::is_nothrow_constructible<
+                    _Type1_,
+                    _Other1>,
+            std::is_nothrow_constructible<
+                _Type2_,
+                _Other2...>>): 
+        _Type1_(std::forward<_Other1>(firstValue)),
+        _secondValue(std::forward<_Other2>(secondValue)...)
+    {}
 
-    inline constexpr NODISCARD _Type1_& _Get_first() noexcept {
+    inline constexpr NODISCARD _Type1_& getFirst() noexcept {
         return *this;
     }
 
-    inline constexpr NODISCARD const _Type1_& _Get_first() const noexcept {
+    inline constexpr NODISCARD const _Type1_& getFirst() const noexcept {
         return *this;
     }
 };
@@ -56,31 +67,44 @@ template <
     class _Type2_>
 class CompressedPair<_Type1_, _Type2_, false> final {
 public:
-    _Type1_ _Myval1;
-    _Type2_ _Myval2;
+    _Type1_ _firstValue;
+    _Type2_ _secondValue;
 
     template <class... _Other2>
-    inline constexpr explicit CompressedPair(_Zero_then_variadic_args_, _Other2&&... _Val2) noexcept(
-        std::conjunction_v<std::is_nothrow_default_constructible<_Type1_>,
-        std::is_nothrow_constructible<_Type2_, _Other2...>>)
-        : 
-        _Myval1(),
-        _Myval2(std::forward<_Other2>(_Val2)...) {}
+    inline constexpr explicit CompressedPair(
+        _Zero_then_variadic_args_,
+        _Other2&&... secondValue) noexcept(
+            std::conjunction_v<
+                std::is_nothrow_default_constructible<_Type1_>,
+            std::is_nothrow_constructible<
+                _Type2_, 
+                _Other2...>>): 
+        _firstValue(),
+        _secondValue(std::forward<_Other2>(secondValue)...)
+    {}
 
     template <class _Other1, class... _Other2>
-    inline constexpr CompressedPair(_One_then_variadic_args_, _Other1&& _Val1, _Other2&&... _Val2) noexcept(
-        std::conjunction_v<std::is_nothrow_constructible<_Type1_, _Other1>,
-        std::is_nothrow_constructible<_Type2_, _Other2...>>)
-        : 
-        _Myval1(std::forward<_Other1>(_Val1)),
-        _Myval2(std::forward<_Other2>(_Val2)...) {}
+    inline constexpr CompressedPair(
+        _One_then_variadic_args_, 
+        _Other1&& firstValue, 
+        _Other2&&... secondValue) noexcept(
+            std::conjunction_v<
+                std::is_nothrow_constructible<
+                    _Type1_,
+                    _Other1>,
+            std::is_nothrow_constructible<
+                _Type2_,
+                _Other2...>>): 
+        _firstValue(std::forward<_Other1>(firstValue)),
+        _secondValue(std::forward<_Other2>(secondValue)...)
+    {}
 
-    inline constexpr NODISCARD _Type1_& _Get_first() noexcept {
-        return _Myval1;
+    inline constexpr NODISCARD _Type1_& getFirst() noexcept {
+        return _firstValue;
     }
 
-    inline constexpr NODISCARD const _Type1_& _Get_first() const noexcept {
-        return _Myval1;
+    inline constexpr NODISCARD const _Type1_& getFirst() const noexcept {
+        return _firstValue;
     }
 };
 
