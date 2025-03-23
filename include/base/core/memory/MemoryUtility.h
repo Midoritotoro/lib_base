@@ -102,7 +102,7 @@ NODISCARD inline constexpr _PossiblyNullPointerLikeType_*
 
 template <typename _Type_>
 NODISCARD inline constexpr char* 
-    UnCheckedToChar(_Type_* pointerLike) noexcept
+    UnCheckedToChar(_Type_ pointerLike) noexcept
 {
     return const_cast<char*>(
         reinterpret_cast<const volatile char*>(pointerLike));
@@ -110,7 +110,7 @@ NODISCARD inline constexpr char*
 
 template <typename _Type_> 
 NODISCARD inline constexpr 
-    const char* UnCheckedToConstChar(_Type_* pointerLike) noexcept
+    const char* UnCheckedToConstChar(_Type_ pointerLike) noexcept
 {
     return const_cast<const char*>(
         reinterpret_cast<const volatile char*>(pointerLike));
@@ -118,7 +118,7 @@ NODISCARD inline constexpr
 
 template <typename _Type_>
 NODISCARD inline constexpr
-    char* CheckedToChar(_Type_* pointerLike) noexcept
+    char* CheckedToChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAdress = ToAdress(pointerLike);
     return UnCheckedToChar(pointerLikeAdress);
@@ -126,16 +126,15 @@ NODISCARD inline constexpr
 
 template <typename _Type_>
 NODISCARD inline constexpr
-    const char* CheckedToConstChar(_Type_* pointerLike) noexcept
+    const char* CheckedToConstChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAdress = ToAdress(pointerLike);
     return UnCheckedToConstChar(pointerLikeAdress);
 }
 
-template <typename _Type_>
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopy(
-    _Type_* _Destination,
-    const _Type_* _Source,
+inline NODISCARD bool MemoryCopy(
+    void* _Destination,
+    const void* _Source,
     const size_t _SourceLength)
 {
     const auto _Dest    = memcpy(_Destination,
@@ -145,9 +144,8 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopy(
     return _Success;
 }
 
-template <typename _Type_>
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryFill(
-    _Type_* _Destination,
+inline NODISCARD bool MemoryFill(
+    void* _Destination,
     const int _Value,
     const size_t _Size)
 {
@@ -226,6 +224,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     _OutIterator_   outFirst,
     _OutIterator_   outLast) noexcept
 {
+    using OutCopy = CopyResult<_InputIterator_, _OutIterator_>;
+
     const auto inputFirstChar   = CheckedToChar(inputFirst);
     const auto inputLastChar    = CheckedToConstChar(inputLast);
 
@@ -236,7 +236,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
         (inputLastChar - inputFirstChar, outLastChar - outFirstChar));
 
     if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
-        return {};
+        return OutCopy{};
 
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
@@ -250,7 +250,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
         outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(
             countBytes / sizeof(std::iter_value_t<_OutIterator_>));
 
-    return {
+    return OutCopy {
         std::move(inputFirst), 
         std::move(outFirst) 
     };

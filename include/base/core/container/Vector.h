@@ -2,61 +2,73 @@
 
 
 #include <base/core/memory/MemoryUtility.h>
-#include <base/core/container/VectorBase.h>
+#include <base/core/container/VectorIterator.h>
+
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
+enum class _Vector_SIMD_Algorithm_Alignment : sizetype {
+
+};
+
 template <
 	typename	_Element_,
-	class		_Allocator_>
-class Vector<
-	_Vector_Scalar_Algorithm_Tag_, 
-	_Element_,
-	_Allocator_>:
-		public VectorBase<
-			_Element_,
-			_Allocator_>
-	{
+	class		_Allocator_ = memory::RawMemoryAllocator<_Element_>>
+class Vector
+{
 public:
-	using _MyBase_	= VectorBase<_Element_, _Allocator_>;
+	using value_type = _Element_;
+	using allocator_type = _Allocator_;
 
-	using pointer					= typename _MyBase_::pointer;
-	using const_pointer				= typename _MyBase_::const_pointer;
+	using pointer = value_type*;
+	using const_pointer = const pointer;
 
-	using size_type					= typename _MyBase_::size_type;
-	using difference_type			= typename _MyBase_::difference_type;
+	using size_type = sizetype;
+	using difference_type = sizetype;
 
-	using value_type				= typename _MyBase_::value_type;
-	using allocator_type			= typename _MyBase_::allocator_type;
+	using reference = value_type&;
+	using const_reference = const value_type&;
 
-	using reference					= typename _MyBase_::value_type&;
-	using const_reference			= const typename _MyBase_::value_type&;
+	using iterator = VectorIterator<Vector<_Element_, _Allocator_>>;
+	using const_iterator = VectorConstIterator<Vector<_Element_, _Allocator_>>;
 
-	using iterator					= typename _MyBase_::iterator;
-	using const_iterator			= typename _MyBase_::const_iterator;
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-	using reverse_iterator			= typename _MyBase_::reverse_iterator;
-	using const_reverse_iterator	= typename _MyBase_::const_reverse_iterator;
+	using Iterator = iterator;
+	using ConstIterator = const_iterator;
 
-	using Iterator					= iterator;															
-	using ConstIterator				= const_iterator;	
+	using ValueType = value_type;
+	using SizeType = size_type;
 
-	using ValueType					= value_type;														
-	using SizeType					= size_type;	
+	using Reference = reference;
+	using ConstReference = const_reference;
 
-	using Reference					= reference;														
-	using ConstReference			= const_reference;			
+	using Pointer = pointer;
+	using ConstPointer = const_pointer;
 
-	using Pointer					= pointer;															
-	using ConstPointer				= const_pointer;
+	using ReverseIterator = reverse_iterator;
+	using ConstReverseIterator = const_reverse_iterator;
 
-	using ReverseIterator			= reverse_iterator;											
-	using ConstReverseIterator		= const_reverse_iterator;
+	static constexpr sizetype _Buffer_For_Resizing_Length = 16; // ... 
 
-    constexpr Vector() noexcept {};
+
+	static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
+		_Vector_SIMD_Algorithm_Alignment
+#if LIB_BASE_HAS_SIMD_SUPPORT
+			{ MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT };
+#else
+			{ 0 }
+#endif
+			;
+
+    constexpr Vector() noexcept
+	{};
+
     constexpr ~Vector() noexcept = default;
 
-    CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept {
+    CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept
+	{
 		const auto _Capacity		= capacity();
 		const auto _UnusedCapacity	= unusedCapacity();
 
@@ -71,7 +83,8 @@ public:
 		}
     }
 
-	CONSTEXPR_CXX20 inline Vector(const Vector& other) {
+	CONSTEXPR_CXX20 inline Vector(const Vector& other)
+	{
 		const auto _Capacity = other.capacity();
 		TryResize(_Capacity);
 
@@ -79,7 +92,8 @@ public:
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
-	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector) {
+	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector)
+	{
 		const auto _Capacity = vector.capacity();
 		TryResize(_Capacity);
 
@@ -87,7 +101,8 @@ public:
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
     }
 
-	CONSTEXPR_CXX20 inline Vector(const SizeType capacity) {
+	CONSTEXPR_CXX20 inline Vector(const SizeType capacity)
+	{
 		TryResize(capacity);
     }
 
@@ -99,12 +114,133 @@ public:
 		fill(_Fill);
     }
     
-	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept {
+	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept
+	{
 
     }
 
-	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
+	constexpr inline Reference operator[](const SizeType offset) noexcept {
+		return *(_current + offset);
+	}
 
+	constexpr inline NODISCARD Reference at(const SizeType offset) noexcept {
+		const auto isValidOffset = (_current + offset > _start
+			&& _current + offset < _end);
+
+		DebugAssertLog(!isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ");
+		return (*this)[offset];
+	}
+
+	constexpr inline NODISCARD ValueType at(const SizeType index) const noexcept {
+		return at(index);
+	}
+
+	constexpr inline NODISCARD SizeType size() const noexcept {
+		return length();
+	}
+
+	constexpr inline NODISCARD SizeType length() const noexcept {
+		return static_cast<SizeType>(_current - _start);
+	}
+
+	constexpr inline NODISCARD SizeType capacity() const noexcept {
+		return static_cast<SizeType>(_end - _start);
+	}
+
+	constexpr inline NODISCARD SizeType unusedCapacity() const noexcept {
+		return (capacity() - size());
+	}
+
+	constexpr inline NODISCARD bool isEmpty() const noexcept {
+		return (length() == 0);
+	}
+
+	constexpr inline NODISCARD Pointer data() noexcept {
+		return _start;
+	}
+
+	constexpr inline NODISCARD ConstPointer data() const noexcept {
+		return _start;
+	}
+
+	constexpr inline NODISCARD ConstPointer constData() const noexcept {
+		return _start;
+	}
+
+	constexpr inline NODISCARD Iterator begin() noexcept {
+		return Iterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator begin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator cbegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD ConstIterator constBegin() const noexcept {
+		return ConstIterator(this);
+	}
+
+	constexpr inline NODISCARD Iterator end() noexcept {
+		return Iterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator end() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator cend() const {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ConstIterator constEnd() const noexcept {
+		return ConstIterator(this) + size();
+	}
+
+	constexpr inline NODISCARD ReverseIterator rbegin() noexcept {
+		return ReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ReverseIterator rend() noexcept {
+		return ReverseIterator(end());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator rend() const noexcept {
+		return ConstReverseIterator(end());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept {
+		return ConstReverseIterator(begin());
+	}
+
+	constexpr inline NODISCARD ConstReverseIterator crend() const noexcept {
+		return ConstReverseIterator(end());
+	}
+
+	constexpr inline NODISCARD ValueType front() const noexcept {
+		return at(0);
+	}
+
+	constexpr inline NODISCARD Reference front() noexcept {
+		return at(0);
+	}
+
+	constexpr inline NODISCARD ValueType back() const noexcept {
+		return at(size() - 1);
+	}
+
+	constexpr inline NODISCARD Reference back() noexcept {
+		return at(size() - 1);
+	}
+
+	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
+		TryResize(_Buffer_For_Resizing_Length + capacity());
 		
 		++_current;
 
@@ -121,9 +257,13 @@ public:
    	
 	CONSTEXPR_CXX20 inline NODISCARD ValueType pop() noexcept {
 		const auto value = back();
-		remveAt(size() - 1);
+		removeAt(size() - 1);
 
 		return value;
+	}
+
+	inline void removeAt(BASE_GUARDOVERFLOW const size_type index) noexcept {
+
 	}
 
 	inline NODISCARD SizeType find(ConstReference element) const noexcept {
@@ -133,19 +273,19 @@ public:
 	inline NODISCARD Vector<size_type> 
 		findAll(ConstReference element) const noexcept
 	{
-		return {}
+		return {};
 	}
 	
 	inline NODISCARD size_type
 		findLastOf(ConstReference element) const noexcept
 	{
-		
+		return 0;
 	}
 
 	inline NODISCARD size_type 
 		findFirstOf(const_reference element) const noexcept
 	{
-		;
+		return 0;
 	}
 
 	inline NODISCARD size_type
@@ -222,7 +362,7 @@ public:
 	}
 
 	inline NODISCARD bool contains(
-		const Vector<value_type> subVector,
+		const Vector& subVector,
 		size_type from = 0) const noexcept
 	{
 		size_type overlaps = 0;
@@ -250,7 +390,7 @@ public:
 	}
 	
 	inline NODISCARD size_type count(
-		const Vector<value_type>& subVector) const noexcept
+		const Vector& subVector) const noexcept
 	{
 		size_type _Count = 0;
 		size_type overlaps = 0;
@@ -262,7 +402,7 @@ public:
 
 			((*adress) == subVector[i % subVectorSize] 
 				&& (++overlaps == subVectorSize))
-					? ++_Count;
+					? ++_Count
 					: overlaps = 0;
 		}
 		
@@ -296,9 +436,9 @@ public:
 			blockStart, blockEnd));
 
 		_start		= blockStart;
-		_end		= blockEnd;
+		_end			= blockEnd;
 			
-		_current	= nullptr;
+		_current		= nullptr;
 	}
 
 	inline void insert(
@@ -326,8 +466,11 @@ private:
 		const auto adressForOffset = (_start + offset);
 		
 	}
+
+	Pointer _start		= nullptr;
+	Pointer _end		= nullptr;
+
+	Pointer _current	= nullptr;
 };
 
 __BASE_CONTAINER_NAMESPACE_END
-
-#include <base/core/container/SimdOptimizedVector.h>

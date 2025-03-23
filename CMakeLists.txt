@@ -319,15 +319,11 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorConstIterator.h
 
     include/base/core/memory/MemoryUtility.h
-    include/base/core/container/STLCompatibleContainerBase.h
 
     include/base/core/container/Pair.h
     include/base/core/container/CompressedPair.h
 
     include/base/core/container/VectorizedUtility.h
-
-    include/base/core/container/VectorBase.h
-    include/base/core/container/SimdOptimizedVector.h
 )
 
 include(CMakePackageConfigHelpers)
