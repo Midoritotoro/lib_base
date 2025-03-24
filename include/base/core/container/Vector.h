@@ -123,6 +123,8 @@ public:
 
     CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept
 	{
+		const auto pairValue		= _pair.second();
+
 		const auto _Capacity		= capacity();
 		const auto _UnusedCapacity	= unusedCapacity();
 
@@ -132,7 +134,7 @@ public:
 			TryResize(_Capacity + std::max(elementsSize, _Buffer_For_Resizing_Length));
 
 		for (SizeType i = 0; i < elementsSize; ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 			*adress = (elements[i]);
 		}
     }
@@ -140,18 +142,22 @@ public:
 	CONSTEXPR_CXX20 inline Vector(const Vector& other)
 	{
 		const auto _Capacity = other.capacity();
+		auto& _Start		 = _pair.second()._start;
+
 		TryResize(_Capacity);
 
-		if (memory::MemoryCopy(_start, other._start, _Capacity) == false)
+		if (memory::MemoryCopy(_Start, other._pair.second()._start, _Capacity) == false)
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
 	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector)
 	{
 		const auto _Capacity = vector.capacity();
+		auto& _Start		 = _pair.second()._start;
+
 		TryResize(_Capacity);
 
-		if (memory::MemoryCopy(_start, vector.data(), _Capacity) == false)
+		if (memory::MemoryCopy(_Start, vector.data(), _Capacity) == false)
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
     }
 
@@ -174,12 +180,19 @@ public:
     }
 
 	constexpr inline Reference operator[](const SizeType offset) noexcept {
-		return *(_current + offset);
+		const auto pairValue = _pair.second();
+		return *(pairValue._current + offset);
 	}
 
 	constexpr inline NODISCARD Reference at(const SizeType offset) noexcept {
-		const auto isValidOffset = (_current + offset > _start
-			&& _current + offset < _end);
+		const auto pairValue	= _pair.second();
+		const auto _Current		= pairValue._current;
+
+		const auto _Start		= pairValue._start;
+		const auto _End			= pairValue._end;
+
+		const auto isValidOffset = (_Current + offset > _Start
+			&& _Current + offset < _End);
 
 		DebugAssertLog(!isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ");
 		return (*this)[offset];
@@ -300,8 +313,8 @@ public:
 
 	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
 		TryResize(_Buffer_For_Resizing_Length + capacity());
-		
-		++_current;
+		const auto pairValue = _pair.second();
+		++pairValue._current;
 
 	//	memory::MemoryMove(_current, )
     }
@@ -389,8 +402,10 @@ public:
 		const_reference element,
 		size_type from = 0) const noexcept
 	{
+		const auto pairValue = _pair.second();
+
 		for (size_type i = from; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 
 			if ((*adress) == element)
 				return i;
@@ -410,8 +425,10 @@ public:
 		const_reference element,
 		size_type from = 0) const noexcept
 	{
+		const auto pairValue = _pair.second();
+
 		for (size_type i = from; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 
 			if ((*adress) == element)
 				return true;
@@ -425,10 +442,12 @@ public:
 		size_type from = 0) const noexcept
 	{
 		size_type overlaps = 0;
+
 		const auto subVectorSize = subVector.size();
+		const auto pairValue = _pair.second();
 
 		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 
 			if ((*adress) == subVector[i % subVectorSize] && (++overlaps == subVectorSize))
 				return true;
@@ -441,9 +460,10 @@ public:
 		const_reference element) const noexcept
 	{
 		size_type _Count = 0;
+		const auto pairValue = _pair.second();
 
 		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 			_Count += ((*adress) == element);
 		}
 	}
@@ -455,9 +475,10 @@ public:
 		size_type overlaps = 0;
 
 		const auto subVectorSize = subVector.size();
+		const auto pairValue = _pair.second();
 
 		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 
 			((*adress) == subVector[i % subVectorSize] 
 				&& (++overlaps == subVectorSize))
@@ -469,8 +490,10 @@ public:
 	}
 	
 	inline void fill(const_reference _Fill) noexcept {
+		const auto pairValue = _pair.second();
+
 		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (_start + i);
+			const auto adress = (pairValue._start + i);
 			*adress = _Fill;
 		}
 	}
@@ -487,6 +510,8 @@ public:
 		if (UNLIKELY(memory == nullptr))
 			return false;
 
+		const auto pairValue = _pair.second();
+
 		const auto blockStart	= memory;
 		const auto blockEnd		= memory + _Capacity;
 
@@ -494,10 +519,10 @@ public:
 			begin(), end(),
 			blockStart, blockEnd));
 
-		_start		= blockStart;
-		_end			= blockEnd;
+		pairValue._start		= blockStart;
+		pairValue._end			= blockEnd;
 			
-		_current		= nullptr;
+		pairValue._current		= nullptr;
 	}
 
 	inline void insert(
@@ -522,7 +547,8 @@ private:
 		sizetype offset, 
 		ValueType* value)
 	{
-		const auto adressForOffset = (_start + offset);
+		const auto pairValue = _pair.second();
+		const auto adressForOffset = (pairValue._start + offset);
 		
 	}
 

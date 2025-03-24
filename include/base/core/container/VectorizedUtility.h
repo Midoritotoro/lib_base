@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/ProcessorFeatures.h>
+#include <base/core/memory/MemoryUtility.h>
 
 #ifndef _DEBUG
 #  pragma optimize("t", on)
@@ -412,7 +413,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
     const void* _End,
     int8*       _Out)
 {
-    const auto _Length = ByteLength(_Start, _End);
+    const auto _Length = memory::ByteLength(_Start, _End);
 
     if (ProcessorFeatures::AVX2()) {
 

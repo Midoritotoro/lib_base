@@ -14,25 +14,21 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #if __cpp_lib_addressof_constexpr >= 201603L
 #  if __has_builtin(__builtin_addressof)
      template <class _Type_>
-     NODISCARD CONSTEXPR_ADRESSOF _Type_* AdressOf(_Type_& value) noexcept {
+     NODISCARD constexpr _Type_* AdressOf(_Type_& value) noexcept {
          return __builtin_addressof(value);
      }
 #  endif
 #endif
 
 template <typename _Type_> 
-CONSTEXPR_ADRESSOF NODISCARD inline 
-    _Type_* AdressOf(_Type_* value) noexcept
-{
+CONSTEXPR_ADRESSOF NODISCARD inline _Type_* AdressOf(_Type_* value) noexcept {
     // http://eel.is/c++draft/pointer.conversion#1:
     static_assert(!std::is_function_v<_Type_>, "AdressOf must not be used on function types");
     return value;
 }
 
 template <typename _Type_>
-CONSTEXPR_ADRESSOF NODISCARD inline 
-    _Type_* AdressOf(const _Type_& value) noexcept 
-{
+CONSTEXPR_ADRESSOF NODISCARD inline _Type_* AdressOf(const _Type_& value) noexcept {
     return AdressOf(&value);
 }
 
@@ -143,9 +139,9 @@ unsigned char*
     UnCheckedToUnsignedChar(
         _Type_ pointerLike) noexcept
 {
-    return const_cast<char*>(
+    return const_cast<unsigned char*>(
         reinterpret_cast<
-        const volatile char*>(pointerLike));
+        const volatile unsigned char*>(pointerLike));
 }
 
 template <typename _Type_>
