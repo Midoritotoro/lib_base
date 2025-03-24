@@ -18,7 +18,14 @@ __BASE_THREAD_NAMESPACE_BEGIN
 
 class Thread final {
 public:
-	Thread();
+	Thread() noexcept;
+	Thread(const Thread& other) noexcept;
+
+	Thread(Thread&& rOther) noexcept;
+
+	Thread& operator=(const Thread& other) noexcept;
+	Thread& operator=(Thread&& other) noexcept;
+
 	~Thread();
 
 	void setPriority(AbstractThread::Priority priority);
@@ -74,8 +81,6 @@ public:
 		
 	static NODISCARD int getIdealThreadCount() noexcept;
 	static NODISCARD Thread* currentThread() noexcept;
-
-	DISABLE_COPY(Thread)
 private:
 	friend class ThreadsData;
 	std::unique_ptr<ThreadPlatformImplementation> _impl = nullptr;

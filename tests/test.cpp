@@ -10,11 +10,11 @@
 #include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
 #include <base/core/container/Vector.h>
 
-
-//#include <base/media/player/MediaPlayer.h>
+#include <base/core/container/VectorizedUtility.h>
 
 using namespace base;
-using namespace base::container;
+
+
 
 struct test {
 	int value = 0;
@@ -23,7 +23,8 @@ struct test {
 } __declspec(align(16));
 
 int main(int argc, char* argv[]) {
-	
+	std::vector<int32> _vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+	std::cout << (_vec.data() + _vec.size()) - _vec.data();
 
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();

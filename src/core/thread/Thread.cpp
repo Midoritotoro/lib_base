@@ -6,12 +6,28 @@
 
 __BASE_THREAD_NAMESPACE_BEGIN
 
-Thread::Thread() {
+Thread::Thread() noexcept {
 	_impl = std::make_unique<ThreadPlatformImplementation>();
 }
 
 Thread::~Thread() {
 
+}
+
+Thread::Thread(const Thread& other) noexcept {
+
+}
+
+Thread::Thread(Thread&& rOther) noexcept {
+
+}
+
+Thread& Thread::operator=(const Thread& other) noexcept {
+	return *this;
+}
+
+Thread& Thread::operator=(Thread&& other) noexcept {
+	return *this;
 }
 
 void Thread::setPriority(AbstractThread::Priority priority) {
