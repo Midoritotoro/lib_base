@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/memory/Memory.h>
+#include <base/core/utility/Algorithm.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -13,21 +14,25 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #if __cpp_lib_addressof_constexpr >= 201603L
 #  if __has_builtin(__builtin_addressof)
      template <class _Type_>
-     NODISCARD constexpr _Type_* AdressOf(_Type_& value) noexcept {
+     NODISCARD CONSTEXPR_ADRESSOF _Type_* AdressOf(_Type_& value) noexcept {
          return __builtin_addressof(value);
      }
 #  endif
 #endif
 
 template <typename _Type_> 
-CONSTEXPR_ADRESSOF NODISCARD inline _Type_* AdressOf(_Type_* value) noexcept {
+CONSTEXPR_ADRESSOF NODISCARD inline 
+    _Type_* AdressOf(_Type_* value) noexcept
+{
     // http://eel.is/c++draft/pointer.conversion#1:
     static_assert(!std::is_function_v<_Type_>, "AdressOf must not be used on function types");
     return value;
 }
 
 template <typename _Type_>
-CONSTEXPR_ADRESSOF NODISCARD inline _Type_* AdressOf(const _Type_& value) noexcept {
+CONSTEXPR_ADRESSOF NODISCARD inline 
+    _Type_* AdressOf(const _Type_& value) noexcept 
+{
     return AdressOf(&value);
 }
 
@@ -50,7 +55,7 @@ NODISCARD constexpr auto ToAdress(const _Ptr& _Val) noexcept {
     if constexpr (HasToAdress<_Ptr>)
         return std::pointer_traits<_Ptr>::to_address(_Val);
     else
-        return ToAdress(_Val.operator->()); // plain pointer overload must come first
+        return ToAdress(_Val.operator->());
 }
 
 #endif
@@ -132,6 +137,114 @@ NODISCARD inline constexpr
     return UnCheckedToConstChar(pointerLikeAdress);
 }
 
+template <typename _Type_>
+NODISCARD inline constexpr
+unsigned char*
+    UnCheckedToUnsignedChar(
+        _Type_ pointerLike) noexcept
+{
+    return const_cast<char*>(
+        reinterpret_cast<
+        const volatile char*>(pointerLike));
+}
+
+template <typename _Type_>
+NODISCARD inline constexpr
+const unsigned char* 
+    UnCheckedToConstUnsignedChar(
+        _Type_ pointerLike) noexcept
+{
+    return const_cast<const unsigned char*>(
+        reinterpret_cast<
+        const volatile unsigned char*>(pointerLike));
+}
+
+template <typename _Type_>
+NODISCARD inline constexpr
+    unsigned char* CheckedToUnsignedChar(
+        _Type_ pointerLike) noexcept
+{
+    const auto pointerLikeAdress = ToAdress(pointerLike);
+    return UnCheckedToUnsignedChar(pointerLikeAdress);
+}
+
+template <typename _Type_>
+NODISCARD inline constexpr
+const unsigned char* 
+    CheckedToConstUnsignedChar(
+        _Type_ pointerLike) noexcept
+{
+    const auto pointerLikeAdress = ToAdress(pointerLike);
+    return UnCheckedToConstUnsignedChar(pointerLikeAdress);
+}
+
+
+template <class _BidIt>
+inline constexpr void ReverseTail(
+    _BidIt _First, 
+    _BidIt _Last) noexcept 
+{
+    for (; _First != _Last && _First != --_Last; ++_First) {
+        const auto _Temp = *_First;
+
+        *_First = *_Last;
+        *_Last = _Temp;
+    }
+}
+
+template <
+    class _BidIt, 
+    class _OutIt>
+inline constexpr void ReverseCopyTail(
+    _BidIt _First,
+    _BidIt _Last,
+    _OutIt _Dest) noexcept 
+{
+    while (_First != _Last)
+        *_Dest++ = *--_Last;
+}
+
+NODISCARD constexpr inline sizetype ByteLength(
+    const void* _First,
+    const void* _Last) noexcept 
+{
+    const auto _FirstUChar  = UnCheckedToConstUnsignedChar(_First);
+    const auto _LastUChar   = UnCheckedToConstUnsignedChar(_Last);
+    
+    const auto _Length      = static_cast<sizetype>(_LastUChar - _FirstUChar);
+    return _Length;
+}
+
+constexpr inline void RewindBytes(
+    void*& _Target,
+    size_t _Offset) noexcept
+{
+    _Target = UnCheckedToUnsignedChar(_Target) - _Offset;
+}
+
+constexpr inline void RewindBytes(
+    const void*& _Target, 
+    size_t _Offset) noexcept 
+{
+    _Target = UnCheckedToConstUnsignedChar(_Target) - _Offset;
+}
+
+template <class _Integral>
+constexpr inline void AdvanceBytes(
+    void*& _Target, 
+    _Integral _Offset) noexcept 
+{
+    _Target = UnCheckedToUnsignedChar(_Target) + _Offset;
+}
+
+template <class _Integral>
+constexpr inline void AdvanceBytes(
+    const void*& _Target, 
+    _Integral _Offset) noexcept 
+{
+    _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
+}
+
 inline NODISCARD bool MemoryCopy(
     void* _Destination,
     const void* _Source,
@@ -211,6 +324,12 @@ template <
     class _FirstIterator_,
     class _SecondIterator_>
 struct CopyResult {
+    CopyResult() noexcept = default;
+    CopyResult(_FirstIterator_ _First, _SecondIterator_ _Second) noexcept:
+        first(_First),
+        second(_Second)
+    {}
+
     _FirstIterator_     first  = {};
     _SecondIterator_    second = {};
 };
@@ -250,7 +369,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
         outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(
             countBytes / sizeof(std::iter_value_t<_OutIterator_>));
 
-    return OutCopy {
+    return CopyResult {
         std::move(inputFirst), 
         std::move(outFirst) 
     };

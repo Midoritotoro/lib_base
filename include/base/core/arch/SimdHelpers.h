@@ -4,7 +4,13 @@
 #include <base/core/arch/CompilerDetection.h>
 
 #include <base/core/arch/KeywordSupport.h>
+#include <base/core/BaseNamespace.h>
 
+#include <base/core/Types.h>
+
+#if !defined(_M_ARM64EC)
+#include <intrin.h>
+#endif
 
 #ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 
 #  define LIB_BASE_USE_COMPILER_ALIGNMENT
@@ -29,7 +35,7 @@
 #    define __SSE4_2__                      1
 #    define __POPCNT__                      1
 
-#    if !defined(__AVX__) && __has_include(<immintrin.h>) // AVX
+#    if !defined(__AVX__)
 #      define __AVX__                       1
 #    endif
 
@@ -53,7 +59,7 @@
 # endif
 
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
-#  include <immintrin.h>
+#  include <emmintrin.h>
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define LIB_BASE_ENABLE_sse2 1
 #else
@@ -154,11 +160,25 @@
 #  define BASE_SIMD_SSE2_ALIGNMENT		0
 #endif
 
+#ifdef LIB_BASE_ENABLE_avx
+#  ifndef BASE_SIMD_AVX_ALIGNMENT
+#    define BASE_SIMD_AVX_ALIGNMENT		sizeof(__m128i)
+#  endif
+#else 
+#  define BASE_SIMD_AVX_ALIGNMENT		0
+#endif
+
+#ifdef LIB_BASE_ENABLE_avx2
+#  ifndef BASE_SIMD_AVX2_ALIGNMENT
+#    define BASE_SIMD_AVX2_ALIGNMENT	sizeof(__m128i)
+#  endif
+#else 
+#  define BASE_SIMD_AVX2_ALIGNMENT		0
+#endif
+
 
 #ifndef LIB_BASE_HAS_SIMD_SUPPORT
 #  define LIB_BASE_HAS_SIMD_SUPPORT 0
 #endif
 
 #define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT
-
-

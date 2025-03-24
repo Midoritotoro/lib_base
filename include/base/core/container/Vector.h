@@ -4,12 +4,63 @@
 #include <base/core/memory/MemoryUtility.h>
 #include <base/core/container/VectorIterator.h>
 
+#include <base/core/container/CompressedPair.h>
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
 enum class _Vector_SIMD_Algorithm_Alignment : sizetype {
 
 };
+
+template <class _Type_>
+class VectorValue {
+public:
+	using value_type		= typename _Type_::value_type;
+	using size_type			= typename _Type_::size_type;
+
+	using difference_type	= typename _Type_::difference_type;
+	using pointer			= typename _Type_::pointer;
+
+	using const_pointer		= typename _Type_::const_pointer;
+
+	using reference			= value_type&;
+	using const_reference	= const value_type&;
+
+	CONSTEXPR_CXX20 VectorValue() noexcept
+	{}
+
+	CONSTEXPR_CXX20 VectorValue(
+		pointer start, 
+		pointer end,
+		pointer current) noexcept
+	: 
+		_start(start),
+		_end(end),
+		_current(_current) 
+	{}
+
+	CONSTEXPR_CXX20 void swap(VectorValue& other) noexcept {
+		swap(_start, other._start);
+		swap(_end, other._end);
+		swap(_current, other._current);
+	}
+
+	CONSTEXPR_CXX20 void takeContents(VectorValue& other) noexcept {
+		_start = other._start;
+		_end = other._end;
+		_current = other._current;
+
+		other._start = nullptr;
+		other._end = nullptr;
+		other._current = nullptr;
+	}
+
+	pointer _start		= nullptr;
+	pointer _end		= nullptr;
+
+	pointer _current	= nullptr;
+};
+
 
 template <
 	typename	_Element_,
@@ -49,6 +100,9 @@ public:
 
 	using ReverseIterator = reverse_iterator;
 	using ConstReverseIterator = const_reverse_iterator;
+private:
+	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_>>;
+public:
 
 	static constexpr sizetype _Buffer_For_Resizing_Length = 16; // ... 
 
@@ -75,7 +129,7 @@ public:
 		const auto elementsSize		= elements.size();
 
 		if (_UnusedCapacity < elementsSize)
-			TryResize(_Capacity + elementsSize);
+			TryResize(_Capacity + std::max(elementsSize, _Buffer_For_Resizing_Length));
 
 		for (SizeType i = 0; i < elementsSize; ++i) {
 			const auto adress = (_start + i);
@@ -140,11 +194,13 @@ public:
 	}
 
 	constexpr inline NODISCARD SizeType length() const noexcept {
-		return static_cast<SizeType>(_current - _start);
+		const auto pairValue = _pair.second();
+		return static_cast<SizeType>(pairValue._current - pairValue._start);
 	}
 
 	constexpr inline NODISCARD SizeType capacity() const noexcept {
-		return static_cast<SizeType>(_end - _start);
+		const auto pairValue = _pair.second();
+		return static_cast<SizeType>(pairValue._end - pairValue._start);
 	}
 
 	constexpr inline NODISCARD SizeType unusedCapacity() const noexcept {
@@ -156,15 +212,18 @@ public:
 	}
 
 	constexpr inline NODISCARD Pointer data() noexcept {
-		return _start;
+		auto& pairValue = _pair.second();
+		return pairValue._start;
 	}
 
 	constexpr inline NODISCARD ConstPointer data() const noexcept {
-		return _start;
+		const auto pairValue = _pair.second();
+		return pairValue._start;
 	}
 
 	constexpr inline NODISCARD ConstPointer constData() const noexcept {
-		return _start;
+		const auto pairValue = _pair.second();
+		return pairValue._start;
 	}
 
 	constexpr inline NODISCARD Iterator begin() noexcept {
@@ -467,10 +526,7 @@ private:
 		
 	}
 
-	Pointer _start		= nullptr;
-	Pointer _end		= nullptr;
-
-	Pointer _current	= nullptr;
+	CompressedPair<allocator_type, VectorValueType> _pair;
 };
 
 __BASE_CONTAINER_NAMESPACE_END

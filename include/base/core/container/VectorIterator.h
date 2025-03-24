@@ -30,6 +30,11 @@ public:
         return const_cast<reference>(BaseClass::operator*());
     }
 
+    CONSTEXPR_CXX20 pointer operator->() const noexcept {
+        return const_cast<pointer>(BaseClass::operator->());
+    }
+
+
     CONSTEXPR_CXX20 VectorIterator& operator++() noexcept {
         BaseClass::operator++();
         return *this;

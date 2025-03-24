@@ -324,6 +324,9 @@ set(PUBLIC_HEADERS
     include/base/core/container/CompressedPair.h
 
     include/base/core/container/VectorizedUtility.h
+    include/base/core/arch/ProcessorFeatures.h
+    
+    include/base/core/arch/CpuId.h
 )
 
 include(CMakePackageConfigHelpers)

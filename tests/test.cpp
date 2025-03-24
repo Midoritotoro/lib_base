@@ -23,11 +23,7 @@ struct test {
 } __declspec(align(16));
 
 int main(int argc, char* argv[]) {
-	Vector<_Vector_Scalar_Algorithm_Tag_, float> vec;
-	vec.push_back(3);
-
-	for (sizetype i = 0; i < vec.size(); ++i)
-		std::cout << vec[i] << std::endl;
+	
 
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
