@@ -10,7 +10,7 @@
 #include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
 #include <base/core/container/Vector.h>
 
-#include <base/core/container/VectorizedUtility.h>
+#include <base/core/math/VectorizedAlgorithm.h>
 
 using namespace base;
 

@@ -182,3 +182,23 @@
 #endif
 
 #define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT
+
+#if LIB_BASE_HAS_SIMD_SUPPORT
+
+__BASE_NAMESPACE_BEGIN
+
+using xmmint    = __m128i;
+using ymmint    = __m256i;
+using zmmint    = __m512i;
+
+using xmmdouble = __m128d;
+using ymmdouble = __m256d;
+using zmmdouble = __m512d;
+
+using xmmfloat  = __m128;
+using ymmfloat  = __m256;
+using zmmfloat  = __m512;
+
+__BASE_NAMESPACE_END
+
+#endif

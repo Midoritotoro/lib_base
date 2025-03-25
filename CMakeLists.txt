@@ -323,7 +323,9 @@ set(PUBLIC_HEADERS
     include/base/core/container/Pair.h
     include/base/core/container/CompressedPair.h
 
-    include/base/core/math/VectorizedUtility.h
+    include/base/core/math/VectorizedAlgorithm.h
+
+    include/base/core/math/MinMax.h
     include/base/core/math/MinMaxTraits.h
 
     include/base/core/arch/ProcessorFeatures.h

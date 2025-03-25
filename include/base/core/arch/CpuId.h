@@ -77,6 +77,6 @@ DECLARE_NOALIAS inline void CpuIdExtended(int32 op,
     ecx = regs[2];
     edx = regs[3];
 #endif
-
+}
 
 __BASE_NAMESPACE_END
