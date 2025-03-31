@@ -331,6 +331,11 @@ set(PUBLIC_HEADERS
     include/base/core/arch/ProcessorFeatures.h
     
     include/base/core/arch/CpuId.h
+
+    include/base/core/math/MinMaxTraitsAVX.h
+    include/base/core/math/MinMaxTraitsAVX512.h
+
+    include/base/core/math/MinMaxTraitsSSE2.h
 )
 
 include(CMakePackageConfigHelpers)

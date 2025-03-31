@@ -31,6 +31,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
     _Ty _Cur_min_val; // initialized in both of the branches below
     _Ty _Cur_max_val; // initialized in both of the branches below
 
+    constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
     const sizetype _Sse_byte_size = _Length & ~sizetype{ 0xF };
 
     const void* _Stop_at = _Start;
