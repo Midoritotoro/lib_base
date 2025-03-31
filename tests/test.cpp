@@ -23,8 +23,16 @@ struct test {
 } __declspec(align(16));
 
 int main(int argc, char* argv[]) {
-	std::vector<int32> _vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-	std::cout << (_vec.data() + _vec.size()) - _vec.data();
+	std::vector<int32> _vec = {
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+		-16, -15, -14, -13, -12, -123, 24, 8, 124, 128, 54, 12, 99, 55, 1299, -1294};
+
+	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
+
+	int32 max = 0;
+	base::MaximumElement32Bit(_vec.data(), _vec.data() + _vec.size(), &max);
+
+	std::cout << "max: " << max;
 
 //	QApplication application(argc, argv);
 //	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();

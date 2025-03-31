@@ -219,32 +219,32 @@ constexpr inline void RewindBytes(
 }
 
 constexpr inline void RewindBytes(
-    const void*& _Target, 
-    size_t _Offset) noexcept 
+    const void*&    _Target, 
+    size_t          _Offset) noexcept 
 {
     _Target = UnCheckedToConstUnsignedChar(_Target) - _Offset;
 }
 
 template <class _Integral>
 constexpr inline void AdvanceBytes(
-    void*& _Target, 
-    _Integral _Offset) noexcept 
+    void*&      _Target, 
+    _Integral   _Offset) noexcept 
 {
     _Target = UnCheckedToUnsignedChar(_Target) + _Offset;
 }
 
 template <class _Integral>
 constexpr inline void AdvanceBytes(
-    const void*& _Target, 
-    _Integral _Offset) noexcept 
+    const void*&    _Target, 
+    _Integral       _Offset) noexcept 
 {
     _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
 }
 
 inline NODISCARD bool MemoryCopy(
-    void* _Destination,
+    void*       _Destination,
     const void* _Source,
-    const size_t _SourceLength)
+    size_t      _SourceLength)
 {
     const auto _Dest    = memcpy(_Destination,
         _Source, _SourceLength);
@@ -254,9 +254,9 @@ inline NODISCARD bool MemoryCopy(
 }
 
 inline NODISCARD bool MemoryFill(
-    void* _Destination,
-    const int _Value,
-    const size_t _Size)
+    void*       _Destination,
+    const int   _Value,
+    size_t      _Size)
 {
     const auto _Dest    = memset(_Destination, 
         _Value, _Size);

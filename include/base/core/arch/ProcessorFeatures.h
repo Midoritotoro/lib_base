@@ -227,8 +227,6 @@ public:
         return CPU_Rep.isAMD_ && CPU_Rep.f_81_EDX_[31]; 
     }
 private:
-    static const ProcessorFeaturesInternal CPU_Rep;
-
     class ProcessorFeaturesInternal
     {
     public:
@@ -327,6 +325,8 @@ private:
         std::vector<std::array<int, 4>> data_;
         std::vector<std::array<int, 4>> extdata_;
     };
+
+    inline static ProcessorFeaturesInternal CPU_Rep = {};
 };
 
 __BASE_NAMESPACE_END
