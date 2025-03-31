@@ -58,18 +58,38 @@ namespace AVX512 {
             return _mm512_loadu_epi8(_Start);
         }
 
-        NODISCARD static SimdType Min(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_min_epi8(_First, _Second);
         }
 
-        NODISCARD static SimdType Max(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_max_epi8(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_min_epu8(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_max_epu8(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm512_cvtsi512_si32(_Cur));
         }
 
         NODISCARD static zmmdouble ToDouble(SimdType _Vector) {
@@ -123,30 +143,42 @@ namespace AVX512 {
             return _mm512_add_epi16(_FirstVector, _SecondVector);
         }
 
-        /*NODISCARD static SignedType GetByOffset(const sizetype _Offset) {
-            return _mm_cvtsi128_si64x()
-        }*/
-
         NODISCARD static SimdType Load(const void* _Start) {
             return _mm512_loadu_epi16(_Start);
         }
 
-        /*    NODISCARD static SimdType LoadAligned(const void* _Start) {
-                return _mm_load_epi32(_Start);
-            }*/
-
-        NODISCARD static SimdType Min(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_min_epi16(_First, _Second);
         }
 
-        NODISCARD static SimdType Max(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_max_epi16(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_min_epu16(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_max_epu16(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm512_cvtsi512_si32(_Cur));
         }
 
         NODISCARD static zmmdouble ToDouble(SimdType _Vector) {
@@ -200,30 +232,42 @@ namespace AVX512 {
             return _mm512_add_epi32(_FirstVector, _SecondVector);
         }
 
-        /*NODISCARD static SignedType GetByOffset(const sizetype _Offset) {
-            return _mm_cvtsi128_si64x()
-        }*/
-
         NODISCARD static SimdType Load(const void* _Start) {
             return _mm512_loadu_epi32(_Start);
         }
 
-        /*    NODISCARD static SimdType LoadAligned(const void* _Start) {
-                return _mm_load_epi32(_Start);
-            }*/
-
-        NODISCARD static SimdType Min(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_min_epi32(_First, _Second);
         }
 
-        NODISCARD static SimdType Max(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_max_epi32(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_min_epu32(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_max_epu32(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm512_cvtsi512_si32(_Cur));
         }
 
         NODISCARD static zmmdouble ToDouble(SimdType _Vector) {
@@ -275,30 +319,51 @@ namespace AVX512 {
             return _mm512_add_epi64(_FirstVector, _SecondVector);
         }
 
-        /*NODISCARD static SignedType GetByOffset(const sizetype _Offset) {
-            return _mm_cvtsi128_si64x()
-        }*/
-
         NODISCARD static SimdType Load(const void* _Start) {
             return _mm512_loadu_epi64(_Start);
         }
 
-        /*    NODISCARD static SimdType LoadAligned(const void* _Start) {
-                return _mm_load_epi32(_Start);
-            }*/
-
-        NODISCARD static SimdType Min(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_min_epi64(_First, _Second);
         }
 
-        NODISCARD static SimdType Max(
-            SimdType _First,
-            SimdType _Second)
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm512_undefined_epi32()) noexcept
         {
             return _mm512_max_epi64(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_min_epu64(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm512_max_epu64(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(GetVPos(_Cur, 0));
+        }
+
+        NODISCARD static UnsignedType GetVPos(
+            const SimdType _Idx,
+            const unsigned long _H_pos) noexcept
+        {
+            UnsignedType _Array[8];
+            _mm512_storeu_si512(reinterpret_cast<SimdType*>(&_Array), _Idx);
+            return _Array[_H_pos >> 3];
         }
 
         NODISCARD static zmmdouble ToDouble(SimdType _Vector) {

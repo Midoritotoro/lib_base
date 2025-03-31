@@ -21,7 +21,6 @@ namespace SSE2 {
         static constexpr auto MaxInt = BASE_INT8_MAX;
         static constexpr auto MaxUInt = BASE_UINT8_MAX;
 
-
         NumberTraits8Bit() noexcept = default;
 
         NODISCARD static SimdType SignCorrection(
@@ -54,11 +53,11 @@ namespace SSE2 {
         }
 
         template <class _Fn>
-        NODISCARD static __m128i HorizontalFunc(const __m128i _Cur, _Fn _Funct) noexcept {
-            const __m128i _Shuf_bytes = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
-            const __m128i _Shuf_words = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
+            const SimdType _Shuf_bytes = _mm_set_epi8(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+            const SimdType _Shuf_words = _mm_set_epi8(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 
-            __m128i _H_min_val = _Cur;
+            SimdType _H_min_val = _Cur;
 
             _H_min_val = _Funct(_H_min_val, _mm_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
             _H_min_val = _Funct(_H_min_val, _mm_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
@@ -69,28 +68,62 @@ namespace SSE2 {
             return _H_min_val;
         }
 
-        NODISCARD static __m128i HorizontalMinimum(const __m128i _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
+        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
                 return _mm_min_epi8(_Val1, _Val2);
-                });
+            });
         }
 
-        NODISCARD static __m128i HorizontalMaximum(const __m128i _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
+        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
                 return _mm_max_epi8(_Val1, _Val2);
-                });
+            });
         }
 
-        NODISCARD static __m128i HorizontalMinimumUnsigned(const __m128i _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
                 return _mm_min_epu8(_Val1, _Val2);
-                });
+            });
         }
 
-        NODISCARD static __m128i HorizontalMaximumUnsigned(const __m128i _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
                 return _mm_max_epu8(_Val1, _Val2);
-                });
+            });
+        }
+
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_min_epi8(_First, _Second);
+        }
+
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_max_epi8(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_min_epu8(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_max_epu8(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm_cvtsi128_si32(_Cur));
         }
 
         NODISCARD static xmmdouble ToDouble(SimdType _Vector) {
@@ -165,25 +198,59 @@ namespace SSE2 {
         NODISCARD static __m128i HorizontalMinimum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_min_epi16(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_max_epi16(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMinimumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_min_epu16(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_max_epu16(_Val1, _Val2);
-                });
+            });
+        }
+
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_min_epi16(_First, _Second);
+        }
+
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_max_epi16(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_min_epu16(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_max_epu16(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm_cvtsi128_si32(_Cur));
         }
 
         NODISCARD static xmmdouble ToDouble(SimdType _Vector) {
@@ -255,25 +322,59 @@ namespace SSE2 {
         NODISCARD static __m128i HorizontalMinimum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_min_epi32(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_max_epi32(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMinimumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_min_epu32(_Val1, _Val2);
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](__m128i _Val1, __m128i _Val2) {
                 return _mm_max_epu32(_Val1, _Val2);
-                });
+            });
+        }
+
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_min_epi32(_First, _Second);
+        }
+
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_max_epi32(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_min_epu32(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_max_epu32(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
+            return static_cast<SignedType>(_mm_cvtsi128_si32(_Cur));
         }
 
         NODISCARD static xmmdouble ToDouble(SimdType _Vector) {
@@ -297,7 +398,6 @@ namespace SSE2 {
 
         static constexpr auto MaxInt = BASE_INT64_MAX;
         static constexpr auto MaxUInt = BASE_UINT64_MAX;
-
 
         NumberTraits64Bit() noexcept = default;
 
@@ -343,32 +443,71 @@ namespace SSE2 {
             return _mm_set1_epi64x(_H_min_a);
         }
 
-        NODISCARD static SignedType GetAny(const __m128i _Cur) noexcept {
-            return static_cast<SignedType>(_mm_cvtsi128_si32(_Cur));
-        }
-
         NODISCARD static __m128i HorizontalMinimum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](SignedType _Lhs, SignedType _Rhs) {
                 return _Lhs < _Rhs;
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximum(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](SignedType _Lhs, SignedType _Rhs) {
                 return _Lhs > _Rhs;
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMinimumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](SignedType _Lhs, SignedType _Rhs) {
                 return _Lhs < _Rhs;
-                });
+            });
         }
 
         NODISCARD static __m128i HorizontalMaximumUnsigned(const __m128i _Cur) noexcept {
             return HorizontalFunc(_Cur, [](SignedType _Lhs, SignedType _Rhs) {
                 return _Lhs > _Rhs;
-                });
+            });
+        }
+
+        NODISCARD static SimdType Minimum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_min_epi64(_First, _Second);
+        }
+
+        NODISCARD static SimdType Maximum(
+            const SimdType _First,
+            const SimdType _Second,
+            SimdType = _mm_undefined_si128()) noexcept
+        {
+            return _mm_max_epi64(_First, _Second);
+        }
+
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_min_epu64(_First, _Second);
+        }
+
+        NODISCARD static SimdType MaximumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept
+        {
+            return _mm_max_epu64(_First, _Second);
+        }
+
+        NODISCARD static SignedType GetAny(const __m128i _Cur) noexcept {
+            return static_cast<SignedType>(GetVPos(_Cur, 0));
+        }
+
+        NODISCARD static UnsignedType GetVPos(
+            const __m128i _Idx, 
+            const unsigned long _H_pos) noexcept 
+        {
+            UnsignedType _Array[2];
+            _mm_storeu_si128(reinterpret_cast<__m128i*>(&_Array), _Idx);
+            return _Array[_H_pos >> 3];
         }
 
         NODISCARD static xmmdouble ToDouble(SimdType _Vector) {

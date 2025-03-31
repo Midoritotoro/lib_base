@@ -28,7 +28,6 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
         typename _Traits_::SignedType,
         typename _Traits_::UnsignedType>;
 
-    _Ty _Cur_min_val; // initialized in both of the branches below
     _Ty _Cur_max_val; // initialized in both of the branches below
 
     constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
@@ -46,6 +45,45 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
     auto _Cur_vals_min = _Cur_vals; // vector of vertical minimum values
     auto _Cur_vals_max = _Cur_vals; // vector of vertical maximum values
 
+    for (;;) {
+        memory::AdvanceBytes(_Start, 16);
+
+        if (_Start != _Stop_at) {
+            // This is the main part, finding vertical minimum/maximum
+
+            _Cur_vals = _Traits_::Load(_Start);
+
+            if constexpr (_Sign_correction)
+                _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+            
+            if constexpr (_Sign_ || _Sign_correction) 
+                _Cur_vals_max = _Traits_::Maximum(_Cur_vals_max, _Cur_vals); // Update the current maximum
+            else
+                _Cur_vals_max = _Traits_::MaximumUnsigned(_Cur_vals_max, _Cur_vals); // Update the current maximum
+        }
+        else {
+            // Reached end. Compute horizontal min and/or max.
+            if constexpr (_Sign_ || _Sign_correction) {
+                const auto _H_max =
+                    _Traits_::HorizontalMaximum(_Cur_vals_max); // Vector populated by the largest element
+                _Cur_max_val = _Traits_::GetAny(_H_max); // Get any element of it
+            }
+            else {
+                const auto _H_max =
+                    _Traits_::HorizontalMaximumUnsigned(_Cur_vals_max); // Vector populated by the largest element
+                _Cur_max_val = _Traits_::GetAny(_H_max); // Get any element of it
+            }
+
+            if constexpr (_Sign_correction) {
+                constexpr _Ty _Correction = _Ty{ 1 } << (sizeof(_Ty) * 8 - 1);
+                _Cur_max_val += _Correction;
+            }
+
+            break;
+        }
+    }
+
+    *_Out = _Cur_max_val;
     return;
 }
 
