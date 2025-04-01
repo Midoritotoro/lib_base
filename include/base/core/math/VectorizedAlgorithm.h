@@ -205,13 +205,13 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
     const void* _End,
     int32*      _Out)
 {
-    if (ProcessorFeatures::AVX512F())
+   /* if (ProcessorFeatures::AVX512F())
         return MaximumIntegerImplementation<
             AVX512::NumberTraits32Bit, true>(_Start, _End, _Out);
     else if (ProcessorFeatures::AVX())
         return MaximumIntegerImplementation<
             AVX::NumberTraits32Bit, true>(_Start, _End, _Out);
-    else if (ProcessorFeatures::SSE2())
+    else */if (ProcessorFeatures::SSE2())
         return MaximumIntegerImplementation<
             SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
 }

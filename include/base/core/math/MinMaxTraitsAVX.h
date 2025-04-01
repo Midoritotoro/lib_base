@@ -84,6 +84,37 @@ namespace AVX {
             return _mm256_max_epu8(_First, _Second);
         }
 
+        
+        template <class _Fn>
+        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
+            SimdType _H_min_val = _Cur;
+            return _H_min_val;
+        }
+
+        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epi8(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epi8(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epu8(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epu8(_Val1, _Val2);
+            });
+        }
+
         NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
             return static_cast<SignedType>(_mm256_cvtsi256_si32(_Cur));
         }
@@ -169,6 +200,47 @@ namespace AVX {
             const SimdType _Second) noexcept
         {
             return _mm256_max_epu16(_First, _Second);
+        }
+
+
+        template <class _Fn>
+        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
+            const SimdType _Shuf_bytes = _mm256_set_epi16(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+            const SimdType _Shuf_words = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+
+            SimdType _H_min_val = _Cur;
+
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+
+            //_H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_words));
+            //_H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_bytes));
+
+            return _H_min_val;
+        }
+
+        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epi16(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epi16(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epu16(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epu16(_Val1, _Val2);
+            });
         }
 
         NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
@@ -258,6 +330,45 @@ namespace AVX {
             return _mm256_max_epu32(_First, _Second);
         }
 
+        
+        template <class _Fn>
+        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
+            const SimdType _Shuf_words = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+
+            SimdType _H_min_val = _Cur;
+
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+
+         //   _H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_words));
+
+            return _H_min_val;
+        }
+
+        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epi32(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epi32(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epu32(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epu32(_Val1, _Val2);
+            });
+        }
+
         NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
             return static_cast<SignedType>(_mm256_cvtsi256_si32(_Cur));
         }
@@ -344,9 +455,44 @@ namespace AVX {
             return _mm256_max_epu64(_First, _Second);
         }
 
+        template <class _Fn>
+        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
+            SimdType _H_min_val = _Cur;
+
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
+            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+
+            return _H_min_val;
+        }
+
+        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epi64(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epi64(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_min_epu64(_Val1, _Val2);
+            });
+        }
+
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
+            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
+                return _mm256_max_epu64(_Val1, _Val2);
+            });
+        }
+
         NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
             return static_cast<SignedType>(GetVPos(_Cur, 0));
         }
+
 
         NODISCARD static UnsignedType GetVPos(
             const SimdType _Idx,
