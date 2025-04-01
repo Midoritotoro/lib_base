@@ -30,57 +30,35 @@ namespace Scalar {
     template <
         typename Integer,
         typename = std::enable_if_t<IsValidIntegerType<Integer>>>
-    bool GetMinimum(
-        const Integer*  _Start,
-        const Integer*  _End,
+    void GetMinimum(
+        const void*     _Start,
+        const void*     _End,
         Integer*        _Out)
     {
-        const auto _Length = memory::ByteLength(_Start, _End);
+        Integer _Temp = 0;
 
-        sizetype   _Temp = 0;
-        sizetype   _TempMin = _Temp;
-
-        if (memory::MemoryCopy(memory::AdressOf(&_Temp), _Start, sizeof(Integer)) == false)
-            return false;
-
-        for (sizetype i = 0; i < _Length; ++i) {
-            if (memory::MemoryCopy(memory::AdressOf(&_TempMin), _Start + i, sizeof(Integer)) == false)
-                return false;
-
-            if (_TempMin < _Temp)
-                _Temp = _TempMin;
-        }
+        for (auto _Ptr = static_cast<const Integer*>(_Start); _Ptr != _End; ++_Ptr)
+            if (*_Ptr < _Temp)
+                _Temp = *_Ptr;
 
         *_Out = _Temp;
-        return true;
     }
 
     template <
         typename Integer,
         typename = std::enable_if_t<IsValidIntegerType<Integer>>>
-    bool GetMaximum(
-        const Integer*  _Start,
-        const Integer*  _End,
+    void GetMaximum(
+        const void*     _Start,
+        const void*     _End,
         Integer*        _Out)
     {
-        const auto _Length = memory::ByteLength(_Start, _End);
+        Integer _Temp = 0;
 
-        sizetype   _Temp = 0;
-        sizetype   _TempMax = _Temp;
-
-        if (memory::MemoryCopy(memory::AdressOf(&_Temp), _Start, sizeof(Integer)) == false)
-            return false;
-
-        for (sizetype i = 0; i < _Length; ++i) {
-            if (memory::MemoryCopy(memory::AdressOf(&_TempMax), _Start + i, sizeof(Integer)) == false)
-                return false;
-
-            if (_TempMax > _Temp)
-                _Temp = _TempMax;
-        }
+        for (auto _Ptr = static_cast<const Integer*>(_Start); _Ptr != _End; ++_Ptr)
+            if (*_Ptr > _Temp)
+                _Temp = *_Ptr;
 
         *_Out = _Temp;
-        return true;
     }
 } // namespace Scalar
 

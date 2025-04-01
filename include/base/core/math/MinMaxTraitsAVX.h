@@ -21,6 +21,8 @@ namespace AVX {
         static constexpr auto MaxInt = BASE_INT8_MAX;
         static constexpr auto MaxUInt = BASE_UINT8_MAX;
 
+        static constexpr auto StepSizeInBytes = 32;
+
         NumberTraits8Bit() noexcept = default;
 
         NODISCARD static SimdType SignCorrection(
@@ -140,6 +142,8 @@ namespace AVX {
 
         static constexpr auto MaxInt = BASE_INT16_MAX;
         static constexpr auto MaxUInt = BASE_UINT16_MAX;
+
+        static constexpr auto StepSizeInBytes = 32;
 
         NumberTraits16Bit() noexcept = default;
 
@@ -269,6 +273,8 @@ namespace AVX {
         static constexpr auto MaxInt = BASE_INT32_MAX;
         static constexpr auto MaxUInt = BASE_UINT32_MAX;
 
+        static constexpr auto StepSizeInBytes = 32;
+
         NumberTraits32Bit() noexcept = default;
 
         NODISCARD static SimdType SignCorrection(
@@ -333,14 +339,13 @@ namespace AVX {
         
         template <class _Fn>
         NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
-            const SimdType _Shuf_words = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
-
             SimdType _H_min_val = _Cur;
 
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+            SimdType _Shuffled = _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2));
+            _H_min_val = _Funct(_H_min_val, _Shuffled);
 
-         //   _H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_words));
+            _Shuffled = _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1));
+            _H_min_val = _Funct(_H_min_val, _Shuffled);
 
             return _H_min_val;
         }
@@ -394,6 +399,8 @@ namespace AVX {
 
         static constexpr auto MaxInt = BASE_INT64_MAX;
         static constexpr auto MaxUInt = BASE_UINT64_MAX;
+
+        static constexpr auto StepSizeInBytes = 32;
 
         NumberTraits64Bit() noexcept = default;
 

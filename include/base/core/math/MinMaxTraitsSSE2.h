@@ -18,8 +18,10 @@ namespace SSE2 {
 
         using SimdType = xmmint;
 
-        static constexpr auto MaxInt = BASE_INT8_MAX;
+        static constexpr auto MaxInt    = BASE_INT8_MAX;
         static constexpr auto MaxUInt = BASE_UINT8_MAX;
+        
+        static constexpr auto StepSizeInBytes = 16;
 
         NumberTraits8Bit() noexcept = default;
 
@@ -148,6 +150,8 @@ namespace SSE2 {
         static constexpr auto MaxInt = BASE_INT16_MAX;
         static constexpr auto MaxUInt = BASE_UINT16_MAX;
 
+        static constexpr auto StepSizeInBytes = 16;
+
         NumberTraits16Bit() noexcept = default;
 
         NODISCARD static SimdType SignCorrection(
@@ -275,6 +279,7 @@ namespace SSE2 {
         static constexpr auto MaxInt = BASE_INT32_MAX;
         static constexpr auto MaxUInt = BASE_UINT32_MAX;
 
+        static constexpr auto StepSizeInBytes = 16;
 
         NumberTraits32Bit() noexcept = default;
 
@@ -398,6 +403,8 @@ namespace SSE2 {
 
         static constexpr auto MaxInt = BASE_INT64_MAX;
         static constexpr auto MaxUInt = BASE_UINT64_MAX;
+
+        static constexpr auto StepSizeInBytes = 16;
 
         NumberTraits64Bit() noexcept = default;
 

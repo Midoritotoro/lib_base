@@ -19,8 +19,8 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
     if (_Length <= 0)
         return;
 
-    if (_Length < 16) {
-        Scalar::GetMaximum((_Integer_*)_Start, (_Integer_*)_End, _Out);
+    if (_Length < _Traits_::StepSizeInBytes) {
+        Scalar::GetMaximum(_Start, _End, _Out);
         return;
     }
 
@@ -31,22 +31,20 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
     _Ty _Cur_max_val; // initialized in both of the branches below
 
     constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
-    const sizetype _Sse_byte_size = _Length & ~sizetype{ 0xF };
+    const sizetype _Byte_size = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
 
     const void* _Stop_at = _Start;
-    memory::AdvanceBytes(_Stop_at, _Sse_byte_size);
+    memory::AdvanceBytes(_Stop_at, _Byte_size);
 
     auto _Cur_vals = _Traits_::Load(_Start);
 
-    if constexpr (_Sign_correction) {
+    if constexpr (_Sign_correction)
         _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
-    }
 
-    auto _Cur_vals_min = _Cur_vals; // vector of vertical minimum values
     auto _Cur_vals_max = _Cur_vals; // vector of vertical maximum values
 
     for (;;) {
-        memory::AdvanceBytes(_Start, 16);
+        memory::AdvanceBytes(_Start, _Traits_::StepSizeInBytes);
 
         if (_Start != _Stop_at) {
             // This is the main part, finding vertical minimum/maximum
@@ -84,7 +82,6 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
     }
 
     *_Out = _Cur_max_val;
-    return;
 }
 
 template <
@@ -97,7 +94,73 @@ inline DECLARE_NOALIAS void __CDECL MinimumIntegerImplementation(
     const void* _End,
     _Integer_*  _Out)
 {
-    return;
+    const auto _Length = memory::ByteLength(_Start, _End);
+
+    if (_Length <= 0)
+        return;
+
+    if (_Length < 16) {
+        Scalar::GetMinimum(_Start, _End, _Out);
+        return;
+    }
+
+    using _Ty = std::conditional_t<_Sign_,
+        typename _Traits_::SignedType,
+        typename _Traits_::UnsignedType>;
+
+    _Ty _Cur_min_val; // initialized in both of the branches below
+
+    constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
+    const sizetype _Byte_size = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
+
+    const void* _Stop_at = _Start;
+    memory::AdvanceBytes(_Stop_at, _Byte_size);
+
+    auto _Cur_vals = _Traits_::Load(_Start);
+
+    if constexpr (_Sign_correction)
+        _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+
+    auto _Cur_vals_min = _Cur_vals; // vector of vertical minimum values
+
+    for (;;) {
+        memory::AdvanceBytes(_Start, _Traits_::StepSizeInBytes);
+
+        if (_Start != _Stop_at) {
+            _Cur_vals = _Traits_::Load(_Start);
+
+            if constexpr (_Sign_correction)
+                _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+
+            if constexpr (_Sign_ || _Sign_correction)
+                _Cur_vals_min = _Traits_::Minimum(_Cur_vals_min, _Cur_vals); // Update the current minimum
+            else
+                _Cur_vals_min = _Traits_::MinimumUnsigned(_Cur_vals_min, _Cur_vals); // Update the current minimum
+        }
+        else {
+            // Reached end. Compute horizontal min and/or max.
+
+            if constexpr (_Sign_ || _Sign_correction) {
+                const auto _H_min =
+                    _Traits_::HorizontalMinimum(_Cur_vals_min); // Vector populated by the smallest element
+                _Cur_min_val = _Traits_::GetAny(_H_min); // Get any element of it
+            }
+            else {
+                const auto _H_min =
+                    _Traits_::HorizontalMinimumUnsigned(_Cur_vals_min); // Vector populated by the smallest element
+                _Cur_min_val = _Traits_::GetAny(_H_min); // Get any element of it
+            }
+
+            if constexpr (_Sign_correction) {
+                constexpr _Ty _Correction = _Ty{ 1 } << (sizeof(_Ty) * 8 - 1);
+                _Cur_min_val += _Correction;
+            }
+
+            break;
+        }
+    }
+
+    *_Out = _Cur_min_val;
 }
 
 // -------------------------------------------------
@@ -205,13 +268,13 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
     const void* _End,
     int32*      _Out)
 {
-   /* if (ProcessorFeatures::AVX512F())
+    if (ProcessorFeatures::AVX512F())
         return MaximumIntegerImplementation<
             AVX512::NumberTraits32Bit, true>(_Start, _End, _Out);
     else if (ProcessorFeatures::AVX())
         return MaximumIntegerImplementation<
             AVX::NumberTraits32Bit, true>(_Start, _End, _Out);
-    else */if (ProcessorFeatures::SSE2())
+    else if (ProcessorFeatures::SSE2())
         return MaximumIntegerImplementation<
             SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
 }
