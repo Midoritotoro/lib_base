@@ -190,6 +190,22 @@ public:
 		return _AllocatorStrategy_::MemoryDuplicate(
 			pointer, size);
 	}
+
+	template <class... _Types_>
+	static inline
+	CONSTEXPR_CXX20 void 
+	Construct(
+		value_type* const _Ptr,
+		_Types_&&... _Args)
+	{
+#if BASE_HAS_CXX20
+		memory::ConstructAt(_Ptr, std::forward<_Types_>(_Args)...);
+#else
+		::new (const_cast<void*>(static_cast<
+			const volatile void*>(_Ptr))) 
+				_Objty(_STD forward<_Types>(_Args)...);
+#endif
+	}
 	
 	// STL
 	inline CONSTEXPR_CXX20 void deallocate(
@@ -206,6 +222,16 @@ public:
 	{
 		static_assert(sizeof(value_type) > 0, "value_type must be complete before calling allocate.");
 		return Allocate(bytes);
+	}
+	
+	template <class... _Types_>
+	static inline
+	CONSTEXPR_CXX20 void
+	construct(
+		value_type* const _Ptr,
+		_Types_&&... _Args)
+	{
+		return Construct(_Ptr, std::forward<_Types_>(_Args)...)
 	}
 };
 

@@ -14,7 +14,6 @@ struct _One_then_variadic_args_ {
     explicit _One_then_variadic_args_() = default;
 }; // tag type for constructing first from one arg, constructing second from remaining args
 
-
 template <
     class _Type1_,
     class _Type2_, 
@@ -138,7 +137,5 @@ public:
         std::swap(_secondValue, other._secondValue);
     }
 };
-
-
 
 __BASE_CONTAINER_NAMESPACE_END

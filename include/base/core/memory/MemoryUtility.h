@@ -290,13 +290,13 @@ inline NODISCARD bool MemoryFill(
 
 template <class _Iterator_>
 inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
-    _Iterator_ first,
-    _Iterator_ last)
+    _Iterator_ _First,
+    _Iterator_ _Last)
 {
-    const auto firstAdress  = CheckedToConstChar(first);
-    const auto lastAdress   = CheckedToConstChar(last);
+    const auto _FirstAdress = CheckedToConstChar(_First);
+    const auto _LastAdress  = CheckedToConstChar(_Last);
 
-    const auto _Size        = static_cast<sizetype>(lastAdress - firstAdress);
+    const auto _Size        = static_cast<sizetype>(_LastAdress - _FirstAdress);
     return _Size;
 }
 
@@ -305,18 +305,18 @@ template <
     class _InputIterator_,
     class _OutIterator_>
 inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
-    _InputIterator_ first,
-    sizetype        size,
-    _OutIterator_   destination)
+    _InputIterator_ _First,
+    sizetype        _Size,
+    _OutIterator_   _Destination)
 {
-    const auto destinationAdress = CheckedToChar(destination);
-    const auto firstAdress       = CheckedToConstChar(first);
+    const auto _DestinationAdress   = CheckedToChar(_Destination);
+    const auto _FirstAdress         = CheckedToConstChar(_First);
 
-    const auto _Dest             = memmove(destinationAdress, 
-        firstAdress, size);
-    const auto success           = (_Dest == destinationAdress);
+    const auto _Dest                = memmove(_DestinationAdress,
+        _FirstAdress, _Size);
+    const auto _Success             = (_Dest == _DestinationAdress);
 
-    return success;
+    return _Success;
 }
 
 template <
@@ -325,7 +325,7 @@ template <
 inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     _InputIterator_ _First,
     _InputIterator_ _Last,
-    _OutIterator_   _Destination)
+    _OutIterator_   _Destination) noexcept
 {
     const auto _DestinationAdress   = CheckedToChar(_Destination);
         
@@ -337,6 +337,20 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
 
     const auto _Success             = (_Dest = destinationAdress);
     return _Success;
+}
+
+template <class _InputIterator_>
+inline NODISCARD CONSTEXPR_CXX20 bool DestroyRange(
+    _InputIterator_ _First,
+    _InputIterator_ _Last) noexcept
+{
+    const auto _FirstAdress = CheckedToChar(_First);
+    const auto _LastAdress  = CheckedToChar(_Last);
+
+    const auto _Length = static_cast<sizetype>(_LastAdress - _FirstAdress);
+    for (sizetype i = 0; i < _Length; ++i) {
+
+    }
 }
 
 template <

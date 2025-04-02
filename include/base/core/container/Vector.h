@@ -185,6 +185,7 @@ public:
 	}
 
 	constexpr inline NODISCARD Reference at(const SizeType offset) noexcept {
+#ifdef _DEBUG
 		const auto pairValue	= _pair.second();
 		const auto _Current		= pairValue._current;
 
@@ -195,6 +196,7 @@ public:
 			&& _Current + offset < _End);
 
 		DebugAssertLog(!isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ");
+#endif
 		return (*this)[offset];
 	}
 
@@ -339,37 +341,59 @@ public:
 	}
 
 	inline NODISCARD SizeType find(ConstReference element) const noexcept {
-		return 0;
+		for (SizeType i = 0; i < size(); ++i)
+			if (at(i) == element)
+				return i;
+
+		return -1;
 	}
 
-	inline NODISCARD Vector<size_type> 
+	inline NODISCARD Vector<SizeType>
 		findAll(ConstReference element) const noexcept
 	{
-		return {};
+		Vector<SizeType> result = { -1 };
+
+		for (SizeType i = 0; i < size(); ++i)
+			if (at(i) == element)
+				result.push_back(i);
+
+		return result;
 	}
 	
-	inline NODISCARD size_type
+	inline NODISCARD SizeType
 		findLastOf(ConstReference element) const noexcept
 	{
-		return 0;
+		for (SizeType i = size() - 1; i >= 0; --i)
+			if (at(i) == element)
+				return i;
+
+		return -1;
 	}
 
-	inline NODISCARD size_type 
-		findFirstOf(const_reference element) const noexcept
+	inline NODISCARD SizeType
+		findFirstOf(ConstReference element) const noexcept
 	{
-		return 0;
+		return find(element);
 	}
 
-	inline NODISCARD size_type
-		findLastNotOf(const_reference element) const noexcept
+	inline NODISCARD SizeType
+		findLastNotOf(ConstReference element) const noexcept
 	{
-		return 0;
+		for (SizeType i = size() - 1; i >= 0; --i)
+			if (at(i) != element)
+				return i;
+
+		return -1;
 	}
 	
-	inline NODISCARD size_type 
-		findFirstNotOf(const_reference element) const noexcept
+	inline NODISCARD SizeType
+		findFirstNotOf(ConstReference element) const noexcept
 	{
-		return 0;
+		for (SizeType i = 0; i < size(); ++i)
+			if (at(i) != element)
+				return i;
+
+		return -1;
 	}
 
 	inline void clear() {
@@ -398,74 +422,63 @@ public:
 		return success;
 	}
 
-    inline NODISCARD size_type indexOf(
-		const_reference element,
-		size_type from = 0) const noexcept
+    inline NODISCARD SizeType indexOf(
+		ConstReference element,
+		SizeType from = 0) const noexcept
 	{
-		const auto pairValue = _pair.second();
-
-		for (size_type i = from; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-
-			if ((*adress) == element)
+		for (SizeType i = from; i < size(); ++i)
+			if (at(i) == element)
 				return i;
-		}
 
 		return -1;
 	}
 
-	inline NODISCARD size_type lastIndexOf(
-		const_reference element,
-		size_type from = 0) const noexcept
+	inline NODISCARD SizeType lastIndexOf(
+		ConstReference element,
+		SizeType from = 0) const noexcept
 	{
-		
+		for (SizeType i = size() - 1; i >= from; --i)
+			if (at(i) == element)
+				return i;
+
+		return -1;
 	}
 
 	inline NODISCARD bool contains(
-		const_reference element,
-		size_type from = 0) const noexcept
+		ConstReference element,
+		SizeType from = 0) const noexcept
 	{
-		const auto pairValue = _pair.second();
-
-		for (size_type i = from; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-
-			if ((*adress) == element)
+		for (SizeType i = from; i < size(); ++i)
+			if (at(i) == element)
 				return true;
-		}
 
 		return false;
 	}
 
 	inline NODISCARD bool contains(
 		const Vector& subVector,
-		size_type from = 0) const noexcept
+		SizeType from = 0) const noexcept
 	{
-		size_type overlaps = 0;
-
+		SizeType overlaps = 0;
 		const auto subVectorSize = subVector.size();
-		const auto pairValue = _pair.second();
 
-		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-
-			if ((*adress) == subVector[i % subVectorSize] && (++overlaps == subVectorSize))
+		for (SizeType i = from; i < size(); ++i)
+			if (at(i) == subVector[i % subVectorSize] && (++overlaps == subVectorSize))
 				return true;
-		}
 
 		return false;
 	}
 	
-	inline NODISCARD size_type count(
-		const_reference element) const noexcept
+	inline NODISCARD SizeType count(
+		ConstReference element) const noexcept
 	{
-		size_type _Count = 0;
-		const auto pairValue = _pair.second();
+		SizeType _Count = 0;
 
-		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-			_Count += ((*adress) == element);
-		}
+		for (SizeType i = 0; i < size(); ++i)
+			if (at(i) == element)
+				++_Count;
+
+		return _Count;
 	}
 	
 	inline NODISCARD size_type count(
@@ -475,27 +488,19 @@ public:
 		size_type overlaps = 0;
 
 		const auto subVectorSize = subVector.size();
-		const auto pairValue = _pair.second();
 
-		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-
-			((*adress) == subVector[i % subVectorSize] 
+		for (size_type i = 0; i < size(); ++i)
+			(at(i) == subVector[i % subVectorSize]
 				&& (++overlaps == subVectorSize))
 					? ++_Count
 					: overlaps = 0;
-		}
 		
 		return _Count;
 	}
 	
 	inline void fill(const_reference _Fill) noexcept {
-		const auto pairValue = _pair.second();
-
-		for (size_type i = 0; i < size(); ++i) {
-			const auto adress = (pairValue._start + i);
-			*adress = _Fill;
-		}
+		for (SizeType i = 0; i < capacity(); ++i)
+			insert(i, _Fill);
 	}
 
 	inline NODISCARD bool resize(const SizeType _Capacity) {
@@ -510,7 +515,7 @@ public:
 		if (UNLIKELY(memory == nullptr))
 			return false;
 
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 
 		const auto blockStart	= memory;
 		const auto blockEnd		= memory + _Capacity;
