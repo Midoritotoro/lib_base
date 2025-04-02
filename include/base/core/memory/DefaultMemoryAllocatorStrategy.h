@@ -49,11 +49,13 @@ public:
 #  ifdef CPP_CLANG
 #    if BASE_HAS_CXX20
 		if (is_constant_evaluated())
-			return reinterpret_cast<value_type*>(::operator new(bytes));
+			return reinterpret_cast<value_type*>(
+				::operator new(bytes));
 		else
 #    endif
 #  endif
-			return reinterpret_cast<value_type*>(::operator new(bytes, std::align_val_t{ alignment }));
+			return reinterpret_cast<value_type*>(
+				::operator new(bytes, std::align_val_t{ alignment }));
 	}
 #else 
 	static NODISCARD_RETURN_RAW_PTR

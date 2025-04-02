@@ -192,18 +192,18 @@ public:
 	}
 
 	template <class... _Types_>
-	static inline
+	inline
 	CONSTEXPR_CXX20 void 
 	Construct(
 		value_type* const _Ptr,
 		_Types_&&... _Args)
 	{
 #if BASE_HAS_CXX20
-		memory::ConstructAt(_Ptr, std::forward<_Types_>(_Args)...);
+		std::construct_at(_Ptr, std::forward<_Types_>(_Args)...);
 #else
 		::new (const_cast<void*>(static_cast<
 			const volatile void*>(_Ptr))) 
-				_Objty(_STD forward<_Types>(_Args)...);
+				value_type(std::forward<_Types_>(_Args)...);
 #endif
 	}
 	
@@ -231,7 +231,7 @@ public:
 		value_type* const _Ptr,
 		_Types_&&... _Args)
 	{
-		return Construct(_Ptr, std::forward<_Types_>(_Args)...)
+		return Construct(_Ptr, std::forward<_Types_>(_Args)...);
 	}
 };
 

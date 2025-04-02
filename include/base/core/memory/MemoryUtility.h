@@ -253,29 +253,6 @@ inline NODISCARD bool MemoryCopy(
     return _Success;
 }
 
-
-#if BASE_HAS_CXX20
-	template <
-		class _Ty,
-		class... _Types>
-			requires requires(
-			_Ty* _Location,
-			_Types&&... _Args)
-	{
-		::new (static_cast<void*>(_Location))
-			_Ty(std::forward<_Types>(_Args)...);
-	}
-	constexpr _Ty* ConstructAt(
-		_Ty* const _Location,
-		_Types&&... _Args) noexcept(
-			noexcept(::new(static_cast<void*>(_Location))
-				_Ty(std::forward<_Types>(_Args)...)))
-	{
-		return ::new (static_cast<void*>(_Location))
-			_Ty(std::forward<_Types>(_Args)...);
-	}
-#endif // BASE_HAS_CXX20
-
 inline NODISCARD bool MemoryFill(
     void*       _Destination,
     const int   _Value,
@@ -335,22 +312,8 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     const auto _Size                = static_cast<sizetype>(_LastAdress - _FirstAdress);
     const auto _Dest                = memmove(_DestinationAdress, _FirstAdress, _Size);
 
-    const auto _Success             = (_Dest = destinationAdress);
+    const auto _Success             = (_Dest = _DestinationAdress);
     return _Success;
-}
-
-template <class _InputIterator_>
-inline NODISCARD CONSTEXPR_CXX20 bool DestroyRange(
-    _InputIterator_ _First,
-    _InputIterator_ _Last) noexcept
-{
-    const auto _FirstAdress = CheckedToChar(_First);
-    const auto _LastAdress  = CheckedToChar(_Last);
-
-    const auto _Length = static_cast<sizetype>(_LastAdress - _FirstAdress);
-    for (sizetype i = 0; i < _Length; ++i) {
-
-    }
 }
 
 template <
@@ -443,5 +406,43 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     };
 }
 
+//#if BASE_HAS_CXX20
+//	template <
+//		class _Ty,
+//		class... _Types>
+//			requires requires(
+//			_Ty* _Location,
+//			_Types&&... _Args)
+//	{
+//		::new (static_cast<void*>(_Location))
+//			_Ty(std::forward<_Types>(_Args)...);
+//	}
+//	constexpr _Ty* ConstructAt(
+//		_Ty* const _Location,
+//		_Types&&... _Args) noexcept(
+//			noexcept(::new(static_cast<void*>(_Location))
+//				_Ty(std::forward<_Types>(_Args)...)))
+//	{
+//		return ::new (static_cast<void*>(_Location))
+//			_Ty(std::forward<_Types>(_Args)...);
+//	}
+//#endif
+//
+//template <
+//    class _Type_, 
+//    class... _Types_>
+//CONSTEXPR_CXX20 void ConstructInPlace(
+//    _Type_& _Obj, 
+//    _Types_&&... _Args) noexcept(
+//        std::is_nothrow_constructible_v<_Type_, _Types_...>) 
+//{
+//#if BASE_HAS_CXX20
+//    if (std::is_constant_evaluated())
+//        ConstructAt(AdressOf(_Obj), std::forward<_Types_>(_Args)...);
+//    else
+//#endif
+//        ::new (static_cast<void*>(AdressOf(_Obj))) 
+//            _Type_(std::forward<_Types_>(_Args)...);
+//}
 
 __BASE_MEMORY_NAMESPACE_END

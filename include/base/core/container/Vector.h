@@ -116,14 +116,18 @@ public:
 #endif
 			;
 
-    constexpr Vector() noexcept
+    constexpr Vector() noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{};
 
-    constexpr ~Vector() noexcept = default;
+	constexpr ~Vector() noexcept {
 
-    CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept
+	}
+
+    CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
-		const auto pairValue		= _pair.second();
+		const auto pairValue		= _pair._secondValue;
 
 		const auto _Capacity		= capacity();
 		const auto _UnusedCapacity	= unusedCapacity();
@@ -131,15 +135,16 @@ public:
 		const auto elementsSize		= elements.size();
 
 		if (_UnusedCapacity < elementsSize)
-			TryResize(_Capacity + std::max(elementsSize, _Buffer_For_Resizing_Length));
+			TryResize(_Capacity + std::max(static_cast<sizetype>(elementsSize), _Buffer_For_Resizing_Length));
 
 		for (SizeType i = 0; i < elementsSize; ++i) {
-			const auto adress = (pairValue._start + i);
-			*adress = (elements[i]);
+			auto adress = (elements.begin() + i);
+			push_back(*adress);
 		}
     }
 
-	CONSTEXPR_CXX20 inline Vector(const Vector& other)
+	CONSTEXPR_CXX20 inline Vector(const Vector& other) noexcept:
+		_pair(other._pair)
 	{
 		const auto _Capacity = other.capacity();
 		auto& _Start		 = _pair.second()._start;
@@ -150,7 +155,8 @@ public:
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
-	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector)
+	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector) noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
 		const auto _Capacity = vector.capacity();
 		auto& _Start		 = _pair.second()._start;
@@ -161,32 +167,35 @@ public:
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
     }
 
-	CONSTEXPR_CXX20 inline Vector(const SizeType capacity)
+	CONSTEXPR_CXX20 inline Vector(const SizeType capacity) noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
 		TryResize(capacity);
     }
 
 	CONSTEXPR_CXX20 inline Vector(
-        const SizeType _Capacity,
-        const ValueType& _Fill)
+		const SizeType _Capacity,
+		const ValueType& _Fill) noexcept:
+			_pair(_Zero_then_variadic_args_{}, VectorValueType())
     {
 		TryResize(_Capacity);
 		fill(_Fill);
     }
     
-	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept
+	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
 
     }
 
 	constexpr inline Reference operator[](const SizeType offset) noexcept {
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 		return *(pairValue._current + offset);
 	}
 
 	constexpr inline NODISCARD Reference at(const SizeType offset) noexcept {
 #ifdef _DEBUG
-		const auto pairValue	= _pair.second();
+		const auto pairValue	= _pair._secondValue;
 		const auto _Current		= pairValue._current;
 
 		const auto _Start		= pairValue._start;
@@ -209,12 +218,12 @@ public:
 	}
 
 	constexpr inline NODISCARD SizeType length() const noexcept {
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 		return static_cast<SizeType>(pairValue._current - pairValue._start);
 	}
 
 	constexpr inline NODISCARD SizeType capacity() const noexcept {
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 		return static_cast<SizeType>(pairValue._end - pairValue._start);
 	}
 
@@ -227,17 +236,17 @@ public:
 	}
 
 	constexpr inline NODISCARD Pointer data() noexcept {
-		auto& pairValue = _pair.second();
+		auto& pairValue = _pair._secondValue;
 		return pairValue._start;
 	}
 
 	constexpr inline NODISCARD ConstPointer data() const noexcept {
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 		return pairValue._start;
 	}
 
 	constexpr inline NODISCARD ConstPointer constData() const noexcept {
-		const auto pairValue = _pair.second();
+		const auto pairValue = _pair._secondValue;
 		return pairValue._start;
 	}
 
@@ -328,6 +337,11 @@ public:
 	CONSTEXPR_CXX20 inline void append(const ValueType& element) {
 
     }
+
+	template <class ... Args> 
+	CONSTEXPR_CXX20 inline void emplace_back(Args&&... args) noexcept {
+		
+	}
    	
 	CONSTEXPR_CXX20 inline NODISCARD ValueType pop() noexcept {
 		const auto value = back();
@@ -540,7 +554,31 @@ public:
 	inline void prepend(const_reference element) noexcept {
 
 	}
+
+	constexpr inline NODISCARD sizetype max_size() const noexcept {
+		return static_cast<std::size_t>(-1) / sizeof(ValueType) 
+			- sizeof(CompressedPair<allocator_type, VectorValueType>);
+	}
+
+	constexpr inline NODISCARD sizetype maxSize() const noexcept {
+		return max_size();
+	}
 private:
+	constexpr inline NODISCARD SizeType CalculateGrowth(SizeType newSize) {
+		const auto oldCapacity	= capacity();
+		const auto _MaxSize		= maxSize();
+
+		if (oldCapacity > _MaxSize - oldCapacity / 2)
+			return _MaxSize; // Overflow
+
+		const SizeType geometricGrowth = oldCapacity + oldCapacity / 2;
+
+		if (geometricGrowth < newSize)
+			return newSize;
+
+		return geometricGrowth;
+	}
+
 	inline void TryResize(sizetype newCapacity) {
 		const auto isEnoughMemory = resize(newCapacity);
 
@@ -552,8 +590,7 @@ private:
 		sizetype offset, 
 		ValueType* value)
 	{
-		const auto pairValue = _pair.second();
-		const auto adressForOffset = (pairValue._start + offset);
+		
 		
 	}
 
