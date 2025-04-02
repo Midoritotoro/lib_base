@@ -28,60 +28,59 @@ inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
         typename _Traits_::SignedType,
         typename _Traits_::UnsignedType>;
 
-    _Ty _Cur_max_val; // initialized in both of the branches below
+    _Ty _MaximumValue;
 
-    constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
-    const sizetype _Byte_size = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
+    constexpr bool _SignCorrection = sizeof(_Ty) == 8 && !_Sign_;
+    const sizetype _ByteSize = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
 
-    const void* _Stop_at = _Start;
-    memory::AdvanceBytes(_Stop_at, _Byte_size);
+    const void* _StopAt = _Start;
+    memory::AdvanceBytes(_StopAt, _ByteSize);
 
-    auto _Cur_vals = _Traits_::Load(_Start);
+    auto _CurrentValues = _Traits_::Load(_Start);
 
-    if constexpr (_Sign_correction)
-        _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+    if constexpr (_SignCorrection)
+        _CurrentValues = _Traits_::SignCorrection(_CurrentValues, false);
 
-    auto _Cur_vals_max = _Cur_vals; // vector of vertical maximum values
+    auto _CurrentMaximumValues = _CurrentValues;
 
     for (;;) {
         memory::AdvanceBytes(_Start, _Traits_::StepSizeInBytes);
 
-        if (_Start != _Stop_at) {
-            // This is the main part, finding vertical minimum/maximum
+        if (_Start != _StopAt) {
+            _CurrentValues = _Traits_::Load(_Start);
 
-            _Cur_vals = _Traits_::Load(_Start);
-
-            if constexpr (_Sign_correction)
-                _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+            if constexpr (_SignCorrection)
+                _CurrentValues = _Traits_::SignCorrection(_CurrentValues, false);
             
-            if constexpr (_Sign_ || _Sign_correction) 
-                _Cur_vals_max = _Traits_::Maximum(_Cur_vals_max, _Cur_vals); // Update the current maximum
+            if constexpr (_Sign_ || _SignCorrection)
+                _CurrentMaximumValues = _Traits_::Maximum(_CurrentMaximumValues, _CurrentValues);
             else
-                _Cur_vals_max = _Traits_::MaximumUnsigned(_Cur_vals_max, _Cur_vals); // Update the current maximum
+                _CurrentMaximumValues = _Traits_::MaximumUnsigned(_CurrentMaximumValues, _CurrentValues);
         }
         else {
-            // Reached end. Compute horizontal min and/or max.
-            if constexpr (_Sign_ || _Sign_correction) {
-                const auto _H_max =
-                    _Traits_::HorizontalMaximum(_Cur_vals_max); // Vector populated by the largest element
-                _Cur_max_val = _Traits_::GetAny(_H_max); // Get any element of it
+            // Конец
+
+            if constexpr (_Sign_ || _SignCorrection) {
+                const auto _HorizontalMaximum =
+                    _Traits_::HorizontalMaximum(_CurrentMaximumValues); // Отсортированный вектор с максимальным элементом на первой позиции
+                _MaximumValue = _Traits_::GetAny(_HorizontalMaximum);
             }
             else {
-                const auto _H_max =
-                    _Traits_::HorizontalMaximumUnsigned(_Cur_vals_max); // Vector populated by the largest element
-                _Cur_max_val = _Traits_::GetAny(_H_max); // Get any element of it
+                const auto _HorizontalMaximum =
+                    _Traits_::HorizontalMaximumUnsigned(_CurrentMaximumValues); // Отсортированный вектор с максимальным элементом на первой позиции
+                _MaximumValue = _Traits_::GetAny(_HorizontalMaximum);
             }
 
-            if constexpr (_Sign_correction) {
+            if constexpr (_SignCorrection) {
                 constexpr _Ty _Correction = _Ty{ 1 } << (sizeof(_Ty) * 8 - 1);
-                _Cur_max_val += _Correction;
+                _MaximumValue += _Correction;
             }
 
             break;
         }
     }
 
-    *_Out = _Cur_max_val;
+    *_Out = _MaximumValue;
 }
 
 template <
@@ -108,59 +107,58 @@ inline DECLARE_NOALIAS void __CDECL MinimumIntegerImplementation(
         typename _Traits_::SignedType,
         typename _Traits_::UnsignedType>;
 
-    _Ty _Cur_min_val; // initialized in both of the branches below
+    _Ty _MinimumValue;
 
-    constexpr bool _Sign_correction = sizeof(_Ty) == 8 && !_Sign_;
-    const sizetype _Byte_size = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
+    constexpr bool _SignCorrection = sizeof(_Ty) == 8 && !_Sign_;
+    const sizetype _ByteSize = _Length & ~sizetype{ _Traits_::StepSizeInBytes - 1 };
 
-    const void* _Stop_at = _Start;
-    memory::AdvanceBytes(_Stop_at, _Byte_size);
+    const void* _StopAt = _Start;
+    memory::AdvanceBytes(_StopAt, _ByteSize);
 
-    auto _Cur_vals = _Traits_::Load(_Start);
+    auto _CurrentValues = _Traits_::Load(_Start);
 
-    if constexpr (_Sign_correction)
-        _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+    if constexpr (_SignCorrection)
+        _CurrentValues = _Traits_::SignCorrection(_CurrentValues, false);
 
-    auto _Cur_vals_min = _Cur_vals; // vector of vertical minimum values
+    auto _CurrentMinimumValues = _CurrentValues;
 
     for (;;) {
         memory::AdvanceBytes(_Start, _Traits_::StepSizeInBytes);
 
-        if (_Start != _Stop_at) {
-            _Cur_vals = _Traits_::Load(_Start);
+        if (_Start != _StopAt) {
+            _CurrentValues = _Traits_::Load(_Start);
 
-            if constexpr (_Sign_correction)
-                _Cur_vals = _Traits_::SignCorrection(_Cur_vals, false);
+            if constexpr (_SignCorrection)
+                _CurrentValues = _Traits_::SignCorrection(_CurrentValues, false);
 
-            if constexpr (_Sign_ || _Sign_correction)
-                _Cur_vals_min = _Traits_::Minimum(_Cur_vals_min, _Cur_vals); // Update the current minimum
+            if constexpr (_Sign_ || _SignCorrection)
+                _CurrentMinimumValues = _Traits_::Minimum(_CurrentMinimumValues, _CurrentValues);
             else
-                _Cur_vals_min = _Traits_::MinimumUnsigned(_Cur_vals_min, _Cur_vals); // Update the current minimum
+                _CurrentMinimumValues = _Traits_::MinimumUnsigned(_CurrentMinimumValues, _CurrentValues);
         }
         else {
-            // Reached end. Compute horizontal min and/or max.
-
-            if constexpr (_Sign_ || _Sign_correction) {
-                const auto _H_min =
-                    _Traits_::HorizontalMinimum(_Cur_vals_min); // Vector populated by the smallest element
-                _Cur_min_val = _Traits_::GetAny(_H_min); // Get any element of it
+            // Конец
+            if constexpr (_Sign_ || _SignCorrection) {
+                const auto _HorizontalMinimum =
+                    _Traits_::HorizontalMinimum(_CurrentMinimumValues); // Отсортированный вектор с минимальным элементом на первой позиции
+                _MinimumValue = _Traits_::GetAny(_HorizontalMinimum);
             }
             else {
-                const auto _H_min =
-                    _Traits_::HorizontalMinimumUnsigned(_Cur_vals_min); // Vector populated by the smallest element
-                _Cur_min_val = _Traits_::GetAny(_H_min); // Get any element of it
+                const auto _HorizontalMinimum =
+                    _Traits_::HorizontalMinimumUnsigned(_CurrentMinimumValues); // Отсортированный вектор с минимальным элементом на первой позиции
+                _MinimumValue = _Traits_::GetAny(_HorizontalMinimum);
             }
 
-            if constexpr (_Sign_correction) {
+            if constexpr (_SignCorrection) {
                 constexpr _Ty _Correction = _Ty{ 1 } << (sizeof(_Ty) * 8 - 1);
-                _Cur_min_val += _Correction;
+                _MinimumValue += _Correction;
             }
 
             break;
         }
     }
 
-    *_Out = _Cur_min_val;
+    *_Out = _MinimumValue;
 }
 
 // -------------------------------------------------

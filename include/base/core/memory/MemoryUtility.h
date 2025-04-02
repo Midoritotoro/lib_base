@@ -253,6 +253,29 @@ inline NODISCARD bool MemoryCopy(
     return _Success;
 }
 
+
+#if BASE_HAS_CXX20
+	template <
+		class _Ty,
+		class... _Types>
+			requires requires(
+			_Ty* _Location,
+			_Types&&... _Args)
+	{
+		::new (static_cast<void*>(_Location))
+			_Ty(std::forward<_Types>(_Args)...);
+	}
+	constexpr _Ty* ConstructAt(
+		_Ty* const _Location,
+		_Types&&... _Args) noexcept(
+			noexcept(::new(static_cast<void*>(_Location))
+				_Ty(std::forward<_Types>(_Args)...)))
+	{
+		return ::new (static_cast<void*>(_Location))
+			_Ty(std::forward<_Types>(_Args)...);
+	}
+#endif // BASE_HAS_CXX20
+
 inline NODISCARD bool MemoryFill(
     void*       _Destination,
     const int   _Value,
@@ -300,20 +323,20 @@ template <
     class _InputIterator_,
     class _OutIterator_> 
 inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
-    _InputIterator_ first,
-    _InputIterator_ last,
-    _OutIterator_   destination)
+    _InputIterator_ _First,
+    _InputIterator_ _Last,
+    _OutIterator_   _Destination)
 {
-    const auto destinationAdress = CheckedToChar(destination);
+    const auto _DestinationAdress   = CheckedToChar(_Destination);
         
-    const auto firstAdress       = CheckedToConstChar(first);
-    const auto lastAdress        = CheckedToConstChar(last);
+    const auto _FirstAdress         = CheckedToConstChar(_First);
+    const auto _LastAdress          = CheckedToConstChar(_Last);
 
-    const auto _Size             = static_cast<sizetype>(last - first);
-    const auto _Dest             = memmove(destinationAdress, firstAdress, _Size);
+    const auto _Size                = static_cast<sizetype>(_LastAdress - _FirstAdress);
+    const auto _Dest                = memmove(_DestinationAdress, _FirstAdress, _Size);
 
-    const auto success           = (_Dest = destinationAdress);
-    return success;
+    const auto _Success             = (_Dest = destinationAdress);
+    return _Success;
 }
 
 template <
@@ -321,9 +344,11 @@ template <
     class _SecondIterator_>
 struct CopyResult {
     CopyResult() noexcept = default;
-    CopyResult(_FirstIterator_ _First, _SecondIterator_ _Second) noexcept:
-        first(_First),
-        second(_Second)
+    CopyResult(
+        _FirstIterator_ _First, 
+        _SecondIterator_ _Second) noexcept:
+            first(_First),
+            second(_Second)
     {}
 
     _FirstIterator_     first  = {};

@@ -14,14 +14,6 @@
 
 using namespace base;
 
-
-
-struct test {
-	int value = 0;
-	float f = 0.f;
-	double val = 0.f;
-} __declspec(align(16));
-
 void fmax(int32* s, int32* e, int32* o) {
 	sizetype l = e - s;
 	int32 t = *s;
@@ -32,7 +24,7 @@ void fmax(int32* s, int32* e, int32* o) {
 }
 
 int main(int argc, char* argv[]) {
-	std::vector<int32> _vec = {
+	container::Vector<int32> _vec = {
 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 		-16, -15, -14, -13, -12, -123, 24, 8, 124, 128, 2357, 12, 99, 55, 1299, -1294,
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
@@ -41,11 +33,8 @@ int main(int argc, char* argv[]) {
 	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
 
 	int32 max = 0;
-	{
-		measureExecutionTime_0()
-		for (int i = 0; i < 10000000; ++i)
-			MaximumElement32Bit(_vec.data(), _vec.data() + _vec.size(), &max);
-	}
+	fmax(_vec.data(), _vec.data() + _vec.size(), &max);
+	
 	std::cout << "max: " << max;
 
 //	QApplication application(argc, argv);
