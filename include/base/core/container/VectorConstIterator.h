@@ -85,7 +85,7 @@ public:
 	}
 
 	CONSTEXPR_CXX20 VectorConstIterator& operator+=(const size_type _Off) noexcept {
-		DebugAssertLog(checkOffset(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
+		DebugAssertLog(checkOffsetExclusive(_Off), "base::string::StringIterator::operator+=(sizetype): Индекс вне диапазона. ");
 
 		_currentElement += _Off;
 		return *this;

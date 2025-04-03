@@ -406,6 +406,38 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     };
 }
 
+template <
+    class _InputIterator_,
+    class _OutIterator_>
+NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
+    _InputIterator_ inputFirst,
+    _OutIterator_   outFirst,
+    const sizetype  countBytes) noexcept
+{
+    const auto inputFirstChar = CheckedToChar(inputFirst);
+    const auto outFirstChar = CheckedToChar(outFirst);
+
+    if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
+        return {};
+
+    if constexpr (std::is_pointer_v<_InputIterator_>)
+        inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
+    else
+        inputFirst += static_cast<std::iter_difference_t<_InputIterator_>>(
+            countBytes / sizeof(std::iter_value_t<_InputIterator_>));
+
+    if constexpr (std::is_pointer_v<_OutIterator_>)
+        outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
+    else
+        outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(
+            countBytes / sizeof(std::iter_value_t<_OutIterator_>));
+
+    return {
+        std::move(inputFirst),
+        std::move(outFirst)
+    };
+}
+
 //#if BASE_HAS_CXX20
 //	template <
 //		class _Ty,
@@ -444,5 +476,42 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
 //        ::new (static_cast<void*>(AdressOf(_Obj))) 
 //            _Type_(std::forward<_Types_>(_Args)...);
 //}
+
+template <class _Ty>
+_CONSTEXPR20 void DestroyInPlace(_Ty& _Obj) noexcept;
+
+template <class _Alloc>
+_CONSTEXPR20 void DestroyRange(
+    typename _Alloc::pointer _First,
+    const typename _Alloc::pointer _Last, 
+    _Alloc& _Al) noexcept 
+{
+    using _Ty = typename _Alloc::value_type;
+
+    if constexpr (!std::conjunction_v<std::is_trivially_destructible<_Ty>, std::_Uses_default_destroy<_Alloc, _Ty*>>)
+        for (; _First != _Last; ++_First)
+            _Al.destroy(UnFancy(_First));
+}
+
+template <
+    class _NoThrowFwdIt,
+    class _NoThrowSentinel>
+_CONSTEXPR20 void DestroyRange(
+    _NoThrowFwdIt _First, 
+    const _NoThrowSentinel _Last) noexcept 
+{
+    if constexpr (!std::is_trivially_destructible_v<std::_Iter_value_t<_NoThrowFwdIt>>)
+        for (; _First != _Last; ++_First)
+            DestroyInPlace(*_First);
+}
+
+template <class _Ty>
+_CONSTEXPR20 void DestroyInPlace(_Ty& _Obj) noexcept {
+    if constexpr (std::is_array_v<_Ty>)
+        DestroyRange(_Obj, _Obj + std::extent_v<_Ty>);
+    else
+        _Obj.~_Ty();
+}
+
 
 __BASE_MEMORY_NAMESPACE_END
