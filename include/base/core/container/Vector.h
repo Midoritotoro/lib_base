@@ -117,38 +117,50 @@ public:
 	{};
 
 	constexpr ~Vector() noexcept {
-		FreeAll();
+		FreeAllElements();
 	}
 
 	CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
-		const auto pairValue = _pair._secondValue;
+		const auto _Capacity		= capacity();
+		const auto _UnusedCapacity	= unusedCapacity();
 
-		const auto _Capacity = capacity();
-		const auto _UnusedCapacity = unusedCapacity();
+		const auto elementsSize		= elements.size();
 
-		const auto elementsSize = elements.size();
+		using _SizeType_			= typename std::initializer_list<ValueType>::size_type;
 
-		if (_UnusedCapacity < elementsSize)
-			TryResize(_Capacity + elementsSize);
+		if (_UnusedCapacity < elementsSize) {
+			const auto isEnoughMemory = resize(_Capacity + elementsSize);
+			if (UNLIKELY(isEnoughMemory == false)) {
+				DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+				return;
+			}
+		}
 
-		for (SizeType i = 0; i < elementsSize; ++i) {
+		for (_SizeType_ i = 0; i < elementsSize; ++i) {
 			auto adress = (elements.begin() + i);
 			push_back(*adress);
 		}
 	}
 
-	CONSTEXPR_CXX20 inline Vector(const Vector& other) noexcept:
+	CONSTEXPR_CXX20 inline Vector(const Vector& other) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
 		const auto _Capacity = other.capacity();
 		auto& _Start = other._pair._secondValue._start;
 
-		TryResize(_Capacity);
+		const auto isEnoughMemory = resize(_Capacity);
 
-		if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false)
-			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
+		if (UNLIKELY(isEnoughMemory == false)) {
+			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+			return;
+		}
+
+		if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false) {
+			DebugAssertLog(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
+			return;
+		}
 	}
 
 	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector) noexcept :
@@ -157,24 +169,39 @@ public:
 		const auto _Capacity = vector.capacity();
 		auto& _Start = _pair.second()._start;
 
-		TryResize(_Capacity);
+		const auto isEnoughMemory = resize(_Capacity);
+
+		if (UNLIKELY(isEnoughMemory == false)) {
+			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+			return;
+		}
 
 		if (memory::MemoryCopy(_Start, vector.data(), _Capacity) == false)
-			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
+			DebugAssertLog(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
-	CONSTEXPR_CXX20 inline Vector(const SizeType capacity) noexcept :
+	CONSTEXPR_CXX20 inline Vector(const SizeType _Capacity) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
-		TryResize(capacity);
+		const auto isEnoughMemory = resize(_Capacity);
+
+		if (UNLIKELY(isEnoughMemory == false))
+			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
 	}
 
 	CONSTEXPR_CXX20 inline Vector(
 		const SizeType _Capacity,
-		const ValueType& _Fill) noexcept :
+		const ValueType& _Fill
+	) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
-		TryResize(_Capacity);
+		const auto isEnoughMemory = resize(_Capacity);
+
+		if (UNLIKELY(isEnoughMemory == false)) {
+			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+			return;
+		}
+
 		fill(_Fill);
 	}
 
@@ -317,16 +344,43 @@ public:
 	}
 
 	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
+		auto& pairValue	= _pair._secondValue;
 
-	//	memory::MemoryMove(_current, )
+		auto& _End		= pairValue._end;
+		auto& _Current	= pairValue._current;
+
+		if (_Current != _End) {
+			EmplaceBackWithUnusedCapacity()
+			return;
+		}
+
+
     }
+
+	template <class... _Valty_>
+	CONSTEXPR_CXX20 inline void EmplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
+		auto& _My_data = _pair._secondValue;
+		pointer& _Mylast = _My_data._end;
+
+		DebugAssert(_Mylast != _My_data._Myend);
+
+		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
+			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>) {
+			memory::ConstructInPlace(*_Mylast, std::forward<_Valty_>(_Val)...);
+		}
+		/*else {
+			_Alty_traits::construct(_Getal(), _Unfancy(_Mylast), _STD forward<_Valty>(_Val)...);
+		}*/
+
+		++_Mylast;
+	}
 
 	CONSTEXPR_CXX20 inline void push_front(const ValueType& element) {
 
     }
 
 	CONSTEXPR_CXX20 inline void append(const ValueType& element) {
-
+		return push_back(element);
     }
 
 	template <class ... Args> 
@@ -420,11 +474,12 @@ public:
 		size_type size,
 		const_reference _Fill)
 	{
-		const auto resizeSuccess = TryResize(size);
-		const auto fillSuccess   = fill(_Fill);
+		const auto resizeSuccess = resize(size);
 
-		const auto success		 = (resizeSuccess == true && fillSuccess == true);
-		return success;
+		if (resizeSuccess)
+			fill(_Fill);
+
+		return resizeSuccess;
 	}
 
     inline NODISCARD SizeType indexOf(
@@ -508,8 +563,11 @@ public:
 			insert(i, _Fill);
 	}
 
-	inline NODISCARD bool resize(const SizeType _Capacity) {
-		
+	inline NODISCARD bool resize(const SizeType newCapacity) {
+		const auto growth			= calculateGrowth(newCapacity);
+		const auto isEnoughMemory	= resizeReallocate(growth);
+
+		return isEnoughMemory;
 	}
 
 	inline void insert(
@@ -531,7 +589,7 @@ public:
 		return max_size();
 	}
 private:
-	constexpr inline NODISCARD SizeType CalculateGrowth(SizeType newSize) {
+	constexpr inline NODISCARD SizeType calculateGrowth(SizeType newSize) {
 		const auto oldCapacity	= capacity();
 		const auto _MaxSize		= maxSize();
 
@@ -546,14 +604,14 @@ private:
 		return geometricGrowth;
 	}
 
-	CONSTEXPR_CXX20 inline NODISCARD void resizeReallocate(SizeType newCapacity) noexcept {
-		const auto bytesRequired = static_cast<sizetype>(_Capacity * sizeof(ValueType));
+	CONSTEXPR_CXX20 inline NODISCARD bool resizeReallocate(SizeType newCapacity) noexcept {
+		const auto bytesRequired = static_cast<SizeType>(newCapacity * sizeof(ValueType));
 
 		if (UNLIKELY(bytesRequired <= 0))
 			return false;
 
 		auto& allocator		= _pair.first();
-		auto memory			= allocator.Allocate(bytesRequired);
+		auto memory			= allocator.allocate(bytesRequired);
 
 		if (UNLIKELY(memory == nullptr))
 			return false;
@@ -562,7 +620,7 @@ private:
 		auto& pairValue		= _pair._secondValue;
 
 		auto& blockStart	= memory;
-		auto& blockEnd		= memory + _Capacity;
+		auto  blockEnd		= memory + newCapacity;
 
 		if (LIKELY(oldSize != 0))
 			memory::MemoryCopyCommon(
@@ -572,73 +630,21 @@ private:
 		pairValue._start	= blockStart;
 		pairValue._end		= blockEnd;
 			
-		pairValue._current	= blockStart + olsSize;
-
-
+		pairValue._current	= blockStart + oldSize;
+		
+		return true;
 	}
 
-	inline void TryResize(sizetype newCapacity) {
-		const auto growth = CalculateGrowth(newCapacity);
-		const auto isEnoughMemory = resize(growth);
+	inline void FreeAllElements() noexcept {
+		auto& pairValue	= _pair._secondValue;
+		auto& allocator = _pair.first();
 
-		if (UNLIKELY(isEnoughMemory == false))
-			AssertReturn(false, "base::container::Vector: Not enough memory to expand the Vector.\n ", UNUSED(0));
+		memory::FreeRange(pairValue._start, pairValue._end, allocator);
+
+		pairValue._current = nullptr;
 	}
 
-	inline void FreeAll() noexcept {
-		auto& data			= _pair._secondValue;
-		auto& allocator		= _pair.first();
-
-		pointer& _Start		= data._start;
-
-		if (!_Start)
-			return;
-
-		pointer& _End		= data._end;
-		pointer& _Current	= data._current;
-
-		memory::DestroyRange(_Start, _End, allocator);
-		allocator.deallocate(_Start, static_cast<sizetype>(_End - _Start));
-
-		_Start = nullptr;
-		_End = nullptr;
-		_Current = nullptr;
-	}
-
-	inline void FreeElements(
-		sizetype elementsCount,
-		sizetype offsetFromStart) noexcept 
-	{
-		if (UNLIKELY(elementsCount <= 0))
-			return;
-
-		auto& data			= _pair._secondValue;
-		auto& allocator		= _pair.first();
-			
-		pointer& _Start		= data._start;
-
-		if (!_Start)
-			return;
-
-		const auto _StartWithOffset = static_cast<sizetype>(_Start + offsetFromStart);
-
-		if (_StartWithOffset > _End || _StartWithOffset < _Start)
-			return;
-
-		pointer& _End		= data._end;
-		pointer& _Current	= data._current;
-
-		const auto bytes	= elementsCount * sizeof(ValueType);
-
-		memory::DestroyRange(_StartWithOffset, _End, allocator);
-		allocator.deallocate(_StartWithOffset, bytes);
-
-		_Start = nullptr;
-		_End = nullptr;
-		_Current = nullptr;
-	}
-
-	inline void InsertToAdress(
+	inline void insertToAdress(
 		sizetype offset, 
 		ValueType* value)
 	{

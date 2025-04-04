@@ -1,6 +1,5 @@
 #pragma once 
 
-#include <base/core/memory/RawMemoryAllocatorStrategy.h>
 #include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
 
 
@@ -238,11 +237,6 @@ public:
 template <typename _Type>
 class DefaultMemoryAllocator :
 	public MemoryAllocator<DefaultMemoryAllocatorStrategy<_Type>>
-{};
-
-template <typename _Type>
-class RawMemoryAllocator :
-	public MemoryAllocator<RawMemoryAllocatorStrategy<_Type>>
 {};
 
 __BASE_MEMORY_NAMESPACE_END

@@ -23,13 +23,29 @@ void fmax(int32* s, int32* e, int32* o) {
 	*o = t;
 }
 
+using iti32 = container::VectorIterator<container::Vector<int32>>;
+
+void fvmax(iti32 _First, iti32 _Last, int32* o) {
+	int32 tmp = 0;
+
+	for (iti32 _Cur = _First; _Cur != _Last; ++_Cur) {
+		std::cout << *_Cur;
+		if (*_Cur > tmp) {
+			tmp = *_Cur;
+		}
+	}
+
+	*o = tmp;
+}
+
 int main(int argc, char* argv[]) {
 	container::Vector<int32> _vec = { 1, 2, 3, 4, 5 } ;
 
 	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
 
+	std::cout << "_vec.length(): " << _vec.length() << " _vec.capacity(): " << _vec.capacity() << " _vec.unusedCapacity(): " << _vec.unusedCapacity() << '\n';
 	int32 max = 0;
-	fmax(_vec.data(), _vec.data() + _vec.size(), &max);
+	fvmax(_vec.begin(), _vec.end(), &max);
 	
 	std::cout << "max: " << max;
 

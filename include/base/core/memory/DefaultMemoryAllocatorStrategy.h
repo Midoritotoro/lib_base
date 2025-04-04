@@ -158,10 +158,8 @@ public:
 		return realloc(pointer, bytes + !bytes);
 	}
 
-	static NODISCARD_RETURN_RAW_PTR
-	inline DECLARE_MEMORY_ALLOCATOR
-	CLANG_CONSTEXPR_CXX20
-	value_type* ReAllocateAligned(
+	static NODISCARD_RETURN_RAW_PTR inline
+	DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 value_type* ReAllocateAligned(
 		value_type* pointer,
 		size_type bytes,
 		size_type alignment)
@@ -176,10 +174,8 @@ public:
 			alignment);
 	}
 
-	static NODISCARD_RETURN_RAW_PTR
-	inline DECLARE_MEMORY_ALLOCATOR
-	CLANG_CONSTEXPR_CXX20
-	value_type* ReallocateArray(
+	static NODISCARD_RETURN_RAW_PTR inline 
+	DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 value_type* ReallocateArray(
 		value_type* pointer,
 		size_type numberOfElements,
 		size_type singleElementSize)
