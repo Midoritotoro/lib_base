@@ -103,10 +103,6 @@ public:
 private:
 	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_>>;
 public:
-
-	static constexpr sizetype _Buffer_For_Resizing_Length = 16; // ... 
-
-
 	static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
 		_Vector_SIMD_Algorithm_Alignment
 #if LIB_BASE_HAS_SIMD_SUPPORT
@@ -121,7 +117,7 @@ public:
 	{};
 
 	constexpr ~Vector() noexcept {
-
+		FreeAll();
 	}
 
 	CONSTEXPR_CXX20 inline Vector(std::initializer_list<ValueType> elements) noexcept :
@@ -143,15 +139,15 @@ public:
 		}
 	}
 
-	CONSTEXPR_CXX20 inline Vector(const Vector& other) noexcept :
-		_pair(other._pair)
+	CONSTEXPR_CXX20 inline Vector(const Vector& other) noexcept:
+		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 	{
 		const auto _Capacity = other.capacity();
-		auto& _Start = _pair.second()._start;
+		auto& _Start = other._pair._secondValue._start;
 
 		TryResize(_Capacity);
 
-		if (memory::MemoryCopy(_Start, other._pair.second()._start, _Capacity) == false)
+		if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false)
 			AssertReturn(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
 	}
 
@@ -513,30 +509,7 @@ public:
 	}
 
 	inline NODISCARD bool resize(const SizeType _Capacity) {
-		const auto bytesRequired = static_cast<sizetype>(_Capacity * sizeof(ValueType));
-		if (UNLIKELY(bytesRequired <= 0))
-			return false;
-
-		auto& allocator		= _pair.first();
-		const auto memory	= allocator.Allocate(bytesRequired);
-
-		if (UNLIKELY(memory == nullptr))
-			return false;
-
-		auto& pairValue = _pair._secondValue;
-
-		const auto blockStart	= memory;
-		const auto blockEnd		= memory + _Capacity;
-
-		if (size() != 0)
-			memory::MemoryCopyCommon(
-				begin(), end(),
-				blockStart, blockEnd);
-
-		pairValue._start		= blockStart;
-		pairValue._end			= blockEnd;
-			
-		pairValue._current		= nullptr;
+		
 	}
 
 	inline void insert(
@@ -571,6 +544,37 @@ private:
 			return newSize;
 
 		return geometricGrowth;
+	}
+
+	CONSTEXPR_CXX20 inline NODISCARD void resizeReallocate(SizeType newCapacity) noexcept {
+		const auto bytesRequired = static_cast<sizetype>(_Capacity * sizeof(ValueType));
+
+		if (UNLIKELY(bytesRequired <= 0))
+			return false;
+
+		auto& allocator		= _pair.first();
+		auto memory			= allocator.Allocate(bytesRequired);
+
+		if (UNLIKELY(memory == nullptr))
+			return false;
+
+		const auto oldSize	= size();
+		auto& pairValue		= _pair._secondValue;
+
+		auto& blockStart	= memory;
+		auto& blockEnd		= memory + _Capacity;
+
+		if (LIKELY(oldSize != 0))
+			memory::MemoryCopyCommon(
+				begin(), end(),
+				blockStart, blockEnd);
+
+		pairValue._start	= blockStart;
+		pairValue._end		= blockEnd;
+			
+		pairValue._current	= blockStart + olsSize;
+
+
 	}
 
 	inline void TryResize(sizetype newCapacity) {

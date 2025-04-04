@@ -3,7 +3,29 @@
 #include <base/core/memory/Memory.h>
 #include <base/core/utility/Algorithm.h>
 
+#include <base/core/utility/TypeTraits.h>
+
 __BASE_MEMORY_NAMESPACE_BEGIN
+
+
+template <class _Allocator_>
+using AllocatorPointerType      = typename _Allocator_::pointer;
+
+template <class _Allocator_>
+using AllocatorConstPointerType = typename _Allocator_::const_pointer;
+
+template <class _Allocator_>
+using AllocatorSizeType         = typename _Allocator_::size_type;
+
+template <class _Allocator_>
+using AllocatorValueType        = typename _Allocator_::value_type;
+
+template <
+    typename _Type_,
+    class   _Allocator_>
+constexpr bool CanDestroyRange = !std::conjunction_v<
+    std::is_trivially_destructible<_Type_>,
+    std::_Uses_default_destroy<_Allocator_, _Type_*>>;
 
 #if __cpp_lib_addressof_constexpr >= 201603L
 #  define CONSTEXPR_ADRESSOF constexpr
@@ -58,7 +80,7 @@ NODISCARD constexpr auto ToAdress(const _Ptr& _Val) noexcept {
 
 // true, если у скал€рного типа все биты имеют значение 0
 template <class _Type_>
-NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
+CONSTEXPR_CXX20 NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
     static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
 
     if constexpr (std::is_same_v<_Type_, std::nullptr_t>)
@@ -69,7 +91,7 @@ NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
 }
 
 //  онвертирует "модный" указатель в стандартный. 
-// ћодными указател€ми считаютс€ типы с переопределенным оператором -> и * (Ќапример, итераторы).
+// ћодными указател€ми считаютс€ типы с переопределенным оператором -> и *
 template <class _PointerLikeType_>
 NODISCARD inline constexpr decltype(auto)
     UnFancy(_PointerLikeType_ pointerLike) noexcept 
@@ -244,7 +266,7 @@ constexpr inline void AdvanceBytes(
 inline NODISCARD bool MemoryCopy(
     void*       _Destination,
     const void* _Source,
-    size_t      _SourceLength)
+    size_t      _SourceLength) noexcept
 {
     const auto _Dest    = memcpy(_Destination,
         _Source, _SourceLength);
@@ -256,7 +278,7 @@ inline NODISCARD bool MemoryCopy(
 inline NODISCARD bool MemoryFill(
     void*       _Destination,
     const int   _Value,
-    size_t      _Size)
+    size_t      _Size) noexcept
 {
     const auto _Dest    = memset(_Destination, 
         _Value, _Size);
@@ -268,7 +290,7 @@ inline NODISCARD bool MemoryFill(
 template <class _Iterator_>
 inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
     _Iterator_ _First,
-    _Iterator_ _Last)
+    _Iterator_ _Last) noexcept
 {
     const auto _FirstAdress = CheckedToConstChar(_First);
     const auto _LastAdress  = CheckedToConstChar(_Last);
@@ -284,7 +306,7 @@ template <
 inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     _InputIterator_ _First,
     sizetype        _Size,
-    _OutIterator_   _Destination)
+    _OutIterator_   _Destination) noexcept
 {
     const auto _DestinationAdress   = CheckedToChar(_Destination);
     const auto _FirstAdress         = CheckedToConstChar(_First);
@@ -438,79 +460,142 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     };
 }
 
-//#if BASE_HAS_CXX20
-//	template <
-//		class _Ty,
-//		class... _Types>
-//			requires requires(
-//			_Ty* _Location,
-//			_Types&&... _Args)
-//	{
-//		::new (static_cast<void*>(_Location))
-//			_Ty(std::forward<_Types>(_Args)...);
-//	}
-//	constexpr _Ty* ConstructAt(
-//		_Ty* const _Location,
-//		_Types&&... _Args) noexcept(
-//			noexcept(::new(static_cast<void*>(_Location))
-//				_Ty(std::forward<_Types>(_Args)...)))
-//	{
-//		return ::new (static_cast<void*>(_Location))
-//			_Ty(std::forward<_Types>(_Args)...);
-//	}
-//#endif
-//
-//template <
-//    class _Type_, 
-//    class... _Types_>
-//CONSTEXPR_CXX20 void ConstructInPlace(
-//    _Type_& _Obj, 
-//    _Types_&&... _Args) noexcept(
-//        std::is_nothrow_constructible_v<_Type_, _Types_...>) 
-//{
-//#if BASE_HAS_CXX20
-//    if (std::is_constant_evaluated())
-//        ConstructAt(AdressOf(_Obj), std::forward<_Types_>(_Args)...);
-//    else
-//#endif
-//        ::new (static_cast<void*>(AdressOf(_Obj))) 
-//            _Type_(std::forward<_Types_>(_Args)...);
-//}
+#if BASE_HAS_CXX20
+	template <
+		class _Ty,
+		class... _Types>
+			requires requires(
+			_Ty* _Location,
+			_Types&&... _Args)
+	{
+		::new (static_cast<void*>(_Location))
+			_Ty(std::forward<_Types>(_Args)...);
+	}
+	constexpr _Ty* ConstructAt(
+		_Ty* const _Location,
+		_Types&&... _Args) noexcept(
+			noexcept(::new(static_cast<void*>(_Location))
+				_Ty(std::forward<_Types>(_Args)...)))
+	{
+		return ::new (static_cast<void*>(_Location))
+			_Ty(std::forward<_Types>(_Args)...);
+	}
+#endif
 
-template <class _Ty>
-_CONSTEXPR20 void DestroyInPlace(_Ty& _Obj) noexcept;
-
-template <class _Alloc>
-_CONSTEXPR20 void DestroyRange(
-    typename _Alloc::pointer _First,
-    const typename _Alloc::pointer _Last, 
-    _Alloc& _Al) noexcept 
+template <
+    class _Type_, 
+    class... _Types_>
+CONSTEXPR_CXX20 void ConstructInPlace(
+    _Type_& _Obj, 
+    _Types_&&... _Args) noexcept(
+        std::is_nothrow_constructible_v<_Type_, _Types_...>) 
 {
-    using _Ty = typename _Alloc::value_type;
+#if BASE_HAS_CXX20
+    if (std::is_constant_evaluated())
+        ConstructAt(AdressOf(_Obj), std::forward<_Types_>(_Args)...);
+    else
+#endif
+        ::new (static_cast<void*>(AdressOf(_Obj))) 
+            _Type_(std::forward<_Types_>(_Args)...);
+}
 
-    if constexpr (!std::conjunction_v<std::is_trivially_destructible<_Ty>, std::_Uses_default_destroy<_Alloc, _Ty*>>)
+template <class _Type_>
+CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& _Obj) noexcept;
+
+template <class _Allocator_>
+CONSTEXPR_CXX20 inline void DestroyRange(
+    AllocatorPointerType<_Allocator_>       _First,
+    AllocatorConstPointerType<_Allocator_>  _Last,
+    _Allocator_&                            _Al) noexcept 
+{
+    using _Ty = AllocatorValueType<_Allocator_>;
+
+    if constexpr (CanDestroyRange<_Ty, _Allocator_>)
         for (; _First != _Last; ++_First)
             _Al.destroy(UnFancy(_First));
 }
 
 template <
-    class _NoThrowFwdIt,
-    class _NoThrowSentinel>
-_CONSTEXPR20 void DestroyRange(
-    _NoThrowFwdIt _First, 
-    const _NoThrowSentinel _Last) noexcept 
+    class _NoThrowFwdIt_,
+    class _NoThrowSentinel_>
+CONSTEXPR_CXX20 inline void DestroyRange(
+    _NoThrowFwdIt_          _First,
+    const _NoThrowSentinel_ _Last) noexcept
 {
-    if constexpr (!std::is_trivially_destructible_v<std::_Iter_value_t<_NoThrowFwdIt>>)
+    if constexpr (!std::is_trivially_destructible_v<std::iter_value_t<_NoThrowFwdIt_>>)
         for (; _First != _Last; ++_First)
             DestroyInPlace(*_First);
 }
 
-template <class _Ty>
-_CONSTEXPR20 void DestroyInPlace(_Ty& _Obj) noexcept {
-    if constexpr (std::is_array_v<_Ty>)
-        DestroyRange(_Obj, _Obj + std::extent_v<_Ty>);
+template <class _Type_>
+CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& _Obj) noexcept {
+    if constexpr (std::is_array_v<_Type_>)
+        DestroyRange(_Obj, _Obj + std::extent_v<_Type_>);
     else
-        _Obj.~_Ty();
+        _Obj.~_Type_();
+}
+
+
+template <class _Allocator_>
+CONSTEXPR_CXX20 inline void FreeRange(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>   _End,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (UNLIKELY(!_Start) || UNLIKELY(!_End))
+        return; 
+
+    using _SizeType_ = AllocatorSizeType<_Allocator_>;
+    const auto _Length = static_cast<_SizeType_>(_End - _Start);
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    _Allocator.deallocate(_Start, _Length);
+
+    _Start = nullptr;
+    _End = nullptr;
+}
+
+template <class _Allocator_>
+CONSTEXPR_CXX20 inline void FreeRangeCount(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorSizeType<_Allocator_>      _ElementsCount,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (UNLIKELY(_ElementsCount <= 0))
+        return;
+
+    using _ValueType_   = AllocatorValueType<_Allocator_>;
+    using _PointerType_ = AllocatorPointerType<_Allocator_>;
+
+    const auto _BytesCount  = _ElementsCount * sizeof(_ValueType_);
+    _PointerType_& _End     = _Start + _BytesCount;
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    allocator.deallocate(_Start, _BytesCount);
+
+    _Start = nullptr;
+    _End = nullptr;
+}
+
+template <class _Allocator_>
+CONSTEXPR_CXX20 inline void FreeRangeBytes(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorSizeType<_Allocator_>      _BytesCount,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (UNLIKELY(_ElementsCount <= 0))
+        return;
+
+    using _ValueType_   = AllocatorValueType<_Allocator_>;
+    using _PointerType_ = AllocatorPointerType<_Allocator_>;
+
+    _PointerType_& _End     = _Start + _BytesCount;
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    allocator.deallocate(_Start, _BytesCount);
+
+    _Start = nullptr;
+    _End = nullptr;
 }
 
 

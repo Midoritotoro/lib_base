@@ -194,4 +194,13 @@ using IfIsNotForwardIterator = typename std::enable_if<
 	std::forward_iterator_tag>::value,
 	bool>::type;
 
+template <
+	typename,
+	typename = void>
+constexpr bool IsTypeComplete = false;
+
+template <typename T>
+constexpr bool IsTypeComplete
+	<T, std::void_t<decltype(sizeof(T))>> = true;
+
 __BASE_NAMESPACE_END
