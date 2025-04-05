@@ -5,16 +5,16 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Allocator_>
-using AllocatorPointerType      = typename _Allocator_::pointer;
+using AllocatorPointerType      = typename std::allocator_traits<_Allocator_>::pointer;
 
 template <class _Allocator_>
-using AllocatorConstPointerType = typename _Allocator_::const_pointer;
+using AllocatorConstPointerType = typename std::allocator_traits<_Allocator_>::const_pointer;
 
 template <class _Allocator_>
-using AllocatorSizeType         = typename _Allocator_::size_type;
+using AllocatorSizeType         = typename std::allocator_traits<_Allocator_>::size_type;
 
 template <class _Allocator_>
-using AllocatorValueType        = typename _Allocator_::value_type;
+using AllocatorValueType        = typename std::allocator_traits<_Allocator_>::value_type;
 
 template <
     typename _Type_,

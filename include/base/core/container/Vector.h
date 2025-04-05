@@ -2,6 +2,8 @@
 
 
 #include <base/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryRange.h>
+
 #include <base/core/container/VectorIterator.h>
 
 #include <base/core/container/CompressedPair.h>
@@ -64,7 +66,7 @@ public:
 
 template <
 	typename	_Element_,
-	class		_Allocator_ = memory::DefaultMemoryAllocator<_Element_>>
+	class		_Allocator_ = std::allocator<_Element_>>
 class Vector
 {
 public:
@@ -344,17 +346,7 @@ public:
 	}
 
 	CONSTEXPR_CXX20 inline void push_back(const ValueType& element) {
-		auto& pairValue	= _pair._secondValue;
-
-		auto& _End		= pairValue._end;
-		auto& _Current	= pairValue._current;
-
-		if (_Current != _End) {
-			EmplaceBackWithUnusedCapacity()
-			return;
-		}
-
-
+		emplaceBack(element);
     }
 
 	CONSTEXPR_CXX20 inline void push_front(const ValueType& element) {
@@ -617,8 +609,23 @@ private:
 		return true;
 	}
 
+	template <class ..._Valty_>
+	CONSTEXPR_CXX20 inline void emplaceBack(_Valty_&&... _Val) {
+		auto& pairValue = _pair._secondValue;
+
+		auto& _End = pairValue._end;
+		auto& _Current = pairValue._current;
+
+		if (_Current != _End) {
+			emplaceBackWithUnusedCapacity(std::forward<_Valty_>(_Val)...);
+			return;
+		}
+
+		emplaceBackReallocate(std::forward<_Valty_>(_Val)...);
+	}
+
 	template <class... _Valty_>
-	CONSTEXPR_CXX20 inline void EmplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
+	CONSTEXPR_CXX20 inline void emplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
 		auto& pairValue		= _pair._secondValue;
 		auto& allocator		= _pair.first();
 
@@ -628,11 +635,39 @@ private:
 		DebugAssert(_Current != _End);
 
 		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
-			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>)
-			memory::ConstructInPlace(*_Current, std::forward<_Valty_>(_Val)...);
+			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
+		)
+			memory::ConstructInPlace(
+				*_Current, std::forward<_Valty_>(_Val)...);
 		else
-			_Alty_traits::construct(allocator, memory::UnFancy(_Current), _STD forward<_Valty>(_Val)...);
+			std::allocator_traits<allocator_type>::construct(
+				allocator, memory::UnFancy(_Current), std::forward<_Valty_>(_Val)...);
 		
+
+		++_Current;
+	}
+
+	template <class... _Valty_>
+	CONSTEXPR_CXX20 inline void emplaceBackReallocate(_Valty_&&... _Val) {
+		auto& pairValue = _pair._secondValue;
+		auto& allocator = _pair.first();
+
+		pointer& _End = pairValue._end;
+		pointer& _Current = pairValue._current;
+
+		DebugAssert(_Current != _End);
+
+		resize(sizeof...(_Val) + capacity());
+		
+		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
+			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
+			)
+			memory::ConstructInPlace(
+				*_Current, std::forward<_Valty_>(_Val)...);
+		else
+			std::allocator_traits<allocator_type>::construct(
+				allocator, memory::UnFancy(_Current), std::forward<_Valty_>(_Val)...);
+
 
 		++_Current;
 	}

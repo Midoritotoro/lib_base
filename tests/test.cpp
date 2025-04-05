@@ -6,8 +6,6 @@
 
 #include <base/core/string/String.h>
 #include <base/core/memory/MemoryAllocator.h>
-
-#include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
 #include <base/core/container/Vector.h>
 
 #include <base/core/math/VectorizedAlgorithm.h>

@@ -1,28 +1,30 @@
 #pragma once 
 
-#include <base/core/memory/DefaultMemoryAllocatorStrategy.h>
-
+#include <base/core/memory/Memory.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-template <class _AllocatorStrategy_>
+template <typename _Type_>
 class MemoryAllocator {
-	static_assert(!std::is_const_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids containers of const elements "
+	static_assert(!std::is_const_v<_Type_>,
+		"The C++ Standard forbids containers of const elements "
 		"because allocator<const T> is ill-formed.");
 
-	static_assert(!std::is_function_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids allocators for function elements "
+	static_assert(!std::is_function_v<_Type_>,
+		"The C++ Standard forbids allocators for function elements "
 		"because of [allocator.requirements].");
 
-	static_assert(!std::is_reference_v<_AllocatorStrategy_::value_type>, "The C++ Standard forbids allocators for reference elements "
+	static_assert(!std::is_reference_v<_Type_>,
+		"The C++ Standard forbids allocators for reference elements "
 		"because of [allocator.requirements].");
 public:
-	using pointer						= typename _AllocatorStrategy_::pointer;
-	using const_pointer					= typename _AllocatorStrategy_::const_pointer;
+	using pointer			= _Type_*;
+	using const_pointer		= const _Type_*;
 
-	using value_type					= typename _AllocatorStrategy_::value_type;
+	using value_type		= _Type_;
 
-	using difference_type				= typename _AllocatorStrategy_::difference_type;
-	using size_type						= typename _AllocatorStrategy_::size_type;
+	using difference_type	= ptrdiff;
+	using size_type			= sizetype;
 
 
 	CONSTEXPR_CXX20 ~MemoryAllocator() noexcept = default;
@@ -35,208 +37,46 @@ public:
 
 	CONSTEXPR_CXX20 MemoryAllocator& operator=(const MemoryAllocator&) noexcept = default;
 
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* Allocate(size_type bytes) {
-		return _AllocatorStrategy_::Allocate(bytes);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* AllocateAligned(
-		size_type bytes,
-		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
-	{
-		return _AllocatorStrategy_::AllocateAligned(bytes, alignment);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* AllocateZeros(size_type bytes) {
-		return _AllocatorStrategy_::AllocateZeros(bytes);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* AllocateArray(
-		size_type numberOfElements,
-		size_type singleElementSize)
-	{
-		return _AllocatorStrategy_::AllocateArray(
-			numberOfElements, singleElementSize);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* AllocateArrayAligned(
-		size_type numberOfElements,
-		size_type singleElementSize,
-		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
-	{
-		return _AllocatorStrategy_::AllocateArrayAligned(
-			numberOfElements, singleElementSize, alignment);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* ReAllocate(
-		value_type* pointer,
-		size_type size)
-	{
-		return _AllocatorStrategy_::ReAllocate(
-			pointer, size);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* ReAllocateAligned(
-		value_type* pointer,
-		size_type size,
-		size_type alignment = MEMORY_DEFAULT_ALIGNMENT)
-	{
-		return _AllocatorStrategy_::ReAllocateAligned(
-			pointer, size, MEMORY_DEFAULT_ALIGNMENT);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* ReallocateArray(
-		value_type* pointer,
-		size_type numberOfElements,
-		size_type singleElementSize)
-	{
-		return _AllocatorStrategy_::ReallocateArray(
-			pointer, numberOfElements, singleElementSize);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* ReallocateFast(
-		value_type* pointer,
-		uint* size,
-		sizetype minimumSize)
-	{
-		return _AllocatorStrategy_::ReallocateFast(
-			pointer, size, minimumSize);
-	}
-
-	inline DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	void AllocateFast(
-		value_type* pointer,
-		uint* size, 
-		sizetype minimumSize)
-	{
-		_AllocatorStrategy_::AllocateFast(
-			pointer, size, minimumSize);
-	}
-
-	inline DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	void AllocateZerosFast(
-		value_type* pointer,
-		uint* size,
-		sizetype minimumSize)
-	{
-		_AllocatorStrategy_::AllocateZerosFast(
-			pointer, size, minimumSize);
-	}
-
-	inline CONSTEXPR_CXX20
-	void Deallocate(value_type* pointer) {
-		 _AllocatorStrategy_::Deallocate(pointer);
-	}
-
-	inline CONSTEXPR_CXX20
-	void Free(value_type* pointer) {
-		_AllocatorStrategy_::Free(pointer);
-	}
-
-	inline CONSTEXPR_CXX20
-	void DeallocateAligned(value_type* pointer) {
-		aligned_free(pointer);
-	}
-
-	inline CONSTEXPR_CXX20
-	void FreeAligned(value_type* pointer) {
-		DeallocateAligned(pointer);
-	}
-
-	inline CONSTEXPR_CXX20
-	void FreeNull(value_type* pointer) {
-		_AllocatorStrategy_::FreeNull(pointer);
-	}
-
-	inline CONSTEXPR_CXX20
-	void FreeNullAligned(value_type* pointer) {
-		value_type* value = nullptr;
-
-		memcpy(&value, pointer, sizeof(value));
-		memcpy(pointer, &reinterpret_cast<value_type*>(nullptr), sizeof(value));
-
-		FreeAligned(value);
-	}
-
-	inline CONSTEXPR_CXX20
-	void DeallocateNullAligned(value_type* pointer) {
-		FreeNullAligned(pointer);
-	}
-
-	NODISCARD_RETURN_RAW_PTR inline
-	DECLARE_MEMORY_ALLOCATOR CONSTEXPR_CXX20
-	value_type* MemoryDuplicate(
-		const value_type* pointer,
-		sizetype size)
-	{
-		return _AllocatorStrategy_::MemoryDuplicate(
-			pointer, size);
-	}
-
-	template <class... _Types_>
-	inline
-	CONSTEXPR_CXX20 void 
-	Construct(
-		value_type* const _Ptr,
-		_Types_&&... _Args)
-	{
-#if BASE_HAS_CXX20
-		std::construct_at(_Ptr, std::forward<_Types_>(_Args)...);
-#else
-		::new (const_cast<void*>(static_cast<
-			const volatile void*>(_Ptr))) 
-				value_type(std::forward<_Types_>(_Args)...);
-#endif
+		static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20 // Clang и MSVC реализуют P0784R7 по-разному; см. GH-1532
+	value_type* allocate(size_type bytes) {
+		return reinterpret_cast<value_type*>(::operator new(bytes));
 	}
 	
-	// STL
-	inline CONSTEXPR_CXX20 void deallocate(
-	value_type* const pointer, 
-	BASE_GUARDOVERFLOW const size_type count) 
+#ifdef __cpp_aligned_new
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* allocateAligned(
+		size_type bytes,
+		size_type alignment)
 	{
-		Assert(pointer != nullptr || count == 0, "null pointer cannot point to a block of non-zero size");
-		Deallocate(pointer);
+#  ifdef CPP_CLANG
+#    if BASE_HAS_CXX20
+		if (is_constant_evaluated())
+			return reinterpret_cast<value_type*>(
+				::operator new(bytes));
+		else
+#    endif
+#  endif
+			return reinterpret_cast<value_type*>(
+				::operator new(bytes, std::align_val_t{ alignment }));
 	}
-
-	inline NODISCARD_RETURN_RAW_PTR 
-	CONSTEXPR_CXX20 DECLARE_MEMORY_ALLOCATOR 
-	pointer allocate(BASE_GUARDOVERFLOW const size_type bytes) 
+#else 
+	static NODISCARD_RETURN_RAW_PTR
+	inline DECLARE_MEMORY_ALLOCATOR
+	CLANG_CONSTEXPR_CXX20
+	value_type* allocateAligned(
+		size_type bytes,
+		size_type alignment) 
 	{
-		static_assert(sizeof(value_type) > 0, "value_type must be complete before calling allocate.");
+		UNUSED(alignment);
 		return Allocate(bytes);
 	}
-	
-	template <class... _Types_>
-	static inline
-	CONSTEXPR_CXX20 void
-	construct(
-		value_type* const _Ptr,
-		_Types_&&... _Args)
-	{
-		return Construct(_Ptr, std::forward<_Types_>(_Args)...);
-	}
+#endif 
+private:
+	static constexpr inline std::atomic<int> MaximumAllocationSize = INT_MAX;
 };
-
-template <typename _Type>
-class DefaultMemoryAllocator :
-	public MemoryAllocator<DefaultMemoryAllocatorStrategy<_Type>>
-{};
 
 __BASE_MEMORY_NAMESPACE_END
