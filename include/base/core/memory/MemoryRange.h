@@ -5,24 +5,23 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Allocator_>
-using AllocatorPointerType = typename _Allocator_::pointer;
+using AllocatorPointerType      = typename _Allocator_::pointer;
 
 template <class _Allocator_>
 using AllocatorConstPointerType = typename _Allocator_::const_pointer;
 
 template <class _Allocator_>
-using AllocatorSizeType = typename _Allocator_::size_type;
+using AllocatorSizeType         = typename _Allocator_::size_type;
 
 template <class _Allocator_>
-using AllocatorValueType = typename _Allocator_::value_type;
+using AllocatorValueType        = typename _Allocator_::value_type;
 
 template <
     typename _Type_,
     class   _Allocator_>
-constexpr bool CanDestroyRange = !std::conjunction_v<
+constexpr bool CanDestroyRange  = !std::conjunction_v<
     std::is_trivially_destructible<_Type_>,
     std::_Uses_default_destroy<_Allocator_, _Type_*>>;
-
 
 template <
     class _FirstIterator_,
@@ -49,7 +48,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     _OutIterator_   outFirst,
     _OutIterator_   outLast) noexcept
 {
-    using OutCopy = CopyResult<_InputIterator_, _OutIterator_>;
+    using OutCopy               = CopyResult<_InputIterator_, _OutIterator_>;
 
     const auto inputFirstChar   = CheckedToChar(inputFirst);
     const auto inputLastChar    = CheckedToConstChar(inputLast);
@@ -171,13 +170,13 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
 template <
     class _Type_, 
     class... _Types_>
-CONSTEXPR_CXX20 void ConstructInPlace(
+CONSTEXPR_CXX20 inline void ConstructInPlace(
     _Type_& _Obj, 
     _Types_&&... _Args) noexcept(
         std::is_nothrow_constructible_v<_Type_, _Types_...>) 
 {
 #if BASE_HAS_CXX20
-    if (std::is_constant_evaluated())
+    if (is_constant_evaluated())
         ConstructAt(AdressOf(_Obj), std::forward<_Types_>(_Args)...);
     else
 #endif
@@ -231,14 +230,14 @@ CONSTEXPR_CXX20 inline void FreeRange(
     if (UNLIKELY(!_Start) || UNLIKELY(!_End))
         return; 
 
-    using _SizeType_ = AllocatorSizeType<_Allocator_>;
-    const auto _Length = static_cast<_SizeType_>(_End - _Start);
+    using _SizeType_    = AllocatorSizeType<_Allocator_>;
+    const auto _Length  = static_cast<_SizeType_>(_End - _Start);
 
     memory::DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _Length);
 
-    _Start = nullptr;
-    _End = nullptr;
+    _Start  = nullptr;
+    _End    = nullptr;
 }
 
 template <class _Allocator_>

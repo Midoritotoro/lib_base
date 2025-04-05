@@ -64,7 +64,7 @@ public:
 
 template <
 	typename	_Element_,
-	class		_Allocator_ = memory::RawMemoryAllocator<_Element_>>
+	class		_Allocator_ = memory::DefaultMemoryAllocator<_Element_>>
 class Vector
 {
 public:
@@ -357,24 +357,6 @@ public:
 
     }
 
-	template <class... _Valty_>
-	CONSTEXPR_CXX20 inline void EmplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
-		auto& _My_data = _pair._secondValue;
-		pointer& _Mylast = _My_data._end;
-
-		DebugAssert(_Mylast != _My_data._Myend);
-
-		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
-			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>) {
-			memory::ConstructInPlace(*_Mylast, std::forward<_Valty_>(_Val)...);
-		}
-		/*else {
-			_Alty_traits::construct(_Getal(), _Unfancy(_Mylast), _STD forward<_Valty>(_Val)...);
-		}*/
-
-		++_Mylast;
-	}
-
 	CONSTEXPR_CXX20 inline void push_front(const ValueType& element) {
 
     }
@@ -633,6 +615,26 @@ private:
 		pairValue._current	= blockStart + oldSize;
 		
 		return true;
+	}
+
+	template <class... _Valty_>
+	CONSTEXPR_CXX20 inline void EmplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
+		auto& pairValue		= _pair._secondValue;
+		auto& allocator		= _pair.first();
+
+		pointer& _End		= pairValue._end;
+		pointer& _Current	= pairValue._current;
+
+		DebugAssert(_Current != _End);
+
+		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
+			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>)
+			memory::ConstructInPlace(*_Current, std::forward<_Valty_>(_Val)...);
+		else
+			_Alty_traits::construct(allocator, memory::UnFancy(_Current), _STD forward<_Valty>(_Val)...);
+		
+
+		++_Current;
 	}
 
 	inline void FreeAllElements() noexcept {

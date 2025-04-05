@@ -301,6 +301,9 @@ set(PUBLIC_HEADERS
     include/base/core/string/StringConstIterator.h
 
     include/base/core/memory/MemoryAllocator.h
+    include/base/core/memory/MemoryRange.h
+
+    include/base/core/memory/MemoryAllocation.h
 
     include/base/core/container/Map.h
     include/base/core/container/Set.h
