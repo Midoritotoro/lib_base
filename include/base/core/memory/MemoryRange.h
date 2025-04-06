@@ -4,17 +4,77 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-template <class _Allocator_>
-using AllocatorPointerType      = typename std::allocator_traits<_Allocator_>::pointer;
+#if BASE_HAS_CXX20
+    template <typename _Allocator_>
+    struct AllocatorPointerTraits {
+        using type = typename std::allocator_traits<_Allocator_>::pointer;
+    };
 
-template <class _Allocator_>
-using AllocatorConstPointerType = typename std::allocator_traits<_Allocator_>::const_pointer;
+    template <typename _Allocator_>
+        requires HasPointerType<_Allocator_>
+    struct AllocatorPointerTraits<_Allocator_> {
+        using type = typename _Allocator_::pointer;
+    };
 
-template <class _Allocator_>
-using AllocatorSizeType         = typename std::allocator_traits<_Allocator_>::size_type;
+    template <typename _Allocator_>
+    struct AllocatorConstPointerTraits {
+        using type = typename std::allocator_traits<_Allocator_>::const_pointer;
+    };
 
-template <class _Allocator_>
-using AllocatorValueType        = typename std::allocator_traits<_Allocator_>::value_type;
+    template <typename _Allocator_>
+        requires HasConstPointerType<_Allocator_>
+    struct AllocatorConstPointerTraits<_Allocator_> {
+        using type = typename _Allocator_::const_pointer;
+    };
+
+    template <typename _Allocator_>
+    struct AllocatorValueTraits {
+        using type = typename std::allocator_traits<_Allocator_>::value_type;
+    };
+
+    template <typename _Allocator_>
+        requires HasValueType<_Allocator_>
+    struct AllocatorValueTraits<_Allocator_> {
+        using type = typename _Allocator_::value_type;
+    };
+
+    template <typename _Allocator_>
+    struct AllocatorSizeTraits {
+        using type = typename std::allocator_traits<_Allocator_>::size_type;
+    };
+
+    template <typename _Allocator_>
+        requires HasSizeType<_Allocator_>
+    struct AllocatorSizeTraits<_Allocator_> {
+        using type = typename _Allocator_::size_type;
+    };
+
+    template <typename _Allocator_>
+    using AllocatorPointerType      = typename AllocatorPointerTraits<_Allocator_>::type;
+
+    template <class _Allocator_>
+    using AllocatorConstPointerType = typename AllocatorConstPointerTraits<_Allocator_>::type;
+
+    template <class _Allocator_>
+    using AllocatorSizeType         = typename AllocatorSizeTraits<_Allocator_>::type;
+
+    template <class _Allocator_>
+    using AllocatorValueType        = typename AllocatorValueTraits<_Allocator_>::type;
+#else 
+
+    template <class _Allocator_>
+    using AllocatorPointerType      = typename std::allocator_traits<_Allocator_>::pointer;
+
+    template <class _Allocator_>
+    using AllocatorConstPointerType = typename std::allocator_traits<_Allocator_>::const_pointer;
+
+    template <class _Allocator_>
+    using AllocatorSizeType         = typename std::allocator_traits<_Allocator_>::size_type;
+
+    template <class _Allocator_>
+    using AllocatorValueType        = typename std::allocator_traits<_Allocator_>::value_type;
+
+#endif
 
 template <
     typename _Type_,
@@ -222,6 +282,7 @@ CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& _Obj) noexcept {
 
 
 template <class _Allocator_>
+// Deallocates the range [_Start, _End) and sets _Start and _End to nullptr
 CONSTEXPR_CXX20 inline void FreeRange(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorPointerType<_Allocator_>   _End,
@@ -241,6 +302,7 @@ CONSTEXPR_CXX20 inline void FreeRange(
 }
 
 template <class _Allocator_>
+// Deallocates the range [_Start, _Start + _Offset) and sets _Start and calculated end to nullptr
 CONSTEXPR_CXX20 inline void FreeRangeCount(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorSizeType<_Allocator_>      _ElementsCount,
@@ -263,6 +325,7 @@ CONSTEXPR_CXX20 inline void FreeRangeCount(
 }
 
 template <class _Allocator_>
+// Deallocates the range [_Start, _Start + _BytesCount) and sets _Start and calculated end to nullptr
 CONSTEXPR_CXX20 inline void FreeRangeBytes(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorSizeType<_Allocator_>      _BytesCount,
@@ -281,6 +344,63 @@ CONSTEXPR_CXX20 inline void FreeRangeBytes(
 
     _Start  = nullptr;
     _End    = nullptr;
+}
+
+
+template <class _Allocator_>
+// Deallocates the range [_Start, _End) without setting _Start and _End to nullptr
+CONSTEXPR_CXX20 inline void DeallocateRange(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>   _End,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (UNLIKELY(!_Start) || UNLIKELY(!_End))
+        return; 
+
+    using _SizeType_    = AllocatorSizeType<_Allocator_>;
+    const auto _Length  = static_cast<_SizeType_>(_End - _Start);
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    _Allocator.deallocate(_Start, _Length);
+}
+
+template <class _Allocator_>
+// Deallocates the range [_Start, _Start + _Offset) without setting _Start and calculated end to nullptr
+CONSTEXPR_CXX20 inline void DeallocateRangeCount(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorSizeType<_Allocator_>      _ElementsCount,
+    _Allocator_& _Allocator) noexcept
+{
+    if (UNLIKELY(_ElementsCount <= 0))
+        return;
+
+    using _ValueType_ = AllocatorValueType<_Allocator_>;
+    using _PointerType_ = AllocatorPointerType<_Allocator_>;
+
+    const auto _BytesCount = _ElementsCount * sizeof(_ValueType_);
+    _PointerType_& _End = _Start + _BytesCount;
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    _Allocator.deallocate(_Start, _BytesCount);
+}
+
+template <class _Allocator_>
+// Deallocates the range [_Start, _Start + _BytesCount) without setting _Start and calculated end to nullptr
+CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorSizeType<_Allocator_>      _BytesCount,
+    _Allocator_& _Allocator) noexcept
+{
+    if (UNLIKELY(_BytesCount <= 0))
+        return;
+
+    using _ValueType_ = AllocatorValueType<_Allocator_>;
+    using _PointerType_ = AllocatorPointerType<_Allocator_>;
+
+    _PointerType_& _End = _Start + _BytesCount;
+
+    memory::DestroyRange(_Start, _End, _Allocator);
+    _Allocator.deallocate(_Start, _BytesCount);
 }
 
 __BASE_MEMORY_NAMESPACE_END

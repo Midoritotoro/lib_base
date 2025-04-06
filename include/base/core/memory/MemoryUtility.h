@@ -126,8 +126,8 @@ template <typename _Type_>
 NODISCARD inline constexpr
     const char* CheckedToConstChar(_Type_ pointerLike) noexcept
 {
-    const auto pointerLikeAdress = ToAddress(pointerLike);
-    return UnCheckedToConstChar(pointerLikeAdress);
+    const auto pointerLikeAddress = ToAddress(pointerLike);
+    return UnCheckedToConstChar(pointerLikeAddress);
 }
 
 template <typename _Type_>
@@ -157,8 +157,8 @@ NODISCARD inline constexpr
     unsigned char* CheckedToUnsignedChar(
         _Type_ pointerLike) noexcept
 {
-    const auto pointerLikeAdress = ToAddress(pointerLike);
-    return UnCheckedToUnsignedChar(pointerLikeAdress);
+    const auto pointerLikeAddress = ToAddress(pointerLike);
+    return UnCheckedToUnsignedChar(pointerLikeAddress);
 }
 
 template <typename _Type_>
@@ -167,8 +167,8 @@ const unsigned char*
     CheckedToConstUnsignedChar(
         _Type_ pointerLike) noexcept
 {
-    const auto pointerLikeAdress = ToAddress(pointerLike);
-    return UnCheckedToConstUnsignedChar(pointerLikeAdress);
+    const auto pointerLikeAddress = ToAddress(pointerLike);
+    return UnCheckedToConstUnsignedChar(pointerLikeAddress);
 }
 
 

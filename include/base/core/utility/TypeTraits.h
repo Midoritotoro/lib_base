@@ -1,10 +1,9 @@
 #pragma once 
 
 #include <type_traits>
-#include <ranges>
 
 #include <base/core/arch/Platform.h>
-
+#include <base/core/utility/Concepts.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -114,14 +113,6 @@ using is_detected = typename _detail::detector<nonesuch, void, Op, Args...>::val
 template <template <typename...> class Op, typename...Args>
 constexpr inline bool is_detected_v = is_detected<Op, Args...>::value;
 
-
-// is_virtual_base_of_v<B, D> is true if and only if B is a virtual base class of D.
-// Just like is_base_of:
-// * only works on complete types;
-// * B and D must be class types;
-// * ignores cv-qualifications;
-// * B may be inaccessibile.
-
 namespace _detail {
 	WARNING_PUSH
 		WARNING_DISABLE_GCC("-Wold-style-cast")
@@ -140,21 +131,10 @@ namespace _detail {
 		Base, Derived,
 		std::enable_if_t <
 		std::conjunction_v<
-		// Base is a base class of Derived.
 		std::is_base_of<Base, Derived>,
 
-		// Check that Derived* can be converted to Base*, ignoring
-		// accessibility. If this is possible, then Base is
-		// an unambiguous base of Derived (=> virtual bases are always
-		// unambiguous).
 		is_detected<is_virtual_base_conversion_test, Derived, Base>,
 
-		// Check that Base* can _not_ be converted to Derived*,
-		// again ignoring accessibility. This seals the deal:
-		// if this conversion cannot happen, it means that Base is an
-		// ambiguous base and/or it is a virtual base.
-		// But we have already established that Base is an unambiguous
-		// base, hence: Base is a virtual base.
 		std::negation<
 		is_detected<is_virtual_base_conversion_test, Base, Derived>
 		>

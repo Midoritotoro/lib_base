@@ -349,17 +349,13 @@ public:
 		emplaceBack(element);
     }
 
-	CONSTEXPR_CXX20 inline void push_front(const ValueType& element) {
-
-    }
-
 	CONSTEXPR_CXX20 inline void append(const ValueType& element) {
-		return push_back(element);
+		emplaceBack(element);
     }
 
-	template <class ... Args> 
-	CONSTEXPR_CXX20 inline void emplace_back(Args&&... args) noexcept {
-		
+	template <class ... _Args_>
+	CONSTEXPR_CXX20 inline void emplace_back(_Args_&&... args) noexcept {
+		emplaceBack(std::forward<_Args_>(args)...);
 	}
    	
 	CONSTEXPR_CXX20 inline NODISCARD ValueType pop() noexcept {
@@ -430,18 +426,50 @@ public:
 	}
 
 	inline void clear() {
-		UNUSED(erase(constBegin(), constEnd()));
+		auto& pairValue		= _pair._secondValue;
+		auto& allocator		= _pair.first();
+
+		pointer& _Start		= pairValue._start;
+		pointer& _End		= pairValue._end;
+		pointer& _Current	= pairValue._current;
+
+		if (_Start == _End)
+			return;
+
+		memory::DeallocateRange(_Start, _End, allocator);
+		_Current = _Start;
 	}
 
 	inline NODISCARD Iterator erase(
 		ConstIterator first,
 		ConstIterator last)
 	{
-		return {};
+		auto& pairValue		= _pair._secondValue;
+		auto& allocator		= _pair.first();
+
+		if (size() <= 0)
+			return;
+
+		memory::DeallocateRange(
+			memory::UnFancy(first), 
+			memory::UnFancy(last), allocator);
+
+		_Current = _Start;
+		retru n
 	}
 
 	inline NODISCARD Iterator erase(ConstIterator it) {
-		return {};
+		auto& pairValue = _pair._secondValue;
+		auto& allocator = _pair.first();
+
+		if (size() <= 0)
+			return;
+
+		memory::DeallocateRange(
+			memory::UnFancy(first),
+			memory::UnFancy(last), allocator);
+
+		_Current = _Start;
 	}
 
 	inline NODISCARD bool resize(
@@ -532,7 +560,7 @@ public:
 		return _Count;
 	}
 	
-	inline void fill(const_reference _Fill) noexcept {
+	inline void fill(const_reference _Fill) {
 		for (SizeType i = 0; i < capacity(); ++i)
 			insert(i, _Fill);
 	}
@@ -546,13 +574,12 @@ public:
 
 	inline void insert(
 		size_type index,
-		const_reference element) noexcept
+		const_reference element)
 	{
+		auto& pairValue		= _pair._secondValue;
+		const auto _Offset	= index * sizeof(ValueType);
 
-	}
-
-	inline void prepend(const_reference element) noexcept {
-
+		emplaceAt(pairValue._start + _Offset, element);
 	}
 
 	constexpr inline NODISCARD sizetype max_size() const noexcept {
@@ -611,15 +638,13 @@ private:
 
 	template <class ..._Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBack(_Valty_&&... _Val) {
-		auto& pairValue = _pair._secondValue;
+		auto& pairValue		= _pair._secondValue;
 
-		auto& _End = pairValue._end;
-		auto& _Current = pairValue._current;
+		pointer& _End		= pairValue._end;
+		pointer& _Current	= pairValue._current;
 
-		if (_Current != _End) {
-			emplaceBackWithUnusedCapacity(std::forward<_Valty_>(_Val)...);
-			return;
-		}
+		if (_Current != _End)
+			return emplaceBackWithUnusedCapacity(std::forward<_Valty_>(_Val)...);
 
 		emplaceBackReallocate(std::forward<_Valty_>(_Val)...);
 	}
@@ -627,49 +652,41 @@ private:
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
 		auto& pairValue		= _pair._secondValue;
-		auto& allocator		= _pair.first();
-
-		pointer& _End		= pairValue._end;
-		pointer& _Current	= pairValue._current;
-
-		DebugAssert(_Current != _End);
-
-		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
-			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
-		)
-			memory::ConstructInPlace(
-				*_Current, std::forward<_Valty_>(_Val)...);
-		else
-			std::allocator_traits<allocator_type>::construct(
-				allocator, memory::UnFancy(_Current), std::forward<_Valty_>(_Val)...);
-		
-
-		++_Current;
+		emplaceAt(pairValue._current, std::forward<_Valty_>(_Val)...);
 	}
 
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBackReallocate(_Valty_&&... _Val) {
-		auto& pairValue = _pair._secondValue;
-		auto& allocator = _pair.first();
+		auto& pairValue				= _pair._secondValue;
+		const auto _NewSize			= static_cast<size_type>(sizeof...(_Val) + capacity());
 
-		pointer& _End = pairValue._end;
-		pointer& _Current = pairValue._current;
+		const auto _IsEnoughMemory	= resize(_NewSize);
 
-		DebugAssert(_Current != _End);
+		if (UNLIKELY(_IsEnoughMemory == false)) {
+			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+			return;
+		}
 
-		resize(sizeof...(_Val) + capacity());
-		
-		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
+		emplaceAt(pairValue._current, std::forward<_Valty_>(_Val)...);
+	}
+
+	template <class... _Valty_>
+	CONSTEXPR_CXX20 inline void emplaceAt(
+		pointer			_Location,
+		_Valty_&&...	_Val)
+	{
+		if constexpr (std::conjunction_v<
+			std::is_nothrow_constructible<ValueType, _Valty_...>,
 			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
 		)
 			memory::ConstructInPlace(
-				*_Current, std::forward<_Valty_>(_Val)...);
+				*_Location, std::forward<_Valty_>(_Val)...);
 		else
 			std::allocator_traits<allocator_type>::construct(
-				allocator, memory::UnFancy(_Current), std::forward<_Valty_>(_Val)...);
+				allocator, memory::UnFancy(_Location),
+				std::forward<_Valty_>(_Val)...);
 
-
-		++_Current;
+		++_Location;
 	}
 
 	inline void FreeAllElements() noexcept {
@@ -679,13 +696,6 @@ private:
 		memory::FreeRange(pairValue._start, pairValue._end, allocator);
 
 		pairValue._current = nullptr;
-	}
-
-	inline void insertToAdress(
-		sizetype offset, 
-		ValueType* value)
-	{
-			
 	}
 
 	CompressedPair<allocator_type, VectorValueType> _pair;

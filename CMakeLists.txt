@@ -336,6 +336,7 @@ set(PUBLIC_HEADERS
     include/base/core/math/MinMaxTraitsAVX512.h
 
     include/base/core/math/MinMaxTraitsSSE2.h
+    include/base/core/utility/Concepts.h
 )
 
 include(CMakePackageConfigHelpers)
