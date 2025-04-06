@@ -177,10 +177,10 @@ CONSTEXPR_CXX20 inline void ConstructInPlace(
 {
 #if BASE_HAS_CXX20
     if (is_constant_evaluated())
-        ConstructAt(AdressOf(_Obj), std::forward<_Types_>(_Args)...);
+        ConstructAt(AddressOf(_Obj), std::forward<_Types_>(_Args)...);
     else
 #endif
-        ::new (static_cast<void*>(AdressOf(_Obj))) 
+        ::new (static_cast<void*>(AddressOf(_Obj)))
             _Type_(std::forward<_Types_>(_Args)...);
 }
 

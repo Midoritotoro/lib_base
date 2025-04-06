@@ -661,7 +661,7 @@ private:
 		
 		if constexpr (std::conjunction_v<std::is_nothrow_constructible<ValueType, _Valty_...>,
 			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
-			)
+		)
 			memory::ConstructInPlace(
 				*_Current, std::forward<_Valty_>(_Val)...);
 		else
