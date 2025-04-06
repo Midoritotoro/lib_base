@@ -12,12 +12,23 @@
 
 #include <base/core/container/CompressedPair.h>
 
-#if defined(_DEBUG) && !defined(BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE)
+#if defined(_DEBUG)
+
+#ifdef BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE
+#  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
+    DebugAssertReturn(_Cond, _Message, _RetVal)
+#else
+#  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
+	UNUSED(_RetVal);															\
+	DebugAssert(_Cond, _Message)												\
+	
+#endif
+
 
 #  ifndef _VECTOR_ERROR_DEBUG_
 #    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							\
 	do {																		\
-		DebugAssertLog(false, _Messsage);										\
+		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);										\
 		return _RetVal;															\
 	} while(0);
 #  endif
@@ -25,7 +36,7 @@
 #  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
 #    define _VECTOR_ERROR_DEBUG_NO_RET_(_Messsage)								\
 	do {																		\
-		DebugAssertLog(false, _Messsage);										\
+		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);										\
 		return;																	\
 	} while(0);
 #  endif

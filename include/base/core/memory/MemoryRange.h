@@ -258,13 +258,13 @@ template <class _Allocator_>
 CONSTEXPR_CXX20 inline void DestroyRange(
     AllocatorPointerType<_Allocator_>       _First,
     AllocatorConstPointerType<_Allocator_>  _Last,
-    _Allocator_&                            _Al) noexcept 
+    _Allocator_&                            _Allocator) noexcept 
 {
     using _Ty = AllocatorValueType<_Allocator_>;
 
     if constexpr (CanDestroyRange<_Ty, _Allocator_>)
         for (; _First != _Last; ++_First)
-            _Al.destroy(UnFancy(_First));
+            _Allocator.destroy(UnFancy(_First));
 }
 
 template <
