@@ -76,12 +76,19 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 
 #endif
 
-template <
-    typename _Type_,
-    class   _Allocator_>
-constexpr bool CanDestroyRange  = !std::conjunction_v<
-    std::is_trivially_destructible<_Type_>,
-    std::_Uses_default_destroy<_Allocator_, _Type_*>>;
+#if defined(OS_WIN) && defined(CPP_MSVC)
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange  = !std::conjunction_v<
+        std::is_trivially_destructible<_Type_>,
+        std::_Uses_default_destroy<_Allocator_, _Type_*>>;
+#else 
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange = !std::is_trivially_destructible<_Type_>;
+#endif
 
 template <
     class _FirstIterator_,

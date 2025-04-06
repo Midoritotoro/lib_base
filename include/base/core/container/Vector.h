@@ -42,9 +42,9 @@ public:
 	{}
 
 	CONSTEXPR_CXX20 void swap(VectorValue& other) noexcept {
-		swap(_start, other._start);
-		swap(_end, other._end);
-		swap(_current, other._current);
+		std::swap(_start, other._start);
+		std::swap(_end, other._end);
+		std::swap(_current, other._current);
 	}
 
 	CONSTEXPR_CXX20 void takeContents(VectorValue& other) noexcept {
@@ -134,6 +134,7 @@ public:
 
 		if (_UnusedCapacity < elementsSize) {
 			const auto isEnoughMemory = resize(_Capacity + elementsSize);
+
 			if (UNLIKELY(isEnoughMemory == false)) {
 				DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
 				return;
@@ -369,62 +370,6 @@ public:
 
 	}
 
-	inline NODISCARD SizeType find(ConstReference element) const noexcept {
-		for (SizeType i = 0; i < size(); ++i)
-			if (at(i) == element)
-				return i;
-
-		return -1;
-	}
-
-	inline NODISCARD Vector<SizeType>
-		findAll(ConstReference element) const noexcept
-	{
-		Vector<SizeType> result = { -1 };
-
-		for (SizeType i = 0; i < size(); ++i)
-			if (at(i) == element)
-				result.push_back(i);
-
-		return result;
-	}
-	
-	inline NODISCARD SizeType
-		findLastOf(ConstReference element) const noexcept
-	{
-		for (SizeType i = size() - 1; i >= 0; --i)
-			if (at(i) == element)
-				return i;
-
-		return -1;
-	}
-
-	inline NODISCARD SizeType
-		findFirstOf(ConstReference element) const noexcept
-	{
-		return find(element);
-	}
-
-	inline NODISCARD SizeType
-		findLastNotOf(ConstReference element) const noexcept
-	{
-		for (SizeType i = size() - 1; i >= 0; --i)
-			if (at(i) != element)
-				return i;
-
-		return -1;
-	}
-	
-	inline NODISCARD SizeType
-		findFirstNotOf(ConstReference element) const noexcept
-	{
-		for (SizeType i = 0; i < size(); ++i)
-			if (at(i) != element)
-				return i;
-
-		return -1;
-	}
-
 	inline void clear() {
 		auto& pairValue		= _pair._secondValue;
 		auto& allocator		= _pair.first();
@@ -454,8 +399,7 @@ public:
 			memory::UnFancy(first), 
 			memory::UnFancy(last), allocator);
 
-		_Current = _Start;
-		retru n
+		return Iterator(this);
 	}
 
 	inline NODISCARD Iterator erase(ConstIterator it) {
@@ -466,10 +410,10 @@ public:
 			return;
 
 		memory::DeallocateRange(
-			memory::UnFancy(first),
-			memory::UnFancy(last), allocator);
+			pairValue._start,
+			memory::UnFancy(it), allocator);
 
-		_Current = _Start;
+		return Iterator(this);
 	}
 
 	inline NODISCARD bool resize(
@@ -482,82 +426,6 @@ public:
 			fill(_Fill);
 
 		return resizeSuccess;
-	}
-
-    inline NODISCARD SizeType indexOf(
-		ConstReference element,
-		SizeType from = 0) const noexcept
-	{
-		for (SizeType i = from; i < size(); ++i)
-			if (at(i) == element)
-				return i;
-
-		return -1;
-	}
-
-	inline NODISCARD SizeType lastIndexOf(
-		ConstReference element,
-		SizeType from = 0) const noexcept
-	{
-		for (SizeType i = size() - 1; i >= from; --i)
-			if (at(i) == element)
-				return i;
-
-		return -1;
-	}
-
-	inline NODISCARD bool contains(
-		ConstReference element,
-		SizeType from = 0) const noexcept
-	{
-		for (SizeType i = from; i < size(); ++i)
-			if (at(i) == element)
-				return true;
-
-		return false;
-	}
-
-	inline NODISCARD bool contains(
-		const Vector& subVector,
-		SizeType from = 0) const noexcept
-	{
-		SizeType overlaps = 0;
-		const auto subVectorSize = subVector.size();
-
-		for (SizeType i = from; i < size(); ++i)
-			if (at(i) == subVector[i % subVectorSize] && (++overlaps == subVectorSize))
-				return true;
-
-		return false;
-	}
-	
-	inline NODISCARD SizeType count(
-		ConstReference element) const noexcept
-	{
-		SizeType _Count = 0;
-
-		for (SizeType i = 0; i < size(); ++i)
-			if (at(i) == element)
-				++_Count;
-
-		return _Count;
-	}
-	
-	inline NODISCARD size_type count(
-		const Vector& subVector) const noexcept
-	{
-		size_type _Count = 0;
-		size_type overlaps = 0;
-
-		const auto subVectorSize = subVector.size();
-
-		for (size_type i = 0; i < size(); ++i)
-			(at(i) == subVector[i % subVectorSize]
-				&& (++overlaps == subVectorSize))
-					? ++_Count
-					: overlaps = 0;
-		
-		return _Count;
 	}
 	
 	inline void fill(const_reference _Fill) {
@@ -606,32 +474,42 @@ private:
 	}
 
 	CONSTEXPR_CXX20 inline NODISCARD bool resizeReallocate(SizeType newCapacity) noexcept {
+		const auto oldCapacity = capacity();
+
+		if (UNLIKELY(oldCapacity == newCapacity))
+			return false;
+
 		const auto bytesRequired = static_cast<SizeType>(newCapacity * sizeof(ValueType));
 
 		if (UNLIKELY(bytesRequired <= 0))
 			return false;
 
 		auto& allocator		= _pair.first();
-		auto memory			= allocator.allocate(bytesRequired);
+		pointer memory		= allocator.allocate(bytesRequired);
 
 		if (UNLIKELY(memory == nullptr))
 			return false;
 
 		const auto oldSize	= size();
+
 		auto& pairValue		= _pair._secondValue;
 
-		auto& blockStart	= memory;
-		auto  blockEnd		= memory + newCapacity;
+		pointer& _Start		= pairValue._start;
+		pointer& _End		= pairValue._end;
+		pointer& _Current	= pairValue._current;
 
-		if (LIKELY(oldSize != 0))
+		auto& blockStart	= memory;
+		auto blockEnd		= memory + newCapacity;
+
+		if (LIKELY(oldSize != 0) && newCapacity >= oldCapacity)
 			memory::MemoryCopyCommon(
 				begin(), end(),
 				blockStart, blockEnd);
 
-		pairValue._start	= blockStart;
-		pairValue._end		= blockEnd;
+		_Start		= blockStart;
+		_End		= blockEnd;
 			
-		pairValue._current	= blockStart + oldSize;
+		_Current	= blockStart + oldSize;
 		
 		return true;
 	}
@@ -652,14 +530,19 @@ private:
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBackWithUnusedCapacity(_Valty_&&... _Val) {
 		auto& pairValue		= _pair._secondValue;
-		emplaceAt(pairValue._current, std::forward<_Valty_>(_Val)...);
+		auto& allocator		= _pair.first();
+
+		emplaceAt(
+			allocator, pairValue._current,
+			std::forward<_Valty_>(_Val)...);
 	}
 
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBackReallocate(_Valty_&&... _Val) {
 		auto& pairValue				= _pair._secondValue;
-		const auto _NewSize			= static_cast<size_type>(sizeof...(_Val) + capacity());
+		auto& allocator				= _pair.first();
 
+		const auto _NewSize			= static_cast<size_type>(sizeof...(_Val) + capacity());
 		const auto _IsEnoughMemory	= resize(_NewSize);
 
 		if (UNLIKELY(_IsEnoughMemory == false)) {
@@ -667,23 +550,30 @@ private:
 			return;
 		}
 
-		emplaceAt(pairValue._current, std::forward<_Valty_>(_Val)...);
+		emplaceAt(
+			allocator, pairValue._current,
+			std::forward<_Valty_>(_Val)...);
 	}
 
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceAt(
+		allocator_type& _Allocator,
 		pointer			_Location,
 		_Valty_&&...	_Val)
 	{
+#if defined(OS_WIN) && defined(CPP_MSVC)
 		if constexpr (std::conjunction_v<
 			std::is_nothrow_constructible<ValueType, _Valty_...>,
 			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
 		)
+#else
+		if constexpr (std::is_nothrow_constructible<ValueType, _Valty_...>)
+#endif
 			memory::ConstructInPlace(
 				*_Location, std::forward<_Valty_>(_Val)...);
 		else
 			std::allocator_traits<allocator_type>::construct(
-				allocator, memory::UnFancy(_Location),
+				_Allocator, memory::UnFancy(_Location),
 				std::forward<_Valty_>(_Val)...);
 
 		++_Location;
