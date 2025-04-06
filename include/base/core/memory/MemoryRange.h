@@ -87,7 +87,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
     template <
         typename _Type_,
         class   _Allocator_>
-    constexpr bool CanDestroyRange = !std::is_trivially_destructible<_Type_>;
+    constexpr bool CanDestroyRange = !std::is_trivially_destructible_v<_Type_>;
 #endif
 
 template <

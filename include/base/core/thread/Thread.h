@@ -18,10 +18,43 @@ __BASE_THREAD_NAMESPACE_BEGIN
 
 class Thread final {
 public:
-	Thread() noexcept;
-	Thread(const Thread& other) noexcept;
+	NODISCARD_THREAD_CTOR Thread() noexcept;
+	NODISCARD_THREAD_CTOR Thread(const Thread& other) noexcept;
 
-	Thread(Thread&& rOther) noexcept;
+	NODISCARD_THREAD_CTOR Thread(Thread&& rOther) noexcept;
+
+
+	template <
+		class Function,
+		class ... Args>
+	NODISCARD_THREAD_CTOR Thread(
+		Function&& _routine,
+		Args&& ... args)
+	{
+		_impl->start(
+			std::forward<Function>(_routine),
+			std::forward<Args>(args)...);
+	}
+
+	// For methods
+	template <
+		class Owner,
+		class Method,
+		class ... Args>
+	NODISCARD_THREAD_CTOR Thread(
+		Owner* _owner,
+		Method&& _routine,
+		Args&& ... args)
+	{
+		static_assert(std::is_invocable_r_v<void, Method, Owner*, Args...>,
+			"Method must be a callable type that can be called with Owner* as the first argument.");
+		_impl->start(
+			std::bind(
+				std::forward<Method>(_routine),
+				_owner,
+				std::forward<Args>(args)...)
+		);
+	}
 
 	Thread& operator=(const Thread& other) noexcept;
 	Thread& operator=(Thread&& other) noexcept;

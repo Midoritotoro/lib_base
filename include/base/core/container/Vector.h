@@ -1,5 +1,9 @@
 #pragma once
 
+// All warnings defined in this file can be disabled using 
+//	#define BASE_SILENCE_ALL_VECTOR_WARNINGS.
+// Calling std::terminate in all Debug-Only asserts on failure can be disabled using
+//	#define BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE
 
 #include <base/core/memory/MemoryUtility.h>
 #include <base/core/memory/MemoryRange.h>
@@ -7,6 +11,59 @@
 #include <base/core/container/VectorIterator.h>
 
 #include <base/core/container/CompressedPair.h>
+
+#if defined(_DEBUG) && !defined(BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE)
+
+#  ifndef _VECTOR_ERROR_DEBUG_
+#    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							\
+	do {																		\
+		DebugAssertLog(false, _Messsage);										\
+		return _RetVal;															\
+	} while(0);
+#  endif
+
+#  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
+#    define _VECTOR_ERROR_DEBUG_NO_RET_(_Messsage)								\
+	do {																		\
+		DebugAssertLog(false, _Messsage);										\
+		return;																	\
+	} while(0);
+#  endif
+
+#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_
+#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(_RetVal)							\
+    _VECTOR_ERROR_DEBUG_(														\
+      "base::container::Vector: Not enough memory to expand the Vector.\n ",	\
+        _RetVal)
+#  endif
+
+#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								\
+    _VECTOR_ERROR_DEBUG_NO_RET_(												\
+      "base::container::Vector: Not enough memory to expand the Vector.\n ")
+#  endif
+
+#else
+
+#  ifndef _VECTOR_ERROR_DEBUG_
+#    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							((void)0)
+#  endif
+
+#  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
+#    define _VECTOR_ERROR_DEBUG_NO_RET_(_Message)								((void)0)
+#  endif
+
+#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_
+#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(_RetVal)							((void)0)
+#  endif
+
+#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								((void)0)
+#  endif
+
+#endif
+
+
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
@@ -135,10 +192,8 @@ public:
 		if (_UnusedCapacity < elementsSize) {
 			const auto isEnoughMemory = resize(_Capacity + elementsSize);
 
-			if (UNLIKELY(isEnoughMemory == false)) {
-				DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
-				return;
-			}
+			if (UNLIKELY(isEnoughMemory == false))
+				_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 		}
 
 		for (_SizeType_ i = 0; i < elementsSize; ++i) {
@@ -160,10 +215,8 @@ public:
 			return;
 		}
 
-		if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false) {
-			DebugAssertLog(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
-			return;
-		}
+		if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false)
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 	}
 
 	CONSTEXPR_CXX20 inline Vector(const std::vector<ValueType>& vector) noexcept :
@@ -174,13 +227,11 @@ public:
 
 		const auto isEnoughMemory = resize(_Capacity);
 
-		if (UNLIKELY(isEnoughMemory == false)) {
-			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
-			return;
-		}
+		if (UNLIKELY(isEnoughMemory == false))
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 
-		if (memory::MemoryCopy(_Start, vector.data(), _Capacity) == false)
-			DebugAssertLog(false, "base::container::Vector::Vector: Ошибка при копировании элементов. ");
+		if (UNLIKELY(memory::MemoryCopy(_Start, vector.data(), _Capacity) == false))
+			_VECTOR_ERROR_DEBUG_NO_RET_("base::container::Vector::Vector: Error when copying elements. ")
 	}
 
 	CONSTEXPR_CXX20 inline Vector(const SizeType _Capacity) noexcept :
@@ -200,10 +251,8 @@ public:
 	{
 		const auto isEnoughMemory = resize(_Capacity);
 
-		if (UNLIKELY(isEnoughMemory == false)) {
-			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
-			return;
-		}
+		if (UNLIKELY(isEnoughMemory == false))
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 
 		fill(_Fill);
 	}
@@ -385,6 +434,8 @@ public:
 		_Current = _Start;
 	}
 
+	// Deletes the specified elements from the container
+	// Moves the elements of the vector that follow the part being deleted to the place of the elements being deleted
 	inline NODISCARD Iterator erase(
 		ConstIterator first,
 		ConstIterator last)
@@ -401,10 +452,16 @@ public:
 
 		return Iterator(this);
 	}
-
-	inline NODISCARD Iterator erase(ConstIterator it) {
+	
+	// Deletes the specified element from the container
+	// Moves the elements of the vector that follow the part being deleted to the place of the element being deleted
+	inline NODISCARD Iterator erase(ConstIterator it) noexcept(
+		std::is_nothrow_move_assignable_v<ValueType>) 
+	{
 		auto& pairValue = _pair._secondValue;
 		auto& allocator = _pair.first();
+
+		pointer& _IteratorPointer = memory::UnFancy(it);
 
 		if (size() <= 0)
 			return;
@@ -416,8 +473,19 @@ public:
 		return Iterator(this);
 	}
 
+	// increase capacity to newCapacity (without geometric growth)
+	_CONSTEXPR20 void reserve(BASE_GUARDOVERFLOW size_type newCapacity) {
+		if (UNLIKELY(newCapacity <= capacity()) || UNLIKELY(newCapacity > maxSize())) // something to do (reserve() never shrinks)
+			return;
+
+		const auto isEnoughMemory = resizeReallocate(newCapacity);
+
+		if (UNLIKELY(isEnoughMemory == false))
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+	}
+
 	inline NODISCARD bool resize(
-		size_type size,
+		SizeType size,
 		const_reference _Fill)
 	{
 		const auto resizeSuccess = resize(size);
@@ -433,7 +501,9 @@ public:
 			insert(i, _Fill);
 	}
 
-	inline NODISCARD bool resize(const SizeType newCapacity) {
+	inline NODISCARD bool resize(
+		BASE_GUARDOVERFLOW const SizeType newCapacity) 
+	{
 		const auto growth			= calculateGrowth(newCapacity);
 		const auto isEnoughMemory	= resizeReallocate(growth);
 
@@ -488,10 +558,9 @@ private:
 		pointer memory		= allocator.allocate(bytesRequired);
 
 		if (UNLIKELY(memory == nullptr))
-			return false;
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false)
 
 		const auto oldSize	= size();
-
 		auto& pairValue		= _pair._secondValue;
 
 		pointer& _Start		= pairValue._start;
@@ -545,10 +614,8 @@ private:
 		const auto _NewSize			= static_cast<size_type>(sizeof...(_Val) + capacity());
 		const auto _IsEnoughMemory	= resize(_NewSize);
 
-		if (UNLIKELY(_IsEnoughMemory == false)) {
-			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
-			return;
-		}
+		if (UNLIKELY(_IsEnoughMemory == false))
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 
 		emplaceAt(
 			allocator, pairValue._current,
@@ -558,7 +625,7 @@ private:
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceAt(
 		allocator_type& _Allocator,
-		pointer			_Location,
+		pointer&		_Location,
 		_Valty_&&...	_Val)
 	{
 #if defined(OS_WIN) && defined(CPP_MSVC)
@@ -567,7 +634,7 @@ private:
 			std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
 		)
 #else
-		if constexpr (std::is_nothrow_constructible<ValueType, _Valty_...>)
+		if constexpr (std::is_nothrow_constructible_v<ValueType, _Valty_...>)
 #endif
 			memory::ConstructInPlace(
 				*_Location, std::forward<_Valty_>(_Val)...);
@@ -589,6 +656,48 @@ private:
 	}
 
 	CompressedPair<allocator_type, VectorValueType> _pair;
+};
+
+
+// --------------------------------------------------------------------------------------------------------------------------------------------
+
+
+template <class _Allocator_>
+class Vector<bool, _Allocator_>
+{
+public:
+	using value_type = bool;
+	using allocator_type = _Allocator_;
+
+	using pointer = value_type*;
+	using const_pointer = const pointer;
+
+	using size_type = sizetype;
+	using difference_type = sizetype;
+
+	using reference = value_type&;
+	using const_reference = const value_type&;
+
+	using iterator = VectorIterator<Vector<bool, _Allocator_>>;
+	using const_iterator = VectorConstIterator<Vector<bool, _Allocator_>>;
+
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+	using Iterator = iterator;
+	using ConstIterator = const_iterator;
+
+	using ValueType = value_type;
+	using SizeType = size_type;
+
+	using Reference = reference;
+	using ConstReference = const_reference;
+
+	using Pointer = pointer;
+	using ConstPointer = const_pointer;
+
+	using ReverseIterator = reverse_iterator;
+	using ConstReverseIterator = const_reverse_iterator;
 };
 
 __BASE_CONTAINER_NAMESPACE_END

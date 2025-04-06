@@ -23,7 +23,7 @@ concept IsValidIdType =
 
 class WindowsThreadPrivate {
 public:
-        template <
+    template <
         class _Tuple,
         size_t... _Indices>
     static NODISCARD uint
@@ -54,15 +54,15 @@ public:
     }
 
     template <
-        class Function,
-        class... Args,
-        class IdType = sizetype,
+        class       Function,
+        class...    Args,
+        class       IdType = sizetype,
         class = std::enable_if<IsValidIdType<IdType>>>
     static void STDCALL StartImplementation(
-        AtomicInteger<IdType>* _PThreadId,
+        AtomicInteger<IdType>*  _PThreadId,
         io::WindowsSmartHandle* _PHandle,
-        Function&& _Routine,
-        Args&& ... _Args) noexcept
+        Function&&              _Routine,
+        Args&& ...              _Args) noexcept
     {
         using _Tuple = std::tuple<
             std::decay_t<Function>,
@@ -81,7 +81,8 @@ public:
         // -MT или -MTd 
 
         *_PHandle = (HANDLE)reinterpret_cast<void*>(
-            _beginthreadex(nullptr, 0, invokerProc,
+            _beginthreadex(
+                nullptr, 0, invokerProc,
                 decayCopied.get(), 0, 
                 reinterpret_cast<uint*>(&threadId)));
 #else
@@ -131,6 +132,7 @@ public:
     {
 #if defined(CPP_MSVC) && !defined(_DLL)
         // -MT или -MTd 
+
         CloseImplementation(_PHandle);
         return true;
 #else

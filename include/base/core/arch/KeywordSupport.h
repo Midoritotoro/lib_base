@@ -335,21 +335,45 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined (CPP_GNU) || defined (CPP_CLANG)
 
+#ifndef LIKELY
 #  define LIKELY(p)                             __builtin_expect(!!(p), 1)
+#endif
+
+#ifndef UNLIKELY
 #  define UNLIKELY(p)                           __builtin_expect(!!(p), 0)
+#endif
+
+#ifndef UNREACHABLE
 #  define UNREACHABLE()                         __builtin_unreachable()
+#endif
 
 #elif defined(CPP_MSVC)
 
+#ifndef LIKELY
 #  define LIKELY(p)                             (!!(p))
+#endif
+
+#ifndef UNLIKELY
 #  define UNLIKELY(p)                           (!!(p))
+#endif
+
+#ifndef UNREACHABLE
 #  define UNREACHABLE()                         (__assume(0))
+#endif
 
 #else
 
+#ifndef LIKELY
 #  define LIKELY(p)                             (!!(p))
+#endif
+
+#ifndef UNLIKELY
 #  define UNLIKELY(p)                           (!!(p))
+#endif
+
+#ifndef UNREACHABLE
 #  define UNREACHABLE()                         ((void)0)
+#endif
 
 #endif
 
@@ -425,8 +449,8 @@ WARNING_DISABLE_MSVC(4067)
 #  endif 
 #endif
 
-#ifndef RESTRICT
-#  define RESTRICT base_restrict
+#ifndef BASE_RESTRICT
+#  define BASE_RESTRICT base_restrict
 #endif
 
 #ifdef CPP_CLANG
@@ -459,6 +483,15 @@ WARNING_DISABLE_MSVC(4067)
                    "Discarding the return value will cause a memory leak.")
 #else 
 #  define NODISCARD_RETURN_RAW_PTR 
+#endif
+
+#ifndef NODISCARD_THREAD_CTOR
+#  define NODISCARD_THREAD_CTOR \
+    NODISCARD_CTOR_MSG("Creating a thread object without assigning it to a variable " \
+                "may lead to unexpected behavior and resource leaks. Ensure " \
+                "the thread is properly managed.")
+#else
+#  define NODISCARD_THREAD_CTOR
 #endif
 
 #endif // __cplusplus
