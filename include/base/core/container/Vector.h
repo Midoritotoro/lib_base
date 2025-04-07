@@ -11,6 +11,11 @@
 #include <base/core/container/VectorIterator.h>
 
 #include <base/core/container/CompressedPair.h>
+#include <base/core/memory/MemoryAllocatorUtility.h>
+
+WARNING_DISABLE_MSVC(4834)
+WARNING_DISABLE_MSVC(4002)
+WARNING_DISABLE_MSVC(4003)
 
 #if defined(_DEBUG)
 
@@ -274,6 +279,33 @@ public:
 	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept :
 		_pair(std::exchange(rOther._pair, {}))
 	{}
+
+	CONSTEXPR_CXX20 Vector& operator=(Vector&& _Right) noexcept(
+		memory::ChoosePocma_v<allocator_type> != memory::PocmaValues::NoPropagateAllocators)
+	{
+		if (this == memory::AddressOf(_Right))
+			return *this;
+	
+		auto& pairValue = _pair._secondValue;
+		auto& _Al		= _pair.first();
+
+		auto& _Right_al = _Right._pair.first();
+
+		constexpr auto _Pocma_val = memory::ChoosePocma_v<allocator_type>;
+		if constexpr (_Pocma_val == memory::PocmaValues::NoPropagateAllocators) {
+			if (_Al != _Right_al) {
+				//_Move_assign_unequal_alloc(_Right);
+				return *this;
+			}
+		}
+
+		FreeAllElements();
+
+		memory::POCMA(_Al, _Right_al);
+		pairValue.takeContents(_Right.pairValue._secondValue);
+
+		return *this;
+	}
 
 	constexpr inline Reference operator[](const SizeType offset) noexcept {
 		const auto pairValue = _pair._secondValue;
