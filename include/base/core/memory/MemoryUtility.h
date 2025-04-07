@@ -312,4 +312,5 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     return _Success;
 }
 
+
 __BASE_MEMORY_NAMESPACE_END

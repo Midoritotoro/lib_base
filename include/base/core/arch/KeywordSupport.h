@@ -475,6 +475,14 @@ WARNING_DISABLE_MSVC(4067)
 #  define DECLARE_NOALIAS 
 #endif
 
+#ifndef SIZEOF_TO_BITS
+#  define SIZEOF_TO_BITS(_Type) (sizeof(_Type) * 8)
+#endif 
+
+#ifndef sizeof_to_bits
+#  define sizeof_to_bits        SIZEOF_TO_BITS
+#endif
+
 // Warnings
 
 #ifndef NODISCARD_RETURN_RAW_PTR

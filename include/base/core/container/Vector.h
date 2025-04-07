@@ -28,7 +28,7 @@
 #  ifndef _VECTOR_ERROR_DEBUG_
 #    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							\
 	do {																		\
-		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);										\
+		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);							\
 		return _RetVal;															\
 	} while(0);
 #  endif
@@ -36,7 +36,7 @@
 #  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
 #    define _VECTOR_ERROR_DEBUG_NO_RET_(_Messsage)								\
 	do {																		\
-		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);										\
+		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);							\
 		return;																	\
 	} while(0);
 #  endif
@@ -74,6 +74,9 @@
 
 #endif
 
+#ifndef _VECTOR_BOOLS_PER_UINT32_
+#  define _VECTOR_BOOLS_PER_UINT32_ (SIZEOF_TO_BITS(uint32))
+#endif
 
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
@@ -173,7 +176,7 @@ public:
 private:
 	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_>>;
 public:
-	static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
+	inline static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
 		_Vector_SIMD_Algorithm_Alignment
 #if LIB_BASE_HAS_SIMD_SUPPORT
 	{ MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT };
@@ -251,7 +254,7 @@ public:
 		const auto isEnoughMemory = resize(_Capacity);
 
 		if (UNLIKELY(isEnoughMemory == false))
-			DebugAssertLog(false, "base::container::Vector: Not enough memory to expand the Vector.\n ");
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 	}
 
 	CONSTEXPR_CXX20 inline Vector(
@@ -499,12 +502,12 @@ public:
 		SizeType size,
 		const_reference _Fill)
 	{
-		const auto resizeSuccess = resize(size);
+		const auto isEnoughMemory = resize(size);
 
-		if (resizeSuccess)
+		if (isEnoughMemory)
 			fill(_Fill);
 
-		return resizeSuccess;
+		return isEnoughMemory;
 	}
 	
 	inline void fill(const_reference _Fill) {
@@ -661,7 +664,10 @@ private:
 		auto& pairValue	= _pair._secondValue;
 		auto& allocator = _pair.first();
 
-		memory::FreeRange(pairValue._start, pairValue._end, allocator);
+		pointer& _Start = pairValue._start;
+		pointer& _End	= pairValue._end;
+
+		memory::FreeRange(_Start, _End, allocator);
 
 		pairValue._current = nullptr;
 	}
@@ -672,6 +678,14 @@ private:
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 
+
+class VectorBoolConstIterator {
+
+};
+
+class VectorBoolIterator {
+
+};
 
 template <class _Allocator_>
 class Vector<bool, _Allocator_>

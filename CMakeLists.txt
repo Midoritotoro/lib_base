@@ -337,6 +337,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/math/MinMaxTraitsSSE2.h
     include/base/core/utility/Concepts.h
+
+    include/base/core/memory/MemoryAllocatorUtility.h
 )
 
 include(CMakePackageConfigHelpers)
