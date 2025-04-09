@@ -224,6 +224,55 @@ public:
 	CONSTEXPR_CXX20 inline Reference operator[](const SizeType offset) noexcept;
 	CONSTEXPR_CXX20 inline ConstReference operator[](const SizeType offset) const noexcept;
 
+	template <typename U = T>
+	QTypeTraits::compare_eq_result_container<QList, U> operator==(const QList& other) const
+	{
+		if (size() != other.size())
+			return false;
+		if (begin() == other.begin())
+			return true;
+
+		// do element-by-element comparison
+		return d->compare(data(), other.data(), size());
+	}
+	template <typename U = T>
+	QTypeTraits::compare_eq_result_container<QList, U> operator!=(const QList& other) const
+	{
+		return !(*this == other);
+	}
+
+	template <typename U = T>
+	QTypeTraits::compare_lt_result_container<QList, U> operator<(const QList& other) const
+		noexcept(noexcept(std::lexicographical_compare<typename QList<U>::const_iterator,
+			typename QList::const_iterator>(
+				std::declval<QList<U>>().begin(), std::declval<QList<U>>().end(),
+				other.begin(), other.end())))
+	{
+		return std::lexicographical_compare(begin(), end(),
+			other.begin(), other.end());
+	}
+
+	template <typename U = T>
+	QTypeTraits::compare_lt_result_container<QList, U> operator>(const QList& other) const
+		noexcept(noexcept(other < std::declval<QList<U>>()))
+	{
+		return other < *this;
+	}
+
+	template <typename U = T>
+	QTypeTraits::compare_lt_result_container<QList, U> operator<=(const QList& other) const
+		noexcept(noexcept(other < std::declval<QList<U>>()))
+	{
+		return !(other < *this);
+	}
+
+	template <typename U = T>
+	QTypeTraits::compare_lt_result_container<QList, U> operator>=(const QList& other) const
+		noexcept(noexcept(std::declval<QList<U>>() < other))
+	{
+		return !(*this < other);
+	}
+
 	CONSTEXPR_CXX20 inline NODISCARD Reference at(const SizeType offset) noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ValueType at(const SizeType index) const noexcept;
 
@@ -338,6 +387,9 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD ValueType popBack() noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ValueType pop_back() noexcept;
 
+	CONSTEXPR_CXX20 inline NODISCARD ValueType pop_front() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ValueType popFront() noexcept;
+
 	CONSTEXPR_CXX20 inline void removeAt(BASE_GUARDOVERFLOW const SizeType index) noexcept;
 
 	CONSTEXPR_CXX20 inline void clear();
@@ -365,7 +417,6 @@ public:
 		const_reference _Fill);
 	inline NODISCARD bool resize(
 		BASE_GUARDOVERFLOW const SizeType newCapacity);
-
 
 	CONSTEXPR_CXX20 inline void fill(const_reference _Fill);
 
@@ -1047,6 +1098,20 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
+	Vector<_Element_, _Allocator_>::pop_front() noexcept
+{
+	return {};
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
+	Vector<_Element_, _Allocator_>::popFront() noexcept
+{
+	return {};
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAt(
 	BASE_GUARDOVERFLOW const size_type index) noexcept 
 {
@@ -1296,7 +1361,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void remove(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	SizeType _First,
 	SizeType _Count)
 {
@@ -1304,7 +1369,7 @@ CONSTEXPR_CXX20 inline void remove(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void remove(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	ConstIterator _First,
 	ConstIterator _Last)
 {
