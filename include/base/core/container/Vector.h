@@ -224,54 +224,38 @@ public:
 	CONSTEXPR_CXX20 inline Reference operator[](const SizeType offset) noexcept;
 	CONSTEXPR_CXX20 inline ConstReference operator[](const SizeType offset) const noexcept;
 
-	template <typename U = T>
-	QTypeTraits::compare_eq_result_container<QList, U> operator==(const QList& other) const
-	{
-		if (size() != other.size())
-			return false;
-		if (begin() == other.begin())
-			return true;
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_eq_result_container<
+		Vector, _ComparedElementType_> operator==(const Vector& other) const;
 
-		// do element-by-element comparison
-		return d->compare(data(), other.data(), size());
-	}
-	template <typename U = T>
-	QTypeTraits::compare_eq_result_container<QList, U> operator!=(const QList& other) const
-	{
-		return !(*this == other);
-	}
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_eq_result_container<
+		Vector, _ComparedElementType_> operator!=(const Vector& other) const;
 
-	template <typename U = T>
-	QTypeTraits::compare_lt_result_container<QList, U> operator<(const QList& other) const
-		noexcept(noexcept(std::lexicographical_compare<typename QList<U>::const_iterator,
-			typename QList::const_iterator>(
-				std::declval<QList<U>>().begin(), std::declval<QList<U>>().end(),
-				other.begin(), other.end())))
-	{
-		return std::lexicographical_compare(begin(), end(),
-			other.begin(), other.end());
-	}
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_lt_result_container<
+		Vector, _ComparedElementType_> operator<(const Vector& other) const noexcept(
+				noexcept(std::lexicographical_compare<
+					typename Vector<_ComparedElementType_>::const_iterator,
+				typename Vector::const_iterator>(
+					std::declval<Vector<_ComparedElementType_>>().begin(), 
+					std::declval<Vector<_ComparedElementType_>>().end(),
+				other.begin(), other.end())));
 
-	template <typename U = T>
-	QTypeTraits::compare_lt_result_container<QList, U> operator>(const QList& other) const
-		noexcept(noexcept(other < std::declval<QList<U>>()))
-	{
-		return other < *this;
-	}
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_lt_result_container<
+		Vector, _ComparedElementType_> operator>(const Vector& other) const noexcept(
+				noexcept(other < std::declval<Vector<_ComparedElementType_>>()));
 
-	template <typename U = T>
-	QTypeTraits::compare_lt_result_container<QList, U> operator<=(const QList& other) const
-		noexcept(noexcept(other < std::declval<QList<U>>()))
-	{
-		return !(other < *this);
-	}
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_lt_result_container<
+		Vector, _ComparedElementType_> operator<=(const Vector& other) const noexcept(
+			noexcept(other < std::declval<Vector<_ComparedElementType_>>()));
 
-	template <typename U = T>
-	QTypeTraits::compare_lt_result_container<QList, U> operator>=(const QList& other) const
-		noexcept(noexcept(std::declval<QList<U>>() < other))
-	{
-		return !(*this < other);
-	}
+	template <typename _ComparedElementType_ = ValueType>
+	CONSTEXPR_CXX20 inline compare_lt_result_container<
+		Vector, _ComparedElementType_> operator>=(const Vector& other) const noexcept(
+			noexcept(std::declval<Vector<_ComparedElementType_>>() < other));
 
 	CONSTEXPR_CXX20 inline NODISCARD Reference at(const SizeType offset) noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ValueType at(const SizeType index) const noexcept;
@@ -469,9 +453,7 @@ public:
 	CONSTEXPR_CXX20 inline void removeFirst();
 	CONSTEXPR_CXX20 inline void removeLast();
 
-	template <
-		typename _Predicate_,
-		typename = std::enable_if_t<std::is_function_v<_Predicate_>>> // ?
+	template <typename _Predicate_>
 	CONSTEXPR_CXX20 inline NODISCARD SizeType removeIf(_Predicate_ pred);
 
 	CONSTEXPR_CXX20 inline NODISCARD bool removeOne(const ValueType& element);
@@ -496,6 +478,10 @@ private:
 		allocator_type& _Allocator,
 		pointer& _Location,
 		_Valty_&&...	_Val);
+
+	template <typename _Type_ = ValueType>
+	CONSTEXPR_CXX20 inline NODISCARD bool elementsCompare(
+		const Vector<_Type_ /*, allocator_type */>& other) const noexcept;
 
 	CONSTEXPR_CXX20 inline void FreeAllElements() noexcept;
 
@@ -694,6 +680,78 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ConstReference
 {	
 	const auto& pairValue = _pair._secondValue;
 	return *(pairValue._current + offset);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_eq_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator==(const Vector& other) const
+{
+	if (size() != other.size())
+		return false;
+
+	if (begin() == other.begin())
+		return true;
+
+	// Element-by-element comparison
+	return elementsCompare(other);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_eq_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator!=(const Vector& other) const
+{
+	return !(*this == other);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_lt_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator<(const Vector& other) const noexcept(
+			noexcept(std::lexicographical_compare<
+				typename Vector<_ComparedElementType_>::const_iterator,
+				typename Vector::const_iterator>(
+					std::declval<Vector<_ComparedElementType_>>().begin(),
+					std::declval<Vector<_ComparedElementType_>>().end(),
+					other.begin(), other.end())))
+{
+	return std::lexicographical_compare(
+		begin(), end(),
+		other.begin(), other.end());
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_lt_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator>(const Vector& other) const noexcept(
+			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
+{
+	return other < *this;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_lt_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator<=(const Vector& other) const noexcept(
+			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
+{
+	return !(other < *this);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _ComparedElementType_>
+CONSTEXPR_CXX20 inline compare_lt_result_container<
+	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_>::operator>=(const Vector& other) const noexcept(
+			noexcept(std::declval<Vector<_ComparedElementType_>>() < other))
+{
+	return !(*this < other);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1394,9 +1452,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeLast() {
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-template <
-	typename _Predicate_,
-	typename = std::enable_if_t<std::is_function_v<_Predicate_>>>
+template <typename _Predicate_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
 	Vector<_Element_, _Allocator_>::removeIf(_Predicate_ pred)
 {
@@ -1551,6 +1607,21 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 			std::forward<_Valty_>(_Val)...);
 
 	++_Location;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Type_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCompare(
+	const Vector<_Type_ /*, allocator_type */>& other) const noexcept
+{
+	// Здесь нужно сравнение размеров SizeType`ов и приведение их к одному типу
+	const auto _Iterations = std::min(other.size(), size());
+
+	for (size_type _Current = 0; _Current < _Iterations; ++_Current)
+		if (at(_Current) != other.at(_Current))
+			return false;
+
+	return true;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
