@@ -95,12 +95,20 @@ struct nonesuch {
 };
 
 namespace _detail {
-	template <typename T, typename Void, template <typename...> class Op, typename...Args>
+	template <
+		typename T,
+		typename Void, 
+		template <typename...> class Op,
+		typename...Args>
 	struct detector {
 		using value_t = std::false_type;
 		using type = T;
 	};
-	template <typename T, template <typename...> class Op, typename...Args>
+
+	template <
+		typename T, 
+		template <typename...> class Op,
+		typename...Args>
 	struct detector<T, std::void_t<Op<Args...>>, Op, Args...> {
 		using value_t = std::true_type;
 		using type = Op<Args...>;
@@ -183,6 +191,15 @@ template <typename T>
 constexpr bool IsTypeComplete
 	<T, std::void_t<decltype(sizeof(T))>> = true;
 
+template <typename _Type_>
+constexpr bool is_unsigned_type_v = std::_Is_any_of_v<_Type_,
+	unsigned char, unsigned short, unsigned int,
+	unsigned long, unsigned long long>>;
+
+template <typename _Type_>
+constexpr bool is_signed_type_v = 
+	std::is_integral_v<_Type_> 
+	&& !is_unsigned_type_v<_Type_>;
 
 // --------------------------------------------------
 

@@ -34,11 +34,6 @@ concept HasValueType = requires {
     typename _Type_::value_type;
 };
 
-template <typename _Type_>
-concept IsPredicateWithConvertibleToBoolReturn = requires(_Type_ a) {
-    { a() } -> std::convertible_to<bool>;
-};
-
 __BASE_NAMESPACE_END
 
 #endif 

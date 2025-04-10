@@ -14,7 +14,9 @@
 __BASE_NAMESPACE_BEGIN
 
 template <typename ForwardIterator>
-inline void DeleteAll(ForwardIterator begin, ForwardIterator end)
+inline void DeleteAll(
+    ForwardIterator begin, 
+    ForwardIterator end)
 {
     while (begin != end) {
         delete* begin;

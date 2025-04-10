@@ -226,11 +226,11 @@ public:
 
 	template <typename _ComparedElementType_ = ValueType>
 	CONSTEXPR_CXX20 inline compare_eq_result_container<
-		Vector, _ComparedElementType_> operator==(const Vector& other) const;
+		Vector, _ComparedElementType_> operator==(const Vector& other) const noexcept;
 
 	template <typename _ComparedElementType_ = ValueType>
 	CONSTEXPR_CXX20 inline compare_eq_result_container<
-		Vector, _ComparedElementType_> operator!=(const Vector& other) const;
+		Vector, _ComparedElementType_> operator!=(const Vector& other) const noexcept;
 
 	template <typename _ComparedElementType_ = ValueType>
 	CONSTEXPR_CXX20 inline compare_lt_result_container<
@@ -374,6 +374,8 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD ValueType pop_front() noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ValueType popFront() noexcept;
 
+	CONSTEXPR_CXX20 inline void reverse() noexcept;
+
 	CONSTEXPR_CXX20 inline void removeAt(BASE_GUARDOVERFLOW const SizeType index) noexcept;
 
 	CONSTEXPR_CXX20 inline void clear();
@@ -407,6 +409,18 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD size_type count(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD size_type count(const Vector& subVector) const noexcept;
 
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD size_type count_if(_Predicate_ predicate) const noexcept;
+
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD size_type countIf(_Predicate_ predicate) const noexcept;
+
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD size_type count_if(_Predicate_ predicate) const noexcept;
+
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD size_type countIf(_Predicate_ predicate) const noexcept;
+
 	CONSTEXPR_CXX20 inline NODISCARD bool contains(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool contains(const Vector& subVector) const noexcept;
 
@@ -418,6 +432,14 @@ public:
 
 	CONSTEXPR_CXX20 inline NODISCARD SizeType indexOf(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD SizeType lastIndexOf(const ValueType& element) const noexcept;
+
+	CONSTEXPR_CXX20 inline NODISCARD SizeType find(const ValueType& element) const noexcept;
+
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD SizeType find_if(_Predicate_ predicate) const noexcept;
+
+	template <typename _Predicate_>
+	CONSTEXPR_CXX20 inline NODISCARD SizeType findIf(_Predicate_ predicate) const noexcept;
 
 	CONSTEXPR_CXX20 inline NODISCARD Vector	sliced(
 		SizeType positionFrom,
@@ -454,7 +476,7 @@ public:
 	CONSTEXPR_CXX20 inline void removeLast();
 
 	template <typename _Predicate_>
-	CONSTEXPR_CXX20 inline NODISCARD SizeType removeIf(_Predicate_ pred);
+	CONSTEXPR_CXX20 inline NODISCARD SizeType removeIf(_Predicate_ pred);	
 
 	CONSTEXPR_CXX20 inline NODISCARD bool removeOne(const ValueType& element);
 
@@ -686,7 +708,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_eq_result_container<
 	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator==(const Vector& other) const
+		Vector<_Element_, _Allocator_>::operator==(const Vector& other) const noexcept
 {
 	if (size() != other.size())
 		return false;
@@ -702,7 +724,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_eq_result_container<
 	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator!=(const Vector& other) const
+		Vector<_Element_, _Allocator_>::operator!=(const Vector& other) const noexcept
 {
 	return !(*this == other);
 }
@@ -1170,6 +1192,11 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reverse() noexcept {
+
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAt(
 	BASE_GUARDOVERFLOW const size_type index) noexcept 
 {
@@ -1310,6 +1337,38 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
+	Vector<_Element_, _Allocator_>::count_if(_Predicate_ predicate) const noexcept
+{
+	return static_cast<size_type>(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
+	Vector<_Element_, _Allocator_>::countIf(_Predicate_ predicate) const noexcept
+{
+	return static_cast<size_type>(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
+	Vector<_Element_, _Allocator_>::count_if(_Predicate_ predicate) const noexcept
+{
+	return static_cast<size_type>(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
+	Vector<_Element_, _Allocator_>::countIf(_Predicate_ predicate) const noexcept
+{
+	return static_cast<size_type>(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
 	Vector<_Element_, _Allocator_>::contains(const ValueType& element) const noexcept 
 {
@@ -1361,6 +1420,29 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
 	Vector<_Element_, _Allocator_>::lastIndexOf(const ValueType& element) const noexcept 
+{
+	return 0;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
+	Vector<_Element_, _Allocator_>::find(const ValueType& element) const noexcept 
+{
+	return 0;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
+	Vector<_Element_, _Allocator_>::find_if(_Predicate_ predicate) const noexcept
+{
+	return 0;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <typename _Predicate_>
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
+	Vector<_Element_, _Allocator_>::findIf(_Predicate_ predicate) const noexcept
 {
 	return 0;
 }
