@@ -191,15 +191,10 @@ template <typename T>
 constexpr bool IsTypeComplete
 	<T, std::void_t<decltype(sizeof(T))>> = true;
 
-template <typename _Type_>
-constexpr bool is_unsigned_type_v = std::_Is_any_of_v<_Type_,
-	unsigned char, unsigned short, unsigned int,
-	unsigned long, unsigned long long>>;
-
-template <typename _Type_>
-constexpr bool is_signed_type_v = 
-	std::is_integral_v<_Type_> 
-	&& !is_unsigned_type_v<_Type_>;
+template <class _Type_>
+constexpr bool is_nonbool_integral_v = 
+	std::is_integral_v<_Type_> &&
+	!std::is_same_v<std::remove_cv_t<_Type_>, bool>;
 
 // --------------------------------------------------
 
