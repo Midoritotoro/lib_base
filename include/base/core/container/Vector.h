@@ -497,6 +497,18 @@ private:
 	CONSTEXPR_CXX20 inline NODISCARD bool elementsCompare(
 		const Vector<_Type_ /*, allocator_type */>& other) const noexcept;
 
+	template <class _Iterator_>
+	CONSTEXPR_CXX20 inline void appendCountedRange(
+		_Iterator_		_First,
+		const SizeType	_Count) noexcept;
+	
+	template <
+		class _Iterator_,
+		class _Sentinel_>
+	CONSTEXPR_CXX20 inline void appendUnCountedRange(
+		_Iterator_ _First,
+		_Sentinel_ _Last) noexcept;
+
 	CONSTEXPR_CXX20 inline void FreeAllElements() noexcept;
 
 	CompressedPair<allocator_type, VectorValueType> _pair;
@@ -1672,6 +1684,49 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCo
 			return false;
 
 	return true;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <class _Iterator_>
+// insert counted range _First + [0, _Count) at end
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
+	_Iterator_		_First,
+	const SizeType	_Count) noexcept
+{
+	auto& pairValue		= _pair._secondValue;
+	auto& allocator		= _pair.first();
+
+	pointer& _Start		= pairValue._start;
+	pointer& _End		= pairValue._end;
+	pointer& _Current	= pairValue._current;
+
+	const auto _UnusedCapacity	= static_cast<SizeType>(_End - _Current);
+	const auto _Capacity		= static_cast<SizeType>(_End - _Start);
+
+	if (_UnusedCapacity < _Count) {
+		const auto isEnoughMemory = resize(_Capacity + _Count);
+
+		if (UNLIKELY(isEnoughMemory == false))
+			_VECTOR_ERROR_DEBUG_NO_RET_
+	}
+
+	if constexpr (
+		std::is_nothrow_move_constructible_v<ValueType> 
+		|| std::is_copy_constructible_v<ValueType> == false
+	)
+		memory::
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <
+	class _Iterator_,
+	class _Sentinel_>
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendUnCountedRange(
+	_Iterator_ _First,
+	_Sentinel_ _Last) noexcept
+{
+	for (; _First != _Last; ++_First)
+		UNUSED(emplaceBack(*_First));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_

@@ -61,34 +61,27 @@ constexpr inline NODISCARD bool ConvertIntegral(
 	constexpr auto _ToMaximumLimit = MaximumIntegralLimit<_TypeTo_>();
 	constexpr auto _ToMinimumLimit = MinimumIntegralLimit<_TypeTo_>();
 
-	if constexpr (std::is_signed_v<_TypeFrom_> && std::is_signed_v<_TypeTo_>) {
+	if constexpr (std::is_signed_v<_TypeFrom_> && std::is_signed_v<_TypeTo_>)
 		if constexpr (sizeof(_TypeFrom_) > sizeof(_TypeTo_))
 			if (_From > _ToMaximumLimit || _From < _ToMinimumLimit)
 				return false;
-
-		_To = static_cast<_TypeTo_>(_From);
-	}
-	else if (std::is_unsigned_v<_TypeFrom_> && std::is_unsigned_v<_TypeTo_>) {
+	
+	else if (std::is_unsigned_v<_TypeFrom_> && std::is_unsigned_v<_TypeTo_>)
 		if constexpr (sizeof(_TypeFrom_) > sizeof(_TypeTo_))
 			if (_From > _ToMaximumLimit)
 				return false;
-
-		_To = static_cast<_TypeTo_>(_From);
-	}
-	else if (std::is_signed_v<_TypeFrom_> && std::is_unsigned_v<_TypeTo_>) {
+	
+	else if (std::is_signed_v<_TypeFrom_> && std::is_unsigned_v<_TypeTo_>)
 		if constexpr (sizeof(_TypeFrom_) > sizeof(_TypeTo_))
 			if (_From < _ToMinimumLimit)
 				return false;
-
-		_To = static_cast<_TypeTo_>(_From);
-	}
-	else /* std::is_unsigned_v<_TypeFrom_> && std::is_signed_v<_TypeTo_> */ {
+	
+	else /* std::is_unsigned_v<_TypeFrom_> && std::is_signed_v<_TypeTo_> */
 		if constexpr (sizeof(_TypeFrom_) > sizeof(_TypeTo_))
 			if (_From > _ToMaximumLimit)
 				return false;
 
-		_To = static_cast<_TypeTo_>(_From);
-	}
+	_To = static_cast<_TypeTo_>(_From);
 
 	return true;
 }

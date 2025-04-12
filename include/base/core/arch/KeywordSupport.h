@@ -483,6 +483,50 @@ WARNING_DISABLE_MSVC(4067)
 #  define sizeof_to_bits        SIZEOF_TO_BITS
 #endif
 
+#if defined(PROCESSOR_X86_64) \
+    || defined(PROCESSOR_ARM) \
+    || (PROCESSOR_ARM == 8) // x64 ARM
+
+#  if defined(OS_WIN) && defined(CPP_MSVC)
+      #define BASE_UNALIGNED __unaligned
+#  else
+      #define BASE_UNALIGNED
+#  endif
+
+#else 
+#  define BASE_UNALIGNED
+#endif
+
+// Exceptions 
+
+#ifndef BASE_TRY_BEGIN
+#  define BASE_TRY_BEGIN try {
+#endif
+
+#ifndef BASE_CATCH
+#  define BASE_CATCH(x) \
+    }             \
+    catch (x) {
+#endif
+
+#ifndef BASE_CATCH_ALL
+#  define BASE_CATCH_ALL \
+    }              \
+    catch (...) {
+#endif
+
+#ifndef BASE_CATCH_END 
+#  define BASE_CATCH_END } 
+#endif
+
+#ifndef BASE_RERAISE
+#  define BASE_RERAISE    throw
+#endif
+
+#ifndef BASE_THROW
+#  define BASE_THROW(...) throw(__VA_ARGS__)
+#endif
+
 // Warnings
 
 #ifndef NODISCARD_RETURN_RAW_PTR
