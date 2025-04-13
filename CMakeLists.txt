@@ -270,7 +270,6 @@ set(PUBLIC_HEADERS
     include/base/core/thread/MutexLocker.h
 
     include/base/core/thread/WindowsThreadPrivate.h
-    include/base/core/utility/MacrosOverload.h
 
     include/base/core/io/FileInfo.h
 
@@ -340,6 +339,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/memory/MemoryAllocatorUtility.h
     include/base/core/utility/TypeConversions.h
+
+    include/base/core/memory/MemoryTypeTraits.h
 )
 
 include(CMakePackageConfigHelpers)

@@ -92,15 +92,6 @@ __BASE_MEMORY_NAMESPACE_BEGIN
     constexpr bool CanDestroyRange = !std::is_trivially_destructible_v<_Type_>;
 #endif
 
-template <class _Iterator_>
-constexpr inline void VerifyRange(
-    _Iterator_ _First,
-    _Iterator_ _Last)
-{
-
-}
-
-
 template <class _Allocator_>
 class NODISCARD UninitializedBackout {
     // Class to undo partially constructed ranges in UninitializedXXX algorithms
@@ -618,17 +609,22 @@ template <
 _InputIterator_ uninitialized_copy(
     const _InputIterator_       _First,
     const _InputIterator_       _Last,
-    _NoThrowForwardIterator_    _Dest)
+    _NoThrowForwardIterator_    _Destination)
 {
     _STD _Adl_verify_range(_First, _Last);
 
-    auto _UFirst = _STD _Get_unwrapped(_First);
-    const auto _ULast = _STD _Get_unwrapped(_Last);
+#if defined(OS_WIN) && defined(CPP_MSVC)
+    auto _UFirst        = std::_Get_unwrapped(_First);
+    const auto _ULast   = std::_Get_unwrapped(_Last);
+#else 
+    auto _UFirst        = UnFancy(_First);
+    const auto _ULast   = UnFancy(_Last);
+#endif
 
-    auto _UDest = _STD _Get_unwrapped_n(_Dest, _STD _Idl_distance<_InputIterator_>(_UFirst, _ULast));
+    auto _UDest = _STD _Get_unwrapped_n(_Destination, _STD _Idl_distance<_InputIterator_>(_UFirst, _ULast));
 
-    _Dest = std::_Uninitialized_copy_unchecked(_UFirst, _ULast, _UDest));
-    return _Dest;
+    _Destination = UninitializedCopyUnchecked(_UFirst, _ULast, _UDest));
+    return _Destination;
 }
 
 template <

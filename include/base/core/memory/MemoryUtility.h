@@ -266,10 +266,14 @@ inline NODISCARD bool MemoryFill(
 }
 
 template <class _Iterator_>
+// Tries to get the difference between random access iterators
 inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
     _Iterator_ _First,
     _Iterator_ _Last) noexcept
 {
+    if constexpr (std::is_pointer_v<_Iterator_>)
+        return static_cast<sizetype>(_Last - _First);
+
     const auto _FirstAdress = CheckedToConstChar(_First);
     const auto _LastAdress  = CheckedToConstChar(_Last);
 

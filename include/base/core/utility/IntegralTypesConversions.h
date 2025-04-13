@@ -1,8 +1,6 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-#include <base/core/utility/TypeConversions.h>
-
 
 __BASE_NAMESPACE_BEGIN
 
@@ -14,7 +12,7 @@ constexpr inline NODISCARD _Type_ MinimumIntegralLimit() noexcept {
 	if constexpr (std::is_unsigned_v< _Type_>)
 		return 0;
 	
-	constexpr auto _UnsignedMax = static_cast<make_unsigned_t<_Type_>>(-1);
+	constexpr auto _UnsignedMax = static_cast<std::make_unsigned_t<_Type_>>(-1);
 	return static_cast<_Type_>((_UnsignedMax >> 1) + 1); // well-defined, N4950 [conv.integral]/3
 }
 
@@ -26,7 +24,7 @@ constexpr inline NODISCARD _Type_ MaximumIntegralLimit() noexcept {
 	if constexpr (std::is_unsigned_v<_Type_>)
 		return static_cast<_Type_>(-1);
 	
-	constexpr auto _UnsignedMax = static_cast<make_unsigned_t<_Type_>>(-1);
+	constexpr auto _UnsignedMax = static_cast<std::make_unsigned_t<_Type_>>(-1);
 	return static_cast<_Type_>(_UnsignedMax >> 1);
 }
 

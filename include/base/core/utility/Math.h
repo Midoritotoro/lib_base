@@ -232,7 +232,7 @@ NODISCARD constexpr bool points_into_range(const T& p, const C& c) noexcept
 }
 
 template <typename To, typename From>
-static constexpr auto saturate(From x)
+constexpr auto saturate(From x)
 {
     static_assert(std::is_integral_v<To>);
     static_assert(std::is_integral_v<From>);

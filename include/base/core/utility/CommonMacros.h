@@ -3,30 +3,22 @@
 #include <cstdio>
 #include <base/core/arch/CompilerDetection.h>
 
-#include <base/core/utility/MacrosOverload.h>
-
 #include <gsl/gsl>
 #include <base/core/system/Time.h>
 
 #include <iostream>
 
-#define measureExecutionTime_0() \
+#define measureExecutionTimeAuto()							\
 	const auto ms = base::Time::now();						\
 	const auto timer = gsl::finally([&]() {					\
 	std::cout << FUNC_INFO << " completed for: "			\
 			<< base::Time::now() - ms << " ms" << '\n'; });
 
-#define measureExecutionTime_1(name)						\
+#define measureExecutionTime(name)							\
 	const auto ms = base::Time::now();						\
 	const auto timer = gsl::finally([&]() {					\
 	std::cout << name << " completed for: "					\
 		<< base::Time::now() - ms << " ms" << '\n'; });
-
-#define measureExecutionTime(...)				\
-    BASE_MACRO_OVERLOAD_COMPAT_BLOCK(			\
-		BASE_MACRO_OVERLOAD_MACRO_CHOOSER(		\
-			measureExecutionTime, __VA_ARGS__)  \
-				(__VA_ARGS__))
 
 //!
 //! \brief
@@ -70,3 +62,6 @@
 
 #define empty_str(str) (!str || !*str)
 #define stringify(x)	#x
+
+#define _PP_CAT(a,b) a##b
+#define PP_CAT(a,b) _PP_CAT(a,b)
