@@ -84,7 +84,8 @@ NODISCARD inline constexpr _PointerLikeType_*
 //  онвертаци€ из потенциально нулевого модного указател€ в стандартный
 template <class _PossiblyNullPointerLikeType_>
 NODISCARD inline constexpr decltype(auto) 
-    UnfancyMaybeNull(_PossiblyNullPointerLikeType_ possiblyNullPointerLike) noexcept
+    UnfancyMaybeNull(
+        _PossiblyNullPointerLikeType_ possiblyNullPointerLike) noexcept
 {
     return possiblyNullPointerLike
         ? AddressOf(*possiblyNullPointerLike)
@@ -93,7 +94,8 @@ NODISCARD inline constexpr decltype(auto)
 
 template <class _PossiblyNullPointerLikeType_>
 NODISCARD inline constexpr _PossiblyNullPointerLikeType_* 
-    UnfancyMaybeNull(_PossiblyNullPointerLikeType_* possiblyNullPointerLike) noexcept
+    UnfancyMaybeNull(
+        _PossiblyNullPointerLikeType_* possiblyNullPointerLike) noexcept
 {
     return possiblyNullPointerLike;
 }
@@ -172,10 +174,10 @@ const unsigned char*
 }
 
 
-template <class _BidIt>
+template <class _BidirectionalIterator_>
 inline constexpr void ReverseTail(
-    _BidIt _First, 
-    _BidIt _Last) noexcept 
+    _BidirectionalIterator_ _First,
+    _BidirectionalIterator_ _Last) noexcept
 {
     for (; _First != _Last && _First != --_Last; ++_First) {
         const auto _Temp = *_First;
@@ -186,15 +188,15 @@ inline constexpr void ReverseTail(
 }
 
 template <
-    class _BidIt, 
-    class _OutIt>
+    class _BidirectionalIterator_,
+    class _OutIterator_>
 inline constexpr void ReverseCopyTail(
-    _BidIt _First,
-    _BidIt _Last,
-    _OutIt _Dest) noexcept 
+    _BidirectionalIterator_ _First,
+    _BidirectionalIterator_ _Last,
+    _OutIterator_           _Destination) noexcept
 {
     while (_First != _Last)
-        *_Dest++ = *--_Last;
+        *_Destination++ = *--_Last;
 }
 
 NODISCARD constexpr inline sizetype ByteLength(
@@ -204,7 +206,8 @@ NODISCARD constexpr inline sizetype ByteLength(
     const auto _FirstUChar  = UnCheckedToConstUnsignedChar(_First);
     const auto _LastUChar   = UnCheckedToConstUnsignedChar(_Last);
     
-    const auto _Length      = static_cast<sizetype>(_LastUChar - _FirstUChar);
+    const auto _Length      = static_cast<sizetype>(
+        _LastUChar - _FirstUChar);
     return _Length;
 }
 
@@ -222,18 +225,18 @@ constexpr inline void RewindBytes(
     _Target = UnCheckedToConstUnsignedChar(_Target) - _Offset;
 }
 
-template <class _Integral>
+template <class _Integral_>
 constexpr inline void AdvanceBytes(
     void*&      _Target, 
-    _Integral   _Offset) noexcept 
+    _Integral_  _Offset) noexcept
 {
     _Target = UnCheckedToUnsignedChar(_Target) + _Offset;
 }
 
-template <class _Integral>
+template <class _Integral_>
 constexpr inline void AdvanceBytes(
     const void*&    _Target, 
-    _Integral       _Offset) noexcept 
+    _Integral_      _Offset) noexcept
 {
     _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
 }
@@ -270,7 +273,9 @@ inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
     const auto _FirstAdress = CheckedToConstChar(_First);
     const auto _LastAdress  = CheckedToConstChar(_Last);
 
-    const auto _Size        = static_cast<sizetype>(_LastAdress - _FirstAdress);
+    const auto _Size        = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+
     return _Size;
 }
 
@@ -282,7 +287,7 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     sizetype        _Size,
     _OutIterator_   _Destination) noexcept
 {
-    const auto _DestinationAdress   = CheckedToChar(_Destination);
+    auto _DestinationAdress         = CheckedToChar(_Destination);
     const auto _FirstAdress         = CheckedToConstChar(_First);
 
     const auto _Dest                = memmove(_DestinationAdress,
@@ -300,15 +305,39 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     _InputIterator_ _Last,
     _OutIterator_   _Destination) noexcept
 {
-    const auto _DestinationAdress   = CheckedToChar(_Destination);
+    auto _DestinationAdress         = CheckedToChar(_Destination);
         
     const auto _FirstAdress         = CheckedToConstChar(_First);
     const auto _LastAdress          = CheckedToConstChar(_Last);
 
-    const auto _Size                = static_cast<sizetype>(_LastAdress - _FirstAdress);
-    const auto _Dest                = memmove(_DestinationAdress, _FirstAdress, _Size);
+    const auto _Size                = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+    const auto _Dest                = memmove(
+        _DestinationAdress, _FirstAdress, _Size);
 
     const auto _Success             = (_Dest = _DestinationAdress);
+    return _Success;
+}
+
+template <
+    class _InputIterator_,
+    class _OutIterator_>
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmove(
+    _InputIterator_ _First,
+    _InputIterator_ _Last,
+    _OutIterator_   _Destination) noexcept
+{
+    auto _DestinationAdress         = CheckedToChar(_Destination);
+
+    const auto _FirstAdress         = CheckedToConstChar(_First);
+    const auto _LastAdress          = CheckedToConstChar(_Last);
+
+    const auto _Size                = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+    const auto _Dest                = memmove(
+        _DestinationAdress, _FirstAdress, _Size);
+
+    const auto _Success = (_Dest = _DestinationAdress);
     return _Success;
 }
 

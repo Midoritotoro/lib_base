@@ -5,6 +5,7 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 #if BASE_HAS_CXX20
+
     template <typename _Allocator_>
     struct AllocatorPointerTraits {
         using type = typename std::allocator_traits<_Allocator_>::pointer;
@@ -60,6 +61,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 
     template <class _Allocator_>
     using AllocatorValueType        = typename AllocatorValueTraits<_Allocator_>::type;
+
 #else 
 
     template <class _Allocator_>
@@ -89,6 +91,14 @@ __BASE_MEMORY_NAMESPACE_BEGIN
         class   _Allocator_>
     constexpr bool CanDestroyRange = !std::is_trivially_destructible_v<_Type_>;
 #endif
+
+template <class _Iterator_>
+constexpr inline void VerifyRange(
+    _Iterator_ _First,
+    _Iterator_ _Last)
+{
+
+}
 
 
 template <class _Allocator_>
@@ -617,7 +627,7 @@ _InputIterator_ uninitialized_copy(
 
     auto _UDest = _STD _Get_unwrapped_n(_Dest, _STD _Idl_distance<_InputIterator_>(_UFirst, _ULast));
 
-    _STD _Seek_wrapped(_Dest, _STD _Uninitialized_copy_unchecked(_UFirst, _ULast, _UDest));
+    _Dest = std::_Uninitialized_copy_unchecked(_UFirst, _ULast, _UDest));
     return _Dest;
 }
 
@@ -660,22 +670,32 @@ template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
 CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedFillCount(
     AllocatorPointerType<_Allocator_>       _First,
-    AllocatorSizeType<_Allocator_>          _Count, 
-    const AllocatorValueType<_Allocator_>&  _Value, 
-    _Allocator_&                            _Allocator) 
+    AllocatorSizeType<_Allocator_>          _Count,
+    const AllocatorValueType<_Allocator_>&  _Value,
+    _Allocator_&                            _Allocator)
 {
     using _Ty = AllocatorValueType<_Allocator_>;
 
-    if constexpr (std::_Fill_memset_is_safe<_Ty*, _Ty> && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value) {
+    if constexpr (
+        std::_Fill_memset_is_safe<_Ty*, _Ty> 
+#if defined(OS_WIN) && defined(CPP_MSVC)
+        && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
+#endif
+    ) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            std::_Fill_memset(UnFancy(_First), _Value, static_cast<size_t>(_Count));
+            FillMemset(UnFancy(_First), _Value, static_cast<size_t>(_Count));
             return _First + _Count;
         }
     }
-    else if constexpr (std::_Fill_zero_memset_is_safe<_Ty*, _Ty> && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value) {
+    else if constexpr (
+        std::_Fill_zero_memset_is_safe<_Ty*, _Ty> 
+#if defined(OS_WIN) && defined(CPP_MSVC)
+        && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
+#endif
+        ) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
@@ -698,29 +718,32 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
 template <
     class _NoThrowForwardIterator_,
     class _Type_>
+// copy _Val throughout raw [_First, _Last)
 void uninitialized_fill(
     const _NoThrowForwardIterator_  _First, 
     const _NoThrowForwardIterator_  _Last,
-    const _Type_&                   _Value) {
-    // copy _Val throughout raw [_First, _Last)
-    _STD _Adl_verify_range(_First, _Last);
-    auto _UFirst = _STD _Get_unwrapped(_First);
-    const auto _ULast = _STD _Get_unwrapped(_Last);
+    const _Type_&                   _Value) 
+{
+#if defined(OS_WIN) && defined(CPP_MSVC)
+    auto _UFirst        = std::_Get_unwrapped(_First);
+    const auto _ULast   = std::_Get_unwrapped(_Last);
+#else
+    auto _UFirst        = UnFancy(_First);
+    const auto _ULast   = UnFancy(_Last);
+#endif
+
     if constexpr (std::_Fill_memset_is_safe<std::remove_cvref_t<const _NoThrowForwardIterator_&>, _Type_>) {
-        _STD _Fill_memset(_UFirst, _Value, static_cast<size_t>(_ULast - _UFirst));
+        FillMemset(_UFirst, _Value, static_cast<size_t>(_ULast - _UFirst));
     }
     else {
-        if constexpr (std::_Fill_zero_memset_is_safe<std::remove_cvref_t<const _NoThrowForwardIterator_&>, _Type_>) {
-            if (_STD _Is_all_bits_zero(_Value)) {
-                _STD _Fill_zero_memset(_UFirst, static_cast<size_t>(_ULast - _UFirst));
-                return;
-            }
-        }
-
+        if constexpr (std::_Fill_zero_memset_is_safe<std::remove_cvref_t<const _NoThrowForwardIterator_&>, _Type_>)
+            if (IsAllBitsZero(_Value))
+                return MemsetZero(_UFirst, static_cast<size_t>(_ULast - _UFirst));
+            
         UninitializedBackout<std::remove_cvref_t<const _NoThrowForwardIterator_&>> _Backout{_UFirst};
-        while (_Backout._Last != _ULast) {
+
+        while (_Backout._Last != _ULast)
             _Backout.EmplaceBack(_Value);
-        }
 
         _Backout.Release();
     }
