@@ -30,15 +30,15 @@ NODISCARD Type detectMediaType(const QString& path);
 	
 NODISCARD QPixmap FindPreviewInCache(const QString& key);
 NODISCARD QSize MediaResolution(
-	const QString& path,
-	Type type = Type::Unknown);
+	const QString&	path,
+	Type			type = Type::Unknown);
 
 NODISCARD QPixmap MediaPreview(
-	const QString& path,
-	Quality quality = Quality::Medium);
+	const QString&	path,
+	Quality			quality = Quality::Medium);
 NODISCARD QPixmap GenerateThumbnail(
-	const QString& path,
-	const QSize& targetSize,
-	Quality quality = Quality::Medium);
+	const QString&	path,
+	const QSize&	targetSize,
+	Quality			quality = Quality::Medium);
 
 __BASE_MEDIA_NAMESPACE_END

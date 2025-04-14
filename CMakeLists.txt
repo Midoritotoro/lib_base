@@ -338,9 +338,10 @@ set(PUBLIC_HEADERS
     include/base/core/utility/Concepts.h
 
     include/base/core/memory/MemoryAllocatorUtility.h
-    include/base/core/utility/TypeConversions.h
-
     include/base/core/memory/MemoryTypeTraits.h
+
+    include/base/core/memory/MemoryPlacement.h
+    include/base/core/memory/MemoryPointerConversion.h
 )
 
 include(CMakePackageConfigHelpers)

@@ -13,10 +13,16 @@
 #include <base/core/container/CompressedPair.h>
 #include <base/core/memory/MemoryAllocatorUtility.h>
 
+#include <base/core/memory/MemoryPointerConversion.h>
+#include <base/core/memory/MemoryPlacement.h>
+
+#include <base/core/memory/MemoryAllocatorUtility.h>
+#include <base/core/memory/MemoryTypeTraits.h>
+
 WARNING_DISABLE_MSVC(4834)
 WARNING_DISABLE_MSVC(4002)
 WARNING_DISABLE_MSVC(4003)
-WARNING_DISABLE_MSVC(1)
+WARNING_DISABLE_MSVC(VCR001)
 
 #if defined(_DEBUG)
 
@@ -317,6 +323,13 @@ public:
 	CONSTEXPR_CXX20 inline void push_front(Vector&& other);
 	CONSTEXPR_CXX20 inline void push_front(ValueType&& element);
 
+	CONSTEXPR_CXX20 inline void pushFront(const ValueType& element);
+	CONSTEXPR_CXX20 inline void pushFront(Vector&& other);
+	CONSTEXPR_CXX20 inline void pushFront(ValueType&& element);
+
+	CONSTEXPR_CXX20 inline void pushBack(const ValueType& element);
+	CONSTEXPR_CXX20 inline void pushBack(Vector&& other);
+	CONSTEXPR_CXX20 inline void pushBack(ValueType&& element);
 
 	template <class ... _Valty_>
 	CONSTEXPR_CXX20 inline NODISCARD Reference emplaceBack(_Valty_&&... _Val);
@@ -440,6 +453,12 @@ public:
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD Vector	sliced(SizeType positionFrom) const noexcept;
+
+	// The same as sliced, but returns a non-owning slice of the vector without copying data.
+	CONSTEXPR_CXX20 inline NODISCARD Vector	view(
+		SizeType positionFrom,
+		SizeType elementsCount) const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Vector	view(SizeType positionFrom) const noexcept;
 
 	CONSTEXPR_CXX20 inline void replace(
 		SizeType position,
@@ -1060,6 +1079,36 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(ValueType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(const ValueType& element) {
+
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(Vector&& other) {
+
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(ValueType&& element) {
+
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushBack(const ValueType& element) {
+	emplaceBack(element);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushBack(Vector&& other) {
+
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void  Vector<_Element_, _Allocator_>::pushBack(ValueType&& element) {
+	emplaceBack(std::move(element));
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 template <class ... _Args_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
 	Vector<_Element_, _Allocator_>::emplace_back(_Args_&&... args)
@@ -1268,12 +1317,23 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reserve(BASE_GUARDOV
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrinkToFit() {
+	auto& pairValue		= _pair._secondValue;
+	auto& allocator		= _pair.first();
 
+	pointer& _Current	= pairValue._current;
+	pointer& _End		= pairValue._end;
+
+	if (_Current == _End)
+		return;
+
+	memory::FreeRange(_Current, _End, allocator);
+
+	_End = _Current;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrink_to_fit() {
-
+	return shrinkToFit();
 }
 
 
@@ -1292,8 +1352,15 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::fill(const_reference _Fill) {
-	for (SizeType i = 0; i < capacity(); ++i)
-		insert(i, _Fill);
+	auto& pairValue = _pair._secondValue;
+	auto& allocator = _pair.first();
+
+	pointer& _Start = pairValue._start;
+	pointer& _End	= pairValue._end;
+
+	const auto _Size = size();
+
+	UNUSED(memory::UninitializedFillCount(_Start, _Size, _Fill, allocator));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1444,6 +1511,22 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
+	Vector<_Element_, _Allocator_>::view(
+		SizeType positionFrom,
+		SizeType elementsCount) const noexcept
+{
+	return {};
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> 
+	Vector<_Element_, _Allocator_>::view(SizeType positionFrom) const noexcept
+{
+	return {};
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 	SizeType position,
 	const ValueType& value)
@@ -1461,7 +1544,13 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swap(Vector& other) {
+	if (this == memory::AddressOf(other))
+		return;
 
+	// check allocators
+	// ...
+	
+	_pair.swap(other._pair);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1560,7 +1649,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReallocate(SizeType newCapacity) noexcept {
 	const auto oldCapacity = capacity();
 
-	if (UNLIKELY(oldCapacity == newCapacity))
+	if (oldCapacity == newCapacity)
 		return false;
 
 	const auto bytesRequired = static_cast<SizeType>(newCapacity * sizeof(ValueType));
@@ -1571,7 +1660,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 	auto& allocator = _pair.first();
 	pointer memory = allocator.allocate(bytesRequired);
 
-	if (UNLIKELY(memory == nullptr))
+	if (memory == nullptr)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false)
 
 	const auto oldSize	= size();
@@ -1584,7 +1673,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 	auto& blockStart = memory;
 	auto blockEnd = memory + newCapacity;
 
-	if (LIKELY(oldSize != 0) && newCapacity >= oldCapacity)
+	if (oldSize != 0 && newCapacity >= oldCapacity)
 		memory::MemoryCopyCommon(
 			begin(), end(),
 			blockStart, blockEnd);
@@ -1674,10 +1763,10 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceAt(
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Type_>
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCompare(
-	const Vector<_Type_ /*, allocator_type */>& other) const noexcept
+	const Vector<_Type_>& other) const noexcept
 {
-	// Здесь нужно сравнение размеров SizeType`ов и приведение их к одному типу
-	const auto _Iterations = std::min(other.size(), size());
+	auto _Iterations = SizeType{ 0 };
+	_Iterations = std::min(other.size(), size());
 
 	for (size_type _Current = 0; _Current < _Iterations; ++_Current)
 		if (at(_Current) != other.at(_Current))
@@ -1693,28 +1782,35 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
 	_Iterator_		_First,
 	const SizeType	_Count) noexcept
 {
-	auto& pairValue		= _pair._secondValue;
-	auto& allocator		= _pair.first();
+	auto& pairValue			= _pair._secondValue;
+	auto& allocator			= _pair.first();
 
-	pointer& _Start		= pairValue._start;
-	pointer& _End		= pairValue._end;
-	pointer& _Current	= pairValue._current;
+	pointer& _OldStart		= pairValue._start;
+	pointer& _OldEnd		= pairValue._end;
+	pointer& _OldCurrent	= pairValue._current;
 
-	const auto _UnusedCapacity	= static_cast<SizeType>(_End - _Current);
-	const auto _Capacity		= static_cast<SizeType>(_End - _Start);
+	const auto _OldUnusedCapacity	= static_cast<SizeType>(_OldEnd - _OldCurrent);
+	const auto _OldCapacity			= static_cast<SizeType>(_OldEnd - _OldStart);
 
-	if (_UnusedCapacity < _Count) {
-		const auto isEnoughMemory = resize(_Capacity + _Count);
+	auto _Destination				= memory::CheckedToChar(_First);
+
+	if (_OldUnusedCapacity < _Count) {
+		const auto isEnoughMemory = resize(_OldCapacity + _Count);
 
 		if (UNLIKELY(isEnoughMemory == false))
-			_VECTOR_ERROR_DEBUG_NO_RET_
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 	}
 
+	pointer& _NewStart	= pairValue._start;
+	pointer& _NewEnd	= pairValue._end;
+
 	if constexpr (
-		std::is_nothrow_move_constructible_v<ValueType> 
+		std::is_nothrow_move_constructible_v<ValueType>
 		|| std::is_copy_constructible_v<ValueType> == false
-	)
-		memory::
+		)
+		memory::UninitializedMove(
+			_NewStart, _NewEnd,
+			_Destination, allocator);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_

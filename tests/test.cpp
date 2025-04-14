@@ -2,6 +2,15 @@
 #include <base/core/thread/Thread.h>
 
 #include <base/core/io/File.h>
+
+#ifdef LIB_BASE_ENABLE_QT
+#include <base/qt/common/MainQueueProcessor.h>
+#include <base/media/player/MediaPlayer.h>
+#endif
+
+#include <base/core/async/Concurrent.h>
+#include <base/qt/text/TextUtility.h>
+
 #include <base/core/utility/CommonMacros.h>
 
 #include <base/core/string/String.h>
@@ -27,7 +36,6 @@ void fvmax(iti32 _First, iti32 _Last, int32* o) {
 	int32 tmp = 0;
 
 	for (iti32 _Cur = _First; _Cur != _Last; ++_Cur) {
-		std::cout << *_Cur;
 		if (*_Cur > tmp) {
 			tmp = *_Cur;
 		}
@@ -41,14 +49,17 @@ int main(int argc, char* argv[]) {
 
 	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
 
+	
+	for (int32 i = 0; i < 120; ++i)
+		_vec.pushBack(i);
+
 	std::cout << "_vec.length(): " << _vec.length() << " _vec.capacity(): " << _vec.capacity() << " _vec.unusedCapacity(): " << _vec.unusedCapacity() << '\n';
 	int32 max = 0;
 	fvmax(_vec.begin(), _vec.end(), &max);
-	
 	std::cout << "max: " << max;
 
-//	QApplication application(argc, argv);
-//	auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
+	//QApplication application(argc, argv);
+	//auto mainQueueProcessor = std::make_unique<base::qt::common::MainQueueProcessor>();
 
 	//base::concurrent::invokeAsync([&]() {
 	//	const auto ratio = application.devicePixelRatio();
@@ -56,7 +67,7 @@ int main(int argc, char* argv[]) {
 
 	//	base::qt::style::SetDevicePixelRatio(useRatio);
 
-	//	base::qt::style::SetCustomFont(u"OpenSans-Regular"_q);
+	//	base::qt::style::SetCustomFont("OpenSans-Regular");
 	//	base::qt::style::internal::StartFonts();
 
 	//	base::qt::style::RegisterStyles();
@@ -74,6 +85,7 @@ int main(int argc, char* argv[]) {
 
 	//_mediaPlayer->setMedia(videoPath);
 
+
+	//return application.exec();
 	return 0;
-//	return application.exec();
 }

@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-add_executable(lib_base_test test.cpp)
+add_executable(lib_base_test test.cpp "VectorTest.cpp")
 find_ffmpeg(lib_base_test)
 
 set(CMAKE_CXX_FLAGS "-march=native")
