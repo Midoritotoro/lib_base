@@ -522,7 +522,12 @@ public:
 
 	constexpr inline NODISCARD sizetype max_size() const noexcept;
 	constexpr inline NODISCARD sizetype maxSize() const noexcept;
-private:
+private: 
+	CONSTEXPR_CXX20 inline Vector(
+		const pointer _First,
+		const pointer _Current,
+		const pointer _Last) const noexcept; // For view method
+
 	constexpr inline NODISCARD SizeType calculateGrowth(SizeType newSize) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool resizeReallocate(SizeType newCapacity) noexcept;
 
@@ -665,6 +670,16 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
 	::Vector(Vector&& rOther) noexcept :
 		_pair(std::exchange(rOther._pair, {}))
+{}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
+	const pointer _First,
+	const pointer _Current,
+	const pointer _Last) const noexcept : // For view method
+		_pair(_Zero_then_variadic_args_{}, VectorValueType(
+			_First, _Last, _Current
+		))
 {}
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1542,15 +1557,38 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept
 {
-	return {};
+	const auto _Size = size();
+
+	if (positionFrom < 0 || positionFrom >= _Size)
+		return {};
+
+	if (elementsCount < 0 || (positionFrom + elementsCount) > _Size)
+		return {};
+
+	auto& pairValue			= _pair._secondValue;
+	auto _StartWithOffset	= pairValue._start + positionFrom;
+
+	return Vector(
+		_StartWithOffset, _StartWithOffset /* start as current */,
+		_StartWithOffset + elementsCount);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> 
 	Vector<_Element_, _Allocator_>::view(SizeType positionFrom) const noexcept
 {
-	return {};
-}
+	const auto _Size = size();
+
+	if (positionFrom < 0 || positionFrom >= _Size)
+		return {};
+
+	auto& pairValue			= _pair._secondValue;
+	auto _StartWithOffset	= pairValue._start + positionFrom;
+
+	return Vector(
+		_StartWithOffset, _StartWithOffset /* start as current */,
+		pairValue._end);
+};
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
