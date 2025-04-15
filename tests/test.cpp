@@ -49,7 +49,8 @@ int main(int argc, char* argv[]) {
 
 	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
 
-	
+
+	std::cout << a;
 	for (int32 i = 0; i < 120; ++i)
 		_vec.pushBack(i);
 

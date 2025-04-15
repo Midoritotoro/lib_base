@@ -60,10 +60,23 @@ WARNING_DISABLE_MSVC(VCR001)
         _RetVal)
 #  endif
 
+#  ifndef _VECTOR_TOO_LONG_DEBUG_
+#    define _VECTOR_TOO_LONG_DEBUG_(_RetVal)									\
+    _VECTOR_ERROR_DEBUG_(														\
+      "base::container::Vector: Vector too long.\n ",							\
+        _RetVal)
+#  endif
+
 #  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 #    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								\
     _VECTOR_ERROR_DEBUG_NO_RET_(												\
       "base::container::Vector: Not enough memory to expand the Vector.\n ")
+#  endif
+
+#  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
+#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_												\
+    _VECTOR_ERROR_DEBUG_NO_RET_(														\
+      "base::container::Vector: Vector too long.\n ")
 #  endif
 
 #else
@@ -80,8 +93,16 @@ WARNING_DISABLE_MSVC(VCR001)
 #    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(_RetVal)							((void)0)
 #  endif
 
+#  ifndef _VECTOR_TOO_LONG_DEBUG_
+#    define _VECTOR_TOO_LONG_DEBUG_(_RetVal)									((void)0)
+#  endif
+
 #  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 #    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								((void)0)
+#  endif
+
+#  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
+#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										((void)0)
 #  endif
 
 #endif
@@ -493,6 +514,11 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD SizeType removeIf(_Predicate_ pred);	
 
 	CONSTEXPR_CXX20 inline NODISCARD bool removeOne(const ValueType& element);
+
+	CONSTEXPR_CXX20 inline void take(
+		const pointer	newVectorStart,
+		const SizeType	newVectorSize,
+		const SizeType	newVectorCapacity);
 
 	constexpr inline NODISCARD sizetype max_size() const noexcept;
 	constexpr inline NODISCARD sizetype maxSize() const noexcept;
@@ -1618,6 +1644,32 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
+	const pointer	newVectorStart,
+	const SizeType	newVectorSize,
+	const SizeType	newVectorCapacity)
+{
+	auto& allocator = _pair.first();
+	auto& pairValue = _pair.secondValue;
+
+	pointer& _Start = pairValue._start;
+	pointer& _End = pairValue._end;
+	pointer& _Current = pairValue._current;;
+
+	if (_Start) {
+		// destroy and deallocate old array
+		const auto _Capacity = static_cast<SizeType>(_End - _Start);
+
+		memory::DestroyRange(_Start, _Current, allocator);
+		_Current.deallocate(_Start, _Capacity);
+	}
+
+	_Start = newVectorStart;
+	_Current = newVectorStart + newVectorSize;
+	_End = newVectorStart + newVectorCapacity;
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_>::max_size() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
@@ -1657,8 +1709,8 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 	if (UNLIKELY(bytesRequired <= 0))
 		return false;
 
-	auto& allocator = _pair.first();
-	pointer memory = allocator.allocate(bytesRequired);
+	auto& allocator		= _pair.first();
+	pointer memory		= allocator.allocate(bytesRequired);
 
 	if (memory == nullptr)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false)
@@ -1670,16 +1722,16 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 	pointer& _End		= pairValue._end;
 	pointer& _Current	= pairValue._current;
 
-	auto& blockStart = memory;
-	auto blockEnd = memory + newCapacity;
+	auto& blockStart	= memory;
+	auto blockEnd		= memory + newCapacity;
 
 	if (oldSize != 0 && newCapacity >= oldCapacity)
 		memory::MemoryCopyCommon(
 			begin(), end(),
 			blockStart, blockEnd);
 
-	_Start = blockStart;
-	_End = blockEnd;
+	_Start	= blockStart;
+	_End	= blockEnd;
 
 	_Current = blockStart + oldSize;
 
@@ -1779,38 +1831,87 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <class _Iterator_>
 // insert counted range _First + [0, _Count) at end
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
-	_Iterator_		_First,
-	const SizeType	_Count) noexcept
+	_Iterator_							_First,
+	BASE_GUARDOVERFLOW const SizeType	_Count) noexcept
 {
+	if (_Count <= 0)
+		return;
+
 	auto& pairValue			= _pair._secondValue;
 	auto& allocator			= _pair.first();
 
-	pointer& _OldStart		= pairValue._start;
-	pointer& _OldEnd		= pairValue._end;
-	pointer& _OldCurrent	= pairValue._current;
+	pointer& _Start			= pairValue._start;
+	pointer& _End			= pairValue._end;
+	pointer& _Current		= pairValue._current;
 
-	const auto _OldUnusedCapacity	= static_cast<SizeType>(_OldEnd - _OldCurrent);
-	const auto _OldCapacity			= static_cast<SizeType>(_OldEnd - _OldStart);
+	auto _Destination		= memory::CheckedToChar(_First);
 
-	auto _Destination				= memory::CheckedToChar(_First);
+	const auto _OldUnusedCapacity	= static_cast<SizeType>(_End - _Current);
+	const auto _OldCapacity			= static_cast<SizeType>(_End - _Start);
+	const auto _OldSize				= static_cast<SizeType>(_Current - _Start);
 
 	if (_OldUnusedCapacity < _Count) {
-		const auto isEnoughMemory = resize(_OldCapacity + _Count);
+		// reallocate 
 
-		if (UNLIKELY(isEnoughMemory == false))
+		if (_Count > maxSize() - _OldSize)
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+
+		const auto _NewCapacity	= calculateGrowth(_OldCapacity + _Count);
+		const auto _NewSize		= _OldSize + _Count;
+
+		const auto _Bytes		= sizeof(ValueType) * _NewCapacity;			// ?????????
+
+		auto _BlockStart		= allocator.allocate(_Bytes);				// ?????????
+
+		if (_BlockStart == nullptr)
 			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+
+		auto _BlockEnd			= _BlockStart + _NewSize;
+		auto _InsertStart		= _BlockStart + _OldSize;
+
+		BASE_TRY_BEGIN
+		
+		memory::UninitializedCopyCount(
+			std::move(_First), _Count, 
+			_BlockStart + _OldSize, allocator);
+
+		if (_Count == 1) {
+			if constexpr (
+				std::is_nothrow_move_constructible_v<ValueType>
+				|| std::is_copy_constructible_v<ValueType> == false
+			) {
+				memory::UninitializedMove(
+					_Start, _End,
+					_Destination, allocator);
+			}
+			else {
+				memory::UninitializedCopy(
+					_Start, _End,
+					_Destination, allocator);
+			}
+		}
+		else {
+			memory::UninitializedMove(
+				_Start, _End,
+				_Destination, allocator)
+		}
+			BASE_CATCH_ALL
+
+		memory::DestroyRange(_Current, _Current + _Count, allocator);
+		allocator.deallocate(_BlockStart, _NewCapacity);
+
+		BASE_RERAISE;
+		BASE_CATCH_END
+
+		take(_BlockStart, _NewSize, _NewCapacity);
+	}
+	else {
+		UNUSED(memory::UninitializedCopyCount(
+			std::move(_First), _Count,
+			_Destination, allocator));
 	}
 
-	pointer& _NewStart	= pairValue._start;
-	pointer& _NewEnd	= pairValue._end;
 
-	if constexpr (
-		std::is_nothrow_move_constructible_v<ValueType>
-		|| std::is_copy_constructible_v<ValueType> == false
-		)
-		memory::UninitializedMove(
-			_NewStart, _NewEnd,
-			_Destination, allocator);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
