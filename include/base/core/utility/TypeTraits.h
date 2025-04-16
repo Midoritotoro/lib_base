@@ -196,6 +196,77 @@ constexpr bool is_nonbool_integral_v =
 	std::is_integral_v<_Type_> &&
 	!std::is_same_v<std::remove_cv_t<_Type_>, bool>;
 
+template <class _Iterator_>
+constexpr bool IteratorIsContiguous = std::contiguous_iterator<_Iterator_>;
+
+template <
+	class _FirstIterator_,
+	class _SecondIterator_>
+constexpr bool IteratorsAreContiguous = 
+	IteratorIsContiguous<_FirstIterator_> 
+	&& IteratorsIsContiguous<_SecondIterator_>;
+
+
+template <class _Iterator_>
+constexpr bool IsIteratorVolatile = 
+	std::is_volatile_v<
+		std::remove_reference_t<
+			std::iter_reference_t<_Iterator_>>>;
+
+
+template <class _Type_>
+struct IsCharacter : 
+	std::false_type 
+{};
+
+template <>
+struct IsCharacter<char> : 
+	std::true_type 
+{};
+
+template <>
+struct IsCharacter<signed char> :
+	std::true_type
+{}; 
+
+template <>
+struct IsCharacter<unsigned char> : 
+	std::true_type
+{}; 
+
+#ifdef __cpp_char8_t
+
+template <>
+struct IsCharacter<char8_t> :
+	std::true_type 
+{};
+
+#endif
+
+template <class _Type_>
+struct IsCharacterOrBool 
+	: IsCharacter<_Type_>::type 
+{};
+
+template <>
+struct IsCharacterOrBool<bool> : 
+	std::true_type 
+{};
+
+template <class _Type_>
+struct IsCharacterOrByteOrBool :
+	IsCharacterOrBool<_Type_>::type
+{};
+
+#ifdef __cpp_lib_byte
+
+template <>
+struct IsCharacterOrByteOrBool<byte> : 
+	std::true_type 
+{};
+
+#endif // defined(__cpp_lib_byte)
+
 // --------------------------------------------------
 
 namespace detail {

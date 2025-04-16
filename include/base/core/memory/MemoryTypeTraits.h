@@ -107,37 +107,116 @@ constexpr bool IsNoThrowMoveConstructible =
     #endif
 
 template <
+    class _Source_, 
+    class _Destination_>
+// checks the convertibility of _Source_ to _Destination_
+constexpr bool IsPointerAdressIncovertible = std::is_void_v<_Source_>
+    || std::is_void_v<_Destination_>
+    // is_same_v is required for function pointers to work
+    || std::is_same_v<
+        std::remove_cv_t<_Source_>, 
+        std::remove_cv_t<_Destination_>>
+#ifdef __cpp_lib_is_pointer_interconvertible
+    || std::is_pointer_interconvertible_base_of_v<_Destination_, _Source_>
+#endif
+    ;
+
+template <
+    class _ForwardIterator_,
+    class _Type_,
+    bool = IteratorIsContiguous<_ForwardIterator_>>
+constexpr bool IsFillMemsetSafe = std::conjunction_v<
+    std::is_scalar<_Type_>,
+    IsCharacterOrByteOrBool<
+        unwrap_enum_t<
+            std::remove_reference_t<
+                std::iter_reference_t<_ForwardIterator_>>>>,
+    std::negation<
+        std::is_volatile<
+            std::remove_reference_t<
+                std::iter_reference_t<_ForwardIterator_>>>>, 
+    std::is_assignable<
+        std::iter_reference_t<_ForwardIterator_>,
+    const _Type_ &>>;
+
+template <
+    class _ForwardIterator_,
+    class _Type_>
+constexpr bool IsFillMemsetSafe<_ForwardIterator_, _Type_, false> = false;
+
+template <
+    class _ForwardIterator_,
+    class _Type_,
+    bool = IteratorIsContiguous<_ForwardIterator_>>
+constexpr bool IsFillZeroMemsetSafe =
+    std::conjunction_v<
+        std::is_scalar<_Type_>, 
+        std::is_scalar<
+            std::iter_value_t<_ForwardIterator_>>,
+        std::negation<
+            std::is_member_pointer<
+                std::iter_value_t<_ForwardIterator_>>>,
+        std::negation<
+            std::is_volatile<
+                std::remove_reference_t<
+                    std::iter_reference_t<_ForwardIterator_>>>>, 
+        std::is_assignable<std::iter_reference_t<_ForwardIterator_>, 
+    const _Type_&>>;
+
+template <
+    class _ForwardIterator_,
+    class _Type_>
+constexpr bool IsFillZeroMemsetSafe<_ForwardIterator_, _Type_, false> = false;
+
+template <
     class _Source_,
     class _Destination_,
     class _SourceReference_,
     class _DestinationReference_>
 struct TrivialCategory {
-    using UnwrappedSource = std::_Unwrap_enum_t<_Source_>;
-    using UnwrappedDestination = _Unwrap_enum_t<_Destination_>;
+    using UnwrappedSource       = unwrap_enum_t<_Source_>;
+    using UnwrappedDestination  = unwrap_enum_t<_Destination_>;
 
     static constexpr bool SameSizeAndCompatible =
         sizeof(_Source_) == sizeof(_Destination_)
         // If UnwrappedDestination is bool, UnwrappedSource also needs to be bool
         // Conversion from non-bool => non-bool | bool => bool | bool => non-bool is fine.
         // Conversion from non-bool => bool is not fine.
-        && is_same_v<bool, UnwrappedSource> >= is_same_v<bool, UnwrappedDestination>
-        && (is_same_v<UnwrappedSource, UnwrappedDestination> || (is_integral_v<UnwrappedSource> && is_integral_v<UnwrappedDestination>)
-            || (is_floating_point_v<UnwrappedSource> && is_floating_point_v<UnwrappedDestination>));
+        && std::is_same_v<bool, UnwrappedSource> 
+            >= std::is_same_v<bool, UnwrappedDestination>
+        && (std::is_same_v<UnwrappedSource, UnwrappedDestination> 
+        || (std::is_integral_v<UnwrappedSource> 
+                && std::is_integral_v<UnwrappedDestination>)
+        || (std::is_floating_point_v<UnwrappedSource> 
+            && std::is_floating_point_v<UnwrappedDestination>));
 
     static constexpr bool BitcopyConstructible =
-        SameSizeAndCompatible && is_trivially_constructible_v<_Destination_, _SourceReference_>;
+        SameSizeAndCompatible 
+        && std::is_trivially_constructible_v<
+            _Destination_, _SourceReference_>;
 
     static constexpr bool BitcopyAssignable =
-        SameSizeAndCompatible && is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
+        SameSizeAndCompatible 
+        && std::is_trivially_assignable_v<
+            _DestinationReference_, _SourceReference_>;
 };
 
-template <class _Source_, class _Destination_, class _SourceReference_, class _DestinationReference_>
-struct TrivialCategory<_Source_*, _Destination_*, _SourceReference_, _DestinationReference_> {
+template <
+    class _Source_,
+    class _Destination_, 
+    class _SourceReference_,
+    class _DestinationReference_>
+struct TrivialCategory<
+    _Source_*, _Destination_*,
+    _SourceReference_, _DestinationReference_>
+{
     static constexpr bool BitcopyConstructible =
-        _Is_pointer_address_convertible<_Source_, _Destination_>&& is_trivially_constructible_v<_Destination_*, _SourceReference_>;
+        IsPointerAddressConvertible<_Source_, _Destination_> 
+        && is_trivially_constructible_v<_Destination_*, _SourceReference_>;
 
     static constexpr bool BitcopyAssignable =
-        _Is_pointer_address_convertible<_Source_, _Destination_>&& is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
+        _Is_pointer_address_convertible<_Source_, _Destination_> 
+        && is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
 };
 
 struct FalseTrivialCategory {
@@ -145,24 +224,78 @@ struct FalseTrivialCategory {
     static constexpr bool BitcopyAssignable = false;
 };
 
-template <class _SourceIterator_, class _DestinationIterator_,
-    bool AreContiguous = _Iterators_are_contiguous<_SourceIterator_, _DestinationIterator_> && !_Iterator_is_volatile<_SourceIterator_>
-    && !_Iterator_is_volatile<_DestinationIterator_>>
-    struct IteratorMoveCategory : TrivialCategory<_Iter_value_t<_SourceIterator_>, _Iter_value_t<_DestinationIterator_>,
-    remove_reference_t<_Iter_ref_t<_SourceIterator_>>&&, _Iter_ref_t<_DestinationIterator_>> {};
+template <
+    class _SourceIterator_, 
+    class _DestinationIterator_,
+    bool AreContiguous = IteratorsAreContiguous<
+            _SourceIterator_, _DestinationIterator_> 
+            && !IsIteratorVolatile<_SourceIterator_>
+            && !IsIteratorVolatile<_DestinationIterator_>>
+    struct IteratorMoveCategory : 
+        TrivialCategory<
+            std::iter_value_t<_SourceIterator_>, 
+            std::iter_value_t<_DestinationIterator_>,
+    std::remove_reference_t<
+        std::iter_reference_t<_SourceIterator_>>&&,
+        std::iter_reference_t<_DestinationIterator_>
+    > 
+{};
 
-template <class _SourceIterator_, class _DestinationIterator_>
-struct IteratorMoveCategory<move_iterator<_SourceIterator_>, _DestinationIterator_, false> : IteratorMoveCategory<_SourceIterator_, _DestinationIterator_> {};
+template <
+    class _SourceIterator_,
+    class _DestinationIterator_>
+struct IteratorMoveCategory<
+    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false> : 
+        IteratorMoveCategory<_SourceIterator_, _DestinationIterator_> {
+};
 
-template <class _SourceIterator_, class _DestinationIterator_,
-    bool AreContiguous = _Iterators_are_contiguous<_SourceIterator_, _DestinationIterator_> && !_Iterator_is_volatile<_SourceIterator_>
-    && !_Iterator_is_volatile<_DestinationIterator_>>
-    struct IteratorCopyCategory
-    : TrivialCategory<_Iter_value_t<_SourceIterator_>, _Iter_value_t<_DestinationIterator_>, _Iter_ref_t<_SourceIterator_>, _Iter_ref_t<_DestinationIterator_>> {};
+template <
+    class _SourceIterator_, 
+    class _DestinationIterator_,
+    bool AreContiguous = IteratorsAreContiguous<
+        _SourceIterator_, _DestinationIterator_> 
+        && !IsIteratorVolatile<_SourceIterator_>
+        && !IsIteratorVolatile<_DestinationIterator_>>
+    struct IteratorCopyCategory : 
+        TrivialCategory<
+            std::iter_value_t<_SourceIterator_>, 
+            std::iter_value_t<_DestinationIterator_>, 
+            std::iter_reference_t<_SourceIterator_>, 
+            std::iter_reference_t<_DestinationIterator_>
+        > 
+{};
 
-template <class _SourceIterator_, class _DestinationIterator_>
-struct IteratorCopyCategory<_SourceIterator_, _DestinationIterator_, false> : FalseTrivialCategory {};
+template <
+    class _SourceIterator_,
+    class _DestinationIterator_>
+struct IteratorCopyCategory<
+    _SourceIterator_, _DestinationIterator_, false> : 
+        FalseTrivialCategory
+{};
 
-template <class _SourceIterator_, class _DestinationIterator_>
-struct IteratorCopyCategory<move_iterator<_SourceIterator_>, _DestinationIterator_, false> : IteratorMoveCategory<_SourceIterator_, _DestinationIterator_> {};
+template <
+    class _SourceIterator_,
+    class _DestinationIterator_>
+struct IteratorCopyCategory<
+    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false> : 
+        IteratorMoveCategory<_SourceIterator_, _DestinationIterator_>
+{};
+
+template <
+    class _InputIterator_,
+    class _Sentinel_,
+    class _OutIterator_>
+using SentinelCopyCategory = std::conditional_t<
+#if BASE_HAS_CXX20
+    std::is_same_v<
+        _Sentinel_, _InputIterator_>
+    || std::sized_sentinel_for<
+        _Sentinel_, _InputIterator_>,
+#else
+    std::is_same_v<_Sentinel_, _InputIterator_>,
+#endif
+    IteratorCopyCategory<
+        _InputIterator_, _OutIterator_>,
+    FalseTrivialCategory>;
+
 __BASE_MEMORY_NAMESPACE_END

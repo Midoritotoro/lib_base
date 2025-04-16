@@ -181,7 +181,7 @@ CONSTEXPR_CXX20 inline void FreeRange(
     AllocatorPointerType<_Allocator_>   _End,
     _Allocator_&                        _Allocator) noexcept
 {
-    if (UNLIKELY(!_Start) || UNLIKELY(!_End))
+    if (!_Start || !_End)
         return; 
 
     using _SizeType_    = AllocatorSizeType<_Allocator_>;
@@ -328,8 +328,8 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
 
     constexpr bool _Can_memmove =
 #if defined (CPP_MSVC) && defined(OS_WIN)
-        std::_Sent_copy_cat<
-            decltype(_UFirst), decltype(_ULast), _ValuePointer_>::_Bitcopy_constructible
+        SentinelCopyCategory<
+            decltype(_UFirst), decltype(_ULast), _ValuePointer_>::BitcopyConstructible
         && std::_Uses_default_construct<
             _Allocator_, _ValuePointer_, decltype(*_UFirst)>::value;
 #else 
@@ -341,12 +341,17 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
 #endif // BASE_HAS_CXX20
         {
             if constexpr (std::is_same_v<decltype(_UFirst), decltype(_ULast)>) {
-                MemoryMove(ToAddress(_UFirst), ToAdress(_ULast), UnFancy(_Destination));
+                MemoryMove(
+                    ToAddress(_UFirst), ToAdress(_ULast),
+                    UnFancy(_Destination));
                 _Destination += _ULast - _UFirst;
             }
             else {
                 const auto _Count = static_cast<size_t>(_ULast - _UFirst);
-                MemoryMove(ToAddress(_UFirst), _Count, UnFancy(_Destination));
+                MemoryMove(
+                    ToAddress(_UFirst), _Count, 
+                    UnFancy(_Destination));
+
                 _Destination += _Count;
             }
 
@@ -372,13 +377,15 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
     AllocatorPointerType<_Allocator_>   _Destination,
     _Allocator_&                        _Allocator) 
 {
-    using _Ptrval = AllocatorValueType<_Allocator_>*;
+    using _PointerToValue_ = AllocatorValueType<_Allocator_>*;
 
     auto _UFirst = _STD _Get_unwrapped(_STD move(_First));
 
     constexpr bool _Can_memmove =
-        std::conjunction_v<std::bool_constant<std::_Iter_copy_cat<decltype(_UFirst), _Ptrval>::_Bitcopy_constructible>,
-        std::_Uses_default_construct<_Allocator_, _Ptrval, decltype(*_UFirst)>>;
+        std::conjunction_v<
+            std::bool_constant<
+                IteratorCopyCategory<decltype(_UFirst), _PointerToValue_>::BitcopyConstructible>,
+        std::_Uses_default_construct<_Allocator_, _PointerToValue_, decltype(*_UFirst)>>;
 
     if constexpr (_Can_memmove) {
 #if BASE_HAS_CXX20
@@ -392,10 +399,10 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
         }
     }
 
-    UninitializedBackout<_Allocator_> _Backout { _Destination, _Allocator_ };
-    for (; _Count != 0; ++_UFirst, (void) --_Count) {
+    UninitializedBackout<_Allocator_> _Backout { _Destination, _Allocator };
+
+    for (; _Count != 0; ++_UFirst, (void) --_Count)
         _Backout.EmplaceBack(*_UFirst);
-    }
 
     return _Backout.Release();
 }
@@ -409,7 +416,7 @@ CONSTEXPR_CXX20 inline NODISCARD _NoThrowForwardIterator_ UninitializedCopyUnche
     const _InputIterator_       _Last,
     _NoThrowForwardIterator_    _Dest)
 {
-    if constexpr (std::_Iter_copy_cat<_InputIterator_, _NoThrowForwardIterator_>::_Bitcopy_constructible) {
+    if constexpr (IteratorCopyCategory<_InputIterator_, _NoThrowForwardIterator_>::BitcopyConstructible) {
 #if _HAS_CXX20
         if (!is_constant_evaluated())
 #endif // _HAS_CXX20
@@ -466,7 +473,7 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
     auto _UFirst = std::_Get_unwrapped(_First);
     const auto _ULast = std::_Get_unwrapped(_Last);
 
-    if constexpr (std::conjunction_v<std::bool_constant<std::_Iter_move_cat<decltype(_UFirst), _Ptrval>::_Bitcopy_constructible>,
+    if constexpr (std::conjunction_v<std::bool_constant<IteratorMoveCategory<decltype(_UFirst), _Ptrval>::BitcopyConstructible>,
         std::_Uses_default_construct<_Allocator_, _Ptrval, decltype(std::move(*_UFirst))>>) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
@@ -497,7 +504,7 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
     using _Ty = AllocatorValueType<_Allocator_>;
 
     if constexpr (
-        std::_Fill_memset_is_safe<_Ty*, _Ty> 
+        IsFillMemsetSafe<_Ty*, _Ty> 
 #if defined(OS_WIN) && defined(CPP_MSVC)
         && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
 #endif
@@ -511,7 +518,7 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
         }
     }
     else if constexpr (
-        std::_Fill_zero_memset_is_safe<_Ty*, _Ty> 
+        IsFillZeroMemsetSafe<_Ty*, _Ty> 
 #if defined(OS_WIN) && defined(CPP_MSVC)
         && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
 #endif
@@ -574,7 +581,11 @@ void uninitialized_fill(
             static_cast<size_t>(_ULast - _UFirst));
     }
 
-    if constexpr (std::_Fill_zero_memset_is_safe<std::remove_cvref_t<const _NoThrowForwardIterator_&>, _Type_>) {
+    if constexpr (std::_Fill_zero_memset_is_safe<
+            std::remove_cvref_t<
+                const _NoThrowForwardIterator_&>,
+        _Type_>)
+    {
         if (IsAllBitsZero(_Value)) {
             return MemsetZero(_UFirst, static_cast<size_t>(_ULast - _UFirst));
         }
@@ -597,17 +608,11 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MoveUnChecked(
     _InputIterator_ _Last,
     _OutIterator_   _Destination)
 {
-    if constexpr (
-#if defined(OS_WIN) && defined(CPP_MSVC)
-        std::_Iter_move_cat<_InputIterator_, _OutIterator_>::_Bitcopy_assignable
-#else
-        true
-#endif
-    ) {
-#if _HAS_CXX20
+    if constexpr (IteratorMoveCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable) {
+#if BASE_HAS_CXX20
             if (!is_constant_evaluated())
-#endif // _HAS_CXX20
-                return _STD _Copy_memmove(_First, _Last, _Destination);
+#endif
+                return MemoryCopyMemmove(_First, _Last, _Destination);
         }
 
     for (; _First != _Last; ++_Destination, (void) ++_First)

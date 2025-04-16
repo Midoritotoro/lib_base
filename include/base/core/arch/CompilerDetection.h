@@ -309,6 +309,37 @@
 #  define WARNING_DISABLE_INVALID_OFFSETOF
 #endif
 
+#if defined(CPP_MSVC)
+
+#define BASE_DEPRECATED_WARNING(message) \
+    __pragma(warning(push)) \
+    __pragma(warning(disable: 4996)) \
+    __pragma(message (__FILE__ "(" __LINE__ ") : warning C4996: " message)) \
+    __pragma(warning(pop))
+
+#elif defined(CPP_CLANG)
+
+#define BASE_DEPRECATED_WARNING(message) \
+    DO_PRAGMA("clang diagnostic push") \
+    DO_PRAGMA("clang diagnostic warning \"-Wdeprecated-declarations\"") \
+    DO_PRAGMA("clang diagnostic ignored \"-Wunused-but-set-variable\"") \
+    DO_PRAGMA("message \"" __FILE__ "(" __LINE__ ") : warning: " message "\"") \
+    DO_PRAGMA("clang diagnostic pop")
+
+#elif defined(CPP_GNU)
+
+#define BASE_DEPRECATED_WARNING(message) \
+    DO_PRAGMA("GCC diagnostic push") \
+    DO_PRAGMA("GCC diagnostic warning \"-Wdeprecated-declarations\"") \
+    DO_PRAGMA("message \"" __FILE__ "(" __LINE__ ") : warning: " message "\"") \ 
+    DO_PRAGMA("GCC diagnostic pop")
+
+#else
+
+#define BASE_DEPRECATED_WARNING(message)
+
+#endif
+
 #define CAST_IGNORE_ALIGN(body) WARNING_PUSH WARNING_DISABLE_GCC("-Wcast-align") body WARNING_POP
 
 #define OFFSETOF(Class, member) \
