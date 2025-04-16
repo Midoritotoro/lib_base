@@ -47,10 +47,6 @@ void fvmax(iti32 _First, iti32 _Last, int32* o) {
 int main(int argc, char* argv[]) {
 	container::Vector<int32> _vec = { 1, 2, 3, 4, 5 } ;
 
-	//std::cout << (_vec.data() + _vec.size()) - _vec.data();
-
-
-	std::cout << a;
 	for (int32 i = 0; i < 120; ++i)
 		_vec.pushBack(i);
 

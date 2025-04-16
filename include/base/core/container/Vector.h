@@ -526,7 +526,7 @@ private:
 	CONSTEXPR_CXX20 inline Vector(
 		const pointer _First,
 		const pointer _Current,
-		const pointer _Last) const noexcept; // For view method
+		const pointer _Last) noexcept; // For view method
 
 	constexpr inline NODISCARD SizeType calculateGrowth(SizeType newSize) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool resizeReallocate(SizeType newCapacity) noexcept;
@@ -549,8 +549,8 @@ private:
 
 	template <class _Iterator_>
 	CONSTEXPR_CXX20 inline void appendCountedRange(
-		_Iterator_		_First,
-		const SizeType	_Count) noexcept;
+		_Iterator_							_First,
+		BASE_GUARDOVERFLOW	const SizeType	_Count) noexcept;
 	
 	template <
 		class _Iterator_,
@@ -558,6 +558,8 @@ private:
 	CONSTEXPR_CXX20 inline void appendUnCountedRange(
 		_Iterator_ _First,
 		_Sentinel_ _Last) noexcept;
+
+	CONSTEXPR_CXX20 inline void moveAssignUnEqualAllocator(Vector& other);
 
 	CONSTEXPR_CXX20 inline void FreeAllElements() noexcept;
 
@@ -579,24 +581,12 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
 	::Vector(std::initializer_list<ValueType> elements) noexcept:
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {
-	const auto _Capacity = capacity();
-	const auto _UnusedCapacity = unusedCapacity();
+	const auto _SizeForAppend = elements.size();
 
-	const auto elementsSize = elements.size();
+	if (_SizeForAppend == 0)
+		return;
 
-	using _SizeType_ = typename std::initializer_list<ValueType>::size_type;
-
-	if (_UnusedCapacity < elementsSize) {
-		const auto isEnoughMemory = resize(_Capacity + elementsSize);
-
-		if (UNLIKELY(isEnoughMemory == false))
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
-	}
-
-	for (_SizeType_ i = 0; i < elementsSize; ++i) {
-		auto adress = (elements.begin() + i);
-		push_back(*adress);
-	}
+	appendCountedRange(elements.begin(), _SizeForAppend);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -676,7 +666,8 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
 	const pointer _First,
 	const pointer _Current,
-	const pointer _Last) const noexcept : // For view method
+	const pointer _Last) noexcept : 
+	// For view method
 		_pair(_Zero_then_variadic_args_{}, VectorValueType(
 			_First, _Last, _Current
 		))
@@ -721,7 +712,7 @@ CONSTEXPR_CXX20 Vector<_Element_, _Allocator_>&
 	constexpr auto _Pocma_val = memory::ChoosePocma_v<allocator_type>;
 	if constexpr (_Pocma_val == memory::PocmaValues::NoPropagateAllocators) {
 		if (_Al != _Right_al) {
-			//_Move_assign_unequal_alloc(_Right);
+			moveAssignUnEqualAllocator(_Right);
 			return *this;
 		}
 	}
@@ -1742,13 +1733,8 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 	if (oldCapacity == newCapacity)
 		return false;
 
-	const auto bytesRequired = static_cast<SizeType>(newCapacity * sizeof(ValueType));
-
-	if (UNLIKELY(bytesRequired <= 0))
-		return false;
-
 	auto& allocator		= _pair.first();
-	pointer memory		= allocator.allocate(bytesRequired);
+	pointer memory		= allocator.allocate(newCapacity);
 
 	if (memory == nullptr)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false)
@@ -1897,9 +1883,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
 		const auto _NewCapacity	= calculateGrowth(_OldCapacity + _Count);
 		const auto _NewSize		= _OldSize + _Count;
 
-		const auto _Bytes		= sizeof(ValueType) * _NewCapacity;			// ?????????
-
-		auto _BlockStart		= allocator.allocate(_Bytes);				// ?????????
+		auto _BlockStart		= allocator.allocate(_NewCapacity);
 
 		if (_BlockStart == nullptr)
 			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
@@ -1931,7 +1915,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
 		else {
 			memory::UninitializedMove(
 				_Start, _End,
-				_Destination, allocator)
+				_Destination, allocator);
 		}
 			BASE_CATCH_ALL
 
@@ -1948,8 +1932,6 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
 			std::move(_First), _Count,
 			_Destination, allocator));
 	}
-
-
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1965,12 +1947,66 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendUnCountedRange
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::FreeAllElements() noexcept {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::moveAssignUnEqualAllocator(Vector& other) {
 	auto& pairValue = _pair._secondValue;
-	auto& allocator = _pair.first();
+	auto& allcator	= _pair.first();
 
-	pointer& _Start = pairValue._start;
-	pointer& _End	= pairValue._end;
+	auto& otherPairValue = other._pair._secondValue;
+
+	const pointer otherStart	= otherPairValue._start;
+	const pointer otherCurrent	= otherPairValue._current;
+
+	const auto otherSize		= static_cast<SizeType>(
+		otherCurrent - otherStart);
+
+	pointer& _Start		= pairValue._start;
+	pointer& _Current	= pairValue._current;
+	pointer& _End		= pairValue._End;
+
+	const auto oldCapacity = static_cast<SizeType>(_End - _Start);
+
+	if (otherSize > oldCapacity) {
+		/*_Clear_and_reserve_geometric(_Newsize);*/
+
+		_Current = memory::UninitializedMove(otherStart, otherCurrent, _Start, allocator);
+		return;
+	}
+
+	const auto oldSize = static_cast<SizeType>(_Current - _Start);
+
+	if (otherSize > oldSize) {
+		const pointer _Mid = otherStart + oldSize;
+		_STD _Move_unchecked(_First, _Mid, _Myfirst);
+
+		if constexpr (_Nothrow_construct) {
+			_ASAN_VECTOR_MODIFY(static_cast<difference_type>(_Newsize - _Oldsize));
+			_Mylast = _Uninitialized_move(_Mid, _Last, _Mylast, _Al);
+		}
+		else {
+			_ASAN_VECTOR_EXTEND_GUARD(_Newsize);
+			_Mylast = _Uninitialized_move(_Mid, _Last, _Mylast, _Al);
+			_ASAN_VECTOR_RELEASE_GUARD;
+		}
+	}
+	else {
+		const pointer _Newlast = _Myfirst + _Newsize;
+		_STD _Move_unchecked(_First, _Last, _Myfirst);
+		_Destroy_range(_Newlast, _Mylast, _Al);
+		_ASAN_VECTOR_MODIFY(static_cast<difference_type>(_Newsize - _Oldsize));
+		_Mylast = _Newlast;
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::FreeAllElements() noexcept {
+	auto& pairValue		= _pair._secondValue;
+	auto& allocator		= _pair.first();
+
+	pointer& _Start		= pairValue._start;
+	pointer& _End		= pairValue._end;
+
+	if (_Start == _End)
+		return;
 
 	memory::FreeRange(_Start, _End, allocator);
 

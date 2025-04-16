@@ -453,4 +453,23 @@ using compare_lt_result_container = std::enable_if_t<
 			Container, T>...>, 
 	bool>;
 
+template <
+	class _Element_, 
+	bool _IsEnum_ = std::is_enum_v<_Element_>>
+struct UnwrapEnum { 
+	// if _Element_ is an enum, gets its underlying type;
+	// otherwise leaves _Element_ unchanged
+
+	using type = std::underlying_type_t<_Element_>;
+};
+
+template <class _Element_>
+struct UnwrapEnum<_Element_, false> { 
+	// passthrough non-enum type
+	using type = _Element_;
+};
+
+template <class _Element_>
+using unwrap_enum_t = typename UnwrapEnum<_Element_>::type;
+
 __BASE_NAMESPACE_END

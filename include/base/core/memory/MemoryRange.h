@@ -588,4 +588,32 @@ void uninitialized_fill(
     _Backout.Release();
 }
 
+template <
+    class _InputIterator_,
+    class _OutIterator_>
+// move [_First, _Last) to [_Dest, ...)
+CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MoveUnChecked(
+    _InputIterator_ _First,
+    _InputIterator_ _Last,
+    _OutIterator_   _Destination)
+{
+    if constexpr (
+#if defined(OS_WIN) && defined(CPP_MSVC)
+        std::_Iter_move_cat<_InputIterator_, _OutIterator_>::_Bitcopy_assignable
+#else
+        true
+#endif
+    ) {
+#if _HAS_CXX20
+            if (!is_constant_evaluated())
+#endif // _HAS_CXX20
+                return _STD _Copy_memmove(_First, _Last, _Destination);
+        }
+
+    for (; _First != _Last; ++_Destination, (void) ++_First)
+        *_Destination = std::move(*_First);
+
+    return _Destination;
+}
+
 __BASE_MEMORY_NAMESPACE_END
