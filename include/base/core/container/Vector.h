@@ -527,6 +527,14 @@ public:
 		ConstIterator _First,
 		ConstIterator _Last);
 
+	CONSTEXPR_CXX20 inline ValueType& first();
+	CONSTEXPR_CXX20 inline const ValueType& first() const noexcept;
+	CONSTEXPR_CXX20 inline const ValueType& constFirst() const noexcept;
+
+	CONSTEXPR_CXX20 inline ValueType& last();
+	CONSTEXPR_CXX20 inline const ValueType& last() const noexcept;
+	CONSTEXPR_CXX20 inline const ValueType& constLast() const noexcept;
+
 	CONSTEXPR_CXX20 inline NODISCARD SizeType removeAll(const ValueType& element);
 
 	CONSTEXPR_CXX20 inline void removeFirst();
@@ -1127,20 +1135,18 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(const Valu
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(Vector&& other) {
-	auto& otherPairValue = other._pair._secondValue;
-	auto& otherAllocator = other._pair.first();
+	auto& otherPairValue	= other._pair._secondValue;
+	auto& otherAllocator	= other._pair.first();
 
-	pointer& otherStart = otherPairValue._start;
-	pointer& otherCurrent = otherPairValue._current;
-	pointer& otherEnd = otherPairValue._end;
+	pointer& otherStart		= otherPairValue._start;
+	pointer& otherCurrent	= otherPairValue._current;
+	pointer& otherEnd		= otherPairValue._end;
 
-	const auto otherSize = static_cast<SizeType>(
+	const auto otherSize	= static_cast<SizeType>(
 		otherCurrent - otherStart);
 
 	if (otherSize == 0)
 		return;
-
-	// clear? 
 
 	appendCountedRange(otherStart, otherSize);
 }
@@ -1189,6 +1195,20 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(const Val
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(Vector&& other) {
 	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
+
+	auto& otherPairValue	= other._pair._secondValue;
+	auto& otherAllocator	= other._pair.first();
+
+	pointer& otherStart		= otherPairValue._start;
+	pointer& otherCurrent	= otherPairValue._current;
+
+	const auto otherSize = static_cast<SizeType>(
+		otherCurrent - otherStart);
+
+	if (otherSize == 0)
+		return;
+
+	appendCountedRange(otherStart, otherSize);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1265,10 +1285,6 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 			return front();
 		}
 		else {
-			// With _Capacity == 0, you can flip the tuple of arguments
-			// and use emplaceBack element-by-element
-
-			// ...
 			auto argsReversedTuple = reverseTuple(std::make_tuple(_Val...));
 			emplaceBack(std::forward<decltype(argsReversedTuple)>(
 				argsReversedTuple)...);
@@ -1294,7 +1310,7 @@ template <class ... _Args_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
 	Vector<_Element_, _Allocator_>::emplace_front(_Args_&&... args) 
 {
-	
+	return emplaceFront(std::forward<_Args_>(args)...);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1314,7 +1330,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 		SizeType where,
 		_Valty_&&... value)
 {
-	return Iterator(this);
+	return insert(where, std::forward<_Valty_>(value)...);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1392,33 +1408,44 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
 	Vector<_Element_, _Allocator_>::popBack() noexcept 
 {
-	return {};
+	return pop();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
 	Vector<_Element_, _Allocator_>::pop_back() noexcept
 {
-	return {};
+	return pop();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
 	Vector<_Element_, _Allocator_>::pop_front() noexcept
 {
-	return {};
+	const auto value = front();
+	removeAt(0);
+
+	return value;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
 	Vector<_Element_, _Allocator_>::popFront() noexcept
 {
-	return {};
+	return pop_front();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reverse() noexcept {
+	auto& pairValue = _pair._secondValue;
+	
+	pointer& _Start = pairValue._start;
+	pointer& _End	= pairValue._end;
 
+	if (_Start == _End)
+		return;
+
+	std::reverse(_Start, _End);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1486,12 +1513,12 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reserve(BASE_GUARDOVERFLOW size_type newCapacity) {
-	if (UNLIKELY(newCapacity <= capacity()) || UNLIKELY(newCapacity > maxSize())) // something to do (reserve() never shrinks)
+	if (newCapacity <= capacity() || newCapacity > maxSize()) // something to do (reserve() never shrinks)
 		return;
 
 	const auto isEnoughMemory = resizeReallocate(newCapacity);
 
-	if (UNLIKELY(isEnoughMemory == false))
+	if (isEnoughMemory == false)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 }
 
@@ -1515,7 +1542,6 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrink_to_fit() {
 	return shrinkToFit();
 }
-
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
@@ -1568,14 +1594,44 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 	Vector<_Element_, _Allocator_>::count(const ValueType& element) const noexcept 
 {
-	return static_cast<size_type>(0);
+	SizeType _Count = 0;
+
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentElement = at(i);
+
+		if (currentElement == element)
+			++_Count;
+	}
+
+	return _Count;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 	Vector<_Element_, _Allocator_>::count(const Vector& subVector) const noexcept
 {
-	return static_cast<size_type>(0);
+	SizeType _Ñount = 0;
+	
+	const auto subVectorSize	= subVector.size();
+	const auto _Size			= size();
+
+	if (subVectorSize == 0 || subVectorSize > size())
+		return;
+
+	for (SizeType i = 0; i < _Size; ++i) {
+		SizeType overlaps = 0;
+
+		const auto& currentElement = at(i);
+
+		if (subVector[i % subVectorSize] == currentElement) {
+			if ((++overlaps) == subVectorSize) {
+				overlaps = 0;
+				++_Ñount;
+			}
+		}
+	}
+
+	return _Ñount;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1583,7 +1639,16 @@ template <typename _Predicate_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
 	Vector<_Element_, _Allocator_>::count_if(_Predicate_ predicate) const noexcept
 {
-	return static_cast<size_type>(0);
+	SizeType _Count = 0;
+
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentElement = at(i);
+
+		if (predicate(currentElement))
+			++_Count;
+	}
+
+	return _Count;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1591,13 +1656,20 @@ template <typename _Predicate_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
 	Vector<_Element_, _Allocator_>::countIf(_Predicate_ predicate) const noexcept
 {
-	return static_cast<size_type>(0);
+	return count_if(predicate);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
 	Vector<_Element_, _Allocator_>::contains(const ValueType& element) const noexcept 
 {
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentElement = at(i);
+
+		if (currentElement == element)
+			return true;
+	}
+
 	return false;
 }
 
@@ -1605,6 +1677,23 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
 	Vector<_Element_, _Allocator_>::contains(const Vector& subVector) const noexcept 
 {
+	const auto subVectorSize = subVector.size();
+	const auto _Size = size();
+
+	if (subVectorSize == 0 || subVectorSize > size())
+		return;
+
+	for (SizeType i = 0; i < _Size; ++i) {
+		SizeType overlaps = 0;
+
+		const auto& currentElement = at(i);
+
+		if (subVector[i % subVectorSize] == currentElement
+			&& (++overlaps) == subVectorSize
+		)
+			return true;
+	}
+
 	return false;
 }
 
@@ -1612,7 +1701,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::startsWith(const ValueType& element) const noexcept 
 {
-	return false;
+	const auto& firstElement = first();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1844,6 +1933,54 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	ConstIterator _Last)
 {
 
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::first()
+{
+	Assert(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	return at(0); 
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::first() const noexcept 
+{
+	Assert(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	return at(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::constFirst() const noexcept 
+{
+	Assert(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
+	return at(0);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::last()
+{
+	Assert(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	return at(size() - 1);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::last() const noexcept 
+{
+	Assert(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	return at(size() - 1);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
+	Vector<_Element_, _Allocator_>::constLast() const noexcept
+{
+	Assert(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
+	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
