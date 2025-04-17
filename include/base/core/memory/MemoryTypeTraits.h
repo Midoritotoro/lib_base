@@ -110,7 +110,7 @@ template <
     class _Source_, 
     class _Destination_>
 // checks the convertibility of _Source_ to _Destination_
-constexpr bool IsPointerAdressIncovertible = std::is_void_v<_Source_>
+constexpr bool IsPointerAddressConvertible = std::is_void_v<_Source_>
     || std::is_void_v<_Destination_>
     // is_same_v is required for function pointers to work
     || std::is_same_v<
@@ -212,11 +212,11 @@ struct TrivialCategory<
 {
     static constexpr bool BitcopyConstructible =
         IsPointerAddressConvertible<_Source_, _Destination_> 
-        && is_trivially_constructible_v<_Destination_*, _SourceReference_>;
+        && std::is_trivially_constructible_v<_Destination_*, _SourceReference_>;
 
     static constexpr bool BitcopyAssignable =
-        _Is_pointer_address_convertible<_Source_, _Destination_> 
-        && is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
+        IsPointerAddressConvertible<_Source_, _Destination_>
+        && std::is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
 };
 
 struct FalseTrivialCategory {

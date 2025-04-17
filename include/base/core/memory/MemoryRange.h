@@ -479,7 +479,7 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            MemoryCopy(_UFirst, _ULast, UnFancy(_Destination));
+            MemoryCopyMemmove(_UFirst, _ULast, UnFancy(_Destination));
             return _Destination + (_ULast - _UFirst);
         }
     }

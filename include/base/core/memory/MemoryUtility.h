@@ -175,7 +175,7 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmove(
     const auto _Dest                = memmove(
         _DestinationAdress, _FirstAdress, _Size);
 
-    const auto _Success = (_Dest = _DestinationAdress);
+    const auto _Success = (_Dest == _DestinationAdress);
     return _Success;
 }
 

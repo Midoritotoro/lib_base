@@ -197,7 +197,7 @@ typename tuple_reverse<Tuple>::type reverseTuple( const Tuple & tuple )
     // now copy everything
     TupleReverseImpl::copyTypes(
 		contentSource, contentTarget, tuple, 
-		typename SequenceHelper::gens<std::tuple_size<Tuple>::value>::type());
+		typename gens<std::tuple_size<Tuple>::value>::type());
 
     return return_tuple;
 }

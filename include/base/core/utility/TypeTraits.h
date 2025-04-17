@@ -204,7 +204,7 @@ template <
 	class _SecondIterator_>
 constexpr bool IteratorsAreContiguous = 
 	IteratorIsContiguous<_FirstIterator_> 
-	&& IteratorsIsContiguous<_SecondIterator_>;
+	&& IteratorIsContiguous<_SecondIterator_>;
 
 
 template <class _Iterator_>
