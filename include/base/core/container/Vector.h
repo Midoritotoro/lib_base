@@ -22,7 +22,10 @@
 WARNING_DISABLE_MSVC(4834)
 WARNING_DISABLE_MSVC(4002)
 WARNING_DISABLE_MSVC(4003)
-WARNING_DISABLE_MSVC(VCR001)
+
+#ifndef _VECTOR_OUT_OF_RANGE_
+#  define _VECTOR_OUT_OF_RANGE_ ("base::container::Vector: Index out of range.\n ")
+#endif
 
 #if defined(_DEBUG)
 
@@ -35,7 +38,6 @@ WARNING_DISABLE_MSVC(VCR001)
 	DebugAssert(_Cond, _Message)												\
 	
 #endif
-
 
 #  ifndef _VECTOR_ERROR_DEBUG_
 #    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							\
@@ -67,6 +69,12 @@ WARNING_DISABLE_MSVC(VCR001)
         _RetVal)
 #  endif
 
+#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_
+#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_									\
+    _VECTOR_ERROR_DEBUG_NO_RET_(												\
+      _VECTOR_OUT_OF_RANGE_)
+#  endif
+
 #  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 #    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								\
     _VECTOR_ERROR_DEBUG_NO_RET_(												\
@@ -74,9 +82,15 @@ WARNING_DISABLE_MSVC(VCR001)
 #  endif
 
 #  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
-#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_												\
-    _VECTOR_ERROR_DEBUG_NO_RET_(														\
+#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										\
+    _VECTOR_ERROR_DEBUG_NO_RET_(												\
       "base::container::Vector: Vector too long.\n ")
+#  endif
+
+#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_
+#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_							\
+    _VECTOR_ERROR_DEBUG_NO_RET_(												\
+      _VECTOR_OUT_OF_RANGE_)
 #  endif
 
 #else
@@ -97,6 +111,10 @@ WARNING_DISABLE_MSVC(VCR001)
 #    define _VECTOR_TOO_LONG_DEBUG_(_RetVal)									((void)0)
 #  endif
 
+#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_
+#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_									((void)0)
+#  endif
+
 #  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 #    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								((void)0)
 #  endif
@@ -105,11 +123,20 @@ WARNING_DISABLE_MSVC(VCR001)
 #    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										((void)0)
 #  endif
 
+#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_
+#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_							((void)0)
+#  endif
+
+#  ifndef _VECTOR_DEBUG_ASSERT_LOG_
+#    define _VECTOR_DEBUG_ASSERT_LOG_											((void)0)
+#endif
+
 #endif
 
 #ifndef _VECTOR_OUTSIDE_TEMPLATE_ 
 #  define _VECTOR_OUTSIDE_TEMPLATE_ template <typename _Element_, class _Allocator_>
 #endif
+
 
 #ifndef BASE_SILENCE_ALL_VECTOR_WARNINGS
 
@@ -188,6 +215,8 @@ template <
 	class		_Allocator_ = std::allocator<_Element_>>
 class Vector
 {
+	using AllocatorForType	= memory::RebindAllocator<_Allocator_, _Element_>; 
+	using AllocatorTraits	= std::allocator_traits<AllocatorForType>;
 public:
 	using value_type = _Element_;
 	using allocator_type = _Allocator_;
@@ -196,7 +225,7 @@ public:
 	using const_pointer = const pointer;
 
 	using size_type = sizetype;
-	using difference_type = sizetype;
+	using difference_type = ptrdiff;
 
 	using reference = value_type&;
 	using const_reference = const value_type&;
@@ -223,6 +252,8 @@ public:
 	using ConstReverseIterator = const_reverse_iterator;
 private:
 	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_>>;
+
+	inline static constexpr auto _Vector_Default_Capacity_ = 16;
 public:
 	inline static constexpr _Vector_SIMD_Algorithm_Alignment _VectorSIMDAlignment =
 		_Vector_SIMD_Algorithm_Alignment
@@ -252,7 +283,11 @@ public:
 		const ValueType& _Fill) noexcept;
 	CONSTEXPR_CXX20 inline Vector(Vector&& rOther) noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD allocator_type getAllocator() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD allocator_type& get_allocator() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& get_allocator() const noexcept;
+
+	CONSTEXPR_CXX20 inline NODISCARD allocator_type& getAllocator() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& getAllocator() const noexcept;
 
 	CONSTEXPR_CXX20 inline Vector& operator=(Vector&& _Right) noexcept(
 		memory::ChoosePocma_v<allocator_type> != memory::PocmaValues::NoPropagateAllocators);
@@ -517,8 +552,8 @@ public:
 		SizeType _First,
 		SizeType _Last);
 	CONSTEXPR_CXX20 inline void swapElementsAt(
-		ConstIterator _First,
-		ConstIterator _Last);
+		Iterator _First,
+		Iterator _Last);
 
 	CONSTEXPR_CXX20 inline void remove(
 		SizeType _First,
@@ -535,7 +570,7 @@ public:
 	CONSTEXPR_CXX20 inline const ValueType& last() const noexcept;
 	CONSTEXPR_CXX20 inline const ValueType& constLast() const noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD SizeType removeAll(const ValueType& element);
+	CONSTEXPR_CXX20 inline void removeAll(const ValueType& element);
 
 	CONSTEXPR_CXX20 inline void removeFirst();
 	CONSTEXPR_CXX20 inline void removeLast();
@@ -566,12 +601,6 @@ private:
 
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceBackReallocate(_Valty_&&... _Val);
-
-	template <class... _Valty_>
-	CONSTEXPR_CXX20 inline void emplaceFrontWithUnusedCapacity(_Valty_&&... _Val);
-
-	template <class... _Valty_>
-	CONSTEXPR_CXX20 inline void emplaceFrontReallocate(_Valty_&&... _Val);
 
 	template <class... _Valty_>
 	CONSTEXPR_CXX20 inline void emplaceAt(
@@ -610,6 +639,8 @@ private:
 	CONSTEXPR_CXX20 inline void moveAssignUnEqualAllocator(Vector& other);
 
 	CONSTEXPR_CXX20 inline void FreeAllElements() noexcept;
+
+	CONSTEXPR_CXX20 inline void clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newCapacity); 
 
 	CompressedPair<allocator_type, VectorValueType> _pair;
 };
@@ -722,8 +753,29 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
 {}
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::allocator_type 
-	Vector<_Element_, _Allocator_>::getAllocator() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::allocator_type&
+	Vector<_Element_, _Allocator_>::getAllocator() noexcept
+{
+	return _pair.first();
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_>::allocator_type&
+Vector<_Element_, _Allocator_>::getAllocator() const noexcept
+{
+	return _pair.first();
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::allocator_type&
+	Vector<_Element_, _Allocator_>::get_allocator() noexcept
+{
+	return _pair.first();
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_>::allocator_type&
+	Vector<_Element_, _Allocator_>::get_allocator() const noexcept
 {
 	return _pair.first();
 }
@@ -740,7 +792,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 	Vector<_Element_, _Allocator_>::operator=(
 		std::vector<ValueType>&& rVector)
 {
-	auto& pairValue = _pair._secondValue;
+	/*auto& pairValue = _pair._secondValue;
 	auto& allocator	= _pair.first();
 
 	auto& otherAllocator = rVector.get_allocator();
@@ -749,18 +801,16 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 
 	if constexpr (_Pocma_val == memory::PocmaValues::NoPropagateAllocators) {
 		if (allocator != otherAllocator) {
-			// moveAssignUnEqualAllocator(_Right);
+			moveAssignUnEqualAllocator(_Right);
 			return *this;
 		}
 	}
 
 	FreeAllElements();
 
-	// ...
-
 	memory::POCMA(allocator, otherAllocator);
 	pairValue.takeContents(rVector._pair._secondValue);
-
+*/
 
 	return *this;
 }
@@ -801,7 +851,16 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 	Vector<_Element_, _Allocator_>::operator=(
 		const std::vector<ValueType>& _Right)
 {
-	return *this;
+	if (this == memory::AddressOf(_Right))
+		return *this;
+
+	auto& pairValue 		= _pair._secondValue;
+	auto& otherPairValue 	= _Right._secondValue;
+
+	UNUSED(memory::UninitializedCopy(
+		otherPairValue._start, otherPairValue._current, 
+		pairValue._start, getAllocator()));
+
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1140,7 +1199,6 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(Vector&& o
 
 	pointer& otherStart		= otherPairValue._start;
 	pointer& otherCurrent	= otherPairValue._current;
-	pointer& otherEnd		= otherPairValue._end;
 
 	const auto otherSize	= static_cast<SizeType>(
 		otherCurrent - otherStart);
@@ -1208,7 +1266,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(Vector&& 
 	if (otherSize == 0)
 		return;
 
-	appendCountedRange(otherStart, otherSize);
+	prependCountedRange(otherStart, otherSize);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1261,46 +1319,44 @@ template <class ... _Args_>
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
 	Vector<_Element_, _Allocator_>::emplaceFront(_Args_&&... _Val) 
 {
-	auto& pairValue = _pair._secondValue;
-	auto& allocator = _pair.first();
+	auto& pairValue		= _pair._secondValue;
+	auto& allocator		= _pair.first();
 
-	pointer& _Start = pairValue._start;
-	pointer& _Current = pairValue._current;
-	pointer& _End = pairValue._end;
+	pointer& _Start		= pairValue._start;
+	pointer& _Current	= pairValue._current;
+	pointer& _End		= pairValue._end;
 
-	constexpr auto valuesForAppendCount = sizeof...(_Val);
-
-	const auto _Size = static_cast<SizeType>(_Current - _Start);
-	const auto _Capacity = static_cast<SizeType>(_End - _Start);
-	const auto _UnusedCapacity = static_cast<SizeType>(_End - _Current);
+	const auto _Size			= static_cast<SizeType>(_Current - _Start);
+	const auto _Capacity		= static_cast<SizeType>(_End - _Start);
+	const auto _UnusedCapacity	= static_cast<SizeType>(_End - _Current);
 
 	if (_Capacity == 0) {
-		const auto isEnoughMemory = resize(valuesForAppendCount);
+		// allocate new array
+		const auto isEnoughMemory = resizeReallocate(_Vector_Default_Capacity_);
+
+		if (isEnoughMemory == false)
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front())
+	}
+	else if (_UnusedCapacity >= 1) {
+		UNUSED(memory::UninitializedMove(
+			_Start, _Current, 
+			_Start + 1, allocator));
+	}
+	else { 
+		// reallocate old array
+		const auto isEnoughMemory = resize(_Capacity + _Vector_Default_Capacity_);
 
 		if (isEnoughMemory == false)
 			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front())
 
-		if constexpr (valuesForAppendCount == 1) {
-			emplaceBack(std::forward<_Args_>(_Val)...);
-			return front();
-		}
-		else {
-			auto argsReversedTuple = reverseTuple(std::make_tuple(_Val...));
-			emplaceBack(std::forward<decltype(argsReversedTuple)>(
-				argsReversedTuple)...);
-		}
+		UNUSED(memory::UninitializedMove(
+			_Start, _Current,
+			_Start + 1, allocator));
 	}
-	else if (valuesForAppendCount < _UnusedCapacity) {
 
-	}
-	else {
-		const auto isEnoughMemory = resize(valuesForAppendCount);
-
-		if (isEnoughMemory == false)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front())
-
-
-	}
+	emplaceAt(
+		allocator, _Start,
+		std::forward<_Args_>(_Val)...);
 
 	return front();
 }
@@ -1339,7 +1395,18 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 		ConstIterator where,
 		const ValueType& value)
 {
-	return Iterator(this);
+	auto& pairValue = _pair._secondValue;
+	pointer& _Start = pairValue._start;
+
+	pointer& wherePointer = where._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		wherePointer >= _Start && wherePointer <= pairValue._end,
+		_VECTOR_OUT_OF_RANGE_);
+
+	emplaceAt(
+		getAllocator(), wherePointer,
+		value) // ??? 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1348,7 +1415,18 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 		ConstIterator where,
 		ValueType&& value)
 {
-	return Iterator(this);
+	auto& pairValue = _pair._secondValue;
+	pointer& _Start = pairValue._start;
+
+	pointer& wherePointer = where._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		wherePointer >= _Start && wherePointer <= pairValue._end,
+		_VECTOR_OUT_OF_RANGE_);
+
+	emplaceAt(
+		getAllocator(), wherePointer,
+		std::move(value)) // ??? 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1452,7 +1530,25 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAt(
 	BASE_GUARDOVERFLOW const size_type index) noexcept 
 {
+	auto& pairValue = _pair._secondValue;
+	auto& allocator = _pair.first();
 
+	pointer& _Start = pairValue._start;
+	pointer& _Current = pairValue._current;
+
+	const auto _Size = static_cast<SizeType>(_Current - _Start);
+
+	_VECTOR_DEBUG_ASSERT_LOG_(index >= 0 && index < _Size, _VECTOR_OUT_OF_RANGE_);
+	
+	auto& forDestroy = at(index);
+
+	memory::DestroyInPlace(forDestroy);
+	allocator.deallocate(index, 1);
+
+	if (index != _Size - 1)
+		UNUSED(memory::UninitializedMove(
+			_Start + index + 1, _Current,
+			 _Start + index, allocator));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1610,7 +1706,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 	Vector<_Element_, _Allocator_>::count(const Vector& subVector) const noexcept
 {
-	SizeType _Ñount = 0;
+	SizeType _Count = 0;
 	
 	const auto subVectorSize	= subVector.size();
 	const auto _Size			= size();
@@ -1626,12 +1722,12 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 		if (subVector[i % subVectorSize] == currentElement) {
 			if ((++overlaps) == subVectorSize) {
 				overlaps = 0;
-				++_Ñount;
+				++_Count;
 			}
 		}
 	}
 
-	return _Ñount;
+	return _Count;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1677,11 +1773,10 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
 	Vector<_Element_, _Allocator_>::contains(const Vector& subVector) const noexcept 
 {
-	const auto subVectorSize = subVector.size();
-	const auto _Size = size();
+	const auto subVectorSize	= subVector.size();
+	const auto _Size			= size();
 
-	if (subVectorSize == 0 || subVectorSize > size())
-		return;
+	_VECTOR_DEBUG_ASSERT_LOG_(subVectorSize == 0 || subVectorSize > size())
 
 	for (SizeType i = 0; i < _Size; ++i) {
 		SizeType overlaps = 0;
@@ -1702,27 +1797,55 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::startsWith(const ValueType& element) const noexcept 
 {
 	const auto& firstElement = first();
+	return (firstElement == element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::startsWith(const Vector& subVector) const noexcept
 {
-	return false;
+	const auto otherSize = subVector.size();
+	
+	if (otherSize > size())
+		return;
+
+	for (SizeType i = 0; i < otherSize; ++i) {
+		const auto& currentElement		= at(i);
+		const auto& otherCurrentElement = subVector[i];
+
+		if (currentElement != otherCurrentElement)
+			return false;
+	}
+
+	return true;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::endsWith(const ValueType& element) const noexcept 
 {
-	return false;
+	const auto& lastElement = last();
+	return (lastElement == element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::endsWith(const Vector& subVector) const noexcept 
 {
-	return false;
+	const auto otherSize = subVector.size();
+
+	if (otherSize > size())
+		return;
+
+	for (SizeType i = otherSize - 1; i >= 0; ++i) {
+		const auto& currentElement = at(i);
+		const auto& otherCurrentElement = subVector[i];
+
+		if (currentElement != otherCurrentElement)
+			return false;
+	}
+
+	return true;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1788,11 +1911,13 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 {
 	const auto _Size = size();
 
-	if (positionFrom < 0 || positionFrom >= _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		positionFrom > 0 && positionFrom < _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
-	if (elementsCount < 0 || (positionFrom + elementsCount) > _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		elementsCount > 0 && (positionFrom + elementsCount) <= _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
 	auto& pairValue = _pair._secondValue;
 
@@ -1817,8 +1942,9 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 {
 	const auto _Size = size();
 
-	if (positionFrom < 0 || positionFrom >= _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		positionFrom > 0 && positionFrom < _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
 	auto& pairValue = _pair._secondValue;
 
@@ -1845,11 +1971,13 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 {
 	const auto _Size = size();
 
-	if (positionFrom < 0 || positionFrom >= _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		positionFrom > 0 && positionFrom < _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
-	if (elementsCount < 0 || (positionFrom + elementsCount) > _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		elementsCount > 0 && (positionFrom + elementsCount) <= _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
 	auto& pairValue			= _pair._secondValue;
 	auto _StartWithOffset	= pairValue._start + positionFrom;
@@ -1865,8 +1993,9 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 {
 	const auto _Size = size();
 
-	if (positionFrom < 0 || positionFrom >= _Size)
-		return {};
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		positionFrom > 0 && positionFrom < _Size,
+		Vector{}, _VECTOR_OUT_OF_RANGE_);
 
 	auto& pairValue			= _pair._secondValue;
 	auto _StartWithOffset	= pairValue._start + positionFrom;
@@ -1881,7 +2010,19 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 	SizeType position,
 	const ValueType& value)
 {
+	if (position > size() || position < 0);
+		return;
 
+	auto& element	= at(position);
+
+	if (element == value)
+		return;
+
+	memory::DestroyInPlace(element);
+	emplaceAt(
+		getAllocator(), 
+		_pair._secondValue._start + position,
+		value);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1908,15 +2049,27 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
 	SizeType _First,
 	SizeType _Last)
 {
+	auto& firstElement	= at(_First);
+	auto& lastElement	= at(_Last);
 
+	if (firstElement == lastElement)
+		return;
+
+	std::swap(firstElement, lastElement);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
-	ConstIterator _First,
-	ConstIterator _Last)
+	Iterator _First,
+	Iterator _Last)
 {
+	auto& firstElement	= *_First;
+	auto& lastElement	= *_Last;
 
+	if (firstElement == lastElement)
+		return;
+
+	std::swap(firstElement, lastElement);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1932,14 +2085,24 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	ConstIterator _First,
 	ConstIterator _Last)
 {
+	auto& pairValue = _pair._secondValue;
+	auto& allocator = _pair.first();
 
+	pointer& _Start = pairValue._start;
+	pointer& _End 	= pairValue._end;
+
+	const pointer& firstPointer = _First._currentElement;
+	const pointer& lastPointer  = _Last._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer > _Start && lastPointer < _End, _VECTOR_OUT_OF_RANGE_);
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer < lastPointer, )
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::first()
 {
-	Assert(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0); 
 }
 
@@ -1947,7 +2110,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::first() const noexcept 
 {
-	Assert(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -1955,7 +2118,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::constFirst() const noexcept 
 {
-	Assert(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -1963,7 +2126,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::last()
 {
-	Assert(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -1971,7 +2134,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::last() const noexcept 
 {
-	Assert(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -1979,25 +2142,29 @@ _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
 	Vector<_Element_, _Allocator_>::constLast() const noexcept
 {
-	Assert(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::removeAll(const ValueType& element)
-{
-	return false;
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAll(const ValueType& element) {
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentElement = at(i);
+
+		if (currentElement == element)
+			removeAt(i);
+	}
+
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeFirst() {
-
+	removeAt(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeLast() {
-
+	removeAt(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2007,7 +2174,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 {
 	for (SizeType i = 0; i < size(); ++i)
 		if (pred(at(i)))
-			return i;
+			return removeAt(i);
 
 	return -1;
 }
@@ -2027,7 +2194,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 
 	//		pointer elementForRemove = _Start + i;
 
-	//		std::allocator_traits<allocator_type>::destroy(allocator, )
+	//		AllocatorTraits::destroy(allocator, )
 
 	//		memory::MoveUnChecked()
 
@@ -2167,7 +2334,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackReallocat
 	auto& allocator				= _pair.first();
 
 	const auto _NewSize			= static_cast<SizeType>(
-		sizeof...(_Val) + capacity());
+		_Vector_Default_Capacity_ + capacity());
 	const auto _IsEnoughMemory	= resize(_NewSize);
 
 	if (UNLIKELY(_IsEnoughMemory == false))
@@ -2176,18 +2343,6 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackReallocat
 	emplaceAt(
 		allocator, pairValue._current,
 		std::forward<_Valty_>(_Val)...);
-}
-
-_VECTOR_OUTSIDE_TEMPLATE_
-template <class... _Valty_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceFrontWithUnusedCapacity(_Valty_&&... _Val) {
-
-}
-
-_VECTOR_OUTSIDE_TEMPLATE_
-template <class... _Valty_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceFrontReallocate(_Valty_&&... _Val) {
-
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2208,7 +2363,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceAt(
 		memory::ConstructInPlace(
 			*_Location, std::forward<_Valty_>(_Val)...);
 	else
-		std::allocator_traits<allocator_type>::construct(
+		AllocatorTraits::construct(
 			_Allocator, memory::UnFancy(_Location),
 			std::forward<_Valty_>(_Val)...);
 
@@ -2332,6 +2487,83 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependCountedRange(
 {
 	if (_Count <= 0)
 		return;
+
+	auto& pairValue 	= _pair._secondValue;
+	auto& allocator 	= _pair.first();
+
+	pointer& _Start 	= pairValue._start;
+	pointer& _End 		= pairValue._end;
+	pointer& _Current 	= pairValue._current;
+
+	const auto _UnusedCapacity 	= static_cast<SizeType>(_End - _Current);
+	const auto _Capacity 		= static_cast<SizeType>(_End - _Start);
+
+	if (_Capacity == 0) {
+		appendCountedRange(std::move(_First), _Count);
+	}
+	if (_UnusedCapacity < _Count) {
+		// reallocate 
+		const auto _Size = static_cast<SizeType>(_Current - _Start);
+
+		if (_Count > maxSize() - _Size)
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+
+		const auto _NewCapacity = calculateGrowth(_Capacity + _Count);
+		const auto _NewSize 	= _Size + _Count;
+
+		auto _BlockStart 		= allocator.allocate(_NewCapacity);
+
+		if (_BlockStart == nullptr)
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+
+		auto _BlockEnd 			= _BlockStart + _NewSize;
+
+		BASE_TRY_BEGIN
+
+		UNUSED(memory::UninitializedMove(
+			_Start, _Current,
+			_Current, allocator));
+
+		if (_Count == 1) {
+			if constexpr (
+				std::is_nothrow_move_constructible_v<ValueType>
+				|| std::is_copy_constructible_v<ValueType> == false
+			) {
+				memory::UninitializedMove(
+					_Start, _Current,
+					_BlockStart, allocator);
+			}
+			else {
+				memory::UninitializedCopy(
+					_Start, _Current,
+					_BlockStart, allocator);
+			}
+		}
+		else {
+			memory::UninitializedMove(
+				_Start, _Current,
+				_BlockStart, allocator);
+		}
+
+		BASE_CATCH_ALL
+
+		memory::DestroyRange(_Start, _Start + _Count, allocator);
+		allocator.deallocate(_BlockStart, _NewCapacity);
+
+		BASE_RERAISE;
+		BASE_CATCH_END
+
+		take(_BlockStart, _NewSize, _NewCapacity);
+	}
+	else {
+		UNUSED(memory::UninitializedMove(
+			_Start, _Current,
+			_Current, allocator));
+
+		UNUSED(memory::UninitializedMove(
+			std::move(_First), _Count,
+			_Start, allocator));
+	}
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2366,7 +2598,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::moveAssignUnEqualAll
 	const auto oldCapacity = static_cast<SizeType>(_End - _Start);
 
 	if (otherSize > oldCapacity) {
-//		_Clear_and_reserve_geometric(_Newsize);
+		clearAndReserveGeometricGrowth(_Newsize);
 
 		_Current = memory::UninitializedMove(otherStart, otherCurrent, _Start, allocator);
 		return;
@@ -2398,14 +2630,46 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::FreeAllElements() no
 	auto& allocator		= _pair.first();
 
 	pointer& _Start		= pairValue._start;
+	pointer& _Current  	= pairValue._current;
 	pointer& _End		= pairValue._end;
 
 	if (_Start == _End)
 		return;
 
-	memory::FreeRange(_Start, _End, allocator);
+	memory::FreeUsedRange(
+		_Start, _Current, 
+		_End, allocator);
+}
 
-	pairValue._current = nullptr;
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newSize) { 
+	if (newSize == 0)
+		return;
+
+	auto& pairValue 	= _pair._secondValue;
+	auto& allocator 	= _pair.first();
+
+	pointer& _Start 	= pairValue._start;
+	pointer& _Current  	= pairValue._current;
+	pointer& _End		= pairValue._end;
+
+	if (newSize > maxSize())
+		return;
+	
+	const auto newCapacity = calculateGrowth(newSize);
+	
+	if (_Start != nullptr) { 
+		// destroy and deallocate old array
+		
+		memory::FreeUsedRange(
+			_Start, _Current, 
+			_End, allocator);
+	}
+	
+	const auto isEnoughMemory = resizeReallocate(newCapacity);
+
+	if (isEnoughMemory == false)
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 }
 
 __BASE_CONTAINER_NAMESPACE_END

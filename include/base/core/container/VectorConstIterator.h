@@ -145,6 +145,7 @@ public:
 	}
 private:
 	value_type* _currentElement	= nullptr;
+	friend class _Vector;
 };
 
 __BASE_CONTAINER_NAMESPACE_END

@@ -169,6 +169,13 @@ template <
 constexpr bool IsFillZeroMemsetSafe<_ForwardIterator_, _Type_, false> = false;
 
 template <
+    class _Allocator_,
+    class _ValueType_>
+using RebindAllocator = 
+    typename std::allocator_traits<_Allocator_>
+        ::template rebind_alloc<_ValueType_>;
+
+template <
     class _Source_,
     class _Destination_,
     class _SourceReference_,

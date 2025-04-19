@@ -239,6 +239,31 @@ CONSTEXPR_CXX20 inline void FreeRangeBytes(
     _End    = nullptr;
 }
 
+// ===================================================================
+
+template <class _Allocator_>
+// Destroys the range [_Start, _Current), then deletes the range [_Start, _End) and sets _Start, _Current and _End to nullptr
+CONSTEXPR_CXX20 inline void FreeUsedRange(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>   _End,
+    AllocatorPointerType<_Allocator_>   _Current,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (!_Start || !_End)
+        return; 
+
+    using _SizeType_                    = AllocatorSizeType<_Allocator_>;
+    const auto _LengthForDeallocate     = static_cast<_SizeType_>(_End - _Start);
+
+    DestroyRange(_Start, _Current, _Allocator);
+    _Allocator.deallocate(_Start, _LengthForDeallocate);
+
+    _Start      = nullptr;
+    _End        = nullptr;
+    _Current    = nullptr;
+}
+
+// ===================================================================
 
 template <class _Allocator_>
 // Deallocates the range [_Start, _End) without setting _Start and _End to nullptr
@@ -295,6 +320,28 @@ CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
     DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _BytesCount);
 }
+
+// ===================================================================
+
+template <class _Allocator_>
+// Destroys the range [_Start, _Current), then deletes the range [_Start, _End)  without setting _Start, _Current and _End to nullptr
+CONSTEXPR_CXX20 inline void DeallocateUsedRange(
+    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>   _End,
+    AllocatorPointerType<_Allocator_>   _Current,
+    _Allocator_&                        _Allocator) noexcept
+{
+    if (!_Start || !_End)
+        return; 
+
+    using _SizeType_                    = AllocatorSizeType<_Allocator_>;
+    const auto _LengthForDeallocate     = static_cast<_SizeType_>(_End - _Start);
+
+    DestroyRange(_Start, _Current, _Allocator);
+    _Allocator.deallocate(_Start, _LengthForDeallocate);
+}
+
+// ===================================================================
 
 template <
     class _InputIterator_,
@@ -458,6 +505,8 @@ _InputIterator_ uninitialized_copy(
     return _Destination;
 }
 
+// ===================================================================
+
 template <
     class _InputIterator_, 
     class _Allocator_>
@@ -492,6 +541,8 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
 
     return _Backout.Release();
 }
+
+// ===================================================================
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al

@@ -6,6 +6,7 @@
 #include <base/core/arch/KeywordSupport.h>
 #include <base/core/BaseNamespace.h>
 
+#include <vector>
 #include <base/core/Types.h>
 
 #if !defined(_M_ARM64EC)
@@ -44,7 +45,7 @@
 #    define VECTORCALL __vectorcall
 #  endif
 #  ifdef __AVX2__
-// MSVC определяет __AVX2__ с /arch:AVX2
+// MSVC пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ __AVX2__ пїЅ /arch:AVX2
 #    define __F16C__                        1
 #    define __RDRND__                       1
 
