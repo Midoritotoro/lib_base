@@ -36,7 +36,6 @@ WARNING_DISABLE_MSVC(4003)
 #  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
 	UNUSED(_RetVal);															\
 	DebugAssert(_Cond, _Message)												\
-	
 #endif
 
 #  ifndef _VECTOR_ERROR_DEBUG_
@@ -539,12 +538,30 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD Vector	view(SizeType positionFrom) const noexcept;
 
 	CONSTEXPR_CXX20 inline void replace(
-		SizeType position,
-		const ValueType& value);
+		SizeType 			positionFrom,
+		const ValueType& 	oldValue,
+		const ValueType& 	newValue);
 
 	CONSTEXPR_CXX20 inline void replace(
-		SizeType position,
-		ValueType&& value);
+		SizeType 			positionFrom,
+		SizeType 			positionTo,
+		const ValueType& 	oldValue,
+		const ValueType& 	newValue);
+
+	CONSTEXPR_CXX20 inline void replace(
+		ConstIterator 		positionFrom,
+		const ValueType& 	oldValue,
+		const ValueType& 	newValue);
+
+	CONSTEXPR_CXX20 inline void replace(
+		ConstIterator 		positionFrom,
+		ConstIterator 		positionTo,
+		const ValueType& 	oldValue,
+		const ValueType& 	newValue);
+
+	CONSTEXPR_CXX20 inline void replace(
+		const ValueType& oldValue,
+		const ValueType& newValue);
 
 	CONSTEXPR_CXX20 inline void swap(Vector& other);
 
@@ -576,7 +593,7 @@ public:
 	CONSTEXPR_CXX20 inline void removeLast();
 
 	template <typename _Predicate_>
-	CONSTEXPR_CXX20 inline NODISCARD SizeType removeIf(_Predicate_ pred);	
+	CONSTEXPR_CXX20 inline void removeIf(_Predicate_ pred);	
 
 	CONSTEXPR_CXX20 inline NODISCARD bool removeOne(const ValueType& element);
 
@@ -1677,13 +1694,11 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 	Vector<_Element_, _Allocator_>::insert(
-		size_type index,
+		SizeType index,
 		const_reference element)
 {
 	auto& pairValue		= _pair._secondValue;
-	const auto _Offset	= index * sizeof(ValueType);
-
-	emplaceAt(pairValue._start + _Offset, element);
+	emplaceAt(pairValue._start + index, element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2003,34 +2018,86 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 	return Vector(
 		_StartWithOffset, _StartWithOffset /* start as current */,
 		pairValue._end);
-};
-
-_VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
-	SizeType position,
-	const ValueType& value)
-{
-	if (position > size() || position < 0);
-		return;
-
-	auto& element	= at(position);
-
-	if (element == value)
-		return;
-
-	memory::DestroyInPlace(element);
-	emplaceAt(
-		getAllocator(), 
-		_pair._secondValue._start + position,
-		value);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
-	SizeType position,
-	ValueType&& value) 
+	SizeType ositionFrom,
+	const ValueType& oldValue,
+	const ValueType& newValue)
 {
+	_VECTOR_DEBUG_ASSERT_LOG_(ositionFrom < size() && ositionFrom > 0);
 
+	for (SizeType i = ositionFrom; i < size(); ++i) {
+		const auto& currentValue = at(i);
+
+		if (currentValue == oldValue)
+			insert(i, newValue);
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+	const ValueType& oldValue,
+	const ValueType& newValue)
+{
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentValue = at(i);
+
+		if (currentValue == oldValue)
+			insert(i, newValue);
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+	SizeType 			positionFrom,
+	SizeType 			positionTo,
+	const ValueType& 	oldValue,
+	const ValueType& 	newValue)
+{
+	_VECTOR_DEBUG_ASSERT_LOG_(positionFrom < size() && positionFrom > 0);
+	_VECTOR_DEBUG_ASSERT_LOG_(positionTo < size() && positionTo > positionFrom);
+
+	for (SizeType i = positionFrom; i < positionTo; ++i) {
+		const auto& currentValue = at(i);
+
+		if (currentValue == oldValue)
+			insert(i, newValue);
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+	ConstIterator 		positionFrom,
+	const ValueType& 	oldValue,
+	const ValueType& 	newValue)
+{
+	auto& pairValue 	= _pair._secondValue;
+
+	pointer& _Start		= pairValue._start;
+	pointer& _Current 	= pairValue._current;
+
+	const pointer& fromPointer = positionFrom._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(fromPointer < _Current && fromPointer >= _Start);
+
+	auto temp = Iterator(fromPointer);
+
+	for (; temp != end(); ++temp) {
+		if (*temp == oldValue)
+			insert(temp, newValue);
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+	ConstIterator 		positionFrom,
+	ConstIterator 		positionTo,
+	const ValueType& 	oldValue,
+	const ValueType& 	newValue)
+{
+	
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2077,7 +2144,22 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	SizeType _First,
 	SizeType _Count)
 {
+	auto& pairValue = _pair._secondValue;
+	const auto _Size = size();
+	
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		_First > 0 && (_First + _Count) <= _Size, 
+		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
 
+	auto deallocateAt = pairValue._start + _First;
+
+	UNUSED(memory::DeallocateRangeCount(
+		deallocateAt, 
+		_Count, allocator));
+
+	UNUSED(memory::UnitializedMove(
+		deallocateAt + 1, pairValue._current,
+		deallocateAt, allocator));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2094,8 +2176,10 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	const pointer& firstPointer = _First._currentElement;
 	const pointer& lastPointer  = _Last._currentElement;
 
-	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer > _Start && lastPointer < _End, _VECTOR_OUT_OF_RANGE_);
-	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer < lastPointer, )
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer > _Start && lastPointer < _End, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer < lastPointer, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+
+	memory::DeallocateRange(firstPointer, lastPointer, allocator);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2169,40 +2253,25 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeLast() {
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::removeIf(_Predicate_ pred)
-{
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeIf(_Predicate_ pred) {
 	for (SizeType i = 0; i < size(); ++i)
 		if (pred(at(i)))
-			return removeAt(i);
-
-	return -1;
+			removeAt(i);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 	::removeOne(const ValueType& element)
 {
-	//for (SizeType i = 0; i < size(); ++i) {
-	//	auto& currentElement = at(i);
-	//	if (currentElement == element) {
-	//		auto& pairValue = _pair._secondValue;
-	//		auto& allocator = _pair.first();
+	for (SizeType i = 0; i < size(); ++i) {
+		const auto& currentElement = at(i);
+		if (currentElement == element) {
+			removeAt(i);
+			return true;
+		}
+	}
 
-	//		pointer& _Start = pairValue._start;
-	//		pointer& _Current = pairValue._current;
-
-	//		pointer elementForRemove = _Start + i;
-
-	//		AllocatorTraits::destroy(allocator, )
-
-	//		memory::MoveUnChecked()
-
-	//		return true;
-	//	}
-	//}
-
-	//return false;
+	return false;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2211,12 +2280,12 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
 	const SizeType	newVectorSize,
 	const SizeType	newVectorCapacity)
 {
-	auto& allocator = _pair.first();
-	auto& pairValue = _pair._secondValue;
+	auto& allocator 	= _pair.first();
+	auto& pairValue 	= _pair._secondValue;
 
-	pointer& _Start = pairValue._start;
-	pointer& _End = pairValue._end;
-	pointer& _Current = pairValue._current;;
+	pointer& _Start 	= pairValue._start;
+	pointer& _End 		= pairValue._end;
+	pointer& _Current 	= pairValue._current;;
 
 	if (_Start) {
 		// destroy and deallocate old array
@@ -2226,9 +2295,9 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
 		allocator.deallocate(_Start, _Capacity);
 	}
 
-	_Start = newVectorStart;
-	_Current = newVectorStart + newVectorSize;
-	_End = newVectorStart + newVectorCapacity;
+	_Start 		= newVectorStart;
+	_Current 	= newVectorStart + newVectorSize;
+	_End 		= newVectorStart + newVectorCapacity;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2302,10 +2371,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 {
 	auto& pairValue		= _pair._secondValue;
 
-	pointer& _End		= pairValue._end;
-	pointer& _Current	= pairValue._current;
-
-	if (_Current != _End) {
+	if (pairValue._current != pairValue._end) {
 		emplaceBackWithUnusedCapacity(std::forward<_Valty_>(_Val)...);
 		return back();
 	}
@@ -2333,11 +2399,11 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackReallocat
 	auto& pairValue				= _pair._secondValue;
 	auto& allocator				= _pair.first();
 
-	const auto _NewSize			= static_cast<SizeType>(
+	const auto _NewCapacity			= static_cast<SizeType>(
 		_Vector_Default_Capacity_ + capacity());
 	const auto _IsEnoughMemory	= resize(_NewSize);
 
-	if (UNLIKELY(_IsEnoughMemory == false))
+	if (_IsEnoughMemory == false)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
 
 	emplaceAt(
@@ -2375,12 +2441,13 @@ template <typename _Type_>
 CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCompare(
 	const Vector<_Type_>& other) const noexcept
 {
-	auto _Iterations = SizeType{ 0 };
-	_Iterations = std::min(other.size(), size());
+	for (SizeType _Current = 0; _Current < size(); ++_Current) {
+		const auto& myCurrentElement 		= at(_Current);
+		const auto& otherCurrentElement 	= other.at(_Current);
 
-	for (size_type _Current = 0; _Current < _Iterations; ++_Current)
-		if (at(_Current) != other.at(_Current))
+		if (myCurrentElement != otherCurrentElement)
 			return false;
+	}
 
 	return true;
 }
@@ -2574,8 +2641,12 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependUnCountedRang
 	_Iterator_ _First,
 	_Sentinel_ _Last) noexcept
 {
-	for (; _First != _Last; ++_First)
-		UNUSED(emplaceFront(*_First));
+	auto _Count = SizeType(0);
+
+	for (auto _Temp = _First; _Temp != _Last; ++_Temp)
+		++_Count;
+
+	prependCountedRange(std::move(_First), _Count)
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_

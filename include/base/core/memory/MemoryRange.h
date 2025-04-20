@@ -287,7 +287,7 @@ template <class _Allocator_>
 CONSTEXPR_CXX20 inline void DeallocateRangeCount(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorSizeType<_Allocator_>      _ElementsCount,
-    _Allocator_& _Allocator) noexcept
+    _Allocator_&                        _Allocator) noexcept
 {
     if (UNLIKELY(_ElementsCount <= 0))
         return;
@@ -307,7 +307,7 @@ template <class _Allocator_>
 CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorSizeType<_Allocator_>      _BytesCount,
-    _Allocator_& _Allocator) noexcept
+    _Allocator_&                        _Allocator) noexcept
 {
     if (UNLIKELY(_BytesCount <= 0))
         return;
