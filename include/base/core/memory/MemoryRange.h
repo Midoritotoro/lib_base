@@ -542,6 +542,40 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
     return _Backout.Release();
 }
 
+template <
+    class _InputIterator_, 
+    class _Allocator_>
+// move [_First, _First + _Count) to raw _Destination, using _Allocator
+CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedMoveCount(
+    const _InputIterator_               _First,
+    const sizetype                      _Count, 
+    AllocatorPointerType<_Allocator_>   _Destination,
+    _Allocator_&                        _Allocator)
+{
+    using _Ptrval = AllocatorValueType<_Allocator_>*;
+
+    auto _UFirst = std::_Get_unwrapped(_First);
+
+    if constexpr (std::conjunction_v<std::bool_constant<IteratorMoveCategory<decltype(_UFirst), _Ptrval>::BitcopyConstructible>,
+        std::_Uses_default_construct<_Allocator_, _Ptrval, decltype(std::move(*_UFirst))>>) {
+#if BASE_HAS_CXX20
+        if (!is_constant_evaluated())
+#endif // BASE_HAS_CXX20
+        {
+            MemoryCopyMemmoveCount(_UFirst, _Count, UnFancy(_Destination));
+            return _Destination + _Count;
+        }
+    }
+
+    UninitializedBackout<_Allocator_> _Backout { _Destination, _Allocator };
+
+    for (sizetype _Temp = _Count; _Temp < _Count; ++_UFirst, ++_Temp) {
+        _Backout.EmplaceBack(std::move(*_UFirst));
+    }
+
+    return _Backout.Release();
+}
+
 // ===================================================================
 
 template <class _Allocator_>

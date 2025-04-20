@@ -35,7 +35,7 @@ WARNING_DISABLE_MSVC(4003)
 #else
 #  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
 	UNUSED(_RetVal);															\
-	DebugAssert(_Cond, _Message)												\
+	DebugAssert(_Cond, _Message)												
 #endif
 
 #  ifndef _VECTOR_ERROR_DEBUG_
@@ -602,6 +602,9 @@ public:
 		const SizeType	newVectorSize,
 		const SizeType	newVectorCapacity);
 
+	CONSTEXPR_CXX20 inline NODISCARD Vector makeView(const std::vector& other);
+	CONSTEXPR_CXX20 inline NODISCARD Vector makeView(const Vector& other);
+
 	constexpr inline NODISCARD sizetype max_size() const noexcept;
 	constexpr inline NODISCARD sizetype maxSize() const noexcept;
 private: 
@@ -653,11 +656,35 @@ private:
 		_Iterator_ _First,
 		_Sentinel_ _Last) noexcept;
 
+	template <class _Iterator_>
+	CONSTEXPR_CXX20 inline void insertCountedRange(
+		ConstIterator						_To,
+		_Iterator_							_First,
+		BASE_GUARDOVERFLOW	const SizeType	_Count) noexcept;
+
+	template <
+		class _Iterator_,
+		class _Sentinel_>
+	CONSTEXPR_CXX20 inline void insertUnCountedRange(
+		ConstIterator	_To,
+		_Iterator_ 		_First,
+		_Sentinel_ 		_Last) noexcept;
+
+	CONSTEXPR_CXX20 inline void ReallocateMoveExcept(
+		const bool 		insertAtEnd, 
+		const SizeType 	toOffset,
+		const pointer	newVectorStart);
+		
+	CONSTEXPR_CXX20 inline void ReallocateCopyExcept(
+		const bool 		insertAtEnd, 
+		const SizeType 	toOffset,
+		const pointer	newVectorStart);
+
 	CONSTEXPR_CXX20 inline void moveAssignUnEqualAllocator(Vector& other);
+	CONSTEXPR_CXX20 inline void clearAndReserveGeometricGrowth(
+		BASE_GUARDOVERFLOW const SizeType newCapacity); 
 
 	CONSTEXPR_CXX20 inline void FreeAllElements() noexcept;
-
-	CONSTEXPR_CXX20 inline void clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newCapacity); 
 
 	CompressedPair<allocator_type, VectorValueType> _pair;
 };
@@ -809,7 +836,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 	Vector<_Element_, _Allocator_>::operator=(
 		std::vector<ValueType>&& rVector)
 {
-	/*auto& pairValue = _pair._secondValue;
+	auto& pairValue = _pair._secondValue;
 	auto& allocator	= _pair.first();
 
 	auto& otherAllocator = rVector.get_allocator();
@@ -818,7 +845,9 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 
 	if constexpr (_Pocma_val == memory::PocmaValues::NoPropagateAllocators) {
 		if (allocator != otherAllocator) {
-			moveAssignUnEqualAllocator(_Right);
+			auto& _View = makeView(rVector);
+			moveAssignUnEqualAllocator(_View);
+
 			return *this;
 		}
 	}
@@ -827,7 +856,6 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 
 	memory::POCMA(allocator, otherAllocator);
 	pairValue.takeContents(rVector._pair._secondValue);
-*/
 
 	return *this;
 }
@@ -998,7 +1026,7 @@ constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 	const auto isValidOffset = (_Start + offset >= _Start
 		&& _Start + offset <= _End);
 
-	_VECTOR_DEBUG_ASSERT_LOG_(isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ", {}); // ? 
+	_VECTOR_DEBUG_ASSERT_LOG_(isValidOffset, "base::container::VectorBase::operator[]: Index out of range. ", {});
 #endif
 	return (*this)[offset];
 }
@@ -1419,11 +1447,11 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 
 	_VECTOR_DEBUG_ASSERT_LOG_(
 		wherePointer >= _Start && wherePointer <= pairValue._end,
-		_VECTOR_OUT_OF_RANGE_);
+		Iterator{}, _VECTOR_OUT_OF_RANGE_);
 
-	emplaceAt(
-		getAllocator(), wherePointer,
-		value) // ??? 
+	emplaceAt(getAllocator(), wherePointer, value);
+
+	return Iterator(wherePointer);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1439,21 +1467,39 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 
 	_VECTOR_DEBUG_ASSERT_LOG_(
 		wherePointer >= _Start && wherePointer <= pairValue._end,
-		_VECTOR_OUT_OF_RANGE_);
+		Iterator{}, _VECTOR_OUT_OF_RANGE_);
 
 	emplaceAt(
 		getAllocator(), wherePointer,
-		std::move(value)) // ??? 
+		std::move(value));
+
+	return Iterator(wherePointer);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
 	Vector<_Element_, _Allocator_>::insert(
-		ConstIterator where,
-		BASE_GUARDOVERFLOW const SizeType count,
-		const ValueType& value)
+		ConstIterator 						where,
+		BASE_GUARDOVERFLOW const SizeType 	count,
+		const ValueType& 					value)
 {
-	return Iterator(this);
+	if (count <= 0)
+		return;
+
+	auto& pairValue = _pair._secondValue;
+	pointer& _Start = pairValue._start;
+
+	pointer& wherePointer = where._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		wherePointer >= _Start && (wherePointer + count) <= pairValue._end,
+		Iterator{}, _VECTOR_OUT_OF_RANGE_);
+
+	emplaceAt(
+		getAllocator(), wherePointer,
+		std::move(value));
+
+	return Iterator(wherePointer);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1462,7 +1508,25 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Iterator
 		ConstIterator where,
 		std::initializer_list<ValueType> initializerList)
 {
-	return Iterator(this);
+	const auto sizeForInsert = initializerList.size();
+	
+	if (sizeForInsert <= 0)
+		return;
+
+	auto& pairValue = _pair._secondValue;
+	pointer& _Start = pairValue._start;
+
+	pointer& wherePointer = where._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		wherePointer >= _Start && (wherePointer + sizeForInsert) <= pairValue._end,
+		Iterator{}, _VECTOR_OUT_OF_RANGE_);
+
+	emplaceAt(
+		getAllocator(), wherePointer,
+		std::move(value));
+
+	return Iterator(wherePointer);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1791,7 +1855,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool
 	const auto subVectorSize	= subVector.size();
 	const auto _Size			= size();
 
-	_VECTOR_DEBUG_ASSERT_LOG_(subVectorSize == 0 || subVectorSize > size())
+	_VECTOR_DEBUG_ASSERT_LOG_(subVectorSize == 0 || subVectorSize > size());
 
 	for (SizeType i = 0; i < _Size; ++i) {
 		SizeType overlaps = 0;
@@ -2056,8 +2120,13 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 	const ValueType& 	oldValue,
 	const ValueType& 	newValue)
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(positionFrom < size() && positionFrom > 0);
-	_VECTOR_DEBUG_ASSERT_LOG_(positionTo < size() && positionTo > positionFrom);
+	_VECTOR_DEBUG_ASSERT_LOG_
+		positionFrom < size() && positionFrom > 0,
+		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		positionTo < size() && positionTo > positionFrom,
+		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
 
 	for (SizeType i = positionFrom; i < positionTo; ++i) {
 		const auto& currentValue = at(i);
@@ -2170,14 +2239,14 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 	auto& pairValue = _pair._secondValue;
 	auto& allocator = _pair.first();
 
-	pointer& _Start = pairValue._start;
-	pointer& _End 	= pairValue._end;
+	pointer& _Start 	= pairValue._start;
+	pointer& _Current 	= pairValue._current;
 
 	const pointer& firstPointer = _First._currentElement;
 	const pointer& lastPointer  = _Last._currentElement;
 
-	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer > _Start && lastPointer < _End, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
-	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer < lastPointer, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer >= _Start && lastPointer <= _Current, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+	_VECTOR_DEBUG_ASSERT_LOG_(firstPointer <= lastPointer, UNUSED(0), _VECTOR_OUT_OF_RANGE_);
 
 	memory::DeallocateRange(firstPointer, lastPointer, allocator);
 }
@@ -2301,6 +2370,34 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_, _Allocator_>::makeView(const std::vector& other) {
+	const auto _Size 	= other.size();
+	pointer& otherData 	= other.data();
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		otherData != nullptr, Vector{}, "base::container::Vector::makeView: "
+		"It is not possible to create a view of an empty vector (with zero capacity)");
+
+	return Vector(
+		otherData, otherData /* start as current */,
+		otherData + _Size);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_, _Allocator_>::makeView(const Vector& other) {
+	const auto _Size 	= other.size();
+	pointer& otherStart = other._pair._secondValue._start;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		otherStart != nullptr, Vector{}, "base::container::Vector::makeView: "
+		"It is not possible to create a view of an empty vector (with zero capacity)");
+
+	return Vector(
+		otherStart, otherStart /* start as current */,
+		otherStart + _Size);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_>::max_size() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
@@ -2418,14 +2515,8 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceAt(
 	pointer&		_Location,
 	_Valty_&&...	_Val)
 {
-#if defined(OS_WIN) && defined(CPP_MSVC)
-	if constexpr (std::conjunction_v<
-		std::is_nothrow_constructible<ValueType, _Valty_...>,
-		std::_Uses_default_construct<allocator_type, ValueType*, _Valty_...>>
-	)
-#else
-	if constexpr (std::is_nothrow_constructible_v<ValueType, _Valty_...>)
-#endif
+	
+	if constexpr (IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
 		memory::ConstructInPlace(
 			*_Location, std::forward<_Valty_>(_Val)...);
 	else
@@ -2494,7 +2585,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
 		
 		memory::UninitializedCopyCount(
 			std::move(_First), _Count, 
-			_BlockStart + _OldSize, allocator);
+			_InsertStart, allocator);
 
 		if (_Count == 1) {
 			if constexpr (
@@ -2542,8 +2633,12 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendUnCountedRange
 	_Iterator_ _First,
 	_Sentinel_ _Last) noexcept
 {
-	for (; _First != _Last; ++_First)
-		UNUSED(emplaceBack(*_First));
+	auto _Count = SizeType(0);
+
+	for (auto _Temp = _First; _Temp != _Last; ++_Temp, ++_Count) {
+	}
+
+	appendCountedRange(_First, _Count);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2568,7 +2663,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependCountedRange(
 	if (_Capacity == 0) {
 		appendCountedRange(std::move(_First), _Count);
 	}
-	if (_UnusedCapacity < _Count) {
+	else if (_UnusedCapacity < _Count) {
 		// reallocate 
 		const auto _Size = static_cast<SizeType>(_Current - _Start);
 
@@ -2646,7 +2741,174 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependUnCountedRang
 	for (auto _Temp = _First; _Temp != _Last; ++_Temp)
 		++_Count;
 
-	prependCountedRange(std::move(_First), _Count)
+	prependCountedRange(std::move(_First), _Count);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <class _Iterator_>
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertCountedRange(
+	ConstIterator						_To,
+	_Iterator_							_First,
+	BASE_GUARDOVERFLOW const SizeType	_Count) noexcept
+{
+	if (_Count <= 0)
+		return;
+
+	pointer& pointerTo 		= _To._currentElement;
+
+	auto& pairValue			= _pair._secondValue;
+	auto& allocator			= _pair.first();
+
+	pointer& _Start			= pairValue._start;
+	pointer& _End			= pairValue._end;
+	pointer& _Current		= pairValue._current;
+
+	const auto _OldUnusedCapacity	= static_cast<SizeType>(_End - _Current);
+	const auto _OldCapacity		= static_cast<SizeType>(_End - _Start);
+	const auto _OldSize			= static_cast<SizeType>(_Current - _Start);
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		pointerTo >= _Start && (pointerTo + _Count) <= _End,
+		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+	
+	if (_OldUnusedCapacity < _Count) {
+		// reallocate 
+
+		if (_Count > maxSize() - _OldSize)
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+
+		const auto _NewCapacity			= calculateGrowth(_OldCapacity + _Count);
+		const auto _NewSize				= _OldSize + _Count;
+
+		const auto toOffset = static_cast<SizeType>(pointerTo - _Start);
+
+		auto _NewVectorStart = allocator.allocate(_NewCapacity);
+
+		if (_NewVectorStart == nullptr)
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+
+		auto _NewVectorCurrent		= _NewVectorStart + _NewSize;
+		auto _NewVectorInsertPlace	= _NewVectorStart + toOffset;
+
+		BASE_TRY_BEGIN
+		
+		const auto _InsertAtEnd = (_Insert == _NewVectorCurrent);
+
+		if (_InsertAtEnd) { 
+			UNUSED(memory::UninitializedCopyCount(
+				std::move(_First), _Count, 
+				_NewVectorStart + _OldSize, allocator));
+		}
+		else {
+			// Do not copy elements from the old vector that will be inserted later.
+			UNUSED(memory::UninitializedCopyCount(
+				std::move(_First), _Count, 
+				_NewVectorInsertPlace, allocator));
+		}
+
+		if (_Count == 1) {
+			if constexpr (
+				std::is_nothrow_move_constructible_v<ValueType>
+				|| std::is_copy_constructible_v<ValueType> == false
+			) {
+				ReallocateMoveExcept(_InsertAtEnd, toOffset,
+					_NewVectorStart);
+			}
+			else {
+				ReallocateCopyExcept(_InsertAtEnd, toOffset,
+					_NewVectorStart);
+			}
+		}
+		else {
+			ReallocateMoveExcept(_InsertAtEnd, toOffset,
+				_NewVectorStart);
+		}
+
+		BASE_CATCH_ALL
+
+		memory::DestroyRange(_Current, _Current + _Count, allocator);
+		allocator.deallocate(_BlockStart, _NewCapacity);
+
+		BASE_RERAISE;
+		BASE_CATCH_END
+
+		take(_BlockStart, _NewSize, _NewCapacity);
+	}
+	else {
+		UNUSED(memory::UninitializedCopyCount(
+			std::move(_First), _Count,
+			_Start, allocator));
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <
+	class _Iterator_,
+	class _Sentinel_>
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertUnCountedRange(
+	ConstIterator	_To,
+	_Iterator_ 		_First,
+	_Sentinel_ 		_Last) noexcept
+{
+	auto& pairValue 	= _pair._secondValue;
+
+	pointer& _Start 	= pairValue._start;
+	pointer& _Current 	= pairValue._current;
+
+	pointer& pointerTo 	= _To._currentElement;
+
+	_VECTOR_DEBUG_ASSERT_LOG_(
+		pointerTo >= _Start && pointerTo <= _Current,
+		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
+
+	auto _Count = SizeType(0);
+
+	for (auto _Temp = _First; _Temp != _Last; ++_Temp, ++_Count) {
+	}
+
+	insertCountedRange(_To, std::move(_First), _Count);
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateMoveExcept(
+	const bool 		insertAtEnd, 
+	const SizeType 	toOffset,
+	const pointer	newVectorStart)
+{
+	auto& pairValue			= _pair._secondValue;
+
+	pointer& _Start			= pairValue._start;
+	pointer& _Current		= pairValue._current;
+
+	UNUSED(memory::UninitializedMoveCount(
+		_Start, toOffset,
+		newVectorStart, allocator));
+
+	if (insertAtEnd == false && (_Start + toOffset) <= _Current)
+		UNUSED(memory::UninitializedMoveCount(
+			_Start + toOffset, _Current,
+			newVectorStart + toOffset, allocator));
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateCopyExcept(
+	const bool 		insertAtEnd, 
+	const SizeType 	toOffset,
+	const pointer	newVectorStart)
+{
+	auto& pairValue			= _pair._secondValue;
+
+	pointer& _Start			= pairValue._start;
+	pointer& _Current		= pairValue._current;
+
+	UNUSED(memory::UninitializedCopyCount(
+		_Start, toOffset,
+		newVectorStart, allocator));
+
+	if (insertAtEnd == false && (_Start + toOffset) <= _Current)
+		UNUSED(memory::UninitializedCopyCount(
+			_Start + toOffset, _Current,
+			newVectorStart + toOffset, allocator));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_

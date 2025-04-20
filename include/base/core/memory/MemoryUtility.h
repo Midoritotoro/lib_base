@@ -180,6 +180,28 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmove(
 }
 
 template <
+    class _InputIterator_,
+    class _OutIterator_>
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmoveCount(
+    _InputIterator_ _First,
+    const sizetype  _Count,
+    _OutIterator_   _Destination) noexcept
+{
+    if (_Count <= 0)
+        return false;
+
+    auto _DestinationAdress         = CheckedToChar(_Destination);
+
+    const auto _FirstAdress         = CheckedToConstChar(_First);
+
+    const auto _Dest                = memmove(
+        _DestinationAdress, _FirstAdress, _Count);
+
+    const auto _Success = (_Dest == _DestinationAdress);
+    return _Success;
+}
+
+template <
     class _ContiguousIterator_,
     class _Type_>
 void FillMemset(

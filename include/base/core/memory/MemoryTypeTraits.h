@@ -95,8 +95,8 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #endif
 
 template <
-    typename _Type_,
-    class _Allocator_>
+    typename    _Type_,
+    class       _Allocator_>
 constexpr bool IsNoThrowMoveConstructible =
     #if defined(OS_WIN) && defined(CPP_MSVC)
 		    std::conjunction_v<
@@ -104,6 +104,19 @@ constexpr bool IsNoThrowMoveConstructible =
 			    std::_Uses_default_construct<_Allocator_, _Type_*, _Type_>>;
     #else
 		    std::is_nothrow_move_constructible_v<_Allocator_>;
+    #endif
+
+template <
+    typename    _Type_,
+    class       _Allocator_,
+    class ...   _Args_>
+constexpr bool IsNoThrowMoveConstructibleArgs =
+    #if defined(OS_WIN) && defined(CPP_MSVC)
+		    std::conjunction_v<
+			    std::is_nothrow_move_constructible<_Type_, _Args_...>,
+			    std::_Uses_default_construct<_Allocator_, _Type_*, _Args_...>>;
+    #else
+		    std::is_nothrow_move_constructible_v<_Allocator_, _Args_...>;
     #endif
 
 template <
