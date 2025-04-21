@@ -19,199 +19,58 @@
 #include <base/core/memory/MemoryAllocatorUtility.h>
 #include <base/core/memory/MemoryTypeTraits.h>
 
+#include <base/core/container/VectorDebug.h>
+#include <base/core/container/VectorValue.h>
+
+
 WARNING_DISABLE_MSVC(4834)
 WARNING_DISABLE_MSVC(4002)
 WARNING_DISABLE_MSVC(4003)
 
-#ifndef _VECTOR_OUT_OF_RANGE_
-#  define _VECTOR_OUT_OF_RANGE_ ("base::container::Vector: Index out of range.\n ")
-#endif
-
-#if defined(_DEBUG)
-
-#ifdef BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE
-#  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
-    DebugAssertReturn(_Cond, _Message, _RetVal)
-#else
-#  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
-	UNUSED(_RetVal);															\
-	DebugAssert(_Cond, _Message)												
-#endif
-
-#  ifndef _VECTOR_ERROR_DEBUG_
-#    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							\
-	do {																		\
-		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);							\
-		return _RetVal;															\
-	} while(0);
-#  endif
-
-#  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
-#    define _VECTOR_ERROR_DEBUG_NO_RET_(_Messsage)								\
-	do {																		\
-		_VECTOR_DEBUG_ASSERT_LOG_(false, _Messsage);							\
-		return;																	\
-	} while(0);
-#  endif
-
-#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_
-#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(_RetVal)							\
-    _VECTOR_ERROR_DEBUG_(														\
-      "base::container::Vector: Not enough memory to expand the Vector.\n ",	\
-        _RetVal)
-#  endif
-
-#  ifndef _VECTOR_TOO_LONG_DEBUG_
-#    define _VECTOR_TOO_LONG_DEBUG_(_RetVal)									\
-    _VECTOR_ERROR_DEBUG_(														\
-      "base::container::Vector: Vector too long.\n ",							\
-        _RetVal)
-#  endif
-
-#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_
-#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_									\
-    _VECTOR_ERROR_DEBUG_NO_RET_(												\
-      _VECTOR_OUT_OF_RANGE_)
-#  endif
-
-#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
-#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								\
-    _VECTOR_ERROR_DEBUG_NO_RET_(												\
-      "base::container::Vector: Not enough memory to expand the Vector.\n ")
-#  endif
-
-#  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
-#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										\
-    _VECTOR_ERROR_DEBUG_NO_RET_(												\
-      "base::container::Vector: Vector too long.\n ")
-#  endif
-
-#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_
-#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_							\
-    _VECTOR_ERROR_DEBUG_NO_RET_(												\
-      _VECTOR_OUT_OF_RANGE_)
-#  endif
-
-#else
-
-#  ifndef _VECTOR_ERROR_DEBUG_
-#    define _VECTOR_ERROR_DEBUG_(_Messsage, _RetVal)							((void)0)
-#  endif
-
-#  ifndef _VECTOR_ERROR_DEBUG_NO_RET_
-#    define _VECTOR_ERROR_DEBUG_NO_RET_(_Message)								((void)0)
-#  endif
-
-#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_
-#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(_RetVal)							((void)0)
-#  endif
-
-#  ifndef _VECTOR_TOO_LONG_DEBUG_
-#    define _VECTOR_TOO_LONG_DEBUG_(_RetVal)									((void)0)
-#  endif
-
-#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_
-#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_									((void)0)
-#  endif
-
-#  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
-#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								((void)0)
-#  endif
-
-#  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
-#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										((void)0)
-#  endif
-
-#  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_
-#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_							((void)0)
-#  endif
-
-#  ifndef _VECTOR_DEBUG_ASSERT_LOG_
-#    define _VECTOR_DEBUG_ASSERT_LOG_											((void)0)
-#endif
-
-#endif
 
 #ifndef _VECTOR_OUTSIDE_TEMPLATE_ 
-#  define _VECTOR_OUTSIDE_TEMPLATE_ template <typename _Element_, class _Allocator_>
-#endif
-
-
-#ifndef BASE_SILENCE_ALL_VECTOR_WARNINGS
-
-#  ifndef _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
-#    define _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_ \
-	BASE_DEPRECATED_WARNING(						\
-		"base::container::Vector::pushFront: Using the pushFront method is inefficient in terms of performance")
-#endif
-
-#else
-
-#  ifndef _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
-#    define _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
-#endif
-
+#  define _VECTOR_OUTSIDE_TEMPLATE_ template <typename _Element_, class _Allocator_, class _SimdOptimization_>
 #endif
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
+struct VectorSimd {
+	// If SSE4.2 is supported on the device being launched,
+	// then these instructions are used.
+	// Otherwise, it is similar to _Optimization_Disable_
+	struct _Optimization_Enable_Only_If_SSE4_ { 
+	};
+	
+	// If AVX is supported on the device being launched,
+	// then these instructions are used.
+	// Otherwise, it is similar to _Optimization_Disable_
+	struct _Optimization_Enable_Only_If_AVX_ { 
+	};
+	
+	// If AVX512 is supported on the device being launched,
+	// then these instructions are used.
+	// Otherwise, it is similar to _Optimization_Disable_
+	struct _Optimization_Enable_Only_If_AVX512_ { 
+	};
+	
+	// Auto-selecting the most efficient option
+	struct _Optimization_Auto_ { 
+	};
+	
+	// A fully scalar vector
+	struct _Optimization_Disable_ { 
+	};
+}
+
 enum class _Vector_SIMD_Algorithm_Alignment : sizetype {
-
 };
 
-template <class _Type_>
-class VectorValue {
-public:
-	using value_type		= typename _Type_::value_type;
-	using size_type			= typename _Type_::size_type;
-
-	using difference_type	= typename _Type_::difference_type;
-	using pointer			= typename _Type_::pointer;
-
-	using const_pointer		= typename _Type_::const_pointer;
-
-	using reference			= value_type&;
-	using const_reference	= const value_type&;
-
-	CONSTEXPR_CXX20 inline VectorValue() noexcept
-	{}
-
-	CONSTEXPR_CXX20 inline VectorValue(
-		pointer start, 
-		pointer end,
-		pointer current) noexcept
-	: 
-		_start(start),
-		_end(end),
-		_current(_current) 
-	{}
-
-	CONSTEXPR_CXX20 inline void swap(VectorValue& other) noexcept {
-		std::swap(_start, other._start);
-		std::swap(_end, other._end);
-		std::swap(_current, other._current);
-	}
-
-	CONSTEXPR_CXX20 inline void takeContents(VectorValue& other) noexcept {
-		_start = other._start;
-		_end = other._end;
-		_current = other._current;
-
-		other._start = nullptr;
-		other._end = nullptr;
-		other._current = nullptr;
-	}
-
-	pointer _start		= nullptr;
-	pointer _end		= nullptr;
-
-	pointer _current	= nullptr;
-};
 
 
 template <
 	typename	_Element_,
-	class		_Allocator_ = std::allocator<_Element_>>
+	class		_Allocator_ = std::allocator<_Element_>,
+	class 		_SimdOptimization_ = VectorSimd::_Optimization_Disable_>
 class Vector
 {
 	using AllocatorForType	= memory::RebindAllocator<_Allocator_, _Element_>; 
