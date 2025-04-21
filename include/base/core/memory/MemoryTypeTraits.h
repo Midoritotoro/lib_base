@@ -189,6 +189,76 @@ using RebindAllocator =
         ::template rebind_alloc<_ValueType_>;
 
 template <
+    class _Allocator_,
+    typename = void>
+struct HasMemberAllocateAligned :
+    std::false_type
+{};
+
+template <class _Allocator_>
+struct HasMemberAllocateAligned<_Allocator_, std::void_t<decltype(
+    std::declval<T>().allocate_aligned())>
+{};
+
+template <typename _Allocator_>
+inline constexpr bool HasMemberAllocateAligned_v = HasMemberAllocateAligned<_Allocator_>::value;
+
+template <std::size_t N>
+struct IsAlignmentConstant : 
+    std::integral_constant<bool, (N > 0) && ((N & (N - 1)) == 0)> 
+{};
+
+template <
+    std::size_t A,
+    std::size_t B>
+struct MinimumSize: 
+    std::integral_constant<std::size_t, (A < B) ? A : B> 
+{};
+
+template <
+    std::size_t A,
+    std::size_t B>
+struct MaximumSize: 
+    std::integral_constant<std::size_t, (A > B) ? A : B> 
+{};
+
+#if defined(CPP_MSVC)
+
+template <class _Type_>
+struct offset_value {
+    _Type_ first;
+    char value;
+    _Type_ second;
+};
+
+template <class _Type_>
+struct AlignmentOf : 
+    MinimumSize<sizeof(_Type_), sizeof(offset_value<_Type_>) - (sizeof(_Type_) << 1)> 
+{};
+
+#elif defined(CPP_GNU)
+
+template <class _Type_>
+struct AlignmentOf: 
+    std::integral_constant<std::size_t, __alignof__(_Type_)> 
+{};
+
+#elif defined(CPP_CLANG)
+
+template <class _Type_>
+struct AlignmentOf:
+    std::integral_constant<std::size_t, __alignof(_Type_)> 
+{};
+
+#endif
+
+template <class _Type_>
+struct MaximumObjects: 
+    std::integral_constant<std::size_t,
+        ~static_cast<std::size_t>(0) / sizeof(_Type_)> 
+{};
+
+template <
     class _Source_,
     class _Destination_,
     class _SourceReference_,

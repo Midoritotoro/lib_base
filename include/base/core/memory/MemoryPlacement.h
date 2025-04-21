@@ -80,4 +80,24 @@ CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& _Obj) noexcept {
         _Obj.~_Type_();
 }
 
+CONSTEXPR_CXX20 inline NODISCARD bool IsAlignment(size_t value) noexcept {
+    return (value > 0) && ((value & (value - 1)) == 0);
+}
+
+CONSTEXPR_CXX20 inline NODISCARD bool isAligned(
+    const void* pointer,
+    std::size_t alignment) noexcept
+{
+    Assert(IsAlignment(alignment));
+    return (reinterpret_cast<std::size_t>(pointer) & (alignment - 1)) == 0;
+}
+
+CONSTEXPR_CXX20 inline NODISCARD bool isAligned(
+    std::size_t alignment,
+    const void* pointer) noexcept
+{
+    Assert(IsAlignment(alignment));
+    return (reinterpret_cast<std::size_t>(ptr) & (alignment - 1)) == 0;
+}
+
 __BASE_MEMORY_NAMESPACE_END

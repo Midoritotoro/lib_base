@@ -65,14 +65,17 @@ struct VectorSimd {
 enum class _Vector_SIMD_Algorithm_Alignment : sizetype {
 };
 
-
-
 template <
 	typename	_Element_,
-	class		_Allocator_ = std::allocator<_Element_>,
-	class 		_SimdOptimization_ = VectorSimd::_Optimization_Disable_>
+	class		_Allocator_ 		= std::allocator<_Element_>,
+	class 		_SimdOptimization_ 	= VectorSimd::_Optimization_Disable_>
 class Vector
 {
+	static_assert(
+		std::is_same_v<_SimdOptimization_, VectorSimd::_Optimization_Disable_> == false &&
+		HasMemberAllocateAligned_v<_Allocator_> == false,
+		"Allocator must have allocate_aligned method when SIMD optimization is enabled.");
+
 	using AllocatorForType	= memory::RebindAllocator<_Allocator_, _Element_>; 
 	using AllocatorTraits	= std::allocator_traits<AllocatorForType>;
 public:
@@ -88,8 +91,8 @@ public:
 	using reference = value_type&;
 	using const_reference = const value_type&;
 
-	using iterator = VectorIterator<Vector<_Element_, _Allocator_>>;
-	using const_iterator = VectorConstIterator<Vector<_Element_, _Allocator_>>;
+	using iterator = VectorIterator<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
+	using const_iterator = VectorConstIterator<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
 
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
@@ -109,7 +112,7 @@ public:
 	using ReverseIterator = reverse_iterator;
 	using ConstReverseIterator = const_reverse_iterator;
 private:
-	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_>>;
+	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
 
 	inline static constexpr auto _Vector_Default_Capacity_ = 16;
 public:
@@ -196,46 +199,46 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD Reference at(const SizeType offset) noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ValueType at(const SizeType index) const noexcept;
 
-	constexpr inline NODISCARD SizeType count() const noexcept;
-	constexpr inline NODISCARD SizeType size() const noexcept;
-	constexpr inline NODISCARD SizeType length() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType count() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType size() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType length() const noexcept;
 
-	constexpr inline NODISCARD SizeType capacity() const noexcept;
-	constexpr inline NODISCARD SizeType unusedCapacity() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType capacity() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType unusedCapacity() const noexcept;
 
-	constexpr inline NODISCARD bool isEmpty() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD bool isEmpty() const noexcept;
 
-	constexpr inline NODISCARD Pointer data() noexcept;
-	constexpr inline NODISCARD ConstPointer data() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Pointer data() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstPointer data() const noexcept;
 
-	constexpr inline NODISCARD ConstPointer constData() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstPointer constData() const noexcept;
 
-	constexpr inline NODISCARD Iterator begin() noexcept;
-	constexpr inline NODISCARD ConstIterator begin() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Iterator begin() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator begin() const noexcept;
 
-	constexpr inline NODISCARD ConstIterator cbegin() const noexcept;
-	constexpr inline NODISCARD ConstIterator constBegin() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator cbegin() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator constBegin() const noexcept;
 
-	constexpr inline NODISCARD Iterator end() noexcept;
-	constexpr inline NODISCARD ConstIterator end() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Iterator end() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator end() const noexcept;
 
-	constexpr inline NODISCARD ConstIterator cend() const;
-	constexpr inline NODISCARD ConstIterator constEnd() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator cend() const;
+	CONSTEXPR_CXX20 inline NODISCARD ConstIterator constEnd() const noexcept;
 
-	constexpr inline NODISCARD ReverseIterator rbegin() noexcept;
-	constexpr inline NODISCARD ReverseIterator rend() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ReverseIterator rbegin() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ReverseIterator rend() noexcept;
 
-	constexpr inline NODISCARD ConstReverseIterator rbegin() const noexcept;
-	constexpr inline NODISCARD ConstReverseIterator rend() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator rbegin() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator rend() const noexcept;
 
-	constexpr inline NODISCARD ConstReverseIterator crbegin() const noexcept;
-	constexpr inline NODISCARD ConstReverseIterator crend() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator crbegin() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator crend() const noexcept;
 
-	constexpr inline NODISCARD ValueType front() const noexcept;
-	constexpr inline NODISCARD Reference front() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ValueType front() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Reference front() noexcept;
 
-	constexpr inline NODISCARD ValueType back() const noexcept;
-	constexpr inline NODISCARD Reference back() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD ValueType back() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD Reference back() noexcept;
 	
 	CONSTEXPR_CXX20 inline void push_back(const ValueType& element);
 	CONSTEXPR_CXX20 inline void push_back(Vector&& other);
@@ -549,17 +552,17 @@ private:
 };
 
 _VECTOR_OUTSIDE_TEMPLATE_
-inline constexpr Vector<_Element_, _Allocator_>::Vector() noexcept :
+inline constexpr Vector<_Element_, _Allocator_, _SimdOptimization_>::Vector() noexcept :
 	_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {};
 
 _VECTOR_OUTSIDE_TEMPLATE_
-inline constexpr Vector<_Element_, _Allocator_>::~Vector() noexcept {
+inline constexpr Vector<_Element_, _Allocator_, _SimdOptimization_>::~Vector() noexcept {
 	FreeAllElements();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::Vector(std::initializer_list<ValueType> elements) noexcept:
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {
@@ -573,7 +576,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _InputIterator_>
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vector(
 	_InputIterator_ _First,
 	_InputIterator_ _Last) noexcept
 {
@@ -581,7 +584,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(const Vector& other) noexcept :
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vector(const Vector& other) noexcept :
 	_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {
 	const auto _Capacity = other.capacity();
@@ -597,7 +600,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(const Vector& othe
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	Vector(const std::vector<ValueType>& vector) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {
@@ -614,7 +617,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::Vector(const SizeType _Capacity) noexcept :
 		_pair(_Zero_then_variadic_args_{}, VectorValueType())
 {
@@ -625,7 +628,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vector(
 		const SizeType _Capacity,
 		const ValueType& _Fill) noexcept :
 	_pair(_Zero_then_variadic_args_{}, VectorValueType())
@@ -639,13 +642,13 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::Vector(Vector&& rOther) noexcept :
 		_pair(std::exchange(rOther._pair, {}))
 {}
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vector(
 	const pointer _First,
 	const pointer _Current,
 	const pointer _Last) noexcept : 
@@ -656,43 +659,43 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Vector(
 {}
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::allocator_type&
-	Vector<_Element_, _Allocator_>::getAllocator() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::getAllocator() noexcept
 {
 	return _pair.first();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_>::allocator_type&
-Vector<_Element_, _Allocator_>::getAllocator() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::getAllocator() const noexcept
 {
 	return _pair.first();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::allocator_type&
-	Vector<_Element_, _Allocator_>::get_allocator() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::get_allocator() noexcept
 {
 	return _pair.first();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_>::allocator_type&
-	Vector<_Element_, _Allocator_>::get_allocator() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::get_allocator() const noexcept
 {
 	return _pair.first();
 }
 
-_VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>& 
-	Vector<_Element_, _Allocator_>::operator=(const Vector& _Right) 
+_VECTOR_OUTSIDE_TEMPLATE_ 
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(const Vector& _Right) 
 {
 	return *this;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>& 
-	Vector<_Element_, _Allocator_>::operator=(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(
 		std::vector<ValueType>&& rVector)
 {
 	auto& pairValue = _pair._secondValue;
@@ -720,8 +723,8 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 Vector<_Element_, _Allocator_>&
-		Vector<_Element_, _Allocator_>::operator=(Vector&& _Right) noexcept(
+CONSTEXPR_CXX20 Vector<_Element_, _Allocator_, _SimdOptimization_>&
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(Vector&& _Right) noexcept(
 			memory::ChoosePocma_v<allocator_type> 
 			!= memory::PocmaValues::NoPropagateAllocators)
 {
@@ -751,8 +754,8 @@ CONSTEXPR_CXX20 Vector<_Element_, _Allocator_>&
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>& 
-	Vector<_Element_, _Allocator_>::operator=(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(
 		const std::vector<ValueType>& _Right)
 {
 	if (this == memory::AddressOf(_Right))
@@ -768,8 +771,8 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>& 
-	Vector<_Element_, _Allocator_>::operator=(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(
 		std::initializer_list<ValueType> initializerList) 
 {
 	const auto _SizeForAppend = initializerList.size();
@@ -783,8 +786,8 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>&
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline Vector<_Element_, _Allocator_>::Reference
-	Vector<_Element_, _Allocator_>::
+constexpr inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		operator[](const SizeType offset) noexcept 
 {
 	auto& pairValue = _pair._secondValue;
@@ -792,8 +795,8 @@ constexpr inline Vector<_Element_, _Allocator_>::Reference
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ConstReference 
-	Vector<_Element_, _Allocator_>::
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		operator[](const SizeType offset) const noexcept
 {	
 	const auto& pairValue = _pair._secondValue;
@@ -803,8 +806,8 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ConstReference
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_eq_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator==(const Vector& other) const noexcept
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator==(const Vector& other) const noexcept
 {
 	if (size() != other.size())
 		return false;
@@ -819,8 +822,8 @@ CONSTEXPR_CXX20 inline compare_eq_result_container<
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_eq_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator!=(const Vector& other) const noexcept
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator!=(const Vector& other) const noexcept
 {
 	return !(*this == other);
 }
@@ -828,8 +831,8 @@ CONSTEXPR_CXX20 inline compare_eq_result_container<
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_lt_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator<(const Vector& other) const noexcept(
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator<(const Vector& other) const noexcept(
 			noexcept(std::lexicographical_compare<
 				typename Vector<_ComparedElementType_>::const_iterator,
 				typename Vector::const_iterator>(
@@ -845,8 +848,8 @@ CONSTEXPR_CXX20 inline compare_lt_result_container<
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_lt_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator>(const Vector& other) const noexcept(
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator>(const Vector& other) const noexcept(
 			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
 {
 	return other < *this;
@@ -855,8 +858,8 @@ CONSTEXPR_CXX20 inline compare_lt_result_container<
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_lt_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator<=(const Vector& other) const noexcept(
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator<=(const Vector& other) const noexcept(
 			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
 {
 	return !(other < *this);
@@ -865,16 +868,16 @@ CONSTEXPR_CXX20 inline compare_lt_result_container<
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _ComparedElementType_>
 CONSTEXPR_CXX20 inline compare_lt_result_container<
-	Vector<_Element_, _Allocator_>, _ComparedElementType_> 
-		Vector<_Element_, _Allocator_>::operator>=(const Vector& other) const noexcept(
+	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
+		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator>=(const Vector& other) const noexcept(
 			noexcept(std::declval<Vector<_ComparedElementType_>>() < other))
 {
 	return !(*this < other);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::at(const SizeType offset) noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::at(const SizeType offset) noexcept 
 {
 #ifdef _DEBUG
 	const auto pairValue	= _pair._secondValue;
@@ -891,213 +894,213 @@ constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ValueType
-	Vector<_Element_, _Allocator_>::at(const SizeType index) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::at(const SizeType index) const noexcept
 {
 	return at(index);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::size() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::size() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
 	return static_cast<SizeType>(pairValue._current - pairValue._start);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::count() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::count() const noexcept
 {
 	const auto& pairValue = _pair._secondValue;
 	return static_cast<SizeType>(pairValue._current - pairValue._start);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
-	Vector<_Element_, _Allocator_>::length() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::length() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
 	return static_cast<SizeType>(pairValue._current - pairValue._start);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::capacity() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::capacity() const noexcept
 {
 	const auto& pairValue = _pair._secondValue;
 	return static_cast<SizeType>(pairValue._end - pairValue._start);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
-	Vector<_Element_, _Allocator_>::unusedCapacity() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::unusedCapacity() const noexcept
 {
 	return (capacity() - size());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD bool Vector<_Element_, _Allocator_>::isEmpty() const noexcept {
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>::isEmpty() const noexcept {
 	return (length() == 0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Pointer 
-	Vector<_Element_, _Allocator_>::data() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Pointer 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::data() noexcept 
 {
 	auto& pairValue = _pair._secondValue;
 	return pairValue._start;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstPointer
-	Vector<_Element_, _Allocator_>::data() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::data() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
 	return pairValue._start;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstPointer 
-	Vector<_Element_, _Allocator_>::constData() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::constData() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
 	return pairValue._start;
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::begin() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::begin() noexcept
 {
 	return Iterator(this);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator 
-	Vector<_Element_, _Allocator_>::begin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::begin() const noexcept
 {
 	return ConstIterator(this);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator 
-	Vector<_Element_, _Allocator_>::cbegin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::cbegin() const noexcept
 {
 	return ConstIterator(this);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator 
-	Vector<_Element_, _Allocator_>::constBegin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::constBegin() const noexcept
 {
 	return ConstIterator(this);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::end() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::end() noexcept 
 {
 	return Iterator(this) + size();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator
-	Vector<_Element_, _Allocator_>::end() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::end() const noexcept
 {
 	return ConstIterator(this) + size();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator 
-	Vector<_Element_, _Allocator_>::cend() const 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::cend() const 
 {
 	return ConstIterator(this) + size();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstIterator
-	Vector<_Element_, _Allocator_>::constEnd() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::constEnd() const noexcept
 {
 	return ConstIterator(this) + size();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ReverseIterator 
-	Vector<_Element_, _Allocator_>::rbegin() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::rbegin() noexcept 
 {
 	return ReverseIterator(begin());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ReverseIterator 
-	Vector<_Element_, _Allocator_>::rend() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::rend() noexcept 
 {
 	return ReverseIterator(end());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstReverseIterator 
-	Vector<_Element_, _Allocator_>::rbegin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::rbegin() const noexcept
 {
 	return ConstReverseIterator(begin());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstReverseIterator 
-	Vector<_Element_, _Allocator_>::rend() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::rend() const noexcept
 {
 	return ConstReverseIterator(end());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstReverseIterator 
-	Vector<_Element_, _Allocator_>::crbegin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::crbegin() const noexcept
 {
 	return ConstReverseIterator(begin());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ConstReverseIterator 
-	Vector<_Element_, _Allocator_>::crend() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::crend() const noexcept 
 {
 	return ConstReverseIterator(end());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::front() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::front() const noexcept
 {
 	return at(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::front() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::front() noexcept 
 {
 	return at(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::back() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::back() const noexcept 
 {
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::back() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::back() noexcept
 {
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_back(const ValueType& element) {
 	emplaceBack(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_back(Vector&& other) {
 	auto& otherPairValue	= other._pair._secondValue;
 	auto& otherAllocator	= other._pair.first();
 
@@ -1114,48 +1117,48 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_back(Vector&& o
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void  Vector<_Element_, _Allocator_>::push_back(ValueType&& element) {
+CONSTEXPR_CXX20 inline void  Vector<_Element_, _Allocator_, _SimdOptimization_>::push_back(ValueType&& element) {
 	emplaceBack(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::append(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::append(const ValueType& element) {
 	emplaceBack(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::append(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::append(Vector&& other) {
 	push_back(std::move(other));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::append(ValueType&& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::append(ValueType&& element) {
 	emplaceBack(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prepend(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::prepend(const ValueType& element) {
 	push_front(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prepend(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::prepend(Vector&& other) {
 	push_front(std::move(other));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prepend(ValueType&& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::prepend(ValueType&& element) {
 	push_front(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_front(const ValueType& element) {
 	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
 	emplaceFront(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_front(Vector&& other) {
 	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
 
 	auto& otherPairValue	= other._pair._secondValue;
@@ -1174,45 +1177,45 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(Vector&& 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::push_front(ValueType&& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_front(ValueType&& element) {
 	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
 	emplaceFront(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::pushFront(const ValueType& element) {
 	push_front(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::pushFront(Vector&& other) {
 	push_front(std::move(other));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushFront(ValueType&& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::pushFront(ValueType&& element) {
 	push_front(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushBack(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::pushBack(const ValueType& element) {
 	emplaceBack(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::pushBack(Vector&& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::pushBack(Vector&& other) {
 	push_back(std::move(other));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void  Vector<_Element_, _Allocator_>::pushBack(ValueType&& element) {
+CONSTEXPR_CXX20 inline void  Vector<_Element_, _Allocator_, _SimdOptimization_>::pushBack(ValueType&& element) {
 	emplaceBack(std::move(element));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class ... _Args_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::emplace_back(_Args_&&... args)
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace_back(_Args_&&... args)
 {
 	emplaceBack(std::forward<_Args_>(args)...);
 	return back();
@@ -1220,8 +1223,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class ... _Args_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::emplaceFront(_Args_&&... _Val) 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceFront(_Args_&&... _Val) 
 {
 	auto& pairValue		= _pair._secondValue;
 	auto& allocator		= _pair.first();
@@ -1267,16 +1270,16 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class ... _Args_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::emplace_front(_Args_&&... args) 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace_front(_Args_&&... args) 
 {
 	return emplaceFront(std::forward<_Args_>(args)...);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class... _Valty_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::emplace(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace(
 		ConstIterator where,
 		_Valty_&&... value)
 {
@@ -1285,8 +1288,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class... _Valty_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::emplace(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace(
 		SizeType where,
 		_Valty_&&... value)
 {
@@ -1294,8 +1297,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::insert(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator where,
 		const ValueType& value)
 {
@@ -1314,8 +1317,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
-	Vector<_Element_, _Allocator_>::insert(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator where,
 		ValueType&& value)
 {
@@ -1336,8 +1339,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::insert(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator 						where,
 		BASE_GUARDOVERFLOW const SizeType 	count,
 		const ValueType& 					value)
@@ -1362,8 +1365,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Iterator 
-	Vector<_Element_, _Allocator_>::insert(
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator where,
 		std::initializer_list<ValueType> initializerList)
 {
@@ -1389,7 +1392,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::assign(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assign(
 	BASE_GUARDOVERFLOW const SizeType newSize,
 	const ValueType& value)
 {
@@ -1398,7 +1401,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::assign(
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _InputIterator_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::assign(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assign(
 	_InputIterator_ _First,
 	_InputIterator_ _Last)
 {
@@ -1406,15 +1409,15 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::assign(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::assign(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assign(
 	const std::initializer_list<ValueType> initializerList)
 {
 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::pop() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop() noexcept 
 {
 	const auto value = back();
 	removeAt(size() - 1);
@@ -1423,22 +1426,22 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::popBack() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::popBack() noexcept 
 {
 	return pop();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::pop_back() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop_back() noexcept
 {
 	return pop();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::pop_front() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop_front() noexcept
 {
 	const auto value = front();
 	removeAt(0);
@@ -1447,14 +1450,14 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::ValueType 
-	Vector<_Element_, _Allocator_>::popFront() noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::popFront() noexcept
 {
 	return pop_front();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reverse() noexcept {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::reverse() noexcept {
 	auto& pairValue = _pair._secondValue;
 	
 	pointer& _Start = pairValue._start;
@@ -1467,7 +1470,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reverse() noexcept {
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAt(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::removeAt(
 	BASE_GUARDOVERFLOW const size_type index) noexcept 
 {
 	auto& pairValue = _pair._secondValue;
@@ -1492,7 +1495,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAt(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::clear() {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::clear() {
 	auto& pairValue		= _pair._secondValue;
 	auto& allocator		= _pair.first();
 
@@ -1508,8 +1511,8 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::clear() {
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
-	Vector<_Element_, _Allocator_>::erase(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::erase(
 		ConstIterator first,
 		ConstIterator last) noexcept(
 			std::is_nothrow_move_assignable_v<ValueType>)
@@ -1528,8 +1531,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
-	Vector<_Element_, _Allocator_>::erase(ConstIterator it) noexcept(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::erase(ConstIterator it) noexcept(
 		std::is_nothrow_move_assignable_v<ValueType>)
 {
 	auto& pairValue = _pair._secondValue;
@@ -1548,7 +1551,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reserve(BASE_GUARDOVERFLOW size_type newCapacity) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::reserve(BASE_GUARDOVERFLOW size_type newCapacity) {
 	if (newCapacity <= capacity() || newCapacity > maxSize()) // something to do (reserve() never shrinks)
 		return;
 
@@ -1559,7 +1562,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::reserve(BASE_GUARDOV
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrinkToFit() {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::shrinkToFit() {
 	auto& pairValue		= _pair._secondValue;
 	auto& allocator		= _pair.first();
 
@@ -1575,12 +1578,12 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrinkToFit() {
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::shrink_to_fit() {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::shrink_to_fit() {
 	return shrinkToFit();
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(
 	SizeType size,
 	const_reference _Fill)
 {
@@ -1593,7 +1596,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::fill(const_reference _Fill) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::fill(const_reference _Fill) {
 	auto& pairValue = _pair._secondValue;
 	auto& allocator = _pair.first();
 
@@ -1605,7 +1608,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::fill(const_reference
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(
 	BASE_GUARDOVERFLOW const SizeType newCapacity)
 {
 	const auto growth			= calculateGrowth(newCapacity);
@@ -1615,8 +1618,8 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resize(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
-	Vector<_Element_, _Allocator_>::insert(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		SizeType index,
 		const_reference element)
 {
@@ -1625,8 +1628,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Iterator
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
-	Vector<_Element_, _Allocator_>::count(const ValueType& element) const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::count(const ValueType& element) const noexcept 
 {
 	SizeType _Count = 0;
 
@@ -1641,8 +1644,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
-	Vector<_Element_, _Allocator_>::count(const Vector& subVector) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::count(const Vector& subVector) const noexcept
 {
 	SizeType _Count = 0;
 	
@@ -1670,8 +1673,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
-	Vector<_Element_, _Allocator_>::count_if(_Predicate_ predicate) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::count_if(_Predicate_ predicate) const noexcept
 {
 	SizeType _Count = 0;
 
@@ -1687,15 +1690,15 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::size_type 
-	Vector<_Element_, _Allocator_>::countIf(_Predicate_ predicate) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::countIf(_Predicate_ predicate) const noexcept
 {
 	return count_if(predicate);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
-	Vector<_Element_, _Allocator_>::contains(const ValueType& element) const noexcept 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::contains(const ValueType& element) const noexcept 
 {
 	for (SizeType i = 0; i < size(); ++i) {
 		const auto& currentElement = at(i);
@@ -1709,7 +1712,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline NODISCARD bool 
-	Vector<_Element_, _Allocator_>::contains(const Vector& subVector) const noexcept 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::contains(const Vector& subVector) const noexcept 
 {
 	const auto subVectorSize	= subVector.size();
 	const auto _Size			= size();
@@ -1731,7 +1734,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::startsWith(const ValueType& element) const noexcept 
 {
 	const auto& firstElement = first();
@@ -1739,7 +1742,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::startsWith(const Vector& subVector) const noexcept
 {
 	const auto otherSize = subVector.size();
@@ -1759,7 +1762,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::endsWith(const ValueType& element) const noexcept 
 {
 	const auto& lastElement = last();
@@ -1767,7 +1770,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::endsWith(const Vector& subVector) const noexcept 
 {
 	const auto otherSize = subVector.size();
@@ -1787,15 +1790,15 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::indexOf(const ValueType& element) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::indexOf(const ValueType& element) const noexcept
 {
 	return find(element);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::lastIndexOf(const ValueType& element) const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::lastIndexOf(const ValueType& element) const noexcept 
 {
 	for (SizeType i = size() - 1; i >= 0; --i) {
 		auto& currentElement = at(i);
@@ -1808,8 +1811,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::find(const ValueType& element) const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::find(const ValueType& element) const noexcept 
 {
 	for (SizeType i = 0; i < size(); ++i) {
 		auto& currentElement = at(i);
@@ -1823,8 +1826,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::find_if(_Predicate_ predicate) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::find_if(_Predicate_ predicate) const noexcept
 {
 	for (SizeType i = 0; i < size(); ++i) 
 		if (predicate(at(i)))
@@ -1835,15 +1838,15 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::findIf(_Predicate_ predicate) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::findIf(_Predicate_ predicate) const noexcept
 {
 	return find_if(predicate);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>	
-	Vector<_Element_, _Allocator_>::sliced(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>	
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::sliced(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept
 {
@@ -1875,8 +1878,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> 
-	Vector<_Element_, _Allocator_>::sliced(SizeType positionFrom) const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::sliced(SizeType positionFrom) const noexcept 
 {
 	const auto _Size = size();
 
@@ -1902,8 +1905,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
-	Vector<_Element_, _Allocator_>::view(
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::view(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept
 {
@@ -1926,8 +1929,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> 
-	Vector<_Element_, _Allocator_>::view(SizeType positionFrom) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::view(SizeType positionFrom) const noexcept
 {
 	const auto _Size = size();
 
@@ -1944,7 +1947,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
 	SizeType ositionFrom,
 	const ValueType& oldValue,
 	const ValueType& newValue)
@@ -1960,7 +1963,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
 	const ValueType& oldValue,
 	const ValueType& newValue)
 {
@@ -1973,7 +1976,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
 	SizeType 			positionFrom,
 	SizeType 			positionTo,
 	const ValueType& 	oldValue,
@@ -1996,7 +1999,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
 	ConstIterator 		positionFrom,
 	const ValueType& 	oldValue,
 	const ValueType& 	newValue)
@@ -2019,7 +2022,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
 	ConstIterator 		positionFrom,
 	ConstIterator 		positionTo,
 	const ValueType& 	oldValue,
@@ -2029,7 +2032,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::replace(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swap(Vector& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::swap(Vector& other) {
 	if (this == memory::AddressOf(other))
 		return;
 
@@ -2040,7 +2043,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swap(Vector& other) 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::swapElementsAt(
 	SizeType _First,
 	SizeType _Last)
 {
@@ -2054,7 +2057,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::swapElementsAt(
 	Iterator _First,
 	Iterator _Last)
 {
@@ -2068,7 +2071,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::swapElementsAt(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::remove(
 	SizeType _First,
 	SizeType _Count)
 {
@@ -2091,7 +2094,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::remove(
 	ConstIterator _First,
 	ConstIterator _Last)
 {
@@ -2111,55 +2114,55 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::remove(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::first()
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::first()
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0); 
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::first() const noexcept 
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::first() const noexcept 
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::constFirst() const noexcept 
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::constFirst() const noexcept 
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::last()
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::last()
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::last() const noexcept 
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::last() const noexcept 
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_>::ValueType& 
-	Vector<_Element_, _Allocator_>::constLast() const noexcept
+CONSTEXPR_CXX20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::constLast() const noexcept
 {
 	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAll(const ValueType& element) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::removeAll(const ValueType& element) {
 	for (SizeType i = 0; i < size(); ++i) {
 		const auto& currentElement = at(i);
 
@@ -2170,25 +2173,25 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeAll(const Valu
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeFirst() {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::removeFirst() {
 	removeAt(0);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeLast() {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::removeLast() {
 	removeAt(size() - 1);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Predicate_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::removeIf(_Predicate_ pred) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::removeIf(_Predicate_ pred) {
 	for (SizeType i = 0; i < size(); ++i)
 		if (pred(at(i)))
 			removeAt(i);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::removeOne(const ValueType& element)
 {
 	for (SizeType i = 0; i < size(); ++i) {
@@ -2203,7 +2206,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::take(
 	const pointer	newVectorStart,
 	const SizeType	newVectorSize,
 	const SizeType	newVectorCapacity)
@@ -2229,7 +2232,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::take(
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_, _Allocator_>::makeView(const std::vector& other) {
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const std::vector& other) {
 	const auto _Size 	= other.size();
 	pointer& otherData 	= other.data();
 
@@ -2243,7 +2246,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_, _Allocator_>::makeView(const Vector& other) {
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const Vector& other) {
 	const auto _Size 	= other.size();
 	pointer& otherStart = other._pair._secondValue._start;
 
@@ -2257,18 +2260,18 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_> Vector<_Element_
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_>::max_size() const noexcept {
+constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::max_size() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_>::maxSize() const noexcept {
+constexpr inline NODISCARD sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::maxSize() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType 
-	Vector<_Element_, _Allocator_>::calculateGrowth(SizeType newSize) const noexcept
+constexpr inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::calculateGrowth(SizeType newSize) const noexcept
 {
 	const auto oldCapacity	= capacity();
 	const auto _MaxSize		= maxSize();
@@ -2285,7 +2288,7 @@ constexpr inline NODISCARD Vector<_Element_, _Allocator_>::SizeType
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReallocate(SizeType newCapacity) noexcept {
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resizeReallocate(SizeType newCapacity) noexcept {
 	const auto oldCapacity = capacity();
 
 	if (oldCapacity == newCapacity)
@@ -2322,8 +2325,8 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::resizeReal
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class ..._Valty_>
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference 
-	Vector<_Element_, _Allocator_>::emplaceBack(_Valty_&&... _Val)
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceBack(_Valty_&&... _Val)
 {
 	auto& pairValue		= _pair._secondValue;
 
@@ -2338,7 +2341,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_>::Reference
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class... _Valty_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackWithUnusedCapacity(_Valty_&&... _Val) 
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceBackWithUnusedCapacity(_Valty_&&... _Val) 
 {
 	auto& pairValue = _pair._secondValue;
 	auto& allocator = _pair.first();
@@ -2350,7 +2353,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackWithUnuse
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class... _Valty_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackReallocate(_Valty_&&... _Val) 
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceBackReallocate(_Valty_&&... _Val) 
 {
 	auto& pairValue				= _pair._secondValue;
 	auto& allocator				= _pair.first();
@@ -2369,7 +2372,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceBackReallocat
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class... _Valty_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceAt(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceAt(
 	allocator_type& _Allocator,
 	pointer&		_Location,
 	_Valty_&&...	_Val)
@@ -2388,7 +2391,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::emplaceAt(
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <typename _Type_>
-CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCompare(
+CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimization_>::elementsCompare(
 	const Vector<_Type_>& other) const noexcept
 {
 	for (SizeType _Current = 0; _Current < size(); ++_Current) {
@@ -2405,7 +2408,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_>::elementsCo
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _Iterator_>
 // insert counted range _First + [0, _Count) at end
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::appendCountedRange(
 	_Iterator_							_First,
 	BASE_GUARDOVERFLOW const SizeType	_Count) noexcept
 {
@@ -2488,7 +2491,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <
 	class _Iterator_,
 	class _Sentinel_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendUnCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::appendUnCountedRange(
 	_Iterator_ _First,
 	_Sentinel_ _Last) noexcept
 {
@@ -2502,7 +2505,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::appendUnCountedRange
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _Iterator_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::prependCountedRange(
 	_Iterator_							_First,
 	BASE_GUARDOVERFLOW	const SizeType	_Count) noexcept
 {
@@ -2591,7 +2594,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <
 	class _Iterator_,
 	class _Sentinel_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependUnCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::prependUnCountedRange(
 	_Iterator_ _First,
 	_Sentinel_ _Last) noexcept
 {
@@ -2605,7 +2608,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::prependUnCountedRang
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _Iterator_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::insertCountedRange(
 	ConstIterator						_To,
 	_Iterator_							_First,
 	BASE_GUARDOVERFLOW const SizeType	_Count) noexcept
@@ -2656,10 +2659,9 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertCountedRange(
 		if (_InsertAtEnd) { 
 			UNUSED(memory::UninitializedCopyCount(
 				std::move(_First), _Count, 
-				_NewVectorStart + _OldSize, allocator));
+				_NewVectorCurrent, allocator));
 		}
 		else {
-			// Do not copy elements from the old vector that will be inserted later.
 			UNUSED(memory::UninitializedCopyCount(
 				std::move(_First), _Count, 
 				_NewVectorInsertPlace, allocator));
@@ -2704,7 +2706,7 @@ _VECTOR_OUTSIDE_TEMPLATE_
 template <
 	class _Iterator_,
 	class _Sentinel_>
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertUnCountedRange(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::insertUnCountedRange(
 	ConstIterator	_To,
 	_Iterator_ 		_First,
 	_Sentinel_ 		_Last) noexcept
@@ -2729,7 +2731,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::insertUnCountedRange
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateMoveExcept(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::ReallocateMoveExcept(
 	const bool 		insertAtEnd, 
 	const SizeType 	toOffset,
 	const pointer	newVectorStart)
@@ -2750,7 +2752,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateMoveExcept
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateCopyExcept(
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::ReallocateCopyExcept(
 	const bool 		insertAtEnd, 
 	const SizeType 	toOffset,
 	const pointer	newVectorStart)
@@ -2771,7 +2773,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::ReallocateCopyExcept
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::moveAssignUnEqualAllocator(Vector& other) {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::moveAssignUnEqualAllocator(Vector& other) {
 	auto& pairValue = _pair._secondValue;
 	auto& allocator	= _pair.first();
 
@@ -2817,7 +2819,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::moveAssignUnEqualAll
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::FreeAllElements() noexcept {
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::FreeAllElements() noexcept {
 	auto& pairValue		= _pair._secondValue;
 	auto& allocator		= _pair.first();
 
@@ -2834,7 +2836,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::FreeAllElements() no
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_>::clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newSize) { 
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newSize) { 
 	if (newSize == 0)
 		return;
 
