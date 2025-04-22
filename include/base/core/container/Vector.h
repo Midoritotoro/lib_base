@@ -38,29 +38,29 @@ struct VectorSimd {
 	// If SSE4.2 is supported on the device being launched,
 	// then these instructions are used.
 	// Otherwise, it is similar to _Optimization_Disable_
-	struct _Optimization_Enable_Only_If_SSE4_ { 
+	struct _Optimization_Enable_Only_If_SSE4_ {
 	};
-	
+
 	// If AVX is supported on the device being launched,
 	// then these instructions are used.
 	// Otherwise, it is similar to _Optimization_Disable_
-	struct _Optimization_Enable_Only_If_AVX_ { 
+	struct _Optimization_Enable_Only_If_AVX_ {
 	};
-	
+
 	// If AVX512 is supported on the device being launched,
 	// then these instructions are used.
 	// Otherwise, it is similar to _Optimization_Disable_
-	struct _Optimization_Enable_Only_If_AVX512_ { 
+	struct _Optimization_Enable_Only_If_AVX512_ {
 	};
-	
+
 	// Auto-selecting the most efficient option
-	struct _Optimization_Auto_ { 
+	struct _Optimization_Auto_ {
 	};
-	
+
 	// A fully scalar vector
-	struct _Optimization_Disable_ { 
+	struct _Optimization_Disable_ {
 	};
-}
+};
 
 enum class _Vector_SIMD_Algorithm_Alignment : sizetype {
 };
@@ -71,46 +71,57 @@ template <
 	class 		_SimdOptimization_ 	= VectorSimd::_Optimization_Disable_>
 class Vector
 {
+	static constexpr NODISCARD inline bool IsTemplateCorrect() noexcept {
+		if constexpr (
+			std::is_same_v<_SimdOptimization_, VectorSimd::_Optimization_Disable_> == false
+			&& memory::HasMemberAllocateAligned_v<_Allocator_> == false
+		)
+			return false;
+
+		return true;
+	}
+
 	static_assert(
-		std::is_same_v<_SimdOptimization_, VectorSimd::_Optimization_Disable_> == false &&
-		HasMemberAllocateAligned_v<_Allocator_> == false,
+		IsTemplateCorrect(),
 		"Allocator must have allocate_aligned method when SIMD optimization is enabled.");
 
-	using AllocatorForType	= memory::RebindAllocator<_Allocator_, _Element_>; 
-	using AllocatorTraits	= std::allocator_traits<AllocatorForType>;
+	using AllocatorForType			= memory::RebindAllocator<_Allocator_, _Element_>; 
+	using AllocatorTraits			= std::allocator_traits<AllocatorForType>;
 public:
-	using value_type = _Element_;
-	using allocator_type = _Allocator_;
+	using value_type 				= _Element_;
+	using allocator_type 			= _Allocator_;
 
-	using pointer = value_type*;
-	using const_pointer = const pointer;
+	using pointer 					= value_type*;
+	using const_pointer 			= const pointer;
 
-	using size_type = sizetype;
-	using difference_type = ptrdiff;
+	using size_type 				= sizetype;
+	using difference_type 			= ptrdiff;
 
-	using reference = value_type&;
-	using const_reference = const value_type&;
+	using reference 				= value_type&;
+	using const_reference 			= const value_type&;
 
-	using iterator = VectorIterator<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
-	using const_iterator = VectorConstIterator<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
+	using iterator 					= VectorIterator<Vector<
+		_Element_, _Allocator_, _SimdOptimization_>>;
+	using const_iterator 			= VectorConstIterator<Vector<
+		_Element_, _Allocator_, _SimdOptimization_>>;
 
-	using reverse_iterator = std::reverse_iterator<iterator>;
-	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using reverse_iterator 			= std::reverse_iterator<iterator>;
+	using const_reverse_iterator 	= std::reverse_iterator<const_iterator>;
 
-	using Iterator = iterator;
-	using ConstIterator = const_iterator;
+	using Iterator		 			= iterator;
+	using ConstIterator 			= const_iterator;
 
-	using ValueType = value_type;
-	using SizeType = size_type;
+	using ValueType 				= value_type;
+	using SizeType	 				= size_type;
 
-	using Reference = reference;
-	using ConstReference = const_reference;
+	using Reference 				= reference;
+	using ConstReference 			= const_reference;
 
-	using Pointer = pointer;
-	using ConstPointer = const_pointer;
+	using Pointer 					= pointer;
+	using ConstPointer 				= const_pointer;
 
-	using ReverseIterator = reverse_iterator;
-	using ConstReverseIterator = const_reverse_iterator;
+	using ReverseIterator 			= reverse_iterator;
+	using ConstReverseIterator 		= const_reverse_iterator;
 private:
 	using VectorValueType = VectorValue<Vector<_Element_, _Allocator_, _SimdOptimization_>>;
 
@@ -464,7 +475,7 @@ public:
 		const SizeType	newVectorSize,
 		const SizeType	newVectorCapacity);
 
-	CONSTEXPR_CXX20 inline NODISCARD Vector makeView(const std::vector& other);
+	CONSTEXPR_CXX20 inline NODISCARD Vector makeView(const std::vector< _Element_>& other);
 	CONSTEXPR_CXX20 inline NODISCARD Vector makeView(const Vector& other);
 
 	constexpr inline NODISCARD sizetype max_size() const noexcept;
@@ -532,6 +543,19 @@ private:
 		_Iterator_ 		_First,
 		_Sentinel_ 		_Last) noexcept;
 
+
+	template <
+		class _Iterator_,
+		class _Sentinel_>
+	CONSTEXPR_CXX20 inline void assignUnCountedRange(
+		_Iterator_ _First,
+		_Sentinel_ _Last);
+
+	template <class _Iterator_>
+	CONSTEXPR_CXX20 inline void assignCountedRange(
+		_Iterator_							_First,
+		BASE_GUARDOVERFLOW	const SizeType	_NewSize);
+
 	CONSTEXPR_CXX20 inline void ReallocateMoveExcept(
 		const bool 		insertAtEnd, 
 		const SizeType 	toOffset,
@@ -580,7 +604,24 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vecto
 	_InputIterator_ _First,
 	_InputIterator_ _Last) noexcept
 {
+	/*template <_Container_compatible_range<_Ty> _Rng>
+    constexpr vector(from_range_t, _Rng&& _Range, const _Alloc& _Al = _Alloc())
+        : _Mypair(_One_then_variadic_args_t{}, _Al) {
+        if constexpr (_RANGES sized_range<_Rng> || _RANGES forward_range<_Rng>) {
+            const auto _Length = _To_unsigned_like(_RANGES distance(_Range));
+            const auto _Count  = _Convert_size<size_type>(_Length);
+            _Construct_n(_Count, _RANGES _Ubegin(_Range), _RANGES _Uend(_Range));
+        } else {
+            auto&& _Alproxy = _GET_PROXY_ALLOCATOR(_Alty, _Getal());
+            _Container_proxy_ptr<_Alty> _Proxy(_Alproxy, _Mypair._Myval2);
+            _Tidy_guard<vector> _Guard{this};
 
+            _Append_uncounted_range(_RANGES _Ubegin(_Range), _RANGES _Uend(_Range));
+
+            _Guard._Target = nullptr;
+            _Proxy._Release();
+        }
+    }*/
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -775,12 +816,10 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>&
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::operator=(
 		std::initializer_list<ValueType> initializerList) 
 {
-	const auto _SizeForAppend = initializerList.size();
+	auto _Count = SizeType(0);
 
-	if (_SizeForAppend == 0)
-		return;
-
-	appendCountedRange(initializerList.begin(), _SizeForAppend);
+	if (ConvertIntegral<SizeType>(initializerList.size(), _Count))
+		assignCountedRange(initializerList.begin(), _Count);
 
 	return *this;
 }
@@ -1384,9 +1423,9 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Itera
 		wherePointer >= _Start && (wherePointer + sizeForInsert) <= pairValue._end,
 		Iterator{}, _VECTOR_OUT_OF_RANGE_);
 
-	emplaceAt(
-		getAllocator(), wherePointer,
-		std::move(value));
+	insertCountedRange(
+		where, initializerList.begin(),
+		initializerList.end());
 
 	return Iterator(wherePointer);
 }
@@ -1491,7 +1530,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	if (index != _Size - 1)
 		UNUSED(memory::UninitializedMove(
 			_Start + index + 1, _Current,
-			 _Start + index, allocator));
+			_Start + index, allocator));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1717,7 +1756,8 @@ CONSTEXPR_CXX20 inline NODISCARD bool
 	const auto subVectorSize	= subVector.size();
 	const auto _Size			= size();
 
-	_VECTOR_DEBUG_ASSERT_LOG_(subVectorSize == 0 || subVectorSize > size());
+	if (subVectorSize == 0 || subVectorSize > _Size)
+		return false;
 
 	for (SizeType i = 0; i < _Size; ++i) {
 		SizeType overlaps = 0;
@@ -1948,13 +1988,16 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimizatio
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::replace(
-	SizeType ositionFrom,
+	SizeType		 positionFrom,
 	const ValueType& oldValue,
 	const ValueType& newValue)
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(ositionFrom < size() && ositionFrom > 0);
+	const auto _Size = size();
 
-	for (SizeType i = ositionFrom; i < size(); ++i) {
+	if (positionFrom > _Size || positionFrom < 0)
+		return;
+
+	for (SizeType i = positionFrom; i < _Size; ++i) {
 		const auto& currentValue = at(i);
 
 		if (currentValue == oldValue)
@@ -1982,7 +2025,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const ValueType& 	oldValue,
 	const ValueType& 	newValue)
 {
-	_VECTOR_DEBUG_ASSERT_LOG_
+	_VECTOR_DEBUG_ASSERT_LOG_(
 		positionFrom < size() && positionFrom > 0,
 		UNUSED(0), _VECTOR_OUT_OF_RANGE_);
 
@@ -2011,14 +2054,15 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 
 	const pointer& fromPointer = positionFrom._currentElement;
 
-	_VECTOR_DEBUG_ASSERT_LOG_(fromPointer < _Current && fromPointer >= _Start);
+	if (fromPointer > _Current || fromPointer < _Start);
+		return;
 
 	auto temp = Iterator(fromPointer);
 
-	for (; temp != end(); ++temp) {
+	for (; temp != end(); ++temp)
 		if (*temp == oldValue)
 			insert(temp, newValue);
-	}
+
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2076,6 +2120,8 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	SizeType _Count)
 {
 	auto& pairValue = _pair._secondValue;
+	auto& allocator = getAllocator();
+
 	const auto _Size = size();
 	
 	_VECTOR_DEBUG_ASSERT_LOG_(
@@ -2088,7 +2134,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		deallocateAt, 
 		_Count, allocator));
 
-	UNUSED(memory::UnitializedMove(
+	UNUSED(memory::UninitializedMove(
 		deallocateAt + 1, pairValue._current,
 		deallocateAt, allocator));
 }
@@ -2232,13 +2278,13 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
-CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const std::vector& other) {
+CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const std::vector<_Element_>& other) {
 	const auto _Size 	= other.size();
 	pointer& otherData 	= other.data();
 
 	_VECTOR_DEBUG_ASSERT_LOG_(
 		otherData != nullptr, Vector{}, "base::container::Vector::makeView: "
-		"It is not possible to create a view of an empty vector (with zero capacity)");
+		"It is not possible to create a view of an vector with zero capacity");
 
 	return Vector(
 		otherData, otherData /* start as current */,
@@ -2360,7 +2406,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 
 	const auto _NewCapacity			= static_cast<SizeType>(
 		_Vector_Default_Capacity_ + capacity());
-	const auto _IsEnoughMemory	= resize(_NewSize);
+	const auto _IsEnoughMemory	= resize(_NewCapacity);
 
 	if (_IsEnoughMemory == false)
 		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
@@ -2378,7 +2424,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	_Valty_&&...	_Val)
 {
 	
-	if constexpr (IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
+	if constexpr (memory::IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
 		memory::ConstructInPlace(
 			*_Location, std::forward<_Valty_>(_Val)...);
 	else
@@ -2407,7 +2453,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimi
 
 _VECTOR_OUTSIDE_TEMPLATE_
 template <class _Iterator_>
-// insert counted range _First + [0, _Count) at end
+// Insert counted range _First + [0, _Count) at end
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::appendCountedRange(
 	_Iterator_							_First,
 	BASE_GUARDOVERFLOW const SizeType	_Count) noexcept
@@ -2500,7 +2546,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	for (auto _Temp = _First; _Temp != _Last; ++_Temp, ++_Count) {
 	}
 
-	appendCountedRange(_First, _Count);
+	appendCountedRange(std::move(_First), _Count);
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -2654,7 +2700,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 
 		BASE_TRY_BEGIN
 		
-		const auto _InsertAtEnd = (_Insert == _NewVectorCurrent);
+		const auto _InsertAtEnd = (_NewVectorInsertPlace == _NewVectorCurrent);
 
 		if (_InsertAtEnd) { 
 			UNUSED(memory::UninitializedCopyCount(
@@ -2688,12 +2734,12 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		BASE_CATCH_ALL
 
 		memory::DestroyRange(_Current, _Current + _Count, allocator);
-		allocator.deallocate(_BlockStart, _NewCapacity);
+		allocator.deallocate(_NewVectorStart, _NewCapacity);
 
 		BASE_RERAISE;
 		BASE_CATCH_END
 
-		take(_BlockStart, _NewSize, _NewCapacity);
+		take(_NewVectorStart, _NewSize, _NewCapacity);
 	}
 	else {
 		UNUSED(memory::UninitializedCopyCount(
@@ -2731,12 +2777,106 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
+template <
+	class _Iterator_,
+	class _Sentinel_>
+// assign unknown number of elements from [_First, _Last)
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assignUnCountedRange(
+	_Iterator_ _First,
+	_Sentinel_ _Last)
+{
+	auto& pairValue    	= _pair._secondValue;
+
+	pointer& _Start 	= pairValue._start;
+	pointer& _Current  	= pairValue._current;
+
+	pointer _Next = _Start;
+
+	for (; _First != _Last && _Next != _Current; ++_First, (void) ++_Next)
+		*_Next = *_First;
+
+	// Code size optimization: we've exhausted only the source, only the dest, or both.
+	// If we've exhausted only the source: we Trim, then Append does nothing.
+	// If we've exhausted only the dest: Trim does nothing, then we Append.
+	// If we've exhausted both: Trim does nothing, then Append does nothing.
+
+	// Trim.
+	memory::DestroyRange(_Next, _Current, getAllocator());
+	_Current = _Next;
+
+	appendUnCountedRange(std::move(_First), std::move(_Last));
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
+template <class _Iterator_>
+// assign elements from counted range _First + [0, _Newsize)
+CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assignCountedRange(
+	_Iterator_ _First,
+	const SizeType _Newsize)
+{
+	auto& pairValue    	= _pair._secondValue;
+	auto& allocator		= _pair.first();
+
+	pointer& _Start 	= pairValue._start;
+	pointer& _Current  	= pairValue._current;
+	pointer& _End		= pairValue._end;
+
+	const auto _OldCapacity = static_cast<SizeType>(_End - _Start);
+
+	if (_Newsize > _OldCapacity) {
+		clearAndReserveGeometricGrowth(_Newsize);
+
+		_Current = memory::UninitializedCopyCount(
+			std::move(_First), _Newsize, _Start, allocator);
+		
+		return;
+	}
+
+	const auto _OldSize = static_cast<SizeType>(_Current - _Start);
+
+	if (_Newsize > _OldSize) {
+		bool _Copied = false;
+		if constexpr (memory::IteratorCopyCategory<_Iterator_, pointer>::BitcopyAssignable) {
+#if BASE_HAS_CXX20
+			if (!is_constant_evaluated())
+#endif
+			{
+				memory::MemoryCopyMemmoveCount(_First, static_cast<size_t>(_OldSize), _Start);
+				_First += _OldSize;
+				_Copied = true;
+			}
+		}
+
+		if (!_Copied) {
+			for (auto _Mid = _Start; _Mid != _Current; ++_Mid, (void) ++_First) {
+				*_Mid = *_First;
+			}
+		}
+
+
+		_Current = memory::UninitializedCopyCount(
+			std::move(_First), _Newsize - _OldSize,
+			_Current, allocator);
+
+	} else {
+		const pointer _NewLast = _Start + _Newsize;
+
+		memory::MemoryCopyCountUnChecked(std::move(_First), _Newsize, _Start);
+		memory::DestroyRange(_NewLast, _Current, allocator);
+
+		_ASAN_VECTOR_MODIFY(static_cast<difference_type>(_Newsize - _OldSize));
+		_Current = _NewLast;
+	}
+}
+
+_VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::ReallocateMoveExcept(
 	const bool 		insertAtEnd, 
 	const SizeType 	toOffset,
 	const pointer	newVectorStart)
 {
 	auto& pairValue			= _pair._secondValue;
+	auto& allocator			= getAllocator();
 
 	pointer& _Start			= pairValue._start;
 	pointer& _Current		= pairValue._current;
@@ -2758,6 +2898,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const pointer	newVectorStart)
 {
 	auto& pairValue			= _pair._secondValue;
+	auto& allocator			= getAllocator();
 
 	pointer& _Start			= pairValue._start;
 	pointer& _Current		= pairValue._current;
@@ -2792,7 +2933,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const auto oldCapacity = static_cast<SizeType>(_End - _Start);
 
 	if (otherSize > oldCapacity) {
-		clearAndReserveGeometricGrowth(_Newsize);
+		clearAndReserveGeometricGrowth(otherSize);
 
 		_Current = memory::UninitializedMove(otherStart, otherCurrent, _Start, allocator);
 		return;

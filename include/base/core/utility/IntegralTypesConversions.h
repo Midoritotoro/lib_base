@@ -30,8 +30,8 @@ constexpr inline NODISCARD _Type_ MaximumIntegralLimit() noexcept {
 
 // false if the _TypeFrom_ type cannot be converted to _TypeTo without _From data loss
 template <
-	typename _TypeFrom_,
 	typename _TypeTo_,
+	typename _TypeFrom_,
 	typename = std::enable_if_t<
 		std::is_integral_v<_TypeFrom_> 
 		&& std::is_same_v<_TypeFrom_, _TypeTo_>>>
@@ -46,8 +46,8 @@ constexpr inline NODISCARD bool ConvertIntegral(
 
 // false if the _TypeFrom_ type cannot be converted to _TypeTo without _From data loss
 template <
-	typename _TypeFrom_,
 	typename _TypeTo_,
+	typename _TypeFrom_,
 	typename = std::enable_if_t<
 		std::is_integral_v<_TypeFrom_>
 		&& std::is_integral_v<_TypeTo_>

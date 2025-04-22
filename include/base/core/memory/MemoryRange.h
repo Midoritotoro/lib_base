@@ -697,7 +697,7 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MoveUnChecked(
 #if BASE_HAS_CXX20
             if (!is_constant_evaluated())
 #endif
-                return MemoryCopyMemmove(_First, _Last, _Destination);
+                return MemoryCopyMemmoveCount(_First, _Last, _Destination);
         }
 
     for (; _First != _Last; ++_Destination, (void) ++_First)
@@ -705,5 +705,35 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MoveUnChecked(
 
     return _Destination;
 }
+
+template <
+    class _InputIterator_, 
+    class _SizeType_,
+    class _OutIterator_>
+// copy _First + [0, _Count) to _Dest + [0, _Count), returning _Dest + _Count
+CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnChecked(
+    _InputIterator_ _First, 
+    _SizeType_      _Count, 
+    _OutIterator_   _Dest) {
+#if BASE_HAS_CXX20
+    static_assert(is_nonbool_integral_v<_SizeType_>);
+#endif // BASE_HAS_CXX20
+
+    if constexpr (IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable) {
+#if BASE_HAS_CXX20
+        if (!is_constant_evaluated())
+#endif
+        {
+            return MemoryCopyMemmoveCount(_First, static_cast<size_t>(_Count), _Dest);
+        }
+    }
+
+    for (; _Count != 0; ++_Dest, (void) ++_First, --_Count) {
+        *_Dest = *_First;
+    }
+
+    return _Dest;
+}
+
 
 __BASE_MEMORY_NAMESPACE_END

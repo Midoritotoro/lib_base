@@ -113,10 +113,10 @@ template <
 constexpr bool IsNoThrowMoveConstructibleArgs =
     #if defined(OS_WIN) && defined(CPP_MSVC)
 		    std::conjunction_v<
-			    std::is_nothrow_move_constructible<_Type_, _Args_...>,
+			    std::is_nothrow_move_constructible<_Type_>,
 			    std::_Uses_default_construct<_Allocator_, _Type_*, _Args_...>>;
     #else
-		    std::is_nothrow_move_constructible_v<_Allocator_, _Args_...>;
+		    std::is_nothrow_move_constructible_v<_Allocator_>;
     #endif
 
 template <
@@ -197,7 +197,7 @@ struct HasMemberAllocateAligned :
 
 template <class _Allocator_>
 struct HasMemberAllocateAligned<_Allocator_, std::void_t<decltype(
-    std::declval<T>().allocate_aligned())>
+    std::declval<_Allocator_>().allocateAligned())>>
 {};
 
 template <typename _Allocator_>
