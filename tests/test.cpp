@@ -30,7 +30,7 @@ void fmax(int32* s, int32* e, int32* o) {
 	*o = t;
 }
 
-using iti32 = container::VectorIterator<container::Vector<int32>>;
+using iti32 = typename container::Vector<int32>::iterator;
 
 void fvmax(iti32 _First, iti32 _Last, int32* o) {
 	int32 tmp = 0;

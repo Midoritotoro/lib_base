@@ -1435,7 +1435,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	BASE_GUARDOVERFLOW const SizeType newSize,
 	const ValueType& value)
 {
-
+	
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
@@ -1444,14 +1444,14 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	_InputIterator_ _First,
 	_InputIterator_ _Last)
 {
-
+	assignUnCountedRange(std::move(_First), std::move(_Last));
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_
 CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::assign(
 	const std::initializer_list<ValueType> initializerList)
 {
-
+	assignUnCountedRange(initializerList.begin(), initializerList.end());
 }
 
 _VECTOR_OUTSIDE_TEMPLATE_

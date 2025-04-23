@@ -325,6 +325,12 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorDebug.h
     include/base/core/container/VectorValue.h
 
+    include/base/core/container/VectorSimdAlgorithm.h
+    include/base/core/container/SimdAlgorithm.h
+
+    include/base/core/container/SimdFindTraits.h
+    include/base/core/container/SimdCountTraits.h
+
     include/base/core/math/VectorizedAlgorithm.h
 
     include/base/core/math/MinMax.h

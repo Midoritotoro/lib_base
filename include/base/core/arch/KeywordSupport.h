@@ -469,8 +469,10 @@ WARNING_DISABLE_MSVC(4067)
 #  define BASE_GUARDOVERFLOW 
 #endif
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+#if defined(OS_WIN) && (defined(CPP_MSVC) || defined(CPP_CLANG))
 #  define DECLARE_NOALIAS __declspec(noalias)
+#elif defined(CPP_GNU)
+#  define DECLARE_NOALIAS __attribute__((const))
 #else 
 #  define DECLARE_NOALIAS 
 #endif
