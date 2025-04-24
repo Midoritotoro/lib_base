@@ -200,15 +200,15 @@ using xmmfloat  = __m128;
 using ymmfloat  = __m256;
 using zmmfloat  = __m512;
 
-enum class SimdType : uchar { 
-	SSE2 	= 0,
-	SSE3 	= 0x01,
-	SSSE3 	= 0x02,
-	SSE41 	= 0x04,
-	SSE42 	= 0x08,
-	AVX 	= 0x10,
-	AVX512 	= 0x20
-}
+enum class SimdType : uchar {
+	SSE2 = 0,
+	SSE3 = 0x01,
+	SSSE3 = 0x02,
+	SSE41 = 0x04,
+	SSE42 = 0x08,
+	AVX = 0x10,
+	AVX512 = 0x20
+};
 
 __BASE_NAMESPACE_END
 

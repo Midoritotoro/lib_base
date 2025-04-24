@@ -17,7 +17,7 @@
 #include <base/core/memory/MemoryAllocator.h>
 #include <base/core/container/Vector.h>
 
-#include <base/core/math/VectorizedAlgorithm.h>
+#include <base/core/utility/simd/VectorizedAlgorithm.h>
 
 using namespace base;
 

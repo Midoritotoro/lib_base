@@ -325,25 +325,27 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorDebug.h
     include/base/core/container/VectorValue.h
 
-    include/base/core/container/VectorSimdAlgorithm.h
-    include/base/core/container/SimdAlgorithm.h
+    include/base/core/utility/simd/VectorSimdAlgorithm.h
+    include/base/core/utility/simd/SimdAlgorithm.h
 
-    include/base/core/container/SimdFindTraits.h
-    include/base/core/container/SimdCountTraits.h
+    include/base/core/utility/simd/SimdFindTraits.h
+    include/base/core/utility/simd/SimdCountTraits.h
 
-    include/base/core/math/VectorizedAlgorithm.h
+    include/base/core/utility/simd/VectorizedAlgorithm.h
 
-    include/base/core/math/MinMax.h
-    include/base/core/math/MinMaxTraits.h
+    include/base/core/utility/simd/MinMax.h
+    include/base/core/utility/simd/MinMaxTraits.h
 
     include/base/core/arch/ProcessorFeatures.h
     
     include/base/core/arch/CpuId.h
 
-    include/base/core/math/MinMaxTraitsAVX.h
-    include/base/core/math/MinMaxTraitsAVX512.h
+    include/base/core/utility/simd/MinMaxTraitsAVX.h
+    include/base/core/utility/simd/MinMaxTraitsAVX512.h
 
-    include/base/core/math/MinMaxTraitsSSE2.h
+    include/base/core/utility/simd/SimdAlgorithmSafety.h
+
+    include/base/core/utility/simd/MinMaxTraitsSSE2.h
     include/base/core/utility/Concepts.h
 
     include/base/core/memory/MemoryAllocatorUtility.h

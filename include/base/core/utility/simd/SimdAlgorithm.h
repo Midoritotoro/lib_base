@@ -22,7 +22,7 @@ extern "C" {
         const void* _Last,
         void* _Dest) noexcept;
 
-    DECLARE_NOALIAS) void __CDECL ReverseCopyTriviallyCopyable32Bit(
+    DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable32Bit(
         const void* _First, 
         const void* _Last, 
         void* _Dest) noexcept;
@@ -133,7 +133,6 @@ extern "C" {
     //    const void* _First, 
     //    const void* _Last) noexcept;
 
-    // TRANSITION, DevCom-10610477
     DECLARE_NOALIAS void STDCALL Replace32Bit(
         void* _First,
         void* _Last,

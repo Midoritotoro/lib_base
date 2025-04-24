@@ -4,10 +4,10 @@
 #  pragma optimize("t", on)
 #endif // !defined(_DEBUG)
 
-#include <base/core/math/MinMaxTraitsSSE2.h>
+#include <base/core/utility/simd/MinMaxTraitsSSE2.h>
 
-#include <base/core/math/MinMaxTraitsAVX.h>
-#include <base/core/math/MinMaxTraitsAVX512.h>
+#include <base/core/utility/simd/MinMaxTraitsAVX.h>
+#include <base/core/utility/simd/MinMaxTraitsAVX512.h>
 
 __BASE_NAMESPACE_BEGIN
 

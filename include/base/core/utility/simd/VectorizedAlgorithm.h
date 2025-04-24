@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/math/MinMaxTraits.h>
+#include <base/core/utility/simd/MinMaxTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 

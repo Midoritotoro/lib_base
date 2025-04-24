@@ -33,14 +33,14 @@ inline constexpr void ReverseCopyTail(
         *_Destination++ = *--_Last;
 }
 
-NODISCARD constexpr inline sizetype ByteLength(
+NODISCARD constexpr inline std::size_t ByteLength(
     const void* _First,
     const void* _Last) noexcept 
 {
     const auto _FirstUChar  = UnCheckedToConstUnsignedChar(_First);
     const auto _LastUChar   = UnCheckedToConstUnsignedChar(_Last);
     
-    const auto _Length      = static_cast<sizetype>(
+    const auto _Length      = static_cast<std::size_t>(
         _LastUChar - _FirstUChar);
     return _Length;
 }
