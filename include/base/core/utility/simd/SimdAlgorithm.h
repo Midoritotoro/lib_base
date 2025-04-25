@@ -31,32 +31,7 @@ extern "C" {
         const void* _Last, 
         void* _Dest) noexcept;
 
-   /* _Min_max_element_t STDCALL MinMaxElement8Bit(
-        const void* _First, 
-        const void* _Last,
-        bool _Signed) noexcept;
-    _Min_max_element_t STDCALL MinMaxElement16Bit(
-        const void* _First,
-        const void* _Last, 
-        bool _Signed) noexcept;
-
-    _Min_max_element_t STDCALL MinMaxElement32Bit(
-        const void* _First,
-        const void* _Last,
-        bool _Signed) noexcept;
-    _Min_max_element_t STDCALL MinMaxElement64Bit(
-        const void* _First, 
-        const void* _Last, 
-        bool _Signed) noexcept;
-
-    _Min_max_element_t STDCALL MinMaxElementFloat(
-        const void* _First,
-        const void* _Last, 
-        bool _Unused) noexcept;
-    _Min_max_element_t STDCALL MinMaxElementDouble(
-        const void* _First, 
-        const void* _Last, 
-        bool _Unused) noexcept;*/
+    // ================================================================================
 
     const void* STDCALL FindLastTrivial8Bit(
         const void* _First, 
@@ -67,6 +42,8 @@ extern "C" {
         const void* _Last, 
         uint16_t _Val) noexcept;
 
+    // ================================================================================
+
     const void* STDCALL FindLastTrivial32Bit(
         const void* _First, 
         const void* _Last, 
@@ -75,7 +52,8 @@ extern "C" {
         const void* _First, 
         const void* _Last, 
         uint64_t _Val) noexcept;
-
+    
+    // ================================================================================
     const void* STDCALL FindFirstOfTrivial8Bit(
         const void* _First1, 
         const void* _Last1,
@@ -97,6 +75,267 @@ extern "C" {
         const void* _Last1, 
         const void* _First2, 
         const void* _Last2) noexcept;
+
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
+        const void* _Start,
+        const void* _End,
+        int8* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits8Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits8Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits8Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement16Bit(
+        const void* _Start,
+        const void* _End,
+        int16* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits16Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits16Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits16Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement32Bit(
+        const void* _Start,
+        const void* _End,
+        int32* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits32Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits32Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement64Bit(
+        const void* _Start,
+        const void* _End,
+        int64* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits64Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits64Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits64Bit, true>(_Start, _End, _Out);
+    }
+
+
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement8Bit(
+        const void* _Start,
+        const void* _End,
+        int8* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits8Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits8Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits8Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement16Bit(
+        const void* _Start,
+        const void* _End,
+        int16* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits16Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits16Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits16Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
+        const void* _Start,
+        const void* _End,
+        int32* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits32Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits32Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement64Bit(
+        const void* _Start,
+        const void* _End,
+        int64* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits64Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits64Bit, true>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits64Bit, true>(_Start, _End, _Out);
+    }
+
+    // -------------------------------------------------------------
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement8BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint8* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits8Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits8Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits8Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement16BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint16* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits16Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits16Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits16Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement32BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint32* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits32Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits32Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits32Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MinimumElement64BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint64* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MinimumIntegerImplementation<
+            AVX512::NumberTraits64Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MinimumIntegerImplementation<
+            AVX::NumberTraits64Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MinimumIntegerImplementation<
+            SSE2::NumberTraits64Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement8BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint8* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits8Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits8Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits8Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement16BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint16* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits16Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits16Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits16Bit, false>(_Start, _End, _Out);
+    }
+
+    inline DECLARE_NOALIAS void __CDECL MaximumElement32BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint32* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits32Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits32Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits32Bit, false>(_Start, _End, _Out);
+    }
+
+    DECLARE_NOALIAS void __CDECL MaximumElement64BitUnsigned(
+        const void* _Start,
+        const void* _End,
+        uint64* _Out)
+    {
+        if (ProcessorFeatures::AVX512F())
+            return MaximumIntegerImplementation<
+            AVX512::NumberTraits64Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::AVX())
+            return MaximumIntegerImplementation<
+            AVX::NumberTraits64Bit, false>(_Start, _End, _Out);
+        else if (ProcessorFeatures::SSE2())
+            return MaximumIntegerImplementation<
+            SSE2::NumberTraits64Bit, false>(_Start, _End, _Out);
+    }
 
     //DECLARE_NOALIAS  Min_max_1i STDCALL MinMax8Bit(
     //    const void* _First, 
@@ -134,10 +373,10 @@ extern "C" {
     //    const void* _Last) noexcept;
 
     DECLARE_NOALIAS void STDCALL Replace32Bit(
-        void* _First,
-        void* _Last,
-        uint32_t _Old_val, 
-        uint32_t _New_val) noexcept;
+        void*       _First,
+        void*       _Last,
+        uint32_t    _OldValue,
+        uint32_t    _New_val) noexcept;
     DECLARE_NOALIAS void STDCALL Replace64Bit(
         void* _First, 
         void* _Last,

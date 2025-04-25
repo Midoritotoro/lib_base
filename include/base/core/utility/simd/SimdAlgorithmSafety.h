@@ -79,13 +79,13 @@ constexpr bool VectorAlgorithmInFindIsSafe =
     // The type of the value to find must be compatible with the type of the elements.
     && VectorAlgorithmInFindIsSafeElement<_Type_, IteratorValueType<_Iterator_>>;
 
-struct NODISCARD ZeroUpperOnDelete {
-    ZeroUpperOnDelete() = default;
+struct NODISCARD ZeroUpperOnDeleteAvx {
+    ZeroUpperOnDeleteAvx() = default;
 
-    ZeroUpperOnDelete(const ZeroUpperOnDelete&) = delete;
-    ZeroUpperOnDelete& operator=(const ZeroUpperOnDelete&) = delete;
+    ZeroUpperOnDeleteAvx(const ZeroUpperOnDeleteAvx&) = delete;
+    ZeroUpperOnDeleteAvx& operator=(const ZeroUpperOnDeleteAvx&) = delete;
 
-    ~ZeroUpperOnDelete() {
+    ~ZeroUpperOnDeleteAvx() {
         _mm256_zeroupper();
     }
 };

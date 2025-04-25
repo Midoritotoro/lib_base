@@ -29,7 +29,7 @@ static inline void fail(
 	volatile auto nullptr_value = (int*)nullptr;
 	*nullptr_value = 0;
 
-	::std::abort();
+	std::abort();
 }
 
 static inline constexpr [[nodiscard]]

@@ -344,6 +344,7 @@ set(PUBLIC_HEADERS
     include/base/core/utility/simd/MinMaxTraitsAVX512.h
 
     include/base/core/utility/simd/SimdAlgorithmSafety.h
+    include/base/core/utility/simd/SimdTailMask.h
 
     include/base/core/utility/simd/MinMaxTraitsSSE2.h
     include/base/core/utility/Concepts.h

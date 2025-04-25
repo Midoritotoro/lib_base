@@ -5,6 +5,8 @@
 #include <base/core/memory/MemoryRange.h>
 #include <base/core/utility/simd/SimdAlgorithmSafety.h>
 
+#include <base/core/utility/simd/SimdTailMask.h>
+
 __BASE_NAMESPACE_BEGIN
 
 template <
@@ -62,19 +64,6 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindSSE2(
     }
 }
 
-
-template <
-    class _Traits_,
-    class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD const void* FindSSE42(
-    const void* _First,
-    const void* _Last,
-    _Type_      _Val)
-{ 
-    return FindSSE2(_First, _Last, _Val);
-}
-
-
 template <
     class _Traits_,
     class _Type_>
@@ -87,20 +76,21 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindAVX(
     const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
 
     if (avxSize != 0) {
-        ZeroUpperOnDelete _Guard;
+        ZeroUpperOnDeleteAvx guard;
 
-        const __m256i _Comparand = _Traits_::SetAVX(_Val);
+        const __m256i comparand = _Traits_::SetAVX(_Val);
         const void* stopAt = _First;
 
         memory::AdvanceBytes(stopAt, avxSize);
 
         do {
             const __m256i data = _mm256_loadu_si256(static_cast<const __m256i*>(_First));
-            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAVX(data, _Comparand));
+            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAVX(data, comparand));
 
             if (bingo != 0) {
-                const unsigned long _Offset = _tzcnt_u32(bingo);
-                memory::AdvanceBytes(_First, _Offset);
+                const unsigned long offset = _tzcnt_u32(bingo);
+                memory::AdvanceBytes(_First, offset);
+
                 return _First;
             }
 
@@ -110,8 +100,9 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindAVX(
         const size_t avxTailSize = sizeInBytes & 0x1C;
 
         if (avxTailSize != 0) {
-            const __m256i tailMask = _Avx2_tail_mask_32(avxTailSize >> 2);
+            const __m256i tailMask = Avx2TailMask32(avxTailSize >> 2);
             const __m256i data = _mm256_maskload_epi32(static_cast<const int*>(_First), tailMask);
+
             const int bingo =
                 _mm256_movemask_epi8(
                     _mm256_and_si256(
@@ -120,6 +111,7 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindAVX(
             if (bingo != 0) {
                 const unsigned long _Offset = _tzcnt_u32(bingo);
                 memory::AdvanceBytes(_First, _Offset);
+
                 return _First;
             }
 
@@ -141,23 +133,22 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindAVX512(
     _Type_      _Val)
 { 
     const auto sizeInBytes = memory::ByteLength(_First, _Last);
-    const std::size_t avx512Size = sizeInBytes & ~std::size_t{0x3F};
+    const std::size_t avx512Size = sizeInBytes & ~std::size_t{ 0x3F };
 
     if (avx512Size != 0) {
-      //  ZeroUpperOnDelete _Guard;
-
-        const __m512i _Comparand = _Traits_::SetAvx512(_Val);
+        const __m512i comparand = _Traits_::SetAvx512(_Val);
         const void* stopAt = _First;
 
         memory::AdvanceBytes(stopAt, avx512Size);
        
         do {
             const __m512i data = _mm512_loadu_si512(static_cast<const __m512i*>(_First));
-            const int bingo = _Traits_::CompareAvx512(data, _Comparand);
-
+            const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
+            
             if (bingo != 0) {
-                const unsigned long _Offset = _tzcnt_u32(bingo);
-                memory::AdvanceBytes(_First, _Offset);
+                const unsigned long offset = _tzcnt_u64(bingo);
+                memory::AdvanceBytes(_First, offset);
+
                 return _First;
             }
 
@@ -167,15 +158,16 @@ CONSTEXPR_CXX20 inline NODISCARD const void* FindAVX512(
         const size_t avx512TailSize = sizeInBytes & 0x3F;
 
         if (avx512TailSize != 0) {
-            const __m512i tailMask = _Avx512_tail_mask_64(avx512TailSize);
+            const __m512i tailMask = Avx512TailMask64(avx512TailSize);
             const __m512i data = _mm512_maskz_loadu_epi8(tailMask, static_cast<const unsigned char*>(_First));
 
             const __mmask64 comparisonMask =
-                _mm512_kand(_Traits_::CompareAVX512(data, _Comparand), tailMask); // Mask the comparison
+                _mm512_kand(_Traits_::CompareAVX512(data, comparand), tailMask); // Mask the comparison
 
             if (comparisonMask != 0) {
-                const unsigned long _Offset = _tzcnt_u64(comparisonMask);
-                memory::AdvanceBytes(_First, _Offset);
+                const unsigned long offset = _tzcnt_u64(comparisonMask);
+                memory::AdvanceBytes(_First, offset);
+
                 return _First;
             }
 
