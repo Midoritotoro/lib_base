@@ -7,6 +7,46 @@
 
 __BASE_NAMESPACE_BEGIN
 
+// Masks for determining the maximum number of remaining bytes to process in the tail of a data buffer,
+// where the remaining bytes are byte-aligned and a multiple of either 4 (dword/AVX) or 8 (qword/AVX512) bytes.
+
+#define AVX_BYTE_ALIGNED_TAIL_MASK_UINT32       (0x1C)
+#define AVX_BYTE_ALIGNED_TAIL_MASK_UINT64       (0x18)
+
+#define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT32    (0x30)
+#define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64    (0x38)
+
+
+DECLARE_NOALIAS constexpr always_inline NODISCARD
+    std::size_t BytesToDoubleWordsCount(const std::size_t bytes)
+{
+    return (bytes >> 2);
+}
+
+DECLARE_NOALIAS constexpr always_inline NODISCARD
+    std::size_t BytesToQuadWordsCount(const std::size_t bytes)
+{
+    return (bytes >> 3);
+}
+
+DECLARE_NOALIAS constexpr always_inline NODISCARD
+    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
+{
+    return (bytes >> 4);
+}
+
+DECLARE_NOALIAS constexpr always_inline NODISCARD
+    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
+{
+    return (bytes >> 5);
+}
+
+DECLARE_NOALIAS constexpr always_inline NODISCARD
+    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
+{
+    return (bytes >> 6);
+
+}
 
 void STDCALL Replace(
     void*           _First,
@@ -25,8 +65,10 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx32Bit(
     const uint32    _OldValue, 
     const uint32    _NewValue) noexcept
 {   
-    const __m256i comparand = _mm256_broadcastd_epi32(_mm_cvtsi32_si128(_OldValue));
-    const __m256i replacement = _mm256_broadcastd_epi32(_mm_cvtsi32_si128(_NewValue));
+    const __m256i comparand = _mm256_broadcastd_epi32(
+        _mm_cvtsi32_si128(_OldValue));
+    const __m256i replacement = _mm256_broadcastd_epi32(
+        _mm_cvtsi32_si128(_NewValue));
 
     const size_t fullLength = memory::ByteLength(_First, _Last);
 
@@ -34,22 +76,26 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx32Bit(
     memory::AdvanceBytes(stopAt, fullLength & ~size_t{ 0x1F });
 
     while (_First != stopAt) {
-        const __m256i data = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(_First));
+        const __m256i data = _mm256_loadu_si256(
+            reinterpret_cast<const __m256i*>(_First));
         const __m256i mask = _mm256_cmpeq_epi32(comparand, data);
 
         _mm256_maskstore_epi32(reinterpret_cast<int*>(_First), mask, replacement);
         memory::AdvanceBytes(_First, 32);
     }
 
-    const size_t tailLength = fullLength & 0x1C;
+    const size_t tailLength = fullLength & AVX_BYTE_ALIGNED_TAIL_MASK_UINT32;
 
     if (tailLength != 0) {
-        const __m256i tailMask = Avx2TailMask32(tailLength >> 2);
+        const __m256i tailMask = Avx2TailMask32(BytesToDoubleWordsCount(tailLength));
 
-        const __m256i data = _mm256_maskload_epi32(reinterpret_cast<const int*>(_First), tailMask);
-        const __m256i mask = _mm256_and_si256(_mm256_cmpeq_epi32(comparand, data), tailMask);
+        const __m256i data = _mm256_maskload_epi32(
+            reinterpret_cast<const int*>(_First), tailMask);
+        const __m256i mask = _mm256_and_si256(
+            _mm256_cmpeq_epi32(comparand, data), tailMask);
 
-        _mm256_maskstore_epi32(reinterpret_cast<int*>(_First), mask, replacement);
+        _mm256_maskstore_epi32(
+            reinterpret_cast<int*>(_First), mask, replacement);
     }
 
     _mm256_zeroupper();
@@ -62,34 +108,45 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx64Bit(
     const uint64    _NewValue) noexcept 
 {
 #if defined(OS_WIN64) || !defined(CPP_MSVC)
-    const __m256i comparand = _mm256_broadcastq_epi64(_mm_cvtsi64_si128(_OldValue));
-    const __m256i replacement = _mm256_broadcastq_epi64(_mm_cvtsi64_si128(_NewValue));
+    const __m256i comparand = _mm256_broadcastq_epi64(
+        _mm_cvtsi64_si128(_OldValue));
+    const __m256i replacement = _mm256_broadcastq_epi64(
+        _mm_cvtsi64_si128(_NewValue));
 #else // workaround, _mm_cvtsi64_si128 does not compile on x86 Windows using MSVC
     const __m256i comparand = _mm256_set1_epi64x(_OldValue);
     const __m256i replacement = _mm256_set1_epi64x(_NewValue);
 #endif
-    const size_t fullLength = memory::ByteLength(_First, _Last);
+
+    const auto fullLength = memory::ByteLength(_First, _Last);
 
     void* stopAt = _First;
-    memory::AdvanceBytes(stopAt, fullLength & ~size_t{ 0x1F });
+    memory::AdvanceBytes(stopAt, fullLength & ~std::size_t{ 0x1F });
 
     while (_First != stopAt) {
-        const __m256i data = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(_First));
-        const __m256i mask = _mm256_cmpeq_epi64(comparand, data);
+        const auto data = _mm256_loadu_si256(
+            reinterpret_cast<const __m256i*>(_First));
+        const auto mask = _mm256_cmpeq_epi64(comparand, data);
 
-        _mm256_maskstore_epi64(reinterpret_cast<long long*>(_First), mask, replacement);
+        _mm256_maskstore_epi64(
+            reinterpret_cast<long long*>(_First),
+            mask, replacement);
 
         memory::AdvanceBytes(_First, 32);
     }
-
-    const size_t tailLength = fullLength & 0x18;
+    
+    const std::size_t tailLength = fullLength & AVX_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
     if (tailLength != 0) {
-        const __m256i tailMask = Avx2TailMask32(tailLength >> 2);
-        const __m256i data = _mm256_maskload_epi64(reinterpret_cast<const long long*>(_First), tailMask);
+        const auto tailMask = Avx2TailMask32(BytesToDoubleWordsCount(tailLength));
+        const auto data = _mm256_maskload_epi64(
+            reinterpret_cast<const long long*>(_First), tailMask);
 
-        const __m256i mask = _mm256_and_si256(_mm256_cmpeq_epi64(comparand, data), tailMask);
-        _mm256_maskstore_epi64(reinterpret_cast<long long*>(_First), mask, replacement);
+        const __m256i mask = _mm256_and_si256(
+            _mm256_cmpeq_epi64(comparand, data), tailMask);
+
+        _mm256_maskstore_epi64(
+            reinterpret_cast<long long*>(_First),
+            mask, replacement);
     }
 
     _mm256_zeroupper();
@@ -101,34 +158,82 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx512_32Bit(
     const uint32    _OldValue,
     const uint32    _NewValue) noexcept
 {
-    const __m512i comparand     = _mm512_broadcastd_epi32(_mm_cvtsi32_si128(_OldValue));
-    const __m512i replacement   = _mm512_broadcastd_epi32(_mm_cvtsi32_si128(_NewValue));
-        
-    const size_t fullLength     = memory::ByteLength(_First, _Last);
+    const auto comparand    = _mm512_broadcastd_epi32(
+        _mm_cvtsi32_si128(_OldValue));
+    const auto replacement  = _mm512_broadcastd_epi32(
+        _mm_cvtsi32_si128(_NewValue));
+
+    const auto fullLength     = memory::ByteLength(_First, _Last);
 
     void* stopAt = _First;
     memory::AdvanceBytes(stopAt, fullLength & ~size_t{ 0x3F });
 
     while (_First != stopAt) {
-        const __m512i data      = _mm512_loadu_si512(reinterpret_cast<const __m512i*>(_First));
-        const __mmask64 mask    = _mm512_cmpeq_epi32_mask(comparand, data);
+        const auto data = _mm512_loadu_si512(
+            reinterpret_cast<const __m512i*>(_First));
+        const auto mask = _mm512_cmpeq_epi32_mask(comparand, data);
 
+        _mm512_mask_store_epi32(_First, mask, replacement);
+
+        memory::AdvanceBytes(_First, 64);
+    }
+    
+    const size_t tailLength = fullLength & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT32;
+
+    if (tailLength != 0) {
+        const auto tailMask = Avx512TailMask64(
+            BytesToQuadWordsCount(tailLength));
+
+        const auto data = _mm512_mask_load_epi32(
+            _mm512_setzero_si512(), tailMask, _First);
+        
+        const auto mask = _mm512_cmpeq_epi32_mask(comparand, data) & tailMask;
         _mm512_mask_store_epi32(reinterpret_cast<int*>(_First), mask, replacement);
+    }
+}
+
+DECLARE_NOALIAS void STDCALL ReplaceAvx512_64Bit(
+    void*           _First,
+    void* const     _Last,
+    const uint64    _OldValue,
+    const uint64    _NewValue) noexcept
+{
+#if defined(OS_WIN64) || !defined(CPP_MSVC)
+    const auto comparand = _mm512_broadcastd_epi32(
+        _mm_cvtsi64_si128(_OldValue));
+    const auto replacement = _mm512_broadcastd_epi32(
+        _mm_cvtsi64_si128(_NewValue));
+#else // workaround, _mm_cvtsi64_si128 does not compile on x86 Windows using MSVC
+    const auto comparand = _mm512_set1_epi64(_OldValue);
+    const auto replacement = _mm512_set1_epi64(_NewValue);
+#endif
+
+    const auto fullLength = memory::ByteLength(_First, _Last);
+
+    void* stopAt = _First;
+    memory::AdvanceBytes(stopAt, fullLength & ~size_t{ 0x3F });
+
+    while (_First != stopAt) {
+        const auto data = _mm512_loadu_epi64(
+            reinterpret_cast<const __m512i*>(_First));
+        const auto mask = _mm512_cmpeq_epi64_mask(comparand, data);
+
+        _mm512_mask_store_epi64(_First, mask, replacement);
         memory::AdvanceBytes(_First, 64);
     }
 
-    const size_t tailLength = fullLength & 0x1C;
+    const size_t tailLength = fullLength & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
     if (tailLength != 0) {
-        const __m512i tailMask = Avx512TailMask64(tailLength >> 2);
-        
-        __m512i data = _mm512_set1_epi32(0);
-        _mm512_mask_load_epi32(reinterpret_cast<__m512i*>(_First), _mm512_mask_tailMask, data);
-        const __m512i mask = _mm512_and_si512(_mm512_cmpeq_epi32(comparand, data), tailMask);
+        const auto tailMask = Avx512TailMask64(
+            BytesToQuadWordsCount(tailLength));
 
-        _mm256_maskstore_epi32(reinterpret_cast<int*>(_First), mask, replacement);
+        const auto data = _mm512_mask_load_epi64(
+            _mm512_setzero_si512(), tailMask, _First);
+
+        const auto mask = _mm512_cmpeq_epi64_mask(comparand, data) & tailMask;
+        _mm512_mask_store_epi64(reinterpret_cast<int*>(_First), mask, replacement);
     }
-
-    _mm256_zeroupper();
 }
+
 __BASE_NAMESPACE_END

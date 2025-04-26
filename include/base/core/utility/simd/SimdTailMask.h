@@ -13,13 +13,11 @@ NODISCARD __m256i Avx2TailMask32(const std::size_t countInDwords) noexcept {
             tailMasks + (8 - countInDwords)));
 }
 
-__m512i Avx512TailMask64(const std::size_t countInDwords) noexcept {
-    // _Count_in_dwords must be within [0, 4].
-    static constexpr std::size_t tailMasks[8] = {
-        ~0u, ~0u, ~0u, ~0u, 0, 0, 0, 0 };
-    return _mm512_loadu_si512(
-        reinterpret_cast<const __m512i*>(
-            tailMasks + (4 - countInDwords)));
+NODISCARD __mmask16 Avx512TailMask64(const std::size_t countInQWords) noexcept {
+    if (countInQWords > 8)
+        return 0;
+
+    return (1ULL << countInQWords) - 1;
 }
 
 __BASE_NAMESPACE_END
