@@ -44,16 +44,6 @@ struct MinMaxUInt64Bit {
     uint64 maximum = 0;
 };
 
-struct MinMaxIntWordSize {
-    registerint minimum = 0;
-    registerint maximum = 0;
-};
-
-struct MinMaxUIntWordSize {
-    registeruint minimum = 0;
-    registeruint maximum = 0;
-};
-
 struct MinMaxFloat {
     float minimum = 0;
     float maximum = 0;

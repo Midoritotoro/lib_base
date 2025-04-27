@@ -543,4 +543,28 @@ struct UnwrapEnum<_Element_, false> {
 template <class _Element_>
 using unwrap_enum_t = typename UnwrapEnum<_Element_>::type;
 
+#if BASE_HAS_CXX20
+
+	template <class _Iterator_>
+	using IteratorReferenceType		= std::iter_reference_t<_Iterator_>;
+
+	template <class _Iterator_>
+	using IteratorValueType			= std::iter_value_t<_Iterator_>;
+
+	template <class _Iterator_>
+	using IteratorDifferenceType	= std::iter_difference_t<_Iterator_>;
+
+#else
+
+	template <class _Iterator_>
+	using IteratorReferenceType		= typename std::iterator_traits<_Iterator_>::reference;
+
+	template <class _Iterator_>
+	using IteratorValueType			= typename std::iterator_traits<_Iterator_>::value_type;
+
+	template <class _Iterator_>
+	using IteratorDifferenceType	= typename std::iterator_traits<_Iterator_>::difference_type;
+
+#endif
+
 __BASE_NAMESPACE_END

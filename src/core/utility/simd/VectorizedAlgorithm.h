@@ -138,6 +138,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumIntegerImplementation(
         }
         else {
             // Конец
+
             if constexpr (_Sign_ || _SignCorrection) {
                 const auto _HorizontalMinimum =
                     _Traits_::HorizontalMinimum(_CurrentMinimumValues); // Отсортированный вектор с минимальным элементом на первой позиции

@@ -6,7 +6,7 @@
 #include <base/core/memory/MemoryRange.h>
 
 __BASE_NAMESPACE_BEGIN
-
+std::_Iter_value_t<_st>
 
 template <
     class _Type_,

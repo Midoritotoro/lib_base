@@ -232,16 +232,15 @@ private:
     public:
         ProcessorFeaturesInternal()
         {
-            //int cpuInfo[4] = {-1};
             std::array<int, 4> cpui;
 
             // Calling __cpuid with 0x0 as the function_id argument
             // gets the number of the highest valid function ID.
+
             CpuId(cpui.data(), 0);
             nIds_ = cpui[0];
 
-            for (int i = 0; i <= nIds_; ++i)
-            {
+            for (int i = 0; i <= nIds_; ++i) {
                 CpuIdExtended(cpui.data(), i, 0);
                 data_.push_back(cpui);
             }
@@ -275,28 +274,26 @@ private:
 
             // Calling __cpuid with 0x80000000 as the function_id argument
             // gets the number of the highest valid extended ID.
+
             CpuId(cpui.data(), 0x80000000);
             nExIds_ = cpui[0];
 
             char brand[0x40];
             memset(brand, 0, sizeof(brand));
 
-            for (int i = 0x80000000; i <= nExIds_; ++i)
-            {
+            for (int i = 0x80000000; i <= nExIds_; ++i) {
                 CpuIdExtended(cpui.data(), i, 0);
                 extdata_.push_back(cpui);
             }
 
             // load bitset with flags for function 0x80000001
-            if (nExIds_ >= 0x80000001)
-            {
+            if (nExIds_ >= 0x80000001) {
                 f_81_ECX_ = extdata_[1][2];
                 f_81_EDX_ = extdata_[1][3];
             }
 
             // Interpret CPU brand string if reported
-            if (nExIds_ >= 0x80000004)
-            {
+            if (nExIds_ >= 0x80000004) {
                 memcpy(brand, extdata_[2].data(), sizeof(cpui));
                 memcpy(brand + 16, extdata_[3].data(), sizeof(cpui));
                 memcpy(brand + 32, extdata_[4].data(), sizeof(cpui));

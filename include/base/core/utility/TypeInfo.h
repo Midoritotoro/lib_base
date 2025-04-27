@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeConversions.h>
+#include <base/core/utility/TypeTraits.h>
 #include <base/core/utility/Flags.h>
 
 

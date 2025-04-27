@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <base/core/utility/simd/Find.h>
-#include <base/core/utility/simd/Count.h>
+#include <src/core/utility/simd/Find.h>
+#include <src/core/utility/simd/Count.h>
 
-#include <base/core/utility/simd/Replace.h>
+#include <src/core/utility/simd/Replace.h>
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 
@@ -41,7 +41,7 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t Count(
 {
     if (ProcessorFeatures::AVX512F())
         return CountAVX512(std::move(_First), std::move(_Last), _Value);
-    else if (ProcessorFeaturse::AVX())
+    else if (ProcessorFeatures::AVX())
         return CountAVX(std::move(_First), std::move(_Last), _Value);
     else if (ProcessorFeatures::SSE42())
         return CountSSE42(std::move(_First), std::move(_Last), _Value);
