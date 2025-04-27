@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-#include <base/core/utility/simd/SimdFindTraits.h>
+#include <src/core/utility/simd/SimdFindTraits.h>
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 

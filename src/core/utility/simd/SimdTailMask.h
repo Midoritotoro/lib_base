@@ -10,8 +10,8 @@ __BASE_NAMESPACE_BEGIN
 #define AVX_BYTE_ALIGNED_TAIL_MASK_UINT32       (0x1C)
 #define AVX_BYTE_ALIGNED_TAIL_MASK_UINT64       (0x18)
 
-#define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT32    (0x30)
 #define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64    (0x38)
+#define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT32    (0x30)
 
 NODISCARD __m256i inline Avx2TailMask32(const std::size_t countInDwords) noexcept {
     // countInDwords must be within [0, 8].

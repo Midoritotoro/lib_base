@@ -142,6 +142,34 @@ set(PRIVATE_SOURCES
 
     src/core/string/UnicodeTables.h
     src/core/string/UnicodeTables.cpp
+
+    src/core/utility/simd/SimdFindTraits.h
+    src/core/utility/simd/SimdFindTraits.cpp
+
+    src/core/utility/simd/SimdCountTraits.h
+    src/core/utility/simd/SimdCountTraits.cpp
+
+    src/core/utility/simd/CountImplementation.cpp
+    src/core/utility/simd/FindImplementation.cpp
+
+    src/core/utility/simd/ReplaceImplementation.cpp
+
+    src/core/utility/simd/MinMax.h
+    src/core/utility/simd/MinMaxTraits.h
+
+    src/core/utility/simd/MinMaxTraitsAVX.h
+    src/core/utility/simd/MinMaxTraitsAVX512.h
+    
+    src/core/utility/simd/MinMaxTraitsSSE2.h
+
+    src/core/utility/simd/MinMaxTraitsAVX.cpp
+    src/core/utility/simd/MinMaxTraitsAVX512.cpp
+    
+    src/core/utility/simd/MinMaxTraitsSSE2.cpp
+
+    src/core/utility/simd/SimdAlgorithmSafety.h
+    src/core/utility/simd/SimdTailMask.h
+
 )
 
 set(PUBLIC_HEADERS 
@@ -328,25 +356,12 @@ set(PUBLIC_HEADERS
     include/base/core/utility/simd/VectorSimdAlgorithm.h
     include/base/core/utility/simd/SimdAlgorithm.h
 
-    include/base/core/utility/simd/SimdFindTraits.h
-    include/base/core/utility/simd/SimdCountTraits.h
-
-    include/base/core/utility/simd/VectorizedAlgorithm.h
-
-    include/base/core/utility/simd/MinMax.h
-    include/base/core/utility/simd/MinMaxTraits.h
 
     include/base/core/arch/ProcessorFeatures.h
     
     include/base/core/arch/CpuId.h
 
-    include/base/core/utility/simd/MinMaxTraitsAVX.h
-    include/base/core/utility/simd/MinMaxTraitsAVX512.h
-
-    include/base/core/utility/simd/SimdAlgorithmSafety.h
-    include/base/core/utility/simd/SimdTailMask.h
-
-    include/base/core/utility/simd/MinMaxTraitsSSE2.h
+     
     include/base/core/utility/Concepts.h
 
     include/base/core/memory/MemoryAllocatorUtility.h

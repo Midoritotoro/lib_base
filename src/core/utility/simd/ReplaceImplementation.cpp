@@ -3,42 +3,10 @@
 #include <base/core/arch/Platform.h>
 #include <base/core/memory/MemoryRange.h>
 
-#include <base/core/utility/simd/SimdTailMask.h>
+#include <src/core/utility/simd/SimdTailMask.h>
 
 __BASE_NAMESPACE_BEGIN
 
-
-
-DECLARE_NOALIAS constexpr always_inline NODISCARD
-    std::size_t BytesToDoubleWordsCount(const std::size_t bytes)
-{
-    return (bytes >> 2);
-}
-
-DECLARE_NOALIAS constexpr always_inline NODISCARD
-    std::size_t BytesToQuadWordsCount(const std::size_t bytes)
-{
-    return (bytes >> 3);
-}
-
-DECLARE_NOALIAS constexpr always_inline NODISCARD
-    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
-{
-    return (bytes >> 4);
-}
-
-DECLARE_NOALIAS constexpr always_inline NODISCARD
-    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
-{
-    return (bytes >> 5);
-}
-
-DECLARE_NOALIAS constexpr always_inline NODISCARD
-    std::size_t BytesToXmmWordsCount(const std::size_t bytes)
-{
-    return (bytes >> 6);
-
-}
 
 void STDCALL Replace(
     void*           _First,

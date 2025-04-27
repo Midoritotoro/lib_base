@@ -6,7 +6,6 @@
 #include <base/core/memory/MemoryRange.h>
 
 __BASE_NAMESPACE_BEGIN
-std::_Iter_value_t<_st>
 
 template <
     class _Type_,
@@ -63,17 +62,13 @@ constexpr bool VectorAlgorithmInFindIsSafeElement = std::disjunction_v<
     // - One of the pointer types is a cv1 U* and the other is a cv2 U*.
     VectorAlgorithmInFindIsSafeObjectPointers<_Type_, _Element_>>;
 
-template <class _Iterator_> 
-using IteratorValueType = typename _Iterator_::value_type;
-
-
 // Can we activate the vector algorithms for find/count?
 template <
     class _Iterator_,
     class _Type_>
 constexpr bool VectorAlgorithmInFindIsSafe =
     // The iterator must be contiguous so we can get raw pointers.
-    IsIteratorContiguous<_Iterator_>
+    IteratorIsContiguous<_Iterator_>
     // The iterator must not be volatile.
     && !IsIteratorVolatile<_Iterator_>
     // The type of the value to find must be compatible with the type of the elements.
