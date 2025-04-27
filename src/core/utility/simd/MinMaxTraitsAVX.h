@@ -27,107 +27,46 @@ namespace AVX {
 
         NODISCARD static SimdType SignCorrection(
             const SimdType _Val,
-            const bool _Sign)
-        {
-            SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][32] = {
-                {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}, {} };
-            return _mm256_sub_epi8(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
-        }
+            const bool _Sign);
 
-        static SimdType Increment(SimdType _Idx) {
-            return _mm256_add_epi8(_Idx, _mm256_set1_epi8(1));
-        }
-
-        static SimdType Decrement(SimdType _Idx) {
-            return _mm256_sub_epi8(_Idx, _mm256_set1_epi8(1));
-        }
+        NODISCARD static SimdType Increment(SimdType _Idx);
+        NODISCARD static SimdType Decrement(SimdType _Idx);
 
         NODISCARD static SimdType Add(
             SimdType _FirstVector,
-            SimdType _SecondVector)
-        {
-            return _mm256_add_epi8(_FirstVector, _SecondVector);
-        }
-
-        NODISCARD static SimdType Load(const void* _Start) {
-            return _mm256_loadu_epi8(_Start);
-        }
+            SimdType _SecondVector);
+        NODISCARD static SimdType Load(const void* _Start);
 
         NODISCARD static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_min_epi8(_First, _Second);
-        }
+            SimdType = _mm256_undefined_si256()) noexcept;
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept;
 
         NODISCARD static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_max_epi8(_First, _Second);
-        }
-
-        NODISCARD static SimdType MinimumUnsigned(
-            const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_min_epu8(_First, _Second);
-        }
-
+            SimdType = _mm256_undefined_si256()) noexcept;
         NODISCARD static SimdType MaximumUnsigned(
             const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_max_epu8(_First, _Second);
-        }
-
+            const SimdType _Second) noexcept;
         
-        template <class _Fn>
-        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
-            SimdType _H_min_val = _Cur;
-            return _H_min_val;
-        }
+        template <class _Functor_>
+        NODISCARD static SimdType HorizontalFunc(
+            const SimdType current,
+            _Functor_ functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epi8(_Val1, _Val2);
-            });
-        }
+        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epi8(_Val1, _Val2);
-            });
-        }
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epu8(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epu8(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
-            return static_cast<SignedType>(_mm256_cvtsi256_si32(_Cur));
-        }
-
-        NODISCARD static ymmdouble ToDouble(SimdType _Vector) {
-            return _mm256_castsi256_pd(_Vector);
-        }
-
-        NODISCARD static ymmfloat ToFloat(SimdType _Vector) {
-            return _mm256_castsi256_ps(_Vector);
-        }
+        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
+        NODISCARD static ymmdouble ToDouble(SimdType _Vector);
+        NODISCARD static ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -149,115 +88,46 @@ namespace AVX {
 
         NODISCARD static SimdType SignCorrection(
             const SimdType _Val,
-            const bool _Sign)
-        {
-            SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][16] = {
-                {0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF,
-                 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF }, {} };
-            return _mm256_sub_epi16(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
-        }
+            const bool _Sign);
 
-        static SimdType Increment(SimdType _Idx) {
-            return _mm256_add_epi16(_Idx, _mm256_set1_epi16(1));
-        }
-
-        static SimdType Decrement(SimdType _Idx) {
-            return _mm256_sub_epi16(_Idx, _mm256_set1_epi16(1));
-        }
+        static SimdType Increment(SimdType _Idx);
+        static SimdType Decrement(SimdType _Idx);
 
         NODISCARD static SimdType Add(
             SimdType _FirstVector,
-            SimdType _SecondVector)
-        {
-            return _mm256_add_epi16(_FirstVector, _SecondVector);
-        }
-
-        NODISCARD static SimdType Load(const void* _Start) {
-            return _mm256_loadu_epi16(_Start);
-        }
+            SimdType _SecondVector);
+        NODISCARD static SimdType Load(const void* _Start);
 
         NODISCARD static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_min_epi16(_First, _Second);
-        }
+            SimdType = _mm256_undefined_si256()) noexcept;
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept;
 
         NODISCARD static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_max_epi16(_First, _Second);
-        }
-
-        NODISCARD static SimdType MinimumUnsigned(
-            const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_min_epu16(_First, _Second);
-        }
-
+            SimdType = _mm256_undefined_si256()) noexcept;
         NODISCARD static SimdType MaximumUnsigned(
             const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_max_epu16(_First, _Second);
-        }
+            const SimdType _Second) noexcept;
 
+        template <class _Functor_>
+        NODISCARD static SimdType HorizontalFunc(
+            const SimdType  current, 
+            _Functor_       functor) noexcept;
 
-        template <class _Fn>
-        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
-            const SimdType _Shuf_bytes = _mm256_set_epi16(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
-            const SimdType _Shuf_words = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-            SimdType _H_min_val = _Cur;
-
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
-
-            //_H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_words));
-            //_H_min_val = _Funct(_H_min_val, _mm256_shufflehi_epi16(_H_min_val, _Shuf_bytes));
-
-            return _H_min_val;
-        }
-
-        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epi16(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epi16(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epu16(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epu16(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
-            return static_cast<SignedType>(_mm256_cvtsi256_si32(_Cur));
-        }
-
-        NODISCARD static ymmdouble ToDouble(SimdType _Vector) {
-            return _mm256_castsi256_pd(_Vector);
-        }
-
-        NODISCARD static ymmfloat ToFloat(SimdType _Vector) {
-            return _mm256_castsi256_ps(_Vector);
-        }
+        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
+        NODISCARD static ymmdouble ToDouble(SimdType _Vector);
+        NODISCARD static ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -279,112 +149,47 @@ namespace AVX {
 
         NODISCARD static SimdType SignCorrection(
             const SimdType _Val,
-            const bool _Sign)
-        {
-            SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][8] = {
-                {0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF,
-                 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF}, {} };
-            return _mm256_sub_epi32(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
-        }
+            const bool _Sign);
 
-        static SimdType Increment(SimdType _Idx) {
-            return _mm256_add_epi32(_Idx, _mm256_set1_epi32(1));
-        }
-
-        static SimdType Decrement(SimdType _Idx) {
-            return _mm256_sub_epi32(_Idx, _mm256_set1_epi32(1));
-        }
+        static SimdType Increment(SimdType _Idx);
+        static SimdType Decrement(SimdType _Idx);
 
         NODISCARD static SimdType Add(
             SimdType _FirstVector,
-            SimdType _SecondVector)
-        {
-            return _mm256_add_epi32(_FirstVector, _SecondVector);
-        }
+            SimdType _SecondVector);
 
-        NODISCARD static SimdType Load(const void* _Start) {
-            return _mm256_loadu_epi32(_Start);
-        }
+        NODISCARD static SimdType Load(const void* _Start);
 
         NODISCARD static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_min_epi32(_First, _Second);
-        }
+            SimdType = _mm256_undefined_si256()) noexcept;
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept;
 
         NODISCARD static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_max_epi32(_First, _Second);
-        }
-
-        NODISCARD static SimdType MinimumUnsigned(
-            const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_min_epu32(_First, _Second);
-        }
-
+            SimdType = _mm256_undefined_si256()) noexcept;
         NODISCARD static SimdType MaximumUnsigned(
             const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_max_epu32(_First, _Second);
-        }
+            const SimdType _Second) noexcept;
 
-        
-        template <class _Fn>
-        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
-            SimdType _H_min_val = _Cur;
+        template <class _Functor_>
+        NODISCARD static SimdType HorizontalFunc(
+            const SimdType  current,
+            _Functor_       functor) noexcept;
 
-            SimdType _Shuffled = _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2));
-            _H_min_val = _Funct(_H_min_val, _Shuffled);
+        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
 
-            _Shuffled = _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1));
-            _H_min_val = _Funct(_H_min_val, _Shuffled);
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-            return _H_min_val;
-        }
-
-        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epi32(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epi32(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epu32(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epu32(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
-            return static_cast<SignedType>(_mm256_cvtsi256_si32(_Cur));
-        }
-
-        NODISCARD static ymmdouble ToDouble(SimdType _Vector) {
-            return _mm256_castsi256_pd(_Vector);
-        }
-
-        NODISCARD static ymmfloat ToFloat(SimdType _Vector) {
-            return _mm256_castsi256_ps(_Vector);
-        }
+        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
+        NODISCARD static ymmdouble ToDouble(SimdType _Vector);
+        NODISCARD static ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -405,118 +210,52 @@ namespace AVX {
         NumberTraits64Bit() noexcept = default;
 
         NODISCARD static SimdType SignCorrection(
-            const SimdType _Val,
-            const bool _Sign)
-        {
-            SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][4] = {
-                {0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF}, {} };
-            return _mm256_sub_epi64(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
-        }
+            const SimdType  _Val,
+            const bool      _Sign);
 
-        static SimdType Increment(SimdType _Idx) {
-            return _mm256_add_epi64(_Idx, _mm256_set1_epi64x(1));
-        }
-
-        static SimdType Decrement(SimdType _Idx) {
-            return _mm256_sub_epi64(_Idx, _mm256_set1_epi64x(1));
-        }
+        static SimdType Increment(SimdType _Idx);
+        static SimdType Decrement(SimdType _Idx);
 
         NODISCARD static SimdType Add(
             SimdType _FirstVector,
-            SimdType _SecondVector)
-        {
-            return _mm256_add_epi64(_FirstVector, _SecondVector);
-        }
+            SimdType _SecondVector);
 
-        NODISCARD static SimdType Load(const void* _Start) {
-            return _mm256_loadu_epi64(_Start);
-        }
+        NODISCARD static SimdType Load(const void* _Start);
 
         NODISCARD static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_min_epi64(_First, _Second);
-        }
+            SimdType = _mm256_undefined_si256()) noexcept;
+        NODISCARD static SimdType MinimumUnsigned(
+            const SimdType _First,
+            const SimdType _Second) noexcept;
 
         NODISCARD static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
-            SimdType = _mm256_undefined_si256()) noexcept
-        {
-            return _mm256_max_epi64(_First, _Second);
-        }
-
-        NODISCARD static SimdType MinimumUnsigned(
-            const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_min_epu64(_First, _Second);
-        }
-
+            SimdType = _mm256_undefined_si256()) noexcept;
         NODISCARD static SimdType MaximumUnsigned(
             const SimdType _First,
-            const SimdType _Second) noexcept
-        {
-            return _mm256_max_epu64(_First, _Second);
-        }
+            const SimdType _Second) noexcept;
 
-        template <class _Fn>
-        NODISCARD static SimdType HorizontalFunc(const SimdType _Cur, _Fn _Funct) noexcept {
-            SimdType _H_min_val = _Cur;
+        template <class _Functor_>
+        NODISCARD static SimdType HorizontalFunc(
+            const SimdType  current, 
+            _Functor_       functor) noexcept;
 
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
-            _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
 
-            return _H_min_val;
-        }
+        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epi64(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximum(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epi64(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_min_epu64(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType _Cur) noexcept {
-            return HorizontalFunc(_Cur, [](SimdType _Val1, SimdType _Val2) {
-                return _mm256_max_epu64(_Val1, _Val2);
-            });
-        }
-
-        NODISCARD static SignedType GetAny(const SimdType _Cur) noexcept {
-            return static_cast<SignedType>(GetVPos(_Cur, 0));
-        }
-
-
+        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
         NODISCARD static UnsignedType GetVPos(
-            const SimdType _Idx,
-            const unsigned long _H_pos) noexcept
-        {
-            UnsignedType _Array[4];
-            _mm256_storeu_si256(reinterpret_cast<SimdType*>(&_Array), _Idx);
-            return _Array[_H_pos >> 3];
-        }
+            const SimdType      _Idx,
+            const unsigned long _H_pos) noexcept;
 
-        NODISCARD static ymmdouble ToDouble(SimdType _Vector) {
-            return _mm256_castsi256_pd(_Vector);
-        }
-
-        NODISCARD static ymmfloat ToFloat(SimdType _Vector) {
-            return _mm256_castsi256_ps(_Vector);
-        }
+        NODISCARD static ymmdouble ToDouble(SimdType _Vector);
+        NODISCARD static ymmfloat ToFloat(SimdType _Vector);
     };
 } // namespace AVX
 
