@@ -534,18 +534,21 @@ WARNING_DISABLE_MSVC(4067)
 #ifndef NODISCARD_RETURN_RAW_PTR
 #  define NODISCARD_RETURN_RAW_PTR \
         NODISCARD_MSG("This function allocates memory and returns a raw pointer. " \
-                   "Discarding the return value will cause a memory leak.")
-#else 
-#  define NODISCARD_RETURN_RAW_PTR 
+            "Discarding the return value will cause a memory leak.")
 #endif
 
 #ifndef NODISCARD_THREAD_CTOR
 #  define NODISCARD_THREAD_CTOR \
     NODISCARD_CTOR_MSG("Creating a thread object without assigning it to a variable " \
-                "may lead to unexpected behavior and resource leaks. Ensure " \
-                "the thread is properly managed.")
-#else
-#  define NODISCARD_THREAD_CTOR
+        "may lead to unexpected behavior and resource leaks. Ensure " \
+        "the thread is properly managed.")
 #endif
+
+#ifndef NODISCARD_REMOVE_ALGORITHM
+#  define NODISCARD_REMOVE_ALGORITHM \
+        NODISCARD_MSG("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
+            "that should be kept. You need to call container.erase(result, container.end()) afterwards. " \
+            "In C++20, 'std::erase' and 'std::erase_if' are simpler replacements for these two steps.")
+#else
 
 #endif // __cplusplus
