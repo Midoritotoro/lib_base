@@ -171,6 +171,32 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/SimdTailMask.h
 
     src/core/utility/simd/SimdAlgorithm.h
+
+    src/core/utility/algorithm/AllOfImplementation.cpp
+    src/core/utility/algorithm/AnyOfImplementation.cpp
+
+    src/core/utility/algorithm/NoneOfImplementation.cpp
+    src/core/utility/algorithm/CopyImplementation.cpp
+
+    src/core/utility/algorithm/CountImplementation.cpp
+    src/core/utility/algorithm/FindImplementation.cpp
+
+    src/core/utility/algorithm/ForEachImplementation.cpp
+    src/core/utility/algorithm/PartialSortImplementation.cpp
+
+    src/core/utility/algorithm/RemoveImplementation.cpp
+    src/core/utility/algorithm/ReplaceImplementation.cpp
+
+    src/core/utility/algorithm/ReverseImplementation.cpp
+    src/core/utility/algorithm/SortImplementation.cpp
+
+    src/core/utility/algorithm/SwapRangesImplementation.cpp
+    src/core/utility/algorithm/TransformImplementation.cpp
+    
+    src/core/utility/algorithm/ReverseCopyImplementation.cpp
+    src/core/utility/algorithm/RotateImplementation.cpp
+
+    src/core/utility/algorithm/FillImplementation.cpp
 )
 
 set(PUBLIC_HEADERS 

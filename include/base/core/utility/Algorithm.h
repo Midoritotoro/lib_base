@@ -106,7 +106,10 @@ NODISCARD CONSTEXPR_CXX20 bool allOf(
 	_Iterator_	lastIterator,
 	_Predicate_ predicate);
 
-template <class _ExecutionPolicy_, class _ForwardIterator_, class _Predicate_>
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_, 
+	class _Predicate_>
 NODISCARD bool allOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -557,6 +560,143 @@ void partialSort(
 	_RandomAccessIterator_	firstIterator,
 	_RandomAccessIterator_	middleIterator,
 	_RandomAccessIterator_	lastIterator) noexcept;
+
+template <class _ForwardIterator_>
+CONSTEXPR_CXX20 _ForwardIterator_ rotate(
+	_ForwardIterator_ firstIterator,
+	_ForwardIterator_ middleIterator,
+	_ForwardIterator_ lastIterator);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_>
+_ForwardIterator_ rotate(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	middleIterator,
+	_ForwardIterator_	lastIterator) noexcept;
+
+template <
+	class _ForwardIterator_,
+	class _Type_>
+CONSTEXPR_CXX20 void fill(
+	const _ForwardIterator_ firstIterator,
+	const _ForwardIterator_ lastIterator,
+	const _Type_&			value);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_,
+	class _Type_>
+void fill(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	lastIterator,
+	const _Type_&		value) noexcept;
+
+template <
+	class _OutputIterator_, 
+	class _DifferenceType_,
+	class _Type_>
+CONSTEXPR_CXX20 _OutputIterator_ fillN(
+	_OutputIterator_		destinationIterator,
+	const _DifferenceType_	_Count,
+	const _Type_&			value);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_, 
+	class _DifferenceType_, 
+	class _Type_>
+_ForwardIterator_ fillN(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	destinationIterator,
+	_DifferenceType_	_Count,
+	const _Type_&		value) noexcept;
+
+template <
+	class _Iterator1_,
+	class _Iterator2_, 
+	class _Predicate_>
+NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
+	_Iterator1_			firstIterator1,
+	const _Iterator1_	lastIterator1,
+	_Iterator2_			firstIterator2, 
+	_Predicate_			predicate);
+
+template <
+	class _ExecutionPolicy_, 
+	class _ForwardIterator1_, 
+	class _ForwardIterator2_,
+	class _Predicate_>
+NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator1_	firstIterator1, 
+	_ForwardIterator1_	lastIterator1, 
+	_ForwardIterator2_	firstIterator2,
+	_Predicate_			predicate) noexcept;
+
+template <
+	class _Iterator1_, 
+	class _Iterator2_>
+NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
+	const _Iterator1_ firstIterator1, 
+	const _Iterator1_ lastIterator1, 
+	const _Iterator2_ firstIterator2);
+
+template <
+	class _ExecutionPolicy_, 
+	class _ForwardIterator1_, 
+	class _ForwardIterator2_>
+NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
+	_ExecutionPolicy_&&			executionPolicy, 
+	const _ForwardIterator1_	firstIterator1, 
+	const _ForwardIterator1_	lastIterator1,
+	const _ForwardIterator2_	firstIterator2) noexcept;
+
+template <
+	class _Iterator1_,
+	class _Iterator2_,
+	class _Predicate_>
+NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
+	_Iterator1_ firstIterator1,
+	_Iterator1_ lastIterator1, 
+	_Iterator2_ firstIterator2, 
+	_Iterator2_ lastIterator2, 
+	_Predicate_ predicate);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator1_, 
+	class _ForwardIterator2_,
+	class _Predicate_>
+NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator1_	firstIterator1,
+	_ForwardIterator1_	lastIterator1,
+	_ForwardIterator2_	firstIterator2,
+	_ForwardIterator2_	lastIterator2, 
+	_Predicate_			predicate) noexcept;
+
+template <
+	class _Iterator1_,
+	class _Iterator2_>
+NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
+	_Iterator1_ firstIterator1,
+	_Iterator1_ lastIterator1,
+	_Iterator2_ firstIterator2,
+	_Iterator2_ lastIterator2);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator1_,
+	class _ForwardIterator2_>
+NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
+	_ExecutionPolicy_&& executionPolicy, 
+	_ForwardIterator1_ firstIterator1,
+	_ForwardIterator1_ lastIterator1,
+	_ForwardIterator2_ firstIterator2, 
+	_ForwardIterator2_ lastIterator2) noexcept;
 
 using namespace ::std::ranges;
 
