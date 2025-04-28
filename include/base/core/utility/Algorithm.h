@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <base/core/arch/Platform.h>
-
 #if defined(OS_WIN) && defined(CPP_MSVC) && !defined(__GNUC__) && !defined(__clang__)
 #include <__msvc_iter_core.hpp>
 #endif
@@ -10,12 +8,11 @@
 	#include <ranges>
 #endif
 
-#include <base/core/Types.h>
+#include <base/core/utility/Execution.h>
 #include <base/core/utility/TypeTraits.h>
 
+
 __BASE_NAMESPACE_BEGIN
-
-
 
 template <
 	class _Iterator_,

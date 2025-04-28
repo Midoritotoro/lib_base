@@ -170,6 +170,7 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
 
+    src/core/utility/simd/SimdAlgorithm.h
 )
 
 set(PUBLIC_HEADERS 
@@ -353,8 +354,6 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorDebug.h
     include/base/core/container/VectorValue.h
 
-    include/base/core/utility/simd/SimdAlgorithm.h
-
     include/base/core/arch/ProcessorFeatures.h
     
     include/base/core/arch/CpuId.h
@@ -367,6 +366,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/memory/MemoryPlacement.h
     include/base/core/memory/MemoryPointerConversion.h
+
+    include/base/core/utility/Execution.h
 )
 
 include(CMakePackageConfigHelpers)

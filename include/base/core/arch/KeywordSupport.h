@@ -549,6 +549,6 @@ WARNING_DISABLE_MSVC(4067)
         NODISCARD_MSG("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
             "that should be kept. You need to call container.erase(result, container.end()) afterwards. " \
             "In C++20, 'std::erase' and 'std::erase_if' are simpler replacements for these two steps.")
-#else
+#endif
 
 #endif // __cplusplus

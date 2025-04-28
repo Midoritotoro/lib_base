@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
+#include <base/core/utility/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
