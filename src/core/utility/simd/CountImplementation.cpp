@@ -6,7 +6,7 @@
 #include <base/core/memory/MemoryRange.h>
 #include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
-#include <src/core/utility/simd/SimdCountTraits.h>
+#include <src/core/utility/simd/traits/SimdCountTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 

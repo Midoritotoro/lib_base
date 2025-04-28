@@ -143,11 +143,11 @@ set(PRIVATE_SOURCES
     src/core/string/UnicodeTables.h
     src/core/string/UnicodeTables.cpp
 
-    src/core/utility/simd/SimdFindTraits.h
-    src/core/utility/simd/SimdFindTraits.cpp
+    src/core/utility/simd/traits/SimdFindTraits.h
+    src/core/utility/simd/traits/SimdFindTraits.cpp
 
-    src/core/utility/simd/SimdCountTraits.h
-    src/core/utility/simd/SimdCountTraits.cpp
+    src/core/utility/simd/traits/SimdCountTraits.h
+    src/core/utility/simd/traits/SimdCountTraits.cpp
 
     src/core/utility/simd/CountImplementation.cpp
     src/core/utility/simd/FindImplementation.cpp
@@ -155,17 +155,17 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/ReplaceImplementation.cpp
 
     src/core/utility/simd/MinMax.h
-    src/core/utility/simd/MinMaxTraits.h
+    src/core/utility/simd/traits/MinMaxTraits.h
 
-    src/core/utility/simd/MinMaxTraitsAVX.h
-    src/core/utility/simd/MinMaxTraitsAVX512.h
+    src/core/utility/simd/traits/MinMaxTraitsAVX.h
+    src/core/utility/simd/traits/MinMaxTraitsAVX512.h
     
-    src/core/utility/simd/MinMaxTraitsSSE2.h
+    src/core/utility/simd/traits/MinMaxTraitsSSE2.h
 
-    src/core/utility/simd/MinMaxTraitsAVX.cpp
-    src/core/utility/simd/MinMaxTraitsAVX512.cpp
+    src/core/utility/simd/traits/MinMaxTraitsAVX.cpp
+    src/core/utility/simd/traits/MinMaxTraitsAVX512.cpp
     
-    src/core/utility/simd/MinMaxTraitsSSE2.cpp
+    src/core/utility/simd/traits/MinMaxTraitsSSE2.cpp
 
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
