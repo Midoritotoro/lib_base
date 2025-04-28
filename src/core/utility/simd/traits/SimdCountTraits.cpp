@@ -1,6 +1,6 @@
 #include <src/core/utility/simd/traits/SimdCountTraits.h>
 
-__BASE_CONTAINER_NAMESPACE_BEGIN
+__BASE_NAMESPACE_BEGIN
 
 NODISCARD __m512i CountTraits64Bit::SubstractAvx512(
     const __m512i left,
@@ -24,8 +24,7 @@ NODISCARD __m128i CountTraits64Bit::SubstractSse(
 }
 
 NODISCARD std::size_t CountTraits64Bit::ReduceAvx512(const __m512i value) noexcept {
-
-
+    return 0;
 }
 
 NODISCARD std::size_t CountTraits64Bit::ReduceAvx(const __m256i value) noexcept {
@@ -75,7 +74,7 @@ NODISCARD __m128i CountTraits32Bit::SubstractSse(
 }
 
 NODISCARD std::size_t CountTraits32Bit::ReduceAvx512(const __m512i value) noexcept {
-
+    return 0;
 }
 
 NODISCARD std::size_t CountTraits32Bit::ReduceAvx(const __m256i value) noexcept {
@@ -125,7 +124,7 @@ NODISCARD __m128i CountTraits16Bit::SubstractSse(
 }
 
 NODISCARD std::size_t CountTraits16Bit::ReduceAvx512(const __m512i value) noexcept {
-
+    return 0;
 }
 
 NODISCARD std::size_t CountTraits16Bit::ReduceAvx(const __m256i value) noexcept {
@@ -170,7 +169,7 @@ NODISCARD __m128i CountTraits8Bit::SubstractSse(
 }
 
 NODISCARD std::size_t CountTraits8Bit::ReduceAvx512(const __m512i value) noexcept {
-
+    return 0;
 }
 
 NODISCARD std::size_t CountTraits8Bit::ReduceAvx(const __m256i value) noexcept {
@@ -183,4 +182,4 @@ NODISCARD std::size_t CountTraits8Bit::ReduceSse(const __m128i value) noexcept {
     return CountTraits64Bit::ReduceSse(_Rx1);
 }
 
-__BASE_CONTAINER_NAMESPACE_END
+__BASE_NAMESPACE_END

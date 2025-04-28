@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/simd/SimdAlgorithm.h>
+#include <src/core/utility/simd/SimdAlgorithm.h>
 
 
 __BASE_NAMESPACE_BEGIN

@@ -2,7 +2,7 @@
 
 #include <base/core/arch/Platform.h>
 
-__BASE_CONTAINER_NAMESPACE_BEGIN
+__BASE_NAMESPACE_BEGIN
 
 class FindTraits8Bit {
 public:
@@ -57,7 +57,7 @@ public:
 
 class FindTraits64Bit {
 public:
-    static NODISCARD __m256i SetAvx512(const uint64 value) noexcept;
+    static NODISCARD __m512i SetAvx512(const uint64 value) noexcept;
     static NODISCARD __m256i SetAvx(const uint64 value) noexcept;
     static NODISCARD __m128i SetSse(const uint64 value) noexcept;
 
@@ -73,4 +73,4 @@ public:
 };
 
 
-__BASE_CONTAINER_NAMESPACE_END
+__BASE_NAMESPACE_END

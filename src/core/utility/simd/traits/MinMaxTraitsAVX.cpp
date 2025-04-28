@@ -1,4 +1,4 @@
-#include <src/core/utility/simd/MinMaxTraitsAVX.h>
+#include <src/core/utility/simd/traits/MinMaxTraitsAVX.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -70,9 +70,7 @@ namespace AVX {
         const SimdType  current, 
         _Functor_       functor) noexcept 
     {
-        // not implemented
-
-        SimdType _H_min_val = _Cur;
+        SimdType _H_min_val = current;
         return _H_min_val;
     }
 
@@ -195,15 +193,22 @@ namespace AVX {
         const SimdType  current, 
         _Functor_       functor) noexcept
     {
-        const SimdType _Shuf_bytes = _mm256_set_epi16(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
-        const SimdType _Shuf_words = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
+        const SimdType shuffledBytes = _mm256_set_epi16(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1);
+        const SimdType shuffledWords = _mm256_set_epi16(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2);
 
-        SimdType _H_min_val = current;
+        SimdType horizontalMinimumValues = current;
 
-        _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(1, 0, 3, 2)));
-        _H_min_val = _Funct(_H_min_val, _mm256_shuffle_epi32(_H_min_val, _MM_SHUFFLE(2, 3, 0, 1)));
+        horizontalMinimumValues = functor(
+            horizontalMinimumValues, 
+            _mm256_shuffle_epi32(
+                horizontalMinimumValues, _MM_SHUFFLE(1, 0, 3, 2)));
 
-        return _H_min_val;
+        horizontalMinimumValues = functor(
+            horizontalMinimumValues,
+            _mm256_shuffle_epi32(
+                horizontalMinimumValues, _MM_SHUFFLE(2, 3, 0, 1)));
+
+        return horizontalMinimumValues;
     }
 
     NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimum(const SimdType current) noexcept {

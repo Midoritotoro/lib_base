@@ -3,7 +3,7 @@
 #include <base/core/arch/Platform.h>
 #include <src/core/utility/simd/traits/SimdFindTraits.h>
 
-__BASE_CONTAINER_NAMESPACE_BEGIN
+__BASE_NAMESPACE_BEGIN
 
 class CountTraits64Bit : public FindTraits64Bit {
 public:
@@ -91,4 +91,4 @@ public:
     static NODISCARD std::size_t ReduceSse(const __m128i value) noexcept;
 };
 
-__BASE_CONTAINER_NAMESPACE_END
+__BASE_NAMESPACE_END

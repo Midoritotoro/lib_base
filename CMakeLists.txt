@@ -353,9 +353,7 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorDebug.h
     include/base/core/container/VectorValue.h
 
-    include/base/core/utility/simd/VectorSimdAlgorithm.h
     include/base/core/utility/simd/SimdAlgorithm.h
-
 
     include/base/core/arch/ProcessorFeatures.h
     

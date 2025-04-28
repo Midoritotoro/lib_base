@@ -231,6 +231,27 @@ NODISCARD constexpr bool points_into_range(const T& p, const C& c) noexcept
         std::data(c) + std::distance(std::begin(c), std::end(c)));
 }
 
+always_inline NODISCARD uint64 BytesToDoubleWordsCount(const uint64 bytes) {
+    return (bytes >> 2);
+}
+
+always_inline NODISCARD uint64 BytesToQuadWordsCount(const uint64 bytes) {
+    return (bytes >> 3);
+}
+
+always_inline NODISCARD uint64 BytesToXmmWordsCount(const uint64 bytes) {
+    return (bytes >> 4);
+}
+
+always_inline NODISCARD uint64 BytesToYmmWordsCount(const uint64 bytes) {
+    return (bytes >> 5);
+}
+
+always_inline NODISCARD uint64 BytesToZmmWordsCount(const uint64 bytes) {
+    return (bytes >> 6);
+}
+
+
 template <typename To, typename From>
 constexpr auto saturate(From x)
 {

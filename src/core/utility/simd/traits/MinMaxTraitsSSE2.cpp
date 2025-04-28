@@ -1,4 +1,4 @@
-#include <src/core/utility/simd/MinMaxTraitsSSE2.h>
+#include <src/core/utility/simd/traits/MinMaxTraitsSSE2.h>
 
 __BASE_NAMESPACE_BEGIN
 

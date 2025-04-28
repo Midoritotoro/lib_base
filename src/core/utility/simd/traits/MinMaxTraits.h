@@ -4,10 +4,7 @@
 #  pragma optimize("t", on)
 #endif // !defined(_DEBUG)
 
-#include <src/core/utility/simd/MinMaxTraitsSSE2.h>
-
-#include <src/core/utility/simd/MinMaxTraitsAVX.h>
-#include <src/core/utility/simd/MinMaxTraitsAVX512.h>
+#include <base/core/utility/TypeTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 

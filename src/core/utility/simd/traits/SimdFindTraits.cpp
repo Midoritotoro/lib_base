@@ -121,7 +121,7 @@ NODISCARD __m128i FindTraits32Bit::CompareSse(
 // ========================================================================
 
 
-NODISCARD __m256i FindTraits64Bit::SetAvx512(const uint64 value) noexcept {
+NODISCARD __m512i FindTraits64Bit::SetAvx512(const uint64 value) noexcept {
     return _mm512_set1_epi64(value);
 }
 

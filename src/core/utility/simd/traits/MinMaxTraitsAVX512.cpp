@@ -310,7 +310,7 @@ namespace AVX512 {
     NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
-        SimdType = _mm512_undefined_epi32()) noexcept
+        SimdType) noexcept
     {
         return _mm512_max_epi32(_First, _Second);
     }
