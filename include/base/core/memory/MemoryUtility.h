@@ -226,7 +226,7 @@ template <
     class _Type_>
 void FillMemset(
     _ContiguousIterator_        _Destination,
-    const _ContiguousIterator_  _Value,
+    const _Type_&               _Value,
     const size_t                _Count) 
 {
     IteratorValueType<_ContiguousIterator_> destinationValue = _Value;

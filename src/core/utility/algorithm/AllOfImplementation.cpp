@@ -1,4 +1,5 @@
 #include <base/core/utility/Algorithm.h>
+#include <src/core/utility/algorithm/AlgorithmDebug.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -10,7 +11,16 @@ NODISCARD CONSTEXPR_CXX20 bool allOf(
 	_Iterator_	lastIterator,
 	_Predicate_ predicate)
 {
+	VerifyRange(firstIterator, lastIterator);
 
+	auto first		= memory::CheckedToChar(firstIterator);
+	const auto last	= memory::CheckedToConstChar(lastIterator);
+
+	for (; first != last; ++first)
+		if (predicate(*first) == false)
+			return false;
+
+	return true;
 }
 
 template <

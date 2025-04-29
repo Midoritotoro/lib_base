@@ -323,11 +323,11 @@ template <
             && !IsIteratorVolatile<_DestinationIterator_>>
     struct IteratorMoveCategory : 
         TrivialCategory<
-            std::iter_value_t<_SourceIterator_>, 
-            std::iter_value_t<_DestinationIterator_>,
+            IteratorValueType<_SourceIterator_>, 
+            IteratorValueType<_DestinationIterator_>,
     std::remove_reference_t<
-        std::iter_reference_t<_SourceIterator_>>&&,
-        std::iter_reference_t<_DestinationIterator_>
+        IteratorReferenceType<_SourceIterator_>>&&,
+        IteratorReferenceType<_DestinationIterator_>
     > 
 {};
 
@@ -340,18 +340,18 @@ struct IteratorMoveCategory<
 };
 
 template <
-    class _SourceIterator_, 
+    class _SourceIterator_,
     class _DestinationIterator_,
     bool AreContiguous = IteratorsAreContiguous<
-        _SourceIterator_, _DestinationIterator_> 
-        && !IsIteratorVolatile<_SourceIterator_>
-        && !IsIteratorVolatile<_DestinationIterator_>>
-    struct IteratorCopyCategory : 
-        TrivialCategory<
-            std::iter_value_t<_SourceIterator_>, 
-            std::iter_value_t<_DestinationIterator_>, 
-            std::iter_reference_t<_SourceIterator_>, 
-            std::iter_reference_t<_DestinationIterator_>
+    _SourceIterator_, _DestinationIterator_>
+    && !IsIteratorVolatile<_SourceIterator_>
+    && !IsIteratorVolatile<_DestinationIterator_>>
+    struct IteratorCopyCategory :
+        TrivialCategory <
+            IteratorValueType<_SourceIterator_>,
+            IteratorValueType<_DestinationIterator_>,
+            IteratorReferenceType<_SourceIterator_>,
+            IteratorReferenceType<_DestinationIterator_>
         > 
 {};
 

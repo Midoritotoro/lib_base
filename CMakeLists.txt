@@ -203,6 +203,7 @@ set(PRIVATE_SOURCES
     src/core/utility/algorithm/MoveImplementation.cpp
 
     src/core/utility/algorithm/AlgorithmDebug.h
+    src/core/utility/algorithm/IteratorWrap.h
 )
 
 set(PUBLIC_HEADERS 

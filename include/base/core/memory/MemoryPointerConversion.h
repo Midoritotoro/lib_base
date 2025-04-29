@@ -2,9 +2,7 @@
 
 #include <base/core/memory/MemoryTypeTraits.h>
 
-
 __BASE_MEMORY_NAMESPACE_BEGIN
-
 
 #if __cpp_lib_addressof_constexpr >= 201603L
 #  define CONSTEXPR_ADDRESSOF constexpr

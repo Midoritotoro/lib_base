@@ -1,5 +1,7 @@
 #include <base/core/utility/Algorithm.h>
+
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/utility/algorithm/IteratorWrap.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -11,10 +13,11 @@ CONSTEXPR_CXX20 void fill(
 	const _ForwardIterator_ lastIterator,
 	const _Type_&			value)
 {
+	std::forward_iterator<_Type_>;
 	VerifyRange(firstIterator, lastIterator);
 
-	const auto start		= memory::CheckedToChar(firstIterator);
-	const auto end			= memory::CheckedToChar(lastIterator);
+	const auto start		= UnwrapIterator(firstIterator);
+	const auto end			= UnwrapIterator(lastIterator);
 		
 	const auto difference	= memory::IteratorsDifference<
 		IteratorDifferenceType<_ForwardIterator_>>(start, end);
@@ -66,7 +69,7 @@ CONSTEXPR_CXX20 _OutputIterator_ fillN(
 	const _DifferenceType_	_Count,
 	const _Type_&			value)
 {
-	const auto destination		= memory::CheckedToChar(destinationIterator);
+	const auto destination		= UnwrapIterator(destinationIterator);
 	const auto destinationEnd	= destination + _Count;
 
 	if (_Count <= 0)

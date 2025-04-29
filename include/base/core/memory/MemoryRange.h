@@ -712,7 +712,8 @@ template <
 CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnChecked(
     _InputIterator_ _First, 
     _SizeType_      _Count, 
-    _OutIterator_   _Dest) {
+    _OutIterator_   _Dest)
+{
 #if BASE_HAS_CXX20
     static_assert(is_nonbool_integral_v<_SizeType_>);
 #endif // BASE_HAS_CXX20
@@ -726,9 +727,8 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnChecked(
         }
     }
 
-    for (; _Count != 0; ++_Dest, (void) ++_First, --_Count) {
+    for (; _Count != 0; ++_Dest, (void) ++_First, --_Count)
         *_Dest = *_First;
-    }
 
     return _Dest;
 }

@@ -11,7 +11,7 @@ NODISCARD CONSTEXPR_CXX20 _Iterator_ find(
 	const _Iterator_	lastIterator,
 	const _Type_&		value)
 {
-
+	 
 }
 
 template <
@@ -74,7 +74,7 @@ template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_>
 NODISCARD _ForwardIterator1_ findFirstOf(
-	_ExecutionPolicy_&& executionPolicy,
+	_ExecutionPolicy_&&			executionPolicy,
 	const _ForwardIterator1_	firstIterator1,
 	const _ForwardIterator1_	lastIterator1,
 	const _ForwardIterator2_	firstIterator2,

@@ -1,0 +1,29 @@
+#pragma once 
+
+#include <base/core/utility/TypeTraits.h>
+
+#ifdef CPP_MSVC
+    #include <xutility>
+#endif
+
+__BASE_NAMESPACE_BEGIN
+
+template <class _Iterator_>
+NODISCARD constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
+    if constexpr (std::is_pointer_v<std::decay_t<_Iterator_>>)
+        return (iterator + 0);
+#ifdef CPP_MSVC
+    // For debugging
+    else if constexpr (std::_Unwrappable_v<_Iterator_>) {
+        return static_cast<_Iterator_&&>(iterator)._Unwrapped();
+#endif
+    else
+        return static_cast<_Iterator_&&>(iterator);
+}
+
+template <class _Iterator_>
+using UnwrappedType = std::remove_cvref_t<
+    decltype(UnwrapIterator(
+        std::declval<_Iterator_>()))>;
+
+__BASE_NAMESPACE_END
