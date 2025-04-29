@@ -734,4 +734,64 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnChecked(
 }
 
 
+template <
+    class _ContiguousIterator1_,
+    class _ContiguousIterator2_>
+_ContiguousIterator2_ CopyBackwardMemmove(
+    _ContiguousIterator1_ firstIterator,
+    _ContiguousIterator1_ lastIterator,
+    _ContiguousIterator2_ destinationIterator)
+{
+    const char* const   first       = CheckedToConstChar(firstIterator);
+    const char* const   last        = CheckedToConstChar(lastIterator);
+
+    char* const         destination = CheckedToConstChar(destinationIterator);
+    const auto          difference  = IteratorsDifference<size_t>(first, last);
+
+    auto result = memmove(
+        destination - difference, 
+        first, difference);
+
+    if constexpr (std::is_pointer_v<_ContiguousIterator2_>)
+        return static_cast<_ContiguousIterator2_>(_Result);
+    else
+        return destinationIterator - (last - first);
+}
+
+template <
+    class _BidirectionalIterator1_, 
+    class _BidirectionalIterator2_>
+_BidirectionalIterator2_ CopyBackwardMemmove(
+    std::move_iterator<_BidirectionalIterator1_>    firstMoveIterator,
+    std::move_iterator<_BidirectionalIterator1_>    lastMoveIterator,
+    _BidirectionalIterator2_                        destinationIterator) 
+{
+    return CopyBackwardMemmove(
+        firstMoveIterator.base(), 
+        lastMoveIterator.base(), 
+        destinationIterator);
+}
+
+template <class _BidirectionalIterator1_, class _BidirectionalIterator2_>
+// copy [_First, _Last) backwards to [..., _Dest)
+NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
+    _BidirectionalIterator1_ firstIterator, 
+    _BidirectionalIterator1_ lastIterator, 
+    _BidirectionalIterator2_ destinationIterator) 
+{
+    if constexpr (IteratorCopyCategory<_BidirectionalIterator1_, _BidirectionalIterator2_>::BitcopyAssignable) {
+#if BASE_HAS_CXX20
+        if (is_constant_evaluated() == false)
+#endif
+        {
+            return _STD _Copy_backward_memmove(_First, _Last, _Dest);
+        }
+    }
+
+    while (firstIterator != lastIterator)
+        *--destinationIterator = *--lastIterator;
+
+    return destinationIterator;
+}
+
 __BASE_MEMORY_NAMESPACE_END

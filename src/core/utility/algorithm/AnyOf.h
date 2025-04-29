@@ -10,7 +10,16 @@ NODISCARD CONSTEXPR_CXX20 bool anyOf(
 	const _Iterator_	lastIterator,
 	_Predicate_			predicate)
 {
+	VerifyRange(firstIterator, lastIterator);
 
+	auto first		= UnwrapIterator(firstIterator);
+	const auto last	= UnwrapIterator(lastIterator);
+
+	for (; first != last; ++first)
+		if (predicate(*first))
+			return true;
+
+	return false;
 }
 
 template <

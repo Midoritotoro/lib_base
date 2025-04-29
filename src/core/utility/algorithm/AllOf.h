@@ -13,8 +13,8 @@ NODISCARD CONSTEXPR_CXX20 bool allOf(
 {
 	VerifyRange(firstIterator, lastIterator);
 
-	auto first		= memory::CheckedToChar(firstIterator);
-	const auto last	= memory::CheckedToConstChar(lastIterator);
+	auto first		= UnwrapIterator(firstIterator);
+	const auto last	= UnwrapIterator(lastIterator);
 
 	for (; first != last; ++first)
 		if (predicate(*first) == false)

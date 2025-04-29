@@ -152,7 +152,7 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/CountImplementation.cpp
     src/core/utility/simd/FindImplementation.cpp
 
-    src/core/utility/simd/ReplaceImplementation.cpp
+    src/core/utility/simd/Replace.h
 
     src/core/utility/simd/MinMax.h
     src/core/utility/simd/traits/MinMaxTraits.h
@@ -172,35 +172,35 @@ set(PRIVATE_SOURCES
 
     src/core/utility/simd/SimdAlgorithm.h
 
-    src/core/utility/algorithm/AllOfImplementation.cpp
-    src/core/utility/algorithm/AnyOfImplementation.cpp
+    src/core/utility/algorithm/AllOf.h
+    src/core/utility/algorithm/AnyOf.h
 
-    src/core/utility/algorithm/NoneOfImplementation.cpp
-    src/core/utility/algorithm/CopyImplementation.cpp
+    src/core/utility/algorithm/NoneOf.h
+    src/core/utility/algorithm/Copy.h
 
-    src/core/utility/algorithm/CountImplementation.cpp
-    src/core/utility/algorithm/FindImplementation.cpp
+    src/core/utility/algorithm/Count.h
+    src/core/utility/algorithm/Find.h
 
-    src/core/utility/algorithm/ForEachImplementation.cpp
-    src/core/utility/algorithm/PartialSortImplementation.cpp
+    src/core/utility/algorithm/ForEach.h
+    src/core/utility/algorithm/PartialSort.h
 
-    src/core/utility/algorithm/RemoveImplementation.cpp
-    src/core/utility/algorithm/ReplaceImplementation.cpp
+    src/core/utility/algorithm/Remove.h
+    src/core/utility/algorithm/Replace.h
 
-    src/core/utility/algorithm/ReverseImplementation.cpp
-    src/core/utility/algorithm/SortImplementation.cpp
+    src/core/utility/algorithm/Reverse.h
+    src/core/utility/algorithm/Sort.h
 
-    src/core/utility/algorithm/SwapRangesImplementation.cpp
-    src/core/utility/algorithm/TransformImplementation.cpp
+    src/core/utility/algorithm/SwapRanges.h
+    src/core/utility/algorithm/Transform.h
     
-    src/core/utility/algorithm/ReverseCopyImplementation.cpp
-    src/core/utility/algorithm/RotateImplementation.cpp
+    src/core/utility/algorithm/ReverseCopy.h
+    src/core/utility/algorithm/Rotate.h
 
-    src/core/utility/algorithm/FillImplementation.cpp
-    src/core/utility/algorithm/MismatchImplementation.cpp
+    src/core/utility/algorithm/Fill.h
+    src/core/utility/algorithm/Mismatch.h
 
-    src/core/utility/algorithm/SearchImplementation.cpp
-    src/core/utility/algorithm/MoveImplementation.cpp
+    src/core/utility/algorithm/Search.h
+    src/core/utility/algorithm/Move.h
 
     src/core/utility/algorithm/AlgorithmDebug.h
     src/core/utility/algorithm/IteratorWrap.h
