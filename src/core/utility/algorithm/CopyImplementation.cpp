@@ -30,5 +30,16 @@ _ForwardIterator2_ copyIf(
 
 }
 
+template <
+	class _BidirectionalIterator1_,
+	class _BidirectionalIterator2_>
+CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
+	_BidirectionalIterator1_ firstIterator,
+	_BidirectionalIterator1_ lastIterator,
+	_BidirectionalIterator2_ destinationIterator)
+{
+
+}
+
 
 __BASE_NAMESPACE_END

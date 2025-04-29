@@ -197,6 +197,9 @@ set(PRIVATE_SOURCES
     src/core/utility/algorithm/RotateImplementation.cpp
 
     src/core/utility/algorithm/FillImplementation.cpp
+    src/core/utility/algorithm/MismatchImplementation.cpp
+
+    src/core/utility/algorithm/SearchImplementation.cpp
 )
 
 set(PUBLIC_HEADERS 

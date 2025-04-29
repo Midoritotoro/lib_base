@@ -175,6 +175,14 @@ _ForwardIterator2_ copyIf(
 	_Predicate_			predicate) noexcept;
 
 template <
+	class _BidirectionalIterator1_,
+	class _BidirectionalIterator2_>
+CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
+	_BidirectionalIterator1_ firstIterator,
+	_BidirectionalIterator1_ lastIterator,
+	_BidirectionalIterator2_ destinationIterator);
+
+template <
 	class _ForwardIterator1_, 
 	class _ForwardIterator2_,
 	class _Predicate_>
@@ -697,6 +705,106 @@ NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
 	_ForwardIterator1_ lastIterator1,
 	_ForwardIterator2_ firstIterator2, 
 	_ForwardIterator2_ lastIterator2) noexcept;
+
+template <
+	class _ForwardIteratorHaystack_, 
+	class _ForwardIteratorPattern_,
+	class _Predicate_>
+NODISCARD CONSTEXPR_CXX20 _ForwardIteratorHaystack_ search(
+	_ForwardIteratorHaystack_		firstHaystack,
+	_ForwardIteratorHaystack_		lastHaystack,
+	const _ForwardIteratorPattern_	firstPattern,
+	const _ForwardIteratorPattern_	lastPattern,
+	_Predicate_						predicate);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIteratorHaystack_,
+	class _ForwardIteratorPattern_,
+	class _Predicate_>
+NODISCARD _ForwardIteratorHaystack_ search(
+	_ExecutionPolicy_&&			executionPolicy,
+	_ForwardIteratorHaystack_	firstHaystack,
+	_ForwardIteratorHaystack_	lastHaystack,
+	_ForwardIteratorPattern_	firstPattern,
+	_ForwardIteratorPattern_	lastPattern,
+	_Predicate_					predicate) noexcept;
+
+template <
+	class _ForwardIteratorHaystack_, 
+	class _ForwardIteratorPattern_>
+NODISCARD CONSTEXPR_CXX20 _ForwardIteratorHaystack_ search(
+	const _ForwardIteratorHaystack_ firstHaystack,
+	const _ForwardIteratorHaystack_ lastHaystack,
+	const _ForwardIteratorPattern_	firstPattern,
+	const _ForwardIteratorPattern_	lastPattern);
+
+template <
+	class _ExecutionPolicy_, 
+	class _ForwardIteratorHaystack_,
+	class _ForwardIteratorPattern_>
+NODISCARD _ForwardIteratorHaystack_ search(
+	_ExecutionPolicy_&&				executionPolicy,
+	const _ForwardIteratorHaystack_ firstHaystack, 
+	const _ForwardIteratorHaystack_ lastHaystack,
+	const _ForwardIteratorPattern_	firstPattern, 
+	const _ForwardIteratorPattern_	lastPattern) noexcept;
+
+template <
+	class _ForwardIteratorHaystack_, 
+	class _Searcher_>
+NODISCARD CONSTEXPR_CXX20 _ForwardIteratorHaystack_ search(
+	const _ForwardIteratorHaystack_ firstHaystack,
+	const _ForwardIteratorHaystack_ lastHaystack,
+	const _Searcher_&				searcher);
+
+template <
+	class _ForwardIterator_,
+	class _Difference_,
+	class _Type_,
+	class _Predicate_>
+NODISCARD CONSTEXPR_CXX20 _ForwardIterator_ searchN(
+	const _ForwardIterator_ firstIterator,
+	_ForwardIterator_		lastIterator,
+	const _Difference_		countRaw,
+	const _Type_&			value,
+	_Predicate_				predicate);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_,
+	class _Difference_,
+	class _Type_,
+	class _Predicate_>
+NODISCARD _ForwardIterator_ searchN(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator, 
+	_ForwardIterator_	lastIterator,
+	_Difference_		countRaw,
+	const _Type_&		value,
+	_Predicate_			predicate) noexcept;
+
+template <
+	class _ForwardIterator_,
+	class _Difference_, 
+	class _Type_>
+NODISCARD CONSTEXPR_CXX20 _ForwardIterator_ searchN(
+	const _ForwardIterator_ firstIterator,
+	const _ForwardIterator_ lastIterator,
+	const _Difference_		count, 
+	const _Type_&			value);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_, 
+	class _Difference_, 
+	class _Type_>
+NODISCARD _ForwardIterator_ searchN(
+	_ExecutionPolicy_&&		executionPolicy, 
+	const _ForwardIterator_ firstIterator,
+	const _ForwardIterator_ lastIterator,
+	const _Difference_		count,
+	const _Type_&			value) noexcept;
 
 using namespace ::std::ranges;
 
