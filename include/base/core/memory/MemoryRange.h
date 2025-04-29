@@ -93,14 +93,14 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
     else
-        inputFirst += static_cast<std::iter_difference_t<_InputIterator_>>(
-            countBytes / sizeof(std::iter_value_t<_InputIterator_>));
+        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(
+            countBytes / sizeof(IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(
-            countBytes / sizeof(std::iter_value_t<_OutIterator_>));
+        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(
+            countBytes / sizeof(std::IteratorValueType<_OutIterator_>));
 
     return CopyResult {
         std::move(inputFirst), 
@@ -120,7 +120,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     const auto outFirstChar     = CheckedToChar(outFirst);
 
     const auto countBytes       = countObjects 
-        * sizeof(std::iter_value_t<_InputIterator_>);
+        * sizeof(IteratorValueType<_InputIterator_>);
 
     if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
         return {};
@@ -128,12 +128,12 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
     else
-        inputFirst += static_cast<std::iter_difference_t<_InputIterator_>>(countObjects);
+        inputFirst += static_cast<std::IteratorDifferenceType<_InputIterator_>>(countObjects);
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(countObjects);
+        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(countObjects);
 
     return {
         std::move(inputFirst),
@@ -158,14 +158,14 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
     else
-        inputFirst += static_cast<std::iter_difference_t<_InputIterator_>>(
-            countBytes / sizeof(std::iter_value_t<_InputIterator_>));
+        inputFirst += static_cast<std::IteratorDifferenceType<_InputIterator_>>(
+            countBytes / sizeof(IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::iter_difference_t<_OutIterator_>>(
-            countBytes / sizeof(std::iter_value_t<_OutIterator_>));
+        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(
+            countBytes / sizeof(IteratorValueType<_OutIterator_>));
 
     return {
         std::move(inputFirst),
@@ -177,8 +177,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
 template <class _Allocator_>
 // Deallocates the range [_Start, _End) and sets _Start and _End to nullptr
 CONSTEXPR_CXX20 inline void FreeRange(
-    AllocatorPointerType<_Allocator_>   _Start,
-    AllocatorPointerType<_Allocator_>   _End,
+    AllocatorPointerType<_Allocator_>&  _Start,
+    AllocatorPointerType<_Allocator_>&  _End,
     _Allocator_&                        _Allocator) noexcept
 {
     if (!_Start || !_End)
@@ -195,9 +195,9 @@ CONSTEXPR_CXX20 inline void FreeRange(
 }
 
 template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _Offset) and sets _Start and calculated end to nullptr
+// Deallocates the range [_Start, _Start + _Offset) and sets _Start to nullptr
 CONSTEXPR_CXX20 inline void FreeRangeCount(
-    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>&  _Start,
     AllocatorSizeType<_Allocator_>      _ElementsCount,
     _Allocator_&                        _Allocator) noexcept
 {
@@ -208,19 +208,18 @@ CONSTEXPR_CXX20 inline void FreeRangeCount(
     using _PointerType_     = AllocatorPointerType<_Allocator_>;
 
     const auto _BytesCount  = _ElementsCount * sizeof(_ValueType_);
-    _PointerType_& _End     = _Start + _BytesCount;
+    _PointerType_ _End      = _Start + _BytesCount;
 
     DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _BytesCount);
 
-    _Start  = nullptr;
-    _End    = nullptr;
+    _Start = nullptr;
 }
 
 template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _BytesCount) and sets _Start and calculated end to nullptr
+// Deallocates the range [_Start, _Start + _BytesCount) and sets _Start to nullptr
 CONSTEXPR_CXX20 inline void FreeRangeBytes(
-    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>&  _Start,
     AllocatorSizeType<_Allocator_>      _BytesCount,
     _Allocator_&                        _Allocator) noexcept
 {
@@ -230,13 +229,12 @@ CONSTEXPR_CXX20 inline void FreeRangeBytes(
     using _ValueType_   = AllocatorValueType<_Allocator_>;
     using _PointerType_ = AllocatorPointerType<_Allocator_>;
 
-    _PointerType_& _End = _Start + _BytesCount;
+    _PointerType_ _End = _Start + _BytesCount;
 
     DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _BytesCount);
 
     _Start  = nullptr;
-    _End    = nullptr;
 }
 
 // ===================================================================
@@ -244,9 +242,9 @@ CONSTEXPR_CXX20 inline void FreeRangeBytes(
 template <class _Allocator_>
 // Destroys the range [_Start, _Current), then deletes the range [_Start, _End) and sets _Start, _Current and _End to nullptr
 CONSTEXPR_CXX20 inline void FreeUsedRange(
-    AllocatorPointerType<_Allocator_>   _Start,
-    AllocatorPointerType<_Allocator_>   _End,
-    AllocatorPointerType<_Allocator_>   _Current,
+    AllocatorPointerType<_Allocator_>&  _Start,
+    AllocatorPointerType<_Allocator_>&  _End,
+    AllocatorPointerType<_Allocator_>&  _Current,
     _Allocator_&                        _Allocator) noexcept
 {
     if (!_Start || !_End)
@@ -268,8 +266,8 @@ CONSTEXPR_CXX20 inline void FreeUsedRange(
 template <class _Allocator_>
 // Deallocates the range [_Start, _End) without setting _Start and _End to nullptr
 CONSTEXPR_CXX20 inline void DeallocateRange(
-    AllocatorPointerType<_Allocator_>   _Start,
-    AllocatorPointerType<_Allocator_>   _End,
+    AllocatorPointerType<_Allocator_>&  _Start,
+    AllocatorPointerType<_Allocator_>&  _End,
     _Allocator_&                        _Allocator) noexcept
 {
     if (UNLIKELY(!_Start) || UNLIKELY(!_End))
@@ -283,9 +281,9 @@ CONSTEXPR_CXX20 inline void DeallocateRange(
 }
 
 template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _Offset) without setting _Start and calculated end to nullptr
+// Deallocates the range [_Start, _Start + _Offset) without setting _Start to nullptr
 CONSTEXPR_CXX20 inline void DeallocateRangeCount(
-    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>&  _Start,
     AllocatorSizeType<_Allocator_>      _ElementsCount,
     _Allocator_&                        _Allocator) noexcept
 {
@@ -296,16 +294,16 @@ CONSTEXPR_CXX20 inline void DeallocateRangeCount(
     using _PointerType_ = AllocatorPointerType<_Allocator_>;
 
     const auto _BytesCount = _ElementsCount * sizeof(_ValueType_);
-    _PointerType_& _End = _Start + _BytesCount;
+    _PointerType_ _End = _Start + _BytesCount;
 
     DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _BytesCount);
 }
 
 template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _BytesCount) without setting _Start and calculated end to nullptr
+// Deallocates the range [_Start, _Start + _BytesCount) without setting _Start to nullptr
 CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
-    AllocatorPointerType<_Allocator_>   _Start,
+    AllocatorPointerType<_Allocator_>&  _Start,
     AllocatorSizeType<_Allocator_>      _BytesCount,
     _Allocator_&                        _Allocator) noexcept
 {
@@ -315,7 +313,7 @@ CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
     using _ValueType_ = AllocatorValueType<_Allocator_>;
     using _PointerType_ = AllocatorPointerType<_Allocator_>;
 
-    _PointerType_& _End = _Start + _BytesCount;
+    _PointerType_ _End = _Start + _BytesCount;
 
     DestroyRange(_Start, _End, _Allocator);
     _Allocator.deallocate(_Start, _BytesCount);
@@ -324,7 +322,7 @@ CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
 // ===================================================================
 
 template <class _Allocator_>
-// Destroys the range [_Start, _Current), then deletes the range [_Start, _End)  without setting _Start, _Current and _End to nullptr
+// Destroys the range [_Start, _Current), then deletes the range [_Start, _End) without setting _Start, _Current and _End to nullptr
 CONSTEXPR_CXX20 inline void DeallocateUsedRange(
     AllocatorPointerType<_Allocator_>   _Start,
     AllocatorPointerType<_Allocator_>   _End,

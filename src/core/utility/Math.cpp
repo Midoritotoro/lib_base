@@ -48,7 +48,7 @@ bool UnsignedReduce(
         uint64_t i_a0_num = 0, i_a0_den = 1, i_a1_num = 1, i_a1_den = 0;
         b_exact = 0;
 
-        for (; ; )
+        for (;;)
         {
             uint64_t i_x = i_nom / i_den;
             uint64_t i_a2n = i_x * i_a1_num + i_a0_num;

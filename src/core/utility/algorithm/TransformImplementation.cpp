@@ -62,21 +62,4 @@ _ForwardIterator3_ transform(
 
 }
 
-template <
-	class _ExecutionPolicy_,
-	class _ForwardIterator1_,
-	class _ForwardIterator2_,
-	class _ForwardIterator3_,
-	class _Function_>
-_ForwardIterator3_ transform(
-	_ExecutionPolicy_&& executionPolicy,
-	_ForwardIterator1_	firstIterator1,
-	_ForwardIterator1_	lastIterator1,
-	_ForwardIterator2_	firstIterator2,
-	_ForwardIterator3_	destinationIterator,
-	_Function_			function) noexcept
-{
-
-}
-
 __BASE_NAMESPACE_END

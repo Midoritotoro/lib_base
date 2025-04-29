@@ -118,6 +118,26 @@ inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
 }
 
 template <
+    class _DifferenceType_,
+    class _ContiguousIterator_>
+// Tries to get the difference between contiguous iterators
+inline NODISCARD CONSTEXPR_CXX20 _DifferenceType_ IteratorsDifference(
+    _ContiguousIterator_ _First,
+    _ContiguousIterator_ _Last) noexcept
+{
+    if constexpr (std::is_pointer_v<_ContiguousIterator_>)
+        return static_cast<_DifferenceType_>(_Last - _First);
+
+    const auto _FirstAdress = CheckedToConstChar(_First);
+    const auto _LastAdress = CheckedToConstChar(_Last);
+
+    const auto _Size = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+
+    return _Size;
+}
+
+template <
     class _InputIterator_,
     class _OutIterator_>
 inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
@@ -209,11 +229,10 @@ void FillMemset(
     const _ContiguousIterator_  _Value,
     const size_t                _Count) 
 {
-    // implicitly convert (a cast would suppress warnings); also handles _Iter_value_t<_CtgIt> being bool
-    std::iter_value_t<_ContiguousIterator_> _DestinationValue = _Value;
+    IteratorValueType<_ContiguousIterator_> destinationValue = _Value;
     memset(
         ToAddress(_Destination), 
-        UnCheckedToUnsignedChar(_DestinationValue), _Count);
+        UnCheckedToUnsignedChar(destinationValue), _Count);
 }
 
 template <class _ContiguousIterator_>
@@ -221,8 +240,18 @@ void MemsetZero(
     _ContiguousIterator_    _Destination,
     const size_t            _Count)
 {
-    const auto _Size = _Count * sizeof(std::iter_value_t<_ContiguousIterator_>);
+    const auto _Size = _Count * sizeof(IteratorValueType<_ContiguousIterator_>);
     memset(ToAddress(_Destination), 0, _Size);
+}
+
+template <
+    class _Iterator1_, 
+    class _Iterator2_>
+constexpr void RewindIterator(
+    _Iterator1_&    iterator,
+    _Iterator2_&&   iteratorTo)
+{
+    iterator = std::forward<_Iterator2_>(iteratorTo);
 }
 
 __BASE_MEMORY_NAMESPACE_END

@@ -11,6 +11,7 @@
 #include <base/core/utility/Execution.h>
 #include <base/core/utility/TypeTraits.h>
 
+#include <execution>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -805,6 +806,70 @@ NODISCARD _ForwardIterator_ searchN(
 	const _ForwardIterator_ lastIterator,
 	const _Difference_		count,
 	const _Type_&			value) noexcept;
+
+template <
+	class _Iterator_,
+	class _OutputIterator_>
+CONSTEXPR_CXX20 _OutputIterator_ move(
+	_Iterator_			firstIterator,
+	_Iterator_			lastIterator,
+	_OutputIterator_	destinationIterator);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator1_,
+	class _ForwardIterator2_>
+_ForwardIterator2_ move(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator1_	firstIterator,
+	_ForwardIterator1_	lastIterator,
+	_ForwardIterator2_	destinationIterator) noexcept;
+
+template <
+	class _BidirectionalIterator1_,
+	class _BidirectionalIterator2_>
+CONSTEXPR_CXX20 _BidirectionalIterator2_ moveBackward(
+	_BidirectionalIterator1_ firstIterator,
+	_BidirectionalIterator1_ lastIterator,
+	_BidirectionalIterator2_ destinationIterator);
+
+
+template <
+	class _Iterator_,
+	class _Type_>
+NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> count(
+	const _Iterator_	firstIterator,
+	const _Iterator_	lastIterator,
+	const _Type_&		value);
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_,
+	class _Type_>
+NODISCARD IteratorDifferenceType<_ForwardIterator_> count(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	lastIterator, 
+	const _Type_&		value) noexcept;
+
+template <
+	class _Iterator_,
+	class _Type_>
+NODISCARD CONSTEXPR_CXX20 _Iterator_ find(
+	_Iterator_			firstIterator,
+	const _Iterator_	lastIterator, 
+	const _Type_&		value);
+
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_,
+	class _Type_>
+NODISCARD _ForwardIterator_ find(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	lastIterator,
+	const _Type_&		value) noexcept;
 
 using namespace ::std::ranges;
 

@@ -2,6 +2,31 @@
 
 __BASE_NAMESPACE_BEGIN
 
+
+template <
+	class _Iterator_,
+	class _Type_>
+NODISCARD CONSTEXPR_CXX20 _Iterator_ find(
+	_Iterator_			firstIterator,
+	const _Iterator_	lastIterator,
+	const _Type_&		value)
+{
+
+}
+
+template <
+	class _ExecutionPolicy_,
+	class _ForwardIterator_,
+	class _Type_>
+NODISCARD _ForwardIterator_ find(
+	_ExecutionPolicy_&& executionPolicy,
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	lastIterator,
+	const _Type_&		value) noexcept
+{
+
+}
+
 template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,

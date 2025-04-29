@@ -200,6 +200,9 @@ set(PRIVATE_SOURCES
     src/core/utility/algorithm/MismatchImplementation.cpp
 
     src/core/utility/algorithm/SearchImplementation.cpp
+    src/core/utility/algorithm/MoveImplementation.cpp
+
+    src/core/utility/algorithm/AlgorithmDebug.h
 )
 
 set(PUBLIC_HEADERS 
