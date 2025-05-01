@@ -14,7 +14,7 @@ NODISCARD constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
         return (iterator + 0);
 #ifdef CPP_MSVC
     // For debugging
-    else if constexpr (std::_Unwrappable_v<_Iterator_>) {
+    else if constexpr (std::_Unwrappable_v<_Iterator_>)
         return static_cast<_Iterator_&&>(iterator)._Unwrapped();
 #endif
     else

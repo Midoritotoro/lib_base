@@ -1,7 +1,7 @@
-#include <base/core/utility/Algorithm.h>
-
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/algorithm/IteratorWrap.h>
+
+#include <base/core/memory/MemoryRange.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -13,7 +13,6 @@ CONSTEXPR_CXX20 void fill(
 	const _ForwardIterator_ lastIterator,
 	const _Type_&			value)
 {
-	std::forward_iterator<_Type_>;
 	VerifyRange(firstIterator, lastIterator);
 
 	const auto start		= UnwrapIterator(firstIterator);
@@ -23,17 +22,19 @@ CONSTEXPR_CXX20 void fill(
 		IteratorDifferenceType<_ForwardIterator_>>(start, end);
 
 #if BASE_HAS_CXX20
-	if (is_constant_evaluated() == false) {
-
-		if constexpr (memory::IsFillMemsetSafe<decltype(start), _Type_>)
+	if (is_constant_evaluated() == false)
+#endif
+	{
+		if constexpr (memory::IsFillMemsetSafe<decltype(start), _Type_>) {
 			return memory::FillMemset(start, value, difference);
-
-		else if (memory::IsFillZeroMemsetSafe<decltype(start), _Type_>)
-			if (memory::IsAllBitsZero(value))
+		}
+		else if (memory::IsFillZeroMemsetSafe<decltype(start), _Type_>) {
+			if (memory::IsAllBitsZero(value)) {
 				return memory::MemsetZero(start, difference);
+			}
+		}
 
 	}
-#endif
 
 	for (auto current = start; current < end; ++current)
 		*current = value;
@@ -76,11 +77,12 @@ CONSTEXPR_CXX20 _OutputIterator_ fillN(
 		return destinationIterator;
 
 #if BASE_HAS_CXX20
-	if (is_constant_evaluated() == false) {
-
+	if (is_constant_evaluated() == false) 
+#endif
+	{
 		if constexpr (memory::IsFillMemsetSafe<decltype(destination), _Type_>) {
 			memory::FillMemset(destination, value, static_cast<size_t>(_Count));
-			memory::RewindIterator(destinationIterator, destinationEnd)
+			memory::RewindIterator(destinationIterator, destinationEnd);
 
 			return destinationIterator;
 		} 
@@ -95,7 +97,6 @@ CONSTEXPR_CXX20 _OutputIterator_ fillN(
 		}
 
 	}
-#endif
 	
 	for (auto current = 0; current < _Count; ++current, ++destination)
 		*destination = value;

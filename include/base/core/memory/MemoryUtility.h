@@ -8,6 +8,21 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
+
+
+
+// true, если у скал€рного типа все биты имеют значение 0
+template <class _Type_>
+CONSTEXPR_CXX20 NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
+    static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
+
+    if constexpr (std::is_same_v<_Type_, std::nullptr_t>)
+        return true;
+
+    constexpr auto zero = _Type_{};
+    return memcmp(&value, &zero, sizeof(_Type_)) == 0;
+}
+
 template <class _BidirectionalIterator_>
 inline constexpr void ReverseTail(
     _BidirectionalIterator_ _First,
@@ -40,9 +55,8 @@ NODISCARD constexpr inline std::size_t ByteLength(
     const auto _FirstUChar  = UnCheckedToConstUnsignedChar(_First);
     const auto _LastUChar   = UnCheckedToConstUnsignedChar(_Last);
     
-    const auto _Length      = static_cast<std::size_t>(
+    return static_cast<std::size_t>(
         _LastUChar - _FirstUChar);
-    return _Length;
 }
 
 constexpr inline void RewindBytes(
@@ -242,16 +256,6 @@ void MemsetZero(
 {
     const auto _Size = _Count * sizeof(IteratorValueType<_ContiguousIterator_>);
     memset(ToAddress(_Destination), 0, _Size);
-}
-
-template <
-    class _Iterator1_, 
-    class _Iterator2_>
-constexpr void RewindIterator(
-    _Iterator1_&    iterator,
-    _Iterator2_&&   iteratorTo)
-{
-    iterator = std::forward<_Iterator2_>(iteratorTo);
 }
 
 __BASE_MEMORY_NAMESPACE_END

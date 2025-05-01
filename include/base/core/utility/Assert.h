@@ -32,7 +32,7 @@ static inline void fail(
 	std::abort();
 }
 
-static inline constexpr [[nodiscard]]
+static inline constexpr NODISCARD
 	const char* extract_basename(
 		const char* path,
 		size_t size)

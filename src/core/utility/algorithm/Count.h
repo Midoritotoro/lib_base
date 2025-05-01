@@ -1,7 +1,7 @@
-#include <base/core/utility/Algorithm.h>
-
 #include <base/core/async/Concurrent.h>
+
 #include <src/core/utility/algorithm/IteratorWrap.h>
+#include <src/core/utility/algorithm/AlgorithmDebug.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -49,7 +49,7 @@ NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> count(
 	const _Iterator_	lastIterator,
 	const _Type_&		value)
 {
-	const auto first = UnwrapIterator()
+	
 }
 
 template <

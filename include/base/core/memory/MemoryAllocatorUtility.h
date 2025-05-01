@@ -28,33 +28,33 @@ constexpr PocmaValues ChoosePocma_v =
 
 
 template <class _Allocator_>
-_CONSTEXPR20 void POCCA(
-    _Allocator_& _Left, 
-    const _Allocator_& _Right) noexcept 
+CONSTEXPR_CXX20 inline void POCCA(
+    _Allocator_&        left, 
+    const _Allocator_&  right) noexcept 
 {
     if constexpr (std::allocator_traits<_Allocator_>::propagate_on_container_copy_assignment::value)
-        _Left = _Right;
+        left = right;
 }
 
 template <class _Allocator_>
-_CONSTEXPR20 void POCMA(
-    _Allocator_& _Left, 
-    _Allocator_& _Right) noexcept 
+CONSTEXPR_CXX20 inline void POCMA(
+    _Allocator_& left,
+    _Allocator_& right) noexcept
 { 
     // (maybe) propagate on container move assignment
     if constexpr (std::allocator_traits<_Allocator_>::propagate_on_container_move_assignment::value)
-        _Left = std::move(_Right);
+        left = std::move(right);
 }
 
 template <class _Allocator_>
-_CONSTEXPR20 void POCS(
-    _Allocator_& _Left,
-    _Allocator_& _Right) noexcept
+CONSTEXPR_CXX20 inline void POCS(
+    _Allocator_& left,
+    _Allocator_& right) noexcept
 {
     if constexpr (std::allocator_traits<_Allocator_>::propagate_on_container_swap::value)
-        std::swap(_Left, _Right); // intentional ADL
+        std::swap(left, right); // intentional ADL
     else
-        AssertLog(_Left == _Right, "base::memory::POCS: Containers incompatible for swap");
+        AssertLog(left == right, "base::memory::POCS: Containers incompatible for swap");
 }
 
 __BASE_MEMORY_NAMESPACE_END

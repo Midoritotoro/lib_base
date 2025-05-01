@@ -1,55 +1,11 @@
 #pragma once 
 
 #include <base/core/memory/MemoryUtility.h>
-#include <base/core/memory/MemoryPlacement.h>
-
 #include <base/core/memory/MemoryTypeTraits.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-template <class _Allocator_>
-class UninitializedBackout {
-    // Class to undo partially constructed ranges in UninitializedXXX algorithms
-private:
-    using pointer = AllocatorPointerType<_Allocator_>;
 
-public:
-    CONSTEXPR_CXX20 inline UninitializedBackout(
-        pointer         _Dest, 
-        _Allocator_&    _Al_
-    ) :
-        _First(_Dest),
-        _Last(_Dest), 
-        _Al(_Al_) 
-    {}
-
-    UninitializedBackout(const UninitializedBackout&) = delete;
-    UninitializedBackout& operator=(const UninitializedBackout&) = delete;
-
-    CONSTEXPR_CXX20 ~UninitializedBackout() {
-        DestroyRange(_First, _Last, _Al);
-    }
-
-    template <class... _Types>
-    CONSTEXPR_CXX20 inline void EmplaceBack(_Types&&... _Vals) {
-        // construct a new element at *_Last and increment
-        std::allocator_traits<_Allocator_>::construct(
-            _Al, UnFancy(_Last), 
-            std::forward<_Types>(_Vals)...);
-
-        ++_Last;
-    }
-
-    constexpr inline pointer Release() { 
-        // suppress any exception handling backout and return _Last
-        _First = _Last;
-        return _Last;
-    }
-private:
-    pointer         _First;
-    pointer         _Last;
-    _Allocator_&    _Al;
-};
 
 template <
     class _FirstIterator_,
@@ -99,8 +55,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(
-            countBytes / sizeof(std::IteratorValueType<_OutIterator_>));
+        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(
+            countBytes / sizeof(IteratorValueType<_OutIterator_>));
 
     return CopyResult {
         std::move(inputFirst), 
@@ -128,12 +84,12 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
     else
-        inputFirst += static_cast<std::IteratorDifferenceType<_InputIterator_>>(countObjects);
+        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(countObjects);
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(countObjects);
+        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(countObjects);
 
     return {
         std::move(inputFirst),
@@ -158,13 +114,13 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
     else
-        inputFirst += static_cast<std::IteratorDifferenceType<_InputIterator_>>(
+        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(
             countBytes / sizeof(IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
     else
-        outFirst += static_cast<std::IteratorDifferenceType<_OutIterator_>>(
+        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(
             countBytes / sizeof(IteratorValueType<_OutIterator_>));
 
     return {
@@ -173,171 +129,6 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     };
 }
 
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _End) and sets _Start and _End to nullptr
-CONSTEXPR_CXX20 inline void FreeRange(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorPointerType<_Allocator_>&  _End,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (!_Start || !_End)
-        return; 
-
-    using _SizeType_    = AllocatorSizeType<_Allocator_>;
-    const auto _Length  = static_cast<_SizeType_>(_End - _Start);
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _Length);
-
-    _Start  = nullptr;
-    _End    = nullptr;
-}
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _Offset) and sets _Start to nullptr
-CONSTEXPR_CXX20 inline void FreeRangeCount(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorSizeType<_Allocator_>      _ElementsCount,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (UNLIKELY(_ElementsCount <= 0))
-        return;
-
-    using _ValueType_       = AllocatorValueType<_Allocator_>;
-    using _PointerType_     = AllocatorPointerType<_Allocator_>;
-
-    const auto _BytesCount  = _ElementsCount * sizeof(_ValueType_);
-    _PointerType_ _End      = _Start + _BytesCount;
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _BytesCount);
-
-    _Start = nullptr;
-}
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _BytesCount) and sets _Start to nullptr
-CONSTEXPR_CXX20 inline void FreeRangeBytes(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorSizeType<_Allocator_>      _BytesCount,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (UNLIKELY(_BytesCount <= 0))
-        return;
-
-    using _ValueType_   = AllocatorValueType<_Allocator_>;
-    using _PointerType_ = AllocatorPointerType<_Allocator_>;
-
-    _PointerType_ _End = _Start + _BytesCount;
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _BytesCount);
-
-    _Start  = nullptr;
-}
-
-// ===================================================================
-
-template <class _Allocator_>
-// Destroys the range [_Start, _Current), then deletes the range [_Start, _End) and sets _Start, _Current and _End to nullptr
-CONSTEXPR_CXX20 inline void FreeUsedRange(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorPointerType<_Allocator_>&  _End,
-    AllocatorPointerType<_Allocator_>&  _Current,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (!_Start || !_End)
-        return; 
-
-    using _SizeType_                    = AllocatorSizeType<_Allocator_>;
-    const auto _LengthForDeallocate     = static_cast<_SizeType_>(_End - _Start);
-
-    DestroyRange(_Start, _Current, _Allocator);
-    _Allocator.deallocate(_Start, _LengthForDeallocate);
-
-    _Start      = nullptr;
-    _End        = nullptr;
-    _Current    = nullptr;
-}
-
-// ===================================================================
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _End) without setting _Start and _End to nullptr
-CONSTEXPR_CXX20 inline void DeallocateRange(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorPointerType<_Allocator_>&  _End,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (UNLIKELY(!_Start) || UNLIKELY(!_End))
-        return; 
-
-    using _SizeType_    = AllocatorSizeType<_Allocator_>;
-    const auto _Length  = static_cast<_SizeType_>(_End - _Start);
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _Length);
-}
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _Offset) without setting _Start to nullptr
-CONSTEXPR_CXX20 inline void DeallocateRangeCount(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorSizeType<_Allocator_>      _ElementsCount,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (UNLIKELY(_ElementsCount <= 0))
-        return;
-
-    using _ValueType_ = AllocatorValueType<_Allocator_>;
-    using _PointerType_ = AllocatorPointerType<_Allocator_>;
-
-    const auto _BytesCount = _ElementsCount * sizeof(_ValueType_);
-    _PointerType_ _End = _Start + _BytesCount;
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _BytesCount);
-}
-
-template <class _Allocator_>
-// Deallocates the range [_Start, _Start + _BytesCount) without setting _Start to nullptr
-CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
-    AllocatorPointerType<_Allocator_>&  _Start,
-    AllocatorSizeType<_Allocator_>      _BytesCount,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (UNLIKELY(_BytesCount <= 0))
-        return;
-
-    using _ValueType_ = AllocatorValueType<_Allocator_>;
-    using _PointerType_ = AllocatorPointerType<_Allocator_>;
-
-    _PointerType_ _End = _Start + _BytesCount;
-
-    DestroyRange(_Start, _End, _Allocator);
-    _Allocator.deallocate(_Start, _BytesCount);
-}
-
-// ===================================================================
-
-template <class _Allocator_>
-// Destroys the range [_Start, _Current), then deletes the range [_Start, _End) without setting _Start, _Current and _End to nullptr
-CONSTEXPR_CXX20 inline void DeallocateUsedRange(
-    AllocatorPointerType<_Allocator_>   _Start,
-    AllocatorPointerType<_Allocator_>   _End,
-    AllocatorPointerType<_Allocator_>   _Current,
-    _Allocator_&                        _Allocator) noexcept
-{
-    if (!_Start || !_End)
-        return; 
-
-    using _SizeType_                    = AllocatorSizeType<_Allocator_>;
-    const auto _LengthForDeallocate     = static_cast<_SizeType_>(_End - _Start);
-
-    DestroyRange(_Start, _Current, _Allocator);
-    _Allocator.deallocate(_Start, _LengthForDeallocate);
-}
 
 // ===================================================================
 
@@ -753,7 +544,7 @@ _ContiguousIterator2_ CopyBackwardMemmove(
         first, difference);
 
     if constexpr (std::is_pointer_v<_ContiguousIterator2_>)
-        return static_cast<_ContiguousIterator2_>(_Result);
+        return static_cast<_ContiguousIterator2_>(result);
     else
         return destinationIterator - (last - first);
 }
@@ -772,7 +563,9 @@ _BidirectionalIterator2_ CopyBackwardMemmove(
         destinationIterator);
 }
 
-template <class _BidirectionalIterator1_, class _BidirectionalIterator2_>
+template <
+    class _BidirectionalIterator1_,
+    class _BidirectionalIterator2_>
 // copy [_First, _Last) backwards to [..., _Dest)
 NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
     _BidirectionalIterator1_ firstIterator, 
@@ -784,7 +577,9 @@ NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
         if (is_constant_evaluated() == false)
 #endif
         {
-            return _STD _Copy_backward_memmove(_First, _Last, _Dest);
+            return CopyBackwardMemmove(
+                firstIterator, lastIterator,
+                destinationIterator);
         }
     }
 
@@ -792,6 +587,16 @@ NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
         *--destinationIterator = *--lastIterator;
 
     return destinationIterator;
+}
+
+template <
+    class _Iterator1_, 
+    class _Iterator2_>
+CONSTEXPR_CXX20 void RewindIterator(
+    _Iterator1_&    iterator,
+    _Iterator2_&&   iteratorTo)
+{
+    iterator = std::forward<_Iterator2_>(iteratorTo);
 }
 
 __BASE_MEMORY_NAMESPACE_END

@@ -1,4 +1,3 @@
-#include <base/core/utility/Algorithm.h>
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 
 __BASE_NAMESPACE_BEGIN

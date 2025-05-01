@@ -63,22 +63,22 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 //
 //    template <class _Allocator_>
 //    using AllocatorValueType        = typename AllocatorValueTraits<_Allocator_>::type;
-//
-//#else 
 
-    template <class _Allocator_>
-    using AllocatorPointerType      = typename std::allocator_traits<_Allocator_>::pointer;
+    //#else 
 
-    template <class _Allocator_>
-    using AllocatorConstPointerType = typename std::allocator_traits<_Allocator_>::const_pointer;
+template <class _Allocator_>
+using AllocatorPointerType      = typename std::allocator_traits<_Allocator_>::pointer;
 
-    template <class _Allocator_>
-    using AllocatorSizeType         = typename std::allocator_traits<_Allocator_>::size_type;
+template <class _Allocator_>
+using AllocatorConstPointerType = typename std::allocator_traits<_Allocator_>::const_pointer;
 
-    template <class _Allocator_>
-    using AllocatorValueType        = typename std::allocator_traits<_Allocator_>::value_type;
+template <class _Allocator_>
+using AllocatorSizeType         = typename std::allocator_traits<_Allocator_>::size_type;
 
-    //#endif
+template <class _Allocator_>
+using AllocatorValueType        = typename std::allocator_traits<_Allocator_>::value_type;
+
+//#endif
 
 #if defined(OS_WIN) && defined(CPP_MSVC)
     template <
@@ -188,25 +188,6 @@ using RebindAllocator =
     typename std::allocator_traits<_Allocator_>
         ::template rebind_alloc<_ValueType_>;
 
-template <
-    class _Allocator_,
-    typename = void>
-struct HasMemberAllocateAligned :
-    std::false_type
-{};
-
-template <class _Allocator_>
-struct HasMemberAllocateAligned<_Allocator_, std::void_t<decltype(
-    std::declval<_Allocator_>().allocateAligned())>>
-{};
-
-template <typename _Allocator_>
-inline constexpr bool HasMemberAllocateAligned_v = HasMemberAllocateAligned<_Allocator_>::value;
-
-template <std::size_t N>
-struct IsAlignmentConstant : 
-    std::integral_constant<bool, (N > 0) && ((N & (N - 1)) == 0)> 
-{};
 
 template <
     std::size_t A,
@@ -222,170 +203,11 @@ struct MaximumSize:
     std::integral_constant<std::size_t, (A > B) ? A : B> 
 {};
 
-#if defined(CPP_MSVC)
-
-template <class _Type_>
-struct offset_value {
-    _Type_ first;
-    char value;
-    _Type_ second;
-};
-
-template <class _Type_>
-struct AlignmentOf : 
-    MinimumSize<sizeof(_Type_), sizeof(offset_value<_Type_>) - (sizeof(_Type_) << 1)> 
-{};
-
-#elif defined(CPP_GNU)
-
-template <class _Type_>
-struct AlignmentOf: 
-    std::integral_constant<std::size_t, __alignof__(_Type_)> 
-{};
-
-#elif defined(CPP_CLANG)
-
-template <class _Type_>
-struct AlignmentOf:
-    std::integral_constant<std::size_t, __alignof(_Type_)> 
-{};
-
-#endif
-
 template <class _Type_>
 struct MaximumObjects: 
     std::integral_constant<std::size_t,
         ~static_cast<std::size_t>(0) / sizeof(_Type_)> 
 {};
 
-template <
-    class _Source_,
-    class _Destination_,
-    class _SourceReference_,
-    class _DestinationReference_>
-struct TrivialCategory {
-    using UnwrappedSource       = unwrap_enum_t<_Source_>;
-    using UnwrappedDestination  = unwrap_enum_t<_Destination_>;
-
-    static constexpr bool SameSizeAndCompatible =
-        sizeof(_Source_) == sizeof(_Destination_)
-        // If UnwrappedDestination is bool, UnwrappedSource also needs to be bool
-        // Conversion from non-bool => non-bool | bool => bool | bool => non-bool is fine.
-        // Conversion from non-bool => bool is not fine.
-        && std::is_same_v<bool, UnwrappedSource> 
-            >= std::is_same_v<bool, UnwrappedDestination>
-        && (std::is_same_v<UnwrappedSource, UnwrappedDestination> 
-        || (std::is_integral_v<UnwrappedSource> 
-                && std::is_integral_v<UnwrappedDestination>)
-        || (std::is_floating_point_v<UnwrappedSource> 
-            && std::is_floating_point_v<UnwrappedDestination>));
-
-    static constexpr bool BitcopyConstructible =
-        SameSizeAndCompatible 
-        && std::is_trivially_constructible_v<
-            _Destination_, _SourceReference_>;
-
-    static constexpr bool BitcopyAssignable =
-        SameSizeAndCompatible 
-        && std::is_trivially_assignable_v<
-            _DestinationReference_, _SourceReference_>;
-};
-
-template <
-    class _Source_,
-    class _Destination_, 
-    class _SourceReference_,
-    class _DestinationReference_>
-struct TrivialCategory<
-    _Source_*, _Destination_*,
-    _SourceReference_, _DestinationReference_>
-{
-    static constexpr bool BitcopyConstructible =
-        IsPointerAddressConvertible<_Source_, _Destination_> 
-        && std::is_trivially_constructible_v<_Destination_*, _SourceReference_>;
-
-    static constexpr bool BitcopyAssignable =
-        IsPointerAddressConvertible<_Source_, _Destination_>
-        && std::is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
-};
-
-struct FalseTrivialCategory {
-    static constexpr bool BitcopyConstructible = false;
-    static constexpr bool BitcopyAssignable = false;
-};
-
-template <
-    class _SourceIterator_, 
-    class _DestinationIterator_,
-    bool AreContiguous = IteratorsAreContiguous<
-            _SourceIterator_, _DestinationIterator_> 
-            && !IsIteratorVolatile<_SourceIterator_>
-            && !IsIteratorVolatile<_DestinationIterator_>>
-    struct IteratorMoveCategory : 
-        TrivialCategory<
-            IteratorValueType<_SourceIterator_>, 
-            IteratorValueType<_DestinationIterator_>,
-    std::remove_reference_t<
-        IteratorReferenceType<_SourceIterator_>>&&,
-        IteratorReferenceType<_DestinationIterator_>
-    > 
-{};
-
-template <
-    class _SourceIterator_,
-    class _DestinationIterator_>
-struct IteratorMoveCategory<
-    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false> : 
-        IteratorMoveCategory<_SourceIterator_, _DestinationIterator_> {
-};
-
-template <
-    class _SourceIterator_,
-    class _DestinationIterator_,
-    bool AreContiguous = IteratorsAreContiguous<
-    _SourceIterator_, _DestinationIterator_>
-    && !IsIteratorVolatile<_SourceIterator_>
-    && !IsIteratorVolatile<_DestinationIterator_>>
-    struct IteratorCopyCategory :
-        TrivialCategory <
-            IteratorValueType<_SourceIterator_>,
-            IteratorValueType<_DestinationIterator_>,
-            IteratorReferenceType<_SourceIterator_>,
-            IteratorReferenceType<_DestinationIterator_>
-        > 
-{};
-
-template <
-    class _SourceIterator_,
-    class _DestinationIterator_>
-struct IteratorCopyCategory<
-    _SourceIterator_, _DestinationIterator_, false> : 
-        FalseTrivialCategory
-{};
-
-template <
-    class _SourceIterator_,
-    class _DestinationIterator_>
-struct IteratorCopyCategory<
-    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false> : 
-        IteratorMoveCategory<_SourceIterator_, _DestinationIterator_>
-{};
-
-template <
-    class _InputIterator_,
-    class _Sentinel_,
-    class _OutIterator_>
-using SentinelCopyCategory = std::conditional_t<
-#if BASE_HAS_CXX20
-    std::is_same_v<
-        _Sentinel_, _InputIterator_>
-    || std::sized_sentinel_for<
-        _Sentinel_, _InputIterator_>,
-#else
-    std::is_same_v<_Sentinel_, _InputIterator_>,
-#endif
-    IteratorCopyCategory<
-        _InputIterator_, _OutIterator_>,
-    FalseTrivialCategory>;
 
 __BASE_MEMORY_NAMESPACE_END

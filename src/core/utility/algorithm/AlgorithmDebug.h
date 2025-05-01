@@ -3,7 +3,6 @@
 #include <base/core/utility/TypeTraits.h>
 #include <base/core/utility/Assert.h>
 
-
 #include <base/core/memory/MemoryUtility.h>
 
 

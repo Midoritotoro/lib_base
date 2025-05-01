@@ -152,9 +152,11 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/CountImplementation.cpp
     src/core/utility/simd/FindImplementation.cpp
 
-    src/core/utility/simd/Replace.h
+    src/core/utility/simd/ReplaceImplementation.cpp
 
     src/core/utility/simd/MinMax.h
+    src/core/utility/simd/MinMaxImplementation.cpp
+
     src/core/utility/simd/traits/MinMaxTraits.h
 
     src/core/utility/simd/traits/MinMaxTraitsAVX.h
@@ -204,6 +206,11 @@ set(PRIVATE_SOURCES
 
     src/core/utility/algorithm/AlgorithmDebug.h
     src/core/utility/algorithm/IteratorWrap.h
+
+    src/core/memory/MemoryAllocation.cpp
+    src/core/memory/UninitializedBackout.h
+
+
 )
 
 set(PUBLIC_HEADERS 
@@ -361,9 +368,7 @@ set(PUBLIC_HEADERS
     include/base/core/string/CharacterHelper.h
     include/base/core/string/StringConstIterator.h
 
-    include/base/core/memory/MemoryAllocator.h
     include/base/core/memory/MemoryRange.h
-
     include/base/core/memory/MemoryAllocation.h
 
     include/base/core/container/Map.h

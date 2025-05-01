@@ -2,6 +2,11 @@
 
 #include <src/core/utility/simd/SimdAlgorithm.h>
 
+#include <src/core/utility/simd/traits/MinMaxTraitsSSE2.h>
+#include <src/core/utility/simd/traits/MinMaxTraitsAVX.h>
+
+#include <src/core/utility/simd/traits/MinMaxTraitsAVX512.h>
+#include <src/core/utility/simd/traits/MinMaxTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 

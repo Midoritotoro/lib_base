@@ -464,7 +464,7 @@ WARNING_DISABLE_MSVC(4067)
 #endif
 
 #if defined(OS_WIN) && defined(CPP_MSVC)
-#  define BASE_GUARDOVERFLOW _CRT_GUARDOVERFLOW
+#  define BASE_GUARDOVERFLOW __declspec(guard(overflow))
 #else
 #  define BASE_GUARDOVERFLOW 
 #endif
@@ -497,6 +497,36 @@ WARNING_DISABLE_MSVC(4067)
 
 #else 
 #  define BASE_UNALIGNED
+#endif
+
+#ifdef CPP_MSVC
+
+#  ifndef BASE_MSVC_COMSTEXPR
+#    ifdef _MSVC_CONSTEXPR_ATTRIBUTE
+#      define BASE_MSVC_COMSTEXPR [[msvc::constexpr]]
+#    else
+#      define BASE_MSVC_COMSTEXPR
+#    endif
+#  endif
+
+#else 
+
+#  define BASE_MSVC_COMSTEXPR 
+
+#endif
+
+#ifdef CPP_MSVC 
+
+#  define BASE_DECLARE_GPU      restrict(amp,cpu)
+#  define BASE_DECLARE_GPU_ONLY restrict(amp)
+#  define BASE_DECLARE_CPU_ONLY restrict(cpu)
+
+#else 
+
+#  define BASE_DECLARE_GPU     
+#  define BASE_DECLARE_GPU_ONLY 
+#  define BASE_DECLARE_CPU_ONLY
+
 #endif
 
 // Exceptions 

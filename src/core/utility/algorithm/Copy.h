@@ -1,5 +1,5 @@
-#include <base/core/utility/Algorithm.h>
-#include <base/core/memory/MemoryUtility.h>
+#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/memory/MemoryRange.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -70,7 +70,7 @@ CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
 
 	memory::RewindIterator(
 		destinationIterator,
-		memory::CopyBackwardUnchecked(_UFirst, _ULast, _UDest));
+		memory::CopyBackwardUnchecked(first, last, destination));
 
 	return destinationIterator;
 }
