@@ -210,7 +210,20 @@ set(PRIVATE_SOURCES
     src/core/memory/MemoryAllocation.cpp
     src/core/memory/UninitializedBackout.h
 
+    src/core/memory/Copy.h
+    src/core/memory/Construct.h
 
+    src/core/memory/Deallocate.h
+    src/core/memory/IteratorCategory.h
+
+    src/core/memory/ToAddress.h
+    src/core/memory/Destroy.h
+
+    src/core/memory/Alignment.h
+    src/core/memory/AlignmentOf.h
+
+    src/core/memory/AddressOf.h
+    src/core/memory/PointerConversion.h
 )
 
 set(PUBLIC_HEADERS 
@@ -401,9 +414,6 @@ set(PUBLIC_HEADERS
 
     include/base/core/memory/MemoryAllocatorUtility.h
     include/base/core/memory/MemoryTypeTraits.h
-
-    include/base/core/memory/MemoryPlacement.h
-    include/base/core/memory/MemoryPointerConversion.h
 
     include/base/core/utility/Execution.h
 )

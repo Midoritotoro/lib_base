@@ -4,14 +4,13 @@
 #include <base/core/utility/Algorithm.h>
 
 #include <base/core/utility/TypeTraits.h>
-#include <base/core/memory/MemoryPointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 
 
 
-// true, если у скалярного типа все биты имеют значение 0
+// true, пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 0
 template <class _Type_>
 CONSTEXPR_CXX20 NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
     static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
@@ -89,30 +88,6 @@ constexpr inline void AdvanceBytes(
     _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
 }
 
-inline NODISCARD bool MemoryCopy(
-    void*       _Destination,
-    const void* _Source,
-    size_t      _SourceLength) noexcept
-{
-    const auto _Dest    = memcpy(_Destination,
-        _Source, _SourceLength);
-    const auto _Success = (_Dest == _Destination);
-
-    return _Success;
-}
-
-inline NODISCARD bool MemoryFill(
-    void*       _Destination,
-    const int   _Value,
-    size_t      _Size) noexcept
-{
-    const auto _Dest    = memset(_Destination, 
-        _Value, _Size);
-    const auto _Success = (_Dest == _Destination);
-    
-    return _Success;
-}
-
 template <class _ContiguousIterator_>
 // Tries to get the difference between contiguous iterators
 inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
@@ -142,13 +117,8 @@ inline NODISCARD CONSTEXPR_CXX20 _DifferenceType_ IteratorsDifference(
     if constexpr (std::is_pointer_v<_ContiguousIterator_>)
         return static_cast<_DifferenceType_>(_Last - _First);
 
-    const auto _FirstAdress = CheckedToConstChar(_First);
-    const auto _LastAdress = CheckedToConstChar(_Last);
-
-    const auto _Size = static_cast<sizetype>(
-        _LastAdress - _FirstAdress);
-
-    return _Size;
+    return static_cast<sizetype>(
+        CheckedToConstChar(_Last) - CheckedToConstChar(_First));
 }
 
 template <
@@ -159,14 +129,13 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     sizetype        _Size,
     _OutIterator_   _Destination) noexcept
 {
-    auto _DestinationAdress         = CheckedToChar(_Destination);
-    const auto _FirstAdress         = CheckedToConstChar(_First);
+    if (_Size <= 0)
+        return false;
 
-    const auto _Dest                = memmove(_DestinationAdress,
-        _FirstAdress, _Size);
-    const auto _Success             = (_Dest == _DestinationAdress);
+    auto _DestinationAdress = CheckedToChar(_Destination);
+    const auto _Dest        = memmove(_DestinationAdress, CheckedToConstChar(_First), _Size);
 
-    return _Success;
+    return (_Dest == _DestinationAdress);;
 }
 
 template <
@@ -187,52 +156,7 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
     const auto _Dest                = memmove(
         _DestinationAdress, _FirstAdress, _Size);
 
-    const auto _Success             = (_Dest = _DestinationAdress);
-    return _Success;
-}
-
-template <
-    class _InputIterator_,
-    class _OutIterator_>
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmove(
-    _InputIterator_ _First,
-    _InputIterator_ _Last,
-    _OutIterator_   _Destination) noexcept
-{
-    auto _DestinationAdress         = CheckedToChar(_Destination);
-
-    const auto _FirstAdress         = CheckedToConstChar(_First);
-    const auto _LastAdress          = CheckedToConstChar(_Last);
-
-    const auto _Size                = static_cast<sizetype>(
-        _LastAdress - _FirstAdress);
-    const auto _Dest                = memmove(
-        _DestinationAdress, _FirstAdress, _Size);
-
-    const auto _Success = (_Dest == _DestinationAdress);
-    return _Success;
-}
-
-template <
-    class _InputIterator_,
-    class _OutIterator_>
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryCopyMemmoveCount(
-    _InputIterator_ _First,
-    const sizetype  _Count,
-    _OutIterator_   _Destination) noexcept
-{
-    if (_Count <= 0)
-        return false;
-
-    auto _DestinationAdress         = CheckedToChar(_Destination);
-
-    const auto _FirstAdress         = CheckedToConstChar(_First);
-
-    const auto _Dest                = memmove(
-        _DestinationAdress, _FirstAdress, _Count);
-
-    const auto _Success = (_Dest == _DestinationAdress);
-    return _Success;
+    return (_Dest == _DestinationAdress);
 }
 
 template <

@@ -567,4 +567,78 @@ using unwrap_enum_t = typename UnwrapEnum<_Element_>::type;
 
 #endif
 
+template <
+    std::size_t A,
+    std::size_t B>
+struct MinimumSize: 
+    std::integral_constant<std::size_t, (A < B) ? A : B> 
+{};
+
+template <
+    std::size_t A,
+    std::size_t B>
+struct MaximumSize: 
+    std::integral_constant<std::size_t, (A > B) ? A : B> 
+{};
+
+template <class _Type_>
+struct MaximumObjects: 
+    std::integral_constant<std::size_t,
+        ~static_cast<std::size_t>(0) / sizeof(_Type_)> 
+{};
+
+#if defined(OS_WIN) && defined(CPP_MSVC)
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange  = !std::conjunction_v<
+        std::is_trivially_destructible<_Type_>,
+        std::_Uses_default_destroy<_Allocator_, _Type_*>>;
+#else 
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange = !std::is_trivially_destructible_v<_Type_>;
+#endif
+
+template <
+    typename    _Type_,
+    class       _Allocator_>
+constexpr bool IsNoThrowMoveConstructible =
+    #if defined(OS_WIN) && defined(CPP_MSVC)
+		    std::conjunction_v<
+			    std::is_nothrow_move_constructible<_Type_>,
+			    std::_Uses_default_construct<_Allocator_, _Type_*, _Type_>>;
+    #else
+		    std::is_nothrow_move_constructible_v<_Allocator_>;
+    #endif
+
+template <
+    typename    _Type_,
+    class       _Allocator_,
+    class ...   _Args_>
+constexpr bool IsNoThrowMoveConstructibleArgs =
+    #if defined(OS_WIN) && defined(CPP_MSVC)
+		    std::conjunction_v<
+			    std::is_nothrow_move_constructible<_Type_>,
+			    std::_Uses_default_construct<_Allocator_, _Type_*, _Args_...>>;
+    #else
+		    std::is_nothrow_move_constructible_v<_Allocator_>;
+    #endif
+
+template <
+    class _Source_, 
+    class _Destination_>
+// checks the convertibility of _Source_ to _Destination_
+constexpr bool IsPointerAddressConvertible = std::is_void_v<_Source_>
+    || std::is_void_v<_Destination_>
+    // is_same_v is required for function pointers to work
+    || std::is_same_v<
+        std::remove_cv_t<_Source_>, 
+        std::remove_cv_t<_Destination_>>
+#ifdef __cpp_lib_is_pointer_interconvertible
+    || std::is_pointer_interconvertible_base_of_v<_Destination_, _Source_>
+#endif
+    ;
+
 __BASE_NAMESPACE_END
