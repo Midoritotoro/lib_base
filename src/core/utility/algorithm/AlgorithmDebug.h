@@ -3,7 +3,7 @@
 #include <base/core/utility/TypeTraits.h>
 #include <base/core/utility/Assert.h>
 
-#include <base/core/memory/MemoryUtility.h>
+#include <src/core/memory/PointerConversion.h>
 
 
 __BASE_NAMESPACE_BEGIN

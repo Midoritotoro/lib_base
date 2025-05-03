@@ -1,5 +1,7 @@
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
-#include <base/core/memory/MemoryRange.h>
+#include <src/core/utility/algorithm/IteratorWrap.h>
+
+#include <src/core/memory/CopyBackward.h>
 
 __BASE_NAMESPACE_BEGIN
 

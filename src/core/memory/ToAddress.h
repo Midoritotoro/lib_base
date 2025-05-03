@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/memory/MemoryTypeTraits.h>
+#include <base/core/utility/TypeTraits.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -9,7 +9,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 template <class _Type_>
 concept HasToAdress = requires(const _Type_ & value) {
     typename std::pointer_traits<_Type_>;
-    std::pointer_traits<_Type_>::to_address(_Val);
+    std::pointer_traits<_Type_>::to_address(value);
 };
 
 template <class _Type_>

@@ -4,6 +4,38 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
+#if defined(CPP_GNU)
+#  if CPP_GNU > 430
+#    define ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
+#  else
+#    define ALLOC_SIZE(...)
+#  endif
+#  else 
+#    define ALLOC_SIZE(...) 
+#endif
+
+#if defined(OS_WIN) && !defined(aligned_malloc)
+#  define aligned_malloc		                _aligned_malloc
+#elif !defined(aligned_malloc)
+#  define aligned_malloc(size, alignment)		malloc(size)
+#endif
+
+#if defined(OS_WIN) && !defined(aligned_realloc)
+#  define aligned_realloc                       _aligned_realloc
+#elif !defined(aligned_realloc)
+#  define aligned_realloc(block, size, align)   realloc(block, size)
+#endif
+
+#if defined (OS_WIN) && !defined(aligned_free)
+#  define aligned_free(ptr)                     _aligned_free(ptr)
+#elif !defined(aligned_free)
+#  define aligned_free(ptr)                     free(ptr)
+#endif
+
+#ifndef MEMORY_DEFAULT_ALIGNMENT
+#  define MEMORY_DEFAULT_ALIGNMENT MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT
+#endif
+
 NODISCARD bool IsAlignment(std::size_t value) noexcept {
     return (value > 0) && ((value & (value - 1)) == 0);
 }
@@ -42,21 +74,6 @@ inline void* AlignUp(
     return reinterpret_cast<void*>(~(alignment - 1) &
         (reinterpret_cast<std::size_t>(pointer) + alignment - 1));
 }
-
-template <
-    class _Allocator_,
-    typename = void>
-struct HasMemberAllocateAligned :
-    std::false_type
-{};
-
-template <class _Allocator_>
-struct HasMemberAllocateAligned<_Allocator_, std::void_t<decltype(
-    std::declval<_Allocator_>().allocateAligned())>>
-{};
-
-template <typename _Allocator_>
-inline constexpr bool HasMemberAllocateAligned = HasMemberAllocateAligned<_Allocator_>::value;
 
 template <std::size_t N>
 struct IsAlignmentConstant : 

@@ -1,8 +1,19 @@
 #pragma once 
 
-#include <base/core/memory/MemoryTypeTraits.h>
+#include <base/core/utility/TypeTraits.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
+
+template <class _Type_>
+CONSTEXPR_CXX20 NODISCARD inline bool IsAllBitsZero(const _Type_& value) {
+    static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
+
+    if constexpr (std::is_same_v<_Type_, std::nullptr_t>)
+        return true;
+
+    constexpr auto zero = _Type_{};
+    return memcmp(&value, &zero, sizeof(_Type_)) == 0;
+}
 
 template <
     class _ForwardIterator_,
@@ -13,13 +24,13 @@ constexpr bool IsFillMemsetSafe = std::conjunction_v<
     IsCharacterOrByteOrBool<
         unwrap_enum_t<
             std::remove_reference_t<
-                std::iter_reference_t<_ForwardIterator_>>>>,
+                IteratorReferenceType<_ForwardIterator_>>>>,
     std::negation<
         std::is_volatile<
             std::remove_reference_t<
-                std::iter_reference_t<_ForwardIterator_>>>>, 
+                IteratorReferenceType<_ForwardIterator_>>>>,
     std::is_assignable<
-        std::iter_reference_t<_ForwardIterator_>,
+        IteratorReferenceType<_ForwardIterator_>,
     const _Type_ &>>;
 
 template <
@@ -35,15 +46,15 @@ constexpr bool IsFillZeroMemsetSafe =
     std::conjunction_v<
         std::is_scalar<_Type_>, 
         std::is_scalar<
-            std::iter_value_t<_ForwardIterator_>>,
+            IteratorValueType<_ForwardIterator_>>,
         std::negation<
             std::is_member_pointer<
-                std::iter_value_t<_ForwardIterator_>>>,
+                IteratorValueType<_ForwardIterator_>>>,
         std::negation<
             std::is_volatile<
                 std::remove_reference_t<
-                    std::iter_reference_t<_ForwardIterator_>>>>, 
-        std::is_assignable<std::iter_reference_t<_ForwardIterator_>, 
+                    IteratorReferenceType<_ForwardIterator_>>>>,
+        std::is_assignable<IteratorReferenceType<_ForwardIterator_>,
     const _Type_&>>;
 
 template <

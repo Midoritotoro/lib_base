@@ -224,6 +224,12 @@ set(PRIVATE_SOURCES
 
     src/core/memory/AddressOf.h
     src/core/memory/PointerConversion.h
+
+    src/core/memory/AllocatorUtility.h
+    src/core/memory/IteratorsDifference.h
+
+    src/core/memory/MemoryUtility.h
+    src/core/system/WindowsVersion.h
 )
 
 set(PUBLIC_HEADERS 
@@ -381,7 +387,6 @@ set(PUBLIC_HEADERS
     include/base/core/string/CharacterHelper.h
     include/base/core/string/StringConstIterator.h
 
-    include/base/core/memory/MemoryRange.h
     include/base/core/memory/MemoryAllocation.h
 
     include/base/core/container/Map.h
@@ -397,8 +402,6 @@ set(PUBLIC_HEADERS
     include/base/core/container/VectorIterator.h
     include/base/core/container/VectorConstIterator.h
 
-    include/base/core/memory/MemoryUtility.h
-
     include/base/core/container/Pair.h
     include/base/core/container/CompressedPair.h
 
@@ -411,10 +414,6 @@ set(PUBLIC_HEADERS
 
      
     include/base/core/utility/Concepts.h
-
-    include/base/core/memory/MemoryAllocatorUtility.h
-    include/base/core/memory/MemoryTypeTraits.h
-
     include/base/core/utility/Execution.h
 )
 

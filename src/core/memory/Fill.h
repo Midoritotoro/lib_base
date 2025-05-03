@@ -1,8 +1,31 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
-
+#include <src/core/memory/AllocatorUtility.h>
+#inclu
 __BASE_MEMORY_NAMESPACE_BEGIN
+
+template <
+    class _ContiguousIterator_,
+    class _Type_>
+void FillMemset(
+    _ContiguousIterator_        _Destination,
+    const _Type_& _Value,
+    const size_t                _Count)
+{
+    IteratorValueType<_ContiguousIterator_> destinationValue = _Value;
+    memset(
+        ToAddress(_Destination),
+        UnCheckedToUnsignedChar(destinationValue), _Count);
+}
+
+template <class _ContiguousIterator_>
+void MemsetZero(
+    _ContiguousIterator_    _Destination,
+    const size_t            _Count)
+{
+    const auto _Size = _Count * sizeof(IteratorValueType<_ContiguousIterator_>);
+    memset(ToAddress(_Destination), 0, _Size);
+}
 
 inline NODISCARD bool MemoryFill(
     void*       _Destination,

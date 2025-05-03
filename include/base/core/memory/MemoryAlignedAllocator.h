@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <base/core/memory/Memory.h>
-#include <base/core/memory/MemoryTypeTraits.h>
+#include <src/core/memory/Alignment.h>
+#include <src/core/memory/AlignmentOf.h>
 
 #include <base/core/memory/MemoryAllocation.h>
 
@@ -31,7 +31,7 @@ public:
 
     template <class U>
     struct rebind {
-        using other = std::aligned_allocator<U, _Alignment_>;
+        using other = AlignedAllocator<U, _Alignment_>;
     };
 
     AlignedAllocator() = default;

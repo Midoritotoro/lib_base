@@ -1,19 +1,19 @@
 #pragma once
 
 #include <base/core/utility/TypeTraits.h>
+#include <src/core/memory/IteratorCategory.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 inline NODISCARD bool MemoryCopy(
-    void*       _Destination,
-    const void* _Source,
-    size_t      _SourceLength) noexcept
+    void*       destinationPointer,
+    const void* sourcePointer,
+    size_t      sourceLength) noexcept
 {
-    const auto _Dest    = memcpy(_Destination,
-        _Source, _SourceLength);
-    const auto _Success = (_Dest == _Destination);
-
-    return _Success;
+    return (
+        memcpy(destinationPointer,
+            sourcePointer, sourceLength)
+        == destinationPointer);
 }
 
 template <
@@ -21,28 +21,28 @@ template <
     class _SizeType_,
     class _OutIterator_>
 // copy _First + [0, _Count) to _Dest + [0, _Count), returning _Dest + _Count
-CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnChecked(
-    _InputIterator_ _First, 
-    _SizeType_      _Count, 
-    _OutIterator_   _Dest)
+CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnchecked(
+    _InputIterator_ firstIterator, 
+    _SizeType_      count, 
+    _OutIterator_   destinationIterator)
 {
 #if BASE_HAS_CXX20
     static_assert(is_nonbool_integral_v<_SizeType_>);
 #endif // BASE_HAS_CXX20
 
-    if constexpr (IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable) {
+    if constexpr (IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
 #if BASE_HAS_CXX20
-        if (!is_constant_evaluated())
+        if (is_constant_evaluated() == false)
 #endif
-        {
-            return MemoryCopyMemmoveCount(_First, static_cast<size_t>(_Count), _Dest);
-        }
-    }
+            return MemoryCopyMemmoveCount(
+                std::move(firstIterator), 
+                static_cast<size_t>(count), 
+                std::move(destinationIterator));
 
-    for (; _Count != 0; ++_Dest, (void) ++_First, --_Count)
-        *_Dest = *_First;
+    for (; count != 0; ++destinationIterator, unused(++firstIterator), --count)
+        *destinationIterator = *firstIterator;
 
-    return _Dest;
+    return destinationIterator;
 }
 
 template <
@@ -65,40 +65,38 @@ template <
     class _InputIterator_,
     class _OutIterator_> 
 NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
-    _InputIterator_ inputFirst,
-    _InputIterator_ inputLast,
-    _OutIterator_   outFirst,
-    _OutIterator_   outLast) noexcept
+    _InputIterator_ inputFirstIterator,
+    _InputIterator_ inputLastIterator,
+    _OutIterator_   outFirstIterator,
+    _OutIterator_   outLastIterator) noexcept
 {
-    using OutCopy               = CopyResult<_InputIterator_, _OutIterator_>;
+    auto inputFirstAddress      = CheckedToChar(inputFirstIterator);
+    const auto inputLastAddress = CheckedToConstChar(inputLastIterator);
 
-    const auto inputFirstChar   = CheckedToChar(inputFirst);
-    const auto inputLastChar    = CheckedToConstChar(inputLast);
+    const auto outFirstAddress  = CheckedToChar(outFirstIterator);
+    auto outLastAddress         = CheckedToConstChar(outLastIterator);
 
-    const auto outFirstChar     = CheckedToChar(outFirst);
-    const auto outLastChar      = CheckedToConstChar(outLast);
+    const auto countBytes       = static_cast<size_t>((std::min)
+        (inputLastAddress - inputFirstAddress, outLastAddress - outFirstAddress));
 
-    const auto countBytes       = static_cast<sizetype>((std::min)
-        (inputLastChar - inputFirstChar, outLastChar - outFirstChar));
-
-    if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
-        return OutCopy{};
+    if (MemoryCopy(outFirstAddress, inputFirstAddress, countBytes) == false)
+        return CopyResult<_InputIterator_, _OutIterator_> {};
 
     if constexpr (std::is_pointer_v<_InputIterator_>)
-        inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
+        inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(
+        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(
             countBytes / sizeof(IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
-        outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
+        outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(
+        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(
             countBytes / sizeof(IteratorValueType<_OutIterator_>));
 
     return CopyResult {
-        std::move(inputFirst), 
-        std::move(outFirst) 
+        std::move(inputFirstIterator),
+        std::move(outFirstIterator)
     };
 }
 
@@ -106,32 +104,31 @@ template <
     class _InputIterator_,
     class _OutIterator_>
 NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
-    _InputIterator_ inputFirst,
-    _OutIterator_   outFirst,
+    _InputIterator_ inputFirstIterator,
+    _OutIterator_   outFirstIterator,
     const sizetype  countObjects) noexcept
 {
-    const auto inputFirstChar   = CheckedToChar(inputFirst);
-    const auto outFirstChar     = CheckedToChar(outFirst);
+    const auto inputFirstAddress = CheckedToChar(inputFirstIterator);
+    const auto outFirstAddress   = CheckedToChar(outFirstIterator);
 
-    const auto countBytes       = countObjects 
-        * sizeof(IteratorValueType<_InputIterator_>);
+    const auto countBytes = countObjects * sizeof(IteratorValueType<_InputIterator_>);
 
-    if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
+    if (MemoryCopy(outFirstAddress, inputFirstAddress, countBytes) == false)
         return {};
 
     if constexpr (std::is_pointer_v<_InputIterator_>)
-        inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
+        inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(countObjects);
+        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(countObjects);
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
-        outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
+        outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(countObjects);
+        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(countObjects);
 
     return {
-        std::move(inputFirst),
-        std::move(outFirst)
+        std::move(inputFirstIterator),
+        std::move(outFirstIterator)
     };
 }
 
@@ -139,31 +136,31 @@ template <
     class _InputIterator_,
     class _OutIterator_>
 NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
-    _InputIterator_ inputFirst,
-    _OutIterator_   outFirst,
+    _InputIterator_ inputFirstIterator,
+    _OutIterator_   outFirstIterator,
     const sizetype  countBytes) noexcept
 {
-    const auto inputFirstChar = CheckedToChar(inputFirst);
-    const auto outFirstChar = CheckedToChar(outFirst);
+    const auto inputFirstAddress = CheckedToChar(inputFirst);
+    const auto outFirstAddress   = CheckedToChar(outFirst);
 
-    if (MemoryCopy(outFirstChar, inputFirstChar, countBytes) == false)
+    if (MemoryCopy(outFirstAddress, inputFirstAddress, countBytes) == false)
         return {};
 
     if constexpr (std::is_pointer_v<_InputIterator_>)
-        inputFirst = reinterpret_cast<_InputIterator_>(inputFirstChar + countBytes);
+        inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirst += static_cast<IteratorDifferenceType<_InputIterator_>>(
+        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(
             countBytes / sizeof(IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
-        outFirst = reinterpret_cast<_OutIterator_>(outFirstChar + countBytes);
+        outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirst += static_cast<IteratorDifferenceType<_OutIterator_>>(
+        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(
             countBytes / sizeof(IteratorValueType<_OutIterator_>));
 
     return {
-        std::move(inputFirst),
-        std::move(outFirst)
+        std::move(inputFirstIterator),
+        std::move(outFirstIterator)
     };
 }
 

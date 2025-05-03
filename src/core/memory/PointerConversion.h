@@ -8,14 +8,14 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 //  онвертирует "модный" указатель в стандартный. 
 // ћодными указател€ми считаютс€ типы с переопределенным оператором -> и *
 template <class _PointerLikeType_>
-CONSTEXPR_ADDRESSOF NODISCARD inline constexpr decltype(auto)
+CONSTEXPR_ADDRESSOF NODISCARD inline decltype(auto)
     UnFancy(_PointerLikeType_ pointerLike) noexcept 
 { 
     return AddressOf(*pointerLike);
 }
 
 template <class _PointerLikeType_>
-CONSTEXPR_ADDRESSOF NODISCARD inline constexpr _PointerLikeType_*
+CONSTEXPR_ADDRESSOF NODISCARD inline _PointerLikeType_*
     UnFancy(_PointerLikeType_* pointerLike) noexcept
 {
     return pointerLike;
@@ -23,7 +23,7 @@ CONSTEXPR_ADDRESSOF NODISCARD inline constexpr _PointerLikeType_*
 
 //  онвертаци€ из потенциально нулевого модного указател€ в стандартный
 template <class _PossiblyNullPointerLikeType_>
-CONSTEXPR_ADDRESSOF NODISCARD inline constexpr decltype(auto)
+CONSTEXPR_ADDRESSOF NODISCARD inline decltype(auto)
     UnfancyMaybeNull(
         _PossiblyNullPointerLikeType_ possiblyNullPointerLike) noexcept
 {
@@ -33,7 +33,7 @@ CONSTEXPR_ADDRESSOF NODISCARD inline constexpr decltype(auto)
 }
 
 template <class _PossiblyNullPointerLikeType_>
-CONSTEXPR_ADDRESSOF NODISCARD inline constexpr _PossiblyNullPointerLikeType_*
+CONSTEXPR_ADDRESSOF NODISCARD inline _PossiblyNullPointerLikeType_*
     UnfancyMaybeNull(
         _PossiblyNullPointerLikeType_* possiblyNullPointerLike) noexcept
 {

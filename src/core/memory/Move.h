@@ -5,6 +5,45 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 
+
+template <
+    class _InputIterator_,
+    class _OutIterator_>
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+    _InputIterator_ _First,
+    sizetype        _Size,
+    _OutIterator_   _Destination) noexcept
+{
+    if (_Size <= 0)
+        return false;
+
+    auto _DestinationAdress = CheckedToChar(_Destination);
+    const auto _Dest        = memmove(_DestinationAdress, CheckedToConstChar(_First), _Size);
+
+    return (_Dest == _DestinationAdress);;
+}
+
+template <
+    class _InputIterator_,
+    class _OutIterator_> 
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+    _InputIterator_ _First,
+    _InputIterator_ _Last,
+    _OutIterator_   _Destination) noexcept
+{
+    auto _DestinationAdress         = CheckedToChar(_Destination);
+        
+    const auto _FirstAdress         = CheckedToConstChar(_First);
+    const auto _LastAdress          = CheckedToConstChar(_Last);
+
+    const auto _Size                = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+    const auto _Dest                = memmove(
+        _DestinationAdress, _FirstAdress, _Size);
+
+    return (_Dest == _DestinationAdress);
+}
+
 template <
     class _InputIterator_,
     class _OutIterator_>
@@ -14,12 +53,11 @@ CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MoveUnChecked(
     _InputIterator_ _Last,
     _OutIterator_   _Destination)
 {
-    if constexpr (IteratorMoveCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable) {
+    if constexpr (IteratorMoveCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
 #if BASE_HAS_CXX20
             if (!is_constant_evaluated())
 #endif
                 return MemoryCopyMemmoveCount(_First, _Last, _Destination);
-        }
 
     for (; _First != _Last; ++_Destination, (void) ++_First)
         *_Destination = std::move(*_First);

@@ -1,6 +1,7 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <src/core/memory/IteratorCategory.h>
+#include <src/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -16,11 +17,9 @@ _ContiguousIterator2_ CopyBackwardMemmove(
     const char* const   last        = CheckedToConstChar(lastIterator);
 
     char* const         destination = CheckedToConstChar(destinationIterator);
-    const auto          difference  = IteratorsDifference<size_t>(first, last);
+    const auto          difference  = static_cast<size_t>(IteratorsDifference(first, last));
 
-    auto result = memmove(
-        destination - difference, 
-        first, difference);
+    auto result = memmove(destination - difference, first, difference);
 
     if constexpr (std::is_pointer_v<_ContiguousIterator2_>)
         return static_cast<_ContiguousIterator2_>(result);

@@ -1,41 +1,28 @@
-#pragma once
+#pragma once 
 
+#include <src/core/memory/AddressOf.h>
+#include <src/core/memory/Alignment.h>
 
-#include <base/core/arch/Platform.h>
+#include <src/core/memory/AlignmentOf.h>
+#include <src/core/memory/AllocatorUtility.h>
 
-__BASE_MEMORY_NAMESPACE_BEGIN
+#include <src/core/memory/Construct.h>
+#include <src/core/memory/Copy.h>
 
-#if defined(CPP_GNU)
-#  if CPP_GNU > 430
-#    define ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
-#  else
-#    define ALLOC_SIZE(...)
-#  endif
-#  else 
-#    define ALLOC_SIZE(...)
-#endif
+#include <src/core/memory/CopyBackward.h>
+#include <src/core/memory/Deallocate.h>
 
-#if defined(OS_WIN) && !defined(aligned_malloc)
-#  define aligned_malloc		                _aligned_malloc
-#elif !defined(aligned_malloc)
-#  define aligned_malloc(size, alignment)		malloc(size)
-#endif
+#include <src/core/memory/Destroy.h>
+#include <src/core/memory/Fill.h>
 
-#if defined(OS_WIN) && !defined(aligned_realloc)
-#  define aligned_realloc                       _aligned_realloc
-#elif !defined(aligned_realloc)
-#  define aligned_realloc(block, size, align)   realloc(block, size)
-#endif
+#include <src/core/memory/FillMemsetSafety.h>
+#include <src/core/memory/IteratorCategory.h>
 
-#if defined (OS_WIN) && !defined(aligned_free)
-#  define aligned_free(ptr)                     _aligned_free(ptr)
-#elif !defined(aligned_free)
-#  define aligned_free(ptr)                     free(ptr)
-#endif
+#include <src/core/memory/IteratorsDifference.h>
+#include <src/core/memory/MemoryUtility.h>
 
-#ifndef MEMORY_DEFAULT_ALIGNMENT
-#  define MEMORY_DEFAULT_ALIGNMENT MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT
-#endif
+#include <src/core/memory/Move.h>
+#include <src/core/memory/PointerConversion.h>
 
-
-__BASE_MEMORY_NAMESPACE_END
+#include <src/core/memory/ToAddress.h>
+#include <src/core/memory/UninitializedBackout.h>

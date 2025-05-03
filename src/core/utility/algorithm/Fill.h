@@ -1,7 +1,10 @@
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/algorithm/IteratorWrap.h>
 
-#include <base/core/memory/MemoryRange.h>
+#include <src/core/memory/FillMemsetSafety.h>
+#include <src/core/memory/Fill.h>
+
+#include <src/core/memory/IteratorsDifference.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -18,8 +21,8 @@ CONSTEXPR_CXX20 void fill(
 	const auto start		= UnwrapIterator(firstIterator);
 	const auto end			= UnwrapIterator(lastIterator);
 		
-	const auto difference	= memory::IteratorsDifference<
-		IteratorDifferenceType<_ForwardIterator_>>(start, end);
+	const auto difference	= static_cast<IteratorDifferenceType<_ForwardIterator_>>(
+		memory::IteratorsDifference(start, end));
 
 #if BASE_HAS_CXX20
 	if (is_constant_evaluated() == false)
