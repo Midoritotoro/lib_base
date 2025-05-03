@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/memory/MemoryAllocator.h>
+#include <base/core/utility/TypeTraits.h>
 
 __BASE_CONTAINER_NAMESPACE_BEGIN
 

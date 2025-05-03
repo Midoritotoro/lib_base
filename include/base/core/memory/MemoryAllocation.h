@@ -4,7 +4,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-constexpr inline uint32 MaximumMemoryAllocationSize() noexcept;
+CLANG_CONSTEXPR_CXX20 inline uint32 MaximumMemoryAllocationSize() noexcept;
 
 NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
 CLANG_CONSTEXPR_CXX20 void* Allocate(sizetype bytes);
@@ -68,7 +68,7 @@ DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 void AllocateFast(
     sizetype    minimumSize,
     bool        zeroReallocate);
 
-CONSTEXPR_CXX20 CLANG_CONSTEXPR_CXX20 
+CLANG_CONSTEXPR_CXX20 CLANG_CONSTEXPR_CXX20
 DECLARE_MEMORY_ALLOCATOR void AllocateZerosFast(
     void*       pointer,
     uint32*     size,

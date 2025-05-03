@@ -1,14 +1,17 @@
 #pragma once 
 
-#include <base/core/memory/MemoryTypeTraits.h>
+#include <src/core/memory/AllocatorUtility.h>
+#include <src/core/memory/PointerConversion.h>
+
+#include <src/core/memory/Destroy.h>
+
+__BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Allocator_>
 // Class to undo partially constructed ranges in UninitializedXXX algorithms
-class UninitializedBackout {
-private:
+struct UninitializedBackout {
     using pointer = AllocatorPointerType<_Allocator_>;
 
-public:
     CONSTEXPR_CXX20 inline UninitializedBackout(
         pointer         destinationPointer, 
         _Allocator_&    allocator
@@ -27,10 +30,10 @@ public:
 
     template <class... _Types_>
     // construct a new element at *_lastPointer and increment
-    CONSTEXPR_CXX20 inline void emplaceBack(_Types_&&... values) noexcept(
+    CONSTEXPR_CXX20 inline void emplaceBack(_Types_&&... values) noexcept(noexcept(
         std::allocator_traits<_Allocator_>::construct(
             _allocator, UnFancy(_lastPointer),
-            std::forward<_Types_>(values)...))
+            std::forward<_Types_>(values)...)))
     {
         std::allocator_traits<_Allocator_>::construct(
             _allocator, UnFancy(_lastPointer),
@@ -39,14 +42,16 @@ public:
         ++_lastPointer;
     }
 
-    constexpr inline pointer release() noexcept { 
+    constexpr inline pointer release() noexcept {
         // suppress any exception handling backout and return _lastPointer
         _firstPointer = _lastPointer;
         return _lastPointer;
     }
-private:
+
     pointer         _firstPointer = nullptr;
     pointer         _lastPointer  = nullptr;
 
     _Allocator_&    _allocator;
 };
+
+__BASE_MEMORY_NAMESPACE_END

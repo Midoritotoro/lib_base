@@ -1,13 +1,13 @@
 #include <base/core/memory/MemoryAllocation.h>
-
-#include <base/core/memory/MemoryUtility.h>
 #include <base/core/utility/OverflowCheck.h>
+
+#include <src/core/memory/MemoryUtility.h>
 
 static inline constexpr std::atomic<base::uint32> MaximumAllocationSize = UINT_MAX;
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-constexpr inline uint32 MaximumMemoryAllocationSize() noexcept {
+CLANG_CONSTEXPR_CXX20 inline uint32 MaximumMemoryAllocationSize() noexcept {
     return thread::AtomicOperations<uint32>::loadRelaxed(MaximumAllocationSize);
 }
 
@@ -251,7 +251,7 @@ DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 void AllocateFast(
     *size = minimumSize;
 }
 
-CONSTEXPR_CXX20 DECLARE_MEMORY_ALLOCATOR void AllocateZerosFast(
+CLANG_CONSTEXPR_CXX20 DECLARE_MEMORY_ALLOCATOR void AllocateZerosFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize)

@@ -23,7 +23,7 @@ NODISCARD constexpr auto ToAddress(const _Pointer_& value) noexcept {
     if constexpr (HasToAdress<_Pointer_>)
         return std::pointer_traits<_Pointer_>::to_address(value);
     else
-        return ToAddress(_Pointer_.operator->());
+        return ToAddress(value.operator->());
 }
 
 #endif

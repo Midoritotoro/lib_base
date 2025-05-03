@@ -35,7 +35,7 @@ inline constexpr void ReverseCopyTail(
         *_Destination++ = *--_Last;
 }
 
-NODISCARD constexpr inline std::size_t ByteLength(
+NODISCARD inline std::size_t ByteLength(
     const void* _First,
     const void* _Last) noexcept
 {
@@ -46,14 +46,14 @@ NODISCARD constexpr inline std::size_t ByteLength(
         _LastUChar - _FirstUChar);
 }
 
-constexpr inline void RewindBytes(
+inline void RewindBytes(
     void*& _Target,
     size_t _Offset) noexcept
 {
     _Target = UnCheckedToUnsignedChar(_Target) - _Offset;
 }
 
-constexpr inline void RewindBytes(
+inline void RewindBytes(
     const void*& _Target,
     size_t          _Offset) noexcept
 {
@@ -61,7 +61,7 @@ constexpr inline void RewindBytes(
 }
 
 template <class _Integral_>
-constexpr inline void AdvanceBytes(
+inline void AdvanceBytes(
     void*& _Target,
     _Integral_  _Offset) noexcept
 {
@@ -69,7 +69,7 @@ constexpr inline void AdvanceBytes(
 }
 
 template <class _Integral_>
-constexpr inline void AdvanceBytes(
+inline void AdvanceBytes(
     const void*& _Target,
     _Integral_      _Offset) noexcept
 {

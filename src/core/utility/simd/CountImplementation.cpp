@@ -3,7 +3,7 @@
 #include <base/core/arch/Platform.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <base/core/memory/MemoryRange.h>
+#include <src/core/memory/MemoryUtility.h>
 #include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
 #include <src/core/utility/simd/traits/SimdCountTraits.h>

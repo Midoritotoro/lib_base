@@ -1,149 +1,130 @@
 #pragma once 
 
 #include <src/core/memory/AllocatorUtility.h>
-#inclu
+#include <src/core/memory/FillMemsetSafety.h>
+
+#include <src/core/memory/ToAddress.h>
+#include <src/core/memory/UninitializedBackout.h>
+
+#include <cstring>
+
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <
     class _ContiguousIterator_,
     class _Type_>
 void FillMemset(
-    _ContiguousIterator_        _Destination,
-    const _Type_& _Value,
-    const size_t                _Count)
+    _ContiguousIterator_        destinationIterator,
+    const _Type_&               value,
+    const size_t                count)
 {
-    IteratorValueType<_ContiguousIterator_> destinationValue = _Value;
+    IteratorValueType<_ContiguousIterator_> destinationValue = value;
     memset(
-        ToAddress(_Destination),
-        UnCheckedToUnsignedChar(destinationValue), _Count);
+        ToAddress(destinationIterator),
+        UnCheckedToUnsignedChar(destinationValue), count);
 }
 
 template <class _ContiguousIterator_>
 void MemsetZero(
-    _ContiguousIterator_    _Destination,
-    const size_t            _Count)
+    _ContiguousIterator_    destinationIterator,
+    const size_t            count)
 {
-    const auto _Size = _Count * sizeof(IteratorValueType<_ContiguousIterator_>);
-    memset(ToAddress(_Destination), 0, _Size);
+    memset(
+        ToAddress(destinationIterator), 0,
+        count * sizeof(IteratorValueType<_ContiguousIterator_>));
 }
 
 inline NODISCARD bool MemoryFill(
-    void*       _Destination,
-    const int   _Value,
-    size_t      _Size) noexcept
+    void*       destinationPointer,
+    const int   value,
+    size_t      size) noexcept
 {
-    const auto _Dest    = memset(_Destination, 
-        _Value, _Size);
-    const auto _Success = (_Dest == _Destination);
-    
-    return _Success;
+    return (memset(destinationPointer, value, size) == destinationPointer);
 }
 
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
 CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedFillCount(
-    AllocatorPointerType<_Allocator_>       _First,
-    AllocatorSizeType<_Allocator_>          _Count,
-    const AllocatorValueType<_Allocator_>&  _Value,
-    _Allocator_&                            _Allocator)
+    AllocatorPointerType<_Allocator_>       firstPointer,
+    AllocatorSizeType<_Allocator_>          count,
+    const AllocatorValueType<_Allocator_>&  value,
+    _Allocator_&                            allocator)
 {
-    using _Ty = AllocatorValueType<_Allocator_>;
+    using _ValueType_ = AllocatorValueType<_Allocator_>;
 
-    if constexpr (
-        IsFillMemsetSafe<_Ty*, _Ty> 
-#if defined(OS_WIN) && defined(CPP_MSVC)
-        && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
-#endif
-    ) {
+    if constexpr (IsFillMemsetSafe<_ValueType_*, _ValueType_>) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            FillMemset(UnFancy(_First), _Value, static_cast<size_t>(_Count));
-            return _First + _Count;
+            FillMemset(UnFancy(firstPointer), value, static_cast<size_t>(count));
+            return firstPointer + count;
         }
     }
-    else if constexpr (
-        IsFillZeroMemsetSafe<_Ty*, _Ty> 
-#if defined(OS_WIN) && defined(CPP_MSVC)
-        && std::_Uses_default_construct<_Allocator_, _Ty*, _Ty>::value
-#endif
-        ) {
+    else if constexpr (IsFillZeroMemsetSafe<_ValueType_*, _ValueType_>) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            if (IsAllBitsZero(_Value)) {
-                MemsetZero(UnFancy(_First), static_cast<size_t>(_Count));
-                return _First + _Count;
+            if (IsAllBitsZero(value)) {
+                MemsetZero(UnFancy(firstPointer), static_cast<size_t>(count));
+                return firstPointer + count;
             }
         }
     }
 
-    UninitializedBackout<_Allocator_> _Backout { _First, _Allocator };
-    for (; 0 < _Count; --_Count) {
-        _Backout.EmplaceBack(_Value);
-    }
+    UninitializedBackout<_Allocator_> backout { firstPointer, allocator };
 
-    return _Backout.Release();
+    for (; 0 < count; --count)
+        backout.emplaceBack(value);
+
+    return backout.release();
 }
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
 CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedFill(
-    AllocatorPointerType<_Allocator_>       _First,
-    AllocatorPointerType<_Allocator_>       _Last,
-    const AllocatorValueType<_Allocator_>&  _Value,
-    _Allocator_&                            _Allocator)
+    AllocatorPointerType<_Allocator_>       firstPointer,
+    AllocatorPointerType<_Allocator_>       lastPointer,
+    const AllocatorValueType<_Allocator_>&  value,
+    _Allocator_&                            allocator)
 {
-    const auto _Count = IteratorsDifference(_First, _Last);
-    return UninitializedFillCount(_First, _Count, _Value, _Allocator);
+    return UninitializedFillCount(
+        firstPointer, 
+        IteratorsDifference(firstPointer, lastPointer), 
+        value, allocator);
 }
 
 template <
     class _NoThrowForwardIterator_,
     class _Type_>
-// copy _Val throughout raw [_First, _Last)
+// copy value throughout raw [firstIterator, lastIterator)
 void uninitialized_fill(
-    const _NoThrowForwardIterator_  _First, 
-    const _NoThrowForwardIterator_  _Last,
-    const _Type_&                   _Value) 
+    const _NoThrowForwardIterator_  firstIterator, 
+    const _NoThrowForwardIterator_  lastIterator,
+    const _Type_&                   value) 
 {
-#if defined(OS_WIN) && defined(CPP_MSVC)
-    auto _UFirst        = std::_Get_unwrapped(_First);
-    const auto _ULast   = std::_Get_unwrapped(_Last);
-#else
-    auto _UFirst        = UnFancy(_First);
-    const auto _ULast   = UnFancy(_Last);
-#endif
+    using _WithoutCvref_ = std::remove_cvref_t<const _NoThrowForwardIterator_&>;
 
-    if constexpr (std::_Fill_memset_is_safe<
-        std::remove_cvref_t<
-            const _NoThrowForwardIterator_&>,
-        _Type_>) 
-    {
+    auto first        = UnwrapIterator(firstIterator);
+    const auto last   = UnwrapIterator(lastIterator);
+     
+    if constexpr (IsFillMemsetSafe<_WithoutCvref_, _Type_>) 
         return FillMemset(
-            _UFirst, _Value,
-            static_cast<size_t>(_ULast - _UFirst));
-    }
+            first, value,
+            static_cast<size_t>(last - first));
 
-    if constexpr (std::_Fill_zero_memset_is_safe<
-            std::remove_cvref_t<
-                const _NoThrowForwardIterator_&>,
-        _Type_>)
-    {
-        if (IsAllBitsZero(_Value)) {
-            return MemsetZero(_UFirst, static_cast<size_t>(_ULast - _UFirst));
-        }
-    }
+    if constexpr (IsFillZeroMemsetSafe<_WithoutCvref_, _Type_>)
+        if (IsAllBitsZero(value))
+            return MemsetZero(first, static_cast<size_t>(last - first));
             
-    UninitializedBackout<std::remove_cvref_t<const _NoThrowForwardIterator_&>> _Backout{_UFirst};
+    UninitializedBackout<_WithoutCvref_> backout{ first };
 
-    while (_Backout._Last != _ULast)
-        _Backout.EmplaceBack(_Value);
+    while (backout._lastPointer != last)
+        backout.emplaceBack(value);
 
-    _Backout.Release();
+    backout.release();
 }
 
 

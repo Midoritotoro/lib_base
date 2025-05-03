@@ -11,35 +11,35 @@
 #include <base/core/utility/Execution.h>
 #include <base/core/utility/TypeTraits.h>
 
-#include <src/core/utility/algorithm/AllOf.h>
-#include <src/core/utility/algorithm/NoneOf.h>
+//#include <src/core/utility/algorithm/AllOf.h>
+//#include <src/core/utility/algorithm/NoneOf.h>
 
-#include <src/core/utility/algorithm/Copy.h>
-#include <src/core/utility/algorithm/Count.h>
+//#include <src/core/utility/algorithm/Copy.h>
+//#include <src/core/utility/algorithm/Count.h>
+//
+//#include <src/core/utility/algorithm/Fill.h>
+//#include <src/core/utility/algorithm/Find.h>
+//
+//#include <src/core/utility/algorithm/ForEach.h>
+//#include <src/core/utility/algorithm/Mismatch.h>
+//
+//#include <src/core/utility/algorithm/Move.h>
+//#include <src/core/utility/algorithm/PartialSort.h>
 
-#include <src/core/utility/algorithm/Fill.h>
-#include <src/core/utility/algorithm/Find.h>
-
-#include <src/core/utility/algorithm/ForEach.h>
-#include <src/core/utility/algorithm/Mismatch.h>
-
-#include <src/core/utility/algorithm/Move.h>
-#include <src/core/utility/algorithm/PartialSort.h>
-
-#include <src/core/utility/algorithm/AnyOf.h>
-#include <src/core/utility/algorithm/Remove.h>
-
-#include <src/core/utility/algorithm/Replace.h>
-#include <src/core/utility/algorithm/Reverse.h>
-
-#include <src/core/utility/algorithm/ReverseCopy.h>
-#include <src/core/utility/algorithm/Rotate.h>
-
-#include <src/core/utility/algorithm/Search.h>
-#include <src/core/utility/algorithm/Sort.h>
-
-#include <src/core/utility/algorithm/SwapRanges.h>
-#include <src/core/utility/algorithm/Transform.h>
+//#include <src/core/utility/algorithm/AnyOf.h>
+//#include <src/core/utility/algorithm/Remove.h>
+//
+//#include <src/core/utility/algorithm/Replace.h>
+//#include <src/core/utility/algorithm/Reverse.h>
+//
+//#include <src/core/utility/algorithm/ReverseCopy.h>
+//#include <src/core/utility/algorithm/Rotate.h>
+//
+//#include <src/core/utility/algorithm/Search.h>
+//#include <src/core/utility/algorithm/Sort.h>
+//
+//#include <src/core/utility/algorithm/SwapRanges.h>
+//#include <src/core/utility/algorithm/Transform.h>
 
 __BASE_NAMESPACE_BEGIN
 

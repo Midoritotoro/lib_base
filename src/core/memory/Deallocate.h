@@ -44,7 +44,7 @@ CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
     AllocatorSizeType<_Allocator_>      bytesCount,
     _Allocator_&                        allocator) noexcept
 {
-    if (_BytesCount <= 0)
+    if (bytesCount <= 0)
         return;
 
     AllocatorPointerType<_Allocator_> end = pointerStart + bytesCount;

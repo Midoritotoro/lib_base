@@ -41,7 +41,7 @@ CONSTEXPR_ADDRESSOF NODISCARD inline _PossiblyNullPointerLikeType_*
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr char* 
+NODISCARD inline char* 
     UnCheckedToChar(_Type_ pointer) noexcept
 {
     return const_cast<char*>(
@@ -49,7 +49,7 @@ NODISCARD inline constexpr char*
 }
 
 template <typename _Type_> 
-NODISCARD inline constexpr 
+NODISCARD inline 
     const char* UnCheckedToConstChar(_Type_ pointer) noexcept
 {
     return const_cast<const char*>(
@@ -57,7 +57,7 @@ NODISCARD inline constexpr
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
     char* CheckedToChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAdress = ToAddress(pointerLike);
@@ -65,7 +65,7 @@ NODISCARD inline constexpr
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
     const char* CheckedToConstChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAddress = ToAddress(pointerLike);
@@ -73,7 +73,7 @@ NODISCARD inline constexpr
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
 unsigned char*
     UnCheckedToUnsignedChar(
         _Type_ pointer) noexcept
@@ -84,7 +84,7 @@ unsigned char*
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
 const unsigned char* 
     UnCheckedToConstUnsignedChar(
         _Type_ pointer) noexcept
@@ -95,7 +95,7 @@ const unsigned char*
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
     unsigned char* CheckedToUnsignedChar(
         _Type_ pointerLike) noexcept
 {
@@ -104,7 +104,7 @@ NODISCARD inline constexpr
 }
 
 template <typename _Type_>
-NODISCARD inline constexpr
+NODISCARD inline
 const unsigned char* 
     CheckedToConstUnsignedChar(
         _Type_ pointerLike) noexcept

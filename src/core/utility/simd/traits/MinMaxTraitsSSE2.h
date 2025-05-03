@@ -1,8 +1,6 @@
 #pragma once 
 
 #include <base/core/arch/ProcessorFeatures.h>
-#include <base/core/memory/MemoryUtility.h>
-
 #include <src/core/utility/simd/MinMax.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -220,10 +218,10 @@ namespace SSE2 {
             SimdType _SecondVector);
 
         NODISCARD static SimdType Load(const void* _Start);
-        template <class functoror_>
+        template <class _Functor_>
         NODISCARD static SimdType HorizontalFunc(
             const SimdType  current, 
-            functoror_       functor) noexcept;
+            _Functor_       functor) noexcept;
 
         NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
         NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;

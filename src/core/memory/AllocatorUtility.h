@@ -1,7 +1,7 @@
 #pragma once 
 
-
-#include <base/core/memory/Memory.h>
+#include <base/core/utility/TypeTraits.h>
+#include <memory>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 

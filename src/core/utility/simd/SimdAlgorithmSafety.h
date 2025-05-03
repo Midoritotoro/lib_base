@@ -3,7 +3,7 @@
 #include <base/core/arch/Platform.h>
 
 #include <base/core/utility/TypeTraits.h>
-#include <base/core/memory/MemoryRange.h>
+
 
 __BASE_NAMESPACE_BEGIN
 

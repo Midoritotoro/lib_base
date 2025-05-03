@@ -1,8 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
 #include <base/core/utility/Assert.h>
-
 #include <src/core/memory/PointerConversion.h>
 
 
@@ -26,7 +24,7 @@ CONSTEXPR_CXX20 void VerifyRange(
 {
 #ifdef _DEBUG
 	if constexpr (std::is_pointer_v<_Iterator_> && std::is_pointer_v<_Sentinel_>) {
-		DebugAssertLog(firstIterator <= lastIterator, "transposed pointer range")
+		DebugAssertLog(firstIterator <= lastIterator, "transposed pointer range");
 		return;
 	}
 

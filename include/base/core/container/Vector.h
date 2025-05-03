@@ -5,19 +5,10 @@
 // Calling std::terminate in all Debug-Only asserts on failure can be disabled using
 //	#define BASE_VECTOR_DEBUG_ASSERT_NO_FAILURE
 
-#include <base/core/memory/MemoryUtility.h>
-#include <base/core/memory/MemoryRange.h>
-
 #include <base/core/container/VectorIterator.h>
 
 #include <base/core/container/CompressedPair.h>
-#include <base/core/memory/MemoryAllocatorUtility.h>
-
-#include <base/core/memory/MemoryPointerConversion.h>
-#include <base/core/memory/MemoryPlacement.h>
-
-#include <base/core/memory/MemoryAllocatorUtility.h>
-#include <base/core/memory/MemoryTypeTraits.h>
+#include <base/core/memory/Memory.h>
 
 #include <base/core/container/VectorDebug.h>
 #include <base/core/container/VectorValue.h>
@@ -74,7 +65,6 @@ class Vector
 	static constexpr NODISCARD inline bool IsTemplateCorrect() noexcept {
 		if constexpr (
 			std::is_same_v<_SimdOptimization_, VectorSimd::_Optimization_Disable_> == false
-			&& memory::HasMemberAllocateAligned_v<_Allocator_> == false
 		)
 			return false;
 
@@ -2424,7 +2414,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	_Valty_&&...	_Val)
 {
 	
-	if constexpr (memory::IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
+	if constexpr (IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
 		memory::ConstructInPlace(
 			*_Location, std::forward<_Valty_>(_Val)...);
 	else
@@ -2841,7 +2831,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 			if (!is_constant_evaluated())
 #endif
 			{
-				memory::MemoryCopyMemmoveCount(_First, static_cast<size_t>(_OldSize), _Start);
+				memory::MemoryCopy(_First, static_cast<size_t>(_OldSize), _Start);
 				_First += _OldSize;
 				_Copied = true;
 			}
@@ -2861,10 +2851,9 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	} else {
 		const pointer _NewLast = _Start + _Newsize;
 
-		memory::MemoryCopyCountUnChecked(std::move(_First), _Newsize, _Start);
+		memory::MemoryCopyCountUnchecked(std::move(_First), _Newsize, _Start);
 		memory::DestroyRange(_NewLast, _Current, allocator);
 
-		_ASAN_VECTOR_MODIFY(static_cast<difference_type>(_Newsize - _OldSize));
 		_Current = _NewLast;
 	}
 }

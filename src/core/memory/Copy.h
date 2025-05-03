@@ -1,7 +1,12 @@
 #pragma once
 
 #include <base/core/utility/TypeTraits.h>
+
 #include <src/core/memory/IteratorCategory.h>
+#include <src/core/memory/AllocatorUtility.h>
+
+#include <src/core/memory/UninitializedBackout.h>
+#include <src/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -15,6 +20,45 @@ inline NODISCARD bool MemoryCopy(
             sourcePointer, sourceLength)
         == destinationPointer);
 }
+
+template <
+    class _InputIterator_,
+    class _OutIterator_>
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+    _InputIterator_ _First,
+    sizetype        _Size,
+    _OutIterator_   _Destination) noexcept
+{
+    if (_Size <= 0)
+        return false;
+
+    auto _DestinationAdress = CheckedToChar(_Destination);
+    const auto _Dest        = memmove(_DestinationAdress, CheckedToConstChar(_First), _Size);
+
+    return (_Dest == _DestinationAdress);;
+}
+
+template <
+    class _InputIterator_,
+    class _OutIterator_> 
+inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+    _InputIterator_ _First,
+    _InputIterator_ _Last,
+    _OutIterator_   _Destination) noexcept
+{
+    auto _DestinationAdress         = CheckedToChar(_Destination);
+        
+    const auto _FirstAdress         = CheckedToConstChar(_First);
+    const auto _LastAdress          = CheckedToConstChar(_Last);
+
+    const auto _Size                = static_cast<sizetype>(
+        _LastAdress - _FirstAdress);
+    const auto _Dest                = memmove(
+        _DestinationAdress, _FirstAdress, _Size);
+
+    return (_Dest == _DestinationAdress);
+}
+
 
 template <
     class _InputIterator_, 
@@ -73,8 +117,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     auto inputFirstAddress      = CheckedToChar(inputFirstIterator);
     const auto inputLastAddress = CheckedToConstChar(inputLastIterator);
 
-    const auto outFirstAddress  = CheckedToChar(outFirstIterator);
-    auto outLastAddress         = CheckedToConstChar(outLastIterator);
+    auto outFirstAddress        = CheckedToChar(outFirstIterator);
+    const auto outLastAddress   = CheckedToConstChar(outLastIterator);
 
     const auto countBytes       = static_cast<size_t>((std::min)
         (inputLastAddress - inputFirstAddress, outLastAddress - outFirstAddress));
@@ -108,8 +152,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     _OutIterator_   outFirstIterator,
     const sizetype  countObjects) noexcept
 {
-    const auto inputFirstAddress = CheckedToChar(inputFirstIterator);
-    const auto outFirstAddress   = CheckedToChar(outFirstIterator);
+    auto inputFirstAddress = CheckedToChar(inputFirstIterator);
+    auto outFirstAddress   = CheckedToChar(outFirstIterator);
 
     const auto countBytes = countObjects * sizeof(IteratorValueType<_InputIterator_>);
 
@@ -140,8 +184,8 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     _OutIterator_   outFirstIterator,
     const sizetype  countBytes) noexcept
 {
-    const auto inputFirstAddress = CheckedToChar(inputFirst);
-    const auto outFirstAddress   = CheckedToChar(outFirst);
+    auto inputFirstAddress = CheckedToChar(inputFirstIterator);
+    auto outFirstAddress   = CheckedToChar(outFirstIterator);
 
     if (MemoryCopy(outFirstAddress, inputFirstAddress, countBytes) == false)
         return {};
@@ -173,69 +217,46 @@ template <
     class _Allocator_>
 // copy [_First, _Last) to raw _Destination, using _Allocator
 CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedCopy(
-    _InputIterator_                     _First,
-    _Sentinel_                          _Last, 
-    AllocatorPointerType<_Allocator_>   _Destination,
-    _Allocator_&                        _Allocator)
+    _InputIterator_                     firstIterator,
+    _Sentinel_                          lastSentinel, 
+    AllocatorPointerType<_Allocator_>   destinationPointer,
+    _Allocator_&                        allocator)
 {
     using _ValuePointer_ = AllocatorValueType<_Allocator_>*;
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+    constexpr bool canMemmove = SentinelCopyCategory<
+        _InputIterator_, _Sentinel_, _ValuePointer_>::BitcopyConstructible;
 
-#  if BASE_HAS_CXX20
-    auto _UFirst    = std::ranges::_Unwrap_iter<_Sentinel_>(std::move(_First));
-    auto _ULast     = std::ranges::_Unwrap_sent<_InputIterator_>(std::move(_Last));
-#  else
-    auto _UFirst    = std::_Get_unwrapped(std::move(_First));
-    auto _ULast     = std::_Get_unwrapped(std::move(_Last));
-#  endif
-
-#else 
-
-    auto _UFirst    = UnFancy(std::move(_First));
-    auto _ULast     = UnFancy(std::move(_Last));
-
-#endif
-
-    constexpr bool _Can_memmove =
-#if defined (CPP_MSVC) && defined(OS_WIN)
-        SentinelCopyCategory<
-            decltype(_UFirst), decltype(_ULast), _ValuePointer_>::BitcopyConstructible
-        && std::_Uses_default_construct<
-            _Allocator_, _ValuePointer_, decltype(*_UFirst)>::value;
-#else 
-#endif
-
-    if constexpr (_Can_memmove) {
+    if constexpr (canMemmove) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            if constexpr (std::is_same_v<decltype(_UFirst), decltype(_ULast)>) {
+            if constexpr (std::is_same_v<_InputIterator_, _Sentinel_>) {
                 MemoryMove(
-                    ToAddress(_UFirst), ToAdress(_ULast),
-                    UnFancy(_Destination));
-                _Destination += _ULast - _UFirst;
+                    ToAddress(firstIterator), ToAdress(lastSentinel),
+                    UnFancy(destinationPointer));
+                destinationPointer += lastSentinel - firstIterator;
             }
             else {
-                const auto _Count = static_cast<size_t>(_ULast - _UFirst);
+                const auto _Count = static_cast<size_t>(lastSentinel - firstIterator);
                 MemoryMove(
-                    ToAddress(_UFirst), _Count, 
-                    UnFancy(_Destination));
+                    ToAddress(firstIterator), _Count,
+                    UnFancy(destinationPointer));
 
-                _Destination += _Count;
+                destinationPointer += _Count;
             }
 
-            return _Destination;
+            return destinationPointer;
         }
     }
 
-    UninitializedBackout<_Allocator_> _Backout{ _Destination, _Allocator };
+    UninitializedBackout<_Allocator_> backout{ destinationPointer, allocator };
 
-    for (; _UFirst != _ULast; ++_UFirst)
-        _Backout.EmplaceBack(*_UFirst);
+    for (; firstIterator != lastSentinel; ++firstIterator)
+        backout.emplaceBack(*firstIterator);
     
-    return _Backout.Release();
+    return backout.release();
 }
 
 template <
@@ -243,90 +264,71 @@ template <
     class _Allocator_>
 // Copy _First + [0, _Count) to raw _Dest, using _Allocator
 CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedCopyCount(
-    _InputIterator_                     _First, 
-    sizetype                            _Count, 
-    AllocatorPointerType<_Allocator_>   _Destination,
-    _Allocator_&                        _Allocator) 
+    _InputIterator_                     firstIterator, 
+    sizetype                            count, 
+    AllocatorPointerType<_Allocator_>   destinationPointer,
+    _Allocator_&                        allocator) 
 {
     using _PointerToValue_ = AllocatorValueType<_Allocator_>*;
 
-    auto _UFirst = _STD _Get_unwrapped(_STD move(_First));
+    constexpr bool canMemove = std::bool_constant<
+        IteratorCopyCategory<
+            _InputIterator_, _PointerToValue_>::BitcopyConstructible>::value;
 
-    constexpr bool _Can_memmove =
-        std::conjunction_v<
-            std::bool_constant<
-                IteratorCopyCategory<decltype(_UFirst), _PointerToValue_>::BitcopyConstructible>,
-        std::_Uses_default_construct<_Allocator_, _PointerToValue_, decltype(*_UFirst)>>;
-
-    if constexpr (_Can_memmove) {
+    if constexpr (canMemove) {
 #if BASE_HAS_CXX20
         if (!is_constant_evaluated())
 #endif // BASE_HAS_CXX20
         {
-            MemoryMove(_UFirst, _Count, UnFancy(_Destination));
-            _Destination += _Count;
+            MemoryMove(firstIterator, count, UnFancy(destinationPointer));
+            destinationPointer += count;
 
-            return _Destination;
+            return destinationPointer;
         }
     }
 
-    UninitializedBackout<_Allocator_> _Backout { _Destination, _Allocator };
+    UninitializedBackout<_Allocator_> backout { destinationPointer, allocator };
 
-    for (; _Count != 0; ++_UFirst, (void) --_Count)
-        _Backout.EmplaceBack(*_UFirst);
+    for (; count != 0; ++firstIterator, unused(--count))
+        backout.emplaceBack(*firstIterator);
 
-    return _Backout.Release();
+    return backout.release();
 }
 
 template <
     class _InputIterator_, 
     class _NoThrowForwardIterator_>
-// copy [_First, _Last) to raw [_Dest, ...)
+// copy [firstIterator, lastIterator) to raw [destinationIterator, ...)
 CONSTEXPR_CXX20 inline NODISCARD _NoThrowForwardIterator_ UninitializedCopyUnchecked(
-    _InputIterator_             _First,
-    const _InputIterator_       _Last,
-    _NoThrowForwardIterator_    _Dest)
+    _InputIterator_             firstIterator,
+    const _InputIterator_       lastIterator,
+    _NoThrowForwardIterator_    destinationIterator)
 {
-    if constexpr (IteratorCopyCategory<_InputIterator_, _NoThrowForwardIterator_>::BitcopyConstructible) {
+    if constexpr (IteratorCopyCategory<_InputIterator_, _NoThrowForwardIterator_>::BitcopyConstructible)
 #if BASE_HAS_CXX20
-        if (!is_constant_evaluated())
+        if (is_constant_evaluated() == false)
 #endif
-        {
-            return MemoryMove(_First, _Last, _Dest);
-        }
-    }
+            return MemoryMove(firstIterator, lastIterator, destinationIterator);
 
-    UninitializedBackout<_NoThrowForwardIterator_> _Backout{ _Dest };
-    for (; _First != _Last; ++_First) {
-        _Backout.EmplaceBack(*_First);
-    }
+    UninitializedBackout<_NoThrowForwardIterator_> backout{ destinationIterator };
 
-    return _Backout.Release();
+    for (; firstIterator != lastIterator; unused(++firstIterator))
+        backout.emplaceBack(*firstIterator);
+
+    return backout.release();
 }
 
 template <
     class _InputIterator_, 
     class _NoThrowForwardIterator_>
-// copy [_First, _Last) to raw [_Dest, ...)
+// copy [firstIterator, lastIterator) to raw [destinationIterator, ...)
 _InputIterator_ uninitialized_copy(
-    const _InputIterator_       _First,
-    const _InputIterator_       _Last,
-    _NoThrowForwardIterator_    _Destination)
+    const _InputIterator_       firstIterator,
+    const _InputIterator_       lastIterator,
+    _NoThrowForwardIterator_    destinationIterator)
 {
-    _STD _Adl_verify_range(_First, _Last);
-
-#if defined(OS_WIN) && defined(CPP_MSVC)
-    auto _UFirst        = std::_Get_unwrapped(_First);
-    const auto _ULast   = std::_Get_unwrapped(_Last);
-#else 
-    auto _UFirst        = UnFancy(_First);
-    const auto _ULast   = UnFancy(_Last);
-#endif
-
-    auto _UDest = _STD _Get_unwrapped_n(_Destination, _STD _Idl_distance<_InputIterator_>(_UFirst, _ULast));
-
-    _Destination = UninitializedCopyUnchecked(_UFirst, _ULast, _UDest);
-    return _Destination;
+    VerifyRange(firstIterator, lastIterator);
+    return UninitializedCopyUnchecked(firstIterator, lastIterator, destinationIterator);
 }
 
 

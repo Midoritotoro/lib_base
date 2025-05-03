@@ -1,3 +1,5 @@
+#pragma once
+
 #include <base/core/async/Concurrent.h>
 
 #include <src/core/utility/algorithm/IteratorWrap.h>

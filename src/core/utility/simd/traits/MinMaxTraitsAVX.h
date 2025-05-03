@@ -1,8 +1,6 @@
 #pragma once 
 
 #include <base/core/arch/ProcessorFeatures.h>
-#include <base/core/memory/MemoryUtility.h>
-
 #include <src/core/utility/simd/MinMax.h>
 
 __BASE_NAMESPACE_BEGIN

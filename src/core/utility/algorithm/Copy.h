@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/algorithm/IteratorWrap.h>
 
