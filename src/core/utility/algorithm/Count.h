@@ -15,12 +15,12 @@ NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> countIf(
 	_Iterator_	lastIterator,
 	_Predicate_ predicate)
 {
-	IteratorDifferenceType<_Iterator_> _Count = 0;
+	IteratorDifferenceType<_Iterator_> count = 0;
 
 	for (; firstIterator < lastIterator; ++firstIterator)
-		_Count += predicate(*firstIterator);
+		count += predicate(*firstIterator);
 
-	return _Count;
+	return count;
 }
 
 template <

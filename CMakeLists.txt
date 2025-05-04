@@ -172,6 +172,8 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
 
+    src/core/utility/simd/SwapRangesVectorized.cpp
+
     src/core/utility/simd/SimdAlgorithm.h
 
     src/core/utility/algorithm/AllOf.h

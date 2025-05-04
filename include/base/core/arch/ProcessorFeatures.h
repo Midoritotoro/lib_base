@@ -11,7 +11,7 @@ class ProcessorFeatures
 {
     class ProcessorFeaturesInternal;
 public:
-    static NODISCARD NODISCARD std::string Vendor() noexcept { 
+    static NODISCARD std::string Vendor() noexcept { 
         return CPU_Rep._vendor;
     }
 

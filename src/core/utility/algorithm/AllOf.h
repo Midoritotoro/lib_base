@@ -14,11 +14,8 @@ NODISCARD CONSTEXPR_CXX20 bool allOf(
 {
 	VerifyRange(firstIterator, lastIterator);
 
-	auto first		= UnwrapIterator(firstIterator);
-	const auto last	= UnwrapIterator(lastIterator);
-
-	for (; first != last; ++first)
-		if (predicate(*first) == false)
+	for (; firstIterator != lastIterator; ++firstIterator)
+		if (predicate(*firstIterator) == false)
 			return false;
 
 	return true;

@@ -18,20 +18,15 @@ CONSTEXPR_CXX20 _OutputIterator_ copyIf(
 	_Predicate_			predicate)
 {
 	VerifyRange(firstIterator, lastIterator);
-
-	const auto first	= UnwrapIterator(firstIterator);
-	const auto last		= UnwrapIterator(lastIterator);
-
-	auto destination	= UnwrapIterator(destinationIterator);
 	
-	for (; first != last; ++first) {
-		if (predicate(*first)) {
-			*destination = *first;
-			++destination;
+	for (; firstIterator != lastIterator; unused(++firstIterator)) {
+		if (predicate(*firstIterator)) {
+			*destinationIterator = *firstIterator;
+			unused(++destinationIterator);
 		}
 	}
 
-	memory::RewindIterator(destinationIterator, destination);
+	memory::RewindIterator(destinationIterator, destinationIterator);
 	return destinationIterator;
 }
 
@@ -60,21 +55,10 @@ CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
 {
 	VerifyRange(firstIterator, lastIterator);
 
-	const auto first	= UnwrapIterator(firstIterator);
-	const auto last		= UnwrapIterator(lastIterator);
-
-	const auto destination =
-#ifdef CPP_MSVC
-		std::_Get_unwrapped_n(
-			destinationIterator,
-			-std::_Idl_distance<_BidirectionalIterator1_>(first, last));
-#else
-		UnwrapIterator(destinationIterator);
-#endif
-
 	memory::RewindIterator(
 		destinationIterator,
-		memory::CopyBackwardUnchecked(first, last, destination));
+		memory::CopyBackwardUnchecked(
+			firstIterator, lastIterator, destinationIterator));
 
 	return destinationIterator;
 }

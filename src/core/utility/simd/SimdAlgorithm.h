@@ -225,6 +225,13 @@ extern "C" {
         void* _Last,
         uint64_t _Old_val,
         uint64_t _New_val) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS void __CDECL SwapRangesTriviallySwappable(
+        void* firstPointer1,
+        void* lastPointer1,
+        void* firstPointer2) noexcept;
 } // extern "C"
 
 __BASE_NAMESPACE_END

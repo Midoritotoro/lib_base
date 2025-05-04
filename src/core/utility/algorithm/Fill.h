@@ -14,37 +14,32 @@ template <
 	class _ForwardIterator_,
 	class _Type_>
 CONSTEXPR_CXX20 void fill(
-	const _ForwardIterator_ firstIterator,
-	const _ForwardIterator_ lastIterator,
-	const _Type_&			value)
+	_ForwardIterator_	firstIterator,
+	_ForwardIterator_	lastIterator,
+	const _Type_&		value)
 {
 	VerifyRange(firstIterator, lastIterator);
-
-	const auto start		= UnwrapIterator(firstIterator);
-	const auto end			= UnwrapIterator(lastIterator);
 		
 	const auto difference	= static_cast<IteratorDifferenceType<_ForwardIterator_>>(
-		memory::IteratorsDifference(start, end));
+		memory::IteratorsDifference(firstIterator, lastIterator));
 
 #if BASE_HAS_CXX20
 	if (is_constant_evaluated() == false)
 #endif
 	{
-		if constexpr (memory::IsFillMemsetSafe<decltype(start), _Type_>) {
-			return memory::FillMemset(start, value, difference);
+		if constexpr (memory::IsFillMemsetSafe<_ForwardIterator_, _Type_>) {
+			return memory::FillMemset(std::move(firstIterator), value, difference);
 		}
-		else if (memory::IsFillZeroMemsetSafe<decltype(start), _Type_>) {
+		else if (memory::IsFillZeroMemsetSafe<_ForwardIterator_, _Type_>) {
 			if (memory::IsAllBitsZero(value)) {
-				return memory::MemsetZero(start, difference);
+				return memory::MemsetZero(std::move(firstIterator), difference);
 			}
 		}
 
 	}
 
-	for (auto current = start; current < end; ++current)
-		*current = value;
-
-	return;
+	for (; firstIterator < lastIterator; unused(++firstIterator))
+		*firstIterator = value;
 }
 
 template <
@@ -58,7 +53,7 @@ void fill(
 	const _Type_&		value) noexcept
 {
 	// It makes no sense to parallelize using ExecutionPolicy
-	UNUSED(executionPolicy);
+	unused(executionPolicy);
 
 	return fill(
 		std::move(firstIterator), 
@@ -72,29 +67,28 @@ template <
 	class _Type_>
 CONSTEXPR_CXX20 _OutputIterator_ fillN(
 	_OutputIterator_		destinationIterator,
-	const _DifferenceType_	_Count,
+	const _DifferenceType_	count,
 	const _Type_&			value)
 {
-	const auto destination		= UnwrapIterator(destinationIterator);
-	const auto destinationEnd	= destination + _Count;
-
-	if (_Count <= 0)
+	if (count <= 0)
 		return destinationIterator;
+
+	const auto destinationEnd = static_cast<size_t>(destinationIterator + count);
 
 #if BASE_HAS_CXX20
 	if (is_constant_evaluated() == false) 
 #endif
 	{
-		if constexpr (memory::IsFillMemsetSafe<decltype(destination), _Type_>) {
-			memory::FillMemset(destination, value, static_cast<size_t>(_Count));
+		if constexpr (memory::IsFillMemsetSafe<_OutputIterator_, _Type_>) {
+			memory::FillMemset(destinationIterator, value, static_cast<size_t>(count));
 			memory::RewindIterator(destinationIterator, destinationEnd);
 
 			return destinationIterator;
 		} 
 
-		else if (memory::IsFillZeroMemsetSafe<decltype(destination), _Type_>) {
+		else if (memory::IsFillZeroMemsetSafe<_OutputIterator_, _Type_>) {
 			if (memory::IsAllBitsZero(value)) {
-				memory::MemsetZero(destination, static_cast<size_t>(_Count));
+				memory::MemsetZero(destinationIterator, static_cast<size_t>(count));
 				memory::RewindIterator(destinationIterator, destinationEnd);
 
 				return destinationIterator;
@@ -103,8 +97,8 @@ CONSTEXPR_CXX20 _OutputIterator_ fillN(
 
 	}
 	
-	for (auto current = 0; current < _Count; ++current, ++destination)
-		*destination = value;
+	for (auto current = 0; current < count; ++current, unused(++destinationIterator))
+		*destinationIterator = value;
 
 	memory::RewindIterator(destinationIterator, destinationEnd);
 	return destinationIterator;
@@ -118,15 +112,15 @@ template <
 _ForwardIterator_ fillN(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	destinationIterator,
-	_DifferenceType_	_Count,
+	_DifferenceType_	count,
 	const _Type_&		value) noexcept
 {
 	// It makes no sense to parallelize using ExecutionPolicy
-	UNUSED(executionPolicy);
+	unused(executionPolicy);
 
 	return fillN(
 		std::move(destinationIterator),
-		_Count, value);
+		count, value);
 }
 
 __BASE_NAMESPACE_END
