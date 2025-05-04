@@ -173,6 +173,7 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/SimdTailMask.h
 
     src/core/utility/simd/SwapRangesVectorized.cpp
+    src/core/arch/ProcessorFeatures.cpp
 
     src/core/utility/simd/SimdAlgorithm.h
 
