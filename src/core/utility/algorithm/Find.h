@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
 __BASE_NAMESPACE_BEGIN
 

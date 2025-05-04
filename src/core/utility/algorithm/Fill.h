@@ -16,7 +16,7 @@ template <
 CONSTEXPR_CXX20 void fill(
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,
-	const _Type_&		value)
+	const _Type_&		value) noexcept
 {
 	VerifyRange(firstIterator, lastIterator);
 		
@@ -27,14 +27,12 @@ CONSTEXPR_CXX20 void fill(
 	if (is_constant_evaluated() == false)
 #endif
 	{
-		if constexpr (memory::IsFillMemsetSafe<_ForwardIterator_, _Type_>) {
+		if constexpr (memory::IsFillMemsetSafe<_ForwardIterator_, _Type_>)
 			return memory::FillMemset(std::move(firstIterator), value, difference);
-		}
-		else if (memory::IsFillZeroMemsetSafe<_ForwardIterator_, _Type_>) {
-			if (memory::IsAllBitsZero(value)) {
+		
+		else if (memory::IsFillZeroMemsetSafe<_ForwardIterator_, _Type_>)
+			if (memory::IsAllBitsZero(value))
 				return memory::MemsetZero(std::move(firstIterator), difference);
-			}
-		}
 
 	}
 
@@ -68,7 +66,7 @@ template <
 CONSTEXPR_CXX20 _OutputIterator_ fillN(
 	_OutputIterator_		destinationIterator,
 	const _DifferenceType_	count,
-	const _Type_&			value)
+	const _Type_&			value) noexcept
 {
 	if (count <= 0)
 		return destinationIterator;

@@ -11,27 +11,6 @@
 __BASE_NAMESPACE_BEGIN
 
 template <
-    class _InputIterator_,
-    class _Predicate_>
-// Find first satisfying _Pred
-CONSTEXPR_CXX20 inline NODISCARD std::size_t CountIf(
-    _InputIterator_             _First,
-    const _InputIterator_       _Last,
-    _Predicate_                 _Pred) noexcept
-{
-    std::size_t _Count = 0;
-
-    auto _UFirst = memory::UnFancy(_First);
-    const auto _ULast = memory::UnFancy(_Last);
-
-    for (; _UFirst != _ULast; ++_UFirst)
-        if (_Pred(*_UFirst))
-            ++_Count;
-
-    return _Count;
-}
-
-template <
     class _Traits_,
     class _Type_>
 CONSTEXPR_CXX20 inline NODISCARD std::size_t CountSSE42(
@@ -184,31 +163,31 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
 template <
     class _InputIterator_,
     class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD std::size_t Count(
-    _InputIterator_             _First,
-    const _InputIterator_       _Last,
-    const _Type_&               _Value)
+CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized(
+    _InputIterator_             firstIterator,
+    const _InputIterator_       lastIterator,
+    const _Type_&               value)
 {
     if (ProcessorFeatures::AVX512F())
         return CountAVX512(
-            memory::UnFancy(std::move(_First)),
-            memory::UnFancy(std::move(_Last)),
-            _Value);
+            memory::UnFancy(std::move(firstIterator)),
+            memory::UnFancy(std::move(lastIterator)),
+            value);
     else if (ProcessorFeatures::AVX())
         return CountAVX(
-            memory::UnFancy(std::move(_First)),
-            memory::UnFancy(std::move(_Last)), 
-            _Value);
+            memory::UnFancy(std::move(firstIterator)),
+            memory::UnFancy(std::move(lastIterator)),
+            value);
     else if (ProcessorFeatures::SSE42())
         return CountSSE42(
-            memory::UnFancy(std::move(_First)), 
-            memory::UnFancy(std::move(_Last)),
-            _Value);
+            memory::UnFancy(std::move(firstIterator)),
+            memory::UnFancy(std::move(lastIterator)),
+            value);
 
     return CountScalar(
-        memory::UnFancy(std::move(_First)), 
-        memory::UnFancy(std::move(_Last)), 
-        _Value);
+        memory::UnFancy(std::move(firstIterator)),
+        memory::UnFancy(std::move(lastIterator)),
+        value);
 }
 
 __BASE_NAMESPACE_END

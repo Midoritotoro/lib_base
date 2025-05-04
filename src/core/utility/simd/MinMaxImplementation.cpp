@@ -184,10 +184,7 @@ DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
     else if (ProcessorFeatures::SSE2())
         return MinimumIntegerImplementation<
             SSE2::NumberTraits8Bit, true>(_Start, _End, _Out);
-
-   
 }
-
 
 DECLARE_NOALIAS void __CDECL MinimumElement8BitUnsigned(
     const void* _Start,
