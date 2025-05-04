@@ -45,7 +45,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
             const __m128i data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
             const int bingo    = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
-            if (_Bingo != 0) {
+            if (bingo != 0) {
                 unsigned long offset = CountTrailingZeroBits(bingo); 
                 memory::AdvanceBytes(firstPointer, offset);
 
@@ -151,8 +151,8 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
         const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
         if (avx512TailSize != 0) {
-            const __m512i tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
-            const __m512i data = _mm512_mask_load_epi32(tailMask, static_cast<const unsigned char*>(firstPointer));
+            const __mmask16 tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
+            const __m512i data = _mm512_maskz_load_epi32(tailMask, firstPointer);
 
             const __mmask64 bingo =
                 _mm512_movepi8_mask(

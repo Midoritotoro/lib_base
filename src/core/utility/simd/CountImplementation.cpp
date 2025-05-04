@@ -209,7 +209,7 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX512(
         if (avxTailSize != 0) {
             const __mmask16 tailMask = Avx512TailMask64(BytesToDoubleWordsCount(avxTailSize));
 
-            const __m512i data = _mm512_mask_load_epi32(static_cast<const int*>(_First), tailMask);
+            const __m512i data = _mm512_maskz_loadu_epi32(tailMask, _First);
             const __m512i mask = _mm512_and_si512(_Traits_::CompareAvx(data, comparand), tailMask);
 
             const int bingo = _mm512_movepi8_mask(mask);
