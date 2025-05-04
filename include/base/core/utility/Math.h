@@ -217,14 +217,19 @@ constexpr inline NODISCARD
 }
 
 template<typename T, typename Cmp = std::less<>>
-NODISCARD constexpr bool points_into_range(const T * p, const T * b, const T * e,
+NODISCARD constexpr bool points_into_range(
+    const T * p,
+    const T * b, 
+    const T * e,
     Cmp less = {}) noexcept
 {
     return !less(p, b) && less(p, e);
 }
 
 template <typename C, typename T>
-NODISCARD constexpr bool points_into_range(const T& p, const C& c) noexcept
+NODISCARD constexpr bool points_into_range(
+    const T& p,
+    const C& c) noexcept
 {
     static_assert(std::is_same_v<decltype(std::data(c)), T>);
     return points_into_range(p, std::data(c),

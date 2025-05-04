@@ -232,6 +232,21 @@ extern "C" {
         void* firstPointer1,
         void* lastPointer1,
         void* firstPointer2) noexcept;
+
+
+    // ================================================================================
+
+    template <class _Type_>
+    DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept;
+
+    template <class _Type_>
+    DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountVectorized(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept;
 } // extern "C"
 
 __BASE_NAMESPACE_END

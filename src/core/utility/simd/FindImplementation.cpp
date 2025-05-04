@@ -7,31 +7,15 @@
 #include <base/core/arch/ProcessorFeatures.h>
 
 #include <src/core/memory/MemoryUtility.h>
-
+#include <base/core/utility/Math.h>
 
 __BASE_NAMESPACE_BEGIN
-
-template <
-    class _InputIterator_,
-    class _Predicate_>
-// Find first satisfying _Pred
-CONSTEXPR_CXX20 inline NODISCARD _InputIterator_ FindIf(
-    _InputIterator_             firstIterator,
-    const _InputIterator_       lastIterator, 
-    _Predicate_                 predicate)
-{
-    for (; firstIterator != lastIterator; unused(++firstIterator))
-        if (predicate(*firstIterator))
-            break;
-
-    return firstIterator;
-}
 
 template <class _Type_>
 CONSTEXPR_CXX20 always_inline NODISCARD const void* FindScalar(
     const void* firstPointer,
     const void* lastPointer,
-    _Type_      value)
+    _Type_      value) noexcept
 {
     for (_Type_* current = static_cast<_Type_*>(firstPointer); current != lastPointer; ++current)
         if (*current == value)
@@ -46,30 +30,30 @@ template <
 CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
     const void* firstPointer,
     const void* lastPointer,
-    _Type_      value)
+    _Type_      value) noexcept
 { 
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const size_t sseSize = sizeInBytes & ~size_t{ 0xF };
 
     if (sseSize != 0) {
-        const __m128i _Comparand = _Traits_::SetSse(value);
-        const void* _Stop_at = firstPointer;
+        const __m128i comparand = _Traits_::SetSse(value);
+        const void* stopAt = firstPointer;
 
-        memory::AdvanceBytes(_Stop_at, sseSize);
+        memory::AdvanceBytes(stopAt, sseSize);
 
         do {
-            const __m128i _Data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
-            const int _Bingo    = _mm_movemask_epi8(_Traits_::CompareSse(_Data, _Comparand));
+            const __m128i data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
+            const int bingo    = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
             if (_Bingo != 0) {
-                unsigned long _Offset = CountTrailingZeroBits(_Bingo); 
-                memory::AdvanceBytes(firstPointer, _Offset);
+                unsigned long offset = CountTrailingZeroBits(bingo); 
+                memory::AdvanceBytes(firstPointer, offset);
 
                 return firstPointer;
             }
 
             memory::AdvanceBytes(firstPointer, 16);
-        } while (firstPointer != _Stop_at);
+        } while (firstPointer != stopAt);
     }
 }
 
@@ -79,7 +63,7 @@ template <
 CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
     const void* firstPointer,
     const void* lastPointer,
-    _Type_      value)
+    _Type_      value) noexcept
 { 
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
@@ -139,7 +123,7 @@ template <
 CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
     const void* firstPointer,
     const void* lastPointer,
-    _Type_      value)
+    _Type_      value) noexcept
 { 
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const std::size_t avx512Size = sizeInBytes & ~std::size_t{ 0x3F };
@@ -166,22 +150,24 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
 
         const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
-        //if (avx512TailSize != 0) {
-        //    const __m512i tailMask = Avx512TailMask64(avx512TailSize);
-        //    const __m512i data = _mm512_maskz_loadu_epi8(tailMask, static_cast<const unsigned char*>(firstPointer));
+        if (avx512TailSize != 0) {
+            const __m512i tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
+            const __m512i data = _mm512_mask_load_epi32(tailMask, static_cast<const unsigned char*>(firstPointer));
 
-        //    const __mmask64 comparisonMask =
-        //        _mm512_kand(_Traits_::CompareAVX512(data, comparand), tailMask); // Mask the comparison
+            const __mmask64 bingo =
+                _mm512_movepi8_mask(
+                    _mm512_and_si512(
+                        _Traits_::CompareAVX512(data, comparand), tailMask));
 
-        //    if (comparisonMask != 0) {
-        //        const unsigned long offset = _tzcnt_u64(comparisonMask);
-        //        memory::AdvanceBytes(firstPointer, offset);
+            if (bingo != 0) {
+                const unsigned long offset = _tzcnt_u64(bingo);
+                memory::AdvanceBytes(firstPointer, offset);
 
-        //        return firstPointer;
-        //    }
+                return firstPointer;
+            }
 
-        //    memory::AdvanceBytes(firstPointer, avx512TailSize);
-        //}
+            memory::AdvanceBytes(firstPointer, avx512TailSize);
+        }
 
 
         if constexpr (sizeof(_Type_) >= 4)
@@ -189,32 +175,20 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
     }
 }
 
-template <
-    class _InputIterator_,
-    class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD _InputIterator_ FindVectorized(
-    _InputIterator_             firstIterator,
-    const _InputIterator_       lastIterator,
-    const _Type_&               value)
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_&   value) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return FindAVX512(
-            std::move(firstIterator), 
-            std::move(lastIterator), value);
+        return FindAVX512(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::AVX())
-        return FindAVX(
-            std::move(firstIterator),
-            std::move(lastIterator), value);
-    else if (ProcessorFeatures::SSE42())
-        return FindSSE42(
-            std::move(firstIterator), 
-            std::move(lastIterator), value);
+        return FindAVX(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::SSE2())
-        return FindSSE2(
-            std::move(firstIterator), 
-            std::move(lastIterator), value);
+        return FindSSE2(firstPointer, lastPointer, value);
 
-    return find;
+    return FindScalar(firstPointer, lastPointer, value);
 }
 
 __BASE_NAMESPACE_END
