@@ -19,7 +19,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastScalar(
     const void* lastPointer,
     _Type_      value) noexcept
 {
-
+    return nullptr;
 }
 
 template <
@@ -82,7 +82,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
     const void* const realLast = lastPointer;
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
 
-    const auto avxSize = sizeInBytes & ~size_t{ 0x1F }
+    const auto avxSize = sizeInBytes & ~size_t{ 0x1F };
 
     if (avxSize != 0) {
         ZeroUpperOnDeleteAvx guard;
@@ -98,7 +98,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
             const __m256i data = _mm256_loadu_si256(static_cast<const __m256i*>(lastPointer));
             const int bingo    = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
 
-            if (_Bingo != 0) {
+            if (bingo != 0) {
                 const unsigned long offset = _lzcnt_u32(bingo);
                 memory::AdvanceBytes(lastPointer, (31 - offset) - (sizeof(_Type_) - 1));
 
@@ -131,7 +131,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
         }
     }
 
-    return FindLastTrivialSse2(firstPointer, lastPointer, value);
+    return FindLastTrivialSse2<_Traits_>(firstPointer, lastPointer, value);
 }
 
 template <
@@ -145,19 +145,19 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
     const void* const realLast = lastPointer;
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
 
-    const auto avx512Size = sizeInBytes & ~size_t{ 0x3F }
+    const auto avx512Size = sizeInBytes & ~size_t{ 0x3F };
 
     if (avx512Size != 0) {
         const __m512i comparand = _Traits_::SetAvx512(value);
         const void* stopAt     = lastPointer;
 
-        memory::RewindBytes(stopAt, avxSize);
+        memory::RewindBytes(stopAt, avx512Size);
 
         do {
             memory::RewindBytes(lastPointer, 64);
 
             const __m512i data = _mm512_loadu_si512(lastPointer);
-            const int bingo    = _mm512_movepi8_mask(_Traits_::CompareAvx(data, comparand));
+            const uint64 bingo = _Traits_::CompareAvx512(data, comparand);
 
             if (bingo != 0) {
                 const unsigned long offset = _lzcnt_u64(bingo);
@@ -169,15 +169,15 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
 
         const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
-        if (avxTailSize != 0) {
-            memory::RewindBytes(lastPointer, avxTailSize);
+      /*  if (avx512TailSize != 0) {
+            memory::RewindBytes(lastPointer, avx512TailSize);
 
-            const __m512i tailMask  = Avx512TailMask64(BytesToQuadWordsCount(avxTailSize));
-            const __m512i data      = _mm512_maskz_load_epi32(static_cast<const int*>(lastPointer), tailMask);
+            const __mmask16 tailMask  = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
+            const __m512i data      = _mm512_maskz_load_epi32(tailMask, lastPointer);
             
             const int bingo =
-                _mm512_movemask_epi8(
-                    _mm512_and_si512(_Traits_::CompareAvx512(data, comparand), tailMask));
+                _mm512_movepi8_mask(
+                    _mm512_and_epi32(_Traits_::CompareAvx512(data, comparand), tailMask));
 
             if (bingo != 0) {
                 const unsigned long offset = _lzcnt_u64(bingo);
@@ -185,14 +185,14 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
 
                 return lastPointer;
             }
-        }
+        }*/
 
         if constexpr (sizeof(_Type_) >= 4) {
             return realLast;
         }
     }
 
-    return FindLastTrivialAvx(firstPointer, lastPointer, value);
+    return FindLastTrivialAvx<_Traits_>(firstPointer, lastPointer, value);
 }
 
 DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial8Bit(

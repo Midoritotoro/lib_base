@@ -147,7 +147,7 @@ NODISCARD __m256i FindTraits64Bit::CompareAvx(
     return _mm256_cmpeq_epi64(left, right);
 }
 
-NODISCARD __m128i FindTraits64Bit::CompareAvx(
+NODISCARD __m128i FindTraits64Bit::CompareSse(
     const __m128i left,
     const __m128i right) noexcept
 {

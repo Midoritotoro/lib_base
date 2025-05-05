@@ -67,7 +67,7 @@ public:
     static NODISCARD __m256i CompareAvx(
         const __m256i left,
         const __m256i right) noexcept;
-    static NODISCARD __m128i CompareAvx(
+    static NODISCARD __m128i CompareSse(
         const __m128i left,
         const __m128i right) noexcept;
 };

@@ -210,8 +210,11 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
             const auto left = _mm512_loadu_si512(static_cast<__m512i*>(firstPointer));
             const auto right = _mm512_loadu_si512(static_cast<__m512i*>(lastPointer));
 
-            const auto leftReversed = _mm512_shuffle_epi8(left, reverseShortLanesAvx512);
-            const auto rightReversed = _mm512_shuffle_epi8(right, reverseShortLanesAvx512);
+            const auto leftPerm = _mm512_permutex_epi64(left, _MM_SHUFFLE(1, 0, 3, 2));
+            const auto rightPerm = _mm512_permutex_epi64(right, _MM_SHUFFLE(1, 0, 3, 2));
+
+            const auto leftReversed = _mm512_shuffle_epi8(leftPerm, reverseShortLanesAvx512);
+            const auto rightReversed = _mm512_shuffle_epi8(rightPerm, reverseShortLanesAvx512);
 
             _mm512_storeu_si512(static_cast<__m512i*>(firstPointer), rightReversed);
             _mm512_storeu_si512(static_cast<__m512i*>(lastPointer), leftReversed);
@@ -222,5 +225,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
 
     return ReverseTriviallySwappable16BitAvx(firstPointer, lastPointer);
 }
+
+// ==================================================================
 
 __BASE_NAMESPACE_END
