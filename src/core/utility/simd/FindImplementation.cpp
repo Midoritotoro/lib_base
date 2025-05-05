@@ -139,7 +139,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
             const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
             
             if (bingo != 0) {
-                const unsigned long offset = _tzcnt_u64(bingo);
+                const ulong offset = _tzcnt_u64(bingo);
                 memory::AdvanceBytes(firstPointer, offset);
 
                 return firstPointer;

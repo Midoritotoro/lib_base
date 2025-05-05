@@ -7,9 +7,6 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-
-
-
 template <class _BidirectionalIterator_>
 inline constexpr void ReverseTail(
     _BidirectionalIterator_ _First,

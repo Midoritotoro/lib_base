@@ -16,7 +16,6 @@
 #include <base/core/string/String.h>
 #include <base/core/container/Vector.h>
 
-
 using namespace base;
 
 void fmax(int32* s, int32* e, int32* o) {

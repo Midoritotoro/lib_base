@@ -30,6 +30,7 @@ static inline void fail(
 	*nullptr_value = 0;
 
 	std::abort();
+	std::terminate();
 }
 
 static inline constexpr NODISCARD

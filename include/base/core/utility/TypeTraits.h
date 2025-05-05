@@ -641,4 +641,44 @@ constexpr bool IsPointerAddressConvertible = std::is_void_v<_Source_>
 #endif
     ;
 
+namespace HasADLSwapDetail {
+#if defined(CPP_CLANG) || defined(__EDG__)\
+	void swap() = delete; // Block unqualified name lookup
+#else
+	void swap();
+#endif
+
+	template <
+		class,
+		class = void>
+	struct HasADLSwap : 
+		std::false_type 
+	{};
+
+	template <class _Type_>
+	struct HasADLSwap < _Type_, std::void_t<decltype(std::swap(
+		std::declval<_Type_&>(), 
+		std::declval<_Type_&>())) >> : 
+	std::true_type 
+	{};
+} // namespace _Has_ADL_swap_detail
+
+template <class _Type_>
+constexpr bool IsTriviallySwappable_v = std::conjunction_v<
+	std::is_trivially_destructible<_Type_>,
+	std::is_trivially_move_constructible<_Type_>,
+		std::is_trivially_move_assignable<_Type_>, 
+	std::negation<HasADLSwapDetail::HasADLSwap<_Type_>>>;
+
+#ifdef __cpp_lib_byte
+template <>
+inline constexpr bool IsTriviallySwappable_v<byte> = true;
+#endif // defined(__cpp_lib_byte)
+
+template <class _Type_>
+// true_type if and only if it is valid to swap two _Ty lvalues by exchanging object representations.
+struct IsTriviallySwappable : 
+	std::bool_constant<IsTriviallySwappable_v<_Type_>> 
+{};
+
 __BASE_NAMESPACE_END

@@ -14,6 +14,28 @@ extern "C" {
     // compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
     // unanalyzable routines may modify those arrays.
 
+    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable8Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable16Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable32Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable64Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+
+    // ================================================================================
+
     DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable8Bit(
         const void* _First, 
         const void* _Last, 
@@ -236,14 +258,21 @@ extern "C" {
 
 template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
-    const void* firstPointer,
-    const void* lastPointer,
-    const _Type_& value) noexcept;
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_&   value) noexcept;
 
 template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountVectorized(
-    const void* firstPointer,
-    const void* lastPointer,
-    const _Type_& value) noexcept;
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_&   value) noexcept;
+
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastVectorized(
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_&   value) noexcept;
+
 
 __BASE_NAMESPACE_END

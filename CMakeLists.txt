@@ -233,6 +233,11 @@ set(PRIVATE_SOURCES
 
     src/core/memory/MemoryUtility.h
     src/core/system/WindowsVersion.h
+
+    src/core/utility/simd/FindLastVectorized.cpp
+    src/core/utility/simd/ReverseVectorized.cpp
+
+    src/core/utility/simd/MismatchVectorized.cpp
 )
 
 set(PUBLIC_HEADERS 
