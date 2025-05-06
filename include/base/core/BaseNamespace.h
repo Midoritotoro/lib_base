@@ -21,7 +21,7 @@
 
 
 #ifndef __BASE_THREAD_NAMESPACE_BEGIN
-#define __BASE_THREAD_NAMESPACE_BEGIN namespace base {	INLINE_NAMESPACE namespace thread {
+#define __BASE_THREAD_NAMESPACE_BEGIN namespace base { INLINE_NAMESPACE namespace thread {
 #endif // __BASE_THREAD_NAMESPACE_BEGIN
 
 #ifndef __BASE_THREAD_NAMESPACE_END

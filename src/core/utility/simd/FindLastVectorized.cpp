@@ -169,15 +169,16 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
 
         const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
-      /*  if (avx512TailSize != 0) {
+        if (avx512TailSize != 0) {
             memory::RewindBytes(lastPointer, avx512TailSize);
 
             const __mmask16 tailMask  = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
             const __m512i data      = _mm512_maskz_load_epi32(tailMask, lastPointer);
             
-            const int bingo =
+            const uint64 bingo =
                 _mm512_movepi8_mask(
-                    _mm512_and_epi32(_Traits_::CompareAvx512(data, comparand), tailMask));
+                    _mm512_and_epi32(
+                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi16(tailMask))); 
 
             if (bingo != 0) {
                 const unsigned long offset = _lzcnt_u64(bingo);
@@ -185,7 +186,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
 
                 return lastPointer;
             }
-        }*/
+        }
 
         if constexpr (sizeof(_Type_) >= 4) {
             return realLast;

@@ -37,9 +37,10 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitSse2(
         } while (firstPointer != stopAt);
     }
 
-    return memory::ReverseTail(
-        static_cast<uchar*>(firstPointer),
-        static_cast<uchar*>(lastPointer));
+    if (firstPointer != lastPointer)
+        return memory::ReverseTail(
+            static_cast<uchar*>(firstPointer),
+            static_cast<uchar*>(lastPointer));
 }
 
 DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx(
@@ -78,7 +79,8 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx(
         _mm256_zeroupper();
     }
 
-    return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
 }
 
 DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx512(
@@ -113,7 +115,8 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx512(
         } while (firstPointer != stopAt);
     }
 
-    return ReverseTriviallySwappable8BitAvx(firstPointer, lastPointer);
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable8BitAvx(firstPointer, lastPointer);
 }
 
 // =======================================================================================
@@ -146,9 +149,10 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitSse2(
         } while (firstPointer != stopAt);
     }
 
-    return memory::ReverseTail(
-        static_cast<ushort*>(firstPointer),
-        static_cast<ushort*>(lastPointer));
+    if (firstPointer != lastPointer)
+        return memory::ReverseTail(
+            static_cast<ushort*>(firstPointer),
+            static_cast<ushort*>(lastPointer));
 }
 
 DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx(
@@ -187,7 +191,8 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx(
         _mm256_zeroupper();
     }
 
-    return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
 }
 
 DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
@@ -223,9 +228,95 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
         } while (firstPointer != stopAt);
     }
 
-    return ReverseTriviallySwappable16BitAvx(firstPointer, lastPointer);
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable16BitAvx(firstPointer, lastPointer);
 }
 
 // ==================================================================
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitSse2(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 32) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0xF });
+
+        const auto shuffle = _mm_set_epi16(0, 1, 2, 3, 4, 5, 6, 7);
+
+        do {
+            memory::AdvanceBytes(lastPointer, -16);
+
+            const auto left = _mm_loadu_si128(static_cast<__m128i*>(firstPointer));
+            const auto right = _mm_loadu_si128(static_cast<__m128i*>(lastPointer));
+
+            const auto leftReversed = _mm_shuffle_epi32(left, _MM_SHUFFLE(0, 1, 2, 3));
+            const auto rightReversed = _mm_shuffle_epi32(right, _MM_SHUFFLE(0, 1, 2, 3));
+
+            _mm_storeu_si128(static_cast<__m128i*>(firstPointer), rightReversed);
+            _mm_storeu_si128(static_cast<__m128i*>(lastPointer), leftReversed);
+
+            memory::AdvanceBytes(firstPointer, 16);
+        } while (firstPointer != stopAt);
+    }
+
+    if (firstPointer != lastPointer)
+        return memory::ReverseTail(
+            static_cast<uint32*>(firstPointer), 
+            static_cast<uint32*>(lastPointer));
+}
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 64) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x1F });
+
+        const __m256i _Shuf = _mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+
+        do {
+            memory::AdvanceBytes(lastPointer, -32);
+
+            const auto left = _mm256_loadu_si256(static_cast<__m256i*>(firstPointer));
+            const auto right = _mm256_loadu_si256(static_cast<__m256i*>(lastPointer));
+
+            const auto leftReversed = _mm256_permutevar8x32_epi32(left, _Shuf);
+            const auto rightReversed = _mm256_permutevar8x32_epi32(right, _Shuf);
+
+            _mm256_storeu_si256(static_cast<__m256i*>(firstPointer), rightReversed);
+            _mm256_storeu_si256(static_cast<__m256i*>(lastPointer), leftReversed);
+
+            memory::AdvanceBytes(firstPointer, 32);
+        } while (firstPointer != stopAt);
+
+        _mm256_zeroupper();
+    }
+
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable32BitSse2(firstPointer, lastPointer);
+}
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx512(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 128) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x3F });
+
+
+    }
+
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable32BitAvx(firstPointer, lastPointer);
+}
 
 __BASE_NAMESPACE_END

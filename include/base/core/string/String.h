@@ -360,7 +360,7 @@ private:
 		const char* input);
 #endif
 
-	std::vector<Char> _data; // ����� ������ �� ��������� ���������
+	std::vector<Char> _data;
 };
 
 NODISCARD CONSTEXPR_CXX20 auto Char::fromUcs4(char32_t c) noexcept

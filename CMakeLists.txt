@@ -237,6 +237,7 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/FindLastVectorized.cpp
     src/core/utility/simd/ReverseVectorized.cpp
 
+    src/core/string/BasicString.h
     src/core/utility/simd/MismatchVectorized.cpp
 )
 

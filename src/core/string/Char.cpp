@@ -14,11 +14,13 @@ bool Char::isPrint(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+
     const int test = FLAG(Other_Control) |
         FLAG(Other_Format) |
         FLAG(Other_Surrogate) |
         FLAG(Other_PrivateUse) |
         FLAG(Other_NotAssigned);
+    
     return !(FLAG(_GetProp(ucs4)->category) & test);
 }
 
@@ -26,9 +28,11 @@ bool FASTCALL Char::isSpace_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Separator_Space) |
         FLAG(Separator_Line) |
         FLAG(Separator_Paragraph);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -36,9 +40,11 @@ bool Char::isMark(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Mark_NonSpacing) |
         FLAG(Mark_SpacingCombining) |
         FLAG(Mark_Enclosing);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -46,6 +52,7 @@ bool Char::isPunct(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Punctuation_Connector) |
         FLAG(Punctuation_Dash) |
         FLAG(Punctuation_Open) |
@@ -53,6 +60,7 @@ bool Char::isPunct(char32_t ucs4) noexcept
         FLAG(Punctuation_InitialQuote) |
         FLAG(Punctuation_FinalQuote) |
         FLAG(Punctuation_Other);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -60,23 +68,28 @@ bool Char::isSymbol(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Symbol_Math) |
         FLAG(Symbol_Currency) |
         FLAG(Symbol_Modifier) |
         FLAG(Symbol_Other);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
 
 bool FASTCALL Char::isLetter_helper(char32_t ucs4) noexcept
 {
+    
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Letter_Uppercase) |
         FLAG(Letter_Lowercase) |
         FLAG(Letter_Titlecase) |
         FLAG(Letter_Modifier) |
         FLAG(Letter_Other);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -85,9 +98,11 @@ bool FASTCALL Char::isNumber_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Number_DecimalDigit) |
         FLAG(Number_Letter) |
         FLAG(Number_Other);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -96,6 +111,7 @@ bool FASTCALL Char::isLetterOrNumber_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     const int test = FLAG(Letter_Uppercase) |
         FLAG(Letter_Lowercase) |
         FLAG(Letter_Titlecase) |
@@ -104,6 +120,7 @@ bool FASTCALL Char::isLetterOrNumber_helper(char32_t ucs4) noexcept
         FLAG(Number_DecimalDigit) |
         FLAG(Number_Letter) |
         FLAG(Number_Other);
+    
     return FLAG(_GetProp(ucs4)->category) & test;
 }
 
@@ -111,6 +128,7 @@ int Char::digitValue(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return -1;
+    
     return _GetProp(ucs4)->digitValue;
 }
 
@@ -118,6 +136,7 @@ Char::Category Char::category(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return Char::Other_NotAssigned;
+    
     return (Char::Category)_GetProp(ucs4)->category;
 }
 
@@ -125,6 +144,7 @@ bool Char::hasMirrored(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
+    
     return _GetProp(ucs4)->mirrorDiff != 0;
 }
 
@@ -132,6 +152,7 @@ char32_t Char::mirroredChar(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return ucs4;
+    
     return ucs4 + _GetProp(ucs4)->mirrorDiff;
 }
 
@@ -140,6 +161,7 @@ static constexpr char32_t Hangul_SBase = 0xac00;
 static constexpr char32_t Hangul_LBase = 0x1100;
 static constexpr char32_t Hangul_VBase = 0x1161;
 static constexpr char32_t Hangul_TBase = 0x11a7;
+
 static constexpr uint32 Hangul_LCount = 19;
 static constexpr uint32 Hangul_VCount = 21;
 static constexpr uint32 Hangul_TCount = 28;
