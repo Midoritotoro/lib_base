@@ -280,4 +280,15 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
+template <size_t typeSizeInBytes>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseVectorized(
+    void* firstPointer,
+    void* lastPointer) noexcept;
+
+template <size_t typeSizeInBytes>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseCopyVectorized(
+    void* firstPointer,
+    void* lastPointer,
+    void*       destinationPointer) noexcept;
+
 __BASE_NAMESPACE_END

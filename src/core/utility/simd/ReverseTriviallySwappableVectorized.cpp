@@ -431,4 +431,88 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx512(
         return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
 }
 
+
+
+DECLARE_NOALIAS NODISCARD void ReverseVectorized8Bit(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallySwappable8BitAvx512(firstPointer, lastPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallySwappable8BitAvx(firstPointer, lastPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
+
+    return memory::ReverseTail(
+        static_cast<uchar*>(firstPointer),
+        static_cast<uchar*>(lastPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseVectorized16Bit(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallySwappable16BitAvx512(firstPointer, lastPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallySwappable16BitAvx(firstPointer, lastPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallySwappable16BitSse2(firstPointer, lastPointer);
+
+    return memory::ReverseTail(
+        static_cast<ushort*>(firstPointer),
+        static_cast<ushort*>(lastPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseVectorized32Bit(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallySwappable32BitAvx512(firstPointer, lastPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallySwappable32BitAvx(firstPointer, lastPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallySwappable32BitSse2(firstPointer, lastPointer);
+
+    return memory::ReverseTail(
+        static_cast<uint32*>(firstPointer),
+        static_cast<uint32*>(lastPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseVectorized64Bit(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallySwappable64BitAvx512(firstPointer, lastPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallySwappable64BitAvx(firstPointer, lastPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
+
+    return memory::ReverseTail(
+        static_cast<uint64*>(firstPointer),
+        static_cast<uint64*>(lastPointer));
+}
+
+
+template <size_t typeSizeInBytes>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseVectorized(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    if constexpr (typeSizeInBytes == 1)
+        return ReverseVectorized8Bit(firstPointer, lastPointer);
+    else if (typeSizeInBytes == 2)
+        return ReverseVectorized16Bit(firstPointer, lastPointer);
+    else if (typeSizeInBytes == 4)
+        return ReverseVectorized32Bit(firstPointer, lastPointer);
+    else if (typeSizeInBytes == 8)
+        return ReverseVectorized64Bit(firstPointer, lastPointer);
+
+    AssertLog(false, "base::utility::ReverseVectorized: Unsupported typeSizeInBytes value");
+}
+
 __BASE_NAMESPACE_END

@@ -393,4 +393,96 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitAvx512(
             firstPointer, lastPointer, destinationPointer);
 }
 
+
+DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized8Bit(
+    void* firstPointer,
+    void* lastPointer,
+    void* destinationPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallyCopyable8BitAvx512(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallyCopyable8BitAvx(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallyCopyable8BitSse2(firstPointer, lastPointer, destinationPointer);
+
+    return memory::ReverseCopyTail(
+        static_cast<uchar*>(firstPointer),
+        static_cast<uchar*>(lastPointer),
+        static_cast<uchar*>(destinationPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized16Bit(
+    void* firstPointer,
+    void* lastPointer,
+    void* destinationPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallyCopyable16BitAvx512(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallyCopyable16BitAvx(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallyCopyable16BitSse2(firstPointer, lastPointer, destinationPointer);
+
+    return memory::ReverseCopyTail(
+        static_cast<ushort*>(firstPointer),
+        static_cast<ushort*>(lastPointer),
+        static_cast<ushort*>(destinationPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized32Bit(
+    void* firstPointer,
+    void* lastPointer,
+    void* destinationPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallyCopyable32BitAvx512(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallyCopyable32BitAvx(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallyCopyable32BitSse2(firstPointer, lastPointer, destinationPointer);
+
+    return memory::ReverseCopyTail(
+        static_cast<uint32*>(firstPointer),
+        static_cast<uint32*>(lastPointer),
+        static_cast<uint32*>(destinationPointer));
+}
+
+DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized64Bit(
+    void* firstPointer,
+    void* lastPointer,
+    void* destinationPointer) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return ReverseTriviallyCopyable64BitAvx512(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::AVX())
+        return ReverseTriviallyCopyable64BitAvx(firstPointer, lastPointer, destinationPointer);
+    else if (ProcessorFeatures::SSE2())
+        return ReverseTriviallyCopyable64BitSse2(firstPointer, lastPointer, destinationPointer);
+
+    return memory::ReverseCopyTail(
+        static_cast<uint64*>(firstPointer),
+        static_cast<uint64*>(lastPointer),
+        static_cast<uint64*>(destinationPointer));
+}
+
+
+template <size_t typeSizeInBytes>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseCopyVectorized(
+    void* firstPointer,
+    void* lastPointer,
+    void*       destinationPointer) noexcept
+{
+    if constexpr (typeSizeInBytes == 1)
+        return ReverseCopyVectorized8Bit(firstPointer, lastPointer, destinationPointer);
+    else if (typeSizeInBytes == 2)
+        return ReverseCopyVectorized16Bit(firstPointer, lastPointer, destinationPointer);
+    else if (typeSizeInBytes == 4)
+        return ReverseCopyVectorized32Bit(firstPointer, lastPointer, destinationPointer);
+    else if (typeSizeInBytes == 8)
+        return ReverseCopyVectorized64Bit(firstPointer, lastPointer, destinationPointer);
+
+    AssertLog(false, "base::utility::ReverseVectorized: Unsupported typeSizeInBytes value");
+
+}
 __BASE_NAMESPACE_END
