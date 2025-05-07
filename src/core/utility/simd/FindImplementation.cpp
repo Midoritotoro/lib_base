@@ -14,12 +14,12 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindScalar(
-    const void* firstPointer,
-    const void* lastPointer,
-    _Type_      value) noexcept
+ always_inline NODISCARD const void* FindScalar(
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_    value) noexcept
 {
-    for (_Type_* current = static_cast<_Type_*>(firstPointer); current != lastPointer; ++current)
+    for (auto current = static_cast<const _Type_*>(firstPointer); current != lastPointer; ++current)
         if (*current == value)
             return current;
 
@@ -29,7 +29,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindScalar(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
+ always_inline NODISCARD const void* FindSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -45,7 +45,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
 
         do {
             const __m128i data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
-            const int bingo    = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
+            const uint32 bingo  = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
             if (bingo != 0) {
                 unsigned long offset = CountTrailingZeroBits(bingo); 
@@ -62,7 +62,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
+ always_inline NODISCARD const void* FindAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -98,7 +98,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
             const __m256i tailMask = Avx2TailMask32(BytesToDoubleWordsCount(avxTailSize));
             const __m256i data = _mm256_maskload_epi32(static_cast<const int*>(firstPointer), tailMask);
 
-            const int bingo =
+            const uint32 bingo =
                 _mm256_movemask_epi8(
                     _mm256_and_si256(
                         _Traits_::CompareAvx(data, comparand), tailMask));
@@ -122,7 +122,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
+ always_inline NODISCARD const void* FindAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -156,7 +156,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
             const __mmask16 tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
             const __m512i data = _mm512_maskz_load_epi32(tailMask, firstPointer);
 
-            const __mmask64 bingo =
+            const uint64 bingo =
                 _mm512_movepi8_mask(
                     _mm512_and_si512(
                         _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask)));
@@ -177,7 +177,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
     }
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized8Bit(
+DECLARE_NOALIAS NODISCARD const void* FindVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -192,7 +192,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized8Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized16Bit(
+DECLARE_NOALIAS  NODISCARD const void* FindVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -207,7 +207,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized16Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized32Bit(
+DECLARE_NOALIAS  NODISCARD const void* FindVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -222,7 +222,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized32Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized64Bit(
+DECLARE_NOALIAS  NODISCARD const void* FindVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept

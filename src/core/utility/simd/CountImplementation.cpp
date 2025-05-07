@@ -16,13 +16,13 @@ __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
 CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
-    void*               _First,
+    const void*         _First,
     const void* const   _Last,
-    const _Type_&       _Value)
+    const _Type_        _Value)
 {
     std::size_t count = 0;
 
-    for (auto current = reinterpret_cast<_Type_*>(_First); current != _Last; ++current)
+    for (auto current = static_cast<const _Type_*>(_First); current != _Last; ++current)
         if ((*current) == _Value)
             ++count;
 
@@ -34,10 +34,10 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD std::size_t CountSSE42(
-    void*               _First,
+inline NODISCARD std::size_t CountSSE42(
+    const void*         _First,
     const void* const   _Last,
-    const _Type_&       _Value) noexcept
+    const _Type_       _Value) noexcept
 {
     size_t result = 0;
 
@@ -87,7 +87,7 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountSSE42(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX(
+inline NODISCARD std::size_t CountAVX(
     const void*         _First, 
     const void* const   _Last,
     const _Type_        _Val) noexcept
@@ -160,10 +160,10 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX512(
-    void*               _First,
+inline NODISCARD std::size_t CountAVX512(
+    const void*         _First,
     const void* const   _Last,
-    const _Type_&       _Value) 
+    const _Type_        _Value) 
 {   
     size_t result = 0;
 
@@ -227,7 +227,7 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX512(
 }
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized8Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -244,7 +244,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized8Bit
 
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized16Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -261,7 +261,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized16Bi
 
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized32Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -278,7 +278,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized32Bi
 
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized8Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept

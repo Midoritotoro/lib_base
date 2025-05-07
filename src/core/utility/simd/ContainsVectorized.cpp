@@ -14,22 +14,22 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* ContainsScalar(
-    const void* firstPointer,
-    const void* lastPointer,
-    _Type_      value) noexcept
+ always_inline NODISCARD bool ContainsScalar(
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_    value) noexcept
 {
-    for (_Type_* current = static_cast<_Type_*>(firstPointer); current != lastPointer; ++current)
+    for (auto current = static_cast<const _Type_*>(firstPointer); current != lastPointer; ++current)
         if (*current == value)
-            return current;
+            return true;
 
-    return firstPointer;
+    return false;
 }
 
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsSSE2(
+ always_inline NODISCARD bool ContainsSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -56,12 +56,14 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsSSE2(
 
     if (firstPointer != lastPointer)
         return ContainsScalar(firstPointer, lastPointer, value);
+
+    return false;
 }
 
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX(
+ always_inline NODISCARD bool ContainsAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -72,14 +74,14 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX(
     if (avxSize != 0) {
         ZeroUpperOnDeleteAvx guard;
 
-        const auto comparand = _Traits_::SetAVX(value);
+        const auto comparand = _Traits_::SetAvx(value);
         const void* stopAt = firstPointer;
 
         memory::AdvanceBytes(stopAt, avxSize);
 
         do {
             const auto data = _mm256_loadu_si256(static_cast<const __m256i*>(firstPointer));
-            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAVX(data, comparand));
+            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
 
             if (bingo != 0)
                 return true;
@@ -96,7 +98,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX(
             const int bingo =
                 _mm256_movemask_epi8(
                     _mm256_and_si256(
-                        _Traits_::CompareAVX(data, comparand), tailMask));
+                        _Traits_::CompareAvx(data, comparand), tailMask));
 
             if (bingo != 0)
                 return true;
@@ -107,13 +109,15 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX(
         if constexpr (sizeof(_Type_) >= 4)
             return false;
     }
+
+    return false;
 }
 
 
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX512(
+ always_inline NODISCARD bool ContainsAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -146,7 +150,7 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX512(
             const __mmask64 bingo =
                 _mm512_movepi8_mask(
                     _mm512_and_si512(
-                        _Traits_::CompareAVX512(data, comparand), tailMask));
+                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask)));
 
             if (bingo != 0)
                 return true;
@@ -158,9 +162,11 @@ CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX512(
         if constexpr (sizeof(_Type_) >= 4)
             return false;
     }
+
+    return false;
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized8Bit(
+DECLARE_NOALIAS  NODISCARD bool ContainsVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -175,7 +181,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized8Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized16Bit(
+DECLARE_NOALIAS  NODISCARD bool ContainsVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -190,7 +196,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized16Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized32Bit(
+DECLARE_NOALIAS  NODISCARD bool ContainsVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -205,7 +211,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized32Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized64Bit(
+DECLARE_NOALIAS  NODISCARD bool ContainsVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -221,7 +227,7 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized64Bit(
 }
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
+DECLARE_NOALIAS  NODISCARD bool ContainsVectorized(
     const void* firstPointer,
     const void* lastPointer,
     const _Type_& value) noexcept
