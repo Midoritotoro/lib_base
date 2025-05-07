@@ -642,7 +642,7 @@ constexpr bool IsPointerAddressConvertible = std::is_void_v<_Source_>
     ;
 
 namespace HasADLSwapDetail {
-#if defined(CPP_CLANG) || defined(__EDG__)\
+#if defined(CPP_CLANG) || defined(__EDG__)
 	void swap() = delete; // Block unqualified name lookup
 #else
 	void swap();

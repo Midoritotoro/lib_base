@@ -235,9 +235,13 @@ set(PRIVATE_SOURCES
     src/core/system/WindowsVersion.h
 
     src/core/utility/simd/FindLastVectorized.cpp
-    src/core/utility/simd/ReverseVectorized.cpp
+
+    src/core/utility/simd/ReverseTriviallySwappableVectorized.cpp
+    src/core/utility/simd/ReverseTriviallyCopyableVectorized.cpp
 
     src/core/string/BasicString.h
+    
+    src/core/utility/simd/ContainsVectorized.cpp
     src/core/utility/simd/MismatchVectorized.cpp
 )
 

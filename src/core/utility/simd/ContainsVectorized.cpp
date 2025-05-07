@@ -14,7 +14,7 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindScalar(
+CONSTEXPR_CXX20 always_inline NODISCARD const void* ContainsScalar(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -29,65 +29,60 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindScalar(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindSSE2(
+CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
-{ 
+{
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const size_t sseSize = sizeInBytes & ~size_t{ 0xF };
 
     if (sseSize != 0) {
-        const __m128i comparand = _Traits_::SetSse(value);
+        const auto comparand = _Traits_::SetSse(value);
         const void* stopAt = firstPointer;
 
         memory::AdvanceBytes(stopAt, sseSize);
 
         do {
-            const __m128i data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
-            const int bingo    = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
+            const auto data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
+            const int bingo = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
-            if (bingo != 0) {
-                unsigned long offset = CountTrailingZeroBits(bingo); 
-                memory::AdvanceBytes(firstPointer, offset);
-
-                return firstPointer;
-            }
+            if (bingo != 0)
+                return true;
 
             memory::AdvanceBytes(firstPointer, 16);
         } while (firstPointer != stopAt);
     }
+
+    if (firstPointer != lastPointer)
+        return ContainsScalar(firstPointer, lastPointer, value);
 }
 
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
+CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
-{ 
+{
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
 
     if (avxSize != 0) {
         ZeroUpperOnDeleteAvx guard;
 
-        const __m256i comparand = _Traits_::SetAvx(value);
+        const auto comparand = _Traits_::SetAVX(value);
         const void* stopAt = firstPointer;
 
         memory::AdvanceBytes(stopAt, avxSize);
 
         do {
-            const __m256i data = _mm256_loadu_si256(static_cast<const __m256i*>(firstPointer));
-            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
+            const auto data = _mm256_loadu_si256(static_cast<const __m256i*>(firstPointer));
+            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAVX(data, comparand));
 
-            if (bingo != 0) {
-                const unsigned long offset = _tzcnt_u32(bingo);
-                memory::AdvanceBytes(firstPointer, offset);
-
-                return firstPointer;
-            }
+            if (bingo != 0)
+                return true;
 
             memory::AdvanceBytes(firstPointer, 32);
         } while (firstPointer != stopAt);
@@ -101,20 +96,16 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
             const int bingo =
                 _mm256_movemask_epi8(
                     _mm256_and_si256(
-                        _Traits_::CompareAvx(data, comparand), tailMask));
+                        _Traits_::CompareAVX(data, comparand), tailMask));
 
-            if (bingo != 0) {
-                const unsigned long offset = _tzcnt_u32(bingo);
-                memory::AdvanceBytes(firstPointer, offset);
-
-                return firstPointer;
-            }
+            if (bingo != 0)
+                return true;
 
             memory::AdvanceBytes(firstPointer, avxTailSize);
         }
 
         if constexpr (sizeof(_Type_) >= 4)
-            return firstPointer;
+            return false;
     }
 }
 
@@ -122,30 +113,26 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX(
 template <
     class _Traits_,
     class _Type_>
-CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
+CONSTEXPR_CXX20 always_inline NODISCARD bool ContainsAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
-{ 
+{
     const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
     const std::size_t avx512Size = sizeInBytes & ~std::size_t{ 0x3F };
 
     if (avx512Size != 0) {
-        const __m512i comparand = _Traits_::SetAvx512(value);
+        const auto comparand = _Traits_::SetAvx512(value);
         const void* stopAt = firstPointer;
 
         memory::AdvanceBytes(stopAt, avx512Size);
-       
-        do {
-            const __m512i data = _mm512_loadu_si512(static_cast<const __m512i*>(firstPointer));
-            const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
-            
-            if (bingo != 0) {
-                const ulong offset = _tzcnt_u64(bingo);
-                memory::AdvanceBytes(firstPointer, offset);
 
-                return firstPointer;
-            }
+        do {
+            const auto data = _mm512_loadu_si512(static_cast<const __m512i*>(firstPointer));
+            const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
+
+            if (bingo != 0)
+                return true;
 
             memory::AdvanceBytes(firstPointer, 64);
         } while (firstPointer != stopAt);
@@ -159,100 +146,96 @@ CONSTEXPR_CXX20 always_inline NODISCARD const void* FindAVX512(
             const __mmask64 bingo =
                 _mm512_movepi8_mask(
                     _mm512_and_si512(
-                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask)));
+                        _Traits_::CompareAVX512(data, comparand), tailMask));
 
-            if (bingo != 0) {
-                const unsigned long offset = _tzcnt_u64(bingo);
-                memory::AdvanceBytes(firstPointer, offset);
-
-                return firstPointer;
-            }
+            if (bingo != 0)
+                return true;
 
             memory::AdvanceBytes(firstPointer, avx512TailSize);
         }
 
 
         if constexpr (sizeof(_Type_) >= 4)
-            return firstPointer;
+            return false;
     }
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized8Bit(
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return FindAVX512<FindTraits8Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX512<FindTraits8Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::AVX())
-        return FindAVX<FindTraits8Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX<FindTraits8Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::SSE2())
-        return FindSSE2<FindTraits8Bit>(firstPointer, lastPointer, value);
+        return ContainsSSE2<FindTraits8Bit>(firstPointer, lastPointer, value);
 
-    return FindScalar(firstPointer, lastPointer, value);
+    return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized16Bit(
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return FindAVX512<FindTraits16Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX512<FindTraits16Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::AVX())
-        return FindAVX<FindTraits16Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX<FindTraits16Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::SSE2())
-        return FindSSE2<FindTraits16Bit>(firstPointer, lastPointer, value);
+        return ContainsSSE2<FindTraits16Bit>(firstPointer, lastPointer, value);
 
-    return FindScalar(firstPointer, lastPointer, value);
+    return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized32Bit(
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return FindAVX512<FindTraits32Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX512<FindTraits32Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::AVX())
-        return FindAVX<FindTraits32Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX<FindTraits32Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::SSE2())
-        return FindSSE2<FindTraits32Bit>(firstPointer, lastPointer, value);
+        return ContainsSSE2<FindTraits32Bit>(firstPointer, lastPointer, value);
 
-    return FindScalar(firstPointer, lastPointer, value);
+    return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized64Bit(
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return FindAVX512<FindTraits64Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX512<FindTraits64Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::AVX())
-        return FindAVX<FindTraits64Bit>(firstPointer, lastPointer, value);
+        return ContainsAVX<FindTraits64Bit>(firstPointer, lastPointer, value);
     else if (ProcessorFeatures::SSE2())
-        return FindSSE2<FindTraits64Bit>(firstPointer, lastPointer, value);
+        return ContainsSSE2<FindTraits64Bit>(firstPointer, lastPointer, value);
 
-    return FindScalar(firstPointer, lastPointer, value);
+    return ContainsScalar(firstPointer, lastPointer, value);
 }
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
-    const void*     firstPointer,
-    const void*     lastPointer,
-    const _Type_&   value) noexcept
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
+    const void* firstPointer,
+    const void* lastPointer,
+    const _Type_& value) noexcept
 {
     if constexpr (sizeof(_Type_) == 1)
-        return FindVectorized8Bit(firstPointer, lastPointer, value);
+        return ContainsVectorized8Bit(firstPointer, lastPointer, value);
     else if (sizeof(_Type_) == 2)
-        return FindVectorized16Bit(firstPointer, lastPointer, value);
+        return ContainsVectorized16Bit(firstPointer, lastPointer, value);
     else if (sizeof(_Type_) == 4)
-        return FindVectorized32Bit(firstPointer, lastPointer, value);
+        return ContainsVectorized32Bit(firstPointer, lastPointer, value);
     else if (sizeof(_Type_) == 8)
-        return FindVectorized64Bit(firstPointer, lastPointer, value);
+        return ContainsVectorized64Bit(firstPointer, lastPointer, value);
 
-    AssertLog(false, "base::utility::FindVectorized: Unsupported _Type_ size");
+    AssertLog(false, "base::utility::ContainsVectorized: Unsupported _Type_ size");
 }
 
 __BASE_NAMESPACE_END

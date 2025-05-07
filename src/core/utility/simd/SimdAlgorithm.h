@@ -274,5 +274,10 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastVectorized(
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
+    const void*     firstPointer,
+    const void*     lastPointer,
+    const _Type_&   value) noexcept;
 
 __BASE_NAMESPACE_END

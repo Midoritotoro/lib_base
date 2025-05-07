@@ -9,6 +9,8 @@
 #include <src/core/utility/simd/traits/SimdCountTraits.h>
 #include <src/core/utility/simd/SimdTailMask.h>
 
+#include <src/core/utility/simd/traits/SimdCountTraits.h>
+
 __BASE_NAMESPACE_BEGIN
 
 
@@ -225,19 +227,88 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountAVX512(
 }
 
 template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized8Bit(
+    const void* firstPointer,
+    const void* lastPointer,
+    uint8       value) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return CountAVX512<CountTraits8Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::AVX())
+        return CountAVX<CountTraits8Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::SSE42())
+        return CountSSE42<CountTraits8Bit>(firstPointer, lastPointer, value);
+
+    return CountScalar(firstPointer, lastPointer, value);
+}
+
+
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized16Bit(
+    const void* firstPointer,
+    const void* lastPointer,
+    uint16      value) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return CountAVX512<CountTraits16Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::AVX())
+        return CountAVX<CountTraits16Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::SSE42())
+        return CountSSE42<CountTraits16Bit>(firstPointer, lastPointer, value);
+
+    return CountScalar(firstPointer, lastPointer, value);
+}
+
+
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized32Bit(
+    const void* firstPointer,
+    const void* lastPointer,
+    uint32      value) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return CountAVX512<CountTraits32Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::AVX())
+        return CountAVX<CountTraits32Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::SSE42())
+        return CountSSE42<CountTraits32Bit>(firstPointer, lastPointer, value);
+
+    return CountScalar(firstPointer, lastPointer, value);
+}
+
+
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized8Bit(
+    const void* firstPointer,
+    const void* lastPointer,
+    uint64      value) noexcept
+{
+    if (ProcessorFeatures::AVX512F())
+        return CountAVX512<CountTraits64Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::AVX())
+        return CountAVX<CountTraits64Bit>(firstPointer, lastPointer, value);
+    else if (ProcessorFeatures::SSE42())
+        return CountSSE42<CountTraits64Bit>(firstPointer, lastPointer, value);
+
+    return CountScalar(firstPointer, lastPointer, value);
+}
+
+template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
-        return CountAVX512(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
-        return CountAVX(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE42())
-        return CountSSE42(firstPointer, lastPointer, value);
+    if constexpr (sizeof(_Type_) == 1)
+        return CountVectorized8Bit(firstPointer, lastPointer, value);
+    else if (sizeof(_Type_) == 2)
+        return CountVectorized16Bit(firstPointer, lastPointer, value);
+    else if (sizeof(_Type_) == 4)
+        return CountVectorized32Bit(firstPointer, lastPointer, value);
+    else if (sizeof(_Type_) == 8)
+        return CountVectorized64Bit(firstPointer, lastPointer, value);
 
-    return CountScalar(firstPointer, lastPointer, value);
+    AssertLog(false, "base::utility::CountVectorized: Unsupported _Type_ size ");
 }
 
 __BASE_NAMESPACE_END

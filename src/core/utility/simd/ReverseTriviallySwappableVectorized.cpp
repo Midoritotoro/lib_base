@@ -278,7 +278,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx(
         const void* stopAt = firstPointer;
         memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x1F });
 
-        const __m256i _Shuf = _mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+        const __m256i shuffle = _mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7);
 
         do {
             memory::AdvanceBytes(lastPointer, -32);
@@ -286,8 +286,8 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx(
             const auto left = _mm256_loadu_si256(static_cast<__m256i*>(firstPointer));
             const auto right = _mm256_loadu_si256(static_cast<__m256i*>(lastPointer));
 
-            const auto leftReversed = _mm256_permutevar8x32_epi32(left, _Shuf);
-            const auto rightReversed = _mm256_permutevar8x32_epi32(right, _Shuf);
+            const auto leftReversed = _mm256_permutevar8x32_epi32(left, shuffle);
+            const auto rightReversed = _mm256_permutevar8x32_epi32(right, shuffle);
 
             _mm256_storeu_si256(static_cast<__m256i*>(firstPointer), rightReversed);
             _mm256_storeu_si256(static_cast<__m256i*>(lastPointer), leftReversed);
@@ -312,11 +312,123 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx512(
         const void* stopAt = firstPointer;
         memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x3F });
 
+        const auto shuffle = _mm512_set_epi32(
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
+        do {
+            memory::AdvanceBytes(lastPointer, -64);
+
+            const auto left = _mm512_loadu_si512(static_cast<__m512i*>(firstPointer));
+            const auto right = _mm512_loadu_si512(static_cast<__m512i*>(lastPointer));
+
+            const auto leftReversed = _mm512_permutevar_epi32(left, shuffle);
+            const auto rightReversed = _mm512_permutevar_epi32(right, shuffle);
+
+            _mm512_storeu_si512(firstPointer, rightReversed);
+            _mm512_storeu_si512(lastPointer, leftReversed);
+
+            memory::AdvanceBytes(firstPointer, 64);
+        } while (firstPointer != stopAt);
     }
 
     if (firstPointer != lastPointer)
         return ReverseTriviallySwappable32BitAvx(firstPointer, lastPointer);
+}
+
+// ====================================================================================================
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitSse2(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 32) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0xF });
+
+        do {
+            memory::AdvanceBytes(lastPointer, -16);
+
+            const auto left = _mm_loadu_si128(static_cast<__m128i*>(firstPointer));
+            const auto right = _mm_loadu_si128(static_cast<__m128i*>(lastPointer));
+            
+            const auto leftReversed = _mm_shuffle_epi32(left, _MM_SHUFFLE(1, 0, 3, 2));
+            const auto rightReversed = _mm_shuffle_epi32(right, _MM_SHUFFLE(1, 0, 3, 2));
+            
+            _mm_storeu_si128(static_cast<__m128i*>(firstPointer), rightReversed);
+            _mm_storeu_si128(static_cast<__m128i*>(lastPointer), leftReversed);
+            
+            memory::AdvanceBytes(firstPointer, 16);
+        } while (firstPointer != stopAt);
+    }
+
+    if (firstPointer != lastPointer)
+        return memory::ReverseTail(
+            static_cast<uint64*>(firstPointer), 
+            static_cast<uint64*>(lastPointer));
+}
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 64) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x1F });
+
+        do {
+            memory::AdvanceBytes(lastPointer, -32);
+
+            const auto left = _mm256_loadu_si256(static_cast<__m256i*>(firstPointer));
+            const auto right = _mm256_loadu_si256(static_cast<__m256i*>(lastPointer));
+            
+            const auto leftReversed = _mm256_permute4x64_epi64(left, _MM_SHUFFLE(0, 1, 2, 3));
+            const auto rightReversed = _mm256_permute4x64_epi64(right, _MM_SHUFFLE(0, 1, 2, 3));
+            
+            _mm256_storeu_si256(static_cast<__m256i*>(firstPointer), rightReversed);
+            _mm256_storeu_si256(static_cast<__m256i*>(lastPointer), leftReversed);
+            
+            memory::AdvanceBytes(firstPointer, 32);
+        } while (firstPointer != stopAt);
+
+        _mm256_zeroupper();
+    }
+
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
+}
+
+DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx512(
+    void* firstPointer,
+    void* lastPointer) noexcept
+{
+    const auto length = memory::ByteLength(firstPointer, lastPointer);
+
+    if (length >= 128) {
+        const void* stopAt = firstPointer;
+        memory::AdvanceBytes(stopAt, (length >> 1) & ~size_t{ 0x3F });
+
+        do {
+            memory::AdvanceBytes(lastPointer, -64);
+
+            const auto left = _mm512_loadu_si512(firstPointer);
+            const auto right = _mm512_loadu_si512(lastPointer);
+
+            const auto leftReversed = _mm512_permutex_epi64(left, _MM_SHUFFLE(0, 1, 2, 3));
+            const auto rightReversed = _mm512_permutex_epi64(right, _MM_SHUFFLE(0, 1, 2, 3));
+
+            _mm512_storeu_si512(firstPointer, rightReversed);
+            _mm512_storeu_si512(lastPointer, leftReversed);
+
+            memory::AdvanceBytes(firstPointer, 64);
+        } while (firstPointer != stopAt);
+    }
+
+    if (firstPointer != lastPointer)
+        return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
 }
 
 __BASE_NAMESPACE_END

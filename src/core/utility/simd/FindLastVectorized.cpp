@@ -178,7 +178,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
             const uint64 bingo =
                 _mm512_movepi8_mask(
                     _mm512_and_epi32(
-                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi16(tailMask))); 
+                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask))); 
 
             if (bingo != 0) {
                 const unsigned long offset = _lzcnt_u64(bingo);
