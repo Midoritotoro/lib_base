@@ -440,3 +440,6 @@ using base::flags;
 
 #define DECLARE_FLAGS_ENUM(_Flags, _Enum) \
 	typedef flags<_Enum> _Flags;
+
+#define DECLARE_FLAGS_ENUM_USING(_Flags, _Enum) \
+	using _Flags = flags<_Enum>;

@@ -8,6 +8,7 @@
 #include <src/core/string/StringDebug.h>
 #include <base/core/container/Vector.h>
 
+
 __BASE_STRING_NAMESPACE_BEGIN
 
 #ifndef _BASIC_STRING_OUTSIDE_TEMPLATE_
@@ -37,6 +38,9 @@ public:
 	using const_iterator	= StringConstIterator<
 		BasicString<_Char_, _Traits_, _Allocator_>>;
 
+	using reverse_iterator = std::reverse_iterator<iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
 	using ValueType			= value_type;
 
 	using Reference			= reference;
@@ -51,28 +55,45 @@ public:
 	using Iterator			= iterator;
 	using ConstIterator		= const_iterator;
 
-	template <typename _Char>
-	using if_compatible_char = typename std::enable_if<
-		IsCompatibleCharType<_Char>::value, bool>::type;
+	using ReverseIterator		= reverse_iterator;
+	using ConstReverseIterator	= const_reverse_iterator;
 
-	template <typename Pointer>
-	using if_compatible_pointer = typename std::enable_if<
-		IsCompatiblePointer<Pointer>::value, bool>::type;
+	using StringList = container::Vector<BasicString>;
 
-	template <typename T>
-	using if_compatible_string_like = typename std::enable_if<
-		std::is_same<T, BasicString>::value, bool>::type;
+	template <typename __Char>
+	using if_compatible_char		= typename std::enable_if<
+		IsCompatibleCharType<__Char>::value, bool>::type;
 
-	template <typename T>
-	using if_compatible_container = typename std::enable_if<
-		IsContainerCompatibleWithStringView<T>::value, bool>::type;
+	template <typename _Pointer_>
+	using if_compatible_pointer		= typename std::enable_if<
+		IsCompatiblePointer<_Pointer_>::value, bool>::type;
 
-	enum _SplitBehavior : uchar {
+	template <typename _Type_>
+	using if_compatible_string_like	= typename std::enable_if<
+		std::is_same<_Type_, BasicString>::value, bool>::type;
+
+	template <typename _Type_>
+	using if_compatible_container	= typename std::enable_if<
+		IsContainerCompatibleWithStringView<_Type_>::value, bool>::type;
+
+	template <typename __Char>
+	inline static constexpr bool is_compatible_char_v			= IsCompatibleCharType<__Char>::value;
+
+	template <typename _Pointer_>
+	inline static constexpr bool is_compatible_pointer_v		= IsCompatiblePointer<_Pointer_>::value;
+
+	template <typename _Type_>
+	inline static constexpr bool is_compatible_string_like_v	= std::is_same<_Type_, BasicString>::value;
+
+	template <typename _Type_>
+	inline static constexpr bool is_compatible_container_v		= IsContainerCompatibleWithStringView<_Type_>::value;
+
+	enum SplitBehaviorEnum : uchar {
 		KeepEmptyParts = 0,
-		SkipEmptyParts = 0x1,
+		SkipEmptyParts = 0x1
 	};
 
-	DECLARE_FLAGS_ENUM(SplitBehavior, _SplitBehavior);
+	DECLARE_FLAGS_ENUM(SplitBehavior, SplitBehaviorEnum);
 
 	CONSTEXPR_CXX20 BasicString();
 	CONSTEXPR_CXX20 ~BasicString();
@@ -86,14 +107,10 @@ public:
 		Iterator first,
 		Iterator last);
 
-	template <
-		typename __Char, 
-		if_compatible_char<__Char> = true>
+	template <typename __Char>
 	CONSTEXPR_CXX20 inline BasicString(const __Char* str, size_type len);
 
-	template <
-		typename __Char,
-		if_compatible_char<__Char> = true>
+	template <typename __Char>
 	CONSTEXPR_CXX20 inline BasicString(
 		const __Char* first,
 		const __Char* last);
@@ -305,8 +322,6 @@ public:
 		const BasicString& after,
 		CaseSensitivity caseSensitivity = CaseSensitive);
 
-	using StringList = std::vector<String>;
-
 	NODISCARD StringList split(
 		const BasicString& sep,
 		SplitBehavior behavior = KeepEmptyParts,
@@ -360,8 +375,7 @@ CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_>::BasicString(
 	const __Char* str,
 	size_type len)
 {
-	for (size_type i = 0; i < len; ++i)
-		_data.push_back(str[i]);
+	static_assert(is_compatible_char_v<__Char>, "Not supported __Char type");
 }
 
 _BASIC_STRING_OUTSIDE_TEMPLATE_
@@ -371,7 +385,9 @@ CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_>::BasicString(
 	const __Char* last
 ) :
 	BasicString(first, last - first)
-{}
+{
+	static_assert(is_compatible_char_v<__Char>, "Not supported __Char type");
+}
 
 _BASIC_STRING_OUTSIDE_TEMPLATE_
 NODISCARD BasicString<_Char_, _Traits_, _Allocator_>::ValueType& 
@@ -956,7 +972,7 @@ BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Alloc
 }
 
 _BASIC_STRING_OUTSIDE_TEMPLATE_
-BasicString<_Char_, _Traits_, _Allocator_& BasicString<_Char_, _Traits_, _Allocator_>::replace(
+BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>::replace(
 	ValueType before,
 	ValueType after,
 	CaseSensitivity caseSensitivity)
@@ -988,7 +1004,7 @@ _BASIC_STRING_OUTSIDE_TEMPLATE_
 BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>::replace(
 	ValueType ch,
 	const BasicString& after,
-	CaseSensitivity caseSensitivity = CaseSensitive)
+	CaseSensitivity caseSensitivity)
 {
 
 }

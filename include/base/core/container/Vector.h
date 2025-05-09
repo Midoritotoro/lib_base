@@ -29,7 +29,7 @@ struct VectorSimd {
 	// If SSE4.2 is supported on the device being launched,
 	// then these instructions are used.
 	// Otherwise, it is similar to _Optimization_Disable_
-	struct _Optimization_Enable_Only_If_SSE4_ {
+	struct _Optimization_Enable_Only_If_SSE42_ {
 	};
 
 	// If AVX is supported on the device being launched,
