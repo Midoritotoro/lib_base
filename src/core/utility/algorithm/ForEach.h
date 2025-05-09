@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -19,7 +20,8 @@ CONSTEXPR_CXX20 _Function_ forEach(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Function_>
+	class _Function_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void forEach(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -45,7 +47,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
 	class _Difference_,
-	class _Function_>
+	class _Function_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator_ forEachN(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -21,7 +22,8 @@ template <
 	class _ExecutionPolicy_, 
 	class _ForwardIterator1_, 
 	class _ForwardIterator2_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
@@ -46,7 +48,8 @@ NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
 template <
 	class _ExecutionPolicy_, 
 	class _ForwardIterator1_, 
-	class _ForwardIterator2_>
+	class _ForwardIterator2_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
 	_ExecutionPolicy_&&			executionPolicy,
 	const _ForwardIterator1_	firstIterator1,
@@ -74,7 +77,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_, 
 	class _ForwardIterator2_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
@@ -101,7 +105,8 @@ NODISCARD CONSTEXPR_CXX20 std::pair<_Iterator1_, _Iterator2_> mismatch(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
-	class _ForwardIterator2_>
+	class _ForwardIterator2_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD std::pair<_ForwardIterator1_, _ForwardIterator2_> mismatch(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_ firstIterator1,

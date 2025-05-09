@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -18,7 +19,8 @@ CONSTEXPR_CXX20 _OutputIterator_ reverseCopy(
 template <
 	class _ExecutionPolicy_,
 	class _BidirectionalIterator_,
-	class _ForwardIterator_>
+	class _ForwardIterator_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator_ reverseCopy(
 	_ExecutionPolicy_&& executionPolicy,
 	_BidirectionalIterator_ firstIterator,

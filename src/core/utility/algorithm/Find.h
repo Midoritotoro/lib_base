@@ -3,6 +3,8 @@
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
+#include <base/core/utility/Execution.h>
+
 __BASE_NAMESPACE_BEGIN
 
 
@@ -20,7 +22,8 @@ NODISCARD CONSTEXPR_CXX20 _Iterator_ find(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIterator_ find(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -60,7 +63,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIterator1_ findFirstOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
@@ -75,7 +79,8 @@ NODISCARD _ForwardIterator1_ findFirstOf(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
-	class _ForwardIterator2_>
+	class _ForwardIterator2_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIterator1_ findFirstOf(
 	_ExecutionPolicy_&&			executionPolicy,
 	const _ForwardIterator1_	firstIterator1,
@@ -89,7 +94,8 @@ NODISCARD _ForwardIterator1_ findFirstOf(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIterator_ findIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -113,7 +119,8 @@ NODISCARD CONSTEXPR_CXX20 _Iterator_ findIfNot(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIterator_ findIfNot(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

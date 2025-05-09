@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -24,7 +25,8 @@ NODISCARD CONSTEXPR_CXX20 bool anyOf(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD bool anyOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

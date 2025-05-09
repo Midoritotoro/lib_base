@@ -136,9 +136,10 @@ set(PRIVATE_SOURCES
     src/core/system/StandardPaths.cpp
 
     src/core/system/UnixStandardPaths.cpp
-    src/core/string/String.cpp
-
     src/core/string/Char.cpp
+
+    src/core/string/StringConverter.h
+    src/core/string/CharTraits.h
 
     src/core/string/UnicodeTables.h
     src/core/string/UnicodeTables.cpp
@@ -243,6 +244,9 @@ set(PRIVATE_SOURCES
     
     src/core/utility/simd/ContainsVectorized.cpp
     src/core/utility/simd/MismatchVectorized.cpp
+
+    src/core/string/StringDebug.h
+    src/core/string/CharTypeCompatibility.h
 )
 
 set(PUBLIC_HEADERS 

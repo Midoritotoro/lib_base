@@ -6,6 +6,7 @@
 #include <src/core/memory/FillMemsetSafety.h>
 #include <src/core/memory/Fill.h>
 
+#include <base/core/utility/Execution.h>
 #include <src/core/memory/IteratorsDifference.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -43,7 +44,8 @@ CONSTEXPR_CXX20 void fill(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void fill(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -106,7 +108,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
 	class _DifferenceType_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator_ fillN(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	destinationIterator,

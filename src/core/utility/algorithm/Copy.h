@@ -35,7 +35,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator2_ copyIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
@@ -118,7 +119,8 @@ CONSTEXPR_CXX20 _OutputIterator_ reverseCopy(
 template <
 	class _ExecutionPolicy_,
 	class _BidirectionalIterator_,
-	class _ForwardIterator_>
+	class _ForwardIterator_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator_ reverseCopy(
 	_ExecutionPolicy_&&		executionPolicy, 
 	_BidirectionalIterator_ firstIterator, 

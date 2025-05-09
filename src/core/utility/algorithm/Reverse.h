@@ -1,59 +1,59 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/utility/simd/SimdAlgorithm.h>
+
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
-template <class _BidIt>
-_CONSTEXPR20 void reverse(
-    const _BidIt _First, 
-    const _BidIt _Last) 
-{ // reverse elements in [_First, _Last)
-    _Adl_verify_range(_First, _Last);
-    auto _UFirst = _Get_unwrapped(_First);
-    auto _ULast = _Get_unwrapped(_Last);
-#if _USE_STD_VECTOR_ALGORITHMS
-    using _Elem = remove_reference_t<_Iter_ref_t<decltype(_UFirst)>>;
-    constexpr bool _Allow_vectorization = conjunction_v<bool_constant<_Iterator_is_contiguous<decltype(_UFirst)>>,
-        _Is_trivially_swappable<_Elem>, negation<is_volatile<_Elem>>>;
-    constexpr size_t _Nx = sizeof(_Elem);
+template <class _BidirectionalIterator_>
+// reverse elements in [firstIterator, lastIterator)
+CONSTEXPR_CXX20 void reverse(
+    const _BidirectionalIterator_ firstIterator,
+    const _BidirectionalIterator_ lastIterator)
+{
+    VerifyRange(firstIterator, lastIterator);
+ 
+    using _Element_ = std::remove_reference_t<
+        IteratorReferenceType<_BidirectionalIterator_>
+    >;
+
+    constexpr bool allowVectorization = std::conjunction_v<
+        std::bool_constant<IteratorIsContiguous<_BidirectionalIterator_>>,
+        IsTriviallySwappable<_Element_>, 
+        std::negation<std::is_volatile<_Element_>>
+    >;
+
+    constexpr size_t elementSizeInBytes = sizeof(_Element_);
 
 #pragma warning(suppress : 6326) // Potential comparison of a constant with another constant
-    if constexpr (_Allow_vectorization && _Nx <= 8 && (_Nx & (_Nx - 1)) == 0) {
-#if _HAS_CXX20
-        if (!_STD is_constant_evaluated())
-#endif // _HAS_CXX20
-        {
-            if constexpr (_Nx == 1) {
-                __std_reverse_trivially_swappable_1(_To_address(_UFirst), _To_address(_ULast));
-            }
-            else if constexpr (_Nx == 2) {
-                __std_reverse_trivially_swappable_2(_To_address(_UFirst), _To_address(_ULast));
-            }
-            else if constexpr (_Nx == 4) {
-                __std_reverse_trivially_swappable_4(_To_address(_UFirst), _To_address(_ULast));
-            }
-            else {
-                __std_reverse_trivially_swappable_8(_To_address(_UFirst), _To_address(_ULast));
-            }
+    if constexpr (
+        allowVectorization && elementSizeInBytes <= 8
+        && (elementSizeInBytes & (elementSizeInBytes - 1)) == 0) 
+#if BASE_HAS_CXX20
+        if (is_constant_evaluated() == false)
+#endif
+            return ReverseVectorized<elementSizeInBytes>(
+                memory::ToAddress(firstIterator),
+                memory::ToAddress(lastIterator));
 
-            return;
-        }
-    }
-#endif // _USE_STD_VECTOR_ALGORITHMS
-
-    for (; _UFirst != _ULast && _UFirst != --_ULast; ++_UFirst) {
-        _STD iter_swap(_UFirst, _ULast);
-    }
+    for (; firstIterator != lastIterator && firstIterator != --lastIterator; ++firstIterator)
+        std::iter_swap(firstIterator, lastIterator);
 }
 
-#if _HAS_CXX17
-template <class _ExPo, class _BidIt, _Enable_if_execution_policy_t<_ExPo> = 0>
-void reverse(_ExPo&&, _BidIt _First, _BidIt _Last) noexcept /* terminates */ {
-    // reverse elements in [_First, _Last)
-    // not parallelized as benchmarks show it isn't worth it
-    return _STD reverse(_First, _Last);
+template <
+    class _ExecutionPolicy_,
+    class _BidirectionalIterator_,
+    EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
+// reverse elements in [firstIterator, lastIterator)
+void reverse(
+    _ExecutionPolicy_&&     executionPolicy,  
+    _BidirectionalIterator_ firstIterator,
+    _BidirectionalIterator_ lastIterator) noexcept 
+{
+    unused(executionPolicy);
+    return reverse(firstIterator, lastIterator);
 }
-#endif // _HAS_CXX17
 
 __BASE_NAMESPACE_END

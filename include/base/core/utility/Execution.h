@@ -78,4 +78,7 @@ struct IsExecutionPolicy<execution::UnsequencedPolicy> :
     std::true_type 
 {};
 
+template <class _ExecutionPolicy_>
+using EnableIfExecutionPolicy = std::remove_reference_t<_ExecutionPolicy_>::StandardExecutionPolicy;
+
 __BASE_NAMESPACE_END

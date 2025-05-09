@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -26,7 +27,8 @@ CONSTEXPR_CXX20 void sort(
 template <
 	class _ExecutionPolicy_,
 	class _RandomAccessIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void sort(
 	_ExecutionPolicy_&&		executionPolicy,
 	_RandomAccessIterator_	firstIterator,
@@ -38,7 +40,8 @@ void sort(
 
 template <
 	class _ExecutionPolicy_,
-	class _RandomAccessIterator_>
+	class _RandomAccessIterator_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void sort(
 	_ExecutionPolicy_&&				executionPolicy,
 	const _RandomAccessIterator_	firstIterator,

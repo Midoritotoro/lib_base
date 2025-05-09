@@ -5,6 +5,8 @@
 #include <src/core/utility/algorithm/IteratorWrap.h>
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
 
+#include <base/core/utility/Execution.h>
+
 __BASE_NAMESPACE_BEGIN
 
 template <
@@ -27,7 +29,8 @@ NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> countIf(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD IteratorDifferenceType<_ForwardIterator_> countIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -64,7 +67,8 @@ NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> count(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD IteratorDifferenceType<_ForwardIterator_> count(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

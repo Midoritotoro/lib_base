@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -18,7 +19,8 @@ CONSTEXPR_CXX20 _OutputIterator_ move(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
-	class _ForwardIterator2_>
+	class _ForwardIterator2_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator2_ move(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator,

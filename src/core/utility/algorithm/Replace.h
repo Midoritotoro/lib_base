@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -19,7 +20,8 @@ CONSTEXPR_CXX20 void replace(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void replace(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
@@ -47,7 +49,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
 	class _Predicate_,
-	class _Type_>
+	class _Type_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 void replaceIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

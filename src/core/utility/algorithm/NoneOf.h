@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -14,14 +15,9 @@ NODISCARD CONSTEXPR_CXX20 bool noneOf(
 {
 	VerifyRange(firstIterator, lastIterator);
 
-	auto first		= memory::CheckedToChar(firstIterator);
-	const auto last = memory::CheckedToConstChar(lastIterator);
-
-	for (; first != last; ++first) {
-		if (_Pred(*first)) {
+	for (; firstIterator != lastIterator; ++firstIterator)
+		if (predicate(*firstIterator))
 			return false;
-		}
-	}
 
 	return true;
 }
@@ -29,7 +25,8 @@ NODISCARD CONSTEXPR_CXX20 bool noneOf(
 template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD bool noneOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,

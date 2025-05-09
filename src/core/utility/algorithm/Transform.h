@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -21,7 +22,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
-	class _Function_>
+	class _Function_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator2_ transform(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
@@ -52,7 +54,8 @@ template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
 	class _ForwardIterator3_,
-	class _Function_>
+	class _Function_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 _ForwardIterator3_ transform(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,

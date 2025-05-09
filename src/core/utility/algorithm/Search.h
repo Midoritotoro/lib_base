@@ -1,6 +1,7 @@
 #pragma once
 
 #include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -22,7 +23,8 @@ template <
 	class _ExecutionPolicy_,
 	class _ForwardIteratorHaystack_,
 	class _ForwardIteratorPattern_,
-	class _Predicate_>
+	class _Predicate_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIteratorHaystack_ search(
 	_ExecutionPolicy_&&			executionPolicy,
 	_ForwardIteratorHaystack_	firstHaystack,
@@ -49,7 +51,8 @@ NODISCARD CONSTEXPR_CXX20 _ForwardIteratorHaystack_ search(
 template <
 	class _ExecutionPolicy_, 
 	class _ForwardIteratorHaystack_,
-	class _ForwardIteratorPattern_>
+	class _ForwardIteratorPattern_,
+	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
 NODISCARD _ForwardIteratorHaystack_ search(
 	_ExecutionPolicy_&&				executionPolicy,
 	const _ForwardIteratorHaystack_ firstHaystack, 
