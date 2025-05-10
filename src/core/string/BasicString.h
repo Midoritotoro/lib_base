@@ -24,7 +24,7 @@ template <
 	class _Traits_				= CharTraits<_Char_>,
 	class _Allocator_			= std::allocator<_Char_>,
 	class _SimdOptimization_	= stringSimd::OptimizationDisable,
-	class _Storage_				= BasicStringStorage<_Char_, _SimdOptimization_>>
+	class _Storage_				= BasicStringStorage<_Char_, _SimdOptimization_, stringStorage::OptimizationSmallAndLarge>>
 class BasicString 
 {
 public:
@@ -83,9 +83,9 @@ public:
 	using if_compatible_string_like	= typename std::enable_if<
 		std::is_same<_Type_, BasicString>::value, bool>::type;
 
-	template <typename _Type_>
+	/*template <typename _Type_>
 	using if_compatible_container	= typename std::enable_if<
-		IsContainerCompatibleWithStringView<_Type_>::value, bool>::type;
+		IsContainerCompatibleWithStringView<_Type_>::value, bool>::type;*/
 
 	template <typename __Char>
 	inline static constexpr bool is_compatible_char_v			= IsCompatibleCharType<__Char>::value;
@@ -96,8 +96,8 @@ public:
 	template <typename _Type_>
 	inline static constexpr bool is_compatible_string_like_v	= std::is_same<_Type_, BasicString>::value;
 
-	template <typename _Type_>
-	inline static constexpr bool is_compatible_container_v		= IsContainerCompatibleWithStringView<_Type_>::value;
+	//template <typename _Type_>
+	//inline static constexpr bool is_compatible_container_v		= IsContainerCompatibleWithStringView<_Type_>::value;
 
 	enum SplitBehaviorEnum : uchar {
 		KeepEmptyParts = 0,

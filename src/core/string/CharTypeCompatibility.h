@@ -4,7 +4,6 @@
 #include <src/core/string/CharTraits.h>
 
 #include <base/core/string/Char.h>
-// #include <src/core/string/BasicStringStorage.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 

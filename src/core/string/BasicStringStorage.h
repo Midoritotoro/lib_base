@@ -67,6 +67,26 @@ namespace stringStorage {
 enum class AcquireMallocatedString 
 {};
 
+inline void* smartRealloc(
+    void* p,
+    const size_t currentSize,
+    const size_t currentCapacity,
+    const size_t newCapacity) {
+    assert(p);
+    assert(currentSize <= currentCapacity && currentCapacity < newCapacity);
+
+    auto const slack = currentCapacity - currentSize;
+    if (slack * 2 > currentSize) {
+        // Too much slack, malloc-copy-free cycle:
+        auto const result = malloc(newCapacity);
+        std::memcpy(result, p, currentSize);
+        free(p);
+        return result;
+    }
+    // If there's not too much slack, we realloc in hope of coalescing
+    return realloc(p, newCapacity);
+}
+
 template <class InIt, class OutIt>
 inline std::pair<InIt, OutIt> copy_n(
     InIt b,
@@ -126,7 +146,7 @@ inline void podMove(const Pod* b, const Pod* e, Pod* d) {
 template <
 	class _Char_,
 	class _SimdOptimization_	= stringSimd::OptimizationDisable,
-	class _StorageOptimization	= stringStorage::OptimizationSmallAndLarge>
+	class _StorageOptimization_ = stringStorage::OptimizationSmallAndLarge>
 class BasicStringStorage {
 public:
 	using CategoryType = uint8;
@@ -137,22 +157,33 @@ public:
 		isLarge = system::SystemInfo::IsLittleEndian() ? 0x40 : 0x1
 	};
 
-	struct MediumLarge {
-		_Char_* _data;
-		size_t _size;
-		size_t _capacity;
+    struct MediumLarge {
+        _Char_* _data;
+        size_t _size;
+        size_t _capacity;
 
-		size_t capacity() const;
 
-		void setCapacity(
-			size_t capacity,
-			Category category);
+        size_t capacity() const {
+            return system::SystemInfo::IsLittleEndian()
+                ? _capacity & capacityExtractMask
+                : _capacity >> 2;
+        }
 
-	union {
-		uint8		_bytes[sizeof(MediumLarge)]; // For accessing the last byte.
-		_Char_		_small[sizeof(MediumLarge) / sizeof(_Char_)];
-		MediumLarge _mediumLarge;
-	};
+        void setCapacity(
+            size_t capacity,
+            Category category)
+        {
+            _capacity = system::SystemInfo::IsLittleEndian()
+                ? capacity | (static_cast<size_t>(category) << kCategoryShift)
+                : (capacity << 2) | static_cast<size_t>(category);
+        }
+    }
+
+    union {
+        uint8		_bytes[sizeof(MediumLarge)]; // For accessing the last byte.
+        _Char_		_small[sizeof(MediumLarge) / sizeof(_Char_)];
+        MediumLarge _mediumLarge;
+    };
 
 	constexpr static size_t lastChar = sizeof(MediumLarge) - 1;
 	constexpr static size_t maxSmallSize = lastChar / sizeof(_Char_);
@@ -232,21 +263,6 @@ public:
 		return static_cast<Category>(_bytes[lastChar] & categoryExtractMask);
 	}
 
-
-	size_t MediumLarge::capacity() const {
-		return system::SystemInfo::IsLittleEndian()
-			? _capacity & capacityExtractMask
-			: _capacity >> 2;
-	}
-
-	void MediumLarge::setCapacity(
-		size_t capacity,
-		Category category)
-	{
-		_capacity = system::SystemInfo::IsLittleEndian()
-			? capacity | (static_cast<size_t>(category) << kCategoryShift)
-			: (capacity << 2) | static_cast<size_t>(category);
-	}
 	
 	// ===============================================
 
@@ -560,9 +576,8 @@ public:
       const _Char_* data,
       size_t size);
 
-  void reserveSmall(
-      size_t minCapacity, 
-      bool disableSSO);
+  void reserveSmall(size_t minCapacity);
+
   void reserveMedium(size_t minCapacity);
   void reserveLarge(size_t minCapacity);
 
@@ -577,16 +592,16 @@ public:
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copySmall(const BasicStringStorage& rhs) {
-    static_assert(offsetof(MediumLarge, data_) == 0, "layout failure");
+    class _StorageOptimization_>
+inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copySmall(const BasicStringStorage& rhs) {
+    static_assert(offsetof(MediumLarge, _data) == 0, "layout failure");
 
     static_assert(
-        offsetof(MediumLarge, size_) == sizeof(_mediumLarge._data),
+        offsetof(MediumLarge, _size) == sizeof(_mediumLarge._data),
         "layout failure");
 
     static_assert(
-        offsetof(MediumLarge, capacity_) == 2 * sizeof(_mediumLarge._data),
+        offsetof(MediumLarge, _capacity) == 2 * sizeof(_mediumLarge._data),
         "layout failure");
 
     // Just write the whole thing, don't look at details. In
@@ -602,8 +617,8 @@ inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyMedium(const BasicStringStorage& rhs) {
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copyMedium(const BasicStringStorage& rhs) {
     // Medium strings are copied eagerly. Don't forget to allocate
     // one extra Char for the null terminator.
     auto const allocSize = (1 + rhs._mediumLarge._size) * sizeof(_Char_);
@@ -623,8 +638,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyM
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyLarge(const BasicStringStorage& rhs) {
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copyLarge(const BasicStringStorage& rhs) {
     // Large strings are just refcounted
     _mediumLarge = rhs._mediumLarge;
     RefCounted::incrementRefs(_mediumLarge._data);
@@ -636,8 +651,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyL
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initSmall(
+    class _StorageOptimization_>
+inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::initSmall(
     const _Char_* const   data,
     const size_t        size) 
 {
@@ -655,11 +670,11 @@ inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>
     constexpr size_t kPageSize = 4096;
     const auto addr = reinterpret_cast<uintptr_t>(data);
 
-    if (size && (addr ^ (addr + sizeof(small_) - 1)) < kPageSize)
+    if (size && (addr ^ (addr + sizeof(_small) - 1)) < kPageSize)
         // the input data is all within one page so over-reads will not segfault
-        std::memcpy(small_, data, sizeof(small_)); // lowers to a 4-insn sequence
+        std::memcpy(_small, data, sizeof(_small)); // lowers to a 4-insn sequence
     else if (size != 0) {
-        podCopy(data, data + size, small_);s
+        podCopy(data, data + size, _small);
   
     setSmallSize(size);
 }
@@ -667,8 +682,8 @@ inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initMedium(
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::initMedium(
     const Char* const   data, 
     const size_t        size) 
 {
@@ -690,8 +705,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initM
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initLarge(
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::initLarge(
     const Char* const   data,
     const size_t        size)
 {
@@ -699,7 +714,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initL
     size_t effectiveCapacity = size;
 
     auto const newRC = RefCounted::create(data, &effectiveCapacity);
-    _mediumLarge._data = newRC->data_;
+    _mediumLarge._data = newRC->_data;
 
     _mediumLarge._size = size;
     _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
@@ -710,8 +725,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initL
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::unshare(size_t minCapacity) {
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::unshare(size_t minCapacity) {
     assert(category() == Category::isLarge);
     size_t effectiveCapacity = std::max(minCapacity, _mediumLarge.capacity());
 
@@ -722,10 +737,10 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::unsha
     assert(effectiveCapacity >= _mediumLarge.capacity());
     // Also copies terminator.
 
-    fbstring_detail::podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->data_);
+    podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->_data);
     RefCounted::decrementRefs(_mediumLarge._data);
 
-    _mediumLarge._data = newRC->data_;
+    _mediumLarge._data = newRC->_data;
     _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
     // size_ remains unchanged.
 }
@@ -733,8 +748,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::unsha
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::mutableDataLarge() {
+    class _StorageOptimization_>
+inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::mutableDataLarge() {
     assert(category() == Category::isLarge);
 
     if (RefCounted::refs(_mediumLarge._data) > 1) // Ensure unique.
@@ -746,8 +761,8 @@ inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveLarge(size_t minCapacity) {
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveLarge(size_t minCapacity) {
     assert(category() == Category::isLarge);
 
     if (RefCounted::refs(_mediumLarge._data) > 1) { 
@@ -764,7 +779,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
             // Asking for more memory
             auto const newRC = RefCounted::reallocate(
                 _mediumLarge._data, _mediumLarge._size, _mediumLarge.capacity(), &minCapacity);
-            _mediumLarge._data = newRC->data_;
+
+            _mediumLarge._data = newRC->_data;
             _mediumLarge.setCapacity(minCapacity, Category::isLarge);
         }
         assert(capacity() >= minCapacity);
@@ -774,8 +790,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveMedium(
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveMedium(
     const size_t minCapacity) 
 {
     assert(category() == Category::isMedium);
@@ -807,7 +823,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
         nascent._mediumLarge._size = _mediumLarge._size;
 
         // Also copies terminator.
-        fbstring_detail::podCopy(
+        podCopy(
             _mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, nascent._mediumLarge._data);
         nascent.swap(*this);
 
@@ -818,8 +834,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveSmall(size_t minCapacity) {
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveSmall(size_t minCapacity) {
     assert(category() == Category::isSmall);
 
     if (minCapacity <= maxSmallSize) {
@@ -831,11 +847,11 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
         auto const allocSizeBytes =
             (1 + minCapacity) * sizeof(_Char_);
 
-        auto const pData = static_cast<_Char_*>(checkedMalloc(allocSizeBytes));
+        auto const pData = static_cast<_Char_*>(malloc(allocSizeBytes));
         auto const size = smallSize();
 
         // Also copies terminator.
-        fbstring_detail::podCopy(small_, small_ + size + 1, pData);
+        podCopy(_small, _small + size + 1, pData);
 
         _mediumLarge._data = pData;
         _mediumLarge._size = size;
@@ -848,8 +864,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
         auto const size = smallSize();
 
         // Also copies terminator.
-        fbstring_detail::podCopy(small_, small_ + size + 1, newRC->data_);
-        _mediumLarge._data = newRC->data_;
+        podCopy(_small, _small + size + 1, newRC->_data);
+        _mediumLarge._data = newRC->_data;
 
         _mediumLarge._size = size;
         _mediumLarge.setCapacity(minCapacity, Category::isLarge);
@@ -861,8 +877,8 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reser
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::expandNoinit(
+    class _StorageOptimization_>
+inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::expandNoinit(
     const size_t delta,
     bool expGrowth)
 {
@@ -876,11 +892,11 @@ inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization
 
         if (newSz <= maxSmallSize) {
             setSmallSize(newSz);
-            return small_ + sz;
+            return _small + sz;
         }
 
         reserveSmall(
-            expGrowth ? std::max(newSz, 2 * maxSmallSize) : newSz, disableSSO);
+            expGrowth ? std::max(newSz, 2 * maxSmallSize) : newSz);
     } 
     else {
         sz = _mediumLarge._size;
@@ -906,8 +922,8 @@ inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkSmall(const size_t delta) {
+    class _StorageOptimization_>
+inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkSmall(const size_t delta) {
     // Check for underflow
     assert(delta <= smallSize());
     setSmallSize(smallSize() - delta);
@@ -916,27 +932,27 @@ inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkMedium(const size_t delta) {
+    class _StorageOptimization_>
+inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkMedium(const size_t delta) {
     // Medium strings and unique large strings need no special
     // handling.
     assert(_mediumLarge._size >= delta);
 
     _mediumLarge._size -= delta;
-    _mediumLarge._data[_mediumLarge.size_] = '\0';
+    _mediumLarge._data[_mediumLarge._size] = '\0';
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
-    class _StorageOptimization>
-inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkLarge(const size_t delta) {
+    class _StorageOptimization_>
+inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkLarge(const size_t delta) {
     assert(_mediumLarge._size >= delta);
     // Shared large string, must make unique. This is because of the
     // durn terminator must be written, which may trample the shared
     // data.
     if (delta)
-    BasicStringStorage(_mediumLarge._data, _mediumLarge._size - delta).swap(*this);
+        BasicStringStorage(_mediumLarge._data, _mediumLarge._size - delta).swap(*this);
     // No need to write the terminator.
 }
 
