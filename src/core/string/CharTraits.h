@@ -3,6 +3,8 @@
 #include <base/core/string/StringConfig.h>
 #include <base/core/utility/TypeTraits.h>
 
+#include <base/core/string/Char.h>
+
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _Char_>
@@ -29,6 +31,11 @@ class CharTraits<char8_t> {
 
 template <>
 class CharTraits<wchar_t> {
+
+};
+
+template <>
+class CharTraits<Char> {
 
 };
 
