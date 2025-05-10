@@ -9,6 +9,7 @@
 #include <base/core/container/Vector.h>
 
 #include <base/core/utility/TypeTraits.h>
+#include <src/core/string/BasicStringStorage.h>
 
 
 WARNING_DISABLE_MSVC(4834)
@@ -22,7 +23,7 @@ template <
 	class _Char_,
 	class _Traits_				= CharTraits<_Char_>,
 	class _Allocator_			= std::allocator<_Char_>,
-	class _SimdOptimization_	= StringSimd::_Optimization_Disable_,
+	class _SimdOptimization_	= stringSimd::OptimizationDisable,
 	class _Storage_				= BasicStringStorage<_Char_, _SimdOptimization_>>
 class BasicString 
 {
@@ -3776,7 +3777,7 @@ operator>>(
 		str.erase();
 
 		for (auto got = is.rdbuf()->sgetc(); extracted != size_t(n); ++extracted) {
-			if (got == T::eof()) {
+			if (got == _Traits_::eof()) {
 				err |= _InputStream_::eofbit;
 				is.width(0);
 

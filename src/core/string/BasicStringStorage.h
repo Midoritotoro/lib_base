@@ -3,6 +3,8 @@
 #include <base/core/arch/Platform.h>
 #include <base/core/system/SystemInfo.h>
 
+#include <base/core/utility/OverflowCheck.h>
+
 __BASE_STRING_NAMESPACE_BEGIN
 
 namespace stringSimd {
@@ -11,7 +13,7 @@ namespace stringSimd {
 	// If SSE4.2 is supported on the device being launched,
 	// then these instructions are used.
 	// Otherwise, it is similar to _Optimization_Disable_
-	struct OptimizationEnableOnlyIfSSE42_
+	struct OptimizationEnableOnlyIfSSE42
 		: Optimization
 	{};
 
@@ -63,10 +65,6 @@ namespace stringStorage {
 }
 
 enum class AcquireMallocatedString 
-{};
-
-enum class _String_Simd_Algorithm_Alignment
-	: sizetype
 {};
 
 template <class InIt, class OutIt>
@@ -139,7 +137,6 @@ public:
 		isLarge = system::SystemInfo::IsLittleEndian() ? 0x40 : 0x1
 	};
 
-private:
 	struct MediumLarge {
 		_Char_* _data;
 		size_t _size;
@@ -157,7 +154,6 @@ private:
 		MediumLarge _mediumLarge;
 	};
 
-public:
 	constexpr static size_t lastChar = sizeof(MediumLarge) - 1;
 	constexpr static size_t maxSmallSize = lastChar / sizeof(_Char_);
 
@@ -172,7 +168,7 @@ public:
 		: 0x0 /* unused */;
 
 	static_assert(
-		!(sizeof(MediumLarge) % sizeof(Char)),
+		!(sizeof(MediumLarge) % sizeof(_Char_)),
 		"Corrupt memory layout.");
 
 	BasicStringStorage() noexcept {
@@ -197,7 +193,7 @@ public:
 		}
 
 		Assert(size() == rhs.size());
-		Assert(memcmp(data(), rhs.data(), size() * sizeof(Char)) == 0);
+		Assert(memcmp(data(), rhs.data(), size() * sizeof(_Char_)) == 0);
 	}
 
 	BasicStringStorage& operator=(const BasicStringStorage& rhs) = delete;
@@ -209,7 +205,7 @@ public:
 	}
 
 	BasicStringStorage(
-		const Char* const	data,
+		const _Char_* const	data,
 		const size_t		size) 
 	{
 		if (size <= maxSmallSize)
@@ -220,7 +216,7 @@ public:
 			initLarge(data, size);
 
 		Assert(this->size() == size);
-		Assert(size == 0 || memcmp(this->data(), data, size * sizeof(Char)) == 0);
+		Assert(size == 0 || memcmp(this->data(), data, size * sizeof(_Char_)) == 0);
 	}
 
 	~BasicStringStorage() noexcept {
@@ -255,7 +251,7 @@ public:
 	// ===============================================
 
     BasicStringStorage(
-        Char* const data,
+        _Char_* const data,
         const size_t size,
         const size_t allocatedSize,
         AcquireMallocatedString)
@@ -288,15 +284,15 @@ public:
     }
 
     // In C++11 data() and c_str() are 100% equivalent.
-    const Char* data() const {
+    const _Char_* data() const {
         return c_str(); 
     }
 
-    Char* data() {
+    _Char_* data() {
         return c_str();
     }
 
-    Char* mutableData() {
+    _Char_* mutableData() {
         switch (category()) {
             case Category::isSmall:
                 return _small;
@@ -309,8 +305,8 @@ public:
         AssertUnreachable();
     }
 
-    const Char* c_str() const {
-        const Char* ptr = _mediumLarge._data;
+    const _Char_* c_str() const {
+        const _Char_* ptr = _mediumLarge._data;
         // With this syntax, GCC and Clang generate a CMOV instead of a branch.
         ptr = (category() == Category::isSmall) 
             ? _small 
@@ -352,25 +348,31 @@ public:
         const size_t delta,
         bool expGrowth = false);
 
-    void push_back(Char c) {
+    void push_back(_Char_ c) {
         *expandNoinit(1, /* expGrowth = */ true) = c; 
     }
 
     size_t size() const {
         size_t ret = _mediumLarge._size;
-        if /* constexpr */ (kIsLittleEndian) {
+
+        if (system::SystemInfo::IsLittleEndian()) {
             // We can save a couple instructions, because the category is
             // small iff the last char, as unsigned, is <= maxSmallSize.
-            typedef typename std::make_unsigned<Char>::type UChar;
+            using UChar = typename std::make_unsigned<_Char_>::type;
+
             auto maybeSmallSize = size_t(maxSmallSize) -
                 size_t(static_cast<UChar>(_small[maxSmallSize]));
+
             // With this syntax, GCC and Clang generate a CMOV instead of a branch.
-            ret =
-                (static_cast<ptrdiff_t>(maybeSmallSize) >= 0) ? maybeSmallSize : ret;
+            ret = (static_cast<ptrdiff_t>(maybeSmallSize) >= 0) 
+                ? maybeSmallSize 
+                : ret;
         }
-        else {
-            ret = (category() == Category::isSmall) ? smallSize() : ret;
-        }
+        else
+            ret = (category() == Category::isSmall) 
+                ? smallSize() 
+                : ret;
+        
         return ret;
     }
 
@@ -400,8 +402,9 @@ public:
     }
 
  private:
-     Char* c_str() {
-         Char* ptr = _mediumLarge._data;
+     _Char_* c_str() {
+         _Char_* ptr = _mediumLarge._data;
+
          // With this syntax, GCC and Clang generate a CMOV instead of a branch.
          ptr = (category() == Category::isSmall)
              ? _small 
@@ -425,94 +428,106 @@ public:
      }
 
      struct RefCounted {
-         std::atomic<size_t> _refCount;
-         Char _data[1];
+        std::atomic<size_t> _refCount;
+        _Char_ _data[1];
 
-         constexpr static size_t getDataOffset() {
-             return offsetof(RefCounted, _data);
-         }
+        constexpr static size_t getDataOffset() {
+            return offsetof(RefCounted, _data);
+        }
 
-         static RefCounted* fromData(Char* p) {
-             return static_cast<RefCounted*>(static_cast<void*>(
-                 static_cast<unsigned char*>(static_cast<void*>(p)) -
-                 getDataOffset()));
-         }
+        static RefCounted* fromData(_Char_* p) {
+            return static_cast<RefCounted*>(static_cast<void*>(
+                static_cast<unsigned char*>(static_cast<void*>(p)) -
+                getDataOffset()));
+        }
 
-         static size_t refs(Char* p) {
-             return fromData(p)->_refCount.load(std::memory_order_acquire);
-         }
+        static size_t refs(_Char_* p) {
+            return fromData(p)->_refCount.load(std::memory_order_acquire);
+        }
 
-         static void incrementRefs(Char* p) {
-             fromData(p)->_refCount.fetch_add(1, std::memory_order_acq_rel);
-         }
+        static void incrementRefs(_Char_* p) {
+            fromData(p)->_refCount.fetch_add(1, std::memory_order_acq_rel);
+        }
 
-         static void decrementRefs(Char* p) {
-             auto const dis = fromData(p);
-             size_t oldcnt = dis->_refCount.fetch_sub(1, std::memory_order_acq_rel);
-             assert(oldcnt > 0);
-             if (oldcnt == 1) {
-                 ::free(dis);
-             }
-         }
+        static void decrementRefs(_Char_* p) {
+            auto const dis = fromData(p);
+            size_t oldcnt = dis->_refCount.fetch_sub(1, std::memory_order_acq_rel);
 
-         static RefCounted* create(size_t* size) {
-             size_t capacityBytes;
+            assert(oldcnt > 0);
+            if (oldcnt == 1)
+                free(dis);
+        }
 
-             if (!folly::checked_add(&capacityBytes, *size, size_t(1)))
-                 throw_exception(std::length_error(""));
+        static RefCounted* create(size_t* size) {
+            size_t capacityBytes = 0;
+
+            if (UnsignedLongLongAddOverflow(&capacityBytes, *size, size_t(1)))
+                return nullptr;
              
-             if (!folly::checked_muladd(
-                 &capacityBytes, capacityBytes, sizeof(Char), getDataOffset()))
-                 throw_exception(std::length_error(""));
+            if (UnsignedLongLongMultiplyOverflow(
+                &capacityBytes, capacityBytes, sizeof(_Char_))
+            )
+                return nullptr;
+
+            if (UnsignedLongLongAddOverflow(
+                &capacityBytes, capacityBytes, getDataOffset())
+            )
+                return nullptr;
              
+            const size_t allocSize = capacityBytes;
+            auto result = static_cast<RefCounted*>(malloc(allocSize));
 
-             const size_t allocSize = capacityBytes;
-             auto result = static_cast<RefCounted*>(checkedMalloc(allocSize));
+            result->_refCount.store(1, std::memory_order_release);
+            *size = (allocSize - getDataOffset()) / sizeof(_Char_) - 1;
 
-             result->_refCount.store(1, std::memory_order_release);
-             *size = (allocSize - getDataOffset()) / sizeof(Char) - 1;
-
-             return result;
+            return result;
          }
 
-         static RefCounted* create(const Char* data, size_t* size) {
+        static RefCounted* create(const _Char_* data, size_t* size) {
              const size_t effectiveSize = *size;
              auto result = create(size);
 
-             if (FOLLY_LIKELY(effectiveSize > 0))
-                 fbstring_detail::podCopy(data, data + effectiveSize, result->_data);
+             if (effectiveSize > 0)
+                 podCopy(data, data + effectiveSize, result->_data);
              
              return result;
          }
 
-         static RefCounted* reallocate(
-             Char* const data,
-             const size_t currentSize,
-             const size_t currentCapacity,
-             size_t* newCapacity) 
+        static RefCounted* reallocate(
+            _Char_* const data,
+            const size_t currentSize,
+            const size_t currentCapacity,
+            size_t* newCapacity) 
          {
              assert(*newCapacity > 0 && *newCapacity > currentSize);
              size_t capacityBytes;
 
-             if (!folly::checked_add(&capacityBytes, *newCapacity, size_t(1)))
-                 throw_exception(std::length_error(""));
-             
-             if (!folly::checked_muladd(
-                 &capacityBytes, capacityBytes, sizeof(Char), getDataOffset()))
-                 throw_exception(std::length_error(""));
+             if (UnsignedLongLongAddOverflow(&capacityBytes, *newCapacity, size_t(1)))
+                 return nullptr;
+
+             if (UnsignedLongLongMultiplyOverflow(
+                &capacityBytes, capacityBytes, sizeof(_Char_))
+            )
+                return nullptr;
+
+            if (UnsignedLongLongAddOverflow(
+                &capacityBytes, capacityBytes, getDataOffset())
+            )
+                return nullptr;
 
              const size_t allocNewCapacity = capacityBytes;
              auto const dis = fromData(data);
 
              assert(dis->_refCount.load(std::memory_order_acquire) == 1);
+
              auto result = static_cast<RefCounted*>(smartRealloc(
                  dis,
-                 getDataOffset() + (currentSize + 1) * sizeof(Char),
-                 getDataOffset() + (currentCapacity + 1) * sizeof(Char),
+                 getDataOffset() + (currentSize + 1) * sizeof(_Char_),
+                 getDataOffset() + (currentCapacity + 1) * sizeof(_Char_),
                  allocNewCapacity));
 
              assert(result->_refCount.load(std::memory_order_acquire) == 1);
-             *newCapacity = (allocNewCapacity - getDataOffset()) / sizeof(Char) - 1;
+             *newCapacity = (allocNewCapacity - getDataOffset()) / sizeof(_Char_) - 1;
 
              return result;
          }
@@ -523,7 +538,7 @@ public:
         // so don't assume anything about the previous value of
         // _small[maxSmallSize].
         assert(s <= maxSmallSize);
-        constexpr auto shift = kIsLittleEndian ? 0 : 2;
+        constexpr auto shift = system::SystemInfo::IsLittleEndian() ? 0 : 2;
 
         _small[maxSmallSize] = char((maxSmallSize - s) << shift);
         _small[s] = '\0';
@@ -536,13 +551,13 @@ public:
   void copyLarge(const BasicStringStorage& rhs);
 
   void initSmall(
-      const Char* data,
+      const _Char_* data,
       size_t size);
   void initMedium(
-      const Char* data, 
+      const _Char_* data, 
       size_t size);
   void initLarge(
-      const Char* data,
+      const _Char_* data,
       size_t size);
 
   void reserveSmall(
@@ -556,7 +571,7 @@ public:
   void shrinkLarge(size_t delta);
 
   void unshare(size_t minCapacity = 0);
-  Char* mutableDataLarge();
+  _Char_* mutableDataLarge();
 };
 
 template <
@@ -589,27 +604,32 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyMedium(const BasicStringStorage& rhs) {
-  // Medium strings are copied eagerly. Don't forget to allocate
-  // one extra Char for the null terminator.
-  auto const allocSize = (1 + rhs._mediumLarge._size) * sizeof(Char);
-  _mediumLarge._data = static_cast<Char*>(checkedMalloc(allocSize));
-  // Also copies terminator.
-  podCopy(
-      rhs._mediumLarge._data, rhs._mediumLarge._data + rhs._mediumLarge._size + 1, _mediumLarge._data);
-  _mediumLarge._size = rhs._mediumLarge._size;
-  _mediumLarge.setCapacity(allocSize / sizeof(Char) - 1, Category::isMedium);
-  assert(category() == Category::isMedium);
+    // Medium strings are copied eagerly. Don't forget to allocate
+    // one extra Char for the null terminator.
+    auto const allocSize = (1 + rhs._mediumLarge._size) * sizeof(_Char_);
+    _mediumLarge._data = static_cast<_Char_*>(malloc(allocSize));
+    // Also copies terminator.
+
+    podCopy(
+        rhs._mediumLarge._data, rhs._mediumLarge._data 
+        + rhs._mediumLarge._size + 1, _mediumLarge._data);
+
+    _mediumLarge._size = rhs._mediumLarge._size;
+    _mediumLarge.setCapacity(allocSize / sizeof(_Char_) - 1, Category::isMedium);
+
+    assert(category() == Category::isMedium);
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyLarge(const BasicStringStorage& rhs) {
-  // Large strings are just refcounted
-  _mediumLarge = rhs._mediumLarge;
-  RefCounted::incrementRefs(_mediumLarge._data);
-  assert(category() == Category::isLarge && size() == rhs.size());
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::copyLarge(const BasicStringStorage& rhs) {
+    // Large strings are just refcounted
+    _mediumLarge = rhs._mediumLarge;
+    RefCounted::incrementRefs(_mediumLarge._data);
+
+    assert(category() == Category::isLarge && size() == rhs.size());
 }
 
 // Small strings are bitblitted
@@ -618,83 +638,96 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initSmall(
-    const Char* const data, const size_t size) {
-  // Layout is: Char* data_, size_t size_, size_t capacity_
-  static_assert(
-      sizeof(*this) == sizeof(Char*) + 2 * sizeof(size_t),
-      "fbstring has unexpected size");
-  static_assert(
-      sizeof(Char*) == sizeof(size_t), "fbstring size assumption violation");
-  // sizeof(size_t) must be a power of 2
-  static_assert(
-      (sizeof(size_t) & (sizeof(size_t) - 1)) == 0,
-      "fbstring size assumption violation");
+    const _Char_* const   data,
+    const size_t        size) 
+{
+    // Layout is: Char* data_, size_t size_, size_t capacity_
+    static_assert(
+        sizeof(*this) == sizeof(_Char_*) + 2 * sizeof(size_t),
+        "fbstring has unexpected size");
+    static_assert(
+        sizeof(_Char_*) == sizeof(size_t), "fbstring size assumption violation");
+    // sizeof(size_t) must be a power of 2
+    static_assert(
+        (sizeof(size_t) & (sizeof(size_t) - 1)) == 0,
+        "fbstring size assumption violation");
 
-  constexpr size_t kPageSize = 4096;
+    constexpr size_t kPageSize = 4096;
+    const auto addr = reinterpret_cast<uintptr_t>(data);
 
-  const auto addr = reinterpret_cast<uintptr_t>(data);
-  if (!kIsSanitize && // sanitizer would trap on over-reads
-      size && (addr ^ (addr + sizeof(small_) - 1)) < kPageSize) {
-    // the input data is all within one page so over-reads will not segfault
-    std::memcpy(small_, data, sizeof(small_)); // lowers to a 4-insn sequence
-  } else {
-    if (size != 0) {
-      fbstring_detail::podCopy(data, data + size, small_);
-    }
-  }
-  setSmallSize(size);
+    if (size && (addr ^ (addr + sizeof(small_) - 1)) < kPageSize)
+        // the input data is all within one page so over-reads will not segfault
+        std::memcpy(small_, data, sizeof(small_)); // lowers to a 4-insn sequence
+    else if (size != 0) {
+        podCopy(data, data + size, small_);s
+  
+    setSmallSize(size);
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initMedium(
-    const Char* const data, const size_t size) {
-  // Medium strings are allocated normally. Don't forget to
-  // allocate one extra Char for the terminating null.
-  auto const allocSize = (1 + size) * sizeof(Char);
-  _mediumLarge._data = static_cast<Char*>(checkedMalloc(allocSize));
-  if (FOLLY_LIKELY(size > 0)) {
-    fbstring_detail::podCopy(data, data + size, _mediumLarge._data);
-  }
-  _mediumLarge._size = size;
-  _mediumLarge.setCapacity(allocSize / sizeof(Char) - 1, Category::isMedium);
-  _mediumLarge._data[size] = '\0';
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initMedium(
+    const Char* const   data, 
+    const size_t        size) 
+{
+    // Medium strings are allocated normally. Don't forget to
+    // allocate one extra Char for the terminating null.
+    auto const allocSize = (1 + size) * sizeof(_Char_);
+
+    _mediumLarge._data = static_cast<_Char_*>(checkedMalloc(allocSize));
+
+    if (size > 0)
+        podCopy(data, data + size, _mediumLarge._data);
+    
+    _mediumLarge._size = size;
+    _mediumLarge.setCapacity(allocSize / sizeof(_Char_) - 1, Category::isMedium);
+
+    _mediumLarge._data[size] = '\0';
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initLarge(
-    const Char* const data, const size_t size) {
-  // Large strings are allocated differently
-  size_t effectiveCapacity = size;
-  auto const newRC = RefCounted::create(data, &effectiveCapacity);
-  _mediumLarge._data = newRC->data_;
-  _mediumLarge._size = size;
-  _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
-  _mediumLarge._data[size] = '\0';
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::initLarge(
+    const Char* const   data,
+    const size_t        size)
+{
+    // Large strings are allocated differently
+    size_t effectiveCapacity = size;
+
+    auto const newRC = RefCounted::create(data, &effectiveCapacity);
+    _mediumLarge._data = newRC->data_;
+
+    _mediumLarge._size = size;
+    _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
+
+    _mediumLarge._data[size] = '\0';
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::unshare(size_t minCapacity) {
-  assert(category() == Category::isLarge);
-  size_t effectiveCapacity = std::max(minCapacity, _mediumLarge.capacity());
-  auto const newRC = RefCounted::create(&effectiveCapacity);
-  // If this fails, someone placed the wrong capacity in an
-  // fbstring.
-  assert(effectiveCapacity >= _mediumLarge.capacity());
-  // Also copies terminator.
-  fbstring_detail::podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->data_);
-  RefCounted::decrementRefs(_mediumLarge._data);
-  _mediumLarge._data = newRC->data_;
-  _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
-  // size_ remains unchanged.
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::unshare(size_t minCapacity) {
+    assert(category() == Category::isLarge);
+    size_t effectiveCapacity = std::max(minCapacity, _mediumLarge.capacity());
+
+    auto const newRC = RefCounted::create(&effectiveCapacity);
+    // If this fails, someone placed the wrong capacity in an
+    // fbstring.
+
+    assert(effectiveCapacity >= _mediumLarge.capacity());
+    // Also copies terminator.
+
+    fbstring_detail::podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->data_);
+    RefCounted::decrementRefs(_mediumLarge._data);
+
+    _mediumLarge._data = newRC->data_;
+    _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
+    // size_ remains unchanged.
 }
 
 template <
@@ -702,108 +735,127 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::mutableDataLarge() {
-  assert(category() == Category::isLarge);
-  if (RefCounted::refs(_mediumLarge._data) > 1) { // Ensure unique.
-    unshare();
-  }
-  return _mediumLarge._data;
+    assert(category() == Category::isLarge);
+
+    if (RefCounted::refs(_mediumLarge._data) > 1) // Ensure unique.
+        unshare();
+  
+    return _mediumLarge._data;
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveLarge(size_t minCapacity) {
-  assert(category() == Category::isLarge);
-  if (RefCounted::refs(_mediumLarge._data) > 1) { // Ensure unique
-    // We must make it unique regardless; in-place reallocation is
-    // useless if the string is shared. In order to not surprise
-    // people, reserve the new block at current capacity or
-    // more. That way, a string's capacity never shrinks after a
-    // call to reserve.
-    unshare(minCapacity);
-  } else {
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveLarge(size_t minCapacity) {
+    assert(category() == Category::isLarge);
+
+    if (RefCounted::refs(_mediumLarge._data) > 1) { 
+        // Ensure unique
+        // We must make it unique regardless; in-place reallocation is
+        // useless if the string is shared. In order to not surprise
+        // people, reserve the new block at current capacity or
+        // more. That way, a string's capacity never shrinks after a
+        // call to reserve.
+        unshare(minCapacity);
+    } else {
     // String is not shared, so let's try to realloc (if needed)
-    if (minCapacity > _mediumLarge.capacity()) {
-      // Asking for more memory
-      auto const newRC = RefCounted::reallocate(
-          _mediumLarge._data, _mediumLarge._size, _mediumLarge.capacity(), &minCapacity);
-      _mediumLarge._data = newRC->data_;
-      _mediumLarge.setCapacity(minCapacity, Category::isLarge);
+        if (minCapacity > _mediumLarge.capacity()) {
+            // Asking for more memory
+            auto const newRC = RefCounted::reallocate(
+                _mediumLarge._data, _mediumLarge._size, _mediumLarge.capacity(), &minCapacity);
+            _mediumLarge._data = newRC->data_;
+            _mediumLarge.setCapacity(minCapacity, Category::isLarge);
+        }
+        assert(capacity() >= minCapacity);
     }
-    assert(capacity() >= minCapacity);
-  }
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveMedium(
-    const size_t minCapacity) {
-  assert(category() == Category::isMedium);
-  // String is not shared
-  if (minCapacity <= _mediumLarge.capacity()) {
-    return; // nothing to do, there's enough room
-  }
-  if (minCapacity <= maxMediumSize) {
-    // Keep the string at medium size. Don't forget to allocate
-    // one extra Char for the terminating null.
-    size_t capacityBytes = (1 + minCapacity) * sizeof(Char);
-    // Also copies terminator.
-    _mediumLarge._data = static_cast<Char*>(smartRealloc(
-        _mediumLarge._data,
-        (_mediumLarge._size + 1) * sizeof(Char),
-        (_mediumLarge.capacity() + 1) * sizeof(Char),
-        capacityBytes));
-    _mediumLarge.setCapacity(capacityBytes / sizeof(Char) - 1, Category::isMedium);
-  } else {
-    // Conversion from medium to large string
-    BasicStringStorage nascent;
-    // Will recurse to another branch of this function
-    nascent.reserve(minCapacity);
-    nascent._mediumLarge._size = _mediumLarge._size;
-    // Also copies terminator.
-    fbstring_detail::podCopy(
-        _mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, nascent._mediumLarge._data);
-    nascent.swap(*this);
-    assert(capacity() >= minCapacity);
-  }
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveMedium(
+    const size_t minCapacity) 
+{
+    assert(category() == Category::isMedium);
+    // String is not shared
+
+    if (minCapacity <= _mediumLarge.capacity())
+        return; // nothing to do, there's enough room
+    
+    if (minCapacity <= maxMediumSize) {
+        // Keep the string at medium size. Don't forget to allocate
+        // one extra Char for the terminating null.
+        size_t capacityBytes = (1 + minCapacity) * sizeof(_Char_);
+        // Also copies terminator.
+
+        _mediumLarge._data = static_cast<_Char_*>(smartRealloc(
+            _mediumLarge._data,
+            (_mediumLarge._size + 1) * sizeof(_Char_),
+            (_mediumLarge.capacity() + 1) * sizeof(_Char_),
+            capacityBytes));
+
+        _mediumLarge.setCapacity(capacityBytes / sizeof(_Char_) - 1, Category::isMedium);
+    } 
+    else {
+        // Conversion from medium to large string
+        BasicStringStorage nascent;
+        // Will recurse to another branch of this function
+
+        nascent.reserve(minCapacity);
+        nascent._mediumLarge._size = _mediumLarge._size;
+
+        // Also copies terminator.
+        fbstring_detail::podCopy(
+            _mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, nascent._mediumLarge._data);
+        nascent.swap(*this);
+
+        assert(capacity() >= minCapacity);
+    }
 }
 
 template <
     class _Char_,
     class _SimdOptimization_,
     class _StorageOptimization>
-FOLLY_NOINLINE void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveSmall(
-    size_t minCapacity, const bool disableSSO) {
-  assert(category() == Category::isSmall);
-  if (!disableSSO && minCapacity <= maxSmallSize) {
-    // small
-    // Nothing to do, everything stays put
-  } else if (minCapacity <= maxMediumSize) {
-    // medium
-    // Don't forget to allocate one extra Char for the terminating null
-    auto const allocSizeBytes =
-        (1 + minCapacity) * sizeof(Char);
-    auto const pData = static_cast<Char*>(checkedMalloc(allocSizeBytes));
-    auto const size = smallSize();
-    // Also copies terminator.
-    fbstring_detail::podCopy(small_, small_ + size + 1, pData);
-    _mediumLarge._data = pData;
-    _mediumLarge._size = size;
-    _mediumLarge.setCapacity(allocSizeBytes / sizeof(Char) - 1, Category::isMedium);
-  } else {
-    // large
-    auto const newRC = RefCounted::create(&minCapacity);
-    auto const size = smallSize();
-    // Also copies terminator.
-    fbstring_detail::podCopy(small_, small_ + size + 1, newRC->data_);
-    _mediumLarge._data = newRC->data_;
-    _mediumLarge._size = size;
-    _mediumLarge.setCapacity(minCapacity, Category::isLarge);
-    assert(capacity() >= minCapacity);
-  }
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::reserveSmall(size_t minCapacity) {
+    assert(category() == Category::isSmall);
+
+    if (minCapacity <= maxSmallSize) {
+        // small
+        // Nothing to do, everything stays put
+    } else if (minCapacity <= maxMediumSize) {
+        // medium
+        // Don't forget to allocate one extra Char for the terminating null
+        auto const allocSizeBytes =
+            (1 + minCapacity) * sizeof(_Char_);
+
+        auto const pData = static_cast<_Char_*>(checkedMalloc(allocSizeBytes));
+        auto const size = smallSize();
+
+        // Also copies terminator.
+        fbstring_detail::podCopy(small_, small_ + size + 1, pData);
+
+        _mediumLarge._data = pData;
+        _mediumLarge._size = size;
+
+        _mediumLarge.setCapacity(allocSizeBytes / sizeof(_Char_) - 1,
+            Category::isMedium);
+    } else {
+        // large
+        auto const newRC = RefCounted::create(&minCapacity);
+        auto const size = smallSize();
+
+        // Also copies terminator.
+        fbstring_detail::podCopy(small_, small_ + size + 1, newRC->data_);
+        _mediumLarge._data = newRC->data_;
+
+        _mediumLarge._size = size;
+        _mediumLarge.setCapacity(minCapacity, Category::isLarge);
+
+        assert(capacity() >= minCapacity);
+    }
 }
 
 template <
@@ -812,35 +864,43 @@ template <
     class _StorageOptimization>
 inline Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::expandNoinit(
     const size_t delta,
-    bool expGrowth, /* = false */
-    bool disableSSO /* = FBSTRING_DISABLE_SSO */) {
-  // Strategy is simple: make room, then change size
-  assert(capacity() >= size());
-  size_t sz, newSz;
-  if (category() == Category::isSmall) {
-    sz = smallSize();
-    newSz = sz + delta;
-    if (!disableSSO && FOLLY_LIKELY(newSz <= maxSmallSize)) {
-      setSmallSize(newSz);
-      return small_ + sz;
+    bool expGrowth)
+{
+    // Strategy is simple: make room, then change size
+    assert(capacity() >= size());
+    size_t sz, newSz;
+
+    if (category() == Category::isSmall) {
+        sz = smallSize();
+        newSz = sz + delta;
+
+        if (newSz <= maxSmallSize) {
+            setSmallSize(newSz);
+            return small_ + sz;
+        }
+
+        reserveSmall(
+            expGrowth ? std::max(newSz, 2 * maxSmallSize) : newSz, disableSSO);
+    } 
+    else {
+        sz = _mediumLarge._size;
+        newSz = sz + delta;
+
+        if (newSz > capacity()) {
+            // ensures not shared
+            reserve(expGrowth ? std::max(newSz, 1 + capacity() * 3 / 2) : newSz);
+        }
     }
-    reserveSmall(
-        expGrowth ? std::max(newSz, 2 * maxSmallSize) : newSz, disableSSO);
-  } else {
-    sz = _mediumLarge._size;
-    newSz = sz + delta;
-    if (FOLLY_UNLIKELY(newSz > capacity())) {
-      // ensures not shared
-      reserve(expGrowth ? std::max(newSz, 1 + capacity() * 3 / 2) : newSz);
-    }
-  }
-  assert(capacity() >= newSz);
-  // Category can't be small - we took care of that above
-  assert(category() == Category::isMedium || category() == Category::isLarge);
-  _mediumLarge._size = newSz;
-  _mediumLarge._data[newSz] = '\0';
-  assert(size() == newSz);
-  return _mediumLarge._data + sz;
+
+    assert(capacity() >= newSz);
+    // Category can't be small - we took care of that above
+    assert(category() == Category::isMedium || category() == Category::isLarge);
+
+    _mediumLarge._size = newSz;
+    _mediumLarge._data[newSz] = '\0';
+
+    assert(size() == newSz);
+    return _mediumLarge._data + sz;
 }
 
 template <
@@ -848,9 +908,9 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkSmall(const size_t delta) {
-  // Check for underflow
-  assert(delta <= smallSize());
-  setSmallSize(smallSize() - delta);
+    // Check for underflow
+    assert(delta <= smallSize());
+    setSmallSize(smallSize() - delta);
 }
 
 template <
@@ -858,11 +918,12 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkMedium(const size_t delta) {
-  // Medium strings and unique large strings need no special
-  // handling.
-  assert(_mediumLarge._size >= delta);
-  _mediumLarge._size -= delta;
-  _mediumLarge._data[_mediumLarge.size_] = '\0';
+    // Medium strings and unique large strings need no special
+    // handling.
+    assert(_mediumLarge._size >= delta);
+
+    _mediumLarge._size -= delta;
+    _mediumLarge._data[_mediumLarge.size_] = '\0';
 }
 
 template <
@@ -870,14 +931,13 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization>
 inline void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization>::shrinkLarge(const size_t delta) {
-  assert(_mediumLarge._size >= delta);
-  // Shared large string, must make unique. This is because of the
-  // durn terminator must be written, which may trample the shared
-  // data.
-  if (delta) {
+    assert(_mediumLarge._size >= delta);
+    // Shared large string, must make unique. This is because of the
+    // durn terminator must be written, which may trample the shared
+    // data.
+    if (delta)
     BasicStringStorage(_mediumLarge._data, _mediumLarge._size - delta).swap(*this);
-  }
-  // No need to write the terminator.
+    // No need to write the terminator.
 }
 
 __BASE_STRING_NAMESPACE_END
