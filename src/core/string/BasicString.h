@@ -8,6 +8,7 @@
 #include <src/core/string/StringDebug.h>
 #include <base/core/container/Vector.h>
 
+#include <base/core/utility/TypeTraits.h>
 
 
 WARNING_DISABLE_MSVC(4834)
@@ -1137,9 +1138,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-	const BasicString& string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -1150,10 +1152,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-	const ValueType* string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 
 }
@@ -1164,9 +1167,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-	const ValueType* string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const ValueType*	string,
+		SizeType			position) const
 {
 
 }
@@ -1177,9 +1181,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		ValueType	ch,
+		SizeType	position) const
 {
 
 }
@@ -1190,9 +1195,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-	const BasicString& string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -1203,10 +1209,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-	const ValueType* string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 
 }
@@ -1217,9 +1224,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-	const ValueType* string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const ValueType*	string,
+		SizeType			position) const
 {
 
 }
@@ -1230,9 +1238,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		ValueType	ch,
+		SizeType	position) const
 {
 
 }
@@ -1243,9 +1252,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-	const BasicString& string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -1256,10 +1266,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-	const ValueType* string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 
 }
@@ -1270,9 +1281,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-	const ValueType* string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const ValueType*	string,
+		SizeType			position) const
 {
 
 }
@@ -1283,9 +1295,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		ValueType	ch,
+		SizeType	position) const
 {
 
 }
@@ -1296,9 +1309,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-	const BasicString& string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -1309,10 +1323,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-	const ValueType* string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 
 }
@@ -1323,9 +1338,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-	const ValueType* string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const ValueType*	string,
+		SizeType			position) const
 {
 
 }
@@ -1336,10 +1352,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-	ValueType	ch,
-	SizeType	position) const
-{
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		ValueType	ch,
+		SizeType	position) const
+{	
 
 }
 
@@ -2088,9 +2105,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	SizeType index,
-	ValueType ch)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		SizeType index,
+		ValueType ch)
 {
 
 }
@@ -2101,10 +2119,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	SizeType index,
-	const ValueType* ch,
-	SizeType length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		SizeType			index,
+		const ValueType*	ch,
+		SizeType			length)
 {
 
 }
@@ -2115,9 +2134,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	SizeType index,
-	const BasicString& string)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		SizeType			index,
+		const BasicString&	string)
 {
 
 }
@@ -2128,19 +2148,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(ValueType ch) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(
-	const ValueType* ch,
-	SizeType length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(ValueType ch) 
 {
 
 }
@@ -2151,7 +2160,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(const BasicString& string) {
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(
+		const ValueType*	ch,
+		SizeType			length)
+{
 
 }
 
@@ -2161,7 +2174,21 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(ValueType ch) {
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(const BasicString& string) 
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(ValueType ch) 
+{
 	
 }
 
@@ -2171,9 +2198,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(
-	const ValueType* ch,
-	SizeType len)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(
+		const ValueType*	ch,
+		SizeType			len)
 {
 
 }
@@ -2184,19 +2212,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(const BasicString& string) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
-	SizeType index,
-	SizeType length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(const BasicString& string)
 {
 
 }
@@ -2207,9 +2224,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
-	ValueType ch,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
+		SizeType index,
+		SizeType length)
 {
 
 }
@@ -2220,9 +2238,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
-	const BasicString& string,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
+		ValueType ch,
+		CaseSensitivity caseSensitivity)
 {
 
 }
@@ -2233,40 +2252,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeAt(SizeType pos) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeFirst() {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeLast() {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	SizeType index,
-	SizeType length,
-	ValueType after)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::remove(
+		const BasicString& string,
+		CaseSensitivity caseSensitivity)
 {
 
 }
@@ -2277,11 +2266,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	SizeType index,
-	SizeType length,
-	const ValueType* ch,
-	SizeType slen)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeAt(SizeType pos)
 {
 
 }
@@ -2292,10 +2278,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	SizeType index,
-	SizeType length,
-	const BasicString& after)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeFirst() 
 {
 
 }
@@ -2306,10 +2290,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	ValueType before,
-	ValueType after,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::removeLast()
 {
 
 }
@@ -2320,12 +2302,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	const ValueType* before,
-	SizeType beforeLength,
-	const ValueType* after,
-	SizeType afterLength,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		SizeType index,
+		SizeType length,
+		ValueType after)
 {
 
 }
@@ -2336,10 +2317,12 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	const BasicString& before,
-	const BasicString& after,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		SizeType index,
+		SizeType length,
+		const ValueType* ch,
+		SizeType slen)
 {
 
 }
@@ -2350,10 +2333,73 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
-	ValueType ch,
-	const BasicString& after,
-	CaseSensitivity caseSensitivity)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		SizeType index,
+		SizeType length,
+		const BasicString& after)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		ValueType before,
+		ValueType after,
+		CaseSensitivity caseSensitivity)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		const ValueType* before,
+		SizeType beforeLength,
+		const ValueType* after,
+		SizeType afterLength,
+		CaseSensitivity caseSensitivity)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		const BasicString& before,
+		const BasicString& after,
+		CaseSensitivity caseSensitivity)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::replace(
+		ValueType ch,
+		const BasicString& after,
+		CaseSensitivity caseSensitivity)
 {
 
 }
@@ -2707,30 +2753,9 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(const BasicString& string) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(BasicString&& string) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
-	const BasicString&	string,
-	const size_type		position,
-	size_type			length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::assign(const BasicString& string) 
 {
 
 }
@@ -2741,9 +2766,8 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
-	const ValueType* string,
-	const size_type length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(BasicString&& string)
 {
 
 }
@@ -2754,7 +2778,12 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(const ValueType* string) {
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
+		const BasicString&	string,
+		const size_type		position,
+		size_type			length)
+{
 
 }
 
@@ -2764,7 +2793,34 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
+		const ValueType* string,
+		const size_type length)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(const ValueType* string) 
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
 	::assign(std::initializer_list<ValueType> initializerList)
 {
 
@@ -2779,9 +2835,10 @@ template <
 template <
 	class _IteratorOrLength_,
 	class _IteratorOrChar_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
-	_IteratorOrLength_	firstOrLength,
-	_IteratorOrChar_	lastOrChar)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(
+		_IteratorOrLength_	firstOrLength,
+		_IteratorOrChar_	lastOrChar)
 {
 
 }
@@ -2792,11 +2849,12 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	SizeType				firstPosition,
-	const BasicString&		string,
-	SizeType				secondPosition,
-	SizeType				length)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		SizeType				firstPosition,
+		const BasicString&		string,
+		SizeType				secondPosition,
+		SizeType				length)
 {
 
 }
@@ -2807,10 +2865,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	SizeType	position,
-	SizeType	length,
-	ValueType	ch)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		SizeType	position,
+		SizeType	length,
+		ValueType	ch)
 {
 
 }
@@ -2821,9 +2880,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::iterator BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
-	ConstIterator	where,
-	const ValueType ch)
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::iterator
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
+		ConstIterator	where,
+		const ValueType ch)
 {
 
 }
@@ -2834,9 +2894,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -2847,10 +2908,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
-	const ValueType*	needle,
-	SizeType			position,
-	SizeType			size) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
+		const ValueType*	needle,
+		SizeType			position,
+		SizeType			size) const
 {
 
 }
@@ -2861,9 +2923,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
-	const ValueType*	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
+		const ValueType*	string,
+		SizeType			position) const
 {
 
 }
@@ -2874,9 +2937,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find(
+		ValueType	ch,
+		SizeType	position) const
 {
 
 }
@@ -2887,9 +2951,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
+		const BasicString&	string,
+		SizeType			position) const
 {
 
 }
@@ -2900,10 +2965,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 
 }
@@ -2914,9 +2980,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
-	const ValueType*	string,
-	SizeType			pos) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
+		const ValueType*	string,
+		SizeType			pos) const
 {
 
 }
@@ -2927,9 +2994,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::rfind(
+		ValueType	ch,
+		SizeType	position) const
 {
 	
 }
@@ -2940,9 +3008,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
+		const BasicString&	string,
+		SizeType			position) const
 {
 	return findFirstOf(string, position);
 }
@@ -2953,10 +3022,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 	return findFirstOf(string, position, length);
 }
@@ -2967,9 +3037,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
-	const ValueType*	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
+		const ValueType*	string,
+		SizeType			position) const
 {
 	return findFirstOf(string, position);
 }
@@ -2980,9 +3051,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_of(
+		ValueType	ch,
+		SizeType	position) const
 {
 	return findFirstOf(ch, position);
 }
@@ -2993,9 +3065,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
+		const BasicString&	string,
+		SizeType			position) const
 {
 	return findLastOf(string, position);
 }
@@ -3006,10 +3079,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 	return findLastOf(string, position, length);
 }
@@ -3020,9 +3094,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
-	const ValueType*	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
+		const ValueType*	string,
+		SizeType			position) const
 {
 	return findLastOf(string, position);
 }
@@ -3033,9 +3108,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_of(
+		ValueType	ch,
+		SizeType	position) const
 {
 	return findLastOf(ch, position);
 }
@@ -3046,9 +3122,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
+		const BasicString&	string,
+		SizeType			position) const
 {
 	return findFirstNotOf(string, position);
 }
@@ -3059,10 +3136,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 	return findFirstNotOf(string, position, length);
 }
@@ -3073,9 +3151,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
-	const ValueType*	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
+		const ValueType*	string,
+		SizeType			position) const
 {
 	return findFirstNotOf(string, position);
 }
@@ -3086,9 +3165,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_first_not_of(
+		ValueType	ch,
+		SizeType	position) const
 {
 	return findFirstNotOf(ch, position);
 }
@@ -3099,9 +3179,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
-	const BasicString&	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
+		const BasicString&	string,
+		SizeType			position) const
 {
 	return findLastNotOf(string, position);
 }
@@ -3112,10 +3193,11 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
 {
 	return findLastNotOf(string, position, length);
 }
@@ -3126,9 +3208,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
-	const ValueType*	string,
-	SizeType			position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
+		const ValueType*	string,
+		SizeType			position) const
 {
 	return findLastNotOf(string, position);
 }
@@ -3139,9 +3222,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
-	ValueType	ch,
-	SizeType	position) const
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::find_last_not_of(
+		ValueType	ch,
+		SizeType	position) const
 {
 	return findLastNotOf(ch, position);
 }
@@ -3152,9 +3236,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_> BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::substr(
-	SizeType position,
-	SizeType length) const&
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_> 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::substr(
+		SizeType position,
+		SizeType length) const&
 {
 
 }
@@ -3165,9 +3250,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_> BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::substr(
-	SizeType position,
-	SizeType length)&&
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_> 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::substr(
+		SizeType position,
+		SizeType length)&&
 {
 
 }
@@ -3251,376 +3337,687 @@ int BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c
 
 }
 
-//template <typename E, class T, class A, class S>
-//inline BasicString<E, T, A, S> operator+(
-//	BasicString<E, T, A, S>&& lhs, E rhs) {
-//  //
-//  return std::move(lhs += rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator==(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return lhs.size() == rhs.size() && lhs.compare(rhs) == 0;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator==(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator==(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs == lhs;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator==(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator==(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return lhs.compare(rhs) == 0;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator!=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs == rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator!=(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator!=(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs == rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator!=(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator!=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return !(lhs == rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return lhs.compare(rhs) < 0;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return lhs.compare(rhs) < 0;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs.compare(lhs) > 0;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs < lhs;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return rhs < lhs;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs < lhs;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(rhs < lhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return !(rhs < lhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(rhs < lhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs < rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>=(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const typename basic_fbstring<E, T, A, S>::value_type* rhs) {
-//  return !(lhs < rhs);
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>=(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator>=(
-//    const typename basic_fbstring<E, T, A, S>::value_type* lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs < rhs);
-//}
-//
-//#if FOLLY_CPLUSPLUS >= 202002
-//template <typename E, class T, class A, class S>
-//inline bool operator<=>(std::nullptr_t, const basic_fbstring<E, T, A, S>&) =
-//    delete;
-//
-//template <typename E, class T, class A, class S>
-//inline bool operator<=>(const basic_fbstring<E, T, A, S>&, std::nullptr_t) =
-//    delete;
-//#endif
-//
-//// C++11 21.4.8.8
-//template <typename E, class T, class A, class S>
-//void swap(basic_fbstring<E, T, A, S>& lhs, basic_fbstring<E, T, A, S>& rhs) {
-//  lhs.swap(rhs);
-//}
-//
-//// TODO: make this faster.
-//template <typename E, class T, class A, class S>
-//inline std::basic_istream<
-//    typename basic_fbstring<E, T, A, S>::value_type,
-//    typename basic_fbstring<E, T, A, S>::traits_type>&
-//operator>>(
-//    std::basic_istream<
-//        typename basic_fbstring<E, T, A, S>::value_type,
-//        typename basic_fbstring<E, T, A, S>::traits_type>& is,
-//    basic_fbstring<E, T, A, S>& str) {
-//  typedef std::basic_istream<
-//      typename basic_fbstring<E, T, A, S>::value_type,
-//      typename basic_fbstring<E, T, A, S>::traits_type>
-//      _istream_type;
-//  typename _istream_type::sentry sentry(is);
-//  size_t extracted = 0;
-//  typename _istream_type::iostate err = _istream_type::goodbit;
-//  if (sentry) {
-//    auto n = is.width();
-//    if (n <= 0) {
-//      n = str.max_size();
-//    }
-//    str.erase();
-//    for (auto got = is.rdbuf()->sgetc(); extracted != size_t(n); ++extracted) {
-//      if (got == T::eof()) {
-//        err |= _istream_type::eofbit;
-//        is.width(0);
-//        break;
-//      }
-//      if (isspace(got)) {
-//        break;
-//      }
-//      str.push_back(got);
-//      got = is.rdbuf()->snextc();
-//    }
-//  }
-//  if (!extracted) {
-//    err |= _istream_type::failbit;
-//  }
-//  if (err) {
-//    is.setstate(err);
-//  }
-//  return is;
-//}
-//
-//template <typename E, class T, class A, class S>
-//inline std::basic_ostream<
-//    typename basic_fbstring<E, T, A, S>::value_type,
-//    typename basic_fbstring<E, T, A, S>::traits_type>&
-//operator<<(
-//    std::basic_ostream<
-//        typename basic_fbstring<E, T, A, S>::value_type,
-//        typename basic_fbstring<E, T, A, S>::traits_type>& os,
-//    const basic_fbstring<E, T, A, S>& str) {
-//#ifdef _LIBCPP_VERSION
-//  typedef std::basic_ostream<
-//      typename basic_fbstring<E, T, A, S>::value_type,
-//      typename basic_fbstring<E, T, A, S>::traits_type>
-//      _ostream_type;
-//  typename _ostream_type::sentry _s(os);
-//  if (_s) {
-//    typedef std::ostreambuf_iterator<
-//        typename basic_fbstring<E, T, A, S>::value_type,
-//        typename basic_fbstring<E, T, A, S>::traits_type>
-//        _Ip;
-//    size_t __len = str.size();
-//    bool __left =
-//        (os.flags() & _ostream_type::adjustfield) == _ostream_type::left;
-//    if (__pad_and_output(
-//            _Ip(os),
-//            str.data(),
-//            __left ? str.data() + __len : str.data(),
-//            str.data() + __len,
-//            os,
-//            os.fill())
-//            .failed()) {
-//      os.setstate(_ostream_type::badbit | _ostream_type::failbit);
-//    }
-//  }
-//#elif defined(_MSC_VER)
-//  typedef decltype(os.precision()) streamsize;
-//  // MSVC doesn't define __ostream_insert
-//  os.write(str.data(), static_cast<streamsize>(str.size()));
-//#else
-//  std::__ostream_insert(os, str.data(), str.size());
-//#endif
-//  return os;
-//}
-//
-//// basic_string compatibility routines
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator==(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) == 0;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator==(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs == lhs;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator!=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return !(lhs == rhs);
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator!=(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs == rhs);
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator<(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) < 0;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator>(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) > 0;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator<(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs > lhs;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator>(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return rhs < lhs;
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator<=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return !(lhs > rhs);
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator>=(
-//    const basic_fbstring<E, T, A, S>& lhs,
-//    const std::basic_string<E, T, A2>& rhs) {
-//  return !(lhs < rhs);
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator<=(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs > rhs);
-//}
-//
-//template <typename E, class T, class A, class S, class A2>
-//inline bool operator>=(
-//    const std::basic_string<E, T, A2>& lhs,
-//    const basic_fbstring<E, T, A, S>& rhs) {
-//  return !(lhs < rhs);
-//}
+// ================================================================================
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_> operator+(
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&& lhs,
+	_Char_ rhs)
+{
+  return std::move(lhs += rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator==(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs) 
+{
+	return lhs.size() == rhs.size() 
+		&& lhs.compare(rhs) == 0;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator==(
+	std::nullptr_t, 
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator==(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs) 
+{
+	return rhs == lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator==(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&,
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator==(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs) 
+{
+	return lhs.compare(rhs) == 0;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator!=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs) 
+{
+	return !(lhs == rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator!=(
+	std::nullptr_t, 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator!=(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs) 
+{
+	return !(lhs == rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator!=(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&, 
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator!=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs) 
+{
+	return !(lhs == rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs)
+{
+	return lhs.compare(rhs) < 0;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&,
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs) 
+{
+	return lhs.compare(rhs) < 0;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<(
+	std::nullptr_t, 
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs) 
+{
+	return rhs.compare(lhs) > 0;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs) {
+  return rhs < lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&,
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs)
+{
+	return rhs < lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>(
+	std::nullptr_t, 
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs)
+{
+	return rhs < lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&,
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs) {
+  return !(rhs < lhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=(
+	std::nullptr_t, 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs)
+{
+	return !(rhs < lhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>=(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&, 
+	std::nullptr_t) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						lhs,
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	rhs) 
+{
+	return !(lhs < rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>=(
+	std::nullptr_t,
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator>=(
+    const typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type*	lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&						rhs) 
+{
+	return !(lhs < rhs);
+}
+
+#if BASE_HAS_CXX20
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=>(
+	std::nullptr_t,
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&) = delete;
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline bool operator<=>(
+	const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&,
+	std::nullptr_t) = delete;
+#endif
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+void swap(
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& lhs,
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& rhs) 
+{
+	lhs.swap(rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline std::basic_istream<
+    typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+    typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>&
+operator>>(
+    std::basic_istream<
+        typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+        typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>& is,
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& str) 
+{
+	using _InputStream_ = std::basic_istream<
+      typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+      typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>;
+
+	using _SEntry_ = typename _InputStream_::sentry;
+	using _IOState_ = typename _InputStream_::iostate;
+
+	_SEntry_ sentry(is);
+	size_t extracted = 0;
+
+	_IOState_ err = _InputStream_::goodbit;
+
+	if (sentry) {
+		auto n = is.width();
+
+		if (n <= 0)
+			n = str.max_size();
+
+		str.erase();
+
+		for (auto got = is.rdbuf()->sgetc(); extracted != size_t(n); ++extracted) {
+			if (got == T::eof()) {
+				err |= _InputStream_::eofbit;
+				is.width(0);
+
+				break;
+			}
+
+			if (isspace(got))
+				break;
+			
+			str.push_back(got);
+			got = is.rdbuf()->snextc();
+		}
+	}
+
+	if (!extracted)
+		err |= _InputStream_::failbit;
+
+	if (err)
+		is.setstate(err);
+
+	return is;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+inline std::basic_ostream<
+    typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+    typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>&
+operator<<(
+    std::basic_ostream<
+        typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+        typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>& os,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& str) 
+{
+#ifdef _LIBCPP_VERSION
+	using _OutputStream_ = std::basic_ostream<
+      typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+      typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>;
+
+	using _SEntry_ = _OutputStream_::sentry;
+	using _Ip_ = _OutputStream_::std::ostreambuf_iterator<
+		typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::value_type,
+		typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::traits_type>
+
+	_SEntry_ _s(os);
+	if (_s) {
+		size_t __len = str.size();
+		bool __left =
+			(os.flags() & _OutputStream_::adjustfield) == _OutputStream_::left;
+
+	if (__pad_and_output(
+			_Ip(os), str.data(),
+			__left ? str.data() + __len : str.data(),
+			str.data() + __len, os, os.fill()) .failed()) 
+	{
+		os.setstate(_ostream_type::badbit | _ostream_type::failbit);
+	}
+}
+#elif defined(CPP_MSVC)
+	using streamsize = decltype(os.precision());
+	// MSVC doesn't define __ostream_insert
+	os.write(str.data(), static_cast<streamsize>(str.size()));
+#else
+	std::__ostream_insert(os, str.data(), str.size());
+#endif
+
+  return os;
+}
+
+// basic_string compatibility routines
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator==(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs) 
+{
+	return (lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) == 0);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator==(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs)
+{
+	return rhs == lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator!=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator!=(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs)
+{
+	return !(lhs == rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator<(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
+{
+	return (lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) < 0);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator>(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
+{
+	return (lhs.compare(0, lhs.size(), rhs.data(), rhs.size()) > 0);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator<(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs) 
+{
+	return rhs > lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator>(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs) 
+{
+	return rhs < lhs;
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator<=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
+{
+	return !(lhs > rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator>=(
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	lhs,
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs) 
+{	
+	return !(lhs < rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator<=(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs) 
+{
+	return !(lhs > rhs);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_,
+	class _SecondAllocator_>
+inline bool operator>=(
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
+    const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&	rhs)
+{
+	return !(lhs < rhs);
+}
 
 __BASE_STRING_NAMESPACE_END
