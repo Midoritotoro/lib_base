@@ -62,6 +62,16 @@ bool SignedAddOverflow(
 #endif
 }
 
+always_inline static NODISCARD
+bool SizetypeAddOverflow(
+    sizetype a,
+    sizetype b,
+    sizetype* res)
+{
+    *res = a + b;
+    return (a + b) < a;
+}
+
 #if !(defined(CPP_GNU) || defined(CPP_CLANG))
 #include <numeric>
 #endif
@@ -115,7 +125,7 @@ bool SizetypeMultiplyOverflow(
     sizetype* res)
 {
     *res = a * b;
-    return b > 0 && a > (ULLONG_MAX / b);
+    return b > 0 && a > (LLONG_MAX / b);
 }
 
 always_inline static NODISCARD

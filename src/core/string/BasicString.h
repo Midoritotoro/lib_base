@@ -8,8 +8,8 @@
 #include <src/core/string/StringDebug.h>
 #include <base/core/container/Vector.h>
 
-#include <base/core/utility/TypeTraits.h>
 #include <src/core/string/BasicStringStorage.h>
+#include <src/core/string/CharTraits.h>
 
 
 WARNING_DISABLE_MSVC(4834)
@@ -21,7 +21,7 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 template <
 	class _Char_,
-	class _Traits_				= CharTraits<_Char_>,
+	class _Traits_				= stringTraits::CharTraits<_Char_>,
 	class _Allocator_			= std::allocator<_Char_>,
 	class _SimdOptimization_	= stringSimd::OptimizationDisable,
 	class _Storage_				= BasicStringStorage<_Char_, _SimdOptimization_, stringStorage::OptimizationSmallAndLarge>>
@@ -68,7 +68,7 @@ public:
 
 	using StringList = container::Vector<BasicString>;
 
-	using traits = CharTraits<ValueType>;
+	using traits = stringTraits::CharTraits<ValueType>;
 	using Traits = traits;
 
 	template <typename __Char>

@@ -3,9 +3,9 @@
 #include <base/core/string/StringConfig.h>
 #include <base/core/utility/TypeTraits.h>
 
-#include <base/core/string/Char.h>
-
 __BASE_STRING_NAMESPACE_BEGIN
+
+namespace stringTraits {
 
 template <class _Char_>
 class CharTraits;
@@ -33,9 +33,6 @@ template <>
 class CharTraits<wchar_t> {
 
 };
-
-template <>
-class CharTraits<Char> {
 
 };
 

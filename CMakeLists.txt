@@ -249,6 +249,10 @@ set(PRIVATE_SOURCES
     src/core/string/CharTypeCompatibility.h
     
     src/core/string/BasicStringStorage.h
+    src/core/string/StringOptimization.h
+
+    src/core/string/BasicStringUtility.h
+    src/core/string/StringStorageRefCount.h
 )
 
 set(PUBLIC_HEADERS 

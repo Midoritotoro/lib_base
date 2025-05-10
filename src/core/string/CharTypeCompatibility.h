@@ -1,9 +1,6 @@
 #pragma once 
 
 #include <base/core/utility/TypeTraits.h>
-#include <src/core/string/CharTraits.h>
-
-#include <base/core/string/Char.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -24,9 +21,9 @@ struct IsCompatibleCharTypeHelper
 	std::is_same<_Char, ushort>::value ||
 	std::is_same<_Char, char16_t>::value ||
 	std::is_same<_Char, char32_t>::value ||
-#if __cpp_lib_char8_t
-	std::is_same<_Char, char8_t>::value ||
-#endif
+//#if __cpp_lib_char8_t
+//	std::is_same<_Char, char8_t>::value ||
+//#endif
 	(std::is_same<_Char, wchar_t>::value && sizeof(wchar_t) == sizeof(_Char))> 
 {};
 
