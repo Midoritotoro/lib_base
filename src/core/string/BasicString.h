@@ -18,7 +18,6 @@ WARNING_DISABLE_MSVC(4003)
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-
 template <
 	class _Char_,
 	class _Traits_				= CharTraits<_Char_>,
@@ -673,6 +672,7 @@ public:
 		ValueType	ch,
 		SizeType	position) const;
 private:
+	_Storage_ _storage;
 };
 
 

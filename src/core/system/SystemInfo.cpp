@@ -12,6 +12,14 @@
 
 __BASE_SYSTEM_NAMESPACE_BEGIN
 
+bool SystemInfo::IsLittleEndian() {
+	return (Endian::ByteOrder == Endian::LittleEndian);
+}
+
+bool SystemInfo::IsBigEndian() {
+	return (Endian::ByteOrder == Endian::BigEndian);
+}
+
 int SystemInfo::GetCpuCount() {
 	return PlatformSystemInfoImplementation::GetCpuCount();
 }

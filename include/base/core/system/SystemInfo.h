@@ -21,6 +21,9 @@ namespace base::system {
 #  endif
         };
 
+        constexpr static NODISCARD bool IsLittleEndian();
+        constexpr static NODISCARD bool IsBigEndian();
+
         static NODISCARD int GetCpuCount();
 	};
 } // namespace base::system
