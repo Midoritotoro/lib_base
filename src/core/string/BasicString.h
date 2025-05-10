@@ -18,7 +18,7 @@ template <
 class BasicString 
 {
 public:
-	using allocator_type	= _Allocator;
+	using allocator_type	= _Allocator_;
 	using value_type		= _Char_;
 
 	using reference			= _Char_&;
@@ -233,24 +233,6 @@ public:
 	NODISCARD ValueType pop_front() noexcept;
 	NODISCARD ValueType popFront() noexcept;
 
-	NODISCARD SizeType find(const BasicString& string) const noexcept;
-	NODISCARD SizeType find(ValueType ch) const noexcept;
-
-	NODISCARD container::Vector<SizeType> findAll(const BasicString& string) const noexcept;
-	NODISCARD container::Vector<SizeType> findAll(ValueType ch) const noexcept;
-
-	NODISCARD SizeType findLastOf(const BasicString& string) const noexcept;
-	NODISCARD SizeType findLastOf(ValueType ch) const noexcept;
-
-	NODISCARD SizeType findFirstOf(const BasicString& string) const noexcept;
-	NODISCARD SizeType findFirstOf(ValueType ch) const noexcept;
-
-	NODISCARD SizeType findLastNotOf(const BasicString& string) const noexcept;
-	NODISCARD SizeType findLastNotOf(ValueType ch) const noexcept;
-
-	NODISCARD SizeType findFirstNotOf(const BasicString& string) const noexcept;
-	NODISCARD SizeType findFirstNotOf(ValueType ch) const noexcept;
-
 	NODISCARD bool isEmpty() const noexcept;
 	NODISCARD bool isNull() const noexcept;
 
@@ -450,11 +432,11 @@ public:
 		size_type			length);
 
 	BasicString& assign(
-		const value_type* string, 
+		const ValueType* string, 
 		const size_type length);
 
-	BasicString& assign(const value_type* string);
-	BasicString& assign(std::initializer_list<value_type> initializerList);
+	BasicString& assign(const ValueType* string);
+	BasicString& assign(std::initializer_list<ValueType> initializerList);
 
 	template <
 		class _IteratorOrLength_,
@@ -494,6 +476,161 @@ public:
 	BasicString& insert(
 		SizeType index,
 		const BasicString& string);
+
+	SizeType find(
+		const BasicString& str, 
+		SizeType pos = 0) const;
+
+	SizeType find(
+		const ValueType* needle,
+		SizeType pos,
+		SizeType nsize) const;
+
+	SizeType find(
+		const ValueType* s, 
+		SizeType pos = 0) const;
+
+	SizeType find(
+		ValueType c, 
+	SizeType pos = 0) const;
+
+	SizeType rfind(
+		const BasicString& str, 
+		SizeType pos = -1) const;
+
+	SizeType rfind(
+		const ValueType* s,
+		SizeType pos, 
+		SizeType n) const;
+
+	SizeType rfind(
+		const ValueType* s,
+		SizeType pos = -1) const;
+
+	SizeType rfind(
+		ValueType c, 
+		SizeType pos = -1) const;
+
+	SizeType find_first_of(
+		const BasicString& str,
+		SizeType pos = 0) const;
+
+	SizeType find_first_of(
+		const ValueType* s,
+		SizeType pos,
+		SizeType n) const;
+
+	SizeType find_first_of(
+		const ValueType* s,
+		SizeType pos = 0) const;
+
+	SizeType find_first_of(
+		ValueType c,
+		SizeType pos = 0) const;
+
+	SizeType find_last_of(
+		const BasicString& str,
+		SizeType pos = -1) const;
+
+	SizeType find_last_of(
+		const ValueType* s,
+		SizeType pos,
+		SizeType n) const;
+
+	SizeType find_last_of(
+		const ValueType* s, 
+		SizeType pos = -1) const;
+
+	SizeType find_last_of(
+		ValueType c,
+		SizeType pos = -1) const;
+
+	SizeType find_first_not_of(
+		const BasicString& str,
+		SizeType pos = 0) const;
+
+	SizeType find_first_not_of(
+		const ValueType* s,
+		SizeType pos, 
+		SizeType n) const;
+
+	SizeType find_first_not_of(
+		const ValueType* s,
+		SizeType pos = 0) const;
+
+	SizeType find_first_not_of(
+		ValueType c,
+		SizeType pos = 0) const;
+
+	SizeType find_last_not_of(
+		const BasicString& str,
+		SizeType pos = -1) const;
+
+	SizeType find_last_not_of(
+		const ValueType* s,
+		SizeType pos, 
+		SizeType n) const;
+
+	SizeType find_last_not_of(
+		const ValueType* s, 
+		SizeType pos = -1) const;
+
+	SizeType find_last_not_of(
+		ValueType c,
+		SizeType pos = -1) const;
+
+	BasicString substr(
+		SizeType pos = 0,
+		SizeType n = -1) const&;
+
+	BasicString substr(
+		SizeType pos = 0,
+		SizeType n = -1) &&;
+
+	int compare(const BasicString& str) const;
+
+	int compare(
+		SizeType pos1,
+		SizeType n1,
+		const BasicString& str) const;
+
+	int compare(
+		SizeType pos1, 
+		SizeType n1,
+		const ValueType* s) const;
+
+	int compare(
+		SizeType pos1,
+		SizeType n1,
+		const ValueType* s,
+		SizeType n2) const;
+
+	int compare(
+		SizeType pos1,
+		SizeType n1,
+		const BasicString& str,
+		SizeType pos2,
+		SizeType n2) const;
+
+	int compare(const ValueType* s) const;
+
+	NODISCARD SizeType find(const BasicString& string) const noexcept;
+	NODISCARD SizeType find(ValueType ch) const noexcept;
+
+	NODISCARD container::Vector<SizeType> findAll(const BasicString& string) const noexcept;
+	NODISCARD container::Vector<SizeType> findAll(ValueType ch) const noexcept;
+
+	NODISCARD SizeType findLastOf(const BasicString& string) const noexcept;
+	NODISCARD SizeType findLastOf(ValueType ch) const noexcept;
+
+	NODISCARD SizeType findFirstOf(const BasicString& string) const noexcept;
+	NODISCARD SizeType findFirstOf(ValueType ch) const noexcept;
+
+	NODISCARD SizeType findLastNotOf(const BasicString& string) const noexcept;
+	NODISCARD SizeType findLastNotOf(ValueType ch) const noexcept;
+
+	NODISCARD SizeType findFirstNotOf(const BasicString& string) const noexcept;
+	NODISCARD SizeType findFirstNotOf(ValueType ch) const noexcept;
 private:
 };
 
@@ -2146,7 +2283,7 @@ template <
 	class _Traits_,
 	class _Allocator_>
 BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>::assign(
-	const value_type* string,
+	const ValueType* string,
 	const size_type length)
 {
 
@@ -2156,7 +2293,7 @@ template <
 	class _Char_,
 	class _Traits_,
 	class _Allocator_>
-BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>::assign(const value_type* string) {
+BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>::assign(const ValueType* string) {
 
 }
 
@@ -2165,7 +2302,7 @@ template <
 	class _Traits_,
 	class _Allocator_>
 BasicString<_Char_, _Traits_, _Allocator_>& BasicString<_Char_, _Traits_, _Allocator_>
-	::assign(std::initializer_list<value_type> initializerList)
+	::assign(std::initializer_list<ValueType> initializerList)
 {
 
 }
