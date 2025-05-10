@@ -58,19 +58,6 @@ template <
 	class 		_SimdOptimization_ 	= VectorSimd::_Optimization_Disable_>
 class Vector
 {
-	static constexpr NODISCARD inline bool IsTemplateCorrect() noexcept {
-		if constexpr (
-			std::is_same_v<_SimdOptimization_, VectorSimd::_Optimization_Disable_> == false
-		)
-			return false;
-
-		return true;
-	}
-
-	static_assert(
-		IsTemplateCorrect(),
-		"Allocator must have allocate_aligned method when SIMD optimization is enabled.");
-
 	using AllocatorForType			= memory::RebindAllocator<_Allocator_, _Element_>; 
 	using AllocatorTraits			= std::allocator_traits<AllocatorForType>;
 public:

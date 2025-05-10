@@ -247,6 +247,8 @@ set(PRIVATE_SOURCES
 
     src/core/string/StringDebug.h
     src/core/string/CharTypeCompatibility.h
+    
+    src/core/string/BasicStringStorage.h
 )
 
 set(PUBLIC_HEADERS 

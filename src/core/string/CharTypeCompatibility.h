@@ -4,13 +4,16 @@
 #include <src/core/string/CharTraits.h>
 
 #include <base/core/string/Char.h>
+#include <src/core/string/BasicStringStorage.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <
 	class _Char_,
 	class _Traits_,
-	class _Allocator_>
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
 class BasicString;
 
 class StringView;
@@ -52,6 +55,7 @@ struct IsContainerCompatibleWithStringView
 	: std::false_type 
 {};
 
+
 template <typename T>
 struct IsContainerCompatibleWithStringView < T, std::enable_if_t < std::conjunction_v <
 	// lacking concepts and ranges, we accept any T whose std::data yields a suitable pointer ...
@@ -78,7 +82,7 @@ struct IsContainerCompatibleWithStringView < T, std::enable_if_t < std::conjunct
 	bool>,
 
 	// These need to be treated specially due to the empty vs null distinction
-	std::negation < std::is_same < std::decay_t<T>, BasicString < T, CharTraits<T>, std::allocator<T>>> > ,
+	std::negation < std::is_same < std::decay_t<T>, BasicString < T, CharTraits<T>, std::allocator<T>, StringSimd::_Optimization_, BasicStringStorage<T, StringSimd::_Optimization_> >> >,
 
 	// Don't make an accidental copy constructor
 	std::negation<std::is_same<std::decay_t<T>, StringView>>
