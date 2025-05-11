@@ -226,8 +226,7 @@ inline NODISCARD std::size_t CountAVX512(
     }
 }
 
-template <class _Type_>
-DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized8Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t Count8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -243,8 +242,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized8Bit(
 }
 
 
-template <class _Type_>
-DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized16Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t Count16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -259,9 +257,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized16Bit(
     return CountScalar(firstPointer, lastPointer, value);
 }
 
-
-template <class _Type_>
-DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized32Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t Count32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -276,9 +272,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized32Bit(
     return CountScalar(firstPointer, lastPointer, value);
 }
 
-
-template <class _Type_>
-DECLARE_NOALIAS inline NODISCARD std::size_t CountVectorized8Bit(
+DECLARE_NOALIAS inline NODISCARD std::size_t Count64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept

@@ -257,6 +257,12 @@ set(PRIVATE_SOURCES
     src/core/string/BasicStringUtility.h
     src/core/string/StringStorageRefCount.h
 
+    src/core/utility/simd/ContainsSubRangeVectorized.cpp
+    src/core/utility/simd/FindLastSubRangeVectorized.cpp
+
+    src/core/utility/simd/FindSubRangeVectorized.cpp
+    src/core/utility/simd/CountSubRangeVectorized.cpp
+
     src/core/memory/crt/BaseMemmove.h
     src/core/memory/crt/BaseMemmove.cpp
     #src/core/memory/crt/BaseMemmove.S

@@ -6,6 +6,7 @@
 __BASE_NAMESPACE_BEGIN
 
 extern "C" {
+
     // The "noalias" attribute tells the compiler optimizer that pointers going into these hand-vectorized algorithms
     // won't be stored beyond the lifetime of the function, and that the function will only reference arrays denoted by
     // those pointers. The optimizer also assumes in that case that a pointer parameter is not returned to the caller via
@@ -103,6 +104,32 @@ extern "C" {
         const void* _Last1, 
         const void* _First2, 
         const void* _Last2) noexcept;
+
+    // ==================================================================================
+
+    DECLARE_NOALIAS NODISCARD const void* FindSubRange8Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+
+    // ==================================================================================
+
+    DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD const void* FindSubRange64Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
 
     DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
         const void* _Start,
@@ -254,6 +281,81 @@ extern "C" {
         void* firstPointer1,
         void* lastPointer1,
         void* firstPointer2) noexcept;
+
+    // ================================================================================
+
+
+    DECLARE_NOALIAS NODISCARD std::size_t Count8Bit(
+        const void* firstPointer,
+        const void* lastPointer,
+        uint8       value) noexcept;
+    DECLARE_NOALIAS NODISCARD std::size_t Count16Bit(
+        const void* firstPointer,
+        const void* lastPointer,
+        uint16      value) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS NODISCARD std::size_t Count32Bit(
+        const void* firstPointer,
+        const void* lastPointer,
+        uint32      value) noexcept;
+    DECLARE_NOALIAS NODISCARD std::size_t Count64Bit(
+        const void* firstPointer,
+        const void* lastPointer,
+        uint64      value) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange8Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange64Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+
+    // ================================================================================
+
+    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange8Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange16Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    
+    // ================================================================================
+
+    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange32Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange64Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
 } // extern "C"
 
 template <class _Type_>
@@ -262,11 +364,23 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindSubRangeVectorized(
+    const void* firstMainRangePointer,
+    const void* lastMainRangePointer,
+    const void* firstSubRangePointer,
+    const void* lastSubRangePointer) noexcept;
+
 template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
+
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountSubRangeVectorized(
+    const void* firstMainRangePointer,
+    const void* lastMainRangePointer,
+    const void* firstSubRangePointer,
+    const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastVectorized(
@@ -274,11 +388,24 @@ DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastVectorized(
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastSubRangeVectorized(
+    const void* firstMainRangePointer,
+    const void* lastMainRangePointer,
+    const void* firstSubRangePointer,
+    const void* lastSubRangePointer) noexcept;
+
 template <class _Type_>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
+
+template <class _Type_>
+DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsSubRangeVectorized(
+    const void* firstMainRangePointer,
+    const void* lastMainRangePointer,
+    const void* firstSubRangePointer,
+    const void* lastSubRangePointer) noexcept;
 
 template <size_t typeSizeInBytes>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseVectorized(
@@ -289,6 +416,6 @@ template <size_t typeSizeInBytes>
 DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseCopyVectorized(
     void* firstPointer,
     void* lastPointer,
-    void*       destinationPointer) noexcept;
+    void* destinationPointer) noexcept;
 
 __BASE_NAMESPACE_END
