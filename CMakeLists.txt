@@ -270,6 +270,9 @@ set(PRIVATE_SOURCES
     src/core/memory/crt/BaseMemcpy.h
     src/core/memory/crt/BaseMemcpy.cpp
     #src/core/memory/crt/BaseMemcpy.S
+
+    src/core/string/crt/BaseStrlen.h
+    src/core/string/crt/BaseStrlen.cpp
 )
 
 set(PUBLIC_HEADERS 

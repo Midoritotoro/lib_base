@@ -1181,8 +1181,19 @@ BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeT
 		const BasicString&	string,
 		SizeType			position) const
 {
-	if constexpr ()
-	FindVectorized(data() + position, data() + size, ( )
+	if constexpr (is_vectorization_enabled) {
+		if (string.size() == 1) {
+			return FindVectorized(
+				data() + position, data() + size(),
+				string.at(0));
+		}
+
+		return FindSubRangeVectorized(
+			data() + position, data() + size(),
+			string.data(), string.size());
+	}
+
+	wcslen()
 }
 
 template <
