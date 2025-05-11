@@ -3,7 +3,7 @@
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
-    LANGUAGES CXX)
+    LANGUAGES C CXX ASM)
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
@@ -19,6 +19,9 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
 endif()
 
 set(libs_loc "D:/Libraries/win64")
+
+enable_language(ASM_MASM)
+set(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
 
 option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
@@ -253,6 +256,14 @@ set(PRIVATE_SOURCES
 
     src/core/string/BasicStringUtility.h
     src/core/string/StringStorageRefCount.h
+
+    src/core/memory/crt/BaseMemmove.h
+    src/core/memory/crt/BaseMemmove.cpp
+    #src/core/memory/crt/BaseMemmove.S
+
+    src/core/memory/crt/BaseMemcpy.h
+    src/core/memory/crt/BaseMemcpy.cpp
+    #src/core/memory/crt/BaseMemcpy.S
 )
 
 set(PUBLIC_HEADERS 
@@ -494,7 +505,7 @@ set_target_properties(
 target_compile_features(lib_base PUBLIC cxx_std_23)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>") # "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 endif()
 
 target_link_libraries(lib_base PUBLIC OpenMP::OpenMP_CXX)
@@ -639,9 +650,9 @@ if (WIN32)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-   set_target_properties(lib_base
-        PROPERTIES
-        MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
+  # set_target_properties(lib_base
+     #   PROPERTIES
+      #  MSVC_RUNTIME_LIBRARY ${CMAKE_DEBUG_TARGET_PROPERTIES})
 
         target_link_options(lib_base
     INTERFACE

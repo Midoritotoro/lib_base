@@ -7,6 +7,10 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 class StringConverter {
 public:
+	template <class _StringType_>
+	NODISCARD std::wstring convertToStdWString(const _StringType_& string) {
+		
+	}
 private:
 };
 

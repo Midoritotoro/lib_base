@@ -5,8 +5,6 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-namespace stringTraits {
-
 template <class _Char_>
 class CharTraits;
 
@@ -31,8 +29,6 @@ class CharTraits<char8_t> {
 
 template <>
 class CharTraits<wchar_t> {
-
-};
 
 };
 

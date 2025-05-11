@@ -193,6 +193,8 @@ private:
 
 	const _String* _container = nullptr;
 	_String::pointer _currentChar = nullptr;
+
+	friend typename _String;
 };
 
 __BASE_STRING_NAMESPACE_END

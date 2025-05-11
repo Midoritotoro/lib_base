@@ -622,10 +622,10 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vecto
 	const auto isEnoughMemory = resize(_Capacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 	if (memory::MemoryCopy(_pair._secondValue._start, _Start, _Capacity) == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 }
 
 template <
@@ -642,10 +642,10 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const auto isEnoughMemory = resize(_Capacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 	if (memory::MemoryCopy(_Start, vector.data(), _Capacity) == false)
-		_VECTOR_ERROR_DEBUG_NO_RET_("base::container::Vector::Vector: Error when copying elements. ")
+		_VECTOR_ERROR_DEBUG_NO_RET_("base::container::Vector::Vector: Error when copying elements. ");
 }
 
 template <
@@ -659,7 +659,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>
 	const auto isEnoughMemory = resize(_Capacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 }
 
 template <
@@ -674,7 +674,7 @@ CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Vecto
 	const auto isEnoughMemory = resize(_Capacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 	fill(_Fill);
 }
@@ -1482,7 +1482,7 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimizatio
 		const auto isEnoughMemory = resizeReallocate(_Vector_Default_Capacity_);
 
 		if (isEnoughMemory == false)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front())
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front());
 	}
 	else if (_UnusedCapacity >= 1) {
 		UNUSED(memory::UninitializedMove(
@@ -1494,8 +1494,8 @@ CONSTEXPR_CXX20 inline NODISCARD Vector<_Element_, _Allocator_, _SimdOptimizatio
 		const auto isEnoughMemory = resize(_Capacity + _Vector_Default_Capacity_);
 
 		if (isEnoughMemory == false)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front())
-
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(front());
+			
 		UNUSED(memory::UninitializedMove(
 			_Start, _Current,
 			_Start + 1, allocator));
@@ -1861,7 +1861,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const auto isEnoughMemory = resizeReallocate(newCapacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 }
 
 template <
@@ -2769,7 +2769,7 @@ CONSTEXPR_CXX20 inline NODISCARD bool Vector<_Element_, _Allocator_, _SimdOptimi
 	pointer memory		= allocator.allocate(newCapacity);
 
 	if (memory == nullptr)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false)
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_(false);
 
 	const auto oldSize	= size();
 	auto& pairValue		= _pair._secondValue;
@@ -2843,7 +2843,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const auto _IsEnoughMemory	= resize(_NewCapacity);
 
 	if (_IsEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 	emplaceAt(
 		allocator, pairValue._current,
@@ -2919,7 +2919,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		// reallocate 
 
 		if (_Count > maxSize() - _OldSize)
-			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_;
 
 		const auto _NewCapacity	= calculateGrowth(_OldCapacity + _Count);
 		const auto _NewSize		= _OldSize + _Count;
@@ -2927,7 +2927,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		auto _BlockStart		= allocator.allocate(_NewCapacity);
 
 		if (_BlockStart == nullptr)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 		auto _BlockEnd			= _BlockStart + _NewSize;
 		auto _InsertStart		= _BlockStart + _OldSize;
@@ -3025,7 +3025,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		const auto _Size = static_cast<SizeType>(_Current - _Start);
 
 		if (_Count > maxSize() - _Size)
-			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_;
 
 		const auto _NewCapacity = calculateGrowth(_Capacity + _Count);
 		const auto _NewSize 	= _Size + _Count;
@@ -3033,7 +3033,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		auto _BlockStart 		= allocator.allocate(_NewCapacity);
 
 		if (_BlockStart == nullptr)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 		auto _BlockEnd 			= _BlockStart + _NewSize;
 
@@ -3138,7 +3138,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		// reallocate 
 
 		if (_Count > maxSize() - _OldSize)
-			_VECTOR_TOO_LONG_DEBUG_NO_RET_
+			_VECTOR_TOO_LONG_DEBUG_NO_RET_;
 
 		const auto _NewCapacity			= calculateGrowth(_OldCapacity + _Count);
 		const auto _NewSize				= _OldSize + _Count;
@@ -3148,7 +3148,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		auto _NewVectorStart = allocator.allocate(_NewCapacity);
 
 		if (_NewVectorStart == nullptr)
-			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+			_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 
 		auto _NewVectorCurrent		= _NewVectorStart + _NewSize;
 		auto _NewVectorInsertPlace	= _NewVectorStart + toOffset;
@@ -3482,7 +3482,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	const auto isEnoughMemory = resizeReallocate(newCapacity);
 
 	if (isEnoughMemory == false)
-		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
+		_VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_;
 }
  
 __BASE_CONTAINER_NAMESPACE_END
