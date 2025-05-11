@@ -6,37 +6,12 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 namespace stringSimd {
-	struct Optimization
-	{};
-	// If SSE4.2 is supported on the device being launched,
-	// then these instructions are used.
-	// Otherwise, it is similar to _Optimization_Disable_
-	struct OptimizationEnableOnlyIfSSE42
-		: Optimization
-	{};
-
-	// If AVX is supported on the device being launched,
-	// then these instructions are used.
-	// Otherwise, it is similar to _Optimization_Disable_
-	struct OptimizationEnableOnlyIfAVX 
-		: Optimization
-	{};
-
-	// If AVX512 is supported on the device being launched,
-	// then these instructions are used.
-	// Otherwise, it is similar to _Optimization_Disable_
-	struct OptimizationEnableOnlyIfAVX512 
-		: Optimization
-	{};
-
-	// Auto-selecting the most efficient option
-	struct OptimizationAuto 
-		: Optimization
+	// Auto-selecting the most efficient option: AVX512 > AVX2 > SSE42 > Scalar
+	struct OptimizationEnable
 	{};
 
 	// A fully scalar string
 	struct OptimizationDisable
-		: Optimization
 	{};
 };
 

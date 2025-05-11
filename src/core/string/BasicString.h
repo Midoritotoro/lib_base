@@ -699,7 +699,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::BasicString() {
-
+	XCV 
 }
 
 template <

@@ -22,9 +22,9 @@ public:
     using CategoryType = uint8;
 
     enum class Category : CategoryType {
-        isSmall = 0,
-        isMedium = system::SystemInfo::Endian::ByteOrder == system::SystemInfo::Endian::LittleEndian ? 0x80 : 0x2,
-        isLarge = system::SystemInfo::Endian::ByteOrder == system::SystemInfo::Endian::BigEndian ? 0x40 : 0x1
+        isSmall     = 0,
+        isMedium    = system::SystemInfo::Endian::ByteOrder == system::SystemInfo::Endian::LittleEndian ? 0x80 : 0x2,
+        isLarge     = system::SystemInfo::Endian::ByteOrder == system::SystemInfo::Endian::BigEndian ? 0x40 : 0x1
     };
 
     struct MediumLarge {
