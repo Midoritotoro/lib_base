@@ -273,6 +273,12 @@ set(PRIVATE_SOURCES
 
     src/core/string/crt/BaseStrlen.h
     src/core/string/crt/BaseStrlen.cpp
+
+    src/core/string/crt/BaseStrstr.h
+    src/core/string/crt/BaseStrstr.cpp
+
+    src/core/string/crt/BaseStrstrn.h
+    src/core/string/crt/BaseStrstrn.cpp
 )
 
 set(PUBLIC_HEADERS 
