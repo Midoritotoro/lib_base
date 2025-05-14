@@ -266,6 +266,8 @@ set(PRIVATE_SOURCES
     src/core/memory/crt/BaseMemmove.h
     src/core/memory/crt/BaseMemmove.cpp
     #src/core/memory/crt/BaseMemmove.S
+            
+    src/core/memory/crt/FixedMemcmp.h
 
     src/core/memory/crt/BaseMemcpy.h
     src/core/memory/crt/BaseMemcpy.cpp

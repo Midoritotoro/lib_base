@@ -24,6 +24,12 @@ inline void DeleteAll(
     }
 }
 
+template <typename _Type_>
+NODISCARD _Type_ ClearLeftMostSet(const _Type_ value) {
+    DebugAssert(value != _Type_{});
+    return value & (value - 1);
+}
+
 template <typename Container>
 inline void DeleteAll(const Container& c)
 {

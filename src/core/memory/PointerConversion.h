@@ -73,6 +73,37 @@ NODISCARD inline
 }
 
 template <typename _Type_>
+NODISCARD inline wchar_t* 
+    UnCheckedToWChar(_Type_ pointer) noexcept
+{
+    return const_cast<wchar_t*>(
+        reinterpret_cast<const volatile wchar_t*>(pointer));
+}
+
+template <typename _Type_> 
+NODISCARD inline 
+    const wchar_t* UnCheckedToConstWChar(_Type_ pointer) noexcept
+{
+    return const_cast<const wchar_t*>(
+        reinterpret_cast<const volatile wchar_t*>(pointer));
+}
+
+template <typename _Type_>
+NODISCARD inline wchar_t* CheckedToWChar(_Type_ pointerLike) noexcept
+{
+    const auto pointerLikeAdress = ToAddress(pointerLike);
+    return UnCheckedToWChar(pointerLikeAdress);
+}
+
+template <typename _Type_>
+NODISCARD inline
+    const wchar_t* CheckedToConstWChar(_Type_ pointerLike) noexcept
+{
+    const auto pointerLikeAddress = ToAddress(pointerLike);
+    return UnCheckedToConstWChar(pointerLikeAddress);
+}
+
+template <typename _Type_>
 NODISCARD inline
 unsigned char*
     UnCheckedToUnsignedChar(
