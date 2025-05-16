@@ -26,5 +26,19 @@ NODISCARD CONSTEXPR_CXX20 auto Char::fromUcs4(char32_t c) noexcept
 		R{ {char16_t(c), u'\0'} };
 }
 
+using String		= BasicString<char, std::char_traits<char>>;
+
+#if __cpp_lib_char8_t
+
+using Utf8String	= BasicString<char8_t, std::char_traits<char8_t>>;
+
+#endif
+
+using Utf16String	= BasicString<char16_t, std::char_traits<char16_t>>;
+using WString		= BasicString<wchar_t, std::char_traits<wchar_t>>;
+
+using Utf32String	= BasicString<char32_t, std::char_traits<char32_t>>;
+
+
 __BASE_STRING_NAMESPACE_END
 

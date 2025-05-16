@@ -469,6 +469,15 @@ WARNING_DISABLE_MSVC(4067)
 #  define BASE_GUARDOVERFLOW 
 #endif
 
+
+// The "noalias" attribute tells the compiler optimizer that pointers going into these hand-vectorized algorithms
+// won't be stored beyond the lifetime of the function, and that the function will only reference arrays denoted by
+// those pointers. The optimizer also assumes in that case that a pointer parameter is not returned to the caller via
+// the return value, so functions using "noalias" must usually return void. This attribute is valuable because these
+// functions are in native code objects that the compiler cannot analyze. In the absence of the noalias attribute, the
+// compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
+// unanalyzable routines may modify those arrays.
+
 #if defined(OS_WIN) && (defined(CPP_MSVC) || defined(CPP_CLANG))
 #  define DECLARE_NOALIAS __declspec(noalias)
 #elif defined(CPP_GNU)

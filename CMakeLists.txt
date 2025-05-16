@@ -281,6 +281,14 @@ set(PRIVATE_SOURCES
 
     src/core/string/crt/BaseStrstrn.h
     src/core/string/crt/BaseStrstrn.cpp
+
+    src/core/string/crt/simd/BaseStrstrAvx2.cpp
+    src/core/string/crt/simd/BaseStrstrAvx512F.cpp
+
+    src/core/string/crt/simd/BaseStrstrSse2.cpp
+    src/core/string/crt/simd/BaseStrstrAvx2Clang.h
+
+    src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
 )
 
 set(PUBLIC_HEADERS 

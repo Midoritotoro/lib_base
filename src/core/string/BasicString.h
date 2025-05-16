@@ -30,6 +30,8 @@ template <
 class BasicString 
 {
 public:
+	inline static constexpr std::size_t npos = -1;
+
 	using allocator_type	= _Allocator_;
 	using value_type		= _Char_;
 

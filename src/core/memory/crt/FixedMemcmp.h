@@ -2,7 +2,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-bool always_true(const char*, const char*) {
+bool alwaysTrue(const char*, const char*) {
     return true;
 }
 

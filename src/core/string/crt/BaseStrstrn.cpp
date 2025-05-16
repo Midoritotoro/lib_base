@@ -159,14 +159,17 @@ DECLARE_NOALIAS char* CDECL __base_strstrn(
         return __base_strstrnAvx512F(
             memory::UnCheckedToChar(mainString), mainLength,
             memory::UnCheckedToChar(subString), subLength);
+
     else if (ProcessorFeatures::AVX2())
         return __base_strstrnAvx2(
             memory::UnCheckedToChar(mainString), mainLength,
             memory::UnCheckedToChar(subString), subLength);
+
     else if (ProcessorFeatures::SSE42())
         return __base_strstrnSse42(
             memory::UnCheckedToChar(mainString), mainLength,
             memory::UnCheckedToChar(subString), subLength);
+
     else if (ProcessorFeatures::SSE2())
         return __base_strstrnSse2(
             memory::UnCheckedToChar(mainString), mainLength,
