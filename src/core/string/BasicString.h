@@ -1183,19 +1183,19 @@ BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeT
 		const BasicString&	string,
 		SizeType			position) const
 {
-	if constexpr (is_vectorization_enabled) {
-		if (string.size() == 1) {
-			return FindVectorized(
-				data() + position, data() + size(),
-				string.at(0));
-		}
+	//if constexpr (is_vectorization_enabled) {
+	//	if (string.size() == 1) {
+	//		return FindVectorized(
+	//			data() + position, data() + size(),
+	//			string.at(0));
+	//	}
 
-		return FindSubRangeVectorized(
-			data() + position, data() + size(),
-			string.data(), string.size());
-	}
+	//	return FindSubRangeVectorized(
+	//		data() + position, data() + size(),
+	//		string.data(), string.size());
+	//}
 
-	wcslen()
+	//wcslen()
 }
 
 template <
@@ -2664,8 +2664,8 @@ CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOpti
 	const auto firstPointer = firstIterator._currentChar;
 	const auto secondPointer = secondIterator._currentChar;
 
-	DebugAssertLog(firstPointer >= myDataStart && firstPosition < myDataStart + size(), "base::string::BasicString::swap: Index out of range");
-	DebugAssertLog(secondPosition >= myDataStart && secondPosition < myDataStart + size(), "base::string::BasicString::swap: Index out of range");
+	DebugAssertLog(firstPointer >= myDataStart && firstPointer < myDataStart + size(), "base::string::BasicString::swap: Index out of range");
+	DebugAssertLog(secondPointer >= myDataStart && secondPointer < myDataStart + size(), "base::string::BasicString::swap: Index out of range");
 #endif
 
 	const auto temp = *firstIterator;

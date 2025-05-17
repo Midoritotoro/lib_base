@@ -16,7 +16,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange8Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return 0;
 }
 
 DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
@@ -25,7 +25,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return 0;
 }
 
 DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
@@ -34,7 +34,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return 0;
 }
 
 DECLARE_NOALIAS NODISCARD std::size_t CountSubRange64Bit(
@@ -43,7 +43,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange64Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return 0;
 }
 
 __BASE_NAMESPACE_END

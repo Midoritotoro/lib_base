@@ -17,6 +17,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange8Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
+    return nullptr;
 }
 
 DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
@@ -25,7 +26,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return nullptr;
 }
 
 DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
@@ -34,7 +35,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-       
+    return nullptr;
 }
 
 DECLARE_NOALIAS NODISCARD const void* FindSubRange64Bit(
@@ -43,7 +44,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange64Bit(
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept
 {
-
+    return nullptr;
 }
 
 __BASE_NAMESPACE_END
