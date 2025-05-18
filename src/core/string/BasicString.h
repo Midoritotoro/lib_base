@@ -214,7 +214,7 @@ public:
 
 
 	// =======================================================================================
-	//									Iterators
+	//										Iterators
 	// =======================================================================================
 
 	CONSTEXPR_CXX20 inline NODISCARD Iterator begin() noexcept;
@@ -272,8 +272,11 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD allocator_type& getAllocator() noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& getAllocator() const noexcept;
 
+	constexpr inline NODISCARD sizetype max_size() const noexcept;
+	constexpr inline NODISCARD sizetype maxSize() const noexcept;
+
 	// =======================================================================================
-	//								Modifiers
+	//										Modifiers
 	// =======================================================================================
 
 	// increase capacity to newCapacity (without geometric growth)
@@ -295,30 +298,49 @@ public:
 	CONSTEXPR_CXX20 NODISCARD Iterator erase(ConstIterator it);
 
 	// =======================================================================================
-	//						Push/Pop and Appending/Prepending
+	//							Push/Pop and Appending/Prepending
 	// =======================================================================================
 
-	CONSTEXPR_CXX20 inline void append(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline void append(ValueType element);
-	CONSTEXPR_CXX20 inline void append(BasicString&& other);
+	CONSTEXPR_CXX20 inline BasicString& append(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline BasicString& append(ValueType element);
+	CONSTEXPR_CXX20 inline BasicString& append(BasicString&& other);
 
-	CONSTEXPR_CXX20 inline void prepend(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline void prepend(ValueType element);
-	CONSTEXPR_CXX20 inline void prepend(BasicString&& other);
+	CONSTEXPR_CXX20 inline BasicString& append(const BasicString& string);
+	CONSTEXPR_CXX20 inline BasicString& append(
+		const ValueType*	chars,
+		SizeType			length);
 
-	CONSTEXPR_CXX20 inline void pushFront(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline void pushFront(ValueType element);
-	CONSTEXPR_CXX20 inline void pushFront(BasicString&& other);
+	CONSTEXPR_CXX20 inline BasicString& prepend(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline BasicString& prepend(ValueType element);
+	CONSTEXPR_CXX20 inline BasicString& prepend(BasicString&& other);
 
-	CONSTEXPR_CXX20 inline void pushBack(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline void pushBack(ValueType element);
-	CONSTEXPR_CXX20 inline void pushBack(BasicString&& other);
+	CONSTEXPR_CXX20 inline BasicString& prepend(
+		const ValueType*	chars,
+		SizeType			length);
+	CONSTEXPR_CXX20 inline BasicString& prepend(const BasicString& string);
+
+	CONSTEXPR_CXX20 inline BasicString& pushFront(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline BasicString& pushFront(ValueType element);
+	CONSTEXPR_CXX20 inline BasicString& pushFront(BasicString&& other);
+
+	CONSTEXPR_CXX20 inline BasicString& pushFront(
+		const ValueType*	chars,
+		SizeType			length);
+	CONSTEXPR_CXX20 inline BasicString& pushFront(const BasicString& string);
+
+	CONSTEXPR_CXX20 inline BasicString& pushBack(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline BasicString& pushBack(ValueType element);
+	CONSTEXPR_CXX20 inline BasicString& pushBack(BasicString&& other);
+
+	CONSTEXPR_CXX20 inline BasicString& pushBack(
+		const ValueType*	chars,
+		SizeType			length);
+	CONSTEXPR_CXX20 inline BasicString& pushBack(const BasicString& string);
 
 	CONSTEXPR_CXX20 NODISCARD ValueType pop() noexcept;
 
 	CONSTEXPR_CXX20 NODISCARD ValueType popBack() noexcept;
 	CONSTEXPR_CXX20 NODISCARD ValueType popFront() noexcept;
-
 
 	// =======================================================================================
 	//										Swap
@@ -396,19 +418,6 @@ public:
 		ValueType ch,
 		SizeType size = -1);
 
-	BasicString& append(ValueType ch);
-	BasicString& append(
-		const ValueType* ch,
-		SizeType length);
-
-	BasicString& append(const BasicString& string);
-
-	BasicString& prepend(ValueType ch);
-	BasicString& prepend(
-		const ValueType* ch,
-		SizeType len);
-
-	BasicString& prepend(const BasicString& string);
 
 	BasicString& remove(
 		SizeType index,
@@ -481,13 +490,7 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD bool endsWith(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool endsWith(const BasicString& subVector) const noexcept;
 
-
-
 	CONSTEXPR_CXX20 inline void removeAll(const ValueType& element);
-
-	constexpr inline NODISCARD sizetype max_size() const noexcept;
-	constexpr inline NODISCARD sizetype maxSize() const noexcept;
-
 
 	BasicString& assign(const BasicString& string);
 	BasicString& assign(BasicString&& string);
@@ -672,7 +675,7 @@ public:
 		SizeType	position) const;
 
 	// =======================================================================================
-	//								STL compatibility
+	//									STL compatibility
 	// =======================================================================================
 
 	SizeType find_first_of(
@@ -770,8 +773,14 @@ private:
 	_Storage_ _storage;
 };
 
+// ================================================================================================================================================
+//																Implementation
+// ================================================================================================================================================
 
-// =========================================================================================
+
+// =======================================================================================
+//									 Constructors
+// =======================================================================================
 
 template <
 	class _Char_,
@@ -1000,6 +1009,12 @@ CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _
 
 }
 
+
+// =======================================================================================
+//								 Assignment Operators
+// =======================================================================================
+
+
 template <
 	class _Char_,
 	class _Traits_,
@@ -1049,6 +1064,11 @@ CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _
 	return append(initializerList);
 }
 
+
+// =======================================================================================
+//							Accessors and Element Access
+// =======================================================================================
+
 template <
 	class _Char_,
 	class _Traits_,
@@ -1060,6 +1080,162 @@ NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storag
 {
 	return at(index);
 }
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+NODISCARD inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Reference 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::at(const SizeType index) noexcept 
+{
+	DebugAssertLog(_storage.data() != nullptr, "base:string::BasicString::at: Data is nullptr");
+	DebugAssertLog(index >= 0 && index < size(), "base::string::BasicString::at: Index out of range");
+
+	return *(_storage.data() + index);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::data() noexcept
+{
+	return _storage.data();
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 NODISCARD const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constData() const noexcept 
+{
+	return _storage.data();
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 NODISCARD const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::data() const noexcept 
+{
+	return _storage.data();
+}
+
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::first() 
+{
+	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
+	return at(0);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::first() const noexcept
+{
+	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
+	return at(0);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constFirst() const noexcept
+{
+	return first();
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::last()
+{
+	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
+	return at(size() - 1);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::last() const noexcept
+{
+	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
+	return at(size() - 1);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constLast() const noexcept 
+{
+	return last();
+}
+
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ConstPointer 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() const noexcept
+{
+	return _storage.c_str();
+}
+
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Pointer
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() noexcept
+{
+	return _storage.c_str();
+}
+
+
 
 template <
 	class _Char_,
@@ -1161,22 +1337,6 @@ CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimi
 {
 	return _storage.capacity();
 }
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-NODISCARD inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Reference 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::at(const SizeType index) noexcept 
-{
-	DebugAssertLog(_storage.data() != nullptr, "base:string::BasicString::at: Data is nullptr");
-	DebugAssertLog(index >= 0 && index < size(), "base::string::BasicString::at: Index out of range");
-
-	return *(_storage.data() + index);
-}
-
 template <
 	class _Char_,
 	class _Traits_,
@@ -1277,270 +1437,6 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-NODISCARD container::Vector<typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType>
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findAll(const BasicString& string) const noexcept 
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-NODISCARD container::Vector<typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType> 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findAll(ValueType ch) const noexcept
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-		const BasicString&	string,
-		SizeType			position) const
-{
-	//if constexpr (is_vectorization_enabled) {
-	//	if (string.size() == 1) {
-	//		return FindVectorized(
-	//			data() + position, data() + size(),
-	//			string.at(0));
-	//	}
-
-	//	return FindSubRangeVectorized(
-	//		data() + position, data() + size(),
-	//		string.data(), string.size());
-	//}
-
-	//wcslen()
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-		const ValueType*	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
-		ValueType	ch,
-		SizeType	position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-		const BasicString&	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-		const ValueType*	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
-		ValueType	ch,
-		SizeType	position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-		const BasicString&	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-		const ValueType*	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
-		ValueType	ch,
-		SizeType	position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-		const BasicString&	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-		const ValueType*	string,
-		SizeType			position) const
-{
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
-		ValueType	ch,
-		SizeType	position) const
-{	
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
 CONSTEXPR_CXX20 NODISCARD bool BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::isEmpty() const noexcept {
 
 }
@@ -1555,41 +1451,9 @@ CONSTEXPR_CXX20 NODISCARD bool BasicString<_Char_, _Traits_, _Allocator_, _SimdO
 
 }
 
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::data() noexcept
-{
-	return _storage.data();
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 NODISCARD const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constData() const noexcept 
-{
-	return _storage.data();
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 NODISCARD const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType*
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::data() const noexcept 
-{
-	return _storage.data();
-}
+// =======================================================================================
+//										Iterators
+// =======================================================================================
 
 template <
 	class _Char_,
@@ -1860,36 +1724,6 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(BasicString&& other) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(const ValueType& element) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(BasicString&& other) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(BasicString&& other) {
 
 }
 
@@ -2303,8 +2137,9 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
-	::append(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+		::append(std::initializer_list<ValueType> initializerList)
 {
 
 }
@@ -2315,7 +2150,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(ValueType ch) 
 {
 
@@ -2327,9 +2162,9 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(
-		const ValueType*	ch,
+		const ValueType*	chars,
 		SizeType			length)
 {
 
@@ -2341,11 +2176,12 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(const BasicString& string) 
 {
 
 }
+
 
 template <
 	class _Char_,
@@ -2353,7 +2189,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(ValueType ch) 
 {
 	
@@ -2365,10 +2201,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(
-		const ValueType*	ch,
-		SizeType			len)
+		const ValueType*	chars,
+		SizeType			length)
 {
 
 }
@@ -2379,7 +2215,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(const BasicString& string)
 {
 
@@ -2789,81 +2625,6 @@ CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOpti
 	*secondIterator = temp;
 }
 
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::first() 
-{
-	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
-	return at(0);
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::first() const noexcept
-{
-	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
-	return at(0);
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constFirst() const noexcept
-{
-	return first();
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::last()
-{
-	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
-	return at(size() - 1);
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::last() const noexcept
-{
-	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
-	return at(size() - 1);
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType& 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::constLast() const noexcept 
-{
-	return last();
-}
 
 template <
 	class _Char_,
@@ -2893,18 +2654,6 @@ template <
 	class _Storage_>
 constexpr inline NODISCARD sizetype BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::maxSize() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ConstPointer 
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() const
-{
-	return _storage.c_str();
 }
 
 template <
@@ -3093,6 +2842,270 @@ BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::itera
 		ConstIterator	where,
 		const ValueType ch)
 {
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+NODISCARD container::Vector<typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType>
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findAll(const BasicString& string) const noexcept 
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+NODISCARD container::Vector<typename BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType> 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findAll(ValueType ch) const noexcept
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const BasicString&	string,
+		SizeType			position) const
+{
+	//if constexpr (is_vectorization_enabled) {
+	//	if (string.size() == 1) {
+	//		return FindVectorized(
+	//			data() + position, data() + size(),
+	//			string.at(0));
+	//	}
+
+	//	return FindSubRangeVectorized(
+	//		data() + position, data() + size(),
+	//		string.data(), string.size());
+	//}
+
+	//wcslen()
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		const ValueType*	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstOf(
+		ValueType	ch,
+		SizeType	position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const BasicString&	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		const ValueType*	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastOf(
+		ValueType	ch,
+		SizeType	position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const BasicString&	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		const ValueType*	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findFirstNotOf(
+		ValueType	ch,
+		SizeType	position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const BasicString&	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		const ValueType*	string,
+		SizeType			position) const
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::findLastNotOf(
+		ValueType	ch,
+		SizeType	position) const
+{	
 
 }
 
