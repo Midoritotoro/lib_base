@@ -289,6 +289,7 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrAvx2ClangMsvc.h
 
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
+    src/core/string/StringConverter.cpp
 )
 
 set(PUBLIC_HEADERS 

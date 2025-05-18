@@ -1248,7 +1248,7 @@ template <
 CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::front() const noexcept
 {
-
+	return at(0);
 }
 
 template <
@@ -1260,7 +1260,7 @@ template <
 CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::front() noexcept
 {
-
+	return at(0);
 }
 
 template <
@@ -1272,7 +1272,7 @@ template <
 CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::back() const noexcept
 {
-
+	return at(size() - 1);
 }
 
 template <
@@ -1284,13 +1284,14 @@ template <
 CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::back() noexcept
 {
-
+	return at(size() - 1);
 }
 
 
 // =======================================================================================
 //										Iterators
 // =======================================================================================
+
 
 template <
 	class _Char_,
@@ -1558,7 +1559,7 @@ template <
 CONSTEXPR_CXX20 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::SizeType 
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::length() const noexcept
 {
-	return size();
+	return _storage.size();
 }
 
 template <
@@ -1603,7 +1604,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 NODISCARD bool BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::isEmpty() const noexcept {
-
+	return (size() == 0);
 }
 
 template <
@@ -1613,7 +1614,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 NODISCARD bool BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::isNull() const noexcept {
-
+	return (capacity() == 0);
 }
 
 
@@ -1668,6 +1669,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
+// It is mainly used in Windows to avoid unnecessary code with a defined UNICODE 
 NODISCARD NativeString BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toNativeString() const noexcept {
 	if constexpr (std::is_same_v<NativeString, std::string>)
 		return toStdString();
@@ -1684,7 +1686,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::wstring BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdWString() const noexcept {
-
+	
 }
 
 template <

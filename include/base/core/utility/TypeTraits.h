@@ -681,4 +681,15 @@ struct IsTriviallySwappable :
 	std::bool_constant<IsTriviallySwappable_v<_Type_>> 
 {};
 
+
+template <
+	class _Ty,
+	class... _Types>
+constexpr bool IsAnyOf_v = // true if and only if _Ty is in _Types
+#if BASE_HAS_CXX17
+    (std::is_same_v<_Ty, _Types> || ...);
+#else
+    std::disjunction_v<std::is_same<_Ty, _Types>...>;
+#endif
+
 __BASE_NAMESPACE_END
