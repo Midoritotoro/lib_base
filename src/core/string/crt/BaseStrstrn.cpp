@@ -8,7 +8,7 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS char* CDECL __base_strstrn(
+DECLARE_NOALIAS const char* CDECL __base_strstrn(
 	const char*			mainString,
 	const std::size_t	mainLength,
 	const char*			subString,
@@ -34,16 +34,16 @@ DECLARE_NOALIAS char* CDECL __base_strstrn(
         memory::UnCheckedToChar(subString), subLength);
 }
 
-DECLARE_NOALIAS wchar_t* CDECL __base_wcsstrn(
-	const wchar_t*		mainString,
-	const std::size_t	mainLength,
-	const wchar_t*		subString,
-	const std::size_t	subLength) noexcept
-{
-
-    return __base_wcsstrstrnScalar(
-        memory::UnCheckedToWChar(mainString), mainLength,
-        memory::UnCheckedToWChar(subString), subLength);
-}
+//DECLARE_NOALIAS const wchar_t* CDECL __base_wcsstrn(
+//	const wchar_t*		mainString,
+//	const std::size_t	mainLength,
+//	const wchar_t*		subString,
+//	const std::size_t	subLength) noexcept
+//{
+//
+//    return __base_wcsstrstrnScalar(
+//        memory::UnCheckedToWChar(mainString), mainLength,
+//        memory::UnCheckedToWChar(subString), subLength);
+//}
 
 __BASE_STRING_NAMESPACE_END

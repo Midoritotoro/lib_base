@@ -22,7 +22,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenSse2(const char* string) noexcept
 		const uint bingo = _mm_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const char*>(current) - string + result));
 		}
@@ -43,7 +43,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenAvx(const char* string) noexcept 
 		const uint bingo = _mm256_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const char*>(current) - string + result));
 		}
@@ -64,7 +64,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenAvx512(const char* string) noexce
 		const uint64 bingo = _mm512_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const char*>(current) - string + result));
 		}
@@ -94,7 +94,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenSse2(const wchar_t* string) noexc
 		const ushort bingo = _mm_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const wchar_t*>(current) - string + result));
 		}
@@ -115,7 +115,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenAvx(const wchar_t* string) noexce
 		const ushort bingo = _mm256_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const wchar_t*>(current) - string + result));
 		}
@@ -136,7 +136,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenAvx512(const wchar_t* string) noe
 		const uint64 bingo = _mm512_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {
-			const auto result = CountLeadingZeroBits(bingo);
+			const auto result = CountTrailingZeroBits(bingo);
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const wchar_t*>(current) - string + result));
 		}

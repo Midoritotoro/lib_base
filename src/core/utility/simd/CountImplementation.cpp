@@ -45,7 +45,7 @@ inline NODISCARD std::size_t CountSSE42(
     size_t sseSize = sizeInBytes & ~size_t{ 0xF };
 
     if (sseSize == 0)
-        return;
+        return 0;
    
     const auto comparand = _Traits_::SetSse(_Value);
     const void* stopAt = _First;
@@ -194,7 +194,7 @@ inline NODISCARD std::size_t CountAVX512(
                 const auto data = _mm512_loadu_si512(static_cast<const __m512i*>(_First));
                 const auto mask = _Traits_::CompareAvx512(data, comparand);
 
-                countVector = _Traits_::SubstractAvx512(countVector, mask);
+                countVector = _Traits_::SubstractAvx512(countVector, _mm512_movm_epi32(mask));
                 memory::AdvanceBytes(_First, 64);
             } while (_First != stopAt);
 
@@ -212,12 +212,9 @@ inline NODISCARD std::size_t CountAVX512(
             const __mmask16 tailMask = Avx512TailMask64(BytesToDoubleWordsCount(avxTailSize));
 
             const __m512i data = _mm512_maskz_loadu_epi32(tailMask, _First);
-            const __m512i mask = _mm512_and_si512(_Traits_::CompareAvx(data, comparand), tailMask);
+            const __mmask8 mask = _Traits_::CompareAvx512(data, comparand) & tailMask;
 
-            const int bingo = _mm512_movepi8_mask(mask);
-            const size_t tailCount = PopulationCount(bingo);
-
-            result += tailCount / sizeof(_Type_);
+            result += PopulationCount(mask) / sizeof(_Type_);
             memory::AdvanceBytes(_First, avxTailSize);
         }
 

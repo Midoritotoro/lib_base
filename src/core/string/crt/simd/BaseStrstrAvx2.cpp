@@ -83,7 +83,7 @@ DECLARE_NOALIAS NODISCARD always_inline const char* __base_strstrnAvx2Equal(
             equal = _mm256_and_si256(equal, _mm256_cmpeq_epi8(substring, broadcasted[i]));
         }
 #else
-        inner_loop<needleLength>()(eq, next1, curr, broadcasted);
+        inner_loop<needleLength>()(equal, next1, curr, broadcasted);
 #endif
 
         curr = next;

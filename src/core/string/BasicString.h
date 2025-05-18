@@ -88,8 +88,8 @@ public:
 		std::is_same<_Type_, BasicString>::value, bool>::type;
 
 	template <class _Vectorization_>
-	constexpr bool is_vectorization_enabled = std::is_same_v<
-		_Vectorization_, stringSimd::OptimizationEnabled>;
+	static inline constexpr bool IsVectorizationEnabled = std::is_same_v<
+		_Vectorization_, stringSimd::OptimizationEnable>;
 	/*template <typename _Type_>
 	using if_compatible_container	= typename std::enable_if<
 		IsContainerCompatibleWithStringView<_Type_>::value, bool>::type;*/
