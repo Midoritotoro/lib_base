@@ -45,7 +45,7 @@ extern "C" {
 
     // Scalar 
 
-    DECLARE_NOALIAS NODISCARD const wchar_t* __base_wcsstrnScalar(
+    DECLARE_NOALIAS NODISCARD const wchar_t* CDECL __base_wcsstrnScalar(
         const wchar_t*  string,
         size_t          stringLength,
         const wchar_t*  needle,

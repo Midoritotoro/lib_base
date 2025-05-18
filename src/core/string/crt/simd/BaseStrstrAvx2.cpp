@@ -1,5 +1,5 @@
 #include <src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h>
-#include <src/core/string/crt/simd/BaseStrStrAvx2Clang.h>
+#include <src/core/string/crt/simd/BaseStrStrAvx2ClangMsvc.h>
 
 #include <base/core/utility/BitOps.h>
 #include <base/core/string/String.h>
@@ -77,7 +77,7 @@ DECLARE_NOALIAS NODISCARD always_inline const char* __base_strstrnAvx2Equal(
         next1 = _mm256_inserti128_si256(next1, _mm256_extracti128_si256(curr, 1), 0); // b
         next1 = _mm256_inserti128_si256(next1, _mm256_extracti128_si256(next, 0), 1); // c
 
-#ifndef CPP_CLANG
+#if !defined(CPP_CLANG) && !defined(CPP_MSVC)
         for (unsigned i = 1; i < needleLength; i++) {
             const auto substring = _mm256_alignr_epi8(next1, curr, i);
             equal = _mm256_and_si256(equal, _mm256_cmpeq_epi8(substring, broadcasted[i]));

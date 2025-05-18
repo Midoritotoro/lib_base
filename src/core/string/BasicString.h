@@ -44,10 +44,8 @@ public:
 	using size_type			= sizetype;
 	using difference_type	= ptrdiff;
 
-	using iterator			= StringIterator<
-		BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>>;
-	using const_iterator	= StringConstIterator<
-		BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>>;
+	using iterator			= StringIterator<BasicString>;
+	using const_iterator	= StringConstIterator<BasicString>;
 
 	using reverse_iterator	= std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
@@ -72,8 +70,12 @@ public:
 
 	using StringList = container::Vector<BasicString>;
 
+	using traits_type = CharTraits<ValueType>;
+
 	using traits = CharTraits<ValueType>;
 	using Traits = traits;
+
+	using Allocator = allocator_type;
 
 	template <typename __Char>
 	using if_compatible_char		= typename std::enable_if<
@@ -113,12 +115,23 @@ public:
 
 	DECLARE_FLAGS_ENUM(SplitBehavior, SplitBehaviorEnum);
 
+	// =======================================================================================
+	//									 Constructors
+	// =======================================================================================
+
 	CONSTEXPR_CXX20 BasicString();
 	CONSTEXPR_CXX20 ~BasicString();
+
+	CONSTEXPR_CXX20 BasicString(const ValueType* chars);
 
 	CONSTEXPR_CXX20 BasicString(
 		const ValueType* chs, 
 		SizeType length);
+
+	CONSTEXPR_CXX20 BasicString(
+		const ValueType* chs,
+		SizeType length,
+		Allocator allocator = Allocator());
 
 	CONSTEXPR_CXX20 BasicString(
 		Iterator first,
@@ -132,7 +145,12 @@ public:
 	template <typename __Char>
 	CONSTEXPR_CXX20 inline BasicString(
 		const __Char* first,
-		const __Char* last);
+		const __Char* last,
+		typename std::enable_if<
+			!std::is_same<__Char, value_type*>::value,
+			const Allocator>::type& = Allocator());
+
+	CONSTEXPR_CXX20 inline BasicString(std::initializer_list<ValueType> initializerList);
 
 #if __cpp_lib_char8_t
 	CONSTEXPR_CXX20 BasicString(std::u8string&& string);
@@ -155,18 +173,49 @@ public:
 	CONSTEXPR_CXX20 BasicString(const std::u32string& string);
 
 
+	// =======================================================================================
+	//								 Assignment Operators
+	// =======================================================================================
+
 	NODISCARD ValueType& operator[](const SizeType index) noexcept;
 	NODISCARD const ValueType& operator[](const SizeType index) const noexcept;
+
+	CONSTEXPR_CXX20 BasicString& operator=(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 BasicString& operator+=(std::initializer_list<ValueType> initializerList);
+
+
+	// =======================================================================================
+	//							Accessors and Element Access
+	// =======================================================================================
 
 	NODISCARD ValueType at(const SizeType index) const noexcept;
 	NODISCARD inline Reference at(const SizeType offset) noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD SizeType count() const noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD SizeType size() const noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD SizeType length() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline ValueType front() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline Reference front() noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD SizeType capacity() const noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD SizeType unusedCapacity() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline ValueType back() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline Reference back() noexcept;
+
+	CONSTEXPR_CXX20 NODISCARD ValueType* data() noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline ConstPointer data() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD const ValueType* constData() const noexcept;
+
+	CONSTEXPR_CXX20 NODISCARD inline ValueType& first();
+	CONSTEXPR_CXX20 NODISCARD inline const ValueType& first() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline const ValueType& constFirst() const noexcept;
+
+	CONSTEXPR_CXX20 NODISCARD inline ValueType& last();
+	CONSTEXPR_CXX20 NODISCARD inline const ValueType& last() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD inline const ValueType& constLast() const noexcept;
+
+	CONSTEXPR_CXX20 inline ConstPointer c_str() const noexcept;
+	CONSTEXPR_CXX20 inline Pointer c_str() noexcept;
+
+
+	// =======================================================================================
+	//									Iterators
+	// =======================================================================================
 
 	CONSTEXPR_CXX20 inline NODISCARD Iterator begin() noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ConstIterator begin() const noexcept;
@@ -198,35 +247,95 @@ public:
 	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator constReversedBegin() const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD ConstReverseIterator constReversedEnd() const noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD ValueType front() const noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD Reference front() noexcept;
 
-	CONSTEXPR_CXX20 inline NODISCARD ValueType back() const noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD Reference back() noexcept;
+	// =======================================================================================
+	//									Capacity and Size
+	// =======================================================================================
 
-	CONSTEXPR_CXX20 inline void push_back(const ValueType& element);
-	CONSTEXPR_CXX20 inline void push_back(BasicString&& other);
-	CONSTEXPR_CXX20 inline void push_back(ValueType&& element);
+	CONSTEXPR_CXX20 inline NODISCARD SizeType count() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType size() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType length() const noexcept;
 
-	CONSTEXPR_CXX20 inline void append(const ValueType& element);
+	CONSTEXPR_CXX20 inline NODISCARD SizeType capacity() const noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD SizeType unusedCapacity() const noexcept;
+	
+	CONSTEXPR_CXX20 NODISCARD bool isEmpty() const noexcept;
+	CONSTEXPR_CXX20 NODISCARD bool isNull() const noexcept;
+
+	// =======================================================================================
+	//										Allocator
+	// =======================================================================================
+
+	CONSTEXPR_CXX20 inline NODISCARD allocator_type& get_allocator() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& get_allocator() const noexcept;
+
+	CONSTEXPR_CXX20 inline NODISCARD allocator_type& getAllocator() noexcept;
+	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& getAllocator() const noexcept;
+
+	// =======================================================================================
+	//								Modifiers
+	// =======================================================================================
+
+	// increase capacity to newCapacity (without geometric growth)
+	CONSTEXPR_CXX20 inline void reserve(BASE_GUARDOVERFLOW SizeType newCapacity);
+
+	CONSTEXPR_CXX20 inline void shrinkToFit();
+	CONSTEXPR_CXX20 inline void shrink_to_fit();
+
+	void resize(SizeType size);
+	void resize(
+		SizeType size,
+		ValueType fill);
+
+	void clear();
+
+	CONSTEXPR_CXX20 NODISCARD Iterator erase(
+		ConstIterator first,
+		ConstIterator last);
+	CONSTEXPR_CXX20 NODISCARD Iterator erase(ConstIterator it);
+
+	// =======================================================================================
+	//						Push/Pop and Appending/Prepending
+	// =======================================================================================
+
+	CONSTEXPR_CXX20 inline void append(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void append(ValueType element);
 	CONSTEXPR_CXX20 inline void append(BasicString&& other);
-	CONSTEXPR_CXX20 inline void append(ValueType&& element);
 
-	CONSTEXPR_CXX20 inline void prepend(const ValueType& element);
+	CONSTEXPR_CXX20 inline void prepend(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void prepend(ValueType element);
 	CONSTEXPR_CXX20 inline void prepend(BasicString&& other);
-	CONSTEXPR_CXX20 inline void prepend(ValueType&& element);
 
-	CONSTEXPR_CXX20 inline void push_front(const ValueType& element);
-	CONSTEXPR_CXX20 inline void push_front(BasicString&& other);
-	CONSTEXPR_CXX20 inline void push_front(ValueType&& element);
-
-	CONSTEXPR_CXX20 inline void pushFront(const ValueType& element);
+	CONSTEXPR_CXX20 inline void pushFront(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void pushFront(ValueType element);
 	CONSTEXPR_CXX20 inline void pushFront(BasicString&& other);
-	CONSTEXPR_CXX20 inline void pushFront(ValueType&& element);
 
-	CONSTEXPR_CXX20 inline void pushBack(const ValueType& element);
+	CONSTEXPR_CXX20 inline void pushBack(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void pushBack(ValueType element);
 	CONSTEXPR_CXX20 inline void pushBack(BasicString&& other);
-	CONSTEXPR_CXX20 inline void pushBack(ValueType&& element);
+
+	CONSTEXPR_CXX20 NODISCARD ValueType pop() noexcept;
+
+	CONSTEXPR_CXX20 NODISCARD ValueType popBack() noexcept;
+	CONSTEXPR_CXX20 NODISCARD ValueType popFront() noexcept;
+
+
+	// =======================================================================================
+	//										Swap
+	// =======================================================================================
+
+	CONSTEXPR_CXX20 inline void swap(BasicString& other);
+
+	CONSTEXPR_CXX20 inline void swapAt(
+		SizeType _First,
+		SizeType _Last);
+	CONSTEXPR_CXX20 inline void swapAt(
+		Iterator _First,
+		Iterator _Last);
+
+	// =======================================================================================
+	//									Type Conversion
+	// =======================================================================================
 
 	NODISCARD NativeString toNativeString() const noexcept;
 
@@ -237,33 +346,11 @@ public:
 	NODISCARD std::u16string toStdUTF16String() const noexcept;
 	NODISCARD std::u32string toStdUTF32String() const noexcept;
 
+	// =======================================================================================
+	//				String Operations (Search, Find, Replace, Remove, etc.)
+	// =======================================================================================
 
-	CONSTEXPR_CXX20 NODISCARD ValueType pop() noexcept;
-
-	CONSTEXPR_CXX20 NODISCARD ValueType popBack() noexcept;
-	CONSTEXPR_CXX20 NODISCARD ValueType pop_back() noexcept;
-
-	CONSTEXPR_CXX20 NODISCARD ValueType pop_front() noexcept;
-	CONSTEXPR_CXX20 NODISCARD ValueType popFront() noexcept;
-
-	CONSTEXPR_CXX20 NODISCARD bool isEmpty() const noexcept;
-	CONSTEXPR_CXX20 NODISCARD bool isNull() const noexcept;
-
-	CONSTEXPR_CXX20 NODISCARD ValueType* data() noexcept;
-	CONSTEXPR_CXX20 NODISCARD inline ConstPointer data() const noexcept;
-	CONSTEXPR_CXX20 NODISCARD const ValueType* constData() const noexcept;
-
-	void clear();
-
-	CONSTEXPR_CXX20 NODISCARD Iterator erase(
-		ConstIterator first,
-		ConstIterator last);
-	CONSTEXPR_CXX20 NODISCARD Iterator erase(ConstIterator it);
-
-	void resize(SizeType size);
-	void resize(
-		SizeType size,
-		ValueType fill);
+	CONSTEXPR_CXX20 inline void reverse() noexcept;
 
 	NODISCARD SizeType indexOf(
 		ValueType ch,
@@ -384,13 +471,6 @@ public:
 		SplitBehavior behavior = KeepEmptyParts,
 		CaseSensitivity caseSensibity = CaseSensitive) const;
 
-	CONSTEXPR_CXX20 inline void reverse() noexcept;
-
-	//increase capacity to newCapacity (without geometric growth)
-	CONSTEXPR_CXX20 inline void reserve(BASE_GUARDOVERFLOW SizeType newCapacity);
-
-	CONSTEXPR_CXX20 inline void shrinkToFit();
-	CONSTEXPR_CXX20 inline void shrink_to_fit();
 
 	CONSTEXPR_CXX20 inline NODISCARD bool contains(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool contains(const BasicString& subVector) const noexcept;
@@ -400,35 +480,14 @@ public:
 
 	CONSTEXPR_CXX20 inline NODISCARD bool endsWith(const ValueType& element) const noexcept;
 	CONSTEXPR_CXX20 inline NODISCARD bool endsWith(const BasicString& subVector) const noexcept;
-	CONSTEXPR_CXX20 inline void swap(BasicString& other);
 
-	CONSTEXPR_CXX20 inline void swapAt(
-		SizeType _First,
-		SizeType _Last);
-	CONSTEXPR_CXX20 inline void swapAt(
-		Iterator _First,
-		Iterator _Last);
 
-	CONSTEXPR_CXX20 inline ValueType& first();
-	CONSTEXPR_CXX20 inline const ValueType& first() const noexcept;
-	CONSTEXPR_CXX20 inline const ValueType& constFirst() const noexcept;
-
-	CONSTEXPR_CXX20 inline ValueType& last();
-	CONSTEXPR_CXX20 inline const ValueType& last() const noexcept;
-	CONSTEXPR_CXX20 inline const ValueType& constLast() const noexcept;
 
 	CONSTEXPR_CXX20 inline void removeAll(const ValueType& element);
 
 	constexpr inline NODISCARD sizetype max_size() const noexcept;
 	constexpr inline NODISCARD sizetype maxSize() const noexcept;
 
-	CONSTEXPR_CXX20 inline ConstPointer c_str() const;
-
-	CONSTEXPR_CXX20 inline NODISCARD allocator_type& get_allocator() noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& get_allocator() const noexcept;
-
-	CONSTEXPR_CXX20 inline NODISCARD allocator_type& getAllocator() noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& getAllocator() const noexcept;
 
 	BasicString& assign(const BasicString& string);
 	BasicString& assign(BasicString&& string);
@@ -512,74 +571,6 @@ public:
 
 	SizeType rfind(
 		ValueType	ch, 
-		SizeType	position = -1) const;
-
-	SizeType find_first_of(
-		const BasicString&	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const;
-
-	SizeType find_first_of(
-		const ValueType*	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_of(
-		ValueType	ch,
-		SizeType	position = 0) const;
-
-	SizeType find_last_of(
-		const BasicString&	string,
-		SizeType			position = -1) const;
-
-	SizeType find_last_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType n) const;
-
-	SizeType find_last_of(
-		const ValueType*	string, 
-		SizeType			position = -1) const;
-
-	SizeType find_last_of(
-		ValueType	ch,
-		SizeType	position = -1) const;
-
-	SizeType find_first_not_of(
-		const BasicString&	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_not_of(
-		const ValueType*	string,
-		SizeType			position, 
-		SizeType			length) const;
-
-	SizeType find_first_not_of(
-		const ValueType*	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_not_of(
-		ValueType	ch,
-		SizeType	position = 0) const;
-
-	SizeType find_last_not_of(
-		const BasicString&	string,
-		SizeType			position = -1) const;
-
-	SizeType find_last_not_of(
-		const ValueType*	string,
-		SizeType			position, 
-		SizeType			length) const;
-
-	SizeType find_last_not_of(
-		const ValueType*	string, 
-		SizeType			position = -1) const;
-
-	SizeType find_last_not_of(
-		ValueType	ch,
 		SizeType	position = -1) const;
 
 	BasicString substr(
@@ -679,6 +670,89 @@ public:
 	SizeType findLastNotOf(
 		ValueType	ch,
 		SizeType	position) const;
+
+	// =======================================================================================
+	//								STL compatibility
+	// =======================================================================================
+
+	SizeType find_first_of(
+		const BasicString&	string,
+		SizeType			position = 0) const;
+
+	SizeType find_first_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType			length) const;
+
+	SizeType find_first_of(
+		const ValueType*	string,
+		SizeType			position = 0) const;
+
+	SizeType find_first_of(
+		ValueType	ch,
+		SizeType	position = 0) const;
+
+	SizeType find_last_of(
+		const BasicString&	string,
+		SizeType			position = -1) const;
+
+	SizeType find_last_of(
+		const ValueType*	string,
+		SizeType			position,
+		SizeType n) const;
+
+	SizeType find_last_of(
+		const ValueType*	string, 
+		SizeType			position = -1) const;
+
+	SizeType find_last_of(
+		ValueType	ch,
+		SizeType	position = -1) const;
+
+	SizeType find_first_not_of(
+		const BasicString&	string,
+		SizeType			position = 0) const;
+
+	SizeType find_first_not_of(
+		const ValueType*	string,
+		SizeType			position, 
+		SizeType			length) const;
+
+	SizeType find_first_not_of(
+		const ValueType*	string,
+		SizeType			position = 0) const;
+
+	SizeType find_first_not_of(
+		ValueType	ch,
+		SizeType	position = 0) const;
+
+	SizeType find_last_not_of(
+		const BasicString&	string,
+		SizeType			position = -1) const;
+
+	SizeType find_last_not_of(
+		const ValueType*	string,
+		SizeType			position, 
+		SizeType			length) const;
+
+	SizeType find_last_not_of(
+		const ValueType*	string, 
+		SizeType			position = -1) const;
+
+	SizeType find_last_not_of(
+		ValueType	ch,
+		SizeType	position = -1) const;
+
+	CONSTEXPR_CXX20 inline void push_front(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void push_front(ValueType element);
+	CONSTEXPR_CXX20 inline void push_front(BasicString&& other);
+
+	CONSTEXPR_CXX20 inline void push_back(std::initializer_list<ValueType> initializerList);
+	CONSTEXPR_CXX20 inline void push_back(ValueType element);
+	CONSTEXPR_CXX20 inline void push_back(BasicString&& other);
+
+	CONSTEXPR_CXX20 NODISCARD ValueType pop_back() noexcept;
+	CONSTEXPR_CXX20 NODISCARD ValueType pop_front() noexcept;
 private:
 	static constexpr NODISCARD SizeType calculateGrowth(SizeType newSize) noexcept;
 
@@ -735,9 +809,20 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
+CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::BasicString(const ValueType* chars) {
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
 CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::BasicString(
 	const ValueType* chs,
-	SizeType length)
+	SizeType length,
+	Allocator allocator)
 {
 
 }
@@ -763,8 +848,8 @@ template <
 	class _Storage_>
 template <typename __Char>
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::BasicString(
-	const __Char* str,
-	size_type len)
+	const __Char*	string,
+	size_type		length)
 {
 	static_assert(is_compatible_char_v<__Char>, "Not supported __Char type");
 }
@@ -778,12 +863,26 @@ template <
 template <typename __Char>
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::BasicString(
 	const __Char* first,
-	const __Char* last
+	const __Char* last,
+	typename std::enable_if<
+		!std::is_same<__Char, value_type*>::value,
+		const Allocator>::type&
 ) :
 	BasicString(first, last - first)
 {
 	static_assert(is_compatible_char_v<__Char>, "Not supported __Char type");
-	
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::BasicString(std::initializer_list<ValueType> initializerList)
+{
+	assign(initializerList);
 }
 
 
@@ -932,6 +1031,30 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
+CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::operator=(std::initializer_list<ValueType> initializerList) 
+{
+	return assign(initializerList.begin(), initializerList.size());
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::operator+=(std::initializer_list<ValueType> initializerList) 
+{
+	return append(initializerList);
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
 NODISCARD BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::ValueType 
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::at(const SizeType index) const noexcept
 {
@@ -970,7 +1093,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdString() const noexcept {
-	
+	return "";
 }
 
 template <
@@ -1714,8 +1837,20 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(const ValueType& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(ValueType element) {
 
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::push_back(std::initializer_list<ValueType> initializerList)
+{
+	return append(initializerList);
 }
 
 template <
@@ -1725,16 +1860,6 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(BasicString&& other) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(ValueType&& element) {
 
 }
 
@@ -1764,26 +1889,6 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::append(ValueType&& element) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(const ValueType& element) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(BasicString&& other) {
 
 }
@@ -1794,9 +1899,10 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::prepend(ValueType&& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_front(ValueType element) {
 
 }
+
 
 template <
 	class _Char_,
@@ -1804,7 +1910,9 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_front(const ValueType& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::push_front(std::initializer_list<ValueType> initializerList)
+{
 
 }
 
@@ -1824,7 +1932,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_front(ValueType&& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushFront(ValueType element) {
 
 }
 
@@ -1834,7 +1942,9 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushFront(const ValueType& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::pushFront(std::initializer_list<ValueType> initializerList)
+{
 
 }
 
@@ -1854,7 +1964,7 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushFront(ValueType&& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushBack(ValueType element) {
 
 }
 
@@ -1864,9 +1974,12 @@ template <
 	class _Allocator_,
 	class _SimdOptimization_,
 	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushBack(const ValueType& element) {
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::pushBack(std::initializer_list<ValueType> initializerList)
+{
 
 }
+
 
 template <
 	class _Char_,
@@ -1875,16 +1988,6 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushBack(BasicString&& other) {
-
-}
-
-template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_>
-CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::pushBack(ValueType&& element) {
 
 }
 
@@ -2190,6 +2293,18 @@ BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::insert(
 		SizeType			index,
 		const BasicString&	string)
+{
+
+}
+
+template <
+	class _Char_,
+	class _Traits_,
+	class _Allocator_,
+	class _SimdOptimization_,
+	class _Storage_>
+CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
+	::append(std::initializer_list<ValueType> initializerList)
 {
 
 }
@@ -2848,8 +2963,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
-	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
-	::assign(const BasicString& string) 
+	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(const BasicString& string) 
 {
 
 }
@@ -2904,7 +3018,7 @@ template <
 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>& 
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::assign(const ValueType* string) 
 {
-
+	
 }
 
 template <
@@ -2917,7 +3031,7 @@ BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
 	::assign(std::initializer_list<ValueType> initializerList)
 {
-
+	return assign(initializerList.data(), initializerList.size());
 }
 
 template <
@@ -4226,7 +4340,7 @@ operator<<(
 	std::__ostream_insert(os, str.data(), str.size());
 #endif
 
-  return os;
+	return os;
 }
 
 // basic_string compatibility routines

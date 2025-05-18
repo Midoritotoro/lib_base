@@ -21223,7 +21223,7 @@ static constexpr IdnaMapEntry idnaMap[] = {
     { 0x2fa1d, 2, { 0xd869, 0xde00 } },
 };
 
-//QStringView FASTCALL idnaMapping(char32_t ucs4) noexcept
+//StringView FASTCALL idnaMapping(char32_t ucs4) noexcept
 //{
 //    auto i = std::lower_bound(std::begin(idnaMap), std::end(idnaMap), ucs4,
 //        [](const auto& p, char32_t c) { return p.codePoint < c; });

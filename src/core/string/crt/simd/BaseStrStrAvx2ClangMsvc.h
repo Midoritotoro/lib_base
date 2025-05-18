@@ -12,11 +12,11 @@ __BASE_STRING_NAMESPACE_BEGIN
             eq = _mm256_and_si256(eq, _mm256_cmpeq_epi8(substring, broadcasted[i]));
         }
 
-    Clang complains that the loop parameter `i` is a variable and it cannot be
+    Clang and MSVC complains that the loop parameter `i` is a variable and it cannot be
     applied as a parameter _mm256_alignr_epi8.  GCC somehow deals with it.
 */
 
-#if defined(CPP_CLANG)
+#if defined(CPP_CLANG) || defined(CPP_MSVC)
 
 template <
     size_t K, 

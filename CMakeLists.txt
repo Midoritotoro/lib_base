@@ -286,7 +286,7 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrAvx512F.cpp
 
     src/core/string/crt/simd/BaseStrstrSse2.cpp
-    src/core/string/crt/simd/BaseStrstrAvx2Clang.h
+    src/core/string/crt/simd/BaseStrstrAvx2ClangMsvc.h
 
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
 )
