@@ -194,11 +194,11 @@ public:
     }
 
     // In C++11 data() and c_str() are 100% equivalent.
-    const _Char_* data() const {
+    const _Char_* data() const noexcept {
         return c_str();
     }
 
-    _Char_* data() {
+    _Char_* data() noexcept {
         return c_str();
     }
 
@@ -215,8 +215,18 @@ public:
         AssertUnreachable();
     }
 
-    const _Char_* c_str() const {
+    const _Char_* c_str() const noexcept {
         const _Char_* ptr = _mediumLarge._data;
+        // With this syntax, GCC and Clang generate a CMOV instead of a branch.
+        ptr = (category() == Category::isSmall)
+            ? _small
+            : ptr;
+
+        return ptr;
+    }
+    
+    _Char_* c_str() noexcept {
+        _Char_* ptr = _mediumLarge._data;
         // With this syntax, GCC and Clang generate a CMOV instead of a branch.
         ptr = (category() == Category::isSmall)
             ? _small
@@ -312,17 +322,6 @@ public:
     }
 
 private:
-    _Char_* c_str() {
-        _Char_* ptr = _mediumLarge._data;
-
-        // With this syntax, GCC and Clang generate a CMOV instead of a branch.
-        ptr = (category() == Category::isSmall)
-            ? _small
-            : ptr;
-
-        return ptr;
-    }
-
     void reset() {
         setSmallSize(0);
     }
