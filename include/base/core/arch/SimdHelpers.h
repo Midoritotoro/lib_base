@@ -9,6 +9,8 @@
 #include <vector>
 #include <base/core/Types.h>
 
+#include <base/core/arch/CpuFeature.h>
+
 #if !defined(_M_ARM64EC)
 #include <intrin.h>
 #endif
@@ -45,7 +47,7 @@
 #    define VECTORCALL __vectorcall
 #  endif
 #  ifdef __AVX2__
-// MSVC ���������� __AVX2__ � /arch:AVX2
+// MSVC defines __AVX2__ with /arch:AVX2
 #    define __F16C__                        1
 #    define __RDRND__                       1
 
@@ -199,16 +201,6 @@ using zmmdouble = __m512d;
 using xmmfloat  = __m128;
 using ymmfloat  = __m256;
 using zmmfloat  = __m512;
-
-enum class SimdType : uchar {
-	SSE2 = 0,
-	SSE3 = 0x01,
-	SSSE3 = 0x02,
-	SSE41 = 0x04,
-	SSE42 = 0x08,
-	AVX = 0x10,
-	AVX512 = 0x20
-};
 
 __BASE_NAMESPACE_END
 

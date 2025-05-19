@@ -1,4 +1,7 @@
 #include <src/core/string/StringConverter.h>
+#include <base/core/arch/ProcessorFeatures.h>
+
+#include <src/core/memory/MemoryUtility.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -119,11 +122,38 @@ std::u32string StringConverter::convertToStdUtf32String(const _StringType_& stri
 }
 
 CONSTEXPR_CXX20 std::wstring StringConverter::convertStdStringToStdWString(const std::string& string) {
-
+	return std::wstring(string.begin(), string.end());
 }
 
 CONSTEXPR_CXX20 std::wstring StringConverter::convertStdUtf8StringToStdWString(const std::u8string& string) {
+	std::wstring wideString;
+	wideString.reserve(string.size());
 
+	const auto bytes = size_t(string.size() * sizeof(char8_t));
+	const auto bytesAlignedForAvx512 = bytes & ~size_t(0x3F);
+
+	const void* start = string.data();
+	const void* stopAt = string.data() + bytesAlignedForAvx512;
+
+
+	if (bytesAlignedForAvx512 != 0) {
+		if (ProcessorFeatures::AVX512F()) {
+			do {
+				const auto loaded = _mm512_loadu_epi8(start);
+
+				// wchar_t is 32 bit type on non-Windows platforms
+#if defined(OS_WIN)
+				_mm512_storeu_epi16(wideString.data(), loaded);
+#else
+				_mm512_storeu_epi32(wideString.data(), loaded);
+#endif
+
+				memory::AdvanceBytes(start, 64);
+			} while (start != stopAt);
+		}
+	}
+
+	if (start != )
 }
 
 CONSTEXPR_CXX20 std::wstring StringConverter::convertStdUtf16StringToStdWString(const std::u16string& string) {
@@ -186,15 +216,15 @@ CONSTEXPR_CXX20 std::u32string StringConverter::convertStdWStringToStdUtf32Strin
 
 }
 
-CONSTEXPR_CXX20 std::u32string StringConverter::convertStdUtf8StringToStdUtf32String(const std::string& string) {
+CONSTEXPR_CXX20 std::u32string StringConverter::convertStdStringToStdUtf32String(const std::string& string) {
 
 }
 
-CONSTEXPR_CXX20 std::u32string StringConverter::convertStdUtf16StringToStdUtf32String(const std::u8string& string) {
+CONSTEXPR_CXX20 std::u32string StringConverter::convertStdUtf8StringToStdUtf32String(const std::u8string& string) {
 
 }
 
-CONSTEXPR_CXX20 std::u32string StringConverter::convertStdUtf32StringToStdUtf32String(const std::u16string& string) {
+CONSTEXPR_CXX20 std::u32string StringConverter::convertStdUtf16StringToStdUtf32String(const std::u16string& string) {
 
 }
 

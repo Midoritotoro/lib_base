@@ -296,6 +296,9 @@ set(PUBLIC_HEADERS
     include/base/core/utility/Assert.h
     include/base/core/BaseNamespace.h
 
+    include/base/core/arch/CpuFeature.h
+    include/base/core/arch/CpuFeatureTag.h
+
     include/base/core/utility/Algorithm.h
     include/base/core/async/Concurrent.h
 
