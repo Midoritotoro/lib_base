@@ -1,10 +1,11 @@
 #pragma once 
 
-#include <base/core/BaseNamespace.h>
+#include <base/core/Types.h>
 
 __BASE_NAMESPACE_BEGIN
 
 enum class CpuFeature : uchar {
+	None,
 	MMX,
 	SSE,
 	SSE2,
