@@ -12,7 +12,7 @@
 #include <src/core/string/CharTraits.h>
 
 #include <src/core/utility/simd/SimdAlgorithm.h>
-
+#include <src/core/string/StringConverter.h>
 
 WARNING_DISABLE_MSVC(4834)
 WARNING_DISABLE_MSVC(4002)
@@ -29,6 +29,8 @@ template <
 	class _Storage_				= BasicStringStorage<_Char_, _SimdOptimization_, stringStorage::OptimizationSmallAndLarge>>
 class BasicString 
 {
+	using BasicStdString = std::basic_string<
+		_Char_, std::char_traits<_Char_>, std::allocator<_Char_>>;
 public:
 	inline static constexpr std::size_t npos = -1;
 
@@ -1686,7 +1688,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::wstring BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdWString() const noexcept {
-	
+	return StringConverter::convertString<BasicStdString, std::wstring>(data());
 }
 
 template <
@@ -1696,7 +1698,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdString() const noexcept {
-	return "";
+	return StringConverter::convertString<BasicStdString, std::string>(data());
 }
 
 template <
@@ -1706,7 +1708,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::u8string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdUTF8String() const noexcept {
-
+	return StringConverter::convertString<BasicStdString, std::u8string>(data());
 }
 
 template <
@@ -1716,7 +1718,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::u16string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdUTF16String() const noexcept {
-
+	return StringConverter::convertString<BasicStdString, std::u16string>(data());
 }
 
 template <
@@ -1726,7 +1728,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 NODISCARD std::u32string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdUTF32String() const noexcept {
-
+	return StringConverter::convertString<BasicStdString, std::u32string>(data());
 }
 
 
