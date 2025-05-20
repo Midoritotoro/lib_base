@@ -23,9 +23,22 @@ public:
 			IsSupportedString<_ToType_>>>
 	NODISCARD _ToType_ convertString(const _FromType_& string);
 private:
-	
-	
 	template <
+		class _FromType_,
+		class _ToType_,
+		class _Tag_,
+		typename = std::enable_if_t<
+			IsSupportedString<_FromType_> &&
+			IsSupportedString<_ToType_>>>
+	NODISCARD _ToType_ convertStringImplementation(
+		const _FromType_& string,
+		_Tag_)
+	{
+		return {};
+	}
+
+
+	/*template <
 		class _FromType_,
 		class _ToType_,
 		class _Tag_,
@@ -79,7 +92,7 @@ private:
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
 		return {};
-	}
+	}*/
 
 	// =================================================================================================================
 	//														AVX512F
@@ -89,13 +102,20 @@ private:
 	//													To std::string
 	// =================================================================================================================
 
+#if __cpp_lib_char8_t
 	template <>
 	NODISCARD std::string convertStringImplementation<std::u8string, std::string, CpuFeatureTag<CpuFeature::AVX512F>>(
 		const std::u8string& string,
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
-		return {};
+		const auto fromSizeInBytes = size_t(string.size() * sizeof(char8_t));
+		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
+
+		if (avx512SizeInBytes != 0) {
+
+		}
 	}
+#endif
 
 	template <>
 	NODISCARD std::string convertStringImplementation<std::u16string, std::string, CpuFeatureTag<CpuFeature::AVX512F>>(

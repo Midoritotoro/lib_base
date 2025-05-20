@@ -363,7 +363,10 @@ public:
 	NODISCARD std::wstring toStdWString() const noexcept;
 	NODISCARD std::string toStdString() const noexcept;
 
+#if __cpp_lib_char8_t
 	NODISCARD std::u8string toStdUTF8String() const noexcept;
+#endif
+
 	NODISCARD std::u16string toStdUTF16String() const noexcept;
 	NODISCARD std::u32string toStdUTF32String() const noexcept;
 
@@ -1701,6 +1704,8 @@ NODISCARD std::string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimizati
 	return StringConverter::convertString<BasicStdString, std::string>(data());
 }
 
+#if __cpp_lib_char8_t
+
 template <
 	class _Char_,
 	class _Traits_,
@@ -1710,6 +1715,8 @@ template <
 NODISCARD std::u8string BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::toStdUTF8String() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::u8string>(data());
 }
+
+#endif
 
 template <
 	class _Char_,
@@ -1746,7 +1753,7 @@ template <
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>
 	::reserve(BASE_GUARDOVERFLOW SizeType newCapacity)
 {
-
+	_storage.reserve(newCapacity);
 }
 
 template <
@@ -1756,7 +1763,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 CONSTEXPR_CXX20 inline void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::shrinkToFit() {
-
+	_storage.shrink(capacity());
 }
 
 
@@ -1767,7 +1774,7 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::resize(SizeType size) {
-
+	_storage.expandNoInit(size, true);
 }
 
 template <
@@ -1778,9 +1785,10 @@ template <
 	class _Storage_>
 void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::resize(
 	SizeType size,
-	ValueType fill)
+	ValueType fillChar)
 {
-
+	_storage.expandNoInit(size, true);
+	fill(fillChar);
 }
 
 template <
@@ -1790,7 +1798,10 @@ template <
 	class _SimdOptimization_,
 	class _Storage_>
 void BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::clear() {
+	if (_storage.category() == _Storage_::Category::isSmall)
+		return;
 
+	_storage.destroyMediumLarge();
 }
 
 template <
@@ -1833,7 +1844,7 @@ template <
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>&
 	BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::push_back(ValueType element)
 {
-
+	_storage.push_back(element);
 }
 
 template <
