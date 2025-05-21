@@ -12,6 +12,7 @@ template <
 	class _Storage_>
 class BasicString;
 
+class Char;
 class StringView;
 
 template <typename _Char>

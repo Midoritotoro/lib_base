@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <base/core/arch/CpuId.h>
+#include <base/core/arch/CpuFeatureTag.h>
 
 __BASE_NAMESPACE_BEGIN
 

@@ -33,22 +33,6 @@ template <
 	typename _TypeTo_,
 	typename _TypeFrom_,
 	typename = std::enable_if_t<
-		std::is_integral_v<_TypeFrom_> 
-		&& std::is_same_v<_TypeFrom_, _TypeTo_>>>
-constexpr inline NODISCARD bool ConvertIntegral(
-	const _TypeFrom_	_From,
-	_TypeTo_&			_To) noexcept
-{
-	_To = _From;
-	return true;
-}
-
-
-// false if the _TypeFrom_ type cannot be converted to _TypeTo without _From data loss
-template <
-	typename _TypeTo_,
-	typename _TypeFrom_,
-	typename = std::enable_if_t<
 		std::is_integral_v<_TypeFrom_>
 		&& std::is_integral_v<_TypeTo_>
 		&& !std::is_same_v<_TypeFrom_, _TypeTo_>>>
@@ -56,6 +40,11 @@ constexpr inline NODISCARD bool ConvertIntegral(
 	const _TypeFrom_	_From,
 	_TypeTo_&			_To) noexcept
 {
+	if constexpr (std::is_same_v<_TypeFrom_, _TypeTo_>) {
+		_To = _From;
+		return true;
+	}
+
 	constexpr auto _ToMaximumLimit = MaximumIntegralLimit<_TypeTo_>();
 	constexpr auto _ToMinimumLimit = MinimumIntegralLimit<_TypeTo_>();
 

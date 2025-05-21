@@ -5,8 +5,15 @@
 
 #include <base/core/arch/CpuFeatureTag.h>
 
+#include <base/core/memory/MemoryAllocation.h>
+#include <src/core/memory/MemoryUtility.h>
+
+#include <base/core/utility/IntegralTypesConversions.h>
+#include <src/core/string/StringConversionOptions.h>
+
 __BASE_STRING_NAMESPACE_BEGIN
 
+// template <class _NarrowingConversionBehaviour_ = DefaultReplacementConversionMode>
 static class StringConverter {
 public:
 	template <class _String_>
@@ -111,8 +118,28 @@ private:
 		const auto fromSizeInBytes = size_t(string.size() * sizeof(char8_t));
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		if (avx512SizeInBytes != 0) {
+		char* converted = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
 
+		if (avx512SizeInBytes != 0) {
+			constexpr auto toLimit = MaximumIntegralLimit<std::string::value_type>();
+
+			const void* stringDataStart = string.data();
+			const void* stopAt = string.data() + avx512SizeInBytes;
+		
+			const auto lessThanCompare = _mm512_set1_epi8(toLimit);
+
+			do {
+				const auto loaded = _mm512_loadu_si512(stringDataStart);
+				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, lessThanCompare);
+
+				// Narrowing conversion
+				if (comparedGreaterThan != 0) {
+					switch (0) {};
+				}
+
+				_mm512_store_si512(converted, loaded);
+				memory::AdvanceBytes(stringDataStart, 64);
+			} while (stringDataStart != stopAt);
 		}
 	}
 #endif

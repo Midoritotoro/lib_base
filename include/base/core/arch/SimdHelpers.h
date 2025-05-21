@@ -179,7 +179,6 @@
 #  define BASE_SIMD_AVX2_ALIGNMENT		0
 #endif
 
-
 #ifndef LIB_BASE_HAS_SIMD_SUPPORT
 #  define LIB_BASE_HAS_SIMD_SUPPORT 0
 #endif

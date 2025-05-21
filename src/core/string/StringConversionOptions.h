@@ -4,6 +4,7 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+// Behavior during narrowing string conversion. For example, from char16_t to char
 enum class NarrowingConversionMode : uchar {
     DefaultReplacement  = 0,        // Replace unsupported chars with the default character
     CustomReplacement   = 0x01,     // Use the char provided by the user
