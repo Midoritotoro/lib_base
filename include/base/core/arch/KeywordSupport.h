@@ -538,6 +538,23 @@ WARNING_DISABLE_MSVC(4067)
 
 #endif
 
+#if defined(CPP_GNU) || defined(CPP_CLANG)
+#  if !defined(BASE_LLVM_ATTRIBUTE_VECTOR_SIZE)
+#    define BASE_LLVM_ATTRIBUTE_VECTOR_SIZE(size) __attribute__((__vector_size__(size), __may_alias__));
+#endif
+#else 
+#  define BASE_LLVM_ATTRIBUTE_VECTOR_SIZE(size) 
+#endif
+
+#if defined(CPP_GNU) || defined(CPP_CLANG)
+#  if !defined(BASE_LLVM_ATTRIBUTE_VECTOR_SIZE_ALIGNED)
+#    define BASE_LLVM_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) __attribute__((__vector_size__(size), __aligned__(size)));
+#endif
+#else 
+#  define BASE_LLVM_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) 
+#endif
+
+
 // Exceptions 
 
 #ifndef BASE_TRY_BEGIN
