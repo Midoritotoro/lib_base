@@ -292,6 +292,9 @@ set(PRIVATE_SOURCES
     src/core/string/StringConverter.cpp
 
     src/core/string/StringConversionOptions.h
+
+    src/core/utility/simd/SimdConstexprHelpers.h
+    src/core/utility/simd/SimdVectorType.h
 )
 
 set(PUBLIC_HEADERS 

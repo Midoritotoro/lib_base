@@ -6,13 +6,14 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+template <class _NarrowingConversionBehaviour_>
 template <
 	class _FromType_,
 	class _ToType_,
 	std::enable_if_t<
-		StringConverter::IsSupportedString<_FromType_> &&
-		StringConverter::IsSupportedString<_ToType_>>>
-NODISCARD _ToType_ StringConverter::convertString(const _FromType_& string) { 
+		StringConverter<_NarrowingConversionBehaviour_>::IsSupportedString<_FromType_> &&
+		StringConverter<_NarrowingConversionBehaviour_>::IsSupportedString<_ToType_>>>
+NODISCARD _ToType_ StringConverter<_NarrowingConversionBehaviour_>::convertString(const _FromType_& string) {
 	if (ProcessorFeatures::AVX512F())
 		return convertStringImplementation<_FromType_, _ToType_>(
 			string, CpuFeatureTag<CpuFeature::AVX512F>{});
