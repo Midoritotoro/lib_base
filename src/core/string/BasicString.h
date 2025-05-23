@@ -1241,6 +1241,7 @@ template <
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Pointer
 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() noexcept
 {
+	auto p = _base_constexpr_mm_set1_epi16(234);
 	return _storage.c_str();
 }
 

@@ -39,16 +39,16 @@ constexpr always_inline void SetConstexpr(
     for (_Integer_ i = 0; i < sizeof...(_Args_); ++i)
         ;
 } 
-
+    
 #if !defined(__BASE_INTRIN_CONSTEXPR_SET1)
 #  define __BASE_INTRIN_CONSTEXPR_SET1(vectorType, integerType, arraySize, value)   \
-    do {                                                                            \   
-        vectorType vec;                                                             \  
-        Set1Constexpr<integerType, arraySize>(vec, value);                          \
+    do {                                                                            \
+        vectorType vec;                                                             \
+        Set1Constexpr<integerType, arraySize>(&vec, value);                         \
         return vec;                                                                 \
-    } while (0)
+    } while(0)
 #endif
-    
+
 //#if !defined(__BASE_INTRIN_CONSTEXPR_SET)
 //#  define __BASE_INTRIN_CONSTEXPR_SET(type, size, ...)      \
 //        type vec;
@@ -66,138 +66,106 @@ constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi8(int8 value) noex
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi16(int16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, int16, 8, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi32(int32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 4, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, int32, 4, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi64(int64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 2, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, int64, 2, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu8(uint8 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 16, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, uint8, 16, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu16(uint16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, uint16, 8, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu32(uint32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 4, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, uint32, 4, value);
 }
 
 constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu64(uint64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 2, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, uint64, 2, value);
 }
 
 // YMM
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epi8(int8 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 32, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, int8, 32, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epi16(int16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 16, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, int16, 16, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epi32(int32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, int32, 8, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epi64(int64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 4, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, int64, 4, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epu8(uint8 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 32, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, uint8, 32, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epu16(uint16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 16, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, uint16, 16, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epu32(uint32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, uint32, 8, value);
 }
 
 constexpr NODISCARD base_vec256i_t _base_constexpr_mm256_set1_epu64(uint64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, 4, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec256i_t, uint64, 4, value);
 }
 
 // ZMM 
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epi8(int8 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 64, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, int8, 64, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epi16(int16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 32, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, int16, 32, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epi32(int32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 16, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, int32, 16, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epi64(int64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, int64, 8, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epu8(uint8 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 64, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, uint8, 64, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epu16(uint16 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 32, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, uint16, 32, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epu32(uint32 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 16, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, uint32, 16, value);
 }
 
 constexpr NODISCARD base_vec512i_t _base_constexpr_mm512_set1_epu64(uint64 value) noexcept { 
-    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, 8, value);
+    __BASE_INTRIN_CONSTEXPR_SET1(base_vec512i_t, uint64, 8, value);
 }
 
 // ========================================================================================
-//                                              SET1
+//                                          SET
 // ========================================================================================
 
 // XMM 
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set_epi8(int8 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 16, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi16(int16 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 8, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi32(int32 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 4, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epi64(int64 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 2, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu8(uint8 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 16, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu16(uint16 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 8, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu32(uint32 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 4, value);
-}
-
-constexpr NODISCARD base_vec128i_t _base_constexpr_mm_set1_epu64(uint64 value) noexcept { 
-        __BASE_INTRIN_CONSTEXPR_SET1(base_vec128i_t, 2, value);
-}
 
 
 __BASE_NAMESPACE_END

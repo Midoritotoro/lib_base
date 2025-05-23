@@ -12,6 +12,7 @@
 #include <src/core/string/StringConversionOptions.h>
 
 #include <src/core/utility/simd/SimdTailMask.h>
+#include <src/core/utility/simd/SimdConstexprHelpers.h>
 
 
 __BASE_STRING_NAMESPACE_BEGIN
