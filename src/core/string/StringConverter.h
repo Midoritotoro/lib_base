@@ -276,7 +276,7 @@ private:
             
 			do { 
                 const auto loaded = _mm512_loadu_si512(stringDataStart);
-                const auto comparedGreaterThan = _mm512_cmpgt_epi16(loaded, lessThanCompare);
+                const auto comparedGreaterThan = _mm512_cmpgt_epi16_mask(loaded, lessThanCompare);
                 
                 // Narrowing conversion
                 if (comparedGreaterThan != 0) { 
@@ -292,7 +292,7 @@ private:
                     _mm512_store_si512(converted, convertedEpi8);
                 }
                 else { 
-                    _mm512_store(converted, loaded);
+                    _mm512_store_si512(converted, loaded);
                 }
 
                 memory::AdvanceBytes(stringDataStart, 64);
@@ -304,7 +304,7 @@ private:
         if (stringDataStart == stringDataEnd)
             return std::string(converted - fromSizeInBytes, fromSizeInBytes);
 
-        const auto avx512TailSize = fromSizeInBytes & AVX512_ALIGNED_TAIL_MASK_UINT64;
+        const auto avx512TailSize = fromSizeInBytes/* & AVX512_ALIGNED_TAIL_MASK_UINT64*/;
         
         if (avx512TailSize != 0) {
         

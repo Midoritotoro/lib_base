@@ -119,7 +119,7 @@
 #    if defined(CPP_GNU) || defined(CPP_CLANG)
 #      define SIMD_ALIGNAS(size)	__attribute__((aligned(size)))
 #	 elif defined(CPP_MSVC)
-#	   define SIMD_ALINGAS(size)	__declspec(align(size))
+#	   define SIMD_ALIGNAS(size)	__declspec(align(size))
 #    else
 #      define SIMD_ALIGNAS			alignas
 #    endif
