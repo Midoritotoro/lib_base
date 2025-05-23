@@ -221,6 +221,6 @@
 #define __BASE_REPEAT_63(X) __BASE_REPEAT_62(X), __BASE_REPEAT__(X)
 #define __BASE_REPEAT_64(X) __BASE_REPEAT_63(X), __BASE_REPEAT__(X)
 
-#define __BASE_REPEAT_N(N, X) __BASE_REPEAT_##N(X)
+#define __BASE_REPEAT_N(N, X) PP_CAT(__BASE_REPEAT_, N)(X)
 
 

@@ -94,5 +94,30 @@ typedef long long   base_vec512i_t BASE_LLVM_ATTRIBUTE_VECTOR_SIZE_ALIGNED(64)
 
 #endif
 
+#ifndef BASE_XMM_SIZE_IN_BYTES
+#  define BASE_XMM_SIZE_IN_BYTES 16
+#endif 
+
+#ifndef BASE_YMM_SIZE_IN_BYTES
+#  define BASE_YMM_SIZE_IN_BYTES 32
+#endif 
+
+#ifndef BASE_ZMM_SIZE_IN_BYTES
+#  define BASE_ZMM_SIZE_IN_BYTES 64
+#endif 
+
+
+
+#ifndef BASE_XMM_SIZE_IN_BITS
+#  define BASE_XMM_SIZE_IN_BITS 128
+#endif 
+
+#ifndef BASE_YMM_SIZE_IN_BITS
+#  define BASE_YMM_SIZE_IN_BITS 256
+#endif 
+
+#ifndef BASE_ZMM_SIZE_IN_BITS
+#  define BASE_ZMM_SIZE_IN_BITS 512
+#endif 
 
 __BASE_NAMESPACE_END
