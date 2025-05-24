@@ -26,7 +26,7 @@ constexpr void SetConstexpr(
 #if !defined(__BASE_INTRIN_CONSTEXPR_SET1)
 #  define __BASE_INTRIN_CONSTEXPR_SET1(vectorType, integerType, arraySize, value)   \
     do {                                                                            \
-        vectorType vec { __BASE_REPEAT_N(arraySize, value) };                       \
+        vectorType vec = { __BASE_REPEAT_N(arraySize, integerType(value)) };                     \
         return vec;                                                                 \
     } while(0)
 #endif
@@ -52,6 +52,8 @@ constexpr void SetConstexpr(
 
 // XMM
 
+
+
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epi8,  base_vec128i_t, int8,  16)
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epi16, base_vec128i_t, int16, 8)
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epi32, base_vec128i_t, int32, 4)
@@ -62,9 +64,8 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epu16, base_vec128i_t, uin
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epu32, base_vec128i_t, uint32, 4)
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epu64, base_vec128i_t, uint64, 2)
 
-
 #define base_constexpr_mm_set1_epi8(value)  _base_constexpr_mm_set1_epi8<value>()
-#define base_constexpr_mm_set1_epi16(value) _base_constexpr_mm_set1_epi16<value>()
+#define z(value) _base_constexpr_mm_set1_epi16<value>()
 #define base_constexpr_mm_set1_epi32(value) _base_constexpr_mm_set1_epi32<value>()
 #define base_constexpr_mm_set1_epi64(value) _base_constexpr_mm_set1_epi64<value>()
 
@@ -72,6 +73,8 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm_set1_epu64, base_vec128i_t, uin
 #define base_constexpr_mm_set1_epu16(value) _base_constexpr_mm_set1_epu16<value>()
 #define base_constexpr_mm_set1_epu32(value) _base_constexpr_mm_set1_epu32<value>()
 #define base_constexpr_mm_set1_epu64(value) _base_constexpr_mm_set1_epu64<value>()
+
+#define base_constexpr_mm_setzero()          base_constexpr_mm_set1_epi64(0)
 
 // YMM
 
@@ -95,6 +98,8 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm256_set1_epu64, base_vec256i_t, 
 #define base_constexpr_mm256_set1_epu32(value)  _base_constexpr_mm256_set1_epu32<value>()
 #define base_constexpr_mm256_set1_epu64(value)  _base_constexpr_mm256_set1_epu64<value>()
 
+#define base_constexpr_mm256_setzero()          base_constexpr_mm256_set1_epi64(0)
+
 // ZMM 
 
 __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epi8,  base_vec512i_t, int8,  64)
@@ -117,6 +122,8 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_vec512i_t, 
 #define base_constexpr_mm512_set1_epu16(value)  _base_constexpr_mm512_set1_epu16<value>()
 #define base_constexpr_mm512_set1_epu32(value)  _base_constexpr_mm512_set1_epu32<value>()
 #define base_constexpr_mm512_set1_epu64(value)  _base_constexpr_mm512_set1_epu64<value>()
+
+#define base_constexpr_mm512_setzero()          base_constexpr_mm512_set1_epi64(0)
 
 
 // ========================================================================================

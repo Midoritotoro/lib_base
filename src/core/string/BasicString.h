@@ -14,6 +14,8 @@
 #include <src/core/utility/simd/SimdAlgorithm.h>
 #include <src/core/string/StringConverter.h>
 
+#include <src/core/utility/simd/SimdVectorType.h>
+
 WARNING_DISABLE_MSVC(4834)
 WARNING_DISABLE_MSVC(4002)
 WARNING_DISABLE_MSVC(4003)
@@ -1231,7 +1233,6 @@ CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimizat
 	return _storage.c_str();
 }
 
-
 template <
 	class _Char_,
 	class _Traits_,
@@ -1241,10 +1242,10 @@ template <
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Pointer
 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() noexcept
 {
-	constexpr auto p = base_constexpr_mm_set1_epi16(2698);
+	constexpr auto p = base_constexpr_mm_set1_epi16(254);
 
 	for (int16 i = 0; i < 8; ++i)
-		std::cout << p.m128i_i16[i] << " ";
+		std::cout << vec.m128i_i16[i] << " ";
 
 	return _storage.c_str();
 }
