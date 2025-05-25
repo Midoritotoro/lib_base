@@ -789,19 +789,6 @@ public:
 	CONSTEXPR_CXX20 NODISCARD ValueType pop_back() noexcept;
 	CONSTEXPR_CXX20 NODISCARD ValueType pop_front() noexcept;
 private:
-	static constexpr NODISCARD SizeType calculateGrowth(SizeType newSize) noexcept;
-
-	CONSTEXPR_CXX20 inline NODISCARD bool resizeReallocate(SizeType newCapacity) noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD Reference emplaceBack(ValueType value);
-
-	CONSTEXPR_CXX20 inline void emplaceBackWithUnusedCapacity(ValueType value);
-	CONSTEXPR_CXX20 inline void emplaceBackReallocate(ValueType value);
-	
-	
-	CONSTEXPR_CXX20 inline void emplaceAt(
-		pointer&	location,
-		ValueType	value);
-
 	_Storage_ _storage;
 };
 
@@ -881,8 +868,7 @@ CONSTEXPR_CXX20 inline __BASE_BS::BasicString(BasicString&& string) :
 {}
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS
-	::BasicString(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline __BASE_BS::BasicString(std::initializer_list<ValueType> initializerList)
 {
 	assign(initializerList);
 }
@@ -959,29 +945,25 @@ CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<char32_t, std::ch
 
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::ValueType& 
-	__BASE_BS::operator[](const SizeType index) noexcept 
+NODISCARD __BASE_BS::ValueType& __BASE_BS::operator[](const SizeType index) noexcept 
 {
 	return at(index);
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD const __BASE_BS::ValueType& 
-	__BASE_BS::operator[](const SizeType index) const noexcept
+NODISCARD const __BASE_BS::ValueType&  __BASE_BS::operator[](const SizeType index) const noexcept
 {
 	return at(index);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS& 
-	__BASE_BS::operator=(std::initializer_list<ValueType> initializerList) 
+CONSTEXPR_CXX20 __BASE_BS& __BASE_BS::operator=(std::initializer_list<ValueType> initializerList) 
 {
 	return assign(initializerList.begin(), initializerList.size());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS& 
-	__BASE_BS::operator+=(std::initializer_list<ValueType> initializerList) 
+CONSTEXPR_CXX20 __BASE_BS& __BASE_BS::operator+=(std::initializer_list<ValueType> initializerList) 
 {
 	return append(initializerList);
 }
@@ -992,15 +974,13 @@ CONSTEXPR_CXX20 __BASE_BS&
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::ValueType 
-	__BASE_BS::at(const SizeType index) const noexcept
+NODISCARD __BASE_BS::ValueType __BASE_BS::at(const SizeType index) const noexcept
 {
 	return at(index);
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD inline __BASE_BS::Reference 
-	__BASE_BS::at(const SizeType index) noexcept 
+NODISCARD inline __BASE_BS::Reference __BASE_BS::at(const SizeType index) noexcept 
 {
 	DebugAssertLog(_storage.data() != nullptr, "base:string::BasicString::at: Data is nullptr");
 	DebugAssertLog(index >= 0 && index < size(), "base::string::BasicString::at: Index out of range");
@@ -1009,110 +989,95 @@ NODISCARD inline __BASE_BS::Reference
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType*
-	__BASE_BS::data() noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType* __BASE_BS::data() noexcept
 {
 	return _storage.data();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD const __BASE_BS::ValueType*
-	__BASE_BS::constData() const noexcept 
+CONSTEXPR_CXX20 NODISCARD const __BASE_BS::ValueType* __BASE_BS::constData() const noexcept 
 {
 	return _storage.data();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD const __BASE_BS::ValueType*
-	__BASE_BS::data() const noexcept 
+CONSTEXPR_CXX20 NODISCARD const __BASE_BS::ValueType* __BASE_BS::data() const noexcept 
 {
 	return _storage.data();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS::ValueType& 
-	__BASE_BS::first() 
+CONSTEXPR_CXX20 inline __BASE_BS::ValueType& __BASE_BS::first() 
 {
 	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& 
-	__BASE_BS::first() const noexcept
+CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& __BASE_BS::first() const noexcept
 {
 	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& 
-	__BASE_BS::constFirst() const noexcept
+CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& __BASE_BS::constFirst() const noexcept
 {
 	return first();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS::ValueType& 
-	__BASE_BS::last()
+CONSTEXPR_CXX20 inline __BASE_BS::ValueType& __BASE_BS::last()
 {
 	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
 	return at(size() - 1);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& 
-	__BASE_BS::last() const noexcept
+CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& __BASE_BS::last() const noexcept
 {
 	DebugAssertLog(size() > 0, "base::string::BasicString::first: String is empty");
 	return at(size() - 1);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& 
-	__BASE_BS::constLast() const noexcept 
+CONSTEXPR_CXX20 inline const __BASE_BS::ValueType& __BASE_BS::constLast() const noexcept 
 {
 	return last();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS::ConstPointer 
-	__BASE_BS::c_str() const noexcept
+CONSTEXPR_CXX20 inline __BASE_BS::ConstPointer __BASE_BS::c_str() const noexcept
 {
 	return _storage.c_str();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS::Pointer
-__BASE_BS::c_str() noexcept
+CONSTEXPR_CXX20 inline __BASE_BS::Pointer __BASE_BS::c_str() noexcept
 {
 	return _storage.c_str();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::front() const noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::front() const noexcept
 {
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType&
-	__BASE_BS::front() noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType& __BASE_BS::front() noexcept
 {
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::back() const noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::back() const noexcept
 {
 	return at(size() - 1);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType&
-	__BASE_BS::back() noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType& __BASE_BS::back() noexcept
 {
 	return at(size() - 1);
 }
@@ -1124,50 +1089,43 @@ CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType&
 
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::Iterator 
-	__BASE_BS::begin() noexcept 
+CONSTEXPR_CXX20 __BASE_BS::Iterator __BASE_BS::begin() noexcept 
 {
 	return (StringIterator(this));
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstIterator 
-	__BASE_BS::begin() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstIterator __BASE_BS::begin() const noexcept
 {
 	return (StringConstIterator(this));
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstIterator 
-	__BASE_BS::cbegin() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstIterator __BASE_BS::cbegin() const noexcept
 {
 	return (StringConstIterator(this));
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstIterator
-	__BASE_BS::constBegin() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstIterator __BASE_BS::constBegin() const noexcept
 {
 	return (StringConstIterator(this));
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::Iterator 
-	__BASE_BS::end() noexcept
+CONSTEXPR_CXX20 __BASE_BS::Iterator __BASE_BS::end() noexcept
 {
 	return (StringIterator(this) + size());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstIterator 
-	__BASE_BS::end() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstIterator __BASE_BS::end() const noexcept
 {
 	return (StringConstIterator(this) + size());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstIterator 
-	__BASE_BS::cend() const
+CONSTEXPR_CXX20 __BASE_BS::ConstIterator __BASE_BS::cend() const
 {
 	return (StringConstIterator(this) + size());
 }
@@ -1180,85 +1138,73 @@ CONSTEXPR_CXX20 __BASE_BS::ConstIterator
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ReverseIterator 
-	__BASE_BS::rbegin() noexcept
+CONSTEXPR_CXX20 __BASE_BS::ReverseIterator __BASE_BS::rbegin() noexcept
 {
 	return ReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ReverseIterator 
-	__BASE_BS::rend() noexcept 
+CONSTEXPR_CXX20 __BASE_BS::ReverseIterator __BASE_BS::rend() noexcept 
 {
 	return ReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator 
-	__BASE_BS::rbegin() const noexcept 
+CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator __BASE_BS::rbegin() const noexcept 
 {
 	return ConstReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator 
-	__BASE_BS::rend() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator __BASE_BS::rend() const noexcept
 {
 	return ConstReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator 
-	__BASE_BS::crbegin() const noexcept
+CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator __BASE_BS::crbegin() const noexcept
 {
 	return ConstReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator 
-	__BASE_BS::crend() const noexcept 
+CONSTEXPR_CXX20 __BASE_BS::ConstReverseIterator __BASE_BS::crend() const noexcept 
 {
 	return ConstReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ReverseIterator 
-	__BASE_BS::reversedBegin() noexcept
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ReverseIterator __BASE_BS::reversedBegin() noexcept
 {
 	return ReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ReverseIterator 
-	__BASE_BS::reversedEnd() noexcept 
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ReverseIterator __BASE_BS::reversedEnd() noexcept 
 {
 	return ReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator 
-	__BASE_BS::reversedBegin() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator __BASE_BS::reversedBegin() const noexcept
 {
 	return ConstReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator 
-	__BASE_BS::reversedEnd() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator __BASE_BS::reversedEnd() const noexcept 
 {
 	return ConstReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator 
-	__BASE_BS::constReversedBegin() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator __BASE_BS::constReversedBegin() const noexcept 
 {
 	return crbegin();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator
-	__BASE_BS::constReversedEnd() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator __BASE_BS::constReversedEnd() const noexcept 
 {
 	return crend();
 }
@@ -1269,36 +1215,31 @@ CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::ConstReverseIterator
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType
-	__BASE_BS::size() const noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType __BASE_BS::size() const noexcept
 {
 	return _storage.size();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::length() const noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType __BASE_BS::length() const noexcept
 {
 	return _storage.size();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType
-	__BASE_BS::capacity() const noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::SizeType __BASE_BS::capacity() const noexcept
 {
 	return _storage.capacity();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::count() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::SizeType __BASE_BS::count() const noexcept 
 {
 	return size();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::unusedCapacity() const noexcept
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::SizeType __BASE_BS::unusedCapacity() const noexcept
 {
 	return (capacity() - size());
 }
@@ -1320,15 +1261,13 @@ CONSTEXPR_CXX20 NODISCARD bool __BASE_BS::isNull() const noexcept {
 
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::allocator_type& 
-	__BASE_BS::getAllocator() noexcept
+CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::allocator_type& __BASE_BS::getAllocator() noexcept
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD const __BASE_BS::allocator_type& 
-	__BASE_BS::getAllocator() const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD const __BASE_BS::allocator_type& __BASE_BS::getAllocator() const noexcept 
 {
 
 }
@@ -1391,8 +1330,7 @@ NODISCARD std::u32string __BASE_BS::toStdUTF32String() const noexcept {
 
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline void __BASE_BS
-	::reserve(BASE_GUARDOVERFLOW SizeType newCapacity)
+CONSTEXPR_CXX20 inline void __BASE_BS::reserve(SizeType newCapacity)
 {
 	_storage.reserve(newCapacity);
 }
@@ -1429,10 +1367,9 @@ void __BASE_BS::clear() {
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::Iterator
-	__BASE_BS::erase(
-		ConstIterator first,
-		ConstIterator last)
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::Iterator __BASE_BS::erase(
+	ConstIterator first,
+	ConstIterator last)
 {
 
 }
@@ -1450,103 +1387,85 @@ CONSTEXPR_CXX20 NODISCARD __BASE_BS::Iterator
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::push_back(ValueType element)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(ValueType element)
 {
 	_storage.push_back(element);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS
-		::push_back(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(std::initializer_list<ValueType> initializerList)
 {
 	return append(initializerList);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::push_back(BasicString&& other) 
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(BasicString&& other) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::push_front(ValueType element) 
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_front(ValueType element) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS
-		::push_front(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS ::push_front(std::initializer_list<ValueType> initializerList)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::push_front(BasicString&& other) 
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_front(BasicString&& other) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::pushFront(ValueType element)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushFront(ValueType element)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS
-		::pushFront(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushFront(std::initializer_list<ValueType> initializerList)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::pushFront(BasicString&& other)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushFront(BasicString&& other)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::pushBack(ValueType element) 
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushBack(ValueType element) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS
-		::pushBack(std::initializer_list<ValueType> initializerList)
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushBack(std::initializer_list<ValueType> initializerList)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS&
-	__BASE_BS::pushBack(BasicString&& other) 
+CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushBack(BasicString&& other) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::pop() noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::pop() noexcept
 {
 	return popBack();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::popBack() noexcept 
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::popBack() noexcept 
 {
 	DebugAssertLog(isEmpty() == false, "base::string::BasicString::popBack: Data is empty");
 
@@ -1557,22 +1476,19 @@ CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::pop_back() noexcept 
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::pop_back() noexcept 
 {
 	return popBack();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType 
-	__BASE_BS::pop_front() noexcept 
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::pop_front() noexcept 
 {
 	return popFront();
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType
-	__BASE_BS::popFront() noexcept
+CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::popFront() noexcept
 {
 	DebugAssertLog(isEmpty() == false, "base::string::BasicString::popFront: Data is empty");
 
@@ -1634,59 +1550,53 @@ CONSTEXPR_CXX20 inline void __BASE_BS::swapAt(
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::indexOf(
-		ValueType ch,
-		SizeType from,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::indexOf(
+	ValueType ch,
+	SizeType from,
+	CaseSensitivity cs) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::indexOf(
-		const BasicString& string,
-		SizeType from,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::indexOf(
+	const BasicString& string,
+	SizeType from,
+	CaseSensitivity cs) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::lastIndexOf(
-		ValueType c,
-		CaseSensitivity cs) const noexcept
+NODISCARD __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+	ValueType c,
+	CaseSensitivity cs) const noexcept
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType
-	__BASE_BS::lastIndexOf(
-		ValueType c,
-		SizeType from,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+	ValueType c,
+	SizeType from,
+	CaseSensitivity cs) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType
-	__BASE_BS::lastIndexOf(
-		const BasicString& string,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+	const BasicString& string,
+	CaseSensitivity cs) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::lastIndexOf(
-		const BasicString& string,
-		SizeType from,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+	const BasicString& string,
+	SizeType from,
+	CaseSensitivity cs) const
 {
 
 }
@@ -1708,197 +1618,176 @@ NODISCARD bool __BASE_BS::contains(
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::count(
-		ValueType ch,
-		CaseSensitivity caseSensitivity) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::count(
+	ValueType ch,
+	CaseSensitivity caseSensitivity) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::SizeType
-	__BASE_BS::count(
-		const BasicString& string,
-		CaseSensitivity caseSensitivity) const
+NODISCARD __BASE_BS::SizeType __BASE_BS::count(
+	const BasicString& string,
+	CaseSensitivity caseSensitivity) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS& 
-	__BASE_BS::fill(
-		ValueType ch,
-		SizeType size)
+NODISCARD __BASE_BS& __BASE_BS::fill(
+	ValueType ch,
+	SizeType size)
 {	
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::insert(
-		SizeType index,
-		ValueType ch)
+__BASE_BS& __BASE_BS::insert(
+	SizeType index,
+	ValueType ch)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::insert(
-		SizeType			index,
-		const ValueType*	ch,
-		SizeType			length)
+__BASE_BS& __BASE_BS::insert(
+	SizeType			index,
+	const ValueType*	ch,
+	SizeType			length)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::insert(
-		SizeType			index,
-		const BasicString&	string)
+__BASE_BS&  __BASE_BS::insert(
+	SizeType			index,
+	const BasicString&	string)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::remove(
-		SizeType index,
-		SizeType length)
+__BASE_BS& __BASE_BS::remove(
+	SizeType index,
+	SizeType length)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::remove(
-		ValueType ch,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::remove(
+	ValueType ch,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::remove(
-		const BasicString& string,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::remove(
+	const BasicString& string,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::removeAt(SizeType pos)
+__BASE_BS& __BASE_BS::removeAt(SizeType pos)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::removeFirst() 
+__BASE_BS& __BASE_BS::removeFirst() 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::removeLast()
+__BASE_BS& __BASE_BS::removeLast()
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		SizeType index,
-		SizeType length,
-		ValueType after)
+__BASE_BS& __BASE_BS::replace(
+	SizeType index,
+	SizeType length,
+	ValueType after)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		SizeType index,
-		SizeType length,
-		const ValueType* ch,
-		SizeType slen)
+__BASE_BS& __BASE_BS::replace(
+	SizeType index,
+	SizeType length,
+	const ValueType* ch,
+	SizeType slen)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		SizeType index,
-		SizeType length,
-		const BasicString& after)
+__BASE_BS& __BASE_BS::replace(
+	SizeType index,
+	SizeType length,
+	const BasicString& after)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		ValueType before,
-		ValueType after,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::replace(
+	ValueType before,
+	ValueType after,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		const ValueType* before,
-		SizeType beforeLength,
-		const ValueType* after,
-		SizeType afterLength,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::replace(
+	const ValueType* before,
+	SizeType beforeLength,
+	const ValueType* after,
+	SizeType afterLength,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::replace(
-		const BasicString& before,
-		const BasicString& after,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::replace(
+	const BasicString& before,
+	const BasicString& after,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::replace(
-		ValueType ch,
-		const BasicString& after,
-		CaseSensitivity caseSensitivity)
+__BASE_BS& __BASE_BS::replace(
+	ValueType ch,
+	const BasicString& after,
+	CaseSensitivity caseSensitivity)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::StringList 
-	__BASE_BS::split(
-		const BasicString& sep,
-		SplitBehavior behavior,
-		CaseSensitivity cs) const
+NODISCARD __BASE_BS::StringList __BASE_BS::split(
+	const BasicString& sep,
+	SplitBehavior behavior,
+	CaseSensitivity cs) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-NODISCARD __BASE_BS::StringList 
-	__BASE_BS::split(
-		ValueType sep,
-		SplitBehavior behavior,
-		CaseSensitivity caseSensibity) const
+NODISCARD __BASE_BS::StringList __BASE_BS::split(
+	ValueType sep,
+	SplitBehavior behavior,
+	CaseSensitivity caseSensibity) const
 {
 
 }
@@ -1909,8 +1798,7 @@ CONSTEXPR_CXX20 inline void __BASE_BS::reverse() noexcept {
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
-	::contains(const ValueType& element) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::contains(const ValueType& element) const noexcept
 {
 
 }
@@ -1923,15 +1811,13 @@ CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
-	::startsWith(const ValueType& element) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::startsWith(const ValueType& element) const noexcept
 {
 	return (at(0) == element);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
-	::startsWith(const BasicString& subString) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::startsWith(const BasicString& subString) const noexcept
 {
 	const auto subStringSize = subString.size();
 
@@ -1946,15 +1832,13 @@ CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
-	::endsWith(const ValueType& element) const noexcept 
+CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::endsWith(const ValueType& element) const noexcept 
 {
 	return (at(size() - 1) == element);
 }
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS
-	::endsWith(const BasicString& subString) const noexcept
+CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::endsWith(const BasicString& subString) const noexcept
 {
 	const auto subStringSize	= subString.size();
 	const auto mySize			= size();
@@ -1976,49 +1860,42 @@ CONSTEXPR_CXX20 inline void __BASE_BS::removeAll(const ValueType& element) {
 
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::assign(const BasicString& string) 
+__BASE_BS& __BASE_BS::assign(const BasicString& string) 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::assign(BasicString&& string)
+__BASE_BS& __BASE_BS::assign(BasicString&& string)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::assign(
-		const BasicString&	string,
-		const size_type		position,
-		size_type			length)
+__BASE_BS& __BASE_BS::assign(
+	const BasicString&	string,
+	const size_type		position,
+	size_type			length)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::assign(
-		const ValueType* string,
-		const size_type length)
+__BASE_BS& __BASE_BS::assign(
+	const ValueType* string,
+	const size_type length)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS::assign(const ValueType* string) 
+__BASE_BS& __BASE_BS::assign(const ValueType* string) 
 {
 	
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS& 
-	__BASE_BS
-	::assign(std::initializer_list<ValueType> initializerList)
+__BASE_BS& __BASE_BS::assign(std::initializer_list<ValueType> initializerList)
 {
 	return assign(initializerList.data(), initializerList.size());
 }
@@ -2027,40 +1904,36 @@ __BASE_BS_TEMPLATE
 template <
 	class _IteratorOrLength_,
 	class _IteratorOrChar_>
-__BASE_BS&
-	__BASE_BS::assign(
-		_IteratorOrLength_	firstOrLength,
-		_IteratorOrChar_	lastOrChar)
+__BASE_BS& __BASE_BS::assign(
+	_IteratorOrLength_	firstOrLength,
+	_IteratorOrChar_	lastOrChar)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::insert(
-		SizeType				firstPosition,
-		const BasicString&		string,
-		SizeType				secondPosition,
-		SizeType				length)
+__BASE_BS& __BASE_BS::insert(
+	SizeType				firstPosition,
+	const BasicString&		string,
+	SizeType				secondPosition,
+	SizeType				length)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS&
-	__BASE_BS::insert(
-		SizeType	position,
-		SizeType	length,
-		ValueType	ch)
+__BASE_BS& __BASE_BS::insert(
+	SizeType	position,
+	SizeType	length,
+	ValueType	ch)
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::iterator
-	__BASE_BS::insert(
-		ConstIterator	where,
-		const ValueType ch)
+__BASE_BS::iterator __BASE_BS::insert(
+	ConstIterator	where,
+	const ValueType ch)
 {
 
 }
@@ -2080,10 +1953,9 @@ NODISCARD container::Vector<typename __BASE_BS::SizeType>
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findFirstOf(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findFirstOf(
+	const BasicString&	string,
+	SizeType			position) const
 {
 	//if constexpr (is_vectorization_enabled) {
 	//	if (string.size() == 1) {
@@ -2101,214 +1973,191 @@ __BASE_BS::SizeType
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findFirstOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::findFirstOf(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findFirstOf(
-		const ValueType*	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findFirstOf(
+	const ValueType*	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findFirstOf(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::findFirstOf(
+	ValueType	ch,
+	SizeType	position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findLastOf(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findLastOf(
+	const BasicString&	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findLastOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::findLastOf(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findLastOf(
-		const ValueType*	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findLastOf(
+	const ValueType*	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findLastOf(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::findLastOf(
+	ValueType	ch,
+	SizeType	position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findFirstNotOf(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findFirstNotOf(
+	const BasicString&	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findFirstNotOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::findFirstNotOf(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findFirstNotOf(
-		const ValueType*	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findFirstNotOf(
+	const ValueType*	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findFirstNotOf(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::findFirstNotOf(
+	ValueType	ch,
+	SizeType	position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findLastNotOf(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findLastNotOf(
+	const BasicString&	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findLastNotOf(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::findLastNotOf(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::findLastNotOf(
-		const ValueType*	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::findLastNotOf(
+	const ValueType*	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::findLastNotOf(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::findLastNotOf(
+	ValueType	ch,
+	SizeType	position) const
 {	
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::find(
+	const BasicString&	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find(
-		const ValueType*	needle,
-		SizeType			position,
-		SizeType			size) const
+__BASE_BS::SizeType __BASE_BS::find(
+	const ValueType*	needle,
+	SizeType			position,
+	SizeType			size) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find(
-		const ValueType*	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::find(
+	const ValueType*	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::find(
+	ValueType	ch,
+	SizeType	position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::rfind(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::rfind(
+	const BasicString&	string,
+	SizeType			position) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::rfind(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::rfind(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::rfind(
-		const ValueType*	string,
-		SizeType			pos) const
+__BASE_BS::SizeType __BASE_BS::rfind(
+	const ValueType*	string,
+	SizeType			pos) const
 {
 
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::rfind(
-		ValueType	ch,
-		SizeType	position) const
+__BASE_BS::SizeType __BASE_BS::rfind(
+	ValueType	ch,
+	SizeType	position) const
 {
 	
 }
@@ -2344,20 +2193,18 @@ CONSTEXPR_CXX20 inline void __BASE_BS::shrink_to_fit() {
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_first_of(
-		const BasicString&	string,
-		SizeType			position) const
+__BASE_BS::SizeType __BASE_BS::find_first_of(
+	const BasicString&	string,
+	SizeType			position) const
 {
 	return findFirstOf(string, position);
 }
 
 __BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_first_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
+__BASE_BS::SizeType __BASE_BS::find_first_of(
+	const ValueType*	string,
+	SizeType			position,
+	SizeType			length) const
 {
 	return findFirstOf(string, position, length);
 }
@@ -2556,56 +2403,6 @@ int __BASE_BS::compare(
 __BASE_BS_TEMPLATE
 int __BASE_BS::compare(const ValueType* string) const {
 
-}
-
-__BASE_BS_TEMPLATE
-constexpr NODISCARD __BASE_BS::SizeType 
-	__BASE_BS::calculateGrowth(SizeType newSize) noexcept 
-{
-	const auto oldCapacity	= capacity();
-	const auto _MaxSize		= maxSize();
-
-	if (oldCapacity > _MaxSize - oldCapacity / 1.5)
-		return _MaxSize; // Overflow
-
-	const SizeType geometricGrowth = oldCapacity + oldCapacity / 1.5;
-
-	if (geometricGrowth < newSize)
-		return newSize;
-
-	return geometricGrowth;
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD bool __BASE_BS::resizeReallocate(SizeType newCapacity) noexcept {
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::Reference
-	__BASE_BS::emplaceBack(ValueType value) 
-{
-
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline void __BASE_BS::emplaceBackWithUnusedCapacity(ValueType value) {
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline void __BASE_BS::emplaceBackReallocate(ValueType value) {
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline void __BASE_BS::emplaceAt(
-	pointer&		location,
-	ValueType		value)
-{
-	memory::ConstructInPlace(*location, value);
-	++location;
 }
 
 // =======================================================================================
