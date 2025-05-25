@@ -1220,7 +1220,6 @@ CONSTEXPR_CXX20 inline const BasicString<_Char_, _Traits_, _Allocator_, _SimdOpt
 	return last();
 }
 
-
 template <
 	class _Char_,
 	class _Traits_,
@@ -1242,16 +1241,6 @@ template <
 CONSTEXPR_CXX20 inline BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::Pointer
 BasicString<_Char_, _Traits_, _Allocator_, _SimdOptimization_, _Storage_>::c_str() noexcept
 {
-	constexpr auto vec = _base_constexpr_mm_set1_epi8<1>();
-
-	for (int16 i = 0; i < 16; ++i)
-		std::cout << (int)vec.m128i_i8[i] << " ";
-
-	__m128i p = _mm_set1_epi8(1);
-	__m128i v = *const_cast<__m128i*>(reinterpret_cast<const __m128i*>(&vec.m128i_i8[0]));
-
-	std::cout << _mm_movemask_epi8(_mm_cmpeq_epi8(v, p));
-
 	return _storage.c_str();
 }
 
