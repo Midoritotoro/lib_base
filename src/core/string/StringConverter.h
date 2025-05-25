@@ -121,6 +121,9 @@ private:
 	{
         constexpr auto toLimit = MaximumIntegralLimit<std::string::value_type>();
 
+		constexpr auto replacementVector = base_vec128i_t_pointer_as_m128i(base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));
+		constexpr auto lessThanCompare = base_vec128i_t_pointer_as_m128i(base_constexpr_mm512_set1_epi8(toLimit));
+
         static_assert(
             _NarrowingConversionBehaviour_::replacementCharacter <= toLimit, 
             "base::core::string::StringConverter::convertStringImplementation: _NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. "); 
@@ -142,9 +145,6 @@ private:
         memory::AdvanceBytes(stringDataEnd, string.size() * sizeof(std::string::value_type));
 
 		if (avx512SizeInBytes != 0) {
-            const auto replacementVector = _mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
-			const auto lessThanCompare = _mm512_set1_epi8(toLimit);
-
 			do {
 				auto loaded = _mm512_loadu_si512(stringDataStart);
 				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, lessThanCompare);

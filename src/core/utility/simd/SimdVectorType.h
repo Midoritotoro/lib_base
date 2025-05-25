@@ -16,17 +16,16 @@ __BASE_NAMESPACE_BEGIN
 
 // XMM 
 
-//typedef union DECLARE_INTRIN_TYPE SIMD_ALIGNAS(16) base_vec128i_t {
-//    int8    m128i_i8[16];
-//    int16   m128i_i16[8];
-//    int32   m128i_i32[4];
-//    int64   m128i_i64[2];
-//    uint8   m128i_u8[16];
-//    uint16  m128i_u16[8];
-//    uint32  m128i_u32[4];
-//    uint64  m128i_u64[2];
-//} base_vec128i_t;
-using base_vec128i_t = __m128i;
+typedef union DECLARE_INTRIN_TYPE SIMD_ALIGNAS(16) base_vec128i_t {
+    int8    m128i_i8[16];
+    int16   m128i_i16[8];
+    int32   m128i_i32[4];
+    int64   m128i_i64[2];
+    uint8   m128i_u8[16];
+    uint16  m128i_u16[8];
+    uint32  m128i_u32[4];
+    uint64  m128i_u64[2];
+} base_vec128i_t;
 
 typedef struct DECLARE_INTRIN_TYPE SIMD_ALIGNAS(16) base_vec128d_t {
     double              m128d_f64[2];

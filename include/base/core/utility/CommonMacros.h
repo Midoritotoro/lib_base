@@ -223,4 +223,13 @@
 
 #define __BASE_REPEAT_N(N, X) PP_CAT(__BASE_REPEAT_, N)(X)
 
+#define BASE_FUNCTION_ALIAS(newName, ...)                                       \
+  template <typename... _Args_>                                                 \
+  inline auto newName(_Args_ &&... args)										\
+    noexcept(noexcept(__VA_ARGS__(std::forward<_Args_>(args)...)))              \
+		-> decltype(__VA_ARGS__(std::forward<_Args_>(args)...))                 \
+	{                                                                           \
+		return __VA_ARGS__(std::forward<_Args_>(args)...);                      \
+	}
+
 
