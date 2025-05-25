@@ -558,7 +558,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
 #  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__));
+#    define BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__))
 #endif
 #else 
 #  define BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(size) 
@@ -566,7 +566,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
 #  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) __attribute__((__vector_size__(size), __aligned__(size)));
+#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) __attribute__((__vector_size__(size), __aligned__(size)))
 #endif
 #else 
 #  define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) 
@@ -574,7 +574,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
 #  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__, __aligned__(size)));
+#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__, __aligned__(size)))
 #endif
 #else 
 #  define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS(size) 
@@ -582,7 +582,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
 #  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(size, align) __attribute__((__vector_size__(size), __may_alias__, __aligned__(align)));
+#    define BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(size, align) __attribute__((__vector_size__(size), __may_alias__, __aligned__(align)))
 #endif
 #else 
 #  define BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(size, align) 
@@ -590,7 +590,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
 #  if !defined(BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED)
-#    define BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(size) __attribute__((__may_alias__, __aligned__(size)));
+#    define BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(size) __attribute__((__may_alias__, __aligned__(size)))
 #endif
 #else 
 #  define BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(size) 

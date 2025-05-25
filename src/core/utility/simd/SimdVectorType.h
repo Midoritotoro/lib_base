@@ -96,10 +96,14 @@ using base_v16qu_t = BASE_ATTRIBUTE_VECTOR_SIZE(16) unsigned char;
    vector types, and their scalar components.  */
 using base_vec128i_t = BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(16) long long;
 using base_vec128d_t = BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(16) double;
+using base_vec128f_t = BASE_ATTRIBUTE_VECTOR_SIZE(16) float;
+//
+
 
 /* Unaligned version of the same types.  */
 using base_vec128i_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(16, 1) long long;
 using base_vec128d_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(16, 1) double;
+using base_vec128f_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(16, 1) float;
 
 using base_x86_double_u_t = BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(1) double;
 
@@ -152,15 +156,10 @@ using base_vec512f_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(
 using base_vec512i_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(64, 1) long long;
 using base_vec512d_u_t = BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(64, 1) double;
 
-//
-//typedef int __v4si __attribute__((__vector_size__(16)));
-//typedef float __v4sf __attribute__((__vector_size__(16)));
-//typedef float __m128 __attribute__((__vector_size__(16), __aligned__(16)));
-//
-//typedef float __m128_u __attribute__((__vector_size__(16), __aligned__(1)));
-//
-///* Unsigned types */
-//typedef unsigned int __v4su __attribute__((__vector_size__(16)));
+using base_v4si_t = BASE_ATTRIBUTE_VECTOR_SIZE(16) int;
+using base_v4sf_t = BASE_ATTRIBUTE_VECTOR_SIZE(16) float;
+
+using base_v4su = BASE_ATTRIBUTE_VECTOR_SIZE(16)  unsigned int;
 
 #endif
 
