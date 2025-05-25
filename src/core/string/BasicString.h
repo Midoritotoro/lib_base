@@ -703,91 +703,24 @@ public:
 	//									STL compatibility
 	// =======================================================================================
 
-	CONSTEXPR_CXX20 inline void shrink_to_fit();
+	BASE_FUNCTION_ALIAS_SPEC(CONSTEXPR_CXX20 inline, shrink_to_fit, shrinkToFit)
 
-	CONSTEXPR_CXX20 inline NODISCARD allocator_type& get_allocator() noexcept;
-	CONSTEXPR_CXX20 inline NODISCARD const allocator_type& get_allocator() const noexcept;
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(CONSTEXPR_CXX20 inline NODISCARD, get_allocator, noexcept, getAllocator)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(CONSTEXPR_CXX20 inline NODISCARD, get_allocator, const noexcept, getAllocator)
 
-	constexpr inline NODISCARD sizetype max_size() const noexcept;
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(constexpr inline NODISCARD, max_size, const noexcept, maxSize)
 
-	SizeType find_first_of(
-		const BasicString&	string,
-		SizeType			position = 0) const;
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_first_of, const, findFirstOf)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_last_of, const, findLastOf)
 
-	SizeType find_first_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const;
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_first_not_of, const, findFirstNotOf)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_last_not_of, const, findLastNotOf)
 
-	SizeType find_first_of(
-		const ValueType*	string,
-		SizeType			position = 0) const;
+	BASE_FUNCTION_ALIAS_SPEC(CONSTEXPR_CXX20 inline, push_front, pushFront)
+	BASE_FUNCTION_ALIAS_SPEC(CONSTEXPR_CXX20 inline, push_back, pushBack)
 
-	SizeType find_first_of(
-		ValueType	ch,
-		SizeType	position = 0) const;
-
-	SizeType find_last_of(
-		const BasicString&	string,
-		SizeType			position = -1) const;
-
-	SizeType find_last_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType n) const;
-
-	SizeType find_last_of(
-		const ValueType*	string, 
-		SizeType			position = -1) const;
-
-	SizeType find_last_of(
-		ValueType	ch,
-		SizeType	position = -1) const;
-
-	SizeType find_first_not_of(
-		const BasicString&	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_not_of(
-		const ValueType*	string,
-		SizeType			position, 
-		SizeType			length) const;
-
-	SizeType find_first_not_of(
-		const ValueType*	string,
-		SizeType			position = 0) const;
-
-	SizeType find_first_not_of(
-		ValueType	ch,
-		SizeType	position = 0) const;
-
-	SizeType find_last_not_of(
-		const BasicString&	string,
-		SizeType			position = -1) const;
-
-	SizeType find_last_not_of(
-		const ValueType*	string,
-		SizeType			position, 
-		SizeType			length) const;
-
-	SizeType find_last_not_of(
-		const ValueType*	string, 
-		SizeType			position = -1) const;
-
-	SizeType find_last_not_of(
-		ValueType	ch,
-		SizeType	position = -1) const;
-
-	CONSTEXPR_CXX20 inline BasicString& push_front(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline BasicString& push_front(ValueType element);
-	CONSTEXPR_CXX20 inline BasicString& push_front(BasicString&& other);
-
-	CONSTEXPR_CXX20 inline BasicString& push_back(std::initializer_list<ValueType> initializerList);
-	CONSTEXPR_CXX20 inline BasicString& push_back(ValueType element);
-	CONSTEXPR_CXX20 inline BasicString& push_back(BasicString&& other);
-
-	CONSTEXPR_CXX20 NODISCARD ValueType pop_back() noexcept;
-	CONSTEXPR_CXX20 NODISCARD ValueType pop_front() noexcept;
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(CONSTEXPR_CXX20 inline NODISCARD, pop_back, noexcept, popBack)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(CONSTEXPR_CXX20 inline NODISCARD, pop_front, noexcept, popFront)
 private:
 	_Storage_ _storage;
 };
@@ -1387,42 +1320,6 @@ CONSTEXPR_CXX20 NODISCARD __BASE_BS::Iterator
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(ValueType element)
-{
-	_storage.push_back(element);
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(std::initializer_list<ValueType> initializerList)
-{
-	return append(initializerList);
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_back(BasicString&& other) 
-{
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_front(ValueType element) 
-{
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS ::push_front(std::initializer_list<ValueType> initializerList)
-{
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::push_front(BasicString&& other) 
-{
-
-}
-
-__BASE_BS_TEMPLATE
 CONSTEXPR_CXX20 inline __BASE_BS& __BASE_BS::pushFront(ValueType element)
 {
 
@@ -1473,18 +1370,6 @@ CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::popBack() noexcept
 
 	const auto temp = at(lastPosition);
 	erase(lastPosition, lastPosition);
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::pop_back() noexcept 
-{
-	return popBack();
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 NODISCARD __BASE_BS::ValueType __BASE_BS::pop_front() noexcept 
-{
-	return popFront();
 }
 
 __BASE_BS_TEMPLATE
@@ -2167,176 +2052,6 @@ __BASE_BS::SizeType __BASE_BS::rfind(
 //									STL compatibility
 // =======================================================================================
 
-
-__BASE_BS_TEMPLATE
-constexpr inline NODISCARD sizetype __BASE_BS::max_size() const noexcept {
-	return static_cast<std::size_t>(-1) / sizeof(ValueType);
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD __BASE_BS::allocator_type&
-	__BASE_BS::get_allocator() noexcept
-{
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline NODISCARD const __BASE_BS::allocator_type& 
-	__BASE_BS::get_allocator() const noexcept 
-{
-
-}
-
-__BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 inline void __BASE_BS::shrink_to_fit() {
-	return shrinkToFit();
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType __BASE_BS::find_first_of(
-	const BasicString&	string,
-	SizeType			position) const
-{
-	return findFirstOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType __BASE_BS::find_first_of(
-	const ValueType*	string,
-	SizeType			position,
-	SizeType			length) const
-{
-	return findFirstOf(string, position, length);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_first_of(
-		const ValueType*	string,
-		SizeType			position) const
-{
-	return findFirstOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_first_of(
-		ValueType	ch,
-		SizeType	position) const
-{
-	return findFirstOf(ch, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_last_of(
-		const BasicString&	string,
-		SizeType			position) const
-{
-	return findLastOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_last_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-	return findLastOf(string, position, length);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_last_of(
-		const ValueType*	string,
-		SizeType			position) const
-{
-	return findLastOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_last_of(
-		ValueType	ch,
-		SizeType	position) const
-{
-	return findLastOf(ch, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_first_not_of(
-		const BasicString&	string,
-		SizeType			position) const
-{
-	return findFirstNotOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_first_not_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-	return findFirstNotOf(string, position, length);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_first_not_of(
-		const ValueType*	string,
-		SizeType			position) const
-{
-	return findFirstNotOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_first_not_of(
-		ValueType	ch,
-		SizeType	position) const
-{
-	return findFirstNotOf(ch, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_last_not_of(
-		const BasicString&	string,
-		SizeType			position) const
-{
-	return findLastNotOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_last_not_of(
-		const ValueType*	string,
-		SizeType			position,
-		SizeType			length) const
-{
-	return findLastNotOf(string, position, length);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType 
-	__BASE_BS::find_last_not_of(
-		const ValueType*	string,
-		SizeType			position) const
-{
-	return findLastNotOf(string, position);
-}
-
-__BASE_BS_TEMPLATE
-__BASE_BS::SizeType
-	__BASE_BS::find_last_not_of(
-		ValueType	ch,
-		SizeType	position) const
-{
-	return findLastNotOf(ch, position);
-}
 
 __BASE_BS_TEMPLATE
 __BASE_BS 
