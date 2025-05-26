@@ -121,8 +121,10 @@ private:
 	{
         constexpr auto toLimit = MaximumIntegralLimit<std::string::value_type>();
 
-		constexpr auto replacementVector = base_vec128i_t_pointer_as_m128i(base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));
-		constexpr auto lessThanCompare = base_vec128i_t_pointer_as_m128i(base_constexpr_mm512_set1_epi8(toLimit));
+		constexpr auto replacementVector = base_vec128i_t_pointer_as_m128i(
+			base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));
+		constexpr auto lessThanCompare = base_vec128i_t_pointer_as_m128i(
+			base_constexpr_mm512_set1_epi8(toLimit));
 
         static_assert(
             _NarrowingConversionBehaviour_::replacementCharacter <= toLimit, 

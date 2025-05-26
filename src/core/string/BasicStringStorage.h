@@ -133,15 +133,7 @@ public:
         const _Char_* const	data,
         const size_t		size)
     {
-        if (size <= maxSmallSize)
-            initSmall(data, size);
-        else if (size <= maxMediumSize)
-            initMedium(data, size);
-        else
-            initLarge(data, size);
-
-        Assert(this->size() == size);
-        Assert(size == 0 || memcmp(this->data(), data, size * sizeof(_Char_)) == 0);
+        initAny(data, size);
     }
 
     ~BasicStringStorage() noexcept {
@@ -340,6 +332,9 @@ private:
     void copyMedium(const BasicStringStorage& rhs);
     void copyLarge(const BasicStringStorage& rhs);
 
+    void initAny(
+        const _Char_* const   data,
+        const size_t        size);
     void initSmall(
         const _Char_* const data,
         const size_t size);
@@ -362,6 +357,25 @@ private:
     void unshare(size_t minCapacity = 0);
     _Char_* mutableDataLarge();
 };
+
+template <
+    class _Char_,
+    class _SimdOptimization_,
+    class _StorageOptimization_>
+void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::initAny(
+    const _Char_* const   data,
+    const size_t        size)
+{
+    if (size <= maxSmallSize)
+        initSmall(data, size);
+    else if (size <= maxMediumSize)
+        initMedium(data, size);
+    else
+        initLarge(data, size);
+
+    Assert(this->size() == size);
+    Assert(size == 0 || memcmp(this->data(), data, size * sizeof(_Char_)) == 0);
+}
 
 // Small strings are bitblitted
 template <

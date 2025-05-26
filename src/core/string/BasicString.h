@@ -163,40 +163,18 @@ public:
 
 	CONSTEXPR_CXX20 inline BasicString(std::initializer_list<ValueType> initializerList);
 
-#if __cpp_lib_char8_t
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(std::basic_string<char8_t, std::char_traits<char8_t>, _Allocator2_>&& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(const std::basic_string<char8_t, std::char_traits<char8_t>, _Allocator2_>& string);
-#endif
-
 	CONSTEXPR_CXX20 BasicString(BasicString&& string);
 	CONSTEXPR_CXX20 BasicString(const BasicString& string);
 	
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(std::basic_string<char, std::char_traits<char>, _Allocator2_>&& string);
+	template <
+		typename _CharType_,
+		class _AllocatorType_>
+	CONSTEXPR_CXX20 BasicString(std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>&& string);
 
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(const std::basic_string<char, std::char_traits<char>, _Allocator2_>& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(std::basic_string<wchar_t, std::char_traits<wchar_t>, _Allocator2_>&& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(const std::basic_string<wchar_t, std::char_traits<wchar_t>, _Allocator2_>& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(std::basic_string<char16_t, std::char_traits<char16_t>, _Allocator2_>&& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(const std::basic_string<char16_t, std::char_traits<char16_t>, _Allocator2_>& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(std::basic_string<char32_t, std::char_traits<char32_t>, _Allocator2_>&& string);
-
-	template <class _Allocator2_>
-	CONSTEXPR_CXX20 BasicString(const std::basic_string<char32_t, std::char_traits<char32_t>, _Allocator2_>& string);
+	//template <
+	//	typename _CharType_,
+	//	class _AllocatorType_>
+	//CONSTEXPR_CXX20 BasicString(const std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>& stringg);
 
 	// =======================================================================================
 	//								 Assignment Operators
@@ -734,7 +712,6 @@ private:
 //									 Constructors
 // =======================================================================================
 
-
 __BASE_BS_TEMPLATE
 CONSTEXPR_CXX20 __BASE_BS::BasicString() {
 	 
@@ -806,71 +783,32 @@ CONSTEXPR_CXX20 inline __BASE_BS::BasicString(std::initializer_list<ValueType> i
 	assign(initializerList);
 }
 
-
-#if __cpp_lib_char8_t
-
 __BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<char8_t, std::char_traits<char8_t>, _Allocator2_>&& string) {
+template <
+	typename _CharType_,
+	class _AllocatorType_>
+CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>&& string) {
+	// TODO - optimize move
+	if constexpr (std::is_same_v<_CharType_, ValueType>) {
+		_storage.initAny(string.data(), string.size());
+		return;	
+	}
 
-}
+	return _storage.initAny(StringConverter<DefaultReplacementConversionMode>::convertString<
+		std::basic_string<
+			_CharType_,
+			std::char_traits<_CharType_>,
+			std::allocator<_CharType_>>,
+			>(std::move(string));
+	}
 
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<char8_t, std::char_traits<char8_t>, _Allocator2_>& string) {
-
-}
-
-#endif
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<char, std::char_traits<char>, _Allocator2_>&& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<char, std::char_traits<char>, _Allocator2_>& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<wchar_t, std::char_traits<wchar_t>, _Allocator2_>&& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<wchar_t, std::char_traits<wchar_t>, _Allocator2_>& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<char16_t, std::char_traits<char16_t>, _Allocator2_>&& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<char16_t, std::char_traits<char16_t>, _Allocator2_>& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<char32_t, std::char_traits<char32_t>, _Allocator2_>&& string) {
-
-}
-
-__BASE_BS_TEMPLATE
-template <class _Allocator2_>
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<char32_t, std::char_traits<char32_t>, _Allocator2_>& string) {
-
-}
-
+//__BASE_BS_TEMPLATE
+//template <
+//	typename _CharType_,
+//	class _AllocatorType_>
+//CONSTEXPR_CXX20 __BASE_BS::BasicString(const std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>& string) {
+//
+//}
 
 // =======================================================================================
 //								 Assignment Operators
@@ -2609,12 +2547,8 @@ operator<<(
 // std::basic_string compatibility
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator==(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs) 
@@ -2623,12 +2557,8 @@ inline bool operator==(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator==(
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
     const __BASE_BS&	rhs)
@@ -2637,12 +2567,8 @@ inline bool operator==(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator!=(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
@@ -2651,26 +2577,18 @@ inline bool operator!=(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator!=(
-    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
-    const __BASE_BS&	rhs)
+    const std::basic_string<_Char_, _Traits_, _SecondAllocator_>& lhs,
+    const __BASE_BS& rhs)
 {
 	return !(lhs == rhs);
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_, 
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator<(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
@@ -2679,12 +2597,8 @@ inline bool operator<(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator>(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
@@ -2693,12 +2607,8 @@ inline bool operator>(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator<(
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
     const __BASE_BS&	rhs) 
@@ -2707,12 +2617,8 @@ inline bool operator<(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator>(
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
     const __BASE_BS&	rhs) 
@@ -2721,12 +2627,8 @@ inline bool operator>(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator<=(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs)
@@ -2735,12 +2637,8 @@ inline bool operator<=(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator>=(
     const __BASE_BS&	lhs,
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						rhs) 
@@ -2749,12 +2647,8 @@ inline bool operator>=(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator<=(
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
     const __BASE_BS&	rhs) 
@@ -2763,12 +2657,8 @@ inline bool operator<=(
 }
 
 template <
-	class _Char_,
-	class _Traits_,
-	class _Allocator_,
-	class _SimdOptimization_,
-	class _Storage_,
-	class _SecondAllocator_>
+	class _Char_, class _Traits_, class _Allocator_,
+	class _SimdOptimization_, class _Storage_, class _SecondAllocator_>
 inline bool operator>=(
     const std::basic_string<_Char_, _Traits_, _SecondAllocator_>&						lhs,
     const __BASE_BS&	rhs)
