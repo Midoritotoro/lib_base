@@ -167,7 +167,7 @@
 
 #ifdef LIB_BASE_ENABLE_avx
 #  ifndef BASE_SIMD_AVX_ALIGNMENT
-#    define BASE_SIMD_AVX_ALIGNMENT		sizeof(__m128i)
+#    define BASE_SIMD_AVX_ALIGNMENT		sizeof(__m256i)
 #  endif
 #else 
 #  define BASE_SIMD_AVX_ALIGNMENT		0
@@ -175,10 +175,18 @@
 
 #ifdef LIB_BASE_ENABLE_avx2
 #  ifndef BASE_SIMD_AVX2_ALIGNMENT
-#    define BASE_SIMD_AVX2_ALIGNMENT	sizeof(__m128i)
+#    define BASE_SIMD_AVX2_ALIGNMENT	sizeof(__m256i)
 #  endif
 #else 
 #  define BASE_SIMD_AVX2_ALIGNMENT		0
+#endif
+
+#ifdef LIB_BASE_ENABLE_avx512
+#  ifndef BASE_SIMD_AVX512_ALIGNMENT
+#    define BASE_SIMD_AVX512_ALIGNMENT	sizeof(__m512i)
+#  endif
+#else 
+#  define BASE_SIMD_AVX512_ALIGNMENT	0
 #endif
 
 #ifndef LIB_BASE_HAS_SIMD_SUPPORT

@@ -14,96 +14,93 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <src/core/utility/simd/SimdConstexprHelpers.h>
 
+#include <src/core/memory/Alignment.h>
+
 
 __BASE_STRING_NAMESPACE_BEGIN
+
+template <class _Char_> 
+static inline constexpr bool IsSupportedCharType = 
+    IsAnyOf_v<
+        _Char_, Char, char, 
+        char16_t, char32_t, wchar_t
+#if __cpp_lib_char8_t
+    , char8_t
+#endif
+>;
+
+template <
+    typename _Char_,
+    std::enable_if_t<IsCompatibleCharType<_Char_>>>
+struct NODISCARD StringConversionResult { 
+    StringConversionResult() noexcept = default;
+    StringConversionResult(
+        _Char_* _data, 
+        size_t _dataLength, 
+        bool _isNarrowingConversion
+    ) noexcept:
+        dataStart(_data), 
+        dataLength(_dataLength),
+        isNarrowingConversion(_isNarrowingConversion)
+    {}
+
+    NODISCARD bool isNull() const noexcept { 
+        return (dataStart == nullptr || dataLength == 0);
+    }
+
+    _Char_* dataStart           = nullptr;
+    size_t dataLength           = 0;
+    // true if data loss occurred during conversion from a more 
+    // spacious type to a less spacious one (narrowing conversion)
+    bool isNarrowingConversion  = false;
+};
 
 template <class _NarrowingConversionBehaviour_ = DefaultReplacementConversionMode>
 class StringConverter {
 public:
-	template <class _String_>
-	static inline constexpr bool IsSupportedString = 
-		IsAnyOf_v<
-			_String_, std::string, std::wstring,
-			std::u8string, std::u16string, std::u32string>;
-
 	template <
-		class _FromType_,
-		class _ToType_,
-		std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	static NODISCARD _ToType_ convertString(const _FromType_& string);
+		class _FromChar_,
+		class _ToChar_,
+	std::enable_if_t<
+		IsSupportedCharType<_FromChar_> &&
+		IsSupportedCharType<_ToChar_>>>
+	static NODISCARD StringConversionResult<_ToChar_> convertString(
+		const _FromChar_* const string,
+		const size_t			length)
+	{
+		if (ProcessorFeatures::AVX512F())
+			return convertStringImplementation<_FromChar_, _ToChar_>(
+				string, length, nullptr, CpuFeatureTag<CpuFeature::AVX512F>{});
+
+		else if (ProcessorFeatures::AVX2())
+			return convertStringImplementation<_FromChar_, _ToChar_>(
+				string, length, nullptr, CpuFeatureTag<CpuFeature::AVX2>{});
+
+		else if (ProcessorFeatures::SSE2())
+			return convertStringImplementation<_FromChar_, _ToChar_>(
+				string, length, nullptr, CpuFeatureTag<CpuFeature::SSE2>{});
+
+		return convertStringImplementation<_FromChar_, _ToChar_>(
+			string, length, nullptr, CpuFeatureTag<CpuFeature::None>{});
+	}
 private:
 	template <
-		class _FromType_,
-		class _ToType_,
+		class _FromChar_,
+		class _ToChar_,
 		class _Tag_,
 		typename = std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	static NODISCARD _ToType_ convertStringImplementation(
-		const _FromType_& string,
+			IsSupportedCharType<_FromChar_> &&
+			IsSupportedCharType<_ToChar_>>>
+    // Returns outputString
+	static NODISCARD StringConversionResult<_ToChar_> convertStringImplementation(
+		const _FromChar_* const string,
+		const size_t			stringLength,
+		_ToChar_*				outputString = nullptr,
 		_Tag_)
 	{
+		AssertUnreachable();
 		return {};
 	}
-
-
-	/*template <
-		class _FromType_,
-		class _ToType_,
-		class _Tag_,
-		typename = std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	NODISCARD _ToType_ convertStringImplementation(
-		const _FromType_& string,
-		CpuFeatureTag<CpuFeature::None>)
-	{
-		return {};
-	}
-
-	template <
-		class _FromType_,
-		class _ToType_,
-		class _Tag_,
-		typename = std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	NODISCARD _ToType_ convertStringImplementation(
-		const _FromType_& string,
-		CpuFeatureTag<CpuFeature::SSE2>)
-	{
-		return {};
-	}
-
-	template <
-		class _FromType_,
-		class _ToType_,
-		class _Tag_,
-		typename = std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	NODISCARD _ToType_ convertStringImplementation(
-		const _FromType_& string,
-		CpuFeatureTag<CpuFeature::AVX2>)
-	{
-		return {};
-	}
-
-	template <
-		class _FromType_,
-		class _ToType_,
-		class _Tag_,
-		typename = std::enable_if_t<
-			IsSupportedString<_FromType_> &&
-			IsSupportedString<_ToType_>>>
-	NODISCARD _ToType_ convertStringImplementation(
-		const _FromType_& string,
-		CpuFeatureTag<CpuFeature::AVX512F>)
-	{
-		return {};
-	}*/
 
 	// =================================================================================================================
 	//														AVX512F
@@ -115,44 +112,60 @@ private:
 
 #if __cpp_lib_char8_t
 	template <>
-	static NODISCARD std::string convertStringImplementation<std::u8string, std::string, CpuFeatureTag<CpuFeature::AVX512F>>(
-		const std::u8string& string,
+	static NODISCARD StringConversionResult<_ToChar_> convertStringImplementation<char8_t, char, CpuFeatureTag<CpuFeature::AVX512F>>(
+		const char8_t* const	string,
+		const size_t			stringLength,
+		char*					outputString = nullptr,
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
-        constexpr auto toLimit = MaximumIntegralLimit<std::string::value_type>();
+        constexpr auto toLimit = MaximumIntegralLimit<char8_t>();
 
-		constexpr auto replacementVector = base_vec128i_t_pointer_as_m128i(
+		constexpr auto replacementVector = base_vec512i_t_pointer_as_m512i(
 			base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));
-		constexpr auto lessThanCompare = base_vec128i_t_pointer_as_m128i(
+
+		constexpr auto lessThanCompare = base_vec512i_t_pointer_as_m512i(
 			base_constexpr_mm512_set1_epi8(toLimit));
 
         static_assert(
             _NarrowingConversionBehaviour_::replacementCharacter <= toLimit, 
-            "base::core::string::StringConverter::convertStringImplementation: _NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. "); 
+            "base::core::string::StringConverter::convertStringImplementation"
+            "_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. "); 
 
-        if (string.size() == 0)
-            return std::string{};
+        if (string == nullptr || stringLength == 0)
+            return {};
+        
+        bool isNarrowingConversion = false;
 
-		const auto fromSizeInBytes = size_t(string.size() * sizeof(char8_t));
+		const auto fromSizeInBytes = size_t(stringLength * sizeof(char8_t));
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		char* converted = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
+        if (outputString == nullptr)
+		    char* outputString = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
+#if defined(_DEBUG)
+        else
+            DebugAssertLog(
+                memory::IsAlignment(outputString, 64),
+                "base::core::string::StringConverter::convertStringImplementation: "
+                "outputString pointer must be aligned on a 64 byte boundary to improve performance. ");
+#endif
 
-        const void* stringDataStart = string.data();
+        const void* stringDataStart = string;
         const void* stringDataEnd   = stringDataStart;
 
         const void* stopAt = stringDataStart;
 
         memory::AdvanceBytes(stopAt, avx512SizeInBytes);
-        memory::AdvanceBytes(stringDataEnd, string.size() * sizeof(std::string::value_type));
-
-		if (avx512SizeInBytes != 0) {
+        memory::AdvanceBytes(stringDataEnd, stringLength * sizeof(char8_t));
+        
+        if (avx512SizeInBytes != 0) {
 			do {
 				auto loaded = _mm512_loadu_si512(stringDataStart);
 				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, lessThanCompare);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
+                    isNarrowingConversion = true;
+
 					switch (_NarrowingConversionBehaviour_::narrowingConversionMode) {
 						case NarrowingConversionMode::CustomReplacement:
                         case NarrowingConversionMode::DefaultReplacement:
@@ -177,69 +190,14 @@ private:
 			} while (stringDataStart != stopAt);
 		}
 
-		const auto avx512TailSize = fromSizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
         if (stringDataStart == stringDataEnd)
-            return std::string(converted - fromSizeInBytes, fromSizeInBytes);
+            return StringConversionResult<char>(
+                converted - fromSizeInBytes,
+                fromSizeInBytes, isNarrowingConversion);
 
-		
-        return std::string(converted - fromSizeInBytes, fromSizeInBytes);
-
- //       const auto avx2SizeInBytes = fromSizeInBytes & ~size_t(0x1F);
- //       memory::AdvanceBytes(stopAt, avx2SizeInBytes);
-
- //       if (avx2SizeInBytes != 0) { 
- //           const auto replacementVector = _mm256_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
- //           const auto lessThanCompare = _mm256_set1_epi8(toLimit);
-
- //           do {
- //               const auto loaded = _mm256_loadu_si256(stringDataStart);
- //               const uint32 comparedGreaterThan = _mm256_cmpgt_epi8_mask(loaded, lessThanCompare);
-
- //               // Narrowing conversion
- //               if (comparedGreaterThan != 0) {
- //                   switch (_NarrowindConversionBehaviour_::narrowingConversionMode) {
- //                       case NarrowingConversionMode::CustomReplacement:
- //                       case NarrowindConversionMode::DefaultReplacement:
- //                           // If a character in 'loaded' is greater than the threshold (mask bit is 1), it's replaced with
- //                           // 'replacementCharacter'. Otherwise, it's copied from 'loaded'.
-
- //                           _mm256_mask_storeu_epi8(converted, ~comparedGreaterThan, loaded);
- //                           _mm256_mask_storeu_epi8(converted, comparedGreaterThan, replacementVector);
- //                   }
- //               }
- //               else {
- //                   _mm256_store_si256(converted, loaded);
- //               }
-
- //               memory::AdvanceBytes(stringDataStart, 32);
- //           } while (stringDataStart != stopAt);
- //       }
-
- //       if (stringDataStart == stringDataEnd) 
- //           return std::wstring(converted);
-
- //       const auto sse2SizeInBytes = fromSizeInBytes & ~size_t(0xF);
- //       memory::AdvanceBytes(stopAt, sse2SizeInBytes);
-
- //       if (sse2SizeInBytes != 0) {
- //           const auto replacementVector = _mm_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
- //           const auto lessThanCompare = _mm_set1_epi8(toLimit);
-
- //           do {
- //               const auto loaded = _mm_loadu_si128(stringDataStart);
- //               const uint16 comparedGreaterThan = _mm_cmpgt_epi8_mask(loaded, lessThanCompare);
-
- //               // Narrowing conversion
- //               if (comparedGreaterThan != 0) { 
-
- //               }
- //               else { 
-
- //               }
- //               
- //               memory::AdvanceBytes
- //           } while (stringDataStart != stopAt);
- //       }
+        return convertStringImplementation<char8_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
+            converted - fromSizeInBytes, fromSizeInBytes,
+            isNarrowindConversion, CpuFeatureTag<CpuFeature::AVX2>>);
 	}
 #endif
 
@@ -962,6 +920,231 @@ private:
 	static NODISCARD std::u32string convertStringImplementation<std::u32string, std::u32string, CpuFeatureTag<CpuFeature::SSE2>>(
 		const std::u32string& string,
 		CpuFeatureTag<CpuFeature::SSE2>)
+	{
+		return string;
+	}
+
+	// =================================================================================================================
+	//														Scalar
+	// =================================================================================================================
+
+	// =================================================================================================================
+	//													To std::string
+	// =================================================================================================================
+
+	template <>
+	static NODISCARD std::string convertStringImplementation<std::u8string, std::string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u8string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::string convertStringImplementation<std::u16string, std::string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u16string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::string convertStringImplementation<std::u32string, std::string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u32string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::string convertStringImplementation<std::wstring, std::string, CpuFeatureTag<CpuFeature::None>>(
+		const std::wstring& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::string convertStringImplementation<std::string, std::string, CpuFeatureTag<CpuFeature::None>>(
+		const std::string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return string;
+	}
+
+	// =================================================================================================================
+	//													To std::wstring
+	// =================================================================================================================
+
+	template <>
+	static NODISCARD std::wstring convertStringImplementation<std::string, std::wstring, CpuFeatureTag<CpuFeature::None>>(
+		const std::string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::wstring convertStringImplementation<std::u8string, std::wstring, CpuFeatureTag<CpuFeature::None>>(
+		const std::u8string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::wstring convertStringImplementation<std::u16string, std::wstring, CpuFeatureTag<CpuFeature::None>>(
+		const std::u16string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::wstring convertStringImplementation<std::u32string, std::wstring, CpuFeatureTag<CpuFeature::None>>(
+		const std::u32string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::wstring convertStringImplementation<std::wstring, std::wstring, CpuFeatureTag<CpuFeature::None>>(
+		const std::wstring& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return string;
+	}
+
+	// =================================================================================================================
+	//													To std::u8string
+	// =================================================================================================================
+
+
+	template <>
+	static NODISCARD std::u8string convertStringImplementation<std::string, std::u8string, CpuFeatureTag<CpuFeature::None>>(
+		const std::string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u8string convertStringImplementation<std::wstring, std::u8string, CpuFeatureTag<CpuFeature::None>>(
+		const std::wstring& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u8string convertStringImplementation<std::u16string, std::u8string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u16string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u8string convertStringImplementation<std::u32string, std::u8string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u32string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u8string convertStringImplementation<std::u8string, std::u8string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u8string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return string;
+	}
+
+	// =================================================================================================================
+	//													To std::u16string
+	// =================================================================================================================
+
+	template <>
+	static NODISCARD std::u16string convertStringImplementation<std::string, std::u16string, CpuFeatureTag<CpuFeature::None>>(
+		const std::string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u16string convertStringImplementation<std::wstring, std::u16string, CpuFeatureTag<CpuFeature::None>>(
+		const std::wstring& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u16string convertStringImplementation<std::u8string, std::u16string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u8string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u16string convertStringImplementation<std::u32string, std::u16string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u32string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u16string convertStringImplementation<std::u16string, std::u16string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u16string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return string;
+	}
+
+	// =================================================================================================================
+	//													To std::u32string
+	// =================================================================================================================
+
+	template <>
+	static NODISCARD std::u32string convertStringImplementation<std::string, std::u32string, CpuFeatureTag<CpuFeature::None>>(
+		const std::string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u32string convertStringImplementation<std::wstring, std::u32string, CpuFeatureTag<CpuFeature::None>>(
+		const std::wstring& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u32string convertStringImplementation<std::u8string, std::u32string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u8string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u32string convertStringImplementation<std::u16string, std::u32string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u16string& string,
+		CpuFeatureTag<CpuFeature::None>)
+	{
+		return {};
+	}
+
+	template <>
+	static NODISCARD std::u32string convertStringImplementation<std::u32string, std::u32string, CpuFeatureTag<CpuFeature::None>>(
+		const std::u32string& string,
+		CpuFeatureTag<CpuFeature::None>)
 	{
 		return string;
 	}
