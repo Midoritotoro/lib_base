@@ -794,13 +794,14 @@ CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<_CharType_, std::char_t
 		return;	
 	}
 
-	return _storage.initAny(StringConverter<DefaultReplacementConversionMode>::convertString<
-		std::basic_string<
-			_CharType_,
-			std::char_traits<_CharType_>,
-			std::allocator<_CharType_>>,
-			>(std::move(string));
-	}
+	//return _storage.initAny(StringConverter<DefaultReplacementConversionMode>::convertString<
+	//	std::basic_string<
+	//		_CharType_,
+	//		std::char_traits<_CharType_>,
+	//		std::allocator<_CharType_>>,
+	//		>(std::move(string));
+		
+}
 
 //__BASE_BS_TEMPLATE
 //template <

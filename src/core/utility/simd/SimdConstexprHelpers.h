@@ -173,7 +173,7 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
 // ZMM
 
 #define base_constexpr_mm512_set1_epi8(value)   _base_constexpr_mm512_set1_epi8<value>()
-#define base_constexpr_mm512_set1_epi16(value)  _base_constexpr_m512_set1_epi16<value>()
+#define base_constexpr_mm512_set1_epi16(value)  _base_constexpr_mm512_set1_epi16<value>()
 #define base_constexpr_mm512_set1_epi32(value)  _base_constexpr_mm512_set1_epi32<value>()
 #define base_constexpr_mm512_set1_epi64(value)  _base_constexpr_mm512_set1_epi64<value>()
 
@@ -191,32 +191,32 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
     ((const_cast<__m128i*>((reinterpret_cast<const volatile __m128i*>(pointer_to_base_vec128i_t)))))
 
 #define base_vec256i_t_pointer_as_m256i(pointer_to_base_vec256i_t)  \
-    ((const_cast<__m256i*>(reinterpret_cast<const volatile __m256i*>(pointer_to_base_vec256i_t)))))
+    ((const_cast<__m256i*>((reinterpret_cast<const volatile __m256i*>(pointer_to_base_vec256i_t)))))
 
 #define base_vec512i_t_pointer_as_m512i(pointer_to_base_vec512i_t)  \
-    ((const_cast<__m512i*>(reinterpret_cast<const volatile __m512i*>(pointer_to_base_vec512i_t)))))
+    ((const_cast<__m512i*>((reinterpret_cast<const volatile __m512i*>(pointer_to_base_vec512i_t)))))
 
 
 
 #define base_vec128d_t_pointer_as_m128d(pointer_to_base_vec128d_t)  \
-    ((const_cast<__m128d*>(reinterpret_cast<const volatile __m128d*>(pointer_to_base_vec128d_t)))))
+    ((const_cast<__m128d*>((reinterpret_cast<const volatile __m128d*>(pointer_to_base_vec128d_t)))))
 
 #define base_vec256d_t_pointer_as_m256d(pointer_to_base_vec256d_t)  \
-    ((const_cast<__m256d*>(reinterpret_cast<const volatile __m256d*>(pointer_to_base_vec256d_t)))))
+    ((const_cast<__m256d*>((reinterpret_cast<const volatile __m256d*>(pointer_to_base_vec256d_t)))))
 
 #define base_vec512d_t_pointer_as_m512d(pointer_to_base_vec512d_t)  \
-    ((const_cast<__m512d*>(reinterpret_cast<const volatile __m512d*>(pointer_to_base_vec512d_t)))))
+    ((const_cast<__m512d*>((reinterpret_cast<const volatile __m512d*>(pointer_to_base_vec512d_t)))))
 
 
 
 #define base_vec128f_t_pointer_as_m128(pointer_to_base_vec128f_t)   \
-    ((const_cast<__m128*>(reinterpret_cast<const volatile __m128*>(pointer_to_base_vec128f_t)))))
+    ((const_cast<__m128*>((reinterpret_cast<const volatile __m128*>(pointer_to_base_vec128f_t)))))
 
 #define base_vec256f_t_pointer_as_m256(pointer_to_base_vec256f_t)   \
-    ((const_cast<__m256*>(reinterpret_cast<const volatile __m256*>(pointer_to_base_vec256f_t)))))
+    ((const_cast<__m256*>((reinterpret_cast<const volatile __m256*>(pointer_to_base_vec256f_t)))))
 
 #define base_vec512f_t_pointer_as_m512(pointer_to_base_vec512f_t)   \
-    ((const_cast<__m512*>(reinterpret_cast<const volatile __m512*>(pointer_to_base_vec512f_t)))))
+    ((const_cast<__m512*>((reinterpret_cast<const volatile __m512*>(pointer_to_base_vec512f_t)))))
 
 // ========================================================================================
 //                                          SET
