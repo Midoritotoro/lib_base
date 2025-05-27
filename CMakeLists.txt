@@ -141,7 +141,6 @@ set(PRIVATE_SOURCES
     src/core/system/UnixStandardPaths.cpp
     src/core/string/Char.cpp
 
-    src/core/string/StringConverter.h
     src/core/string/CharTraits.h
 
     src/core/string/UnicodeTables.h
@@ -289,7 +288,6 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrAvx2ClangMsvc.h
 
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
-    src/core/string/StringConverter.cpp
 
     src/core/string/StringConversionOptions.h
 
@@ -455,6 +453,8 @@ set(PUBLIC_HEADERS
     include/base/core/string/CharacterHelper.h
     include/base/core/string/StringConstIterator.h
 
+    include/base/core/string/StringConverter.h
+
     include/base/core/memory/MemoryAllocation.h
 
     include/base/core/container/Map.h
@@ -516,7 +516,7 @@ if(LIB_BASE_ENABLE_PHTHREAD)
     endif()
 endif()
 
-target_sources(lib_base PRIVATE ${PRIVATE_SOURCES})
+target_sources(lib_base PUBLIC ${PRIVATE_SOURCES})
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)

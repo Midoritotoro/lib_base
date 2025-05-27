@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/thread/CommonAtomicOperations.h>
+#include <src/core/memory/MemoryUtility.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 

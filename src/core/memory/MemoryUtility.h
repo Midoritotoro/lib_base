@@ -74,5 +74,4 @@ inline void AdvanceBytes(
 }
 
 
-
 __BASE_MEMORY_NAMESPACE_END

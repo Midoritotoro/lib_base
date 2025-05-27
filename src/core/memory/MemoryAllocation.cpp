@@ -1,7 +1,6 @@
 #include <base/core/memory/MemoryAllocation.h>
 #include <base/core/utility/OverflowCheck.h>
 
-#include <src/core/memory/MemoryUtility.h>
 
 static inline constexpr std::atomic<base::uint32> MaximumAllocationSize = UINT_MAX;
 

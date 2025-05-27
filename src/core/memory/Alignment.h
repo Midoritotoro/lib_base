@@ -48,14 +48,6 @@ NODISCARD bool isAligned(
     return (reinterpret_cast<std::size_t>(pointer) & (alignment - 1)) == 0;
 }
 
-NODISCARD bool isAligned(
-    std::size_t alignment,
-    const void* pointer) noexcept
-{
-    Assert(IsAlignment(alignment));
-    return (reinterpret_cast<std::size_t>(pointer) & (alignment - 1)) == 0;
-}
-
 inline void* AlignDown(
     void*       pointer, 
     std::size_t alignment) noexcept

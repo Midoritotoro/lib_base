@@ -12,7 +12,7 @@
 #include <src/core/string/CharTraits.h>
 
 #include <src/core/utility/simd/SimdAlgorithm.h>
-#include <src/core/string/StringConverter.h>
+#include <base/core/string/StringConverter.h>
 
 #include <src/core/utility/simd/SimdVectorType.h>
 

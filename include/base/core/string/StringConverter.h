@@ -1,21 +1,13 @@
 #pragma once 
 
-#include <base/core/utility/Algorithm.h>
 #include <base/core/string/StringConfig.h>
 
-#include <base/core/arch/CpuFeatureTag.h>
-
 #include <base/core/memory/MemoryAllocation.h>
-#include <src/core/memory/MemoryUtility.h>
-
 #include <base/core/utility/IntegralTypesConversions.h>
+
 #include <src/core/string/StringConversionOptions.h>
 
-#include <src/core/utility/simd/SimdTailMask.h>
 #include <src/core/utility/simd/SimdConstexprHelpers.h>
-
-#include <src/core/memory/Alignment.h>
-
 #include <base/core/arch/ProcessorFeatures.h>
 
 
@@ -35,7 +27,8 @@ template <
     typename _Char_,
     typename = std::enable_if_t<IsSupportedCharType<_Char_>>>
 class StringConversionResult {
-    constexpr StringConversionResult() noexcept = default;
+public:
+	constexpr StringConversionResult() noexcept {}
     constexpr inline StringConversionResult(
         _Char_* dataStart, 
         size_t dataLength, 
@@ -46,6 +39,7 @@ class StringConversionResult {
         _isNarrowingConversion(isNarrowingConversion)
     {}
 	
+	constexpr ~StringConversionResult() noexcept {}
 
     constexpr inline NODISCARD bool isNull() const noexcept {
         return (_dataStart == nullptr || _dataLength == 0);
@@ -92,7 +86,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_,
-		std::enable_if_t<
+		typename = std::enable_if_t<
 			IsSupportedCharType<_FromChar_> &&
 			IsSupportedCharType<_ToChar_>>>
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
@@ -479,6 +473,7 @@ private:
 		const void* stringDataEnd = stringDataStart;
 
 		const void* stopAt = stringDataStart;
+		void* outputStringVoidPointer = outputString;
 
 		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
 		memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
@@ -487,27 +482,31 @@ private:
 			do {
 				if constexpr (sizeof(wchar_t) == 4) {
 				    _mm512_store_si512(outputString, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(stringDataStart))));
 
-                    _mm512_store_si512(outputString + 64, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 16))));
+					_mm512_store_si512(outputString + 64, _mm512_cvtepi8_epi32(
+						_mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 16))));
 
                     _mm512_store_si512(outputString + 128, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 32))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 32))));
 
                     _mm512_store_si512(outputString + 192, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 48))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 48))));
 
-                    memory::AdvanceBytes(outputString, 256);  
+                    memory::AdvanceBytes(outputStringVoidPointer, 256);
 				}
 				else if constexpr (sizeof(wchar_t) == 2) {
 				    _mm512_store_si512(outputString, _mm512_cvtepi8_epi16(
-                        _mm256_load_si256(reinterpret_cast<__m256i*>(stringDataStart))));
+                        _mm256_load_si256(reinterpret_cast<const __m256i*>(stringDataStart))));
 
                     _mm512_store_si512(outputString + 64, _mm512_cvtepi8_epi16(
-                        _mm256_load_si256(reinterpret_cast<__m256i*>(stringDataStart + 32))));
+                        _mm256_load_si256(reinterpret_cast<const __m256i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 32))));
 
-                    memory::AdvanceBytes(outputString, 128);
+                    memory::AdvanceBytes(outputStringVoidPointer, 128);
 				}
 
 				memory::AdvanceBytes(stringDataStart, 64);
@@ -516,7 +515,7 @@ private:
 
         if (stringDataStart == stringDataEnd)
             return StringConversionResult<wchar_t>(
-                outputString - outputSizeInBytes,
+                const_cast<wchar_t*>(reinterpret_cast<const wchar_t*>(outputStringVoidPointer)) - outputSizeInBytes,
                 outputSizeInBytes, false);
 
         return convertStringImplementation<char, wchar_t, CpuFeatureTag<CpuFeature::AVX2>>(
@@ -562,25 +561,29 @@ private:
 			do {
 				if constexpr (sizeof(wchar_t) == 4) {
 				    _mm512_store_si512(outputString, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(stringDataStart))));
 
                     _mm512_store_si512(outputString + 64, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 16))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 16))));
 
                     _mm512_store_si512(outputString + 128, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 32))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 32))));
 
                     _mm512_store_si512(outputString + 192, _mm512_cvtepi8_epi32(
-                        _mm_load_si128(reinterpret_cast<__m128i*>(stringDataStart + 48))));
+                        _mm_load_si128(reinterpret_cast<const __m128i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 48))));
 
                     memory::AdvanceBytes(outputString, 256);  
 				}
 				else if constexpr (sizeof(wchar_t) == 2) {
 				    _mm512_store_si512(outputString, _mm512_cvtepi8_epi16(
-                        _mm256_load_si256(reinterpret_cast<__m256i*>(stringDataStart))));
+                        _mm256_load_si256(reinterpret_cast<const __m256i*>(stringDataStart))));
 
                     _mm512_store_si512(outputString + 64, _mm512_cvtepi8_epi16(
-                        _mm256_load_si256(reinterpret_cast<__m256i*>(stringDataStart + 32))));
+                        _mm256_load_si256(reinterpret_cast<const __m256i*>(
+							memory::UnCheckedToConstChar(stringDataStart) + 32))));
 
                     memory::AdvanceBytes(outputString, 128);
 				}
