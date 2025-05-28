@@ -53,8 +53,7 @@ set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 
-   
-set(PRIVATE_SOURCES 
+set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
     src/core/utility/TFunctions.cpp
 
@@ -77,9 +76,7 @@ set(PRIVATE_SOURCES
 
     src/images/ImagesGaussianBlur.cpp
     src/images/gl/ImagesGLImage.cpp
-
-    src/images/StackBlurTask.h
-
+    
     src/images/ImagesIntegral.cpp
     src/images/ImagesRgbBlur.cpp
 
@@ -121,7 +118,6 @@ set(PRIVATE_SOURCES
 
     src/core/thread/Mutex.cpp
 
-    src/core/thread/ThreadsData.h
     src/core/thread/ThreadsData.cpp
 
     src/core/thread/MutexLocker.cpp
@@ -141,25 +137,75 @@ set(PRIVATE_SOURCES
     src/core/system/UnixStandardPaths.cpp
     src/core/string/Char.cpp
 
-    src/core/string/CharTraits.h
-
-    src/core/string/UnicodeTables.h
-    src/core/string/UnicodeTables.cpp
-
-    src/core/utility/simd/traits/SimdFindTraits.h
-    src/core/utility/simd/traits/SimdFindTraits.cpp
-
-    src/core/utility/simd/traits/SimdCountTraits.h
+    src/core/utility/simd/MinMaxImplementation.cpp
     src/core/utility/simd/traits/SimdCountTraits.cpp
+
+    src/core/utility/simd/traits/SimdFindTraits.cpp
+    src/core/string/UnicodeTables.cpp
 
     src/core/utility/simd/CountImplementation.cpp
     src/core/utility/simd/FindImplementation.cpp
 
     src/core/utility/simd/ReplaceImplementation.cpp
 
-    src/core/utility/simd/MinMax.h
-    src/core/utility/simd/MinMaxImplementation.cpp
+    src/core/utility/simd/SwapRangesVectorized.cpp
+    src/core/arch/ProcessorFeatures.cpp
 
+    src/core/utility/simd/traits/MinMaxTraitsAVX.cpp
+    src/core/utility/simd/traits/MinMaxTraitsAVX512.cpp
+    
+    src/core/utility/simd/traits/MinMaxTraitsSSE2.cpp
+
+    src/core/utility/simd/ContainsSubRangeVectorized.cpp
+    src/core/utility/simd/FindLastSubRangeVectorized.cpp
+
+    src/core/utility/simd/FindSubRangeVectorized.cpp
+    src/core/utility/simd/CountSubRangeVectorized.cpp
+
+    src/core/utility/simd/ContainsVectorized.cpp
+
+    src/core/utility/simd/MismatchVectorized.cpp
+    src/core/utility/simd/FindLastVectorized.cpp
+
+    src/core/utility/simd/ReverseTriviallySwappableVectorized.cpp
+    src/core/utility/simd/ReverseTriviallyCopyableVectorized.cpp
+
+    src/core/string/crt/BaseStrstrn.cpp
+    src/core/string/crt/BaseStrstr.cpp
+
+    src/core/string/crt/BaseStrlen.cpp
+    src/core/memory/crt/BaseMemmove.cpp
+
+    src/core/memory/crt/BaseMemcpy.cpp
+    src/core/string/crt/simd/BaseStrstrAvx2.cpp
+
+    src/core/string/crt/simd/BaseStrstrAvx512F.cpp
+    src/core/string/crt/simd/BaseStrstrSse2.cpp
+
+    src/core/memory/MemoryAllocation.cpp
+)
+
+set(PRIVATE_HEADERS
+ 
+
+    src/images/StackBlurTask.h
+
+  
+    src/core/thread/ThreadsData.h
+   
+
+    src/core/string/CharTraits.h
+
+    src/core/string/UnicodeTables.h
+ 
+
+    src/core/utility/simd/traits/SimdFindTraits.h
+  
+    src/core/utility/simd/traits/SimdCountTraits.h
+  
+
+    src/core/utility/simd/MinMax.h
+  
     src/core/utility/simd/traits/MinMaxTraits.h
 
     src/core/utility/simd/traits/MinMaxTraitsAVX.h
@@ -167,17 +213,11 @@ set(PRIVATE_SOURCES
     
     src/core/utility/simd/traits/MinMaxTraitsSSE2.h
 
-    src/core/utility/simd/traits/MinMaxTraitsAVX.cpp
-    src/core/utility/simd/traits/MinMaxTraitsAVX512.cpp
     
-    src/core/utility/simd/traits/MinMaxTraitsSSE2.cpp
-
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
 
-    src/core/utility/simd/SwapRangesVectorized.cpp
-    src/core/arch/ProcessorFeatures.cpp
-
+ 
     src/core/utility/simd/SimdAlgorithm.h
 
     src/core/utility/algorithm/AllOf.h
@@ -213,7 +253,6 @@ set(PRIVATE_SOURCES
     src/core/utility/algorithm/AlgorithmDebug.h
     src/core/utility/algorithm/IteratorWrap.h
 
-    src/core/memory/MemoryAllocation.cpp
     src/core/memory/UninitializedBackout.h
 
     src/core/memory/Copy.h
@@ -237,16 +276,9 @@ set(PRIVATE_SOURCES
     src/core/memory/MemoryUtility.h
     src/core/system/WindowsVersion.h
 
-    src/core/utility/simd/FindLastVectorized.cpp
-
-    src/core/utility/simd/ReverseTriviallySwappableVectorized.cpp
-    src/core/utility/simd/ReverseTriviallyCopyableVectorized.cpp
-
+ 
     src/core/string/BasicString.h
     
-    src/core/utility/simd/ContainsVectorized.cpp
-    src/core/utility/simd/MismatchVectorized.cpp
-
     src/core/string/StringDebug.h
     src/core/string/CharTypeCompatibility.h
     
@@ -256,35 +288,20 @@ set(PRIVATE_SOURCES
     src/core/string/BasicStringUtility.h
     src/core/string/StringStorageRefCount.h
 
-    src/core/utility/simd/ContainsSubRangeVectorized.cpp
-    src/core/utility/simd/FindLastSubRangeVectorized.cpp
-
-    src/core/utility/simd/FindSubRangeVectorized.cpp
-    src/core/utility/simd/CountSubRangeVectorized.cpp
-
     src/core/memory/crt/BaseMemmove.h
-    src/core/memory/crt/BaseMemmove.cpp
     #src/core/memory/crt/BaseMemmove.S
             
     src/core/memory/crt/FixedMemcmp.h
 
     src/core/memory/crt/BaseMemcpy.h
-    src/core/memory/crt/BaseMemcpy.cpp
     #src/core/memory/crt/BaseMemcpy.S
 
     src/core/string/crt/BaseStrlen.h
-    src/core/string/crt/BaseStrlen.cpp
 
     src/core/string/crt/BaseStrstr.h
-    src/core/string/crt/BaseStrstr.cpp
 
     src/core/string/crt/BaseStrstrn.h
-    src/core/string/crt/BaseStrstrn.cpp
-
-    src/core/string/crt/simd/BaseStrstrAvx2.cpp
-    src/core/string/crt/simd/BaseStrstrAvx512F.cpp
-
-    src/core/string/crt/simd/BaseStrstrSse2.cpp
+  
     src/core/string/crt/simd/BaseStrstrAvx2ClangMsvc.h
 
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
@@ -488,7 +505,7 @@ set(PUBLIC_HEADERS
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
 
-add_library(lib_base ${PUBLIC_HEADERS})
+add_library(lib_base STATIC ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
@@ -516,7 +533,29 @@ if(LIB_BASE_ENABLE_PHTHREAD)
     endif()
 endif()
 
-target_sources(lib_base PUBLIC ${PRIVATE_SOURCES})
+target_sources(lib_base PUBLIC 
+    $<BUILD_INTERFACE:${PRIVATE_HEADERS}> 
+    PRIVATE ${PRIVATE_SOURCES})
+
+target_include_directories(lib_base
+    PUBLIC
+         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+)
+
+target_include_directories(lib_base
+    PUBLIC
+        "$<INSTALL_INTERFACE:include>"
+)
+
+target_include_directories(lib_base
+    PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+)
+
+target_include_directories(lib_base
+    PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -651,27 +690,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             /Zc:__cplusplus
     )
 endif()
-
-message(${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(lib_base
-    PUBLIC
-         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-)
-
-target_include_directories(lib_base
-    PUBLIC
-        "$<INSTALL_INTERFACE:include>"
-)
-
-target_include_directories(lib_base
-    PUBLIC
-        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-)
-
-target_include_directories(lib_base
-    PUBLIC
-        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
-)
 
 if (WIN32)
     target_link_libraries(lib_base

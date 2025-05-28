@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <base/core/thread/CommonAtomicOperations.h>
-#include <src/core/memory/MemoryUtility.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -63,14 +62,13 @@ CLANG_CONSTEXPR_CXX20 void* ReallocateFast(
 NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 void FreeNull(void* pointer);
 NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 void FreeNullAligned(void* pointer);
 
-DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 void AllocateFast(
+CLANG_CONSTEXPR_CXX20 void AllocateFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize,
     bool        zeroReallocate);
 
-CLANG_CONSTEXPR_CXX20 CLANG_CONSTEXPR_CXX20
-DECLARE_MEMORY_ALLOCATOR void AllocateZerosFast(
+CLANG_CONSTEXPR_CXX20 CLANG_CONSTEXPR_CXX20 void AllocateZerosFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize);

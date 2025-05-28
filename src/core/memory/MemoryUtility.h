@@ -1,9 +1,6 @@
 #pragma once 
 
-#include <base/core/memory/Memory.h>
-#include <base/core/utility/Algorithm.h>
-
-#include <base/core/utility/TypeTraits.h>
+#include <src/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -32,7 +29,7 @@ inline constexpr void ReverseCopyTail(
         *_Destination++ = *--_Last;
 }
 
-NODISCARD inline std::size_t ByteLength(
+NODISCARD always_inline std::size_t ByteLength(
     const void* _First,
     const void* _Last) noexcept
 {
@@ -43,14 +40,14 @@ NODISCARD inline std::size_t ByteLength(
         _LastUChar - _FirstUChar);
 }
 
-inline void RewindBytes(
+always_inline void RewindBytes(
     void*& _Target,
     size_t _Offset) noexcept
 {
     _Target = UnCheckedToUnsignedChar(_Target) - _Offset;
 }
 
-inline void RewindBytes(
+always_inline void RewindBytes(
     const void*& _Target,
     size_t          _Offset) noexcept
 {
@@ -58,7 +55,7 @@ inline void RewindBytes(
 }
 
 template <class _Integral_>
-inline void AdvanceBytes(
+always_inline void AdvanceBytes(
     void*& _Target,
     _Integral_  _Offset) noexcept
 {
@@ -66,7 +63,7 @@ inline void AdvanceBytes(
 }
 
 template <class _Integral_>
-inline void AdvanceBytes(
+always_inline void AdvanceBytes(
     const void*& _Target,
     _Integral_      _Offset) noexcept
 {

@@ -1,8 +1,6 @@
 #pragma once 
 
 #include <type_traits>
-
-#include <base/core/arch/Platform.h>
 #include <base/core/utility/Concepts.h>
 
 __BASE_NAMESPACE_BEGIN

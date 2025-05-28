@@ -1,6 +1,9 @@
 #include <base/core/memory/MemoryAllocation.h>
 #include <base/core/utility/OverflowCheck.h>
 
+#include <src/core/memory/MemoryUtility.h>
+#include <src/core/memory/Alignment.h>
+
 
 static inline constexpr std::atomic<base::uint32> MaximumAllocationSize = UINT_MAX;
 
@@ -207,7 +210,7 @@ void FreeNullAligned(void* pointer)
     aligned_free(value);
 }
 
-DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 void AllocateFast(
+CLANG_CONSTEXPR_CXX20 void AllocateFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize,
@@ -250,7 +253,7 @@ DECLARE_MEMORY_ALLOCATOR CLANG_CONSTEXPR_CXX20 void AllocateFast(
     *size = minimumSize;
 }
 
-CLANG_CONSTEXPR_CXX20 DECLARE_MEMORY_ALLOCATOR void AllocateZerosFast(
+CLANG_CONSTEXPR_CXX20 void AllocateZerosFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize)
