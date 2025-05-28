@@ -2,56 +2,113 @@
 #include <base/core/arch/Platform.h>
 #include <benchmark/benchmark.h>
 
+// #define BASE_BENCHMARK_IN_MILLISECONDS 1
+
+#if defined(BASE_BENCHMARK_IN_MILLISECONDS)
+#  define BASE_BENCHMARK_UNIT_OF_MEASUREMENT benchmark::kMillisecond
+#else 
+#  define BASE_BENCHMARK_UNIT_OF_MEASUREMENT benchmark::kNanosecond
+#endif
+
 using namespace base;
 
-static const auto stringl6000= std::string("Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3");
-static const auto stringl1200 = std::string("Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3");
+enum StringAlignedSizeForBenchmark {
+    Large = 4096,
+    Medium = 1024,
+    Small = 512
+};
 
-static const auto widestringl6000 = std::string("Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3");
-static const auto widestringl1200 = std::string("Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3Hello world aphHello world aphHello world aphHello world aphr2f3");
+#define BASE_FIXED_CHAR_ARRAY(name, prefix) \
+    template <typename _Type_, size_t N>\
+    struct name {\
+        _Type_ data[N + 1]{};\
+    \
+        constexpr name() {\
+            for (size_t i = 0; i < N; ++i) {\
+                data[i] = prefix'A' + (i % 26);\
+            }\
+            data[N] = prefix'\0';\
+        }\
+    };
+
+#define BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(name, type, prefix) \
+    template <size_t N>\
+    struct name<type, N> {\
+        type data[N + 1]{};\
+    \
+        constexpr name() {\
+            for (size_t i = 0; i < N; ++i) {\
+                data[i] = prefix'A' + (i % 26);\
+            }\
+            data[N] = prefix'\0';\
+        }\
+    };
+
+BASE_FIXED_CHAR_ARRAY(FixedArray, );
+#if __cpp_lib_char8_t
+BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char8_t, u8);
+#endif
+BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char16_t, u);
+BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char32_t, U);
+BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, wchar_t, L);
+
 
 template <
     typename _FromChar_,
-    typename _ToChar_>
+    typename _ToChar_,
+    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class CRTStringConverterBenchmark {
-    static void ConvertStringHelper(const _FromChar_* input, size_t length, _ToChar_* buffer) {
+    static void ConvertStringHelper(
+        const _FromChar_* input,
+        size_t length, 
+        _ToChar_* buffer) 
+    {
         mbstowcs(buffer, input, length);
     }
 
 public:
     static void ConvertString(benchmark::State& state) {
-        _ToChar_* ch = static_cast<_ToChar_*>(memory::AllocateAligned(stringl1200.size() * sizeof(_ToChar_), 64));
+        static constexpr auto textArray = FixedArray < _FromChar_, stringAlignedSizeForBenchmark>{};
+        _ToChar_* ch = static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSizeForBenchmark * sizeof(_ToChar_), 64));
 
         for (auto _ : state) {
-            ConvertStringHelper(stringl1200.data(), stringl1200.size(), ch);
+            ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, ch);
         }
     }
 };
 
 template <
     typename _FromChar_,
-    typename _ToChar_>
+    typename _ToChar_,
+    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class StringConverterBenchmark {
-    static void ConvertStringHelper(const _FromChar_* input, size_t length, string::StringConversionResult<_ToChar_>& result) {
+    static void ConvertStringHelper(
+        const _FromChar_* input, 
+        size_t length, 
+        string::StringConversionResult<_ToChar_>& result)
+    {
         string::StringConverter<>::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
     }
 
 public:
     static void ConvertString(benchmark::State& state) {
         string::StringConversionResult<_ToChar_> result;
-        result.setData(static_cast<_ToChar_*>(memory::AllocateAligned(stringl1200.size() * sizeof(_ToChar_), 64)));
+        static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSizeForBenchmark>{};
+
+        result.setData(static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSizeForBenchmark * sizeof(_ToChar_), 64)));
 
         for (auto _ : state) {
-            ConvertStringHelper(stringl1200.data(), stringl1200.size(), result);
+            ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, result);
         }
     }
 };
 
 BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
-    ->Unit(benchmark::kMillisecond);
+    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT);
 
 BENCHMARK(CRTStringConverterBenchmark<char, wchar_t>::ConvertString)
-    ->Unit(benchmark::kMillisecond);
+    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT);
+
 
 // ========================================================================================
 // ========================================================================================
