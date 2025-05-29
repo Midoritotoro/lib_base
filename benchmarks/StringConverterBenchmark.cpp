@@ -167,6 +167,7 @@ public:
 BENCHMARK(StringConverterBenchmark<char, char8_t>::ConvertString)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
+    ->Iterations(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 

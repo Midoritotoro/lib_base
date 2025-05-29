@@ -42,6 +42,7 @@ endif()
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 
 set(LIB_BASE_BUILD_TESTS ON)
+set(LIB_BASE_BUILD_BENCHMARKS ON)
 
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
@@ -738,6 +739,12 @@ if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_BENCHMARKS)
+    enable_testing()
+    add_subdirectory(benchmarks)
+endif()
+
 
 if(PROJECT_IS_TOP_LEVEL AND LIB_BASE_BUILD_EXAMPLES)
     add_subdirectory(examples)

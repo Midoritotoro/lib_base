@@ -38,6 +38,6 @@ find_package(benchmark REQUIRED)
 FILE(GLOB baseBenchmarks *.cpp )
 
 FOREACH(benchsource ${baseBenchmarks})
-   GET_FILENAME_COMPONENT(filename ${testsource} NAME_WE)
+   GET_FILENAME_COMPONENT(filename ${benchsource} NAME_WE)
    baseBenchmarks_add_benchmark(${filename})
 ENDFOREACH()

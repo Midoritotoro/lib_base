@@ -631,7 +631,6 @@ private:
 		wchar_t*			outputString,
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
-		//const auto ms = base::Time::now();
 		if (string == nullptr || stringLength == 0)
 			return {};
 
@@ -640,16 +639,8 @@ private:
 
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		if (outputString == nullptr) {
+		if (outputString == nullptr)
 			outputString = static_cast<wchar_t*>(memory::AllocateAligned(outputSizeInBytes, 64));
-		}
-#if defined(_DfEBUG)
-		else
-			DebugAssertLog(
-				memory::isAligned(outputString, 64),
-				"base::core::string::StringConverter::convertStringImplementation: "
-				"outputString pointer must be aligned on a 64 byte boundary to improve performance. ");
-#endif
 
 		const void* stringDataStart = string;
 		const void* stringDataEnd = stringDataStart;
@@ -818,14 +809,50 @@ private:
 	////													To std::u8string
 	//// =================================================================================================================
 	//
+#if __cpp_lib_char8_t
+	template <>
+	static NODISCARD StringConversionResult<char8_t> convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX512F>>(
+		const char* const	string,
+		const size_t        stringLength,
+		char8_t*			outputString,
+		CpuFeatureTag<CpuFeature::AVX512F>)
+	{
+		if (string == nullptr || stringLength == 0)
+			return {};
 
-	//template <>
-	//static NODISCARD std::u8string convertStringImplementation<std::string, std::u8string, CpuFeatureTag<CpuFeature::AVX512F>>(
-	//	const std::string& string,
-	//	CpuFeatureTag<CpuFeature::AVX512F>)
-	//{
-	//	return {};
-	//}
+		const auto inputAndOutputSizeInBytes = size_t(stringLength * sizeof(char));
+		const auto avx512SizeInBytes = inputAndOutputSizeInBytes & ~size_t(0x3F);
+
+		if (outputString == nullptr)
+			outputString = static_cast<char8_t*>(memory::AllocateAligned(inputAndOutputSizeInBytes, 64));
+
+		const void* stringDataStart = string;
+		const void* stringDataEnd = stringDataStart;
+
+		const void* stopAt = stringDataStart;
+		void* outputStringVoidPointer = outputString;
+
+		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
+		memory::AdvanceBytes(stringDataEnd, inputAndOutputSizeInBytes);
+
+		if (avx512SizeInBytes != 0) {
+			do {
+				_mm512_storeu_si512(outputStringVoidPointer, _mm512_loadu_si512(stringDataStart));
+
+				memory::AdvanceBytes(stringDataStart, 64);
+				memory::AdvanceBytes(outputStringVoidPointer, 64);
+			} while (stringDataStart != stopAt);
+		}
+
+		if (stringDataStart == stringDataEnd)
+			return StringConversionResult<char8_t>(
+				const_cast<char8_t*>(reinterpret_cast<const char8_t*>(outputStringVoidPointer)) - stringLength,
+				stringLength, false);
+
+		return convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX2>>(
+			static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
+			reinterpret_cast<char8_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
+	}
 
 	//template <>
 	//static NODISCARD std::u8string convertStringImplementation<std::wstring, std::u8string, CpuFeatureTag<CpuFeature::AVX512F>>(
@@ -858,6 +885,7 @@ private:
 	//{
 	//	return string;
 	//}
+#endif
 
 	//// =================================================================================================================
 	////													To std::u16string
