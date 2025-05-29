@@ -45,8 +45,7 @@ template <
     typename = std::enable_if_t<IsSupportedCharType<_Char_>>>
 class StringConversionResult {
 public:
-	constexpr StringConversionResult() noexcept 
-	{}
+	constexpr StringConversionResult() noexcept {}
 
 	constexpr inline StringConversionResult(const StringConversionResult& other) noexcept :
 		_dataStart(other._dataStart),
@@ -64,8 +63,7 @@ public:
         _isNarrowingConversion(isNarrowingConversion)
     {}
 	
-	constexpr ~StringConversionResult() noexcept
-	{}
+	constexpr ~StringConversionResult() noexcept {}
 
     constexpr inline NODISCARD bool isNull() const noexcept {
         return (_dataStart == nullptr || _dataLength == 0);
@@ -309,9 +307,7 @@ private:
 		}
 
         if (stringDataStart == stringDataEnd)
-            return StringConversionResult<char>(
-				outputString - fromSizeInBytes,
-                stringLength, isNarrowingConversion);
+            return StringConversionResult<char>(outputString, stringLength, isNarrowingConversion);
 
         return convertStringImplementation<char8_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
 			static_cast<const char8_t*>(stringDataStart), fromSizeInBytes - avx512SizeInBytes,
@@ -324,7 +320,7 @@ private:
 		const char16_t* const   string,
         const size_t            stringLength,
         char*                   outputString,
-		CpuFeatureTag<CpuFeature::AVX512F> tag)
+		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
 		constexpr auto toLimit = MaximumIntegralLimit<char>();
 
@@ -334,7 +330,7 @@ private:
 			"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
 		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
-		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epi16(toLimit);
+		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epu16(toLimit);
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -361,10 +357,16 @@ private:
 			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
 
 			do {
-				const auto loaded = _mm512_loadu_si512(stringDataStart);
+				const auto loaded1 = _mm512_loadu_si512(stringDataStart);
 				const auto loaded2 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 64);
 
-				const uint32 comparedGreaterThan = _mm512_cmpgt_epi16_mask(loaded, runtimeLessThanCompare);
+				uint32 first64BytesMask = _mm512_cmpgt_epu16_mask(loaded1, runtimeLessThanCompare);
+				uint32 second64BytesMask = _mm512_cmpgt_epu16_mask(loaded2, runtimeLessThanCompare);
+
+				uint64 comparedGreaterThan = base_combine_u32ints_to_u64int(first64BytesMask, second64BytesMask);
+
+				auto convertedToCharVector = _mm512_castsi256_si512(_mm512_cvtepi16_epi8(loaded1));
+				convertedToCharVector = _mm512_inserti32x8(convertedToCharVector, _mm512_cvtepi16_epi8(loaded2), 1);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
@@ -373,15 +375,12 @@ private:
 					switch (_NarrowingConversionBehaviour_::narrowingConversionMode) {
 					case NarrowingConversionMode::CustomReplacement:
 					case NarrowingConversionMode::DefaultReplacement:
-						// If a character in 'loaded' is greater than the threshold (mask bit is 1), it's replaced with
-						// 'replacementCharacter'. Otherwise, it's copied from 'loaded'.
-				/*		const auto convertedToChar = _mm512_shuffle_i64x2(
-							_mm512_packs_epi16(loaded, loaded2),
-							_MM_SHUFFLE(3, 2, 1, 0));
-						*/
+						// If a character in 'convertedToCharVector' is greater than the threshold (mask bit is 1), it's replaced with
+						// 'replacementCharacter'. Otherwise, it's copied from 'convertedToCharVector'.
+	
 
-					//	_mm512_mask_storeu_epi8(outputString, ~comparedGreaterThan, _mm512_cvtepi16_epi8(loaded));
-					//	_mm512_mask_storeu_epi8(outputString, comparedGreaterThan, runtimeReplacementVector);
+						_mm512_mask_storeu_epi8(outputStringVoidPointer, ~comparedGreaterThan, convertedToCharVector);
+						_mm512_mask_storeu_epi8(outputStringVoidPointer, comparedGreaterThan, runtimeReplacementVector);
 
 						break;
 					default:
@@ -390,21 +389,19 @@ private:
 					};
 				}
 				else
-					_mm512_store_si512(outputString, loaded);
+					_mm512_storeu_si512(outputStringVoidPointer, convertedToCharVector);
 
 				memory::AdvanceBytes(stringDataStart, 128);
-				memory::AdvanceBytes(outputString, 64);
+				memory::AdvanceBytes(outputStringVoidPointer, 64);
 			} while (stringDataStart != stopAt);
 		}
 
 		if (stringDataStart == stringDataEnd)
-			return StringConversionResult<char>(
-				outputString - fromSizeInBytes,
-				stringLength, isNarrowingConversion);
+			return StringConversionResult<char>(outputString, stringLength, isNarrowingConversion);
 
 		return convertStringImplementation<char16_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
 		    static_cast<const char16_t*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char16_t)),
-			outputString, CpuFeatureTag<CpuFeature::AVX2>{});
+			reinterpret_cast<char*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
     }
 
 	template <>
@@ -480,9 +477,7 @@ private:
 		}
 
 		if (stringDataStart == stringDataEnd)
-			return StringConversionResult<char>(
-				outputString - fromSizeInBytes,
-				stringLength, isNarrowingConversion);
+			return StringConversionResult<char>(outputString, stringLength, isNarrowingConversion);
 
 		return convertStringImplementation<char32_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
 			static_cast<const char32_t*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char32_t)),
@@ -599,9 +594,7 @@ private:
 		}
 
 		if (stringDataStart == stringDataEnd)
-			return StringConversionResult<char>(
-				outputString - fromSizeInBytes,
-				stringLength, isNarrowingConversion);
+			return StringConversionResult<char>(outputString, stringLength, isNarrowingConversion);
 
 		return convertStringImplementation<char16_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
 			static_cast<const char16_t*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char16_t)),
@@ -689,9 +682,7 @@ private:
 		}
 
         if (stringDataStart == stringDataEnd)
-            return StringConversionResult<wchar_t>(
-                const_cast<wchar_t*>(reinterpret_cast<const wchar_t*>(outputStringVoidPointer)) - stringLength,
-				stringLength, false);
+            return StringConversionResult<wchar_t>(outputString, stringLength, false);
 
         return convertStringImplementation<char, wchar_t, CpuFeatureTag<CpuFeature::AVX2>>(
             static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
@@ -769,9 +760,7 @@ private:
 		}
 
         if (stringDataStart == stringDataEnd)
-            return StringConversionResult<wchar_t>(
-                outputString - outputSizeInBytes,
-                stringLength, false);
+            return StringConversionResult<wchar_t>(outputString, stringLength, false);
 
         return convertStringImplementation<char8_t, wchar_t, CpuFeatureTag<CpuFeature::AVX2>>(
             static_cast<const char8_t*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char8_t)),
@@ -807,10 +796,10 @@ private:
 	//	return string;
 	//}
 
-	//// =================================================================================================================
-	////													To std::u8string
-	//// =================================================================================================================
-	//
+	// =================================================================================================================
+	//													To char8_t
+	// =================================================================================================================
+	
 #if __cpp_lib_char8_t
 	template <>
 	static NODISCARD StringConversionResult<char8_t> convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX512F>>(
@@ -828,9 +817,7 @@ private:
 		if (outputString == nullptr)
 			outputString = static_cast<char8_t*>(memory::AllocateAligned(inputAndOutputSizeInBytes, 64));
 
-		memcpy(outputString, string, stringLength);
-
-		/*const void* stringDataStart = string;
+		const void* stringDataStart = string;
 		const void* stringDataEnd = stringDataStart;
 
 		const void* stopAt = stringDataStart;
@@ -846,16 +833,14 @@ private:
 				memory::AdvanceBytes(stringDataStart, 64);
 				memory::AdvanceBytes(outputStringVoidPointer, 64);
 			} while (stringDataStart != stopAt);
-		}*/
+		}
 
-	//	if (stringDataStart == stringDataEnd)
-			return StringConversionResult<char8_t>(
-				const_cast<char8_t*>(reinterpret_cast<const char8_t*>(outputString)) - stringLength,
-				stringLength, false);
+		if (stringDataStart == stringDataEnd)
+			return StringConversionResult<char8_t>(outputString, stringLength, false);
 
-		//return convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX2>>(
-		//	static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
-		//	reinterpret_cast<char8_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
+		return convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX2>>(
+			static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
+			reinterpret_cast<char8_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
 	}
 
 	//template <>
@@ -891,17 +876,58 @@ private:
 	//}
 #endif
 
-	//// =================================================================================================================
-	////													To std::u16string
-	//// =================================================================================================================
-	//
-	//template <>
-	//static NODISCARD std::u16string convertStringImplementation<std::string, std::u16string, CpuFeatureTag<CpuFeature::AVX512F>>(
-	//	const std::string& string,
-	//	CpuFeatureTag<CpuFeature::AVX512F>)
-	//{
-	//	return {};
-	//}
+	// =================================================================================================================
+	//													To char16_t
+	// =================================================================================================================
+	
+	template <>
+	static NODISCARD StringConversionResult<char16_t> convertStringImplementation<char, char16_t, CpuFeatureTag<CpuFeature::AVX512F>>(
+		const char* const	string,
+		const size_t        stringLength,
+		char16_t*			outputString,
+		CpuFeatureTag<CpuFeature::AVX512F>)
+	{
+		if (string == nullptr || stringLength == 0)
+			return {};
+
+		const auto fromSizeInBytes = size_t(stringLength * sizeof(char));
+		const auto outputSizeInBytes = size_t(stringLength * sizeof(char16_t));
+
+		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
+
+		if (outputString == nullptr)
+			outputString = static_cast<char16_t*>(memory::AllocateAligned(outputSizeInBytes, 64));
+
+		const void* stringDataStart = string;
+		const void* stringDataEnd = stringDataStart;
+
+		const void* stopAt = stringDataStart;
+		void* outputStringVoidPointer = outputString;
+
+		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
+		memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
+		
+		if (avx512SizeInBytes != 0) {
+			do {
+				_mm512_storeu_si512(outputStringVoidPointer, _mm512_cvtepi8_epi16(
+                    _mm256_loadu_si256(reinterpret_cast<const __m256i*>(stringDataStart))));
+
+                _mm512_storeu_si512(memory::UnCheckedToChar(outputStringVoidPointer) + 64, _mm512_cvtepi8_epi16(
+                    _mm256_loadu_si256(reinterpret_cast<const __m256i*>(
+						memory::UnCheckedToConstChar(stringDataStart) + 32))));
+
+                memory::AdvanceBytes(outputStringVoidPointer, 128);
+				memory::AdvanceBytes(stringDataStart, 64);
+			} while (stringDataStart != stopAt);
+		}
+
+        if (stringDataStart == stringDataEnd)
+            return StringConversionResult<char16_t>(outputString, stringLength, false);
+
+        return convertStringImplementation<char, char16_t, CpuFeatureTag<CpuFeature::AVX2>>(
+            static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
+            reinterpret_cast<char16_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
+	}
 
 	//template <>
 	//static NODISCARD std::u16string convertStringImplementation<std::wstring, std::u16string, CpuFeatureTag<CpuFeature::AVX512F>>(

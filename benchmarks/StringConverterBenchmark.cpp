@@ -2,8 +2,8 @@
 #include <base/core/arch/Platform.h>
 #include <benchmark/benchmark.h>
 
-#include <cuchar>
-#include <cwchar>
+#include <uchar.h>
+#include <wchar.h>
 
 // #define BASE_BENCHMARK_IN_MILLISECONDS 1
 
@@ -55,6 +55,11 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char16_t, u);
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char32_t, U);
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, wchar_t, L);
 
+static struct Loc {
+    Loc() {
+        std::setlocale(LC_ALL, "en_US.UTF-8");
+    }
+} localeSet; 
 
 template <
     typename _FromChar_,
@@ -70,13 +75,23 @@ class CRTStringConverterBenchmark {
             return mbstowcs(buffer, input, length);
         else if constexpr (std::is_same_v<_FromChar_, wchar_t> && std::is_same_v<_ToChar_, char>)
             return wcstombs(buffer, input, length);
-        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char16_t>)
-            return mbrtoc16(buffer, input, length, nullptr);
+        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char16_t>) {
+            mbstate_t state{};
+
+            for (size_t i = 0; i < length; ++i)
+                mbrtoc16(&buffer[i], &input[i], 1, &state);
+            return 0;
+        }
+        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char8_t>)
+            return memcpy(buffer, input, length);
+        else if constexpr (std::is_same_v<_FromChar_, char8_t> && std::is_same_v<_ToChar_, char>)
+            return memcpy(buffer, input, length);
         else if constexpr (std::is_same_v<_FromChar_, char16_t> && std::is_same_v<_ToChar_, char>) {
             mbstate_t state{};
 
             for (size_t i = 0; i < length; ++i)
-                c16rtomb(buffer, input[i], length, &state);
+                c16rtomb(&buffer[i], input[i], &state);
+            return 0;
         }
     }
 
@@ -91,7 +106,7 @@ public:
             );
         }
 
-       // memory::Free(ch);
+        memory::FreeNullAligned(ch);
     }
 };
 
@@ -101,8 +116,8 @@ template <
     StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class StringConverterBenchmark {
     static auto ConvertStringHelper(
-        const _FromChar_* input, 
-        size_t length, 
+        const _FromChar_* input,
+        size_t length,
         string::StringConversionResult<_ToChar_>& result)
     {
         string::StringConverter<>::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
@@ -111,10 +126,9 @@ class StringConverterBenchmark {
 
 public:
     static void ConvertString(benchmark::State& state) {
-        
-        string::StringConversionResult<_ToChar_> result;
         static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSizeForBenchmark>{};
 
+        string::StringConversionResult<_ToChar_> result;
         result.setData(static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSizeForBenchmark * sizeof(_ToChar_), 64)));
 
         for (auto _ : state) {
@@ -123,9 +137,13 @@ public:
             );
         }
 
+
         memory::FreeNullAligned(result.data());
     }
 };
+
+// ========================================================================================
+
 
 //BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
 //    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
@@ -138,9 +156,10 @@ public:
 //    ->Repetitions(1000)
 //    ->ReportAggregatesOnly(true)
 //    ->DisplayAggregatesOnly(true);
-
-// ========================================================================================
-
+//
+//
+//
+//
 //BENCHMARK(StringConverterBenchmark<wchar_t, char>::ConvertString)
 //    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
 //    ->Repetitions(1000)
@@ -152,27 +171,76 @@ public:
 //    ->Repetitions(1000)
 //    ->ReportAggregatesOnly(true)
 //    ->DisplayAggregatesOnly(true);
-
-// ========================================================================================
-
+//
+//
+//
+//
+//BENCHMARK(CRTStringConverterBenchmark<char8_t, char>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+// 
 //BENCHMARK(StringConverterBenchmark<char8_t, char>::ConvertString)
 //    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
 //    ->Repetitions(1000)
 //    ->ReportAggregatesOnly(true)
 //    ->DisplayAggregatesOnly(true);
-
-
-// ========================================================================================
-
-BENCHMARK(StringConverterBenchmark<char, char8_t>::ConvertString)
-    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
-    ->Repetitions(1000)
-    ->Iterations(1000)
-    ->ReportAggregatesOnly(true)
-    ->DisplayAggregatesOnly(true);
-
-// ========================================================================================
-// ========================================================================================
+//
+//
+//
+//
+//BENCHMARK(CRTStringConverterBenchmark<char, char8_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//
+//BENCHMARK(StringConverterBenchmark<char, char8_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//
+//
+//
+//BENCHMARK(CRTStringConverterBenchmark<char, char16_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//
+//BENCHMARK(StringConverterBenchmark<char, char16_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//
+//
+//
+//BENCHMARK(CRTStringConverterBenchmark<char16_t, char>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//
+//BENCHMARK(StringConverterBenchmark<char16_t, char>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->Iterations(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+ 
 // ========================================================================================
 // ========================================================================================
 // ========================================================================================
@@ -181,13 +249,14 @@ BENCHMARK(StringConverterBenchmark<char, char8_t>::ConvertString)
 // ========================================================================================
 
 int main(int argc, char** argv) {
-    benchmark::MaybeReenterWithoutASLR(argc, argv);
+    ::benchmark::MaybeReenterWithoutASLR(argc, argv);
     char arg0_default[] = "benchmark"; 
 
     char* args_default = reinterpret_cast<char*>(arg0_default); 
 
     if (!argv) {
-        argc = 1; argv = &args_default;
+        argc = 1; 
+        argv = &args_default;
     } 
 
     ::benchmark::Initialize(&argc, argv);

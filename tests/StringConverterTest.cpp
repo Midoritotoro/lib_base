@@ -60,13 +60,23 @@ class CRTStringConverterTest {
             return mbstowcs(buffer, input, length);
         else if constexpr (std::is_same_v<_FromChar_, wchar_t> && std::is_same_v<_ToChar_, char>)
             return wcstombs(buffer, input, length);
-        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char16_t>)
-            return mbrtoc16(buffer, input, length, nullptr);
+        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char16_t>) {
+            mbstate_t state{};
+
+            for (size_t i = 0; i < length; ++i)
+                mbrtoc16(&buffer[i], &input[i], 1, &state);
+            return 0;
+        }
+        else if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, char8_t>)
+            return memcpy(buffer, input, length);
+        else if constexpr (std::is_same_v<_FromChar_, char8_t> && std::is_same_v<_ToChar_, char>)
+            return memcpy(buffer, input, length);
         else if constexpr (std::is_same_v<_FromChar_, char16_t> && std::is_same_v<_ToChar_, char>) {
             mbstate_t state{};
 
             for (size_t i = 0; i < length; ++i)
-                c16rtomb(buffer, input[i], length, &state);
+                c16rtomb(&buffer[i], input[i], &state);
+            return 0;
         }
     }
 
@@ -76,6 +86,7 @@ public:
         _ToChar_* ch = static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSize * sizeof(_ToChar_), 64));
 
         ConvertStringHelper(textArray.data, stringAlignedSize, ch);
+        std::wcout << (wchar_t*)ch;
     }
 };
 
@@ -103,7 +114,7 @@ public:
     }
 };
 int main(int argc, char** argv) {
-    StringConverterTest<char, char8_t>::ConvertString();
+    StringConverterTest<char16_t, char>::ConvertString();
 
 
 	return 0;

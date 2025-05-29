@@ -191,23 +191,26 @@ CLANG_CONSTEXPR_CXX20 void* ReallocateFast(
 NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 
 void FreeNull(void* pointer) 
 {
-    void* value = nullptr;
+    //void* value = nullptr;
 
-    memcpy(&value, pointer, sizeof(value));
-    memcpy(pointer, nullptr, sizeof(value));
+    //memcpy(&value, pointer, sizeof(value));
+    //memcpy(pointer, nullptr, sizeof(value));
+    
+    //free(value);
 
-    free(value);
+    free(pointer);
 }
 
 NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 
 void FreeNullAligned(void* pointer) 
 {
-    void* value = nullptr;
+    //void* value = nullptr;
 
-    memcpy(&value, pointer, sizeof(value));
-    memcpy(pointer, nullptr, sizeof(value));
-
-    aligned_free(value);
+    //memcpy(&value, pointer, sizeof(value));
+    //memcpy(pointer, nullptr, sizeof(value));
+    
+    //aligned_free(value);
+    aligned_free(pointer);
 }
 
 CLANG_CONSTEXPR_CXX20 void AllocateFast(
