@@ -45,7 +45,8 @@ template <
     typename = std::enable_if_t<IsSupportedCharType<_Char_>>>
 class StringConversionResult {
 public:
-	constexpr StringConversionResult() noexcept {}
+	constexpr StringConversionResult() noexcept 
+	{}
 
 	constexpr inline StringConversionResult(const StringConversionResult& other) noexcept :
 		_dataStart(other._dataStart),
@@ -63,7 +64,8 @@ public:
         _isNarrowingConversion(isNarrowingConversion)
     {}
 	
-	constexpr ~StringConversionResult() noexcept {}
+	constexpr ~StringConversionResult() noexcept
+	{}
 
     constexpr inline NODISCARD bool isNull() const noexcept {
         return (_dataStart == nullptr || _dataLength == 0);
@@ -826,7 +828,9 @@ private:
 		if (outputString == nullptr)
 			outputString = static_cast<char8_t*>(memory::AllocateAligned(inputAndOutputSizeInBytes, 64));
 
-		const void* stringDataStart = string;
+		memcpy(outputString, string, stringLength);
+
+		/*const void* stringDataStart = string;
 		const void* stringDataEnd = stringDataStart;
 
 		const void* stopAt = stringDataStart;
@@ -842,16 +846,16 @@ private:
 				memory::AdvanceBytes(stringDataStart, 64);
 				memory::AdvanceBytes(outputStringVoidPointer, 64);
 			} while (stringDataStart != stopAt);
-		}
+		}*/
 
-		if (stringDataStart == stringDataEnd)
+	//	if (stringDataStart == stringDataEnd)
 			return StringConversionResult<char8_t>(
-				const_cast<char8_t*>(reinterpret_cast<const char8_t*>(outputStringVoidPointer)) - stringLength,
+				const_cast<char8_t*>(reinterpret_cast<const char8_t*>(outputString)) - stringLength,
 				stringLength, false);
 
-		return convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX2>>(
-			static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
-			reinterpret_cast<char8_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
+		//return convertStringImplementation<char, char8_t, CpuFeatureTag<CpuFeature::AVX2>>(
+		//	static_cast<const char*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char)),
+		//	reinterpret_cast<char8_t*>(outputStringVoidPointer), CpuFeatureTag<CpuFeature::AVX2>{});
 	}
 
 	//template <>

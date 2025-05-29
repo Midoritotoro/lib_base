@@ -123,7 +123,7 @@ public:
             );
         }
 
-      //  memory::Free(result.data());
+        memory::FreeNullAligned(result.data());
     }
 };
 
