@@ -248,9 +248,8 @@ private:
 			"base::core::string::StringConverter::convertStringImplementation"
 			"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(
-			_NarrowingConversionBehaviour_::replacementCharacter);
-		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epi8(toLimit);
+		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
+		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epu8(toLimit);
 
         if (string == nullptr || stringLength == 0)
             return {};
@@ -277,8 +276,8 @@ private:
 			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
 
 			do {
-				auto loaded = _mm512_loadu_si512(stringDataStart);
-				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, runtimeLessThanCompare);
+				const auto loaded = _mm512_loadu_si512(stringDataStart);
+				const uint64 comparedGreaterThan = _mm512_cmpgt_epu8_mask(loaded, runtimeLessThanCompare);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
@@ -530,9 +529,6 @@ private:
 			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
 
 			do {
-				// TODO 
-				// _NarrowingConversionBehaviour_::narrowingConversionMode doesn't affect anything right now
-
 				const auto loaded1 = _mm512_loadu_si512(stringDataStart);
 				const auto loaded2 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 64);
 
