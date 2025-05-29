@@ -12,8 +12,23 @@
 
 #include <src/core/memory/MemoryUtility.h>
 
-
 __BASE_STRING_NAMESPACE_BEGIN
+
+#ifndef base_combine_u32ints_to_u64int
+#  define base_combine_u32ints_to_u64int(high, low) ((uint64)high << 32) | (uint64)low
+#endif
+
+#ifndef base_combine_u16ints_to_u32int
+#  define base_combine_u16ints_to_u32int(high, low) ((uint32)high << 16) | (uint32)low
+#endif
+
+#ifndef base_combine_u16ints_to_u64int
+#  define base_combine_u16ints_to_u64int(high1, high2, low1, low2)	\
+	base_combine_u32ints_to_u64int(									\
+		base_combine_u16ints_to_u32int(high1, high2),				\
+		base_combine_u16ints_to_u32int(low1, low2))
+#endif
+
 
 template <class _Char_> 
 static inline constexpr bool IsSupportedCharType = 
@@ -152,6 +167,47 @@ public:
 		*output = temp;
 	}
 private:
+	using WCharAvx512MaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
+		uint32,
+		std::conditional_t<sizeof(wchar_t) == 4, uint16, void>>;
+
+	using WCharAvxMaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
+		uint16,
+		std::conditional_t<sizeof(wchar_t) == 4, uint8, void>>;
+
+	using WCharSseMaskIntegerType = uint8;
+
+	template <size_t conversionToLimit>
+	static constexpr NODISCARD base_vec512i_t wcharSseLessThenCompareVector() noexcept {
+		if constexpr (sizeof(wchar_t) == 2)
+			return base_constexpr_mm_set1_epu16(
+					static_cast<uint16>(conversionToLimit));
+		else if constexpr (sizeof(wchar_t) == 4)
+			return base_constexpr_mm_set1_epu32(
+				static_cast<uint32>(conversionToLimit));
+	}
+
+	template <size_t conversionToLimit>
+	static constexpr NODISCARD base_vec512i_t wcharAvxLessThenCompareVector() noexcept {
+		if constexpr (sizeof(wchar_t) == 2)
+			return base_constexpr_mm256_set1_epu16(
+					static_cast<uint16>(conversionToLimit));
+		else if constexpr (sizeof(wchar_t) == 4)
+			return base_constexpr_mm256_set1_epu32(
+					static_cast<uint32>(conversionToLimit));
+	}
+
+	template <size_t conversionToLimit>
+	static constexpr NODISCARD base_vec512i_t wcharAvx512LessThenCompareVector() noexcept {
+		if constexpr (sizeof(wchar_t) == 2)
+			return base_constexpr_mm512_set1_epu16(
+					static_cast<uint16>(conversionToLimit));
+		else if constexpr (sizeof(wchar_t) == 4)
+			return base_constexpr_mm512_set1_epu32(
+					static_cast<uint32>(conversionToLimit));
+	}
+
+
 	template <
 		class _FromChar_,
 		class _ToChar_,
@@ -185,18 +241,16 @@ private:
 		char*					outputString,
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
-        constexpr auto toLimit = MaximumIntegralLimit<char8_t>();
+        constexpr auto toLimit = MaximumIntegralLimit<char>();
 
-		constexpr auto replacementVector = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));
+		static_assert(
+			_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
+			"base::core::string::StringConverter::convertStringImplementation"
+			"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-		constexpr auto lessThanCompare = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi8(toLimit));
-
-        static_assert(
-            _NarrowingConversionBehaviour_::replacementCharacter <= toLimit, 
-            "base::core::string::StringConverter::convertStringImplementation"
-            "_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. "); 
+		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(
+			_NarrowingConversionBehaviour_::replacementCharacter);
+		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epi8(toLimit);
 
         if (string == nullptr || stringLength == 0)
             return {};
@@ -206,29 +260,25 @@ private:
 		const auto fromSizeInBytes = size_t(stringLength * sizeof(char8_t));
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		if (outputString == nullptr) {
+		if (outputString == nullptr)
 			outputString = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
-		}
-#if defined(_DfEBUG)
-        else 
-            DebugAssertLog(
-                memory::isAligned(outputString, 64),
-                "base::core::string::StringConverter::convertStringImplementation: "
-                "outputString pointer must be aligned on a 64 byte boundary to improve performance. ");
-#endif
-
+		
         const void* stringDataStart = string;
         const void* stringDataEnd   = stringDataStart;
 
         const void* stopAt = stringDataStart;
+		void* outputStringVoidPointer = outputString;
 
         memory::AdvanceBytes(stopAt, avx512SizeInBytes);
         memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
         
         if (avx512SizeInBytes != 0) {
+			const auto runtimeReplacementVector = base_vec512i_t_pointer_as_m512i(&replacementVector);
+			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
+
 			do {
 				auto loaded = _mm512_loadu_si512(stringDataStart);
-				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, lessThanCompare);
+				const uint64 comparedGreaterThan = _mm512_cmpgt_epi8_mask(loaded, runtimeLessThanCompare);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
@@ -240,8 +290,8 @@ private:
                             // If a character in 'loaded' is greater than the threshold (mask bit is 1), it's replaced with
                             // 'replacementCharacter'. Otherwise, it's copied from 'loaded'.
                             
-                            _mm512_mask_store_epi8(outputString, ~comparedGreaterThan, loaded);
-							_mm512_mask_store_epi8(outputString, comparedGreaterThan, replacementVector);
+                            _mm512_mask_storeu_epi8(outputStringVoidPointer, ~comparedGreaterThan, loaded);
+							_mm512_mask_storeu_epi8(outputStringVoidPointer, comparedGreaterThan, runtimeReplacementVector);
 
                             break;
 						default:
@@ -249,12 +299,11 @@ private:
                             break;
 					};
 				}
-                else {
-                    _mm512_store_si512(outputString, loaded);
-                }
+                else
+                    _mm512_store_si512(outputStringVoidPointer, loaded);
 
 				memory::AdvanceBytes(stringDataStart, 64);
-                memory::AdvanceBytes(outputString, 64);
+                memory::AdvanceBytes(outputStringVoidPointer, 64);
 			} while (stringDataStart != stopAt);
 		}
 
@@ -276,18 +325,15 @@ private:
         char*                   outputString,
 		CpuFeatureTag<CpuFeature::AVX512F> tag)
 	{
-		constexpr auto toLimit = MaximumIntegralLimit<char16_t>();
-
-		constexpr auto replacementVector = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi16(_NarrowingConversionBehaviour_::replacementCharacter));
-
-		constexpr auto lessThanCompare = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi16(toLimit));
+		constexpr auto toLimit = MaximumIntegralLimit<char>();
 
 		static_assert(
 			_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
 			"base::core::string::StringConverter::convertStringImplementation"
 			"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
+
+		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
+		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epi16(toLimit);
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -297,42 +343,44 @@ private:
 		const auto fromSizeInBytes = size_t(stringLength * sizeof(char16_t));
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		if (outputString == nullptr) {
+		if (outputString == nullptr)
 			outputString = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
-		}
-#if defined(_DfEBUG)
-		else
-			DebugAssertLog(
-				memory::isAligned(outputString, 64),
-				"base::core::string::StringConverter::convertStringImplementation: "
-				"outputString pointer must be aligned on a 64 byte boundary to improve performance. ");
-#endif
 
 		const void* stringDataStart = string;
 		const void* stringDataEnd = stringDataStart;
 
+		void* outputStringVoidPointer = outputString;
 		const void* stopAt = stringDataStart;
 
 		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
 		memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
 
 		if (avx512SizeInBytes != 0) {
+			const auto runtimeReplacementVector = base_vec512i_t_pointer_as_m512i(&replacementVector);
+			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
+
 			do {
-				auto loaded = _mm512_loadu_si512(stringDataStart);
-				const uint32 comparedGreaterThan = _mm512_cmpgt_epi16_mask(loaded, lessThanCompare);
+				const auto loaded = _mm512_loadu_si512(stringDataStart);
+				const auto loaded2 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 64);
+
+				const uint32 comparedGreaterThan = _mm512_cmpgt_epi16_mask(loaded, runtimeLessThanCompare);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
 					isNarrowingConversion = true;
-
+					
 					switch (_NarrowingConversionBehaviour_::narrowingConversionMode) {
 					case NarrowingConversionMode::CustomReplacement:
 					case NarrowingConversionMode::DefaultReplacement:
 						// If a character in 'loaded' is greater than the threshold (mask bit is 1), it's replaced with
 						// 'replacementCharacter'. Otherwise, it's copied from 'loaded'.
+				/*		const auto convertedToChar = _mm512_shuffle_i64x2(
+							_mm512_packs_epi16(loaded, loaded2),
+							_MM_SHUFFLE(3, 2, 1, 0));
+						*/
 
-						_mm512_mask_store_epi16(outputString, ~comparedGreaterThan, loaded);
-						_mm512_mask_store_epi16(outputString, comparedGreaterThan, replacementVector);
+					//	_mm512_mask_storeu_epi8(outputString, ~comparedGreaterThan, _mm512_cvtepi16_epi8(loaded));
+					//	_mm512_mask_storeu_epi8(outputString, comparedGreaterThan, runtimeReplacementVector);
 
 						break;
 					default:
@@ -340,11 +388,10 @@ private:
 						break;
 					};
 				}
-				else {
+				else
 					_mm512_store_si512(outputString, loaded);
-				}
 
-				memory::AdvanceBytes(stringDataStart, 64);
+				memory::AdvanceBytes(stringDataStart, 128);
 				memory::AdvanceBytes(outputString, 64);
 			} while (stringDataStart != stopAt);
 		}
@@ -368,11 +415,8 @@ private:
 	{
 		constexpr auto toLimit = MaximumIntegralLimit<char32_t>();
 
-		constexpr auto replacementVector = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi32(_NarrowingConversionBehaviour_::replacementCharacter));
-
-		constexpr auto lessThanCompare = base_vec512i_t_pointer_as_m512i(
-			base_constexpr_mm512_set1_epi32(toLimit));
+		constexpr auto replacementVector = base_constexpr_mm512_set1_epi32(_NarrowingConversionBehaviour_::replacementCharacter);
+		constexpr auto lessThanCompare = base_constexpr_mm512_set1_epi32(toLimit);
 
 		static_assert(
 			_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
@@ -387,29 +431,25 @@ private:
 		const auto fromSizeInBytes = size_t(stringLength * sizeof(char32_t));
 		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
 
-		if (outputString == nullptr) {
+		if (outputString == nullptr)
 			outputString = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
-		}
-#if defined(_DfEBUG)
-		else
-			DebugAssertLog(
-				memory::isAligned(outputString, 64),
-				"base::core::string::StringConverter::convertStringImplementation: "
-				"outputString pointer must be aligned on a 64 byte boundary to improve performance. ");
-#endif
 
 		const void* stringDataStart = string;
 		const void* stringDataEnd = stringDataStart;
 
+		void* outputStringVoidPointer = outputString;
 		const void* stopAt = stringDataStart;
 
 		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
 		memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
 
 		if (avx512SizeInBytes != 0) {
+			const auto runtimeReplacementVector = base_vec512i_t_pointer_as_m512i(&replacementVector);
+			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
+
 			do {
 				auto loaded = _mm512_loadu_si512(stringDataStart);
-				const uint16 comparedGreaterThan = _mm512_cmpgt_epi32_mask(loaded, lessThanCompare);
+				const uint16 comparedGreaterThan = _mm512_cmpgt_epi32_mask(loaded, runtimeLessThanCompare);
 
 				// Narrowing conversion
 				if (comparedGreaterThan != 0) {
@@ -421,8 +461,8 @@ private:
 						// If a character in 'loaded' is greater than the threshold (mask bit is 1), it's replaced with
 						// 'replacementCharacter'. Otherwise, it's copied from 'loaded'.
 
-						_mm512_mask_store_epi32(outputString, ~comparedGreaterThan, loaded);
-						_mm512_mask_store_epi32(outputString, comparedGreaterThan, replacementVector);
+						_mm512_mask_store_epi32(outputStringVoidPointer, ~comparedGreaterThan, loaded);
+						_mm512_mask_store_epi32(outputStringVoidPointer, comparedGreaterThan, runtimeReplacementVector);
 
 						break;
 					default:
@@ -430,12 +470,11 @@ private:
 						break;
 					};
 				}
-				else {
-					_mm512_store_si512(outputString, loaded);
-				}
+				else
+					_mm512_store_si512(outputStringVoidPointer, loaded);
 
 				memory::AdvanceBytes(stringDataStart, 64);
-				memory::AdvanceBytes(outputString, 64);
+				memory::AdvanceBytes(outputStringVoidPointer, 64);
 			} while (stringDataStart != stopAt);
 		}
 
@@ -456,20 +495,119 @@ private:
 		char*					outputString,
 		CpuFeatureTag<CpuFeature::AVX512F>)
 	{
-		// Windows 
-		if constexpr (std::is_same_v<wchar_t, char16_t>)
-			return convertStringImplementation<char16_t, char, CpuFeatureTag<CpuFeature::AVX512F>>(
-				static_cast<const char16_t* const>(string), stringLength,
-				outputString, CpuFeatureTag<CpuFeature::AVX512F>{});
+		constexpr auto toLimit = MaximumIntegralLimit<char>();
 
-		// Linux and etc.
-		else if constexpr (std::is_same_v<wchar_t, char32_t>)
-			return convertStringImplementation<char32_t, char, CpuFeatureTag<CpuFeature::AVX512F>>(
-				static_cast<const char32_t* const>(string), stringLength,
-				outputString, CpuFeatureTag<CpuFeature::AVX512F>{});
+		static_assert(
+			_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
+			"base::core::string::StringConverter::convertStringImplementation"
+			"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-		AssertUnreachable();
-		return {};
+		constexpr auto replacementVector = base_constexpr_mm512_set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter);
+		constexpr auto lessThanCompare = wcharAvx512LessThenCompareVector<toLimit>();
+
+		if (string == nullptr || stringLength == 0)
+			return {};
+
+		bool isNarrowingConversion = false;
+
+		const auto fromSizeInBytes = size_t(stringLength * sizeof(char16_t));
+		const auto avx512SizeInBytes = fromSizeInBytes & ~size_t(0x3F);
+
+		if (outputString == nullptr)
+			outputString = static_cast<char*>(memory::AllocateAligned(fromSizeInBytes, 64));
+
+		const void* stringDataStart = string;
+		const void* stringDataEnd = stringDataStart;
+
+		void* outputStringVoidPointer = outputString;
+		const void* stopAt = stringDataStart;
+
+		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
+		memory::AdvanceBytes(stringDataEnd, fromSizeInBytes);
+
+		if (avx512SizeInBytes != 0) {
+			const auto runtimeReplacementVector = base_vec512i_t_pointer_as_m512i(&replacementVector);
+			const auto runtimeLessThanCompare = base_vec512i_t_pointer_as_m512i(&lessThanCompare);
+
+			do {
+				// TODO 
+				// _NarrowingConversionBehaviour_::narrowingConversionMode doesn't affect anything right now
+
+				const auto loaded1 = _mm512_loadu_si512(stringDataStart);
+				const auto loaded2 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 64);
+
+				uint64 comparedGreaterThan = 0;
+
+				__m512i convertedToCharVector;
+
+				if constexpr (sizeof(wchar_t) == 2) {
+					uint32 first64BytesMask = _mm512_cmpgt_epu16_mask(loaded1, runtimeLessThanCompare);
+					uint32 second64BytesMask = _mm512_cmpgt_epu16_mask(loaded2, runtimeLessThanCompare);
+
+					comparedGreaterThan = base_combine_u32ints_to_u64int(first64BytesMask, second64BytesMask);
+
+					convertedToCharVector = _mm512_castsi256_si512(_mm512_cvtepi16_epi8(loaded1));
+					convertedToCharVector = _mm512_inserti32x8(convertedToCharVector, _mm512_cvtepi16_epi8(loaded2), 1);
+				}
+				else if constexpr (sizeof(wchar_t) == 4) {
+					const auto loaded3 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 128);
+					const auto loaded4 = _mm512_loadu_si512(memory::UnCheckedToConstChar(stringDataStart) + 192);
+
+					uint16 first64BytesMask = _mm512_cmpgt_epu32_mask(loaded1, runtimeLessThanCompare);
+					uint16 second64BytesMask = _mm512_cmpgt_epu32_mask(loaded2, runtimeLessThanCompare);
+
+					uint16 third64BytesMask = _mm512_cmpgt_epu32_mask(loaded1, runtimeLessThanCompare);
+					uint16 fourth64BytesMask = _mm512_cmpgt_epu32_mask(loaded2, runtimeLessThanCompare);
+
+					comparedGreaterThan = base_combine_u16ints_to_u64int(
+						first64BytesMask, second64BytesMask, third64BytesMask, fourth64BytesMask);
+
+					convertedToCharVector = _mm512_castsi128_si512(_mm512_cvtepi32_epi8(loaded1));
+
+					convertedToCharVector = _mm512_inserti32x4(convertedToCharVector, _mm512_cvtepi32_epi8(loaded2), 1);
+					convertedToCharVector = _mm512_inserti32x4(convertedToCharVector, _mm512_cvtepi32_epi8(loaded3), 2);
+					convertedToCharVector = _mm512_inserti32x4(convertedToCharVector, _mm512_cvtepi32_epi8(loaded4), 3);
+				}
+
+				// Narrowing conversion
+				if (comparedGreaterThan != 0) {
+					isNarrowingConversion = true;
+
+					switch (_NarrowingConversionBehaviour_::narrowingConversionMode) {
+					case NarrowingConversionMode::CustomReplacement:
+					case NarrowingConversionMode::DefaultReplacement:
+						// If a character in 'convertedToCharVector' is greater than the threshold (mask bit is 1), it's replaced with
+						// 'replacementCharacter'. Otherwise, it's copied from 'convertedToCharVector'.
+
+						_mm512_mask_storeu_epi8(outputStringVoidPointer, ~comparedGreaterThan, convertedToCharVector);
+						_mm512_mask_storeu_epi8(outputStringVoidPointer, comparedGreaterThan, runtimeReplacementVector);
+
+						break;
+					default:
+						AssertUnreachable();
+						break;
+					};
+				}
+				else
+					_mm512_store_si512(outputStringVoidPointer, convertedToCharVector);
+				
+				if constexpr (sizeof(wchar_t) == 2)
+					memory::AdvanceBytes(stringDataStart, 128);
+				else if constexpr (sizeof(wchar_t) == 4)
+					memory::AdvanceBytes(stringDataStart, 256);
+
+				memory::AdvanceBytes(outputStringVoidPointer, 64);
+			} while (stringDataStart != stopAt);
+		}
+
+		if (stringDataStart == stringDataEnd)
+			return StringConversionResult<char>(
+				outputString - fromSizeInBytes,
+				stringLength, isNarrowingConversion);
+
+		return convertStringImplementation<char16_t, char, CpuFeatureTag<CpuFeature::AVX2>>(
+			static_cast<const char16_t*>(stringDataStart), stringLength - (avx512SizeInBytes / sizeof(char16_t)),
+			outputString, CpuFeatureTag<CpuFeature::AVX2>{});
 	}
 
 	template <>

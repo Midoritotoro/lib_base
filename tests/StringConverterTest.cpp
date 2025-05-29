@@ -58,22 +58,29 @@ template <
     typename _ToChar_,
     StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class CRTStringConverterBenchmark {
-    static void ConvertStringHelper(
+    static auto ConvertStringHelper(
         const _FromChar_* input,
         size_t length, 
         _ToChar_* buffer) 
     {
-        mbstowcs(buffer, input, length);
+        if constexpr (std::is_same_v<_FromChar_, char> && std::is_same_v<_ToChar_, wchar_t>)
+            return mbstowcs(buffer, input, length);
+        else if constexpr (std::is_same_v<_FromChar_, wchar_t> && std::is_same_v<_ToChar_, char>)
+            return wcstombs(buffer, input, length);
     }
 
 public:
-    static void ConvertString(benchmark::State& state) {
+    static auto ConvertString(benchmark::State& state) {
         static constexpr auto textArray = FixedArray < _FromChar_, stringAlignedSizeForBenchmark>{};
         _ToChar_* ch = static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSizeForBenchmark * sizeof(_ToChar_), 64));
 
         for (auto _ : state) {
-            ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, ch);
+            benchmark::DoNotOptimize(
+                ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, ch)
+            );
         }
+
+       // memory::Free(ch);
     }
 };
 
@@ -82,35 +89,75 @@ template <
     typename _ToChar_,
     StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class StringConverterBenchmark {
-    static void ConvertStringHelper(
+    static auto ConvertStringHelper(
         const _FromChar_* input, 
         size_t length, 
         string::StringConversionResult<_ToChar_>& result)
     {
         string::StringConverter<>::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
+        return result;
     }
 
 public:
     static void ConvertString(benchmark::State& state) {
+        
         string::StringConversionResult<_ToChar_> result;
         static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSizeForBenchmark>{};
 
         result.setData(static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSizeForBenchmark * sizeof(_ToChar_), 64)));
 
         for (auto _ : state) {
-            ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, result);
+            benchmark::DoNotOptimize(
+                ConvertStringHelper(textArray.data, stringAlignedSizeForBenchmark, result)
+            );
         }
+
+      //  memory::Free(result.data());
     }
 };
 
-BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
-    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT);
-
-BENCHMARK(CRTStringConverterBenchmark<char, wchar_t>::ConvertString)
-    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT);
-
+//BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//BENCHMARK(CRTStringConverterBenchmark<char, wchar_t>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
 
 // ========================================================================================
+
+//BENCHMARK(StringConverterBenchmark<wchar_t, char>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+//
+//BENCHMARK(CRTStringConverterBenchmark<wchar_t, char>::ConvertString)
+//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+//    ->Repetitions(1000)
+//    ->ReportAggregatesOnly(true)
+//    ->DisplayAggregatesOnly(true);
+
+// ========================================================================================
+
+
+BENCHMARK(StringConverterBenchmark<char, char8_t>::ConvertString)
+    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+    ->Repetitions(1000)
+    ->ReportAggregatesOnly(true)
+    ->DisplayAggregatesOnly(true);
+
+BENCHMARK(CRTStringConverterBenchmark<char, char8_t>::ConvertString)
+    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+    ->Repetitions(1000)
+    ->ReportAggregatesOnly(true)
+    ->DisplayAggregatesOnly(true);
+
+
 // ========================================================================================
 // ========================================================================================
 // ========================================================================================
