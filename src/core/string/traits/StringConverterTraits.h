@@ -5,22 +5,31 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+#if !defined(baseInitConversionPointers)
+#  define baseInitConversionPointers(_CharType_, parameters, alignment) \
+	    size_t avx512SizeInBytes = (parameters.stringLength * sizeof(_CharType_)) & ~size_t(alignment); \
+		void* stopAt = parameters.inputStringDataStart; \
+		void* outputStringVoidPointer = parameters.outputStringDataStart; \
+		const void* inputStringVoidPointer = parameters.inputStringDataStart; \
+		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
+#endif
+
 template <
 	typename _FromChar_,
 	typename _ToChar_,
 	typename = std::enable_if_t<
 		IsCompatibleCharType<_FromChar_>::value && 
 		IsCompatibleCharType<_ToChar_>::value>>
-struct ConversionParameters {
-	ConversionParameters(
+struct StringConversionParameters {
+	StringConversionParameters(
 		const _FromChar_*	inputString,
-		size_t				inputStringSizeInBytes,
+		size_t				inputStringLength,
 		_ToChar_*			outputString,
 		const void*			replacementVectorSimd = nullptr,
 		const void*			narrowingLimitVectorSimd = nullptr
 	) noexcept:
 		inputStringDataStart(inputString),
-		stringSizeInBytes(inputStringSizeInBytes),
+		stringLength(inputStringLength),
 		outputStringDataStart(outputString),
 		replacementVector(replacementVectorSimd),
 		narrowingLimitVector(narrowingLimitVectorSimd)
@@ -30,7 +39,7 @@ struct ConversionParameters {
 	const void* narrowingLimitVector = nullptr;
 
 	const _FromChar_* inputStringDataStart = nullptr;
-	size_t stringSizeInBytes = 0;
+	size_t stringLength = 0;
 
 	_ToChar_* outputStringDataStart = nullptr;
 };

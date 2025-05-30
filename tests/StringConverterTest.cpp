@@ -114,7 +114,7 @@ public:
     }
 };
 int main(int argc, char** argv) {
-    StringConverterTest<char16_t, char>::ConvertString();
+    StringConverterTest<char, wchar_t>::ConvertString();
 
 
 	return 0;
