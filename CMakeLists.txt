@@ -307,6 +307,8 @@ set(PRIVATE_HEADERS
 
     src/core/string/StringConversionResult.h
 
+    src/core/string/traits/StringConverterScalarTraits.cpp
+    src/core/string/traits/StringConverterScalarTraits.h
 )
 
 set(PUBLIC_HEADERS 

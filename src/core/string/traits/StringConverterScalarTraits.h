@@ -8,20 +8,7 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<CpuFeatureTag<CpuFeature::AVX>, _NarrowingConversionBehaviour_> {
-	using WCharAvxMaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
-		uint16,
-		std::conditional_t<sizeof(wchar_t) == 4, uint8, void>>;
-
-	template <size_t conversionToLimit>
-	static constexpr NODISCARD base_vec512i_t wcharAvxLessThenCompareVector() noexcept {
-		if constexpr (sizeof(wchar_t) == 2)
-			return base_constexpr_mm256_set1_epu16(
-				static_cast<uint16>(conversionToLimit));
-		else if constexpr (sizeof(wchar_t) == 4)
-			return base_constexpr_mm256_set1_epu32(
-				static_cast<uint32>(conversionToLimit));
-	}
+class StringConverterTraits<CpuFeatureTag<CpuFeature::None>, _NarrowingConversionBehaviour_> {
 public:
 	template <
 		typename _FromChar_,
