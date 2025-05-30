@@ -187,26 +187,16 @@ set(PRIVATE_SOURCES
 )
 
 set(PRIVATE_HEADERS
- 
-
     src/images/StackBlurTask.h
-
-  
     src/core/thread/ThreadsData.h
-   
-
+  
     src/core/string/CharTraits.h
-
     src/core/string/UnicodeTables.h
- 
 
     src/core/utility/simd/traits/SimdFindTraits.h
-  
     src/core/utility/simd/traits/SimdCountTraits.h
-  
 
     src/core/utility/simd/MinMax.h
-  
     src/core/utility/simd/traits/MinMaxTraits.h
 
     src/core/utility/simd/traits/MinMaxTraitsAVX.h
@@ -214,11 +204,9 @@ set(PRIVATE_HEADERS
     
     src/core/utility/simd/traits/MinMaxTraitsSSE2.h
 
-    
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
 
- 
     src/core/utility/simd/SimdAlgorithm.h
 
     src/core/utility/algorithm/AllOf.h
@@ -277,7 +265,6 @@ set(PRIVATE_HEADERS
     src/core/memory/MemoryUtility.h
     src/core/system/WindowsVersion.h
 
- 
     src/core/string/BasicString.h
     
     src/core/string/StringDebug.h
@@ -298,19 +285,28 @@ set(PRIVATE_HEADERS
     #src/core/memory/crt/BaseMemcpy.S
 
     src/core/string/crt/BaseStrlen.h
-
     src/core/string/crt/BaseStrstr.h
 
     src/core/string/crt/BaseStrstrn.h
-  
     src/core/string/crt/simd/BaseStrstrAvx2ClangMsvc.h
 
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
-
     src/core/string/StringConversionOptions.h
 
     src/core/utility/simd/SimdConstexprHelpers.h
     src/core/utility/simd/SimdVectorType.h
+
+    src/core/string/traits/StringConverterAvxTraits.cpp
+    src/core/string/traits/StringConverterAvxTraits.h
+
+    src/core/string/traits/StringConverterAvx512Traits.cpp
+    src/core/string/traits/StringConverterAvx512Traits.h
+
+    src/core/string/traits/StringConverterSseTraits.cpp
+    src/core/string/traits/StringConverterSseTraits.h
+
+    src/core/string/StringConversionResult.h
+
 )
 
 set(PUBLIC_HEADERS 

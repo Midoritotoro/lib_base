@@ -13,6 +13,21 @@
 
 __BASE_NAMESPACE_BEGIN
 
+#ifndef base_combine_u32ints_to_u64int
+#  define base_combine_u32ints_to_u64int(high, low) ((uint64)high << 32) | (uint64)low
+#endif
+
+#ifndef base_combine_u16ints_to_u32int
+#  define base_combine_u16ints_to_u32int(high, low) ((uint32)high << 16) | (uint32)low
+#endif
+
+#ifndef base_combine_u16ints_to_u64int
+#  define base_combine_u16ints_to_u64int(high1, high2, low1, low2)	\
+	base_combine_u32ints_to_u64int(									\
+		base_combine_u16ints_to_u32int(high1, high2),				\
+		base_combine_u16ints_to_u32int(low1, low2))
+#endif
+
 template <typename ForwardIterator>
 inline void DeleteAll(
     ForwardIterator begin, 

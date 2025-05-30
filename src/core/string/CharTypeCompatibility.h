@@ -15,17 +15,23 @@ class BasicString;
 class Char;
 class StringView;
 
+template <typename StdChar>
+struct IsUnicodeChar:
+	std::integral_constant<bool,
+		std::is_same<_Char, Char>::value		||
+		std::is_same<_Char, char16_t>::value	||
+		std::is_same<_Char, char32_t>::value	||
+#if __cpp_lib_char8_t
+		std::is_same<_Char, char8_t>::value		||
+#endif
+{};
+
 template <typename _Char>
 struct IsCompatibleCharTypeHelper
 	: std::integral_constant<bool,
-	std::is_same<_Char, Char>::value ||
-	std::is_same<_Char, ushort>::value ||
-	std::is_same<_Char, char16_t>::value ||
-	std::is_same<_Char, char32_t>::value ||
-#if __cpp_lib_char8_t
-	std::is_same<_Char, char8_t>::value ||
-#endif
-	(std::is_same<_Char, wchar_t>::value && sizeof(wchar_t) == sizeof(_Char))> 
+	std::is_same<_Char, ushort>::value	||
+	IsUnicodeChar<_Char>::value			|| 
+	std::is_same<_Char, wchar_t>::value> 
 {};
 
 template <typename _Char>
@@ -54,7 +60,6 @@ template <
 struct IsContainerCompatibleWithStringView 
 	: std::false_type 
 {};
-
 
 //template <typename T>
 //struct IsContainerCompatibleWithStringView < T, std::enable_if_t < std::conjunction_v <
