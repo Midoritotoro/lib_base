@@ -10,7 +10,6 @@ enum class NarrowingConversionMode : uchar {
     CustomReplacement   = 0x01,     // Use the char provided by the user
 };
 
-
 class DefaultReplacementConversionMode {
 public:
     inline static constexpr auto narrowingConversionMode = NarrowingConversionMode::DefaultReplacement;

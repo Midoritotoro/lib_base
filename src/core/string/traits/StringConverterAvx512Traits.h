@@ -1,14 +1,17 @@
 #pragma once 
 
-#include <base/core/arch/CpuFeatureTag.h>
-#include <src/core/string/StringConversionOptions.h> 
-
 #include <src/core/string/traits/StringConverterTraits.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<CpuFeatureTag<CpuFeature::AVX512>, _NarrowingConversionBehaviour_> {
+class StringConverterTraits<
+	CpuFeatureTag<CpuFeature::AVX512>, 
+	_NarrowingConversionBehaviour_>:
+		public StringConverterTraitsBase<
+			CpuFeatureTag<CpuFeature::AVX512>,
+			_NarrowingConversionBehaviour_> 
+{
 	using WCharAvx512MaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
 		uint32,
 		std::conditional_t<sizeof(wchar_t) == 4, uint16, void>>;
@@ -23,11 +26,9 @@ class StringConverterTraits<CpuFeatureTag<CpuFeature::AVX512>, _NarrowingConvers
 				static_cast<uint32>(conversionToLimit));
 	}
 
-	using FallbackTraits = StringConverterTraits<CpuFeatureTag<CpuFeature::AVX2>, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<CpuFeatureTag<CpuFeature::AVX>, _NarrowingConversionBehaviour_>;
 public:
-	template <
-		typename _FromChar_,
-		typename = std::enable_if_t<IsCompatibleCharType<_FromChar_>::value>>
+	template <typename _FromChar_>
 	// A vector for finding characters of type _FromChar_ that exceed the _ToChar_ limit
 	static constexpr NODISCARD base_vec512i_t narrowingLimitVector() noexcept {
 		if constexpr (std::is_same_v<_FromChar_, char>)
@@ -52,9 +53,7 @@ public:
 		return {};
 	}
 
-	template <
-		typename _ToChar_,
-		typename = std::enable_if_t<IsCompatibleCharType<_ToChar_>::value>>
+	template <typename _ToChar_>
 	// A vector for replacing characters in a narrowing conversion
 	static constexpr NODISCARD base_vec512i_t replacementVector() noexcept {
 		if constexpr (std::is_same_v<_ToChar_, char>)
@@ -81,20 +80,9 @@ public:
 
 	template <
 		typename _FromChar_,
-		typename _ToChar_,
-		typename = std::enable_if_t<
-			IsCompatibleCharType<_FromChar_>::value&&
-			IsCompatibleCharType<_ToChar_>::value>>
-	// Is data loss possible when converting from _FromChar_ to _ToChar_
-	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
-		return (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>());
-	}
-
-	template <
-		typename _FromChar_,
 		typename _ToChar_>
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
-		const StringConversionParameters<_FromChar_, _ToChar_>& parameters) noexcept
+		StringConversionParameters<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX512>>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};
@@ -102,9 +90,9 @@ public:
 
 	template <>
 	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
-		const StringConversionParameters<char, wchar_t>& parameters) noexcept
+		StringConversionParameters<char, wchar_t, CpuFeatureTag<CpuFeature::AVX512>>& parameters) noexcept
 	{
-		baseInitConversionPointers(char, parameters, 64);
+		baseInitConversionPointers(char, parameters, 64)
 
 		if (avx512SizeInBytes != 0) {
 			do {
@@ -141,51 +129,54 @@ public:
 			} while (inputStringVoidPointer != stopAt);
 		}
 
-		if (inputStringVoidPointer == memory::UnCheckedToConstChar(inputStringDataStart + parameters.stringSizeInBytes))
-			return StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters, false);
+		if (inputStringVoidPointer == memory::UnCheckedToConstChar(parameters.inputStringDataStart + parameters.stringLength))
+			return StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters.stringLength, false);
 
-		return FallbackTraits::convertString<char, wchar_t>(
-			static_cast<const char*>(inputStringVoidPointer),
-			parameters.stringLength - (avx512SizeInBytes / sizeof(char)),
-			reinterpret_cast<wchar_t*>(outputStringVoidPointer));
+		//return FallbackTraits::convertString<char, wchar_t>(
+		//	static_cast<const char*>(inputStringVoidPointer),
+		//	parameters.stringLength - (avx512SizeInBytes / sizeof(char)),
+		//	reinterpret_cast<wchar_t*>(outputStringVoidPointer));
 	}
 
-#if __cpp_lib_char8_t
-	template <>
-	static NODISCARD StringConversionResult<char8_t> convertString<char, char8_t>(
-		const StringConversionParameters<char, wchar_t>& parameters) noexcept
-	{
-		baseInitConversionPointers(char, parameters, 64);
-
-		if (avx512SizeInBytes != 0) {
-			do {
-				
-			} while (inputStringVoidPointer != stopAt);
-		}
-
-		if (inputStringVoidPointer == memory::UnCheckedToConstChar(inputStringDataStart + parameters.stringSizeInBytes))
-			return StringConversionResult<char8_t>(parameters.outputStringDataStart, parameters, false);
-
-		return FallbackTraits::convertString<char, char8_t>(
-			static_cast<const char*>(inputStringVoidPointer),
-			parameters.stringLength - (avx512SizeInBytes / sizeof(char)),
-			reinterpret_cast<char8_t*>(outputStringVoidPointer));
-	}
-#endif
-
-	template <>
-	static NODISCARD StringConversionResult<char16_t> convertString<char, char16_t>(
-		const StringConversionParameters<char, wchar_t>& parameters) noexcept
-	{
-
-	}
-
-	template <>
-	static NODISCARD StringConversionResult<char32_t> convertString<char, char32_t>(
-		const StringConversionParameters<char, wchar_t>& parameters) noexcept
-	{
-
-	}
+//#if __cpp_lib_char8_t
+//	template <>
+//	static NODISCARD StringConversionResult<char8_t> convertString<char, char8_t>(
+//		const StringConversionParameters<char, wchar_t>& parameters) noexcept
+//	{
+//		/*baseInitConversionPointers(char, parameters, 64);
+//
+//		if (avx512SizeInBytes != 0) {
+//			do {
+//				_mm512_storeu_si512(outputStringVoidPointer, _mm512_loadu_si512(inputStringVoidPointer));
+//
+//				memory::AdvanceBytes(inputStringVoidPointer, 64);
+//				memory::AdvanceBytes(outputStringVoidPointer, 64);
+//			} while (inputStringVoidPointer != stopAt);
+//		}
+//
+//		if (inputStringVoidPointer == memory::UnCheckedToConstChar(inputStringDataStart + parameters.stringSizeInBytes))
+//			return StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters, false);
+//
+//		return FallbackTraits::convertString<char, wchar_t>(
+//			static_cast<const char*>(inputStringVoidPointer),
+//			parameters.stringLength - (avx512SizeInBytes / sizeof(char)),
+//			reinterpret_cast<wchar_t*>(outputStringVoidPointer));*/
+//	}
+//#endif
+//
+//	template <>
+//	static NODISCARD StringConversionResult<char16_t> convertString<char, char16_t>(
+//		const StringConversionParameters<char, wchar_t>& parameters) noexcept
+//	{
+//
+//	}
+//
+//	template <>
+//	static NODISCARD StringConversionResult<char32_t> convertString<char, char32_t>(
+//		const StringConversionParameters<char, wchar_t>& parameters) noexcept
+//	{
+//
+//	}
 };
 
 __BASE_STRING_NAMESPACE_END

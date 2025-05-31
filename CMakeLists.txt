@@ -187,6 +187,8 @@ set(PRIVATE_SOURCES
 )
 
 set(PRIVATE_HEADERS
+    src/core/arch/CpuFeatureSimdTraits.h
+
     src/images/StackBlurTask.h
     src/core/thread/ThreadsData.h
   
@@ -203,6 +205,8 @@ set(PRIVATE_HEADERS
     src/core/utility/simd/traits/MinMaxTraitsAVX512.h
     
     src/core/utility/simd/traits/MinMaxTraitsSSE2.h
+
+    src/core/string/traits/StringConverterTraitsBase.h
 
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
@@ -495,7 +499,6 @@ set(PUBLIC_HEADERS
     include/base/core/arch/ProcessorFeatures.h
     
     include/base/core/arch/CpuId.h
-
      
     include/base/core/utility/Concepts.h
     include/base/core/utility/Execution.h
