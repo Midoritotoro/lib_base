@@ -627,6 +627,15 @@ WARNING_DISABLE_MSVC(4067)
 #  define BASE_THROW(...) throw(__VA_ARGS__)
 #endif
 
+
+#ifndef BASE_ASM_EXTERN
+#  if defined(__cplusplus)
+#    define BASE_ASM_EXTERN extern "C"
+#  else 
+#    define BASE_ASM_EXTERN extern
+#  endif
+#endif
+
 // Warnings
 
 #ifndef NODISCARD_RETURN_RAW_PTR

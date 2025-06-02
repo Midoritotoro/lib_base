@@ -235,14 +235,16 @@ __BASE_QT_STYLE_NAMESPACE_END
 
 __BASE_QT_STYLE_NAMESPACE_BEGIN
 
-struct TextStyle {
+struct TitleStyle {
 	font _font;
 	int lineHeight = 14;
+};
 
+struct TextStyle: TitleStyle {
 	bool linkUnderLine = true;
 	QuoteStyle blockquote = {};
 };
 
 inline const TextStyle* defaultTextStyle = nullptr;
 
-__BASE_QT_STYLE_NAMESPACE_END
+__BASE_QT_STYLE_NAMESPACE_END 

@@ -6,25 +6,25 @@
 
 __BASE_QT_STYLE_NAMESPACE_BEGIN
 
-namespace {
-	QString _sliderStyle = "";
-	QString _scrollAreaStyle = "";
 
-	void loadStyles() {
-		const auto sliderStyle = ":/src/css/SliderStyle.css";
-		const auto scrollAreaStyle = ":/src/css/ScrollAreaStyle.css";
+QString _sliderStyle = "";
+QString _scrollAreaStyle = "";
 
-		auto file = QFile(sliderStyle);
+void loadStyles() {
+	const auto sliderStyle = ":/src/css/SliderStyle.css";
+	const auto scrollAreaStyle = ":/src/css/ScrollAreaStyle.css";
 
-		if (file.open(QFile::ReadOnly))
-			_sliderStyle = file.readAll();
+	auto file = QFile(sliderStyle);
 
-		file.setFileName(scrollAreaStyle);
+	if (file.open(QFile::ReadOnly))
+		_sliderStyle = file.readAll();
 
-		if (file.open(QFile::ReadOnly))
-			_scrollAreaStyle = file.readAll();
-	}
-} // namespace
+	file.setFileName(scrollAreaStyle);
+
+	if (file.open(QFile::ReadOnly))
+		_scrollAreaStyle = file.readAll();
+}
+
 
 QString SliderStyle() {
 	return _sliderStyle;
@@ -64,7 +64,7 @@ void initStyles() {
 		}
 	} };
 
-	defaultPopupMenuStyle = new PopupMenu{ StyleBase{
+	defaultPopupMenuStyle = new PopupMenu{ StyleBase {
 
 		.borderRadius = 10,
 		.borderWidth = 1,

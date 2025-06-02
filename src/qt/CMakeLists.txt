@@ -90,6 +90,8 @@ set(QT_PRIVATE_SOURCES
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_down.frag
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/dual_kawase_up.frag
     ${PROJECT_SOURCE_DIR}/src/qt/ui/effects/shaders/simple.vert
+
+    ${PROJECT_SOURCE_DIR}/src/qt/style/StyleParameters.h
 )
 
 set(QT_PUBLIC_HEADERS 

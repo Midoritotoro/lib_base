@@ -240,25 +240,26 @@ void FlatLabel::overrideLinkClickHandler(Fn<void()> handler) {
 	setClickHandlerFilter([=](
 		const common::ClickHandlerPtr& link,
 		Qt::MouseButton button)
-		{
-			if (button != Qt::LeftButton)
-				return true;
+	{
+		if (button != Qt::LeftButton)
+			return true;
 
-			handler();
-			return false;
-		});
+		handler();
+		return false;
+	});
 }
 
 void FlatLabel::overrideLinkClickHandler(Fn<void(QString url)> handler) {
 	setClickHandlerFilter([=](
 		const common::ClickHandlerPtr& link,
-		Qt::MouseButton button) {
-			if (button != Qt::LeftButton) {
-				return true;
-			}
-			handler(link->url());
-			return false;
-		});
+		Qt::MouseButton button) 
+	{
+		if (button != Qt::LeftButton) {
+			return true;
+		}
+		handler(link->url());
+		return false;
+	});
 }
 
 void FlatLabel::paintEvent(QPaintEvent* event) {

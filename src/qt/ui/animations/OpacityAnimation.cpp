@@ -19,6 +19,7 @@ void OpacityAnimation::start(
 {
 	Expects(duration != 0);
 	Expects(from != to);
+
 	_opacity = from;
 
 	_opacityFrom = from;

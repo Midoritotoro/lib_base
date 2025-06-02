@@ -24,7 +24,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_,
-		std::enable_if_t<
+		typename = std::enable_if_t<
 			IsCompatibleCharType<_FromChar_>::value &&
 			IsCompatibleCharType<_ToChar_>::value>>
 	// Allocates (length * sizeof(_ToChar_)) bytes of memory for conversion from string
@@ -51,7 +51,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_,
-		std::enable_if_t<
+		typename = std::enable_if_t<
 			IsCompatibleCharType<_FromChar_>::value &&
 			IsCompatibleCharType<_ToChar_>::value>>
 	// Converts by writing to output->data() (without memory allocation)
@@ -100,7 +100,7 @@ private:
 
 		if (string == nullptr || stringLength == 0)
 			return {};
-		// StringConverterTraits<CpuFeatureTag<CpuFeature::AVX512>, DefaultReplacementConversionMode>::maybeNarrowingConversion<char, wchar_t>();
+
 		const auto fromStringSizeInBytes = size_t(stringLength * sizeof(_FromChar_));
 
 		if (outputString == nullptr)
@@ -108,22 +108,22 @@ private:
 
 		StringConversionResult<_ToChar_> conversionResult;
 
-		if constexpr (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>()) {
-			constexpr auto toLimit = MaximumIntegralLimit<char>();
+		//if constexpr (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>()) {
+		//	constexpr auto toLimit = MaximumIntegralLimit<char>();
 
-			static_assert(
-				_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
-				"base::core::string::StringConverter::convertStringImplementation"
-				"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
+		//	static_assert(
+		//		_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
+		//		"base::core::string::StringConverter::convertStringImplementation"
+		//		"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-			constexpr auto replacementVector = StringConverterTraitsType::replacementVector<_ToChar_>();
-			constexpr auto narrowingLimitVector = StringConverterTraitsType::narrowingLimitVector<_FromChar_>();
+		//	constexpr auto replacementVector = StringConverterTraitsType::replacementVector<_ToChar_>();
+		//	constexpr auto narrowingLimitVector = StringConverterTraitsType::narrowingLimitVector<_FromChar_>();
 
-			auto conversionParameters = StringConversionParametersType(
-				string, stringLength, outputString, replacementVector, narrowingLimitVector);
+		//	auto conversionParameters = StringConversionParametersType(
+		//		string, stringLength, outputString, replacementVector, narrowingLimitVector);
 
-			conversionResult = StringConverterTraitsType::convertString<_FromChar_, _ToChar_>(conversionParameters);
-		}
+		//	conversionResult = StringConverterTraitsType::convertString<_FromChar_, _ToChar_>(conversionParameters);
+		//}
 		/*else { 
 			auto conversionParameters = StringConversionParametersType(
 				string, stringLength, outputString);

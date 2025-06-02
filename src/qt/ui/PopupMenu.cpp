@@ -19,13 +19,14 @@ PopupMenu::PopupMenu(
 	BaseWidget(parent)
 	, _actionSt(actionStyle)
 {
-	setStyle(menuStyle, true);
+	setStyle(menuStyle, false);
 	setAttribute(Qt::WA_OpaquePaintEvent, false);
 
 	setAttribute(Qt::WA_TranslucentBackground);
 	setAttribute(Qt::WA_NoSystemBackground);
 
-	setWindowFlags(Qt::WindowFlags(Qt::FramelessWindowHint)
+	setWindowFlags(
+		Qt::WindowFlags(Qt::FramelessWindowHint)
 		| Qt::BypassWindowManagerHint 
 		| Qt::Popup
 		| Qt::NoDropShadowWindowHint);
@@ -86,7 +87,7 @@ void PopupMenu::addAction(
 	if (callback == nullptr)
 		return;
 
-	auto action = new Action(this);
+	Action* action = new Action(this);
 
 	action->setStyle(_actionSt);
 	action->setText(title);
