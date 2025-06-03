@@ -245,6 +245,6 @@ struct TextStyle: TitleStyle {
 	QuoteStyle blockquote = {};
 };
 
-inline const TextStyle* defaultTextStyle = nullptr;
+inline TextStyle* defaultTextStyle = nullptr;
 
 __BASE_QT_STYLE_NAMESPACE_END 

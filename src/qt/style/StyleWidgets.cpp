@@ -38,11 +38,12 @@ void initStyles() {
 	loadStyles();
 
 	defaultTextStyle = new TextStyle{
-		._font = font(13, 0, 0),
-		.lineHeight = 14,
-
 		.linkUnderLine = true,
-		.blockquote = {} };
+		.blockquote = {} 
+	};
+
+	defaultTextStyle->_font = font(13, 0, 0);
+	defaultTextStyle->lineHeight = 14;
 
 	defaultFlatLabelStyle = new FlatLabel{ StyleBase {
 

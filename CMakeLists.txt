@@ -3,7 +3,7 @@
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
-    LANGUAGES C CXX ASM)
+    LANGUAGES C CXX ASM_MASM)
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
@@ -20,7 +20,7 @@ endif()
 
 set(libs_loc "D:/Libraries/win64")
 
-enable_language(ASM_MASM)
+enable_language(C CXX ASM_MASM)
 set(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
 
 option(LIB_BASE_BUILD_TESTS "" ON)
@@ -53,6 +53,8 @@ set(LIB_BASE_ENABLE_FFMPEG ON)
 set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
+set(CMAKE_ASM_COMPILER_OBJECT "<CMAKE_ASM_MASM_COMPILER> <INCLUDES> <FLAGS> -o <OBJECT> <SOURCE>" CACHE STRING "")
+set_source_files_properties(*.S PROPERTIES LANGUAGE ASM_MASM)
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -281,12 +283,16 @@ set(PRIVATE_HEADERS
     src/core/string/StringStorageRefCount.h
 
     src/core/memory/crt/BaseMemmove.h
-    #src/core/memory/crt/BaseMemmove.S
-            
+
+    src/core/memory/crt/x86_64/BaseMemmove.S
+    src/core/memory/crt/x86/BaseMemmoveX86.S
+
     src/core/memory/crt/FixedMemcmp.h
 
     src/core/memory/crt/BaseMemcpy.h
-    #src/core/memory/crt/BaseMemcpy.S
+
+    src/core/memory/crt/x86_64/BaseMemcpy.S
+    src/core/memory/crt/x86/BaseMemcpyX86.S
 
     src/core/string/crt/BaseStrlen.h
     src/core/string/crt/BaseStrstr.h
@@ -575,6 +581,8 @@ set_target_properties(
 
     EXPORT_NAME lib_base
     OUTPUT_NAME lib_base
+
+    LANGUAGE ASM_MASM C CXX
 )
 
 target_compile_features(lib_base PUBLIC cxx_std_23)

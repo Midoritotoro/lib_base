@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
 		base::qt::style::RegisterStyles();
 		base::qt::style::Start();
-		});
+	});
 
 	QWidget widget;
 	widget.resize(1280, 720);
@@ -32,8 +32,6 @@ int main(int argc, char** argv) {
 	menu->addAction("Action2", [] { qDebug() << "action2 Clicked"; });
 	menu->addAction("Action3", [] { qDebug() << "action3 Clicked"; });
 	menu->addAction("Action4", [] { qDebug() << "action4 Clicked"; });
-
-	menu->hideMenu
 
 	widget.show();
 
