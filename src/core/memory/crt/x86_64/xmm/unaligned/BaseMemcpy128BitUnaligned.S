@@ -1,0 +1,40 @@
+option casemap:none
+
+.code
+
+dest$ = 8
+src$ = 16
+len$ = 24
+
+void * __base_memcpy128BitUnaligned(void *,void const *,unsigned __int64) proc
+        mov     r10, rcx
+        test    r8, r8
+
+        ; ===================================================================
+
+        je      SHORT $LN10@__base_memcpy128BitUnaligned
+        npad    8
+$LL2@__base_memcpy128BitUnaligned:
+        mov     r9, rdx
+        mov     rax, r10
+
+        ; ===================================================================
+
+        add     rdx, 16
+        add     r10, 16
+        
+        ; ===================================================================
+
+        lddqu   xmm0, XMMWORD PTR [r9]
+        movdqu  XMMWORD PTR [rax], xmm0
+
+        ; ===================================================================
+
+        sub     r8, 1
+        jne     SHORT $LL2@__base_memcpy128BitUnaligned
+$LN10@__base_memcpy128BitUnaligned:
+        mov     rax, rcx
+        ret     0
+void * __base_memcpy128BitUnaligned(void *,void const *,unsigned __int64) endp
+
+end
