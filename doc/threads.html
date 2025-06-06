@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль Threads - Документация lib_base</title>
+    <link rel="stylesheet" href="node_modules/@highlightjs/cdn-assets/styles/default.min.css">
+    <script src="node_modules/@highlightjs/cdn-assets/highlight.min.js"></script>
+    <link rel="stylesheet" href="threads_style.css">
+    <script>hljs.highlightAll();</script>
+<body>
+<div id="top">
+<a href="page.html">Документация lib_base</a>
+</div>
+
+<div id="content">
+<nav id="menu">
+    <h2>Содержание</h2>
+    <ul>
+        <li><a href="#introduction">Введение</a></li>
+        <li><a href="#thread-class">Класс Thread</a></li>
+        <li><a href="#atomicInteger-class">Класс AtomicInteger</a></li>
+        <li><a href="#Mutex-class">Класс Mutex</a></li>
+    </ul>
+</nav>
+
+<main id="main">
+    <section id="introduction">
+        <h2>Введение</h2>
+        <p>Предоставляет интерфейс для управления потоками в lib_base.</p>
+    </section>
+
+    <section id="thread-class" class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+            <h2>Класс Thread</h2>
+            <span class="arrow">&#9654;</span>
+        </div>
+        <div class="section-content">
+
+            <table class="information">
+                <tr>
+                    <th>Заголовочный файл:</th>
+                    <td><code>#include &lt;base/core/Thread.h&gt;</code></td>
+                </tr>
+                <tr>
+                    <th>CMake:</th>
+                    <td><code>target_link_libraries(Target lib_base::lib_base)</code></td>
+                </tr>
+                <tr>
+                    <th>Пространство имён:</th>
+                    <td><code>base::threads</code></td>
+                </tr>
+            </table>
+
+            <p class="class-description">Предоставляет интерфейс для управления потоками.</p>
+
+            <div class="function-list" id="AbstractThread-Priority">
+                <h4>enum AbstractThread::Priority</h4>
+                <p class="class-description">Это перечисление определяет, как операционная система должна планировать создаваемые потоки.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Константа</th>
+                            <th>Значение</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>IdlePriority</td>
+                            <td>0</td>
+                            <td>Запланировано только тогда, когда другие потоки не запущены.</td>
+                        </tr>
+                        <tr>
+                            <td>LowestPriority</td>
+                            <td>1</td>
+                            <td>Работает медленнее, чем поток с LowPriority.</td>
+                        </tr>
+                        <tr>
+                            <td>LowPriority</td>
+                            <td>2</td>
+                            <td>Работает медленнее, чем поток с NormalPriority.</td>
+                        </tr>
+                        <tr>
+                            <td>NormalPriority</td>
+                            <td>3</td>
+                            <td>Приоритет операционной системы по умолчанию.</td>
+                        </tr>
+                        <tr>
+                            <td>HighPriority</td>
+                            <td>4</td>
+                            <td>Работает быстрее, чем поток с NormalPriority </td>
+                        </tr>
+                        <tr>
+                            <td>HighestPriority</td>
+                            <td>5</td>
+                            <td>Работает быстрее, чем поток с HighestPriority</td>
+                        </tr>
+                        <tr>
+                            <td>TimeCriticalPriority</td>
+                            <td>6</td>
+                            <td>Работает быстрее всех потоков с другими приоритетами</td>
+                        </tr>
+                        <tr>
+                            <td>InheritPriority</td>
+                            <td>7</td>
+                            <td>Наследует приоритет от потока-родителя</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Function List -->
+            <div class="function-list">
+                <h4>Публичные функции:</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Возвращаемое значение</th>
+                            <th>Сигнатура</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#setPriority">setPriority</a>(<a href="#AbstractThread-Priority">AbstractThread::Priority</a> priority)</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#AbstractThread-Priority">AbstractThread::Priority</a></td>
+                            <td><a href="#priority">priority()</a></td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#setTerminateOnClose">setTerminateOnClose</a>(bool terminateOnClose)</td>
+                        </tr>
+                        <tr>
+                            <td>bool</td>
+                            <td><a href="#terminateOnClose">terminateOnClose</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>bool</td>
+                            <td><a href="#isFinished">isFinished</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>bool</td>
+                            <td><a href="#isRunning">isRunning</a>()</td>
+                        </tr><tr>
+                            <td>void</td>
+                            <td><a href="#waitMs">waitMs</a>(int ms)</td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#waitS">waitS</a>(int sec)</td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#join">join</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#close">close</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#terminate">terminate</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>void</td>
+                            <td><a href="#start_templated">start</a>(Function&& _routine, Args&& ... args)</td>
+                        </tr>
+                        <tr>
+                            <td>ThreadPlatformImplementation*</td>
+                            <td><a href="#impl">impl</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>static int</td>
+                            <td><a href="#getIdealThreadCount">getIdealThreadCount</a>()</td>
+                        </tr>
+                        <tr>
+                            <td>static Thread*</td>
+                            <td><a href="#currentThread">currentThread</a>()</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Member Details -->
+            <div class="member" id="setPriority">
+                <h4>void Thread::setPriority(AbstractThread::Priority priority)</h4>
+                <p>Устанавливает приоритет потока. <a href="#AbstractThread::Priority"> enum AbstractThread::Priority</a> </p>
+            </div>
+
+            <div class="member" id="priority">
+                <h4>[[nodiscard]] AbstractThread::Priority Thread::priority() const noexcept</h4>
+                <p>Возвращает приоритет потока.</p>
+            </div>
+
+            <div class="member" id="setTerminateOnClose">
+                <h4>void Thread::setTerminateOnClose(bool terminateOnClose)</h4>
+                <p>При запуске потока без вызова <a href="#join">Thread::join</a>(), если значение <a href="#terminateOnClose">Thread::terminateOnClose</a>() равно true,
+                    в деструкторе потока вызывается <a href="#terminate">Thread::terminate</a>(), если же значение равно false, вызывается <a href="#close">Thread::close</a>().
+                    По умолчанию значение равно false. </p>
+            </div>
+
+            <div class="member" id="terminateOnClose">
+                <h4>bool Thread::terminateOnClose() const noexcept</h4>
+                <p>true, если поток прервет свою работу в деструкторе без ожидания выполнения задачи, в противном случае false. </p>
+            </div>
+
+            <div class="member" id="isFinished">
+                <h4>[[nodiscard]] bool Thread::isFinished() const noexcept</h4>
+                <p>true, если поток завершил выполнение; false в противном случае.</p>
+           </div>
+
+           <div class="member" id="isRunning">
+               <h4>[[nodiscard]] bool Thread::isRunning() const noexcept</h4>
+               <p>true, если поток не завершил выполнение; false в противном случае.</p>
+           </div>
+
+           <div class="member" id="waitMs">
+               <h4>void Thread::waitMs(int ms)</h4>
+               <p>Преостанавливает поток на заданное количество миллисекунд.</p>
+           </div>
+
+           <div class="member" id="waitS">
+               <h4>void Thread::waitS(int sec)</h4>
+               <p>Преостанавливает поток на заданное количество секунд.</p>
+           </div>
+
+           <div class="member" id="join">
+               <h4>void Thread::join()</h4>
+               <p>Ожидает выполнения потока.</p>
+           </div>
+
+           <div class="member" id="close">
+               <h4>void Thread::close()</h4>
+               <p>Дожидается выполнения потока(аналогично вызову <a href="#join">join</a>()) и прерывает работу потока.</p>
+           </div>
+
+           <div class="member" id="terminate">
+               <h4>void Thread::terminate()</h4>
+               <p>Не рекомендуется использовать. Прерывает работу потока независимо от его состояния. </p>
+           </div>
+
+           <div class="member" id="start_templated">
+               <h4>template &lt;class Function, class ... Args&gt; inline void Thread::start(Function&& _routine, Args&& ... args)</h4>
+               <p>Запускает поток.</p>
+           </div>
+
+           <div class="member" id="impl">
+               <h4>[[nodiscard]] ThreadPlatformImplementation* Thread::impl() const noexcept</h4>
+               <p>Возвращает указатель на класс реализации.</p>
+           </div>
+
+           <div class="member" id="getIdealThreadCount">
+               <h4>static [[nodiscard]] int Thread::getIdealThreadCount() noexcept</h4>
+               <p>Возвращает сбалансированное количество потоков(Аналогично вызову system::GetCpuCount()).</p>
+           </div>
+
+           <div class="member" id="currentThread">
+               <h4>static [[nodiscard]] Thread* Thread::currentThread() noexcept</h4>
+               <p>Возвращает указатель на класс текущего потока.</p>
+           </div>
+
+           <div class="example">
+            <h2>Примеры</h2>
+<pre><code>#include &lt;base/core/Thread.h&gt;
+#include &lt;iostream&gt;
+
+void worker(base::sizetype end, const std::string& threadName) {
+    for (base::sizetype i = 0; i < end; ++i)
+        std::cout << "Итерация: " << i << " потока " << threadName << '\n';
+}
+
+int main() {
+    setlocale(LC_ALL, "");
+
+    base::Thread thread, secondThread;
+
+    thread.start(&worker, 1000000, "thread");
+    secondThread.start(&worker, 1000000, "secondThread");
+
+    /* Так как base::Thread::terminateOnClose() по умолчанию имеет значение false,
+    *  то join() вызывается автоматически
+    */
+    return 0;
+}</code></pre>
+        </div>
+       </div>
+   </section>
+
+   <section id="atomicInteger-class" class="section">
+       <div class="section-header" onclick="toggleSection(this)">
+           <h2>Класс AtomicInteger&lt;Integer&gt;</h2>
+           <span class="arrow">&#9654;</span>
+       </div>
+       <div class="section-content">
+        <table class="information">
+            <tr>
+                <th>Заголовочный файл:</th>
+                <td><code>#include &lt;base/core/AtomicInteger.h&gt;</code></td>
+            </tr>
+            <tr>
+                <th>CMake:</th>
+                <td><code>target_link_libraries(Target lib_base::lib_base)</code></td>
+            </tr>
+            <tr>
+                <th>Пространство имён:</th>
+                <td><code>base::threads</code></td>
+            </tr>
+        </table>
+
+        <p class="class-description">Класс AtomicInteger обеспечивает кроссплатформенные потокобезопасные операции над целыми числами</p> <br>
+        
+        <div class="function-list">
+            <h4>Публичные функции:</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Integer</td>
+                        <td><a href="#loadRelaxed">loadRelaxed</a>()</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Integer</td>
+                        <td><a href="#loadSequentiallyConsistent">loadSequentiallyConsistent</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>Integer</td>
+                        <td><a href="#loadAcquire">loadAcquire</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#storeRelaxed">storeRelaxed</a>(Integer newValue)</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#storeRelease">storeRelease</a>(Integer newValue)</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#storeSequentiallyConsistent">storeSequentiallyConsistent</a>(Integer newValue)</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>bool</td>
+                        <td><a href="#isReferenceCountingNative">isReferenceCountingNative</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>bool</td>
+                        <td><a href="#isReferenceCountingWaitFree">isReferenceCountingWaitFree</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>bool</td>
+                        <td><a href="#ref">ref</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>bool</td>
+                        <td><a href="#deref">deref</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetNative">isTestAndSetNative</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetWaitFree">isTestAndSetWaitFree</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#testAndSetRelaxed">testAndSetRelaxed</a>(Integer expectedValue, Integer newValue)</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#testAndSetAcquire">testAndSetAcquire</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#testAndSetRelease">testAndSetRelease</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#testAndSetRelaxed()">testAndSetRelaxed</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetWaitFree()">isTestAndSetWaitFree</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetWaitFree()">isTestAndSetWaitFree</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetWaitFree()">isTestAndSetWaitFree</a>()</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>void</td>
+                        <td><a href="#isTestAndSetWaitFree()">isTestAndSetWaitFree</a>()</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+         <!-- Member Details -->
+         <div class="member" id="loadRelaxed">
+            <h4>Integer loadRelaxed()</h4>
+            <p> </p>
+        </div>
+
+        <div class="member" id="loadSequentiallyConsistent">
+            <h4>Integer loadSequentiallyConsistent()</h4>
+            <p> </p>
+        </div>
+
+        <div class="member" id="loadAcquire">
+            <h4>Integer loadAcquire()</h4>
+            <p> </p>
+        </div>
+
+        <div class="member" id="storeRelaxed">
+            <h4>void storeRelaxed()</h4>
+            <p> </p>
+        </div>
+
+        <div class="member" id="storeRelease">
+            <h4>void storeRelease()</h4>
+            <p> </p>
+       </div>
+
+       <div class="member" id="storeSequentiallyConsistent">
+           <h4>void storeSequentiallyConsistent()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="isReferenceCountingNative">
+           <h4>bool isReferenceCountingNative()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="isReferenceCountingWaitFree">
+           <h4>bool isReferenceCountingWaitFree()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="ref">
+           <h4>void ref()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="deref">
+           <h4>void deref()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="isTestAndSetNative">
+           <h4>bool isTestAndSetNative()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="isTestAndSetWaitFree">
+           <h4>bool isTestAndSetWaitFree()</h4>
+           <p> </p>
+       </div>
+
+       <div class="member" id="impl">
+           <h4>[[nodiscard]] ThreadPlatformImplementation* impl() const noexcept</h4>
+           <p>Возвращает указатель на класс реализации.</p>
+       </div>
+
+       <div class="member" id="getIdealThreadCount">
+           <h4>static [[nodiscard]] int getIdealThreadCount() noexcept</h4>
+           <p>Возвращает сбалансированное количество потоков(Аналогично вызову system::GetCpuCount()).</p>
+       </div>
+
+       <div class="member" id="currentThread">
+           <h4>static [[nodiscard]] Thread* currentThread() noexcept</h4>
+           <p>Возвращает указатель на класс текущего потока.</p>
+       </div>
+       </div>
+   </section>
+
+   <section id="Mutex-class" class="section">
+       <div class="section-header" onclick="toggleSection(this)">
+           <h2>Класс Mutex</h2>
+           <span class="arrow">&#9654;</span>
+       </div>
+       <div class="section-content">
+        <table class="information">
+            <tr>
+                <th>Заголовочный файл:</th>
+                <td><code>#include &lt;base/core/Mutex.h&gt;</code></td>
+            </tr>
+            <tr>
+                <th>CMake:</th>
+                <td><code>target_link_libraries(Target lib_base::lib_base)</code></td>
+            </tr>
+            <tr>
+                <th>Пространство имён:</th>
+                <td><code>base::threads</code></td>
+            </tr>
+        </table>
+       </div>
+   </section>
+
+   <section id="MutexLocker-class" class="section">
+       <div class="section-header" onclick="toggleSection(this)">
+           <h2>Класс MutexLocker</h2>
+           <span class="arrow">&#9654;</span>
+       </div>
+       <div class="section-content">
+        <table class="information">
+            <tr>
+                <th>Заголовочный файл:</th>
+                <td><code>#include &lt;base/core/MutexLocker.h&gt;</code></td>
+            </tr>
+            <tr>
+                <th>CMake:</th>
+                <td><code>target_link_libraries(Target lib_base::lib_base)</code></td>
+            </tr>
+            <tr>
+                <th>Пространство имён:</th>
+                <td><code>base::threads</code></td>
+            </tr>
+        </table>
+       </div>
+   </section>
+</main>
+</div>
+
+<footer id="footer">
+    &copy; https://github.com/Midoritotoro/lib_base
+</footer>
+
+<script>
+function toggleSection(element) {
+   const section = element.closest('section');
+   const content = section.querySelector('.section-content');
+   const arrow = section.querySelector('.arrow');
+
+   content.classList.toggle('show');
+   arrow.classList.toggle('down');
+}
+</script>
+</body>
+
+</html>

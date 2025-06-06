@@ -1,0 +1,237 @@
+html, div, span, applet, object, iframe, h4, 
+h5, h6, blockquote, pre, a, abbr, acronym, address, big, 
+cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, 
+strike, strong, tt, var, b, u, i, center, dl, dt, dd, ol,
+fieldset, form, label, legend, table, caption, tbody, 
+tfoot, thead, tr, th, td, article, aside, canvas, details,
+embed, figure, figcaption, footer, header, hgroup, menu, nav, 
+output, ruby, section, summary, time, mark, audio, video 
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li,
+pre {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    list-style: none; /* Reset list styles */
+}
+
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #222;
+    color: #eee;
+    font-weight:400;
+    transition-duration:1s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+}
+
+ /* Header */
+ #top {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+#top a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#content {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+#menu {
+    width: 250px;
+    padding-right: 20px;
+}
+
+#menu h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #ddd;
+}
+
+#menu ul {
+    list-style: none;
+    /* Remove bullets */
+    padding: 0;
+}
+
+#menu li {
+    margin-bottom: 5px;
+}
+
+#menu a {
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #aaa;
+    transition: color 0.2s ease;
+}
+
+#menu a:hover {
+    color: #fff;
+}
+
+#main {
+    flex: 1;
+    padding-left: 20px;
+}
+
+h1,
+h3 {
+    color: #fff;
+    /* Light headings */
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+h3 {
+    font-size: 1.6em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+}
+
+p {
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+a {
+    color: #7cb342; /* FFmpeg link color */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+pre {
+background-color: #333;
+color: #eee;
+padding: 10px;
+overflow-x: auto;
+border: 1px solid #555;
+border-radius: 4px;
+}
+
+#footer {
+text-align: center;
+padding: 20px;
+background-color: #333;
+color: #777;
+margin-top: 20px;
+}
+
+
+        /* Modern styles for specific elements */
+        .info-box {
+            background-color: #333;
+            /* Slightly lighter than background */
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h4 {
+            font-size: 1.2em;
+            color: #eee;
+            /* Lighter heading */
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            color: #ccc;
+            margin-bottom: 10px; /* More space between items */
+            padding: 8px 12px; /* Add padding to list items */
+            background-color: #444; /* Slightly darker background */
+            border-radius: 4px; /* Rounded corners */
+        }
+
+         /* Make the module names stand out more */
+        .info-box li strong {
+            color: #fff; /* White, bolded name */
+            font-weight: bold;
+            display: block; /* Makes the name take up the full width */
+            margin-bottom: 5px; /* Space between name and description */
+        }
+
+        /* Style links within the info box */
+        .info-box a {
+            color: #7cb342;
+            /* FFMpeg link color */
+        }
+
+ /* Responsive Design */
+ @media (max-width: 768px) {
+     #content {
+         flex-direction: column;
+         margin: 10px auto;
+     }
+
+     #menu {
+         width: 100%;
+         border-right: none;
+         padding: 15px;
+     }
+
+     #menu h2 {
+         margin-bottom: 10px;
+     }
+
+     #main {
+         padding: 15px;
+     }
+
+     h1 {
+         font-size: 2.2em;
+     }
+
+     h2 {
+         font-size: 1.6em;
+     }
+
+     h3 {
+         font-size: 1.3em;
+     }
+
+     p {
+         font-size: 1em;
+     }
+ }
+
+ 

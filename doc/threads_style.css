@@ -1,0 +1,291 @@
+
+                /* Reset (minimal) */
+                body,
+                h1,
+                h2,
+                h3,
+                h4,
+                p,
+                ul,
+                li,
+                pre {
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    font-size: 100%;
+                    font: inherit;
+                    vertical-align: baseline;
+                    list-style: none;
+                    /* Reset list styles */
+                }
+
+                pre, code { 
+                    white-space: pre;
+                }
+
+        
+                body {
+                    font-family: 'Arial', sans-serif;
+                    line-height: 1.6;
+                    background-color: #222;
+                    /* Dark background */
+                    color: #eee;
+                    /* Light text */
+                }
+        
+                #top {
+                    background-color: #333;
+                    color: #fff;
+                    padding: 10px;
+                    text-align: center;
+                }
+        
+                #top a {
+                    color: #fff;
+                    text-decoration: none;
+                }
+        
+                #content {
+                    display: flex;
+                    max-width: 1200px;
+                    margin: 20px auto;
+                    padding: 20px;
+                }
+        
+                #menu {
+                    width: 250px;
+                    padding-right: 20px;
+                }
+        
+                #menu h2 {
+                    font-size: 1.2em;
+                    margin-bottom: 10px;
+                    color: #ddd;
+                }
+        
+                #menu ul {
+                    list-style: none;
+                    /* Remove bullets */
+                    padding: 0;
+                }
+        
+                #menu li {
+                    margin-bottom: 5px;
+                }
+        
+                #menu a {
+                    display: block;
+                    padding: 5px 10px;
+                    text-decoration: none;
+                    color: #aaa;
+                    transition: color 0.2s ease;
+                }
+        
+                #menu a:hover {
+                    color: #fff;
+                }
+        
+                #main {
+                    flex: 1;
+                    padding-left: 20px;
+                }
+        
+                h1,
+                h2,
+                h3 {
+                    color: #fff;
+                    /* Light headings */
+                }
+        
+                h1 {
+                    font-size: 2.5em;
+                    margin-bottom: 15px;
+                }
+        
+                h2 {
+                    font-size: 2em;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    padding-bottom: 5px;
+                }
+        
+                h3 {
+                    font-size: 1.6em;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    padding-bottom: 5px;
+                }
+        
+                p {
+                    margin-bottom: 15px;
+                    color: #ccc;
+                }
+        
+                a {
+                    color: #7cb342;
+                    text-decoration: none;
+                }
+        
+                a:hover {
+                    text-decoration: underline;
+                }
+        
+                pre {
+                    background-color: #3d3d3d;
+                    color: #eee;
+                    padding: 0px;
+                    margin:  0px;
+                    overflow-x: auto;
+                    border: 1px solid #555;
+                    border-radius: 4px;
+                }
+
+                pre code.hljs { 
+                    padding: 0px;
+                }
+        
+                .hljs { 
+                    padding: 0;
+                    margin: 0;
+                    background: #3d3d3d;
+                    color: #8d8d8d;
+                }
+                #footer {
+                    text-align: center;
+                    padding: 20px;
+                    background-color: #333;
+                    color: #777;
+                    margin-top: 20px;
+                }
+        
+                /* Modern styles for specific elements */
+                .section {
+                    background-color: #333;
+                    /* Slightly lighter than background */
+                    border: 1px solid #555;
+                    padding-left: 15px;
+                    padding-bottom: 4px;
+                    border-radius: 15px;
+                    margin-bottom: 10px;
+                    padding-right: 15px;
+                }
+
+                /* Collapsible Sections */
+                .section-header {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    height: 50px;
+                    /* padding-bottom: 10px;
+                    margin-bottom: 10px;  */
+                }
+                
+                .section-content {
+                    display: none;
+                }
+                
+                .section-content.show {
+                    display: block;
+                }
+                
+                .section h2 {
+                    font-size: 1.6em;
+                    color: #eee;
+                    /* Lighter heading */
+                    margin-bottom: 10px;
+                }
+        
+        /* Member Styles */
+        .member {
+            margin-top: 30px;
+            padding-left: 0px;
+            color: #ccc;
+            /* Adjust member text color for readability */
+        }
+        
+        .member h4 {
+            font-size: 1.2em;
+            color: #ddd;
+            /* Adjust member header color */
+            margin-bottom: 0.3em;
+            border-bottom: 1px solid rgb(105, 105, 105);
+        }
+        
+        .arrow {
+            font-size: 1.2em;
+            transition: transform 0.2s ease;
+            color: #ddd;
+        }
+        
+        .arrow.down {
+            transform: rotate(90deg);
+        }
+        
+        /* Information Table Styles */
+        .information {
+            width: 100%;
+            margin-bottom: 1em;
+            font-size: 0.9em;
+        }
+        
+        .information td {
+            padding: 0.5em;
+            border: 1px solid #555;
+            vertical-align: top;
+            color: #ccc;
+        }
+        
+        .information th {
+            width: 20%;
+            font-weight: bold;
+            text-align: left;
+            padding: 0.5em;
+            border: 1px solid #555;
+            background-color: #444;
+            color: #eee;
+        }
+
+        
+                /* Function List Styles */
+                .function-list {
+                    margin-bottom: 1em;
+                }
+        
+                .function-list table {
+                    width: auto;
+                    table-layout: auto;
+                    border-collapse: collapse;
+                }
+        
+                .function-list th,
+                .function-list td {
+                    padding: 8px;
+                    border: 1px solid #555;
+                    text-align: left;
+                    white-space: nowrap;
+                }
+        
+                .function-list th {
+                    background-color: #444;
+                    color: #eee;
+                    font-weight: bold;
+                }
+        
+                .function-list td {
+                    color: #ccc;
+                }
+        
+                .function-list td:first-child {
+                    width: 1%;
+                }
+        
+                .function-list td:last-child {
+                    width: 99%;
+                }
+        
+        .function-list a {
+            color: #7cb342;
+            text-decoration: none;
+        }
+        

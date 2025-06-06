@@ -1,0 +1,145 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, 
+h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, 
+cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, 
+strike, strong, tt, var, b, u, i, center, dl, dt, dd, ol, ul,
+li, fieldset, form, label, legend, table, caption, tbody, 
+tfoot, thead, tr, th, td, article, aside, canvas, details,
+embed, figure, figcaption, footer, header, hgroup, menu, nav, 
+output, ruby, section, summary, time, mark, audio, video 
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #333333;
+    color: rgb(68, 133, 68);
+    line-height: 1;
+    font-family: 'Titillium Web', Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    transition-duration: 1s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    overflow: auto;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #121212; 
+    color: #FFFFFF;
+    padding: 1em 0;
+    text-align: center;
+}
+
+#TitleDiv {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#ModulesDiv {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333333;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#ModulesDiv h1 {
+    border-bottom: 2px solid #0078d4;
+    padding-bottom: 0.5em;
+}
+
+nav {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #333333;
+    border-bottom: 1px solid #ced4da;
+}
+
+nav ul {
+    color: -webkit-link;
+    cursor: pointer;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: rgb(68, 133, 68);
+    font-weight: bold;
+}
+
+#content {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333333;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.sidebar {
+    width: 250px;
+    background-color: #333333; /* */
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: rgb(68, 133, 68);
+    border-bottom: 1px solid #555;
+}
+
+.sidebar li a:hover {
+    background-color: #555;
+    color: white;
+}
+
+.content {
+    margin-left: 270px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    #TitleDiv,
+    #content {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .module-list {
+        width: 100%;
+        float: none;
+        margin-bottom: 1em;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 10px;
+    }
+}

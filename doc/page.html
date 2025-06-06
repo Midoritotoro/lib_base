@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация lib_base</title>
+    <link rel="stylesheet" href="dark_theme_page_style.css">
+</head>
+
+<body>
+    <div id="top">
+        <a href="page.html">Документация lib_base</a>
+    </div>
+
+    <div id="content">
+        <div id="menu">
+            <h2>Содержание</h2>
+            <ul>
+                <li><a href="page.html">Главная</a></li>
+                <li><a href="threads.html">Потоки</a></li>
+                <li><a href="qt_utilities.html">Qt утилиты</a></li>
+                <li><a href="media.html">Медиа</a></li>
+                <li><a href="io.html">Ввод/Вывод</a></li>
+                <li><a href="system.html">Системные инструменты</a></li>
+                <li><a href="core.html">Ключевые инструменты</a></li>
+                <li><a href="build.html">Установка</a></li>
+            </ul>
+        </div>
+
+        <div id="main">
+            <h1>lib_base</h1>
+
+            <div class="info-box">
+                <h3>Информация</h3>
+                <p>lib_base - набор базовых инструментов для разработки кроссплатформенных приложений.</p>
+                <h4>Модули:</h4>
+                <ul>
+                    <li>
+                        <strong><a href="media.html">base/media</a></strong>
+                        Чтение и воспроизведение аудио и видео. Отрисовка кадров видео требует
+                        включения Qt. Включение: <code>-DLIB_BASE_ENABLE_FFMPEG -DLIB_BASE_ENABLE_QT</code>
+                    </li>
+                    <li>
+                        <strong><a href="threads.html">base/threads</a></strong>
+                        Обёртка над WinApi потоками для Windows и над phthread для Unix.
+                        Независимый от платформы <code>AtomicInteger</code>
+                    </li>
+                    <li>
+                        <strong><a href="system.html">base/system</a></strong>
+                        Определение процессора, порядка байт, системы, поддержка ключевых слов C++
+                    </li>
+                    <li>
+                        <strong><a href="core.html">base/core</a></strong>
+                        Основные инструменты
+                    </li>
+                    <li>
+                        <strong><a href="qt_utilities.html">base/qt</a></strong>
+                        Графический интерфейс на Qt (стили, виджеты и т.д.). Включение:
+                        <code>-DLIB_BASE_ENABLE_QT</code>
+                    </li>
+                    <li>
+                        <strong><a href="io.html">base/io</a></strong>
+                        Классы для работы с файловой системой
+                    </li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>Установка</h3>
+                <p>Посетить <a href="https://github.com/Midoritotoro/lib_base">страницу на GitHub</a> для получения последней
+                    версии.</p>
+                <h4>Сборка:</h4>
+                <p>Windows:</p>
+                <pre>doc/build/winbuild.bat</pre>
+                <p>Unix:</p>
+                <pre>doc/build/unixbuild.sh</pre>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
