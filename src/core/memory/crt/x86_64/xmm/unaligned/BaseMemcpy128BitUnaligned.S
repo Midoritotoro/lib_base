@@ -6,7 +6,7 @@ dest$ = 8
 src$ = 16
 len$ = 24
 
-void * __base_memcpy128BitUnaligned(void *,void const *,unsigned __int64) proc
+__base_memcpy128BitUnaligned proc
         mov     r10, rcx
         test    r8, r8
 
@@ -35,6 +35,6 @@ $LL2@__base_memcpy128BitUnaligned:
 $LN10@__base_memcpy128BitUnaligned:
         mov     rax, rcx
         ret     0
-void * __base_memcpy128BitUnaligned(void *,void const *,unsigned __int64) endp
+__base_memcpy128BitUnaligned endp
 
 end

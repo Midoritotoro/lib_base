@@ -19,9 +19,14 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
 endif()
 
 set(libs_loc "D:/Libraries/win64")
+#set(CMAKE_MASM_COMPILER "D:/VS/2022/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/cl.exe")
 
 enable_language(C CXX ASM_MASM)
-set(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
+set(CMAKE_ASM_MASM_FLAGS "-x" "-c" "assembler-with-cpp") # -x -c
+
+if(NOT CMAKE_CL_64)
+    set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} /safeseh)
+endif()
 
 option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
@@ -47,14 +52,24 @@ set(LIB_BASE_BUILD_BENCHMARKS ON)
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT ON)
 
-set(LIB_BASE_ENABLE_OPENGL OFF)
+set(LIB_BASE_ENABLE_OPENGL OFF) 
 set(LIB_BASE_ENABLE_FFMPEG ON)
 
-set(LIB_BASE_ENABLE_ZLIB ON)
+
+set(LIB_BASE_ENABLE_ZLIB ON)  
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
-set(CMAKE_ASM_COMPILER_OBJECT "<CMAKE_ASM_MASM_COMPILER> <INCLUDES> <FLAGS> -o <OBJECT> <SOURCE>" CACHE STRING "")
-set_source_files_properties(*.S PROPERTIES LANGUAGE ASM_MASM)
+set(ASM_DIALECT "_MASM")
+set(CMAKE_ASM${ASM_DIALECT}_COMPILER_INIT ${_CMAKE_TOOLCHAIN_PREFIX}masm)
+
+include(CMakeDetermineASMCompiler)
+set(ASM_DIALECT)
+
+#-x assembler-with-cpp -f <FLAGS> -c
+set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <SOURCE> -o <OBJECT>" CACHE STRING "")
+
+set_source_files_properties(src/core/memory/crt/x86_64/BaseMemcpy.S PROPERTIES COMPILE_OPTIONS ${CMAKE_ASM_MASM_FLAGS})
+set_source_files_properties(src/core/memory/crt/x86_64/BaseMemmove.S PROPERTIES COMPILE_OPTIONS ${CMAKE_ASM_MASM_FLAGS})
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -186,6 +201,12 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrSse2.cpp
 
     src/core/memory/MemoryAllocation.cpp
+
+    src/core/memory/crt/x86_64/BaseMemmove.S
+   # src/core/memory/crt/x86/BaseMemmoveX86.S
+
+   #src/core/memory/crt/x86_64/BaseMemcpy.S
+    #src/core/memory/crt/x86/BaseMemcpyX86.S
 )
 
 set(PRIVATE_HEADERS
@@ -248,6 +269,8 @@ set(PRIVATE_HEADERS
     src/core/utility/algorithm/AlgorithmDebug.h
     src/core/utility/algorithm/IteratorWrap.h
 
+    src/core/memory/crt/BaseMemcpySimd.h
+
     src/core/memory/UninitializedBackout.h
 
     src/core/memory/Copy.h
@@ -284,15 +307,11 @@ set(PRIVATE_HEADERS
 
     src/core/memory/crt/BaseMemmove.h
 
-    src/core/memory/crt/x86_64/BaseMemmove.S
-    src/core/memory/crt/x86/BaseMemmoveX86.S
-
+   
     src/core/memory/crt/FixedMemcmp.h
 
     src/core/memory/crt/BaseMemcpy.h
-
-    src/core/memory/crt/x86_64/BaseMemcpy.S
-    src/core/memory/crt/x86/BaseMemcpyX86.S
+   
 
     src/core/string/crt/BaseStrlen.h
     src/core/string/crt/BaseStrstr.h

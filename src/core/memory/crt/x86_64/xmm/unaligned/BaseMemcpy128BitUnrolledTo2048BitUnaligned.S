@@ -8,6 +8,9 @@ len$ = 24
 
 ; Copies 256 bytes at a time 
 
+; void* __base_memcpy128BitUnrolledTo2048BitUnaligned(void* destination, const void* source, size_t length);
+
+
 __base_memcpy128BitUnrolledTo2048BitUnaligned proc
 $LN14:
         mov     QWORD PTR [rsp+8], rbx

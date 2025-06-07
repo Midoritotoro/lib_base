@@ -4,9 +4,9 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-BASE_ASM_EXTERN DECLARE_NOALIAS void* CDECL __base_memcpy(
+BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpy(
     void*       destination,
     void const* source,
-    size_t      size);
+    size_t      size) noexcept;
 
 __BASE_MEMORY_NAMESPACE_END

@@ -1,7 +1,8 @@
-option casemap:none
+option casemap: none
 
+.code 
 
-.code
-	
+__base_memmove proc 
+__base_memmove endp
 
-END
+end
