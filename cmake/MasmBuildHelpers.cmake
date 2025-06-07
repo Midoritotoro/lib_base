@@ -1,8 +1,7 @@
 set(CMAKE_ASM_COMPILER "D:/VS/2022/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/ml64.exe")
 set(CMAKE_MASM_COMPILER ${CMAKE_ASM_COMPILER})
 
-
-set(CMAKE_ASM_MASM_FLAGS "-x" "/c" "assembler-with-cpp") # -x -c
+set(CMAKE_ASM_MASM_FLAGS "-x" "/c" "assembler-with-cpp")
 set(CMAKE_ASM_FLAGS ${CMAKE_ASM_MASM_FLAGS})
 if(NOT CMAKE_CL_64)
     set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} /safeseh)
