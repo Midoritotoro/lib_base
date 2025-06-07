@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
+﻿cmake_minimum_required (VERSION 3.29 FATAL_ERROR)
 
 project ("lib_base"
     VERSION 1.0.0
@@ -19,11 +19,12 @@ if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
 endif()
 
 set(libs_loc "D:/Libraries/win64")
-#set(CMAKE_MASM_COMPILER "D:/VS/2022/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/cl.exe")
+set(CMAKE_ASM_COMPILER "D:/VS/2022/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/ml64.exe")
+set(CMAKE_MASM_COMPILER ${CMAKE_ASM_COMPILER})
 
 enable_language(C CXX ASM_MASM)
-set(CMAKE_ASM_MASM_FLAGS "-x" "-c" "assembler-with-cpp") # -x -c
-
+set(CMAKE_ASM_MASM_FLAGS "-x" "/c" "assembler-with-cpp") # -x -c
+set(CMAKE_ASM_FLAGS ${CMAKE_ASM_MASM_FLAGS})
 if(NOT CMAKE_CL_64)
     set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} /safeseh)
 endif()
@@ -60,16 +61,38 @@ set(LIB_BASE_ENABLE_ZLIB ON)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 set(ASM_DIALECT "_MASM")
-set(CMAKE_ASM${ASM_DIALECT}_COMPILER_INIT ${_CMAKE_TOOLCHAIN_PREFIX}masm)
+set(CMAKE_ASM${ASM_DIALECT}_COMPILER_INIT ${_CMAKE_TOOLCHAIN_PREFIX}-masm)
 
 include(CMakeDetermineASMCompiler)
 set(ASM_DIALECT)
 
-#-x assembler-with-cpp -f <FLAGS> -c
-set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <SOURCE> -o <OBJECT>" CACHE STRING "")
+set(BASE_MASM_FILES
+    src/core/memory/crt/x86_64/BaseMemmove.S
+   # src/core/memory/crt/x86/BaseMemmoveX86.S
 
-set_source_files_properties(src/core/memory/crt/x86_64/BaseMemcpy.S PROPERTIES COMPILE_OPTIONS ${CMAKE_ASM_MASM_FLAGS})
-set_source_files_properties(src/core/memory/crt/x86_64/BaseMemmove.S PROPERTIES COMPILE_OPTIONS ${CMAKE_ASM_MASM_FLAGS})
+   #src/core/memory/crt/x86_64/BaseMemcpy.S
+    #src/core/memory/crt/x86/BaseMemcpyX86.S
+)
+
+foreach(masm_file IN LISTS BASE_MASM_FILES)
+    # Получаем имя файла без пути и расширения
+    get_filename_component(fname ${masm_file} NAME_WE)
+    # Формируем имя объектного файла
+    set(obj_file "${fname}.obj")
+
+    # Устанавливаем для каждого файла свои свойства
+    set(ASM_FILE_PROPERTIES "-x -c assembler-with-cpp /Fo${obj_file}")
+    message("ASM_FILE_PROPERTIES: ", ${ASM_FILE_PROPERTIES})
+    set_source_files_properties(${masm_file} PROPERTIES
+        LANGUAGE ASM_MASM
+        COMPILE_FLAGS ${ASM_FILE_PROPERTIES}
+    )
+endforeach()
+
+#-x assembler-with-cpp -f <FLAGS> -c
+set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> /c /Fo<OBJECT> <COMPILE_FLAGS> <SOURCE>" CACHE STRING "")
+
+
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -202,11 +225,7 @@ set(PRIVATE_SOURCES
 
     src/core/memory/MemoryAllocation.cpp
 
-    src/core/memory/crt/x86_64/BaseMemmove.S
-   # src/core/memory/crt/x86/BaseMemmoveX86.S
-
-   #src/core/memory/crt/x86_64/BaseMemcpy.S
-    #src/core/memory/crt/x86/BaseMemcpyX86.S
+    ${BASE_MASM_FILES}
 )
 
 set(PRIVATE_HEADERS
