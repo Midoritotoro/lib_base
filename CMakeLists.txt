@@ -77,17 +77,34 @@ set(BASE_MASM_FILES
 foreach(masm_file IN LISTS BASE_MASM_FILES)
     # Получаем имя файла без пути и расширения
     get_filename_component(fname ${masm_file} NAME_WE)
+    
     # Формируем имя объектного файла
-    set(obj_file "${fname}.obj")
+    set(obj_file "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/lib_base.dir/src/core/memory/crt/x86_64/${fname}.S.obj")
 
-    # Устанавливаем для каждого файла свои свойства
+    # Устанавливаем свойства для каждого файла
     set(ASM_FILE_PROPERTIES "-x -c assembler-with-cpp /Fo${obj_file}")
-    message("ASM_FILE_PROPERTIES: ", ${ASM_FILE_PROPERTIES})
+    
+    message("Compiling: ${masm_file} to ${obj_file}")
+    set(FULL_PATH_TO_MASM_FILE "${CMAKE_CURRENT_LIST_DIR}/${masm_file}")
+
+    # Используем add_custom_command для сборки каждого файла
+    add_custom_command(
+        OUTPUT ${obj_file}
+        COMMAND ${CMAKE_MASM_COMPILER} /c /Fo${obj_file} ${FULL_PATH_TO_MASM_FILE}
+    )
+
+    message("Command: ${CMAKE_MASM_COMPILER} /c /Fo${obj_file} ${FULL_PATH_TO_MASM_FILE}")
     set_source_files_properties(${masm_file} PROPERTIES
         LANGUAGE ASM_MASM
         COMPILE_FLAGS ${ASM_FILE_PROPERTIES}
     )
+
+    # Добавляем цель для сборки объекта
+    list(APPEND OBJECT_FILES ${obj_file})
 endforeach()
+
+
+
 
 #-x assembler-with-cpp -f <FLAGS> -c
 set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> /c /Fo<OBJECT> <COMPILE_FLAGS> <SOURCE>" CACHE STRING "")
@@ -224,7 +241,7 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrSse2.cpp
 
     src/core/memory/MemoryAllocation.cpp
-
+    #${OBJECT_FILES}
     ${BASE_MASM_FILES}
 )
 
