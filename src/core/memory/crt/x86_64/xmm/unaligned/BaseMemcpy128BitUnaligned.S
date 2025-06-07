@@ -12,9 +12,9 @@ __base_memcpy128BitUnaligned proc
 
         ; ===================================================================
 
-        je      SHORT $LN10@__base_memcpy128BitUnaligned
-        npad    8
-$LL2@__base_memcpy128BitUnaligned:
+        je      SHORT EndPart
+        align    8 ; npad 8
+MainPart:
         mov     r9, rdx
         mov     rax, r10
 
@@ -31,8 +31,8 @@ $LL2@__base_memcpy128BitUnaligned:
         ; ===================================================================
 
         sub     r8, 1
-        jne     SHORT $LL2@__base_memcpy128BitUnaligned
-$LN10@__base_memcpy128BitUnaligned:
+        jne     SHORT MainPart
+EndPart:
         mov     rax, rcx
         ret     0
 __base_memcpy128BitUnaligned endp

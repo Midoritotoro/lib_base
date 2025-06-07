@@ -11,7 +11,7 @@ len$ = 24
 
 __base_memcpy128BitUnrolledTo256BitUnaligned proc
 
-$LN14:
+StartPart:
         mov     QWORD PTR [rsp+8], rbx
         mov     r11, rdx
         mov     rbx, rcx
@@ -20,9 +20,9 @@ $LN14:
         ; ==================================================================================
         
         test    r8, r8
-        je      SHORT $LN6@__base_memcpy128BitUnrolledTo256BitUnaligned
+        je      SHORT EndPart
 
-$LL2@__base_memcpy128BitUnrolledTo256BitUnaligned:
+MainPart:
         lea     rdx, QWORD PTR [r11+16]
         lea     rcx, QWORD PTR [rax+16]
 
@@ -41,10 +41,10 @@ $LL2@__base_memcpy128BitUnrolledTo256BitUnaligned:
         ; ==================================================================================
 
         sub     r8, 1
-        jne     SHORT $LL2@__base_memcpy128BitUnrolledTo256BitUnaligned
+        jne     SHORT MainPart
         mov     rax, rbx
 
-$LN6@__base_memcpy128BitUnrolledTo256BitUnaligned:
+EndPart:
         mov     rbx, QWORD PTR [rsp+8]
         ret     0
 

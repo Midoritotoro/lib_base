@@ -8,19 +8,19 @@ len$ = 24
 
 ; Copies 128 bytes at a time
 
-__base_memcpy128BitUnrolledTo1024BitUnaligned
+__base_memcpy128BitUnrolledTo1024BitUnaligned proc
 
-$LN14:
+StartPart:
         mov     QWORD PTR [rsp+8], rbx
         mov     r11, rdx
         mov     rbx, rcx
         mov     rax, rcx
-
+       
         ; ==========================================================================
-
+        
         test    r8, r8
-        je      SHORT $LN6@__base_memcpy128BitUnrolledTo1024BitUnaligned
-$LL2@__base_memcpy128BitUnrolledTo1024BitUnaligned:
+        je      SHORT EndPart
+MainPart:
         lea     rdx, QWORD PTR [r11+112]
         lea     rcx, QWORD PTR [rax+112]
 
@@ -64,11 +64,11 @@ $LL2@__base_memcpy128BitUnrolledTo1024BitUnaligned:
         ; ==========================================================================
 
         sub     r8, 1
-        jne     SHORT $LL2@__base_memcpy128BitUnrolledTo1024BitUnaligned
+        jne     SHORT MainPart
         mov     rax, rbx
-$LN6@__base_memcpy128BitUnrolledTo1024BitUnaligned:
+EndPart:
         mov     rbx, QWORD PTR [rsp+8]
         ret     0
 __base_memcpy128BitUnrolledTo1024BitUnaligned endp
 
-endp
+end

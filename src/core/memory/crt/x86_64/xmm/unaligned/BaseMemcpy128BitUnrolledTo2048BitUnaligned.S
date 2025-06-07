@@ -12,7 +12,7 @@ len$ = 24
 
 
 __base_memcpy128BitUnrolledTo2048BitUnaligned proc
-$LN14:
+StartPart:
         mov     QWORD PTR [rsp+8], rbx
         mov     r11, rdx
         mov     rbx, rcx
@@ -21,12 +21,12 @@ $LN14:
         ; ========================================================================
 
         test    r8, r8
-        je      $LN6@__base_memcpy128BitUnrolledTo2048BitUnaligned
+        je      EndPart
         
         ; ========================================================================
 
-        npad    9
-$LL2@__base_memcpy128BitUnrolledTo2048BitUnaligned:
+        align 8 ; npad 9
+MainPart:
         lea     rdx, QWORD PTR [r11+240]
         lea     rcx, QWORD PTR [rax+240]
         
@@ -103,12 +103,12 @@ $LL2@__base_memcpy128BitUnrolledTo2048BitUnaligned:
         ; ========================================================================
 
         sub     r8, 1
-        jne     $LL2@memcpy_128
+        jne     MainPart
         
         ; ========================================================================
 
         mov     rax, rbx
-$LN6@__base_memcpy128BitUnrolledTo2048BitUnaligned:
+EndPart:
         mov     rbx, QWORD PTR [rsp+8]
         ret     0
 __base_memcpy128BitUnrolledTo2048BitUnaligned endp
