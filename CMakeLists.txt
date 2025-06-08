@@ -20,7 +20,6 @@ endif()
 
 set(libs_loc "D:/Libraries/win64")
 
-
 option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 

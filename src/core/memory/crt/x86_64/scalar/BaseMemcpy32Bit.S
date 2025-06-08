@@ -5,9 +5,10 @@ option casemap:none
 dest$ = 8
 src$ = 16
 len$ = 24
-void * __base_memcpy32Bit(void *,void const *,unsigned __int64) proc
+
+__base_memcpy32Bit proc
         test    r8, r8
-        je      SHORT $LN10@__base_memcpy32Bit
+        je      SHORT EndPart
 
         ; ================================================================
 
@@ -16,8 +17,8 @@ void * __base_memcpy32Bit(void *,void const *,unsigned __int64) proc
 
         ; ================================================================
 
-        npad    5
-$LL2@__base_memcpy32Bit:
+;        npad    5
+MainPart:
         mov     eax, DWORD PTR [rdx]
         mov     DWORD PTR [r9+rdx], eax
 
@@ -28,11 +29,11 @@ $LL2@__base_memcpy32Bit:
 
         ; ================================================================
 
-        jne     SHORT $LL2@__base_memcpy32Bit
-$LN10@__base_memcpy32Bit:
+        jne     SHORT MainPart
+EndPart:
         mov     rax, rcx
         ret     0
-void * __base_memcpy32Bit(void *,void const *,unsigned __int64) endp
+__base_memcpy32Bit endp
 
 
 end

@@ -5,22 +5,22 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyScalar(
+BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyScalar(
     void*       destination,
     void const* source,
     size_t      size) noexcept;
 
-DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpySse(
+BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpySse(
     void*       destination,
     void const* source,
     size_t      size) noexcept;
 
-DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyAvx(
+BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyAvx(
     void*       destination,
     void const* source,
     size_t      size) noexcept;
 
-DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyAvx512(
+BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyAvx512(
     void*       destination,
     void const* source,
     size_t      size) noexcept;
