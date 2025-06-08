@@ -13,7 +13,7 @@ __base_memcpy128BitUnaligned proc
         ; ===================================================================
 
         je      SHORT EndPart
-        align    8 ; npad 8
+        ; npad 8
 MainPart:
         mov     r9, rdx
         mov     rax, r10

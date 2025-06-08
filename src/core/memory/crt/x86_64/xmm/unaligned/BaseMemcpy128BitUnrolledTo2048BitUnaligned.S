@@ -25,7 +25,7 @@ StartPart:
         
         ; ========================================================================
 
-        align 8 ; npad 9
+        ; npad 9
 MainPart:
         lea     rdx, QWORD PTR [r11+240]
         lea     rcx, QWORD PTR [rax+240]

@@ -26,7 +26,7 @@ BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpyAvx512(
     size_t      size) noexcept;
 
 BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpy(
-    void*       destination,
+    void* destination,
     void const* source,
     size_t      size) noexcept
 {
