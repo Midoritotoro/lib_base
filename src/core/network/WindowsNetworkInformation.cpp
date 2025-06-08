@@ -16,7 +16,7 @@
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
-void WindowsNetworkInformation::enumerateNetworks() noexcept {
+void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkParameters) noexcept {
 	dword currentWlanApiVersion = 0;
 
 	HANDLE wlanTempHandle = nullptr;
@@ -79,6 +79,75 @@ void WindowsNetworkInformation::enumerateNetworks() noexcept {
 				wprintf(L"\n");
 			}
 
+			outputNetworkParameters[j].isNetworkConnectable = wlanAvailableNetwork->bNetworkConnectable;
+			outputNetworkParameters[j].isSecurityEnabled = wlanAvailableNetwork->bSecurityEnabled;
+
+			outputNetworkParameters[j].networkProfileName = wlanAvailableNetwork->strProfileName;
+			outputNetworkParameters[j].connectionQuality = (wlanAvailableNetwork->wlanSignalQuality == 0) 
+				? -100 
+				: (wlanAvailableNetwork->wlanSignalQuality == 100) 
+					?  -50 
+				:  -100 + (wlanAvailableNetwork->wlanSignalQuality / 2);
+
+			switch (wlanAvailableNetwork->dot11DefaultAuthAlgorithm) {
+				case DOT11_AUTH_ALGO_80211_OPEN:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm = 
+						Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmOpen;
+					break;
+				case DOT11_AUTH_ALGO_80211_SHARED_KEY:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmSharedKey;
+					break;
+				case DOT11_AUTH_ALGO_WPA:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA;
+					break;
+				case DOT11_AUTH_ALGO_WPA_PSK:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_PSK;
+					break;
+				case DOT11_AUTH_ALGO_WPA_NONE:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_NONE;
+					break;
+				case DOT11_AUTH_ALGO_RSNA:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA;
+					break;
+				case DOT11_AUTH_ALGO_RSNA_PSK:
+					outputNetworkParameters[j].defaultAuthenticationAlgorithm =
+						Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA_PSK;
+					break;
+				default:
+					break;
+			}
+
+			switch (wlanAvailableNetwork->dot11DefaultCipherAlgorithm) {
+				case DOT11_CIPHER_ALGO_NONE:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmNone;
+					break;
+				case DOT11_CIPHER_ALGO_WEP40:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmWEP40;
+					break;
+				case DOT11_CIPHER_ALGO_TKIP:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmTKIP;
+					break;
+				case DOT11_CIPHER_ALGO_CCMP:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmCCMP;
+					break;
+				case DOT11_CIPHER_ALGO_WEP104:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmWEP104;
+					break;
+				case DOT11_CIPHER_ALGO_WEP:
+					outputNetworkParameters[j].defaultCipherAlgorithm = Dot11CipherAlgorithm::CipherAlgorithmWEP;
+					break;
+				default:
+					break;
+			}
+
+			outputNetworkParameters[j].isNetworkCurrentlyConnected =
+				wlanAvailableNetwork->dwFlags && wlanAvailableNetwork->dwFlags
+					& WLAN_AVAILABLE_NETWORK_CONNECTED;
 		}	
 	}
 

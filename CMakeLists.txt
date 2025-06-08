@@ -186,6 +186,11 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrSse2.cpp
 
     src/core/memory/MemoryAllocation.cpp
+
+    src/core/network/Socket.cpp
+
+    src/core/network/WindowsNetworkInformation.cpp
+    src/core/network/UnixNetworkInformation.cpp
     ${BASE_MASM_FILES}
 )
 
@@ -322,10 +327,6 @@ set(PRIVATE_HEADERS
     src/core/network/WindowsNetworkInformation.h
     src/core/network/UnixNetworkInformation.h
 
-    src/core/network/Socket.cpp
-
-    src/core/network/WindowsNetworkInformation.cpp
-    src/core/network/UnixNetworkInformation.cpp
 
     src/core/network/WirelessConstants.h
     src/core/network/NetworkParameters.h

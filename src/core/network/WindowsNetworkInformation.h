@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
+#include <src/core/network/NetworkParameters.h>
 
 #if defined(OS_WIN) 
 
@@ -10,7 +11,7 @@ __BASE_NETWORK_NAMESPACE_BEGIN
 
 class WindowsNetworkInformation {
 public:
-	static void enumerateNetworks() noexcept;
+	static void enumerateNetworks(NetworksList& outputNetworkParameters) noexcept;
 private:
 	static BOOL WlanCloseHandleWrap(HANDLE handle) noexcept;
 };
