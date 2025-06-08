@@ -16,11 +16,11 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 //									Scalar memcpy
 // =======================================================================================
 
-__BASE_DECLARE_MEMCPY(__base_memcpy64BitUnaligned);
-__BASE_DECLARE_MEMCPY(__base_memcpy64BitUnrolledTo128BitUnaligned);
-__BASE_DECLARE_MEMCPY(__base_memcpy64BitUnrolledTo256BitUnaligned);
-__BASE_DECLARE_MEMCPY(__base_memcpy64BitUnrolledTo512BitUnaligned);
-__BASE_DECLARE_MEMCPY(__base_memcpy64BitUnrolledTo1024BitUnaligned);
+
+__BASE_DECLARE_MEMCPY(__base_memcpy8Bit);
+__BASE_DECLARE_MEMCPY(__base_memcpy16Bit);
+__BASE_DECLARE_MEMCPY(__base_memcpy32Bit);
+__BASE_DECLARE_MEMCPY(__base_memcpy64Bit);
 
 // =======================================================================================
 //									Aligned xmm memcpy

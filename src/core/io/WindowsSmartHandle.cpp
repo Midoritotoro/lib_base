@@ -28,6 +28,14 @@ HANDLE WindowsSmartHandle::handle() const noexcept {
 	return _handle;
 }
 
+HANDLE WindowsSmartHandle::constHandle() const noexcept {
+	return _handle;
+}
+
+HANDLE WindowsSmartHandle::handle() noexcept {
+	return _handle;
+}
+
 void WindowsSmartHandle::setAutoDelete(bool autoDelete) {
 	_autoDelete = autoDelete;
 }

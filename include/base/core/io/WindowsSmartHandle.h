@@ -19,14 +19,14 @@ public:
 	~WindowsSmartHandle();
 
 	void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
-	[[nodiscard]] Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
+	NODISCARD Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
 
 	void forceDelete();
 
-	[[nodiscard]] bool isValid() const noexcept;
+	NODISCARD bool isValid() const noexcept;
 
 	void setAutoDelete(bool autoDelete);
-	[[nodiscard]] bool autoDelete() const noexcept;
+	NODISCARD bool autoDelete() const noexcept;
 
 	WindowsSmartHandle& operator=(HANDLE handle);
 	bool operator==(HANDLE handle);
@@ -34,7 +34,11 @@ public:
 	void setHandle(
 		not_null<HANDLE> handle, 
 		bool autoDeletePrevious = true);
-	[[nodiscard]] HANDLE handle() const noexcept;
+
+	NODISCARD HANDLE handle() const noexcept;
+	NODISCARD HANDLE constHandle() const noexcept;
+
+	NODISCARD HANDLE handle() noexcept;
 
 	DISABLE_COPY(WindowsSmartHandle);
 private:

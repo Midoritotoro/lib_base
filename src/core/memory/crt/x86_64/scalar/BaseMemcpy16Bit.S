@@ -2,9 +2,8 @@ option casemap:none
 
 .code
 
-dest$ = 8
-src$ = 16
-len$ = 24
+; Declaration in C++
+; BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpy16Bit(void* destination, const void* source, size_t length) noexcept;
 
 __base_memcpy16Bit proc
         test    r8, r8

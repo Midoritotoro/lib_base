@@ -42,6 +42,9 @@ using uint64    = unsigned long long;
 using longlong  = int64;
 using ulonglong = uint64;
 
+using ulong32   = unsigned long;
+using long32    = long;
+
 template <int>      struct IntegerForSize;
 
 template <>         struct IntegerForSize<1> { typedef uint8  Unsigned; typedef int8  Signed; };
@@ -60,6 +63,18 @@ using ptrdiff       = IntegerForSizeof<void*>::Signed;
 
 using intptr        = ptrdiff;
 using sizetype      = IntegerForSizeof<std::size_t>::Signed;
+
+using byte = uint8;
+using sbyte = int8;
+
+using word = uint16;
+using sword = int16;
+
+using dword = ulong32;
+using sdword = long32;
+
+using qword = uint64;
+using sqword = int64;
 
 __BASE_NAMESPACE_END
 

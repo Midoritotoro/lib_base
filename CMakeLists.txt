@@ -318,6 +318,17 @@ set(PRIVATE_HEADERS
 
     src/core/string/traits/StringConverterScalarTraits.cpp
     src/core/string/traits/StringConverterScalarTraits.h
+
+    src/core/network/WindowsNetworkInformation.h
+    src/core/network/UnixNetworkInformation.h
+
+    src/core/network/Socket.cpp
+
+    src/core/network/WindowsNetworkInformation.cpp
+    src/core/network/UnixNetworkInformation.cpp
+
+    src/core/network/WirelessConstants.h
+    src/core/network/NetworkParameters.h
 )
 
 set(PUBLIC_HEADERS 
@@ -507,6 +518,9 @@ set(PUBLIC_HEADERS
      
     include/base/core/utility/Concepts.h
     include/base/core/utility/Execution.h
+
+    include/base/core/network/Socket.h
+    include/base/core/network/NetworkInformation.h
 )
 
 include(CMakePackageConfigHelpers)
@@ -706,6 +720,8 @@ if (WIN32)
         user32.dll
         kernel32.dll
         shlwapi.dll
+        wlanapi.dll
+        ole32.dll
         OpenMP::OpenMP_CXX
     )
 endif()
