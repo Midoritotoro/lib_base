@@ -3,6 +3,7 @@ set(CMAKE_MASM_COMPILER ${CMAKE_ASM_COMPILER})
 
 set(CMAKE_ASM_MASM_FLAGS "-x" "/c" "assembler-with-cpp")
 set(CMAKE_ASM_FLAGS ${CMAKE_ASM_MASM_FLAGS})
+
 if(NOT CMAKE_CL_64)
     set(CMAKE_ASM_MASM_FLAGS ${CMAKE_ASM_MASM_FLAGS} /safeseh)
 endif()

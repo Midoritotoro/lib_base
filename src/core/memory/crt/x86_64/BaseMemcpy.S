@@ -1,10 +1,5 @@
 option casemap:none
 
-;include BaseMemcpy16Bit.S
-;include BaseMecmpy32Bit.S
-;include BaseMemcpy64Bit.S
-;include BaseMemcpyScalar.S
-
 .code
 
 ; This file implements the algorithm: 
