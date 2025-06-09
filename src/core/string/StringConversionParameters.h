@@ -1,16 +1,17 @@
 #pragma once 
 
 #include <src/core/arch/CpuFeatureSimdTraits.h>
+#include <base/core/arch/CpuFeature.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <
 	typename	_FromChar_,
 	typename	_ToChar_,
-	class		_SimdType_>
+	CpuFeature _SimdType_>
 struct StringConversionParameters
 {
-	using SimdVectorType = SimdVectorIntType<_SimdType_>;
+	using SimdVectorType = SimdVectorIntType<CpuFeatureTag<_SimdType_>>;
 
 	StringConversionParameters(
 		const _FromChar_*			inputString,

@@ -6,10 +6,10 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_>
 class StringConverterTraits<
-	CpuFeatureTag<CpuFeature::SSE>, 
+	CpuFeature::SSE, 
 	_NarrowingConversionBehaviour_>:
 		public StringConverterTraitsBase<
-			CpuFeatureTag<CpuFeature::SSE>,
+			CpuFeature::SSE,
 			_NarrowingConversionBehaviour_> 
 {
 	using WCharSseMaskIntegerType = uint8;
@@ -24,7 +24,8 @@ class StringConverterTraits<
 				static_cast<uint32>(conversionToLimit));
 	}
 
-	using FallbackTraits = StringConverterTraits<CpuFeatureTag<CpuFeature::None>, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<
+		CpuFeature::None, _NarrowingConversionBehaviour_>;
 public:
 	template <
 		typename _FromChar_,
@@ -82,9 +83,22 @@ public:
 
 	template <
 		typename _FromChar_,
+		typename _ToChar_,
+		typename = std::enable_if_t<
+			IsCompatibleCharType<_FromChar_>::value &&
+			IsCompatibleCharType<_ToChar_>::value>>
+	// Is data loss possible when converting from _FromChar_ to _ToChar_
+	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
+		return StringConverterTraitsBase<
+			CpuFeature::SSE,
+			_NarrowingConversionBehaviour_>::template maybeNarrowingConversion<_FromChar_, _ToChar_>();
+	}
+
+	template <
+		typename _FromChar_,
 		typename _ToChar_>
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::SSE>>& parameters) noexcept
+		StringConversionParameters<_FromChar_, _ToChar_, CpuFeature::SSE>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};

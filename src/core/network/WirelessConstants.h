@@ -33,7 +33,6 @@ enum Dot11AuthenticationAlgorithm {
     AuthenticationAlgorithmIHV_END = 0xffffffff
 };
 
-
 enum Dot11CipherAlgorithm {
     CipherAlgorithmNone = 0x00,
     CipherAlgorithmWEP40 = 0x01,

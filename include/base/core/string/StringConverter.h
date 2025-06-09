@@ -33,19 +33,19 @@ public:
 		const size_t			length)
 	{
 		if (ProcessorFeatures::AVX512F())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX512>>(
-				string, length, nullptr, CpuFeatureTag<CpuFeature::AVX512>{});
+			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX512>(
+				string, length, nullptr);
 
 		else if (ProcessorFeatures::AVX())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX>>(
-				string, length, nullptr, CpuFeatureTag<CpuFeature::AVX>{});
+			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX>(
+				string, length, nullptr);
 
 		else if (ProcessorFeatures::SSE2())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::SSE>>(
-				string, length, nullptr, CpuFeatureTag<CpuFeature::SSE>{});
+			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::SSE>(
+				string, length, nullptr);
 
-		return convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::None>>(
-			string, length, nullptr, CpuFeatureTag<CpuFeature::None>{});
+		return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::None>(
+			string, length, nullptr);
 	}
 
 	template <
@@ -63,20 +63,20 @@ public:
 		StringConversionResult<_ToChar_> temp;
 
 		if (ProcessorFeatures::AVX512F())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX512>>(
-				string, length, output->data(), CpuFeatureTag<CpuFeature::AVX512>{});
+			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX512>(
+				string, length, output->data());
 
 		else if (ProcessorFeatures::AVX())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX>>(
-				string, length, output->data(), CpuFeatureTag<CpuFeature::AVX>{});
+			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX>(
+				string, length, output->data());
 
 		else if (ProcessorFeatures::SSE2())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::SSE>>(
-				string, length, output->data(), CpuFeatureTag<CpuFeature::SSE>{});
+			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::SSE>(
+				string, length, output->data());
 
 		else
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::None>>(
-				string, length, output->data(), CpuFeatureTag<CpuFeature::None>{});
+			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::None>(
+				string, length, output->data());
 
 		*output = temp;
 	}
@@ -84,19 +84,14 @@ private:
 	template <
 		class _FromChar_,
 		class _ToChar_,
-		class _SimdType_,
-		std::enable_if_t<
-			IsCompatibleCharType<_FromChar_>::value &&
-			IsCompatibleCharType<_ToChar_>::value>>
+		CpuFeature _SimdType_>
 	static NODISCARD StringConversionResult<_ToChar_> convertStringImplementation(
 			const _FromChar_* const string,
 			const size_t			stringLength,	
-			_ToChar_*				outputString,
-			_SimdType_				tag)
+			_ToChar_*				outputString)
 	{
 		using StringConverterTraitsType = StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>;
 		using StringConversionParametersType = StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>;
-
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -108,28 +103,36 @@ private:
 
 		StringConversionResult<_ToChar_> conversionResult;
 
-		//if constexpr (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>()) {
-		//	constexpr auto toLimit = MaximumIntegralLimit<char>();
+		if constexpr (StringConverterTraitsType::template maybeNarrowingConversion<_FromChar_, _ToChar_>()) {
+			constexpr auto toLimit = MaximumIntegralLimit<_ToChar_>();
 
-		//	static_assert(
-		//		_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
-		//		"base::core::string::StringConverter::convertStringImplementation"
-		//		"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
+			static_assert(
+				_NarrowingConversionBehaviour_::replacementCharacter <= toLimit,
+				"base::core::string::StringConverter::convertStringImplementation"
+				"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-		//	constexpr auto replacementVector = StringConverterTraitsType::replacementVector<_ToChar_>();
-		//	constexpr auto narrowingLimitVector = StringConverterTraitsType::narrowingLimitVector<_FromChar_>();
+			if constexpr (_SimdType_ == CpuFeature::None) {
+				auto conversionParameters = StringConversionParametersType(
+					string, stringLength, outputString, nullptr, nullptr);
 
-		//	auto conversionParameters = StringConversionParametersType(
-		//		string, stringLength, outputString, replacementVector, narrowingLimitVector);
+				conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
+			}
+			else {
+				constexpr auto replacementVector = StringConverterTraitsType::template replacementVector<_ToChar_>();
+				constexpr auto narrowingLimitVector = StringConverterTraitsType::template narrowingLimitVector<_FromChar_>();
 
-		//	conversionResult = StringConverterTraitsType::convertString<_FromChar_, _ToChar_>(conversionParameters);
-		//}
-		/*else { 
+				auto conversionParameters = StringConversionParametersType(
+					string, stringLength, outputString, replacementVector, narrowingLimitVector);
+
+				conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
+			}
+		}
+		else { 
 			auto conversionParameters = StringConversionParametersType(
 				string, stringLength, outputString);
 
-			conversionResult = StringConverterTraitsType::convertString<_FromChar_, _ToChar_>(conversionParameters);
-		}*/
+			conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
+		}
 
 		return conversionResult;
 	}

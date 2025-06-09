@@ -69,19 +69,19 @@ template <class _Type_>
 constexpr bool is_simd_feature_v = IsSimdFeature<_Type_>::value;
 
 #if !defined(BASE_DECLARE_SIMD_TYPE_SELECTOR)
-#  define BASE_DECLARE_SIMD_TYPE_SELECTOR(selectorName, simdTypeNameXmm, simdTypeNameYmm, simdTypeNameZmm)	\
+#  define BASE_DECLARE_SIMD_TYPE_SELECTOR(selectorName, simdTypeNameXmm, simdTypeNameYmm, simdTypeNameZmm, defaultType)	\
 	template <class _SimdType_>																				\
 	using selectorName = std::conditional_t<is_xmm_simd_feature_v<_SimdType_>, simdTypeNameXmm,				\
 		std::conditional_t<is_ymm_simd_feature_v<_SimdType_>, simdTypeNameYmm,								\
-		std::conditional_t<is_zmm_simd_feature_v<_SimdType_>, simdTypeNameZmm, void>>>
+		std::conditional_t<is_zmm_simd_feature_v<_SimdType_>, simdTypeNameZmm, defaultType>>>
 #endif
 
-BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorIntType, __m128i, __m256i, __m512i);
-BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorFloatType, __m128, __m256, __m512);
-BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorDoubleType, __m128d, __m256d, __m512d);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorIntType, __m128i, __m256i, __m512i, int32);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorFloatType, __m128, __m256, __m512, float);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorDoubleType, __m128d, __m256d, __m512d, double);
 
-BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorIntType, base_vec128i_t, base_vec256i_t, base_vec512i_t);
-BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorFloatType, base_vec128f_t, base_vec256f_t, base_vec512f_t);
-BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorDoubleType, base_vec128d_t, base_vec256d_t, base_vec512d_t);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorIntType, base_vec128i_t, base_vec256i_t, base_vec512i_t, int32);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorFloatType, base_vec128f_t, base_vec256f_t, base_vec512f_t, float);
+BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorDoubleType, base_vec128d_t, base_vec256d_t, base_vec512d_t, double);
 
 __BASE_NAMESPACE_END

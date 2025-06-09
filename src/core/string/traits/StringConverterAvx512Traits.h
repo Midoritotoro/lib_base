@@ -6,10 +6,10 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_>
 class StringConverterTraits<
-	CpuFeatureTag<CpuFeature::AVX512>, 
+	CpuFeature::AVX512, 
 	_NarrowingConversionBehaviour_>:
 		public StringConverterTraitsBase<
-			CpuFeatureTag<CpuFeature::AVX512>,
+			CpuFeature::AVX512,
 			_NarrowingConversionBehaviour_> 
 {
 	using WCharAvx512MaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
@@ -26,7 +26,8 @@ class StringConverterTraits<
 				static_cast<uint32>(conversionToLimit));
 	}
 
-	using FallbackTraits = StringConverterTraits<CpuFeatureTag<CpuFeature::AVX>, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<
+		CpuFeature::AVX, _NarrowingConversionBehaviour_>;
 public:
 	template <typename _FromChar_>
 	// A vector for finding characters of type _FromChar_ that exceed the _ToChar_ limit
@@ -82,15 +83,28 @@ public:
 		typename _FromChar_,
 		typename _ToChar_>
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, CpuFeatureTag<CpuFeature::AVX512>>& parameters) noexcept
+		StringConversionParameters<_FromChar_, _ToChar_, CpuFeature::AVX512>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};
 	}
 
+	template <
+		typename _FromChar_,
+		typename _ToChar_,
+		typename = std::enable_if_t<
+			IsCompatibleCharType<_FromChar_>::value &&
+			IsCompatibleCharType<_ToChar_>::value>>
+	// Is data loss possible when converting from _FromChar_ to _ToChar_
+	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
+		return StringConverterTraitsBase<
+			CpuFeature::SSE,
+			_NarrowingConversionBehaviour_>::template maybeNarrowingConversion<_FromChar_, _ToChar_>();
+	}
+
 	template <>
 	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
-		StringConversionParameters<char, wchar_t, CpuFeatureTag<CpuFeature::AVX512>>& parameters) noexcept
+		StringConversionParameters<char, wchar_t, CpuFeature::AVX512>& parameters) noexcept
 	{
 		baseInitConversionPointers(char, parameters, 64)
 

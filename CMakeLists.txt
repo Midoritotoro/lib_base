@@ -191,6 +191,13 @@ set(PRIVATE_SOURCES
 
     src/core/network/WindowsNetworkInformation.cpp
     src/core/network/UnixNetworkInformation.cpp
+
+        src/core/string/traits/StringConverterSseTraits.cpp
+    src/core/string/traits/StringConverterScalarTraits.cpp
+        
+    src/core/string/traits/StringConverterAvx512Traits.cpp
+     src/core/string/traits/StringConverterAvxTraits.cpp
+
     ${BASE_MASM_FILES}
 )
 
@@ -310,18 +317,14 @@ set(PRIVATE_HEADERS
     src/core/utility/simd/SimdConstexprHelpers.h
     src/core/utility/simd/SimdVectorType.h
 
-    src/core/string/traits/StringConverterAvxTraits.cpp
+   
     src/core/string/traits/StringConverterAvxTraits.h
 
-    src/core/string/traits/StringConverterAvx512Traits.cpp
     src/core/string/traits/StringConverterAvx512Traits.h
 
-    src/core/string/traits/StringConverterSseTraits.cpp
     src/core/string/traits/StringConverterSseTraits.h
 
     src/core/string/StringConversionResult.h
-
-    src/core/string/traits/StringConverterScalarTraits.cpp
     src/core/string/traits/StringConverterScalarTraits.h
 
     src/core/network/WindowsNetworkInformation.h

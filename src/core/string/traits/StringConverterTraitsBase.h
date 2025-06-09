@@ -7,16 +7,13 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 
 template <
-	class _SimdType_,
+	CpuFeature _SimdType_,
 	class _NarrowingConversionBehaviour_>
 class StringConverterTraitsBase {
 public:
 	template <
 		typename _FromChar_,
-		typename _ToChar_,
-		typename = std::enable_if_t<
-			IsCompatibleCharType<_FromChar_>::value &&
-			IsCompatibleCharType<_ToChar_>::value>>
+		typename _ToChar_>
 	// Is data loss possible when converting from _FromChar_ to _ToChar_
 	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
 		return (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>());

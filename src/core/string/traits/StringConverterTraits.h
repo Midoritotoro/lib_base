@@ -18,7 +18,7 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 
 template <
-	class _SimdType_,
+	CpuFeature _SimdType_,
 	class _NarrowingConversionBehaviour_>
 class StringConverterTraits: 
 	public StringConverterTraitsBase<

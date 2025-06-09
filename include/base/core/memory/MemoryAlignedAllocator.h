@@ -13,7 +13,7 @@ template<
     std::size_t _Alignment_>
 class AlignedAllocator 
 {
-    static_assert(IsAlignmentConstant<Alignment>::value);
+    static_assert(IsAlignmentConstant<_Alignment_>::value);
 public:
     using value_type            = _Type_;
     using pointer               = _Type_*;
