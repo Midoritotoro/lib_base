@@ -91,7 +91,6 @@ private:
 			_ToChar_*				outputString)
 	{
 		using StringConverterTraitsType = StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>;
-		using StringConversionParametersType = StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>;
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -111,30 +110,22 @@ private:
 				"base::core::string::StringConverter::convertStringImplementation"
 				"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-			if constexpr (_SimdType_ == CpuFeature::None) {
-				auto conversionParameters = StringConversionParametersType(
-					string, stringLength, outputString, nullptr, nullptr);
+		//	constexpr auto replacementVector = StringConverterTraitsType::template replacementVector<_ToChar_>();
+		//	constexpr auto narrowingLimitVector = StringConverterTraitsType::template narrowingLimitVector<_FromChar_>();
 
-				conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
-			}
-			else {
-				constexpr auto replacementVector = StringConverterTraitsType::template replacementVector<_ToChar_>();
-				constexpr auto narrowingLimitVector = StringConverterTraitsType::template narrowingLimitVector<_FromChar_>();
+		//	conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>(
+		//		string, stringLength, outputString, &replacementVector, &narrowingLimitVector));
+		//}
+		else {
 
-				auto conversionParameters = StringConversionParametersType(
-					string, stringLength, outputString, replacementVector, narrowingLimitVector);
-
-				conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
-			}
-		}
-		else { 
-			auto conversionParameters = StringConversionParametersType(
-				string, stringLength, outputString);
-
-			conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(conversionParameters);
+		//	conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(
+		//		StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>(
+		//		string, stringLength, outputString));
 		}
 
 		return conversionResult;
+
+
 	}
 };
 

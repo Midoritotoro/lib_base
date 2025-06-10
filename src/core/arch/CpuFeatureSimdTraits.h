@@ -1,79 +1,79 @@
 #pragma once 
 
-#include <base/core/arch/CpuFeatureTag.h>
+#include <base/core/arch/CpuFeature.h>
 
 __BASE_NAMESPACE_BEGIN
 
-template <class _SimdType_>
+template <CpuFeature feature>
 struct IsXmmSimdFeature:
 	std::integral_constant<bool,
-		_SimdType_::value == CpuFeature::SSE		||
-		_SimdType_::value == CpuFeature::SSE2		||
-		_SimdType_::value == CpuFeature::SSSE3		||
-		_SimdType_::value == CpuFeature::SSE41		||
-		_SimdType_::value == CpuFeature::SSE42>
+		feature == CpuFeature::SSE		||
+		feature == CpuFeature::SSE2		||
+		feature == CpuFeature::SSSE3	||
+		feature == CpuFeature::SSE41	||
+		feature == CpuFeature::SSE42>
 {}; 
 
-template <class _SimdType_>
+template <CpuFeature feature>
 struct IsYmmSimdFeature:
 	std::integral_constant<bool,
-		_SimdType_::value == CpuFeature::AVX			||
-		_SimdType_::value == CpuFeature::AVX2			||
-		_SimdType_::value == CpuFeature::FMA			||
-		_SimdType_::value == CpuFeature::AVX_VNNI>
+		feature == CpuFeature::AVX			||
+		feature == CpuFeature::AVX2			||
+		feature == CpuFeature::FMA			||
+		feature == CpuFeature::AVX_VNNI>
 {}; 
 
-template <class _SimdType_>
+template <CpuFeature feature>
 struct IsZmmSimdFeature:
 	std::integral_constant<bool,
-		_SimdType_::value == CpuFeature::AVX512					||
-		_SimdType_::value == CpuFeature::AVX512F				||
-		_SimdType_::value == CpuFeature::AVX512BW				||
-		_SimdType_::value == CpuFeature::AVX512CD				||
-		_SimdType_::value == CpuFeature::AVX512DQ				||
-		_SimdType_::value == CpuFeature::AVX512ER				||
-		_SimdType_::value == CpuFeature::AVX512IFMA52			||
-		_SimdType_::value == CpuFeature::AVX512PF				||
-		_SimdType_::value == CpuFeature::AVX512VL				||
-		_SimdType_::value == CpuFeature::AVX512VPOPCNTDQ		||
-		_SimdType_::value == CpuFeature::AVX512_4FMAPS			||
-		_SimdType_::value == CpuFeature::AVX512_4VNNIW			||
-		_SimdType_::value == CpuFeature::AVX512_BF16			||
-		_SimdType_::value == CpuFeature::AVX512_BITALG			||
-		_SimdType_::value == CpuFeature::AVX512_VBMI			||
-		_SimdType_::value == CpuFeature::AVX512_VBMI2			|| 
-		_SimdType_::value == CpuFeature::AVX512_VNNI			||
-		_SimdType_::value == CpuFeature::AVX512_VP2INTERSECT	||
-		_SimdType_::value == CpuFeature::AVX512_FP16>
+		feature == CpuFeature::AVX512				||
+		feature == CpuFeature::AVX512F				||
+		feature == CpuFeature::AVX512BW				||
+		feature == CpuFeature::AVX512CD				||
+		feature == CpuFeature::AVX512DQ				||
+		feature == CpuFeature::AVX512ER				||
+		feature == CpuFeature::AVX512IFMA52			||
+		feature == CpuFeature::AVX512PF				||
+		feature == CpuFeature::AVX512VL				||
+		feature == CpuFeature::AVX512VPOPCNTDQ		||
+		feature == CpuFeature::AVX512_4FMAPS		||
+		feature == CpuFeature::AVX512_4VNNIW		||
+		feature == CpuFeature::AVX512_BF16			||
+		feature == CpuFeature::AVX512_BITALG		||
+		feature == CpuFeature::AVX512_VBMI			||
+		feature == CpuFeature::AVX512_VBMI2			|| 
+		feature == CpuFeature::AVX512_VNNI			||
+		feature == CpuFeature::AVX512_VP2INTERSECT	||
+		feature == CpuFeature::AVX512_FP16>
 {};
 
-template <class _SimdType_>
+template <CpuFeature feature>
 struct IsSimdFeature:
 	std::integral_constant<bool,
-		IsXmmSimdFeature<_SimdType_>::value ||
-		IsYmmSimdFeature<_SimdType_>::value || 
-		IsZmmSimdFeature<_SimdType_>::value ||
-		_SimdType_::value == CpuFeature::MMX>
+		IsXmmSimdFeature<feature>::value ||
+		IsYmmSimdFeature<feature>::value ||
+		IsZmmSimdFeature<feature>::value ||
+		feature == CpuFeature::MMX>
 {};
 
-template <class _SimdType_>
-constexpr bool is_xmm_simd_feature_v = IsXmmSimdFeature<_SimdType_>::value;
+template <CpuFeature feature>
+constexpr bool is_xmm_simd_feature_v = IsXmmSimdFeature<feature>::value;
 
-template <class _SimdType_>
-constexpr bool is_ymm_simd_feature_v = IsYmmSimdFeature<_SimdType_>::value;
+template <CpuFeature feature>
+constexpr bool is_ymm_simd_feature_v = IsYmmSimdFeature<feature>::value;
 
-template <class _SimdType_>
-constexpr bool is_zmm_simd_feature_v = IsZmmSimdFeature<_SimdType_>::value;
+template <CpuFeature feature>
+constexpr bool is_zmm_simd_feature_v = IsZmmSimdFeature<feature>::value;
 
 template <class _Type_>
 constexpr bool is_simd_feature_v = IsSimdFeature<_Type_>::value;
 
 #if !defined(BASE_DECLARE_SIMD_TYPE_SELECTOR)
 #  define BASE_DECLARE_SIMD_TYPE_SELECTOR(selectorName, simdTypeNameXmm, simdTypeNameYmm, simdTypeNameZmm, defaultType)	\
-	template <class _SimdType_>																				\
-	using selectorName = std::conditional_t<is_xmm_simd_feature_v<_SimdType_>, simdTypeNameXmm,				\
-		std::conditional_t<is_ymm_simd_feature_v<_SimdType_>, simdTypeNameYmm,								\
-		std::conditional_t<is_zmm_simd_feature_v<_SimdType_>, simdTypeNameZmm, defaultType>>>
+	template <CpuFeature feature>																				\
+	using selectorName = std::conditional_t<is_xmm_simd_feature_v<feature>, simdTypeNameXmm,				\
+		std::conditional_t<is_ymm_simd_feature_v<feature>, simdTypeNameYmm,								\
+		std::conditional_t<is_zmm_simd_feature_v<feature>, simdTypeNameZmm, defaultType>>>
 #endif
 
 BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorIntType, __m128i, __m256i, __m512i, int32);

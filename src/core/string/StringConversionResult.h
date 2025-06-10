@@ -4,9 +4,7 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <
-	typename _Char_,
-	typename = std::enable_if_t<IsCompatibleCharTypeHelper<_Char_>::value>>
+template <typename _Char_>
 class StringConversionResult {
 public:
 	constexpr StringConversionResult() noexcept {}
@@ -27,7 +25,8 @@ public:
 		_isNarrowingConversion(isNarrowingConversion)
 	{}
 
-	constexpr ~StringConversionResult() noexcept {}
+	~StringConversionResult() noexcept 
+	{}
 
 	constexpr inline NODISCARD bool isNull() const noexcept {
 		return (_dataStart == nullptr || _dataLength == 0);

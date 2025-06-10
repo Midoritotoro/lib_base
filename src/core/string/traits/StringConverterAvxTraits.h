@@ -51,7 +51,6 @@ public:
 			else if constexpr (sizeof(wchar_t) == 4)
 				return base_constexpr_mm256_set1_epu32(MaximumIntegralLimit<wchar_t>());
 
-		AssertUnreachable();
 		return {};
 	}
 
@@ -76,7 +75,6 @@ public:
 			else if constexpr (sizeof(wchar_t) == 4)
 				return base_constexpr_mm256_set1_epu32(_NarrowingConversionBehaviour_::replacementCharacter);
 
-		AssertUnreachable();
 		return {};
 	}
 
