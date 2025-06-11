@@ -20,15 +20,25 @@ __BASE_STRING_NAMESPACE_BEGIN
 template <
 	CpuFeature _SimdType_,
 	class _NarrowingConversionBehaviour_>
-class StringConverterTraits: 
-	public StringConverterTraitsBase<
-		_SimdType_, 
-		_NarrowingConversionBehaviour_> 
+class StringConverterTraits
 {
-	static_assert(
-		false,
-		"base::core::string::StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>: Invalid _SimdType_");
+	__BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION();
+	//static_assert(
+		//false,
+		//"base::core::string::StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>: Invalid _SimdType_");
 };
 
+template <class _NarrowingConversionBehaviour>
+class StringConverterTraits<CpuFeature::AVX512, _NarrowingConversionBehaviour>;
+
+template <class _NarrowingConversionBehaviour_>
+class StringConverterTraits<CpuFeature::AVX, _NarrowingConversionBehaviour_>;
+
+template <class _NarrowingConversionBehaviour_>
+class StringConverterTraits<CpuFeature::SSE, _NarrowingConversionBehaviour_>;
+
+template <class _NarrowingConversionBehaviour_>
+class StringConverterTraits<CpuFeature::None, _NarrowingConversionBehaviour_>;
 
 __BASE_STRING_NAMESPACE_END
+

@@ -23,46 +23,29 @@ private:
 		else if constexpr (std::is_same_v<_BaseVector_, base_vec512i_t>)
 			return base_vec512i_t_pointer_as_m512i_pointer(vectorBase);
 
-		AssertUnreachable();
-		return {};
+		return vectorBase;
 	}
 public:
 	StringConversionParameters() noexcept = default;
 	~StringConversionParameters() noexcept = default;
 
+	//template <typename _BaseVector_>
 	StringConversionParameters(
 		const _FromChar_*			inputString,
 		size_t						inputStringLength,
 		_ToChar_*					outputString,
-		const SimdVectorType*		replacementVectorSimd = nullptr,
-		const SimdVectorType*		narrowingLimitVectorSimd = nullptr
+		const __m512i*			replacementVectorSimd = nullptr,
+		const __m512i*			narrowingLimitVectorSimd = nullptr
 	) noexcept:
 		inputStringDataStart(inputString),
 		stringLength(inputStringLength),
 		outputStringDataStart(outputString),
-		replacementVector(replacementVectorSimd),
-		narrowingLimitVector(narrowingLimitVectorSimd)
+		replacementVector((replacementVectorSimd)),
+		narrowingLimitVector((narrowingLimitVectorSimd))
 	{}
 
-	template <
-		typename _BaseVector_,
-		std::enable_if_t<IsAnyOf_v<_BaseVector_, base_vec128i_t, base_vec256i_t, base_vec512i_t>> = 0>
-	StringConversionParameters(
-		const _FromChar_*			inputString,
-		size_t						inputStringLength,
-		_ToChar_*					outputString,
-		const _BaseVector_*			replacementVectorSimd = nullptr,
-		const _BaseVector_*			narrowingLimitVectorSimd = nullptr
-	) noexcept:
-		inputStringDataStart(inputString),
-		stringLength(inputStringLength),
-		outputStringDataStart(outputString),
-		replacementVector(simdVectorFromBaseVector(replacementVectorSimd)),
-		narrowingLimitVector(simdVectorFromBaseVector(narrowingLimitVectorSimd))
-	{}
-
-	const SimdVectorType* replacementVector = nullptr;
-	const SimdVectorType* narrowingLimitVector = nullptr;
+	const __m512i* replacementVector = nullptr;
+	const __m512i* narrowingLimitVector = nullptr;
 
 	const _FromChar_* inputStringDataStart = nullptr;
 	size_t stringLength = 0;

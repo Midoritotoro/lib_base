@@ -1,20 +1,14 @@
 #pragma once 
 
-#include <base/core/string/StringConfig.h>
-
-#include <base/core/memory/MemoryAllocation.h>
-#include <base/core/utility/IntegralTypesConversions.h>
-
-#include <src/core/string/StringConversionOptions.h>
-
-#include <src/core/utility/simd/SimdConstexprHelpers.h>
 #include <base/core/arch/ProcessorFeatures.h>
-
-#include <src/core/memory/MemoryUtility.h>
 #include <src/core/string/traits/StringConverterAvx512Traits.h>
 
 #include <src/core/string/traits/StringConverterAvxTraits.h>
 #include <src/core/string/traits/StringConverterSseTraits.h>
+
+#include <src/core/string/traits/StringConverterScalarTraits.h>
+
+#include <base/core/memory/MemoryAllocation.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -33,18 +27,18 @@ public:
 		const size_t			length)
 	{
 		if (ProcessorFeatures::AVX512F())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX512>(
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX512, _NarrowingConversionBehaviour_>>(
 				string, length, nullptr);
 
 		else if (ProcessorFeatures::AVX())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX>(
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX, _NarrowingConversionBehaviour_>>(
 				string, length, nullptr);
 
-		else if (ProcessorFeatures::SSE2())
-			return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::SSE>(
+		else if (ProcessorFeatures::SSE())
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::SSE, _NarrowingConversionBehaviour_>>(
 				string, length, nullptr);
 
-		return convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::None>(
+		return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::None, _NarrowingConversionBehaviour_>>(
 			string, length, nullptr);
 	}
 
@@ -63,19 +57,19 @@ public:
 		StringConversionResult<_ToChar_> temp;
 
 		if (ProcessorFeatures::AVX512F())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX512>(
+			temp = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX512, _NarrowingConversionBehaviour_>>(
 				string, length, output->data());
 
 		else if (ProcessorFeatures::AVX())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::AVX>(
+			temp = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX, _NarrowingConversionBehaviour_>>(
 				string, length, output->data());
 
-		else if (ProcessorFeatures::SSE2())
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::SSE>(
+		else if (ProcessorFeatures::SSE())
+			temp = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::SSE, _NarrowingConversionBehaviour_>>(
 				string, length, output->data());
 
 		else
-			temp = convertStringImplementation<_FromChar_, _ToChar_, CpuFeature::None>(
+			temp = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::None, _NarrowingConversionBehaviour_>>(
 				string, length, output->data());
 
 		*output = temp;
@@ -84,13 +78,13 @@ private:
 	template <
 		class _FromChar_,
 		class _ToChar_,
-		CpuFeature _SimdType_>
+		class _StringConverterTraits_>
 	static NODISCARD StringConversionResult<_ToChar_> convertStringImplementation(
 			const _FromChar_* const string,
 			const size_t			stringLength,	
 			_ToChar_*				outputString)
 	{
-		using StringConverterTraitsType = StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>;
+		using _Parameters_ = StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::template cpuFeature>;
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -102,7 +96,7 @@ private:
 
 		StringConversionResult<_ToChar_> conversionResult;
 
-		if constexpr (StringConverterTraitsType::template maybeNarrowingConversion<_FromChar_, _ToChar_>()) {
+		if constexpr (_StringConverterTraits_::template maybeNarrowingConversion<_FromChar_, _ToChar_>()) {
 			constexpr auto toLimit = MaximumIntegralLimit<_ToChar_>();
 
 			static_assert(
@@ -110,22 +104,27 @@ private:
 				"base::core::string::StringConverter::convertStringImplementation"
 				"_NarrowingConversionBehaviour_::replacementCharacter must be in range [0, toLimit]. ");
 
-		//	constexpr auto replacementVector = StringConverterTraitsType::template replacementVector<_ToChar_>();
-		//	constexpr auto narrowingLimitVector = StringConverterTraitsType::template narrowingLimitVector<_FromChar_>();
+			_Parameters_ parameters;
 
-		//	conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>(
-		//		string, stringLength, outputString, &replacementVector, &narrowingLimitVector));
-		//}
+			if constexpr (_StringConverterTraits_::template cpuFeature == CpuFeature::None) {
+				parameters = _Parameters_(string, stringLength, outputString, nullptr, nullptr);
+			}
+			else {
+				constexpr auto replacementVector = _StringConverterTraits_::template replacementVector<_ToChar_>();
+				constexpr auto narrowingLimitVector = _StringConverterTraits_::template narrowingLimitVector<_FromChar_>();
+
+				parameters = _Parameters_(string, stringLength, outputString, base_vec512i_t_pointer_as_m512i_pointer(&replacementVector), base_vec512i_t_pointer_as_m512i_pointer(&narrowingLimitVector));
+			}
+
+			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
+		}
 		else {
-
-		//	conversionResult = StringConverterTraitsType::template convertString<_FromChar_, _ToChar_>(
-		//		StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>(
-		//		string, stringLength, outputString));
+			StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::template cpuFeature> parameters(
+				string, stringLength, outputString);
+			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
 		}
 
 		return conversionResult;
-
-
 	}
 };
 
