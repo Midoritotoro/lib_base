@@ -391,4 +391,3 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
 //
 //
 __BASE_NAMESPACE_END
-
