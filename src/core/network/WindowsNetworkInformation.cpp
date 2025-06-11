@@ -160,12 +160,12 @@ Dot11AuthenticationAlgorithm WindowsNetworkInformation::AuthenticationAlgorithmF
 		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_SAE:
 			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_SAE;
 
-#if (NTDDI_VERSION >= NTDDI_WIN10_VB)
+#if defined(OS_WIN) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
 		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_OWE:
 			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmOWE;
 #endif
 
-#if (NTDDI_VERSION >= NTDDI_WIN10_FE)
+#if defined(OS_WIN) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
 		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_ENT:
 			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_ENT;
 #endif

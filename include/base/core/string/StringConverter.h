@@ -110,10 +110,21 @@ private:
 				parameters = _Parameters_(string, stringLength, outputString, nullptr, nullptr);
 			}
 			else {
-				constexpr auto replacementVector = _StringConverterTraits_::template replacementVector<_ToChar_>();
-				constexpr auto narrowingLimitVector = _StringConverterTraits_::template narrowingLimitVector<_FromChar_>();
+				constexpr const auto replacementVector = _StringConverterTraits_::template replacementVector<_ToChar_>();
+				constexpr const auto narrowingLimitVector = _StringConverterTraits_::template narrowingLimitVector<_FromChar_>();
 
-				parameters = _Parameters_(string, stringLength, outputString, base_vec512i_t_pointer_as_m512i_pointer(&replacementVector), base_vec512i_t_pointer_as_m512i_pointer(&narrowingLimitVector));
+				if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec128i_t>)
+					parameters = _Parameters_(string, stringLength, outputString, 
+						base_vec128i_t_pointer_as_m128i_pointer(&replacementVector), 
+						base_vec128i_t_pointer_as_m128i_pointer(&narrowingLimitVector));
+				else if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec256i_t>)
+					parameters = _Parameters_(string, stringLength, outputString, 
+						base_vec256i_t_pointer_as_m256i_pointer(&replacementVector), 
+						base_vec256i_t_pointer_as_m256i_pointer(&narrowingLimitVector));
+				else if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec512i_t>)
+					parameters = _Parameters_(string, stringLength, outputString, 
+						base_vec512i_t_pointer_as_m512i_pointer(&replacementVector),
+						base_vec512i_t_pointer_as_m512i_pointer(&narrowingLimitVector));
 			}
 
 			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
