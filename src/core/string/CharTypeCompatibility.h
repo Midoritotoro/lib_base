@@ -22,8 +22,9 @@ struct IsUnicodeChar:
 		std::is_same<StdChar, char16_t>::value	||
 		std::is_same<StdChar, char32_t>::value	||
 #if __cpp_lib_char8_t
-		std::is_same<StdChar, char8_t>::value>
+		std::is_same<StdChar, char8_t>::value ||
 #endif
+		std::is_same<StdChar, uchar>::value>
 {};
 
 template <typename _Char>

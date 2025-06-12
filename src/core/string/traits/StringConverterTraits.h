@@ -4,16 +4,17 @@
 #include <src/core/string/StringConversionParameters.h>
 
 #include <src/core/string/StringConversionResult.h>
+#include <src/core/memory/MemoryUtility.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 #if !defined(baseInitConversionPointers)
 #  define baseInitConversionPointers(_CharType_, parameters, alignment) \
 	    size_t avx512SizeInBytes = (parameters.stringLength * sizeof(_CharType_)) & ~size_t(alignment - 1); \
-		void* stopAt = parameters.inputStringDataStart; \
+		const void* stopAt = parameters.inputStringDataStart; \
 		void* outputStringVoidPointer = parameters.outputStringDataStart; \
 		const void* inputStringVoidPointer = parameters.inputStringDataStart; \
-		memory::AdvanceBytes(stopAt, avx512SizeInBytes);
+		base::memory::AdvanceBytes(stopAt, avx512SizeInBytes);
 #endif
 
 

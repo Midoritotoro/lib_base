@@ -317,7 +317,6 @@ set(PRIVATE_HEADERS
     src/core/utility/simd/SimdConstexprHelpers.h
     src/core/utility/simd/SimdVectorType.h
 
-   
     src/core/string/traits/StringConverterAvxTraits.h
 
     src/core/string/traits/StringConverterAvx512Traits.h
@@ -329,8 +328,6 @@ set(PRIVATE_HEADERS
 
     src/core/network/WindowsNetworkInformation.h
     src/core/network/UnixNetworkInformation.h
-
-    src/core/network/NetworkParameters.cpp
 
     src/core/network/WirelessConstants.h
     src/core/network/NetworkParameters.h

@@ -53,8 +53,6 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 
 	WLAN_AVAILABLE_NETWORK* wlanAvailableNetwork = nullptr;
 
-	std::cout << wlanInterfaceList->dwNumberOfItems << '\n';
-	
 	for (int i = 0; i < (int)wlanInterfaceList->dwNumberOfItems; ++i) {
 		wlanInterfaceInformation = (WLAN_INTERFACE_INFO*)&wlanInterfaceList->InterfaceInfo[i];
 
@@ -62,7 +60,7 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 			wlanInterfaceInformation->InterfaceGuid, (LPOLESTR)&GuidString,
 			sizeof(GuidString) / sizeof(*GuidString));
 
-		/*if (iRet == 0) { fail }*/
+		AssertLog(iRet != 0, "base::network::WindowsNetworkInformation: fail");
 
 		const auto getAvailableNetworksResult = WlanGetAvailableNetworkList(
 			wlanSmartHandle.handle(), &wlanInterfaceInformation->InterfaceGuid,
@@ -72,47 +70,35 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 			continue;
 
 		if ((outputNetworkParameters.capacity() - outputNetworkParameters.size()) < wlanAvailableNetworksList->dwNumberOfItems)
-			outputNetworkParameters.resize(wlanAvailableNetworksList->dwNumberOfItems);
-
-		std::cout << wlanAvailableNetworksList->dwNumberOfItems << '\n';
+			outputNetworkParameters.reserve(outputNetworkParameters.size() + wlanAvailableNetworksList->dwNumberOfItems);
 
 		for (int j = 0; j < wlanAvailableNetworksList->dwNumberOfItems; ++j) {
 			wlanAvailableNetwork = (WLAN_AVAILABLE_NETWORK*) & wlanAvailableNetworksList->Network[j];
 
-			std::u8string str; 
-			str.reserve(wlanAvailableNetwork->dot11Ssid.uSSIDLength);
+			const auto isNetworkCurrentlyConnected = wlanAvailableNetwork->dwFlags
+				&& wlanAvailableNetwork->dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED;
 
-			std::cout << " length: " << wlanAvailableNetwork->dot11Ssid.uSSIDLength << '\n';
-			for (int ph = 0; ph < wlanAvailableNetwork->dot11Ssid.uSSIDLength; ++ph)
-				str.push_back(wlanAvailableNetwork->dot11Ssid.ucSSID[ph]);
+			const auto haveProfile = wlanAvailableNetwork->dwFlags
+				&& wlanAvailableNetwork->dwFlags & WLAN_AVAILABLE_NETWORK_HAS_PROFILE;
 
-			std::wcout << string::StringConverter<>::convertString<char8_t, wchar_t>(str.data(), str.length()).data();
-			
-			outputNetworkParameters[j].dot11Ssid.ssidLength = wlanAvailableNetwork->dot11Ssid.uSSIDLength;
-			memcpy(
-				outputNetworkParameters[j].dot11Ssid.ssid, wlanAvailableNetwork->dot11Ssid.ucSSID,
-				sizeof(uchar) * wlanAvailableNetwork->dot11Ssid.uSSIDLength);
+			const auto networkStateInformation = NetworkStateInformation(
+				isNetworkCurrentlyConnected, wlanAvailableNetwork->bSecurityEnabled,
+				haveProfile, wlanAvailableNetwork->bNetworkConnectable);
 
-			std::cout << outputNetworkParameters[j].dot11Ssid.ssid << '\n';
-
-			outputNetworkParameters[j].isNetworkConnectable = wlanAvailableNetwork->bNetworkConnectable;
-			outputNetworkParameters[j].isSecurityEnabled = wlanAvailableNetwork->bSecurityEnabled;
-
-			outputNetworkParameters[j].networkProfileName = wlanAvailableNetwork->strProfileName;
-			outputNetworkParameters[j].connectionQuality = (wlanAvailableNetwork->wlanSignalQuality == 0) 
-				? -100 
-				: (wlanAvailableNetwork->wlanSignalQuality == 100) 
-					?  -50 
-				:  -100 + (wlanAvailableNetwork->wlanSignalQuality / 2);
-
-			outputNetworkParameters[j].defaultAuthenticationAlgorithm = AuthenticationAlgorithmFromWinApi(
+			const auto authAlgorithm = AuthenticationAlgorithmFromWinApi(
 				wlanAvailableNetwork->dot11DefaultAuthAlgorithm);
 
-			outputNetworkParameters[j].defaultCipherAlgorithm = CipherAlgorithmFromWinApi(
+			const auto cipherAlgorithm = CipherAlgorithmFromWinApi(
 				wlanAvailableNetwork->dot11DefaultCipherAlgorithm);
+			
+			Dot11SSID netSsid(&wlanAvailableNetwork->dot11Ssid.ucSSID[0],
+				wlanAvailableNetwork->dot11Ssid.uSSIDLength);
 
-			outputNetworkParameters[j].isNetworkCurrentlyConnected =
-				wlanAvailableNetwork->dwFlags && wlanAvailableNetwork->dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED;
+			outputNetworkParameters.emplace_back(
+				wlanAvailableNetwork->wlanSignalQuality, std::wstring(&wlanAvailableNetwork->strProfileName[0],
+					lstrlenW(&wlanAvailableNetwork->strProfileName[0])),
+				networkStateInformation, authAlgorithm, cipherAlgorithm, netSsid
+			);
 		}	
 	}
 
