@@ -7,7 +7,14 @@
 
 #if defined(OS_WIN)
 
+__BASE_NAMESPACE_BEGIN
+
+using handle_t = HANDLE;
+
+__BASE_NAMESPACE_END
+
 __BASE_IO_NAMESPACE_BEGIN
+
 
 class WindowsSmartHandle {
 public:

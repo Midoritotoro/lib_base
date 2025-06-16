@@ -2,6 +2,12 @@
 
 #include <base/core/arch/Platform.h>
 
+#if defined(OS_WIN)
+#  include <wlantypes.h>
+#else
+
+#endif
+
 __BASE_NETWORK_NAMESPACE_BEGIN
 
 enum Dot11AuthenticationAlgorithm {
@@ -52,5 +58,10 @@ enum Dot11CipherAlgorithm {
     CipherAlgorithmIHV_START = 0x80000000,
     CipherAlgorithmIHV_END = 0xffffffff
 };
+
+#if defined(OS_WIN)
+    using WinApiDot11CipherAlgorithm_t = DOT11_CIPHER_ALGORITHM;
+    using WinApiDot11AuthAlgorithm_t = DOT11_AUTH_ALGORITHM;
+#endif
 
 __BASE_NETWORK_NAMESPACE_END

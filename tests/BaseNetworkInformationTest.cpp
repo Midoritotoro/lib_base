@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
 		std::wstring wstr;
 		wstr.reserve(parameters[i].dot11Ssid().ssidLength);
 		
-		base::string::StringConverter<>::convertString<uchar, wchar_t>(
-			&parameters[i].dot11Ssid().ssid[0],
-			parameters[i].dot11Ssid().ssidLength);
+		//base::string::StringConverter<>::convertString<uchar, wchar_t>(
+		//	&parameters[i].dot11Ssid().ssid[0],
+		//	parameters[i].dot11Ssid().ssidLength);
 		std::cout << '\n';
 
 	}

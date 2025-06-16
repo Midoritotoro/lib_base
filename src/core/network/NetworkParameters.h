@@ -7,6 +7,14 @@
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
+
+using wlanInterfaceInformationList_t	= WLAN_INTERFACE_INFO_LIST;
+using wlanInterfaceInformation_t		= WLAN_INTERFACE_INFO;
+
+using wlanAvailableNetworksList_t		= WLAN_AVAILABLE_NETWORK_LIST;
+using wlanAvailableNetwork_t			= WLAN_AVAILABLE_NETWORK;
+
+
 #ifndef BASE_DOT11_SSID_MAX_LENGTH
 #  define BASE_DOT11_SSID_MAX_LENGTH 32   
 #endif

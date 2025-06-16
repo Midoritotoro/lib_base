@@ -189,6 +189,8 @@ set(PRIVATE_SOURCES
 
     src/core/network/Socket.cpp
 
+    src/core/network/NetworkInterfaceMemorySafety.cpp
+
     src/core/network/WindowsNetworkInformation.cpp
     src/core/network/UnixNetworkInformation.cpp
 
@@ -331,6 +333,8 @@ set(PRIVATE_HEADERS
 
     src/core/network/WirelessConstants.h
     src/core/network/NetworkParameters.h
+
+    src/core/network/NetworkInterfaceMemorySafety.h
 )
 
 set(PUBLIC_HEADERS 

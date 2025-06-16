@@ -6,7 +6,9 @@
 #include <objbase.h>
 #include <wtypes.h>
 
-#include <base/core/string/StringConverter.h>
+#ifndef __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES
+#  define __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES 78
+#endif // __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES
 
 // ======================================================================================================
 // WLAN API Version: The highest version the client supports.
@@ -20,6 +22,42 @@
 #define BASE_WLAN_API_VERSION (2)
 
 __BASE_NETWORK_NAMESPACE_BEGIN
+
+void WindowsNetworkInformation::scanAvailableNetworks() noexcept {
+	dword currentWlanApiVersion = 0;
+
+	handle_t wlanTempHandle = nullptr;
+	const auto isOpened = WlanOpenHandle(
+		BASE_WLAN_API_VERSION, nullptr,
+		&currentWlanApiVersion, &wlanTempHandle);
+
+	if (isOpened != ERROR_SUCCESS)
+		return;
+
+	auto wlanSmartHandle = io::WindowsSmartHandle();
+
+	wlanSmartHandle.setDeleteCallback(WlanCloseHandleWrap);
+	wlanSmartHandle.setAutoDelete(true);
+
+	wlanSmartHandle.setHandle(wlanTempHandle);
+
+	wlanInterfaceInformationList_t* wlanInterfaceList = nullptr;
+	const auto successfullyEnumerated = WlanEnumInterfaces(
+		wlanSmartHandle.handle(), nullptr, &wlanInterfaceList);
+
+	if (successfullyEnumerated != ERROR_SUCCESS)
+		return;
+
+	wlanInterfaceInformation_t* wlanInterfaceInformation = nullptr;
+
+	for (dword i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
+		wlanInterfaceInformation = static_cast<wlanInterfaceInformation_t*>(&wlanInterfaceList->InterfaceInfo[i]);
+
+		// do something
+		
+	} 
+
+}
 
 void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkParameters) noexcept {
 	dword currentWlanApiVersion = 0;
@@ -39,22 +77,22 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 
 	wlanSmartHandle.setHandle(wlanTempHandle);
 
-	WLAN_INTERFACE_INFO_LIST* wlanInterfaceList = nullptr;
+	wlanInterfaceInformationList_t* wlanInterfaceList = nullptr;
 	const auto successfullyEnumerated = WlanEnumInterfaces(
 		wlanSmartHandle.handle(), nullptr, &wlanInterfaceList);
 
 	if (successfullyEnumerated != ERROR_SUCCESS)
 		return;
 
-	WCHAR GuidString[39] = { 0 };
+	wchar_t GuidString[__BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES / sizeof(WCHAR)] = {0};
 
-	WLAN_INTERFACE_INFO* wlanInterfaceInformation = nullptr;
-	WLAN_AVAILABLE_NETWORK_LIST* wlanAvailableNetworksList = nullptr;
+	wlanInterfaceInformation_t* wlanInterfaceInformation = nullptr;
+	wlanAvailableNetworksList_t *wlanAvailableNetworksList = nullptr;
 
-	WLAN_AVAILABLE_NETWORK* wlanAvailableNetwork = nullptr;
+	wlanAvailableNetwork_t* wlanAvailableNetwork = nullptr;
 
 	for (int i = 0; i < (int)wlanInterfaceList->dwNumberOfItems; ++i) {
-		wlanInterfaceInformation = (WLAN_INTERFACE_INFO*)&wlanInterfaceList->InterfaceInfo[i];
+		wlanInterfaceInformation = static_cast<wlanInterfaceInformation_t*>(&wlanInterfaceList->InterfaceInfo[i]);
 
 		const auto iRet = StringFromGUID2(
 			wlanInterfaceInformation->InterfaceGuid, (LPOLESTR)&GuidString,
@@ -73,7 +111,7 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 			outputNetworkParameters.reserve(outputNetworkParameters.size() + wlanAvailableNetworksList->dwNumberOfItems);
 
 		for (int j = 0; j < wlanAvailableNetworksList->dwNumberOfItems; ++j) {
-			wlanAvailableNetwork = (WLAN_AVAILABLE_NETWORK*) & wlanAvailableNetworksList->Network[j];
+			wlanAvailableNetwork = (wlanAvailableNetwork_t*) & wlanAvailableNetworksList->Network[j];
 
 			const auto isNetworkCurrentlyConnected = wlanAvailableNetwork->dwFlags
 				&& wlanAvailableNetwork->dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED;
@@ -102,58 +140,59 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 		}	
 	}
 
-	if (wlanAvailableNetworksList != nullptr) {
+	if (wlanAvailableNetworksList != nullptr)
 		WlanFreeMemory(wlanAvailableNetworksList);
-		wlanAvailableNetworksList = nullptr;
-	}
 
-	if (wlanInterfaceList != nullptr) {
+	if (wlanInterfaceList != nullptr)
 		WlanFreeMemory(wlanInterfaceList);
-		wlanInterfaceList = nullptr;
+}
+
+bool_t WindowsNetworkInformation::wlanOpen(io::WindowsSmartHandle* pHandle) noexcept {
+
+}
+
+bool_t WindowsNetworkInformation::wlanEnumInterfaces(handle_t handle) noexcept {
+	wlanInterfaceInformationList_t* wlanInterfaceList = nullptr;
+	const auto successfullyEnumerated = WlanEnumInterfaces(handle, nullptr, &wlanInterfaceList);
+
+	if (successfullyEnumerated != ERROR_SUCCESS)
+		return successfullyEnumerated;
+
+	wlanInterfaceInformation_t* wlanInterfaceInformation = nullptr;
+
+	for (dword i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
+		wlanInterfaceInformation = static_cast<wlanInterfaceInformation_t*>(&wlanInterfaceList->InterfaceInfo[i]);
+
+		// do something
+
 	}
 }
 
-BOOL WindowsNetworkInformation::WlanCloseHandleWrap(HANDLE handle) noexcept {
+dword WindowsNetworkInformation::WlanCloseHandleWrap(handle_t handle) noexcept {
 	return WlanCloseHandle(handle, nullptr);
 }
 
-Dot11AuthenticationAlgorithm WindowsNetworkInformation::AuthenticationAlgorithmFromWinApi(DOT11_AUTH_ALGORITHM winApiAuthAlgorithm) noexcept {
+Dot11AuthenticationAlgorithm WindowsNetworkInformation::AuthenticationAlgorithmFromWinApi(WinApiDot11AuthAlgorithm_t winApiAuthAlgorithm) noexcept {
 	switch (winApiAuthAlgorithm) {
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_80211_OPEN:
-			return Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmOpen;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_80211_OPEN:			return Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmOpen;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_80211_SHARED_KEY:	return Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmSharedKey;
 
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_80211_SHARED_KEY:
-			return Dot11AuthenticationAlgorithm::Ieee_802_11_AuthenticationAlgorithmSharedKey;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA:					return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA_PSK:				return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_PSK;
 
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA_NONE:			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_NONE;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_RSNA:				return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA;
 
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA_PSK:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_PSK;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_RSNA_PSK:			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA_PSK;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3:				return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3;
 
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA_NONE:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA_NONE;
-
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_RSNA:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA;
-
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_RSNA_PSK:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmRSNA_PSK;
-
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3;
-
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_SAE:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_SAE;
-
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_SAE:			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_SAE;
 #if defined(OS_WIN) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_OWE:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmOWE;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_OWE:					return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmOWE;
 #endif
 
 #if defined(OS_WIN) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
-		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_ENT:
-			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_ENT;
+		case DOT11_AUTH_ALGORITHM::DOT11_AUTH_ALGO_WPA3_ENT:			return Dot11AuthenticationAlgorithm::AuthenticationAlgorithmWPA3_ENT;
 #endif
 	}
 
@@ -161,49 +200,28 @@ Dot11AuthenticationAlgorithm WindowsNetworkInformation::AuthenticationAlgorithmF
 	return {};
 }
 
-Dot11CipherAlgorithm WindowsNetworkInformation::CipherAlgorithmFromWinApi(DOT11_CIPHER_ALGORITHM winApiCipherAlgorithm) noexcept {
+Dot11CipherAlgorithm WindowsNetworkInformation::CipherAlgorithmFromWinApi(WinApiDot11CipherAlgorithm_t winApiCipherAlgorithm) noexcept {
 	switch (winApiCipherAlgorithm) {
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_NONE:
-			return Dot11CipherAlgorithm::CipherAlgorithmNone;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_NONE:			return Dot11CipherAlgorithm::CipherAlgorithmNone;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP40:			return Dot11CipherAlgorithm::CipherAlgorithmWEP40;
+		
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_TKIP:			return Dot11CipherAlgorithm::CipherAlgorithmTKIP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_CCMP:			return Dot11CipherAlgorithm::CipherAlgorithmCCMP;
 
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP40:
-			return Dot11CipherAlgorithm::CipherAlgorithmWEP40;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP104:			return Dot11CipherAlgorithm::CipherAlgorithmWEP104;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP:				return Dot11CipherAlgorithm::CipherAlgorithmBIP;
 
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_TKIP:
-			return Dot11CipherAlgorithm::CipherAlgorithmTKIP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_GCMP:			return Dot11CipherAlgorithm::CipherAlgorithmGCMP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_GCMP_256:		return Dot11CipherAlgorithm::CipherAlgorithmGCMP_256;
 
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_CCMP:
-			return Dot11CipherAlgorithm::CipherAlgorithmCCMP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_CCMP_256:		return Dot11CipherAlgorithm::CipherAlgorithmCCMP_256;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_GMAC_128:	return Dot11CipherAlgorithm::CipherAlgorithmBIP_GMAC_128;
 
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP104:
-			return Dot11CipherAlgorithm::CipherAlgorithmWEP104;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_GMAC_256:	return Dot11CipherAlgorithm::CipherAlgorithmBIP_GMAC_256;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_CMAC_256:	return Dot11CipherAlgorithm::CipherAlgorithmBIP_CMAC_256;
 
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP:
-			return Dot11CipherAlgorithm::CipherAlgorithmBIP;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_GCMP:
-			return Dot11CipherAlgorithm::CipherAlgorithmGCMP;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_GCMP_256:
-			return Dot11CipherAlgorithm::CipherAlgorithmGCMP_256;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_CCMP_256:
-			return Dot11CipherAlgorithm::CipherAlgorithmCCMP_256;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_GMAC_128:
-			return Dot11CipherAlgorithm::CipherAlgorithmBIP_GMAC_128;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_GMAC_256:
-			return Dot11CipherAlgorithm::CipherAlgorithmBIP_GMAC_256;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_BIP_CMAC_256:
-			return Dot11CipherAlgorithm::CipherAlgorithmBIP_CMAC_256;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WPA_USE_GROUP:
-			return Dot11CipherAlgorithm::CipherAlgorithmWPA_USE_GROUP;
-
-		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP:
-			return Dot11CipherAlgorithm::CipherAlgorithmWEP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WPA_USE_GROUP:	return Dot11CipherAlgorithm::CipherAlgorithmWPA_USE_GROUP;
+		case DOT11_CIPHER_ALGORITHM::DOT11_CIPHER_ALGO_WEP:				return Dot11CipherAlgorithm::CipherAlgorithmWEP;
 	}
 
 	AssertUnreachable();

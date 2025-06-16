@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <src/core/string/traits/StringConverterTraits.h>
+#include <src/core/string/traits/StringConverterScalarTraits.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -11,6 +12,7 @@ class StringConverterTraits<
 {
 public:
 	constexpr inline static auto cpuFeature = CpuFeature::SSE;
+	using FallbackTraits = StringConverterTraits<CpuFeature::None, _NarrowingConversionBehaviour_>;
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec128i_t, 128);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec128i_t, 128);
@@ -37,9 +39,6 @@ private:
 			return base_constexpr_mm_set1_epu32(
 				static_cast<uint32>(conversionToLimit));
 	}
-
-	using FallbackTraits = StringConverterTraits<
-		CpuFeature::None, _NarrowingConversionBehaviour_>;
 };
 
 

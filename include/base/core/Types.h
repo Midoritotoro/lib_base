@@ -76,6 +76,10 @@ using sdword = long32;
 using qword = uint64;
 using sqword = int64;
 
+#if defined(OS_WIN)
+    using bool_t = int;
+#endif
+
 __BASE_NAMESPACE_END
 
 

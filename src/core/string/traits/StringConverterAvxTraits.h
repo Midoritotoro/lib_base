@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <src/core/string/traits/StringConverterTraits.h>
+#include <src/core/string/traits/StringConverterSseTraits.h>
+
 
 __BASE_STRING_NAMESPACE_BEGIN
 
