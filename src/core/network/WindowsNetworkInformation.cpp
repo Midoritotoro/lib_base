@@ -3,11 +3,13 @@
 
 #if defined(OS_WIN)
 
+#include <wlanapi.h>
+
 #include <objbase.h>
 #include <wtypes.h>
 
 #ifndef __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES
-#  define __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES 78
+#  define __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES (78)
 #endif // __BASE_WINDOWS_NETWORK_GUID_SIZE_IN_BYTES
 
 // ======================================================================================================
@@ -24,22 +26,8 @@
 __BASE_NETWORK_NAMESPACE_BEGIN
 
 void WindowsNetworkInformation::scanAvailableNetworks() noexcept {
-	dword currentWlanApiVersion = 0;
-
-	handle_t wlanTempHandle = nullptr;
-	const auto isOpened = WlanOpenHandle(
-		BASE_WLAN_API_VERSION, nullptr,
-		&currentWlanApiVersion, &wlanTempHandle);
-
-	if (isOpened != ERROR_SUCCESS)
-		return;
-
 	auto wlanSmartHandle = io::WindowsSmartHandle();
-
-	wlanSmartHandle.setDeleteCallback(WlanCloseHandleWrap);
-	wlanSmartHandle.setAutoDelete(true);
-
-	wlanSmartHandle.setHandle(wlanTempHandle);
+	wlanOpen(&wlanSmartHandle);
 
 	wlanInterfaceInformationList_t* wlanInterfaceList = nullptr;
 	const auto successfullyEnumerated = WlanEnumInterfaces(
@@ -148,7 +136,18 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 }
 
 bool_t WindowsNetworkInformation::wlanOpen(io::WindowsSmartHandle* pHandle) noexcept {
+	dword currentWlanApiVersion = 0;
 
+	handle_t wlanTempHandle = nullptr;
+	const auto openCode = WlanOpenHandle(BASE_WLAN_API_VERSION, nullptr, &currentWlanApiVersion, &wlanTempHandle);
+
+	if (openCode != ERROR_SUCCESS)
+		return openCode;
+
+	pHandle->setDeleteCallback(WlanCloseHandleWrap);
+	pHandle->setAutoDelete(true);
+
+	pHandle->setHandle(wlanTempHandle);
 }
 
 bool_t WindowsNetworkInformation::wlanEnumInterfaces(handle_t handle) noexcept {

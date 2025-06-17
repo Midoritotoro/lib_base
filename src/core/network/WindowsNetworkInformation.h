@@ -4,9 +4,6 @@
 
 #if defined(OS_WIN) 
 
-#include <wlanapi.h>
-
-
 __BASE_IO_NAMESPACE_BEGIN
 class WindowsSmartHandle;
 __BASE_IO_NAMESPACE_END

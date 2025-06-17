@@ -10,6 +10,6 @@ struct WlanInterfaceInformationListDeleter {
 
 struct WlanAvailableNetworksListDeleter {
 	void operator()(wlanAvailableNetworksList_t* wlanAvailableNetworksList) noexcept;
-}
+};
 
 __BASE_NETWORK_NAMESPACE_END

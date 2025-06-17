@@ -200,6 +200,14 @@ set(PRIVATE_SOURCES
     src/core/string/traits/StringConverterAvx512Traits.cpp
      src/core/string/traits/StringConverterAvxTraits.cpp
 
+     src/core/network/Url.cpp
+     src/core/network/IPAddress.cpp
+
+     src/core/network/WlanApiErrorChecker.cpp
+
+     src/core/logging/MessageLogger.cpp
+      src/core/logging/LogMessageFormatter.cpp
+
     ${BASE_MASM_FILES}
 )
 
@@ -335,6 +343,14 @@ set(PRIVATE_HEADERS
     src/core/network/NetworkParameters.h
 
     src/core/network/NetworkInterfaceMemorySafety.h
+
+    src/core/network/IPAddress.h
+    src/core/network/Url.h
+
+    src/core/network/WlanApiErrorChecker.h
+    src/core/logging/MessageContext.h
+
+    src/core/logging/LogMessageFormatter.h
 )
 
 set(PUBLIC_HEADERS 
@@ -526,6 +542,8 @@ set(PUBLIC_HEADERS
 
     include/base/core/network/Socket.h
     include/base/core/network/NetworkInformation.h
+
+    include/base/core/logging/MessageLogger.h
 )
 
 include(CMakePackageConfigHelpers)
