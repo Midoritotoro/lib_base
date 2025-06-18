@@ -4,6 +4,8 @@
 #include <base/core/string/String.h>
 
 #include <src/core/network/WirelessConstants.h>
+#include <src/core/network/NetworkInterfaceMemorySafety.h>
+
 
 #if defined(OS_WIN)
 
@@ -28,6 +30,10 @@ using wlanInterfaceInformation_t		= WLAN_INTERFACE_INFO;
 
 using wlanAvailableNetworksList_t		= WLAN_AVAILABLE_NETWORK_LIST;
 using wlanAvailableNetwork_t			= WLAN_AVAILABLE_NETWORK;
+
+using pWlanAvailableNetworkList_t		= std::unique_ptr<wlanAvailableNetworksList_t, WlanAvailableNetworksListDeleter>;
+using pWlanInterfaceInformationList_t	= std::unique_ptr<wlanInterfaceInformationList_t, WlanInterfaceInformationListDeleter>;
+
 
 #ifndef BASE_DOT11_SSID_MAX_LENGTH
 #  define BASE_DOT11_SSID_MAX_LENGTH 32   

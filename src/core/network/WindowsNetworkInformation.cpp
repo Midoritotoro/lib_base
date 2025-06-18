@@ -29,9 +29,15 @@ void WindowsNetworkInformation::scanAvailableNetworks() noexcept {
 	auto wlanSmartHandle = io::WindowsSmartHandle();
 	wlanOpen(&wlanSmartHandle);
 
-	wlanInterfaceInformationList_t* wlanInterfaceList = nullptr;
+	pWlanInterfaceInformationList_t wlanInterfaceList;
+	wlanInterfaceInformationList_t* temp = nullptr;
+
 	const auto successfullyEnumerated = WlanEnumInterfaces(
-		wlanSmartHandle.handle(), nullptr, &wlanInterfaceList);
+		wlanSmartHandle.handle(), nullptr, &temp);
+
+	wlanInterfaceList = std::unique_ptr<
+		wlanInterfaceInformationList_t,
+		WlanInterfaceInformationListDeleter>(temp);
 
 	if (successfullyEnumerated != ERROR_SUCCESS)
 		return;

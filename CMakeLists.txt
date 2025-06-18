@@ -208,6 +208,9 @@ set(PRIVATE_SOURCES
      src/core/logging/MessageLogger.cpp
       src/core/logging/LogMessageFormatter.cpp
 
+      src/core/logging/LoggingCategory.cpp
+      src/core/logging/LoggingRegistry.cpp
+
     ${BASE_MASM_FILES}
 )
 
@@ -351,6 +354,9 @@ set(PRIVATE_HEADERS
     src/core/logging/MessageContext.h
 
     src/core/logging/LogMessageFormatter.h
+      src/core/logging/LoggingCategory.h
+
+      src/core/logging/LoggingRegistry.h
 )
 
 set(PUBLIC_HEADERS 
@@ -544,6 +550,7 @@ set(PUBLIC_HEADERS
     include/base/core/network/NetworkInformation.h
 
     include/base/core/logging/MessageLogger.h
+    include/base/core/string/StringView.h
 )
 
 include(CMakePackageConfigHelpers)

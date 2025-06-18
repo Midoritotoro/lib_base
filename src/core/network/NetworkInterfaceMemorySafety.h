@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <src/core/network/NetworkParameters.h>
+#include <memory>
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
