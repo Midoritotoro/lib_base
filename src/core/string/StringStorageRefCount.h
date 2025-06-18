@@ -47,7 +47,7 @@ struct RefCounted {
             return nullptr;
 
         if (MultiplyOverflow(
-            &capacityBytes, capacityBytes, sizeof(_Char_))
+            capacityBytes, size_t(sizeof(_Char_)), &capacityBytes)
         )
             return nullptr;
 

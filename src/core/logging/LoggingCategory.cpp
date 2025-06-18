@@ -15,24 +15,24 @@ LoggingCategory::LoggingCategory(
     init(category, enableForLevel);
 }
 
-void LoggingCategory::init(const char* category, LogMessageType severityLevel)
-{
-    enabled.storeRelaxed(0x01010101);   // enabledDebug = enabledWarning = enabledCritical = true;
-
-    if (category)
-        name = category;
-    else
-        name = defaultCategoryName;
-
-    if (LoggingRegistry* reg = LoggingRegistry::instance())
-        reg->registerCategory(this, severityLevel);
-}
-
-LoggingCategory::~LoggingCategory()
-{
-    if (LoggingRegistry* reg = LoggingRegistry::instance())
-        reg->unregisterCategory(this);
-}
+//void LoggingCategory::init(const char* category, LogMessageType severityLevel)
+//{
+//    enabled.storeRelaxed(0x01010101);   // enabledDebug = enabledWarning = enabledCritical = true;
+//
+//    if (category)
+//        name = category;
+//    else
+//        name = defaultCategoryName;
+//
+//    if (LoggingRegistry* reg = LoggingRegistry::instance())
+//        reg->registerCategory(this, severityLevel);
+//}
+//
+//LoggingCategory::~LoggingCategory()
+//{
+//    if (LoggingRegistry* reg = LoggingRegistry::instance())
+//        reg->unregisterCategory(this);
+//}
 
 bool LoggingCategory::isEnabled(LogMessageType msgtype) const
 {
@@ -63,16 +63,16 @@ LoggingCategory* LoggingCategory::defaultCategory()
     return new LoggingCategory(defaultCategoryName);
 }
 
-LoggingCategory::CategoryFilter LoggingCategory::installFilter(LoggingCategory::CategoryFilter filter)
-{
-    return LoggingRegistry::instance()->installFilter(filter);
-}
-
-void LoggingCategory::setFilterRules(const QString& rules)
-{
-    LoggingRegistry::instance()->setApiRules(rules);
-}
-
+//LoggingCategory::CategoryFilter LoggingCategory::installFilter(LoggingCategory::CategoryFilter filter)
+//{
+//    return LoggingRegistry::instance()->installFilter(filter);
+//}
+//
+//void LoggingCategory::setFilterRules(const QString& rules)
+//{
+//    LoggingRegistry::instance()->setApiRules(rules);
+//}
+//
 
 bool LoggingCategory::isDebugEnabled() const {
     return bools.enabledDebug.loadRelaxed();

@@ -171,11 +171,6 @@ public:
 		class _AllocatorType_>
 	CONSTEXPR_CXX20 BasicString(std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>&& string);
 
-	//template <
-	//	typename _CharType_,
-	//	class _AllocatorType_>
-	//CONSTEXPR_CXX20 BasicString(const std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>& stringg);
-
 	// =======================================================================================
 	//								 Assignment Operators
 	// =======================================================================================
@@ -788,20 +783,12 @@ template <
 	typename _CharType_,
 	class _AllocatorType_>
 CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>&& string) {
-	// TODO - optimize move
 	if constexpr (std::is_same_v<_CharType_, ValueType>) {
-		_storage.initAny(string.data(), string.size());
+		_storage.initAny(string.data(), string.size() + 1);
 		return;	
 	}
-
-	//return _storage.initAny(StringConverter<DefaultReplacementConversionMode>::convertString<
-	//	std::basic_string<
-	//		_CharType_,
-	//		std::char_traits<_CharType_>,
-	//		std::allocator<_CharType_>>,
-	//		>(std::move(string));
-		
 }
+
 
 //__BASE_BS_TEMPLATE
 //template <

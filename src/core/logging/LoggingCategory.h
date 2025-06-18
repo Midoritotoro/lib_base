@@ -3,10 +3,6 @@
 #include <src/core/logging/MessageContext.h>
 #include <base/core/thread/AtomicInteger.h>
 
-__BASE_STRING_NAMESPACE_BEGIN
-class String;
-__BASE_STRING_NAMESPACE_END
-
 __BASE_LOGGING_NAMESPACE_BEGIN
 
 

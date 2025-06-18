@@ -3,6 +3,8 @@
 #include <base/core/arch/Platform.h> 
 #include <base/core/utility/ClassHelperMacros.h>
 
+#include <base/core/string/String.h>
+
 __BASE_LOGGING_NAMESPACE_BEGIN
 
 class Debug;

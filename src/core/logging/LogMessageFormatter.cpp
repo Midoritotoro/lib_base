@@ -96,7 +96,6 @@ private:
     enum RuleSet {
         // sorted by order in which defaultCategoryFilter considers them:
         ConfigRules,
-        ConfigRules,
         ApiRules,
         EnvironmentRules,
         NumRuleSets

@@ -1,39 +1,14 @@
 #pragma once 
 
-#include <base/core/arch/Platform.h> 
 #include <base/core/string/String.h>
 
 #include <src/core/network/WirelessConstants.h>
 #include <src/core/network/NetworkInterfaceMemorySafety.h>
 
-
-#if defined(OS_WIN)
-
-struct _WLAN_INTERFACE_INFO_LIST;
-struct _WLAN_INTERFACE_INFO;
-
-struct _WLAN_AVAILABLE_NETWORK_LIST;
-struct _WLAN_AVAILABLE_NETWORK;
-
-typedef struct _WLAN_INTERFACE_INFO_LIST WLAN_INTERFACE_INFO_LIST, *PWLAN_INTERFACE_INFO_LIST;
-typedef struct _WLAN_INTERFACE_INFO WLAN_INTERFACE_INFO, *PWLAN_INTERFACE_INFO;
-
-typedef struct _WLAN_AVAILABLE_NETWORK_LIST WLAN_AVAILABLE_NETWORK_LIST, *PWLAN_AVAILABLE_NETWORK_LIST;
-typedef struct _WLAN_AVAILABLE_NETWORK WLAN_AVAILABLE_NETWORK, * PWLAN_AVAILABLE_NETWORK;
-
-#endif
-
 __BASE_NETWORK_NAMESPACE_BEGIN
-
-using wlanInterfaceInformationList_t	= WLAN_INTERFACE_INFO_LIST;
-using wlanInterfaceInformation_t		= WLAN_INTERFACE_INFO;
-
-using wlanAvailableNetworksList_t		= WLAN_AVAILABLE_NETWORK_LIST;
-using wlanAvailableNetwork_t			= WLAN_AVAILABLE_NETWORK;
 
 using pWlanAvailableNetworkList_t		= std::unique_ptr<wlanAvailableNetworksList_t, WlanAvailableNetworksListDeleter>;
 using pWlanInterfaceInformationList_t	= std::unique_ptr<wlanInterfaceInformationList_t, WlanInterfaceInformationListDeleter>;
-
 
 #ifndef BASE_DOT11_SSID_MAX_LENGTH
 #  define BASE_DOT11_SSID_MAX_LENGTH 32   

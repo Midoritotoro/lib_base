@@ -1,9 +1,5 @@
 #include <src/core/network/NetworkInterfaceMemorySafety.h>
 
-#if defined(OS_WIN)
-#  include <wlanapi.h>
-#endif
-
 __BASE_NETWORK_NAMESPACE_BEGIN
 
 

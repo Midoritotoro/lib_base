@@ -357,6 +357,8 @@ set(PRIVATE_HEADERS
       src/core/logging/LoggingCategory.h
 
       src/core/logging/LoggingRegistry.h
+
+      src/core/network/NetworkTypes.h
 )
 
 set(PUBLIC_HEADERS 

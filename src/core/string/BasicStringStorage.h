@@ -231,7 +231,7 @@ public:
         if (category() == Category::isSmall)
             shrinkSmall(delta);
         else if (category() == Category::isMedium
-            || RefCounted::refs(_mediumLarge._data) == 1
+            || RefCounted<_Char_>::refs(_mediumLarge._data) == 1
             )
             shrinkMedium(delta);
         else
@@ -267,7 +267,7 @@ public:
     size_t size() const {
         size_t ret = _mediumLarge._size;
 
-        if (system::SystemInfo::IsLittleEndian()) {
+        if constexpr (system::SystemInfo::IsLittleEndian()) {
             // We can save a couple instructions, because the category is
             // small iff the last char, as unsigned, is <= maxSmallSize.
             using UChar = typename std::make_unsigned<_Char_>::type;
@@ -296,7 +296,7 @@ public:
                 // For large-sized strings, a multi-referenced chunk has no
                 // available capacity. This is because any attempt to append
                 // data would trigger a new allocation.
-                if (RefCounted::refs(_mediumLarge._data) > 1)
+                if (RefCounted<_Char_>::refs(_mediumLarge._data) > 1)
                     return _mediumLarge._size;
 
                 break;
@@ -313,6 +313,19 @@ public:
             && RefCounted::refs(_mediumLarge._data) > 1;
     }
 
+    void initAny(
+        const _Char_* const   data,
+        const size_t        size);
+    void initSmall(
+        const _Char_* const data,
+        const size_t size);
+
+    void initMedium(
+        const _Char_* const data,
+        const size_t size);
+    void initLarge(
+        const _Char_* const data,
+        const size_t size);
 private:
     void reset() {
         setSmallSize(0);
@@ -331,19 +344,6 @@ private:
     void copySmall(const BasicStringStorage& rhs);
     void copyMedium(const BasicStringStorage& rhs);
     void copyLarge(const BasicStringStorage& rhs);
-
-    void initAny(
-        const _Char_* const   data,
-        const size_t        size);
-    void initSmall(
-        const _Char_* const data,
-        const size_t size);
-    void initMedium(
-        const _Char_* const data,
-        const size_t size);
-    void initLarge(
-        const _Char_* const data,
-        const size_t size);
 
     void reserveSmall(size_t minCapacity);
 
@@ -422,7 +422,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::init
     // allocate one extra Char for the terminating null.
     auto const allocSize = (1 + size) * sizeof(_Char_);
 
-    _mediumLarge._data = static_cast<_Char_*>(checkedMalloc(allocSize));
+    _mediumLarge._data = static_cast<_Char_*>(malloc(allocSize));
 
     if (size > 0)
         podCopy(data, data + size, _mediumLarge._data);
@@ -444,7 +444,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::init
     // Large strings are allocated differently
     size_t effectiveCapacity = size;
 
-    auto const newRC = RefCounted::create(data, &effectiveCapacity);
+    auto const newRC = RefCounted<_Char_>::create(data, &effectiveCapacity);
     _mediumLarge._data = newRC->_data;
 
     _mediumLarge._size = size;
@@ -507,7 +507,7 @@ template <
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copyLarge(const BasicStringStorage& rhs) {
     // Large strings are just refcounted
     _mediumLarge = rhs._mediumLarge;
-    RefCounted::incrementRefs(_mediumLarge._data);
+    RefCounted<_Char_>::incrementRefs(_mediumLarge._data);
 
     assert(category() == Category::isLarge && size() == rhs.size());
 }
@@ -528,7 +528,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::unsh
     // Also copies terminator.
 
     podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->_data);
-    RefCounted::decrementRefs(_mediumLarge._data);
+    RefCounted<_Char_>::decrementRefs(_mediumLarge._data);
 
     _mediumLarge._data = newRC->_data;
     _mediumLarge.setCapacity(effectiveCapacity, Category::isLarge);
@@ -555,7 +555,7 @@ template <
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveLarge(size_t minCapacity) {
     assert(category() == Category::isLarge);
 
-    if (RefCounted::refs(_mediumLarge._data) > 1) { 
+    if (RefCounted<_Char_>::refs(_mediumLarge._data) > 1) {
         // Ensure unique
         // We must make it unique regardless; in-place reallocation is
         // useless if the string is shared. In order to not surprise
@@ -567,7 +567,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::rese
     // String is not shared, so let's try to realloc (if needed)
         if (minCapacity > _mediumLarge.capacity()) {
             // Asking for more memory
-            auto const newRC = RefCounted::reallocate(
+            auto const newRC = RefCounted<_Char_>::reallocate(
                 _mediumLarge._data, _mediumLarge._size, _mediumLarge.capacity(), &minCapacity);
 
             _mediumLarge._data = newRC->_data;
