@@ -18,7 +18,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenSse2(const char* string) noexcept
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm_loadu_epi8(string);
+		const auto str = _mm_loadu_epi8(current);
 		const uint bingo = _mm_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
@@ -39,7 +39,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenAvx(const char* string) noexcept 
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm256_loadu_epi8(string);
+		const auto str = _mm256_loadu_epi8(current);
 		const uint bingo = _mm256_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
@@ -60,7 +60,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_strlenAvx512(const char* string) noexce
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm512_loadu_epi8(string);
+		const auto str = _mm512_loadu_epi8(current);
 		const uint64 bingo = _mm512_cmpeq_epi8_mask(str, comparand);
 
 		if (bingo != 0) {
@@ -90,7 +90,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenSse2(const wchar_t* string) noexc
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm_loadu_epi16(string);
+		const auto str = _mm_loadu_epi16(current);
 		const ushort bingo = _mm_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {
@@ -111,7 +111,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenAvx(const wchar_t* string) noexce
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm256_loadu_epi16(string);
+		const auto str = _mm256_loadu_epi16(current);
 		const ushort bingo = _mm256_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {
@@ -132,7 +132,7 @@ DECLARE_NOALIAS std::size_t CDECL __base_wcslenAvx512(const wchar_t* string) noe
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm512_loadu_epi16(string);
+		const auto str = _mm512_loadu_epi16(current);
 		const uint64 bingo = _mm512_cmpeq_epi16_mask(str, comparand);
 
 		if (bingo != 0) {

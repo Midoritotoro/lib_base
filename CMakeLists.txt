@@ -211,6 +211,9 @@ set(PRIVATE_SOURCES
       src/core/logging/LoggingCategory.cpp
       src/core/logging/LoggingRegistry.cpp
 
+      src/core/string/crt/BaseStrcmp.cpp
+      src/core/string/crt/BaseStrcmp.h
+
     ${BASE_MASM_FILES}
 )
 

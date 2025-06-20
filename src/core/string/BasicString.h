@@ -708,18 +708,17 @@ private:
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::BasicString() {
-	 
-}
+CONSTEXPR_CXX20 __BASE_BS::BasicString() 
+{}
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::~BasicString() {
-
-}
+CONSTEXPR_CXX20 __BASE_BS::~BasicString() 
+{}
 
 __BASE_BS_TEMPLATE
-CONSTEXPR_CXX20 __BASE_BS::BasicString(const ValueType* chars) {
-
+CONSTEXPR_CXX20 __BASE_BS::BasicString(const ValueType* chars) 
+{
+	// _storage.initAny(chars, base_any_strlen(chars));
 }
 
 __BASE_BS_TEMPLATE
@@ -784,7 +783,7 @@ template <
 	class _AllocatorType_>
 CONSTEXPR_CXX20 __BASE_BS::BasicString(std::basic_string<_CharType_, std::char_traits<_CharType_>, _AllocatorType_>&& string) {
 	if constexpr (std::is_same_v<_CharType_, ValueType>) {
-		_storage.initAny(string.data(), string.size() + 1);
+		_storage.initAny(string.data(), string.size());
 		return;	
 	}
 }

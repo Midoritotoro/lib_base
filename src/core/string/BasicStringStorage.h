@@ -73,11 +73,11 @@ public:
         "Corrupt memory layout.");
 
     size_t smallSize() const {
-        assert(category() == Category::isSmall);
+        Assert(category() == Category::isSmall);
         constexpr auto shift = system::SystemInfo::IsLittleEndian() ? 0 : 2;
 
         auto smallShifted = static_cast<size_t>(_small[maxSmallSize]) >> shift;
-        assert(static_cast<size_t>(maxSmallSize) >= smallShifted);
+        Assert(static_cast<size_t>(maxSmallSize) >= smallShifted);
 
         return static_cast<size_t>(maxSmallSize) - smallShifted;
     }
@@ -86,13 +86,13 @@ public:
         // Warning: this should work with uninitialized strings too,
         // so don't assume anything about the previous value of
         // _small[maxSmallSize].
-        assert(s <= maxSmallSize);
+        Assert(s <= maxSmallSize);
         constexpr auto shift = system::SystemInfo::IsLittleEndian() ? 0 : 2;
 
         _small[maxSmallSize] = char((maxSmallSize - s) << shift);
         _small[s] = '\0';
 
-        assert(category() == Category::isSmall && size() == s);
+        Assert(category() == Category::isSmall && size() == s);
     }
 
 
@@ -333,7 +333,7 @@ private:
 
     void destroyMediumLarge() noexcept {
         auto const c = category();
-        assert(c != Category::isSmall);
+        Assert(c != Category::isSmall);
 
         if (c == Category::isMedium)
             free(_mediumLarge._data);
@@ -403,11 +403,10 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::init
     if (size && (addr ^ (addr + sizeof(_small) - 1)) < kPageSize)
         // the input data is all within one page so over-reads will not segfault
         std::memcpy(_small, data, sizeof(_small)); // lowers to a 4-insn sequence
-    else if (size != 0) {
+    else if (size != 0)
         podCopy(data, data + size, _small);
 
-        setSmallSize(size);
-    }
+    setSmallSize(size);
 }
 
 template <
@@ -476,7 +475,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copy
     // _mediumLarge.capacity field).
 
     _mediumLarge = rhs._mediumLarge;
-    assert(category() == Category::isSmall && this->size() == rhs.size());
+    Assert(category() == Category::isSmall && this->size() == rhs.size());
 }
 
 template <
@@ -497,7 +496,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copy
     _mediumLarge._size = rhs._mediumLarge._size;
     _mediumLarge.setCapacity(allocSize / sizeof(_Char_) - 1, Category::isMedium);
 
-    assert(category() == Category::isMedium);
+    Assert(category() == Category::isMedium);
 }
 
 template <
@@ -509,7 +508,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::copy
     _mediumLarge = rhs._mediumLarge;
     RefCounted<_Char_>::incrementRefs(_mediumLarge._data);
 
-    assert(category() == Category::isLarge && size() == rhs.size());
+    Assert(category() == Category::isLarge && size() == rhs.size());
 }
 
 template <
@@ -517,14 +516,14 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization_>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::unshare(size_t minCapacity) {
-    assert(category() == Category::isLarge);
+    Assert(category() == Category::isLarge);
     size_t effectiveCapacity = std::max(minCapacity, _mediumLarge.capacity());
 
     auto const newRC = RefCounted::create(&effectiveCapacity);
     // If this fails, someone placed the wrong capacity in an
     // fbstring.
 
-    assert(effectiveCapacity >= _mediumLarge.capacity());
+    Assert(effectiveCapacity >= _mediumLarge.capacity());
     // Also copies terminator.
 
     podCopy(_mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, newRC->_data);
@@ -540,7 +539,7 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization_>
 _Char_* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::mutableDataLarge() {
-    assert(category() == Category::isLarge);
+    Assert(category() == Category::isLarge);
 
     if (RefCounted::refs(_mediumLarge._data) > 1) // Ensure unique.
         unshare();
@@ -553,7 +552,7 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization_>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveLarge(size_t minCapacity) {
-    assert(category() == Category::isLarge);
+    Assert(category() == Category::isLarge);
 
     if (RefCounted<_Char_>::refs(_mediumLarge._data) > 1) {
         // Ensure unique
@@ -573,7 +572,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::rese
             _mediumLarge._data = newRC->_data;
             _mediumLarge.setCapacity(minCapacity, Category::isLarge);
         }
-        assert(capacity() >= minCapacity);
+        Assert(capacity() >= minCapacity);
     }
 }
 
@@ -584,7 +583,7 @@ template <
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveMedium(
     const size_t minCapacity) 
 {
-    assert(category() == Category::isMedium);
+    Assert(category() == Category::isMedium);
     // String is not shared
 
     if (minCapacity <= _mediumLarge.capacity())
@@ -617,7 +616,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::rese
             _mediumLarge._data, _mediumLarge._data + _mediumLarge._size + 1, nascent._mediumLarge._data);
         nascent.swap(*this);
 
-        assert(capacity() >= minCapacity);
+        Assert(capacity() >= minCapacity);
     }
 }
 
@@ -626,7 +625,7 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization_>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::reserveSmall(size_t minCapacity) {
-    assert(category() == Category::isSmall);
+    Assert(category() == Category::isSmall);
 
     if (minCapacity <= maxSmallSize) {
         // small
@@ -660,7 +659,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::rese
         _mediumLarge._size = size;
         _mediumLarge.setCapacity(minCapacity, Category::isLarge);
 
-        assert(capacity() >= minCapacity);
+        Assert(capacity() >= minCapacity);
     }
 }
 
@@ -673,7 +672,7 @@ Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::exp
     bool expGrowth)
 {
     // Strategy is simple: make room, then change size
-    assert(capacity() >= size());
+    Assert(capacity() >= size());
     size_t sz, newSz;
 
     if (category() == Category::isSmall) {
@@ -698,14 +697,14 @@ Char* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::exp
         }
     }
 
-    assert(capacity() >= newSz);
+    Assert(capacity() >= newSz);
     // Category can't be small - we took care of that above
-    assert(category() == Category::isMedium || category() == Category::isLarge);
+    Assert(category() == Category::isMedium || category() == Category::isLarge);
 
     _mediumLarge._size = newSz;
     _mediumLarge._data[newSz] = '\0';
 
-    assert(size() == newSz);
+    Assert(size() == newSz);
     return _mediumLarge._data + sz;
 }
 
@@ -715,7 +714,7 @@ template <
     class _StorageOptimization_>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkSmall(const size_t delta) {
     // Check for underflow
-    assert(delta <= smallSize());
+    Assert(delta <= smallSize());
     setSmallSize(smallSize() - delta);
 }
 
@@ -726,7 +725,7 @@ template <
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkMedium(const size_t delta) {
     // Medium strings and unique large strings need no special
     // handling.
-    assert(_mediumLarge._size >= delta);
+    Assert(_mediumLarge._size >= delta);
 
     _mediumLarge._size -= delta;
     _mediumLarge._data[_mediumLarge._size] = '\0';
@@ -737,7 +736,7 @@ template <
     class _SimdOptimization_,
     class _StorageOptimization_>
 void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::shrinkLarge(const size_t delta) {
-    assert(_mediumLarge._size >= delta);
+    Assert(_mediumLarge._size >= delta);
     // Shared large string, must make unique. This is because of the
     // durn terminator must be written, which may trample the shared
     // data.
