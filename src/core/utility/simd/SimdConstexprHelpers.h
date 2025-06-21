@@ -208,6 +208,8 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
 #define base_vec512i_t_pointer_as_m512i(pointer_to_base_vec512i_t)  \
     *((const_cast<__m512i*>((reinterpret_cast<const volatile __m512i*>(pointer_to_base_vec512i_t)))))
 
+
+
 #define base_vec128i_t_pointer_as_m128i_pointer(pointer_to_base_vec128i_t)     \
     ((const_cast<__m128i*>((reinterpret_cast<const volatile __m128i*>(pointer_to_base_vec128i_t)))))
 
@@ -257,6 +259,7 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
 
 #define base_vec512f_t_pointer_as_m512_pointer(pointer_to_base_vec512f_t)   \
     ((const_cast<__m512*>((reinterpret_cast<const volatile __m512*>(pointer_to_base_vec512f_t)))))
+
 
 // ========================================================================================
 //                                          SET

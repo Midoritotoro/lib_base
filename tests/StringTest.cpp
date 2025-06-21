@@ -4,9 +4,9 @@
 
 int main(int argc, char** argv) {
 	//base::string::String string{ std::string("Some test string!") };
-	std::string str("Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!\0");
+	std::wstring str(L"Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!");
 
-	std::cout << base::string::__base_strlen(str.data());
+	std::cout << base::string::__base_any_strlen(str.data());
 
 	return 0;
 }
