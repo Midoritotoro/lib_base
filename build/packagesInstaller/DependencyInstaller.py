@@ -42,28 +42,6 @@ while True:
     elif packagesInstaller.Getch.ch == 'd':
         break
 
-optionsList = [
-    'qt6',
-    'skip-release',
-    'build-stackwalk',
-]
-
-options = []
-runCommand = []
-
-customRunCommand = False
-
-for arg in sys.argv[1:]:
-    if customRunCommand:
-        runCommand.append(arg)
-    if arg in optionsList:
-        options.append(arg)
-    elif arg == 'run':
-        customRunCommand = True
-    elif arg == 'shell':
-        customRunCommand = True
-        runCommand.append('shell')
-
 ignoreInCacheForThirdParty = [
     'USED_PREFIX',
     'LIBS_DIR',
@@ -150,10 +128,6 @@ def writeCacheKey(stage):
 
 stages = []
 
-def removeDir(folder):
-    if win:
-        return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
-    return 'rm -rf ' + folder
 
 def setVar(key, multilineValue):
     singlelineValue = ' '.join(multilineValue.replace('\n', '').split());
@@ -294,7 +268,7 @@ def runStages():
         print(prefix + ': ', end = '', flush=True)
 
         stage['key'] = computeCacheKey(stage)
-        commands = removeDir(stage['name']) + '\n' + stage['commands']
+        commands = packagesInstaller.SetupPaths.removeDir(stage['name']) + '\n' + stage['commands']
 
         checkResult = 'Forced' if len(onlyStages) > 0 else checkCacheKey(stage)
 
@@ -384,150 +358,6 @@ if customRunCommand:
 
     packagesInstaller.NativeToolsError.finish(0)
 
-
-# qt = '6.7'
-# branch = '6.7.0' + ('-lts-lgpl' if qt < '6.3' else '')
-
-# stage('qt_' + qt, """
-#     git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_6.7
-#     cd qt_6.7
-#     git submodule update --init --recursive qtbase qtimageformats qtsvg
-#     cd qtbase
-# mac:
-#     find ../../patches/qtbase_6.7 -type f -print0 | sort -z | xargs -0 git apply -v
-#     cd ..
-#     sed -i.bak 's/tqtc-//' {qtimageformats,qtsvg}/dependencies.yaml
-
-#     CONFIGURATIONS=-debug
-# release:
-#     CONFIGURATIONS=-debug-and-release
-# mac:
-#     ./configure -prefix "$USED_PREFIX/Qt-6.7" \
-#         $CONFIGURATIONS \
-#         -force-debug-info \
-#         -opensource \
-#         -confirm-license \
-#         -static \
-#         -opengl desktop \
-#         -no-openssl \
-#         -securetransport \
-#         -system-webp \
-#         -I "$USED_PREFIX/include" \
-#         -no-feature-futimens \
-#         -no-feature-brotli \
-#         -nomake examples \
-#         -nomake tests \
-#         -platform macx-clang -- \
-#         -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
-#         -DCMAKE_PREFIX_PATH="$USED_PREFIX"
-
-#     ninja
-#     ninja install
-# win:
-#     for /r %%i in (..\\..\\patches\\qtbase_%QT%\\*) do git apply %%i -v
-#     cd ..
-
-#     SET CONFIGURATIONS=-debug
-# release:
-#     SET CONFIGURATIONS=-debug-and-release
-# win:
-#     """ + removeDir('"%LIBS_DIR%\\Qt' + qt + '"') + """
-#     SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
-#     SET OPENSSL_DIR=%LIBS_DIR%\\openssl3
-#     SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\\out
-#     SET ZLIB_LIBS_DIR=%LIBS_DIR%\\zlib
-#     SET WEBP_DIR=%LIBS_DIR%\\libwebp
-#     configure -prefix "%LIBS_DIR%\\Qt-%QT%" ^
-#         %CONFIGURATIONS% ^
-#         -force-debug-info ^
-#         -opensource ^
-#         -confirm-license ^
-#         -static ^
-#         -static-runtime ^
-#         -feature-c++20 ^
-#         -openssl linked ^
-#         -system-webp ^
-#         -system-zlib ^
-#         -system-libjpeg ^
-#         -nomake examples ^
-#         -nomake tests ^
-#         -platform win32-msvc ^
-#         -D ZLIB_WINAPI ^
-#         -- ^
-#         -D OPENSSL_FOUND=1 ^
-#         -D OPENSSL_INCLUDE_DIR="%OPENSSL_DIR%\\include" ^
-#         -D LIB_EAY_DEBUG="%OPENSSL_LIBS_DIR%.dbg\\libcrypto.lib" ^
-#         -D SSL_EAY_DEBUG="%OPENSSL_LIBS_DIR%.dbg\\libssl.lib" ^
-#         -D LIB_EAY_RELEASE="%OPENSSL_LIBS_DIR%\\libcrypto.lib" ^
-#         -D SSL_EAY_RELEASE="%OPENSSL_LIBS_DIR%\\libssl.lib" ^
-#         -D JPEG_FOUND=1 ^
-#         -D JPEG_INCLUDE_DIR="%MOZJPEG_DIR%" ^
-#         -D JPEG_LIBRARY_DEBUG="%MOZJPEG_DIR%\\Debug\\jpeg-static.lib" ^
-#         -D JPEG_LIBRARY_RELEASE="%MOZJPEG_DIR%\\Release\\jpeg-static.lib" ^
-#         -D ZLIB_FOUND=1 ^
-#         -D ZLIB_INCLUDE_DIR="%ZLIB_LIBS_DIR%" ^
-#         -D ZLIB_LIBRARY_DEBUG="%ZLIB_LIBS_DIR%\\Debug\\zlibstaticd.lib" ^
-#         -D ZLIB_LIBRARY_RELEASE="%ZLIB_LIBS_DIR%\\Release\\zlibstatic.lib" ^
-#         -D WebP_INCLUDE_DIR="%WEBP_DIR%\\src" ^
-#         -D WebP_demux_INCLUDE_DIR="%WEBP_DIR%\\src" ^
-#         -D WebP_mux_INCLUDE_DIR="%WEBP_DIR%\\src" ^
-#         -D WebP_LIBRARY="%WEBP_DIR%\\out\\release-static\\$X8664\\lib\\webp.lib" ^
-#         -D WebP_demux_LIBRARY="%WEBP_DIR%\\out\\release-static\\$X8664\\lib\\webpdemux.lib" ^
-#         -D WebP_mux_LIBRARY="%WEBP_DIR%\\out\\release-static\\$X8664\\lib\\webpmux.lib"
-        
-#     cmake --build . --config Debug --parallel
-#     cmake --install . --config Debug
-#     cmake --build . --parallel
-#     cmake --install .
-# """)
-
-# stage('jom', """
-# win:
-#     powershell -Command "iwr -OutFile ./jom.zip https://qt-mirror.dannhauer.de/official_releases/jom/jom_1_1_3.zip"
-#     powershell -Command "Expand-Archive ./jom.zip"
-#     del jom.zip
-# """, 'ThirdParty')
-
-# stage('msys64', """
-# win:
-#     SET PATH_BACKUP_=%PATH%
-#     SET PATH=%ROOT_DIR%\\ThirdParty\\msys64\\usr\\bin;%PATH%
-
-#     SET CHERE_INVOKING=enabled_from_arguments
-#     SET MSYS2_PATH_TYPE=inherit
-
-#     powershell -Command "iwr -OutFile ./msys64.exe https://github.com/msys2/msys2-installer/releases/download/2024-05-07/msys2-base-x86_64-20240507.sfx.exe"
-#     msys64.exe
-#     del msys64.exe
-
-#     bash -c "pacman-key --init; pacman-key --populate; pacman -Syu --noconfirm"
-#     pacman -Syu --noconfirm mingw-w64-x86_64-perl mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-ninja msys/make diffutils pkg-config
-
-#     SET PATH=%PATH_BACKUP_%
-# """, 'ThirdParty')
-
-# stage('zlib', """
-#     git clone https://github.com/madler/zlib.git
-#     cd zlib
-#     git checkout 643e17b749
-# win:
-#     cmake . ^
-#         -A %WIN32X64% ^
-#         -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>" ^
-#         -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" ^
-#         -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG" ^
-#         -DCMAKE_C_FLAGS="/DZLIB_WINAPI"
-#     cmake --build . --config Debug --parallel
-# release:
-#     cmake --build . --config Release --parallel
-# mac:
-#     CFLAGS="$MIN_VER $UNGUARDED" LDFLAGS="$MIN_VER" ./configure \\
-#         --static \\
-#         --prefix=$USED_PREFIX \\
-#         --archs="-arch x86_64 -arch arm64"
-#     make $MAKE_THREADS_CNT
-#     make install
-# """)
 
 if win:
     currentCodePage = subprocess.run('chcp', capture_output=True, shell=True, text=True, env=modifiedEnv).stdout.strip().split()[-1]

@@ -34,3 +34,8 @@ pathPrefixes = [
 pathPrefix = ''
 for singlePrefix in pathPrefixes:
     pathPrefix = pathPrefix + os.path.join(rootDir, singlePrefix) + pathSep
+
+def removeDir(folder):
+    if win:
+        return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
+    return 'rm -rf ' + folder
