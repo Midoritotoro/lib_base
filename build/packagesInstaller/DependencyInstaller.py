@@ -1,35 +1,19 @@
 import os
 import sys
-import pprint
 import re
-import json
 import pathlib
 import hashlib
 import subprocess
 import glob
 import tempfile
 
+import packagesInstaller.EnvironmentSetup
+import packagesInstaller.Getch
+import packagesInstaller.NativeToolsError
 
-executePath = os.getcwd()
-sys.dont_write_bytecode = True
-scriptPath = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(scriptPath + '/..')
-
+import packagesInstaller.SetupPaths
 
 CMakeBuildOptions = []
-
-
-def finish(code):
-    global executePath
-    os.chdir(executePath)
-    sys.exit(code)
-
-def error(text):
-    print('[ERROR] ' + text)
-    finish(1)
-
-def nativeToolsError():
-    error('Make sure to run from Native Tools Command Prompt.')
 
 def checkCmakeBuildOptions(txt_file: str):
     with open(txt_file, 'r', encoding='utf-8') as options_file:
@@ -39,94 +23,23 @@ def checkCmakeBuildOptions(txt_file: str):
 checkCmakeBuildOptions("CMakeBuildOptions.txt")
 # print(CMakeBuildOptions)
 
-win = (sys.platform == 'win32')
-mac = (sys.platform == 'darwin')
-
-if win and not 'Platform' in os.environ:
-    nativeToolsError()
-
-win32 = win and (os.environ['Platform'] == 'x86')
-win64 = win and (os.environ['Platform'] == 'x64')
-winarm = win and (os.environ['Platform'] == 'arm64')
-
-arch = ''
-if win32:
-    arch = 'x86'
-elif win64:
-    arch = 'x64'
-elif winarm:
-    arch = 'arm'
-
-qt = os.environ.get('QT')
-
-if win and not 'COMSPEC' in os.environ:
-    error('COMSPEC environment variable is not set.')
-
-if win and not win32 and not win64 and not winarm:
-    nativeToolsError()
-
-os.chdir(scriptPath + '/../../../..')
-
-pathSep = ';' if win else ':'
-libsLoc = 'Libraries' if not win64 else (os.path.join('Libraries', 'win64'))
-keysLoc = 'cache_keys'
-
-rootDir = os.getcwd()
-libsDir = os.path.realpath(os.path.join(rootDir, libsLoc))
-usedPrefix = os.path.realpath(os.path.join(libsDir, 'local'))
-
-class _Getch:
-    """Gets a single character from standard input.  Does not echo to the screen."""
-    def __init__(self):
-        try:
-            self.impl = _GetchWindows()
-        except ImportError:
-            self.impl = _GetchUnix()
-
-    def __call__(self): return self.impl()
-
-class _GetchUnix:
-    def __init__(self):
-        import tty, sys
-
-    def __call__(self):
-        import sys, tty, termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-
-class _GetchWindows:
-    def __init__(self):
-        import msvcrt
-
-    def __call__(self):
-        import msvcrt
-        return msvcrt.getch().decode('ascii')
-
-getch = _Getch()
-
-
 print('Path to installing libraries')
 print('(d)efault, (c)ustom, (q)uit?: ')
 
-ch = getch()
-
 while True:
-    if ch == 'q':
-        finish(0)
-    elif ch == 'c':
+    if packagesInstaller.Getch.ch == 'q':
+        packagesInstaller.NativeToolsError.finish(0)
+    elif packagesInstaller.Getch.ch == 'c':
         libsDir = input("Enter path: ")
+
         if os.path.exists(libsDir) == False:
             print("Enter the correct existing path")
             continue
+
         print("Libs path: ", libsDir)
+
         break
-    elif ch == 'd':
+    elif packagesInstaller.Getch.ch == 'd':
         break
 
 optionsList = [
@@ -134,9 +47,12 @@ optionsList = [
     'skip-release',
     'build-stackwalk',
 ]
+
 options = []
 runCommand = []
+
 customRunCommand = False
+
 for arg in sys.argv[1:]:
     if customRunCommand:
         runCommand.append(arg)
@@ -147,56 +63,6 @@ for arg in sys.argv[1:]:
     elif arg == 'shell':
         customRunCommand = True
         runCommand.append('shell')
-
-if not os.path.isdir(os.path.join(libsDir, keysLoc)):
-    pathlib.Path(os.path.join(libsDir, keysLoc)).mkdir(parents=True, exist_ok=True)
-
-pathPrefixes = [
-    'ThirdParty\\msys64\\mingw64\\bin',
-    'ThirdParty\\jom',
-    'ThirdParty\\cmake\\bin',
-    'ThirdParty\\gyp',
-] if win else [
-    'ThirdParty/gyp',
-    'ThirdParty/yasm',
-    'ThirdParty/depot_tools',
-]
-pathPrefix = ''
-for singlePrefix in pathPrefixes:
-    pathPrefix = pathPrefix + os.path.join(rootDir, singlePrefix) + pathSep
-
-environment = {
-    'USED_PREFIX': usedPrefix,
-    'ROOT_DIR': rootDir,
-    'LIBS_DIR': libsDir,
-    'PATH_PREFIX': pathPrefix,
-}
-if (win32):
-    environment.update({
-        'SPECIAL_TARGET': 'win',
-        'X8664': 'x86',
-        'WIN32X64': 'Win32',
-    })
-elif (win64):
-    environment.update({
-        'SPECIAL_TARGET': 'win64',
-        'X8664': 'x64',
-        'WIN32X64': 'x64',
-    })
-elif (winarm):
-    environment.update({
-        'SPECIAL_TARGET': 'winarm',
-        'X8664': 'ARM64',
-        'WIN32X64': 'ARM64',
-    })
-elif (mac):
-    environment.update({
-        'SPECIAL_TARGET': 'mac',
-        'MAKE_THREADS_CNT': '-j' + str(os.cpu_count()),
-        'MACOSX_DEPLOYMENT_TARGET': '10.13',
-        'UNGUARDED': '-Werror=unguarded-availability-new',
-        'MIN_VER': '-mmacosx-version-min=10.13',
-    })
 
 ignoreInCacheForThirdParty = [
     'USED_PREFIX',
@@ -248,10 +114,10 @@ def computeCacheKey(stage):
         pathlist = glob.glob(os.path.join(libsDir, pattern))
         items = [pattern]
         if len(pathlist) == 0:
-            error('Nothing found: ' + pattern)
+            packagesInstaller.NativeToolsError.error('Nothing found: ' + pattern)
         for path in pathlist:
             if not os.path.exists(path):
-                error('Not found: ' + path)
+                packagesInstaller.NativeToolsError.error('Not found: ' + path)
             items.append(computeFileHash(path))
         objects.append(':'.join(items))
     return hashlib.sha1(';'.join(objects).encode('utf-8')).hexdigest()
@@ -261,7 +127,7 @@ def keyPath(stage):
 
 def checkCacheKey(stage):
     if not 'key' in stage:
-        error('Key not set in stage: ' + stage['name'])
+        packagesInstaller.NativeToolsError.error('Key not set in stage: ' + stage['name'])
     key = keyPath(stage)
     if not os.path.exists(os.path.join(stage['directory'], stage['name'])):
         return 'NotFound'
@@ -277,7 +143,7 @@ def clearCacheKey(stage):
 
 def writeCacheKey(stage):
     if not 'key' in stage:
-        error('Key not set in stage: ' + stage['name'])
+        packagesInstaller.NativeToolsError.error('Key not set in stage: ' + stage['name'])
     key = keyPath(stage)
     with open(key, 'w') as file:
         file.write(stage['key'])
@@ -338,7 +204,7 @@ def stage(name, commands, location = 'Libraries'):
     if location == 'Libraries':
         directory = libsDir
     else:
-        error('Unknown location: ' + location)
+        packagesInstaller.NativeToolsError.error('Unknown location: ' + location)
     [commands, dependencies, version] = filterByPlatform(commands)
     if len(commands) > 0:
         stages.append({
@@ -357,7 +223,7 @@ def winFailOnEach(command):
     for command in commands:
         command = re.sub(r'\$([A-Za-z0-9_]+)', r'%\1%', command)
         if re.search(r'\$[^<]', command):
-            error('Bad command: ' + command)
+            packagesInstaller.NativeToolsError.error('Bad command: ' + command)
         appendCall = startingCommand and not re.match(r'(if|for) ', command)
         called = 'call ' + command if appendCall else command
         result = result + called
@@ -385,105 +251,139 @@ def run(commands):
             os.remove("command.bat")
         return result
     elif re.search(r'\%', commands):
-        error('Bad command: ' + commands)
+        packagesInstaller.NativeToolsError.error('Bad command: ' + commands)
     else:
         return subprocess.run("set -e\n" + commands, shell=True, env=modifiedEnv).returncode == 0
 
 def runStages():
     onlyStages = []
     rebuildStale = False
+
     for arg in sys.argv[1:]:
         if arg in options:
             continue
+
         elif arg == 'silent':
             rebuildStale = True
             continue
+
         found = False
+
         for stage in stages:
             if stage['name'] == arg:
                 onlyStages.append(arg)
                 found = True
+
                 break
+
         if not found:
-            error('Unknown argument: ' + arg)
+            packagesInstaller.NativeToolsError.error('Unknown argument: ' + arg)
+
     count = len(stages)
     index = 0
+
     for stage in stages:
         if len(onlyStages) > 0 and not stage['name'] in onlyStages:
             continue
+
         index = index + 1
-        version = ('#' + str(stage['version'])) if (stage['version'] != '0') else ''
+
+        version = ('#' + str(stage['version'])) if (stage['version'] != '0') else '' 
         prefix = '[' + str(index) + '/' + str(count) + '](' + stage['location'] + '/' + stage['name'] + version + ')'
+
         print(prefix + ': ', end = '', flush=True)
+
         stage['key'] = computeCacheKey(stage)
         commands = removeDir(stage['name']) + '\n' + stage['commands']
+
         checkResult = 'Forced' if len(onlyStages) > 0 else checkCacheKey(stage)
+
         if checkResult == 'Good':
             print('SKIPPING')
             continue
+
         elif checkResult == 'NotFound':
             print('NOT FOUND, ', end='')
+
         elif checkResult == 'Stale' or checkResult == 'Forced':
             if checkResult == 'Stale':
                 print('CHANGED, ', end='')
+
             if rebuildStale:
                 checkResult == 'Rebuild'
+
             else:
                 print('(r)ebuild, rebuild (a)ll, (s)kip, (p)rint, (q)uit?: ', end='', flush=True)
                 while True:
-                    ch = 'r' if rebuildStale else getch()
-                    if ch == 'q':
-                        finish(0)
-                    elif ch == 'p':
+                    packagesInstaller.Getch.ch = 'r' if rebuildStale else packagesInstaller.Getch.getch()
+
+                    if packagesInstaller.Getch.ch == 'q':
+                        packagesInstaller.NativeToolsError.finish(0)
+
+                    elif packagesInstaller.Getch.ch == 'p':
                         printCommands(commands)
                         checkResult = 'Printed'
+
                         break
-                    elif ch == 's':
+
+                    elif packagesInstaller.Getch.ch == 's':
                         checkResult = 'Skip'
                         break
-                    elif ch == 'r':
+
+                    elif packagesInstaller.Getch.ch == 'r':
                         checkResult = 'Rebuild'
                         break
-                    elif ch == 'a':
+
+                    elif packagesInstaller.Getch.ch == 'a':
                         checkResult = 'Rebuild'
                         rebuildStale = True
+
                         break
+
         if checkResult == 'Printed':
             continue
+
         if checkResult == 'Skip':
             print('SKIPPING')
             continue
+
         clearCacheKey(stage)
         print('BUILDING:')
+
         os.chdir(stage['directory'])
+
         if not run(commands):
             print(prefix + ': FAILED')
             finish(1)
+
         writeCacheKey(stage)
 
 if customRunCommand:
     os.chdir(executePath)
+
     if len(runCommand) == 1 and runCommand[0] == 'shell':
         print('Preparing interactive mode..')
+
         if win:
             modifiedEnv['PROMPT'] = '(prepare) $P$G'
             subprocess.run("cmd.exe", shell=True, env=modifiedEnv)
+
         else:
             prompt = '(prepare) %~ %# '
+
             with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp_zshrc:
                 tmp_zshrc.write(f'export PS1="{prompt}"\n')
                 tmp_zshrc_path = tmp_zshrc.name
+
             subprocess.run(['zsh', '--rcs', tmp_zshrc_path], env=modifiedEnv)
             os.remove(tmp_zshrc_path)
+
     elif not run(' '.join(runCommand) + '\n'):
         print('FAILED :(')
-        finish(1)
-    finish(0)
+        packagesInstaller.NativeToolsError.finish(1)
 
+    packagesInstaller.NativeToolsError.finish(0)
 
-stage('vcpkg', """
-win:
-    git clone https://github.com/Microsoft/vcpkg.git""")
 
 # qt = '6.7'
 # branch = '6.7.0' + ('-lts-lgpl' if qt < '6.3' else '')
@@ -628,17 +528,6 @@ win:
 #     make $MAKE_THREADS_CNT
 #     make install
 # """)
-
-
-stage('ms-gsl', f"""
-win:
-    cd vcpkg
-    bootstrap-vcpkg.sh
-    vcpkg integrate install
-    vcpkg install ms-gsl
-    cd packages
-    move ms-gsl {libsDir}
-""")
 
 if win:
     currentCodePage = subprocess.run('chcp', capture_output=True, shell=True, text=True, env=modifiedEnv).stdout.strip().split()[-1]

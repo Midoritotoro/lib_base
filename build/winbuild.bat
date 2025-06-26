@@ -2,8 +2,8 @@
 setlocal
 
 set CMAKE_BUILD_OPTIONS_FILE="CMakeBuildOptions.txt"
-set CMAKE_BINARY_DIR="build"
-set CMAKE_SOURCE_DIR="."
+set CMAKE_BINARY_DIR="..\out\build"
+set CMAKE_SOURCE_DIR="..\"
 set CMAKE_COMMAND="cmake"
 set BUILD_COMMAND="cmake --build"
 
@@ -21,10 +21,11 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
     goto processArgs
 
 :pythonExistanceCheck
-  echo Checking for Python 3.11 existance...
-  python --version >nul 2>&1
+  echo Checking for Python 3+ existance...
+  where python >nul 2>&1
+
   if errorlevel 1 (
-    goto errorNoPython
+      goto errorNoPython
   )
 
   echo Python was found.
@@ -32,30 +33,23 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
 
 :errorNoPython
   echo.
-  echo Error: Python not installed.
+  echo Python is not installed.
   
   echo Attempting to install python...
   goto :tryToInstallPython
 
-
 :tryToInstallPython
-     Invoke-WebRequest  -UseBasicParsing -Uri  \
-    'https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe' \
-    -OutFile 'C:\ProgramFiles\python-3.11.0-amd64.exe' 
+    PowerShell -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File ""powershell/pythonInstall.ps1""' -Verb RunAs}"
 
-    .\python-3.11.0-amd64.exe /passive /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+    where python >nul 2>&1
 
-    setx /M path "%path%;C:\Program Files\Python311\" 
-    $env:PATH =$env:PATH+";C:\Program Files\Python311\"
-
-    if %errorlevel% equ 0 (
+    if errorlevel 0 (
         echo Python installation successful.
         goto startPackagesInstallation
     ) 
-    else (
-        echo Python installation failed. Stopping the build. 
-        goto eof
-    )
+    
+    echo Python installation failed. Stopping the build. 
+    goto eof
 
 :checkOptionsValidity
     echo Checking validity of the given build options.
@@ -64,7 +58,6 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
 :startPackagesInstallation
     echo Installing packages...
     python DependencyInstaller.py
-
 
 :tryToBuildLibrary
     if not exist "%CMAKE_BUILD_OPTIONS_FILE%" (
@@ -77,21 +70,21 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
       mkdir "%CMAKE_BINARY_DIR%"
     )
 
-::   echo Configuring CMake project...
-::    pushd "%CMAKE_BINARY_DIR%"
+    echo Configuring CMake project...
+    pushd "%CMAKE_BINARY_DIR%"
 
-::    set CMAKE_OPTIONS=""
-::    for /f "delims=" %%a in (%CMAKE_BUILD_OPTIONS_FILE%) do (
-::      set CMAKE_OPTIONS=%CMAKE_OPTIONS% -D%%a
-::      )
+    set CMAKE_OPTIONS=""
+    for /f "delims=" %%a in (%CMAKE_BUILD_OPTIONS_FILE%) do (
+      set CMAKE_OPTIONS=%CMAKE_OPTIONS% -D%%a
+    )
   
-::      echo Using CMAKE OPTIONS: %CMAKE_OPTIONS%
-::      "%CMAKE_COMMAND%" %CMAKE_OPTIONS% "%CMAKE_SOURCE_DIR%"
+    echo Using CMAKE OPTIONS: %CMAKE_OPTIONS%
+    "%CMAKE_COMMAND%" %CMAKE_OPTIONS% "%CMAKE_SOURCE_DIR%"
 
-      ::if errorlevel 1 (
-    ::        echo Error: CMake configuration failed.
-  ::          goto errorEnd
-::      )
+      if errorlevel 1 (
+          echo Error: CMake configuration failed.
+          goto errorEnd
+      )
 
    :: echo Building the project...
      :: "%BUILD_COMMAND%" .

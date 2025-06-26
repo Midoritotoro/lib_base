@@ -1,0 +1,198 @@
+from typing import Dict, List
+from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
+
+supportedLibraries: List[str] = [
+    "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "mozjpeg", "openssl3",
+    "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
+    "stackwalk", "protobuf"
+]
+
+installCommands: List[LibraryInstallationInformation] =  []
+
+def isLibrarySupported(libraryName: str) -> bool:
+    return (libraryName in supportedLibraries)
+
+installCommands["ffmpeg"] = """
+    git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
+    cd ffmpeg
+win:
+depends:patches/ffmpeg.patch
+    git apply ../patches/ffmpeg.patch
+
+    SET PATH_BACKUP_=%PATH%
+    SET PATH=%ROOT_DIR%\\ThirdParty\\msys64\\usr\\bin;%PATH%
+
+    SET CHERE_INVOKING=enabled_from_arguments
+    SET MSYS2_PATH_TYPE=inherit
+
+    SET "ARCH_PARAM="
+winarm:
+    SET "ARCH_PARAM=--arch=aarch64"
+win:
+depends:patches/build_ffmpeg_win.sh
+    bash --login ../patches/build_ffmpeg_win.sh
+
+    SET PATH=%PATH_BACKUP_%
+mac:
+    export PKG_CONFIG_PATH=$USED_PREFIX/lib/pkgconfig
+depends:yasm/yasm
+
+    configureFFmpeg() {
+        arch=$1
+
+        ./configure --prefix=$USED_PREFIX \
+        --enable-cross-compile \
+        --target-os=darwin \
+        --arch="$arch" \
+        --extra-cflags="$MIN_VER -arch $arch $UNGUARDED -DCONFIG_SAFE_BITSTREAM_READER=1 -I$USED_PREFIX/include" \
+        --extra-cxxflags="$MIN_VER -arch $arch $UNGUARDED -DCONFIG_SAFE_BITSTREAM_READER=1 -I$USED_PREFIX/include" \
+        --extra-ldflags="$MIN_VER -arch $arch $USED_PREFIX/lib/libopus.a -lc++" \
+        --disable-programs \
+        --disable-doc \
+        --disable-network \
+        --disable-everything \
+        --enable-protocol=file \
+        --enable-libdav1d \
+        --enable-libopenh264 \
+        --enable-libopus \
+        --enable-libvpx \
+        --enable-hwaccel=h264_videotoolbox \
+        --enable-hwaccel=hevc_videotoolbox \
+        --enable-hwaccel=mpeg1_videotoolbox \
+        --enable-hwaccel=mpeg2_videotoolbox \
+        --enable-hwaccel=mpeg4_videotoolbox \
+        --enable-decoder=aac \
+        --enable-decoder=aac_at \
+        --enable-decoder=aac_fixed \
+        --enable-decoder=aac_latm \
+        --enable-decoder=aasc \
+        --enable-decoder=ac3 \
+        --enable-decoder=alac \
+        --enable-decoder=alac_at \
+        --enable-decoder=av1 \
+        --enable-decoder=eac3 \
+        --enable-decoder=flac \
+        --enable-decoder=gif \
+        --enable-decoder=h264 \
+        --enable-decoder=hevc \
+        --enable-decoder=libdav1d \
+        --enable-decoder=libvpx_vp8 \
+        --enable-decoder=libvpx_vp9 \
+        --enable-decoder=mp1 \
+        --enable-decoder=mp1float \
+        --enable-decoder=mp2 \
+        --enable-decoder=mp2float \
+        --enable-decoder=mp3 \
+        --enable-decoder=mp3adu \
+        --enable-decoder=mp3adufloat \
+        --enable-decoder=mp3float \
+        --enable-decoder=mp3on4 \
+        --enable-decoder=mp3on4float \
+        --enable-decoder=mpeg4 \
+        --enable-decoder=msmpeg4v2 \
+        --enable-decoder=msmpeg4v3 \
+        --enable-decoder=opus \
+        --enable-decoder=pcm_alaw \
+        --enable-decoder=pcm_alaw_at \
+        --enable-decoder=pcm_f32be \
+        --enable-decoder=pcm_f32le \
+        --enable-decoder=pcm_f64be \
+        --enable-decoder=pcm_f64le \
+        --enable-decoder=pcm_lxf \
+        --enable-decoder=pcm_mulaw \
+        --enable-decoder=pcm_mulaw_at \
+        --enable-decoder=pcm_s16be \
+        --enable-decoder=pcm_s16be_planar \
+        --enable-decoder=pcm_s16le \
+        --enable-decoder=pcm_s16le_planar \
+        --enable-decoder=pcm_s24be \
+        --enable-decoder=pcm_s24daud \
+        --enable-decoder=pcm_s24le \
+        --enable-decoder=pcm_s24le_planar \
+        --enable-decoder=pcm_s32be \
+        --enable-decoder=pcm_s32le \
+        --enable-decoder=pcm_s32le_planar \
+        --enable-decoder=pcm_s64be \
+        --enable-decoder=pcm_s64le \
+        --enable-decoder=pcm_s8 \
+        --enable-decoder=pcm_s8_planar \
+        --enable-decoder=pcm_u16be \
+        --enable-decoder=pcm_u16le \
+        --enable-decoder=pcm_u24be \
+        --enable-decoder=pcm_u24le \
+        --enable-decoder=pcm_u32be \
+        --enable-decoder=pcm_u32le \
+        --enable-decoder=pcm_u8 \
+        --enable-decoder=vorbis \
+        --enable-decoder=vp8 \
+        --enable-decoder=wavpack \
+        --enable-decoder=wmalossless \
+        --enable-decoder=wmapro \
+        --enable-decoder=wmav1 \
+        --enable-decoder=wmav2 \
+        --enable-decoder=wmavoice \
+        --enable-encoder=aac \
+        --enable-encoder=libopus \
+        --enable-encoder=libopenh264 \
+        --enable-encoder=pcm_s16le \
+        --enable-filter=atempo \
+        --enable-parser=aac \
+        --enable-parser=aac_latm \
+        --enable-parser=flac \
+        --enable-parser=gif \
+        --enable-parser=h264 \
+        --enable-parser=hevc \
+        --enable-parser=mpeg4video \
+        --enable-parser=mpegaudio \
+        --enable-parser=opus \
+        --enable-parser=vorbis \
+        --enable-demuxer=aac \
+        --enable-demuxer=flac \
+        --enable-demuxer=gif \
+        --enable-demuxer=h264 \
+        --enable-demuxer=hevc \
+        --enable-demuxer=matroska \
+        --enable-demuxer=m4v \
+        --enable-demuxer=mov \
+        --enable-demuxer=mp3 \
+        --enable-demuxer=ogg \
+        --enable-demuxer=wav \
+        --enable-muxer=mp4 \
+        --enable-muxer=ogg \
+        --enable-muxer=opus \
+        --enable-muxer=wav
+    }
+
+    configureFFmpeg arm64
+    make $MAKE_THREADS_CNT
+
+    mkdir out.arm64
+    mv libavfilter/libavfilter.a out.arm64
+    mv libavformat/libavformat.a out.arm64
+    mv libavcodec/libavcodec.a out.arm64
+    mv libswresample/libswresample.a out.arm64
+    mv libswscale/libswscale.a out.arm64
+    mv libavutil/libavutil.a out.arm64
+
+    make clean
+
+    configureFFmpeg x86_64
+    make $MAKE_THREADS_CNT
+
+    mkdir out.x86_64
+    mv libavfilter/libavfilter.a out.x86_64
+    mv libavformat/libavformat.a out.x86_64
+    mv libavcodec/libavcodec.a out.x86_64
+    mv libswresample/libswresample.a out.x86_64
+    mv libswscale/libswscale.a out.x86_64
+    mv libavutil/libavutil.a out.x86_64
+
+    lipo -create out.arm64/libavfilter.a out.x86_64/libavfilter.a -output libavfilter/libavfilter.a
+    lipo -create out.arm64/libavformat.a out.x86_64/libavformat.a -output libavformat/libavformat.a
+    lipo -create out.arm64/libavcodec.a out.x86_64/libavcodec.a -output libavcodec/libavcodec.a
+    lipo -create out.arm64/libswresample.a out.x86_64/libswresample.a -output libswresample/libswresample.a
+    lipo -create out.arm64/libswscale.a out.x86_64/libswscale.a -output libswscale/libswscale.a
+    lipo -create out.arm64/libavutil.a out.x86_64/libavutil.a -output libavutil/libavutil.a
+
+    make install
+"""

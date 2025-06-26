@@ -24,12 +24,13 @@ option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
-option(LIB_BASE_ENABLE_QT "" ON)
+option(LIB_BASE_ENABLE_QT "" OFF)
 
 option(LIB_BASE_ENABLE_OPENGL "" OFF)
-option(LIB_BASE_ENABLE_FFMPEG "" ON)
+option(LIB_BASE_ENABLE_FFMPEG "" OFF)
 
-option(LIB_BASE_ENABLE_ZLIB "" ON)
+option(LIB_BASE_ENABLE_ZLIB "" OFF)
+option(LIB_BASE_ENABLE_IMAGES "" OFF)
 
 if (UNIX)
     option(LIB_BASE_ENABLE_PHTHREAD "" OFF)
@@ -42,13 +43,14 @@ set(LIB_BASE_BUILD_TESTS ON)
 set(LIB_BASE_BUILD_BENCHMARKS ON)
 
 set(BUILD_SHARED_LIBS OFF)
-set(LIB_BASE_ENABLE_QT ON)
+set(LIB_BASE_ENABLE_QT OFF)
 
 set(LIB_BASE_ENABLE_OPENGL OFF) 
-set(LIB_BASE_ENABLE_FFMPEG ON)
+set(LIB_BASE_ENABLE_FFMPEG OFF)
 
+set(LIB_BASE_ENABLE_IMAGES OFF)
 
-set(LIB_BASE_ENABLE_ZLIB ON)  
+set(LIB_BASE_ENABLE_ZLIB OFF)  
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 enable_language(C CXX ASM_MASM)
@@ -70,28 +72,6 @@ set(PRIVATE_SOURCES
     src/core/async/WinapiList.cpp
 
     src/core/async/WinapiSemaphore.cpp
-
-	src/images/ImagesBuffer.cpp
-    src/images/ImagesPrepare.cpp
-
-    src/images/ImagesBoxBlur.cpp
-    src/images/ImagesStackBlur.cpp
-
-    src/images/ImagesGaussianBlur.cpp
-    src/images/gl/ImagesGLImage.cpp
-    
-    src/images/ImagesIntegral.cpp
-    src/images/ImagesRgbBlur.cpp
-
-    src/images/ImagesImage.cpp
-    src/images/ImagesUtility.cpp
-
-    src/images/formats/PngHandler.cpp
-    src/images/formats/JpegHandler.cpp
-    src/images/formats/BmpHandler.cpp
-
-    src/images/filters/ImageFilter.cpp
-    src/images/ImageReader.cpp
 
     src/core/system/SystemInfo.cpp
     src/core/io/File.cpp
@@ -219,8 +199,7 @@ set(PRIVATE_SOURCES
 
 set(PRIVATE_HEADERS
     src/core/arch/CpuFeatureSimdTraits.h
-
-    src/images/StackBlurTask.h
+   
     src/core/thread/ThreadsData.h
   
     src/core/string/CharTraits.h
@@ -407,34 +386,10 @@ set(PUBLIC_HEADERS
     include/base/core/system/SystemTools.h
 
     include/base/core/utility/TypeTraits.h
-    include/base/images/ImagesBlur.h
-
-	include/base/images/ImagesBuffer.h
-    include/base/images/ImagesPrepare.h
-
-    include/base/images/Images.h
-    include/base/images/ImagesIntegral.h
-
-    include/base/images/gl/ImagesGLImage.h
-
-    include/base/images/ImagesCommon.h
-    include/base/images/ImagesGeometry.h
-
-    include/base/images/formats/AbstractFormatHandler.h
-
-    include/base/images/formats/PngHandler.h
-    include/base/images/formats/JpegHandler.h
-    include/base/images/formats/BmpHandler.h
-
-    include/base/images/filters/ImageFilter.h
-    include/base/images/ImageReader.h
-
-    include/base/images/ImagesUtility.h
+ 
 
     include/base/core/Types.h
     include/base/core/arch/SimdHelpers.h
-
-    include/base/images/ImagesImage.h
 
     include/base/core/arch/SystemDetection.h
     include/base/core/arch/CompilerDetection.h
@@ -565,14 +520,8 @@ add_library(lib_base STATIC ${PRIVATE_SOURCES} ${PUBLIC_HEADERS})
 add_library(lib_base::lib_base ALIAS lib_base)
 
 include(cmake/Util_ExportConfig.cmake)
-include(cmake/Util_FindGSL.cmake)
 
 include(cmake/Util_FindQt.cmake)
-include(cmake/Util_FindLibPngJpeg.cmake)
-
-find_libpng_and_libjpeg(lib_base)
-find_ms_gsl(lib_base)
-
 find_package(OpenMP REQUIRED)
 
 if(LIB_BASE_ENABLE_PHTHREAD)
@@ -675,6 +624,18 @@ if(LIB_BASE_ENABLE_FFMPEG)
     target_link_libraries(lib_baseFFmpeg INTERFACE lib_base_ffmpeg)
 
     add_library(lib_base::lib_baseFFmpeg ALIAS lib_baseFFmpeg)
+endif()
+
+if(LIB_BASE_ENABLE_IMAGES)
+    include(cmake/Util_FindLibPngJpeg.cmake)
+    find_libpng_and_libjpeg(lib_base)
+
+    add_subdirectory(src/images)
+
+    add_library(lib_baseImages INTERFACE)
+    target_link_libraries(lib_baseImages INTERFACE lib_base_images)
+
+    add_library(lib_base::lib_baseImages ALIAS lib_baseImages)
 endif()
 
 #string(REGEX REPLACE "(-march=[a-zA-Z0-9-]*)|(-mtune=[a-zA-Z0-9-]*)|(-msse[0-9,\\.]*)|(-mavx[a-z0-9]*)|(-mfma)|(-mamx-[a-z0-9]*)" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

@@ -218,9 +218,6 @@ set_target_properties(
 target_compile_features(lib_base_qt PUBLIC cxx_std_23)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Util_FindQt.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindGSL.cmake)
-
-find_ms_gsl(lib_base_qt)
 find_qt(lib_base_qt)
 
 target_sources(lib_base_qt PRIVATE ${QT_PRIVATE_SOURCES})

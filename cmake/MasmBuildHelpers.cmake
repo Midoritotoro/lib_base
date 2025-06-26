@@ -1,4 +1,4 @@
-set(CMAKE_ASM_COMPILER "D:/VS/2022/VC/Tools/MSVC/14.41.34120/bin/Hostx64/x64/ml64.exe")
+set(CMAKE_ASM_COMPILER "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/ml64.exe")
 set(CMAKE_MASM_COMPILER ${CMAKE_ASM_COMPILER})
 
 set(CMAKE_ASM_MASM_FLAGS "-x" "/c" "assembler-with-cpp")
@@ -103,6 +103,7 @@ elseif("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
     )
 endif()
 
+set(BASE_MASM_FILES "")
 function(BaseBuildMasmFiles)
     foreach(masm_file IN LISTS BASE_MASM_FILES)
         get_filename_component(fname ${masm_file} NAME_WE)
@@ -112,12 +113,12 @@ function(BaseBuildMasmFiles)
 
         set(ASM_FILE_PROPERTIES "-x -c assembler-with-cpp /Fo${obj_file}")
     
-        # message("Compiling: ${masm_file} to ${obj_file}")
+        message("Compiling: ${masm_file} to ${obj_file}")
         set(FULL_PATH_TO_MASM_FILE "${CMAKE_CURRENT_LIST_DIR}/${masm_file}")
 
         execute_process(COMMAND ${CMAKE_MASM_COMPILER} -c -Fo${obj_file} ${FULL_PATH_TO_MASM_FILE})
     
-        # message("Command: ${CMAKE_MASM_COMPILER} -c -Fo${obj_file} ${FULL_PATH_TO_MASM_FILE}")
+        message("Command: ${CMAKE_MASM_COMPILER} -c -Fo${obj_file} ${FULL_PATH_TO_MASM_FILE}")
         set_source_files_properties(${masm_file} PROPERTIES
             LANGUAGE ASM_MASM
             COMPILE_FLAGS ${ASM_FILE_PROPERTIES}

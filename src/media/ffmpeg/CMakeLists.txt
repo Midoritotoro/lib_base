@@ -66,7 +66,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpenH264.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/Util_FindOpus.cmake)
 
 include(${PROJECT_SOURCE_DIR}/cmake/Util_FindFFmpeg.cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/Util_FindGSL.cmake)
 
 set_target_properties(
     lib_base_ffmpeg PROPERTIES
@@ -79,7 +78,6 @@ set_target_properties(
 target_compile_features(lib_base_ffmpeg PUBLIC cxx_std_23)
 
 find_ffmpeg(lib_base_ffmpeg)
-find_ms_gsl(lib_base_ffmpeg)
 
 if(LIB_BASE_ENABLE_QT)
     include(${PROJECT_SOURCE_DIR}/cmake/Util_FindQt.cmake)

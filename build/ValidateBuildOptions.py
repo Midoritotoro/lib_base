@@ -1,4 +1,7 @@
-def validate_cmake_options(filepath, allowed_options):
+def validate_cmake_options(
+    filepath: str,
+    allowed_options: list[str]
+):
     """
     Reads a file, validates CMake options in each line, and removes invalid lines.
 
