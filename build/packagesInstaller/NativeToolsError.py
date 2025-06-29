@@ -1,7 +1,7 @@
-from packagesInstaller.SetupPaths import * 
-
 import sys
 import os
+
+executePath = os.getcwd()
 
 def finish(code):
     global executePath

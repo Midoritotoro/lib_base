@@ -1,7 +1,7 @@
 from packagesInstaller.SystemDetection import win, win64
 
-import packagesInstaller.NativeToolsError
-from packagesInstaller.Getch import *
+from packagesInstaller.NativeToolsError import finish
+from packagesInstaller.Getch import ch
 
 import pathlib
 
@@ -54,7 +54,7 @@ def setupInstallingPath():
 
     while True:
         if ch == 'q':
-            packagesInstaller.NativeToolsError.finish(0)
+            finish(0)
         elif ch == 'c':
             libsDir = input("Enter path: ")
 

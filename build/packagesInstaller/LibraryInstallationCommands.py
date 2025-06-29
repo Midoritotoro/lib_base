@@ -1,9 +1,12 @@
-from typing import Dict, List
+from typing import List
 
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
-from packagesInstaller.EnvironmentSetup import *
+# from packagesInstaller.SystemDetection import mac
 
-from packagesInstaller.InstallOptionsCheck import *
+import os
+from packagesInstaller.SetupPaths import removeDir
+
+from packagesInstaller.InstallOptionsCheck import options
 
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
@@ -297,23 +300,23 @@ installCommands.append(
 )
 )
 
-if not mac or 'build-stackwalk' in options:
-    installCommands.append(
-        LibraryInstallationInformation("gyp", 
-    "GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
-    """
-    win:
-        git clone https://github.com/desktop-app/gyp.git
-        cd gyp
-        git checkout 618958fdbe
-    mac:
-        python3 -m pip install \\
-            --ignore-installed \\
-            --target=$THIRDPARTY_DIR/gyp \\
-            git+https://chromium.googlesource.com/external/gyp@master
-    """
-    )
-    )
+# if not mac or 'build-stackwalk' in options:
+#     installCommands.append(
+#         LibraryInstallationInformation("gyp", 
+#     "GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
+#     """
+#     win:
+#         git clone https://github.com/desktop-app/gyp.git
+#         cd gyp
+#         git checkout 618958fdbe
+#     mac:
+#         python3 -m pip install \\
+#             --ignore-installed \\
+#             --target=$THIRDPARTY_DIR/gyp \\
+#             git+https://chromium.googlesource.com/external/gyp@master
+#     """
+#     )
+#     )
 
 
 installCommands.append(
@@ -827,7 +830,7 @@ if qt < '6':
     release:
         SET CONFIGURATIONS=-debug-and-release
     win:
-        """ + packagesInstaller.SetupPaths.removeDir('"%LIBS_DIR%\\Qt-' + qt + '"') + """
+        """ + removeDir('"%LIBS_DIR%\\Qt-' + qt + '"') + """
         SET ANGLE_DIR=%LIBS_DIR%\\tg_angle
         SET ANGLE_LIBS_DIR=%ANGLE_DIR%\\out
         SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
@@ -950,7 +953,7 @@ win:
 release:
     SET CONFIGURATIONS=-debug-and-release
 win:
-    """ + packagesInstaller.SetupPaths.removeDir('"%LIBS_DIR%\\Qt' + qt + '"') + """
+    """ + removeDir('"%LIBS_DIR%\\Qt' + qt + '"') + """
     SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
     SET OPENSSL_DIR=%LIBS_DIR%\\openssl3
     SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\\out

@@ -1,5 +1,21 @@
-from packagesInstaller.LibraryInstallationCommands import *
+from packagesInstaller.LibraryInstallationCommands import isLibrarySupported
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
+
+from packagesInstaller.SystemDetection import win
+from packagesInstaller.BuildInstructionsParser import BuildInstructionsParser
+
+from packagesInstaller.NativeToolsError import error, finish
+from packagesInstaller.CacheManager import CacheManager
+
+from packagesInstaller.Getch import getch
+from packagesInstaller.SetupPaths import removeDir
+
+from packagesInstaller.EnvironmentSetup import environmentConfiguration
+
+import subprocess
+import re
+
+import os 
 
 class InstallExecutor: 
     def __init__(
@@ -20,10 +36,110 @@ class InstallExecutor:
         
         if self.__isLibrarySupported == False: 
             print(f"WARNING: Library {self.__installationInformation.libraryName} is not supported. ")
+    
+    def printInstallationCommands(self: 'InstallExecutor') -> None:
+        print('---------------------------------COMMANDS-LIST----------------------------------')
+        print(self.__installationInformation.installationCommands, end='')
+        print('--------------------------------------------------------------------------------')
 
-    def install(self: 'InstallExecutor') -> None:
-        if self.__isLibrarySupported == False:
+    def install(
+        self: 'InstallExecutor',
+        queueLength: int,
+        indexInQueue: int
+    ) -> None:
+        rebuildStale = False
+
+        version = ('#' + str(self.__installationInformation.libraryVersion)) if (self.__installationInformation.libraryVersion != '0') else '' 
+        prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.__installationInformation.location + '/' + self.__installationInformation.libraryName + version + ')'
+
+        print(prefix + ': ', end = '', flush=True)
+
+        self.__installationInformation.setCacheKey(CacheManager.ComputeCacheKey(self))
+        commands = removeDir(self.__installationInformation.libraryName) + '\n' + self.__installationInformation.installationCommands
+
+        checkResult = CacheManager.CheckCacheKey(self)
+
+        if checkResult == CacheManager.CacheKeyState.Good:
+            print('SKIPPING')
             return
+
+        elif checkResult == CacheManager.CacheKeyState.NotFound:
+            print('NOT FOUND, ', end='')
+
+        elif checkResult == CacheManager.CacheKeyState.Stale:
+            print('CHANGED, ', end='')
+
+            if rebuildStale:
+                checkResult == 'Rebuild'
+
+            else:
+                print('(r)ebuild, rebuild (a)ll, (s)kip, (p)rint, (q)uit?: ', end='', flush=True)
+                while True:
+                    ch = 'r' if rebuildStale else getch()
+
+                    if ch == 'q':
+                        finish(0)
+
+                    elif ch == 'p':
+                        self.printInstallationCommands(commands)
+                        checkResult = 'Printed'
+
+                        break
+
+                    elif ch == 's':
+                        checkResult = 'Skip'
+                        break
+
+                    elif ch == 'r':
+                        checkResult = 'Rebuild'
+                        break
+
+                    elif ch == 'a':
+                        checkResult = 'Rebuild'
+                        rebuildStale = True
+
+                        break
+
+        if checkResult == 'Printed':
+            return
+
+        if checkResult == 'Skip':
+            print('SKIPPING')
+            return
+
+        CacheManager.ClearCacheKey(self)
+        print('BUILDING:')
+
+        os.chdir(self.__installationInformation.directory)
+
+        if not self.runCommands():
+            print(prefix + ': FAILED')
+            finish(1)
+
+        CacheManager.WriteCacheKey(self) 
+
+    def runCommands(self: 'InstallExecutor') -> None | bool:
+        self.printInstallationCommands()
+
+        if win:
+            if os.path.exists("command.bat"):
+                os.remove("command.bat")
+
+            with open("command.bat", 'w') as file:
+                file.write('@echo OFF\r\n' + BuildInstructionsParser.winFailOnEach(self.__installationInformation.installationCommands))
+            result = subprocess.run("command.bat", shell=True, env=environmentConfiguration.modifiedEnvironment).returncode == 0
+
+            if result and os.path.exists("command.bat"):
+                os.remove("command.bat")
+            return result
+        
+        elif re.search(r'\%', self.__installationInformation.installationCommands):
+            error('Bad command: ' + self.__installationInformation.installationCommands)
+        else:
+            return subprocess.run(
+                "set -e\n" + self.__installationInformation.installationCommands, shell=True,
+                env=environmentConfiguration.modifiedEnvironment).returncode == 0
+
 
     @property
     def installationInformation(self: 'InstallExecutor') -> LibraryInstallationInformation:

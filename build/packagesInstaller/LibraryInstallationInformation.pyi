@@ -33,7 +33,7 @@ class LibraryInstallationInformation:
 
     @property
     def directory(self: 'LibraryInstallationInformation') -> str: ...
-    @location.setter
+    @directory.setter
     def setDirectory(
         self:       'LibraryInstallationInformation',
         directory:  str
@@ -51,7 +51,7 @@ class LibraryInstallationInformation:
 
     @property
     def libraryName(self: 'LibraryInstallationInformation') -> str: ...
-    @libraryInformation.setter
+    @libraryName.setter
     def setLibraryName(
         self:           'LibraryInstallationInformation',
         libraryName:    str
@@ -60,7 +60,7 @@ class LibraryInstallationInformation:
 
     @property
     def dependencies(self: 'LibraryInstallationInformation') -> List[str]: ...
-    @installationCommands.setter
+    @dependencies.setter
     def setDependencies(
         self:           'LibraryInstallationInformation',
         dependencies:   List[str]
@@ -69,7 +69,7 @@ class LibraryInstallationInformation:
 
     @property
     def libraryVersion(self: 'LibraryInstallationInformation') -> str: ...
-    @installationCommands.setter
+    @libraryVersion.setter
     def setLibraryVersion(
         self:           'LibraryInstallationInformation',
         libraryVersion: str
@@ -77,7 +77,7 @@ class LibraryInstallationInformation:
 
     @property
     def cacheKey(self: 'LibraryInstallationInformation') -> str: ...
-    @installationCommands.setter
+    @cacheKey.setter
     def setCacheKey(
         self:           'LibraryInstallationInformation',
         cacheKey:       str

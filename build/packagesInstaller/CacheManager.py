@@ -73,7 +73,7 @@ class CacheManager:
     
     @staticmethod
     def CheckCacheKey(installExecutor: InstallExecutor) -> Literal[CacheKeyState.Stale, CacheKeyState.Good, CacheKeyState.NotFound]:
-        if len(installExecutor.installationInformation.cacheKey) <= 0: # if not 'key' in stage
+        if len(installExecutor.installationInformation.cacheKey) <= 0:
             error('Key not set in stage: ' + installExecutor.installationInformation.libraryName)
 
         key: str = CacheManager.KeyPath(installExecutor)
@@ -99,7 +99,7 @@ class CacheManager:
 
     @staticmethod
     def WriteCacheKey(installExecutor: InstallExecutor):
-        if len(installExecutor.installationInformation.cacheKey) <= 0: # if not 'key' in stage
+        if len(installExecutor.installationInformation.cacheKey) <= 0:
             error('Key not set in stage: ' + installExecutor.installationInformation.libraryName)
 
         key: str = CacheManager.KeyPath(installExecutor)

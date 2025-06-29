@@ -1,4 +1,6 @@
-from packagesInstaller.SystemDetection import os, win32, win64, winarm, mac
+from packagesInstaller.SystemDetection import os, win, win32, win64, winarm, mac
+from packagesInstaller.NativeToolsError import finish, error, nativeToolsError
+
 import packagesInstaller.SetupPaths
 
 import hashlib
@@ -6,6 +8,8 @@ from typing import Dict, List
 
 class EnvironmentConfiguration:
     def __init__(self: "EnvironmentConfiguration") -> None:
+        EnvironmentConfiguration.__checkEnvironment()
+        
         self.__qt: str | None = os.environ.get("QT")
         self.__environment: Dict[str, str] = self.__initializeEnvironment()
 
@@ -112,5 +116,17 @@ class EnvironmentConfiguration:
 
         modifiedEnvironment["PATH"] = self.__environment["PATH_PREFIX"] + modifiedEnvironment["PATH"]
         return modifiedEnvironment
+    
+    @staticmethod
+    def __checkEnvironment() -> None:        
+        if win and not 'Platform' in os.environ:
+            nativeToolsError()
+            
+        if win and not 'COMSPEC' in os.environ:
+            error('COMSPEC environment variable is not set.')
+
+        if win and not win32 and not win64 and not winarm:
+            nativeToolsError()
 
 environmentConfiguration: EnvironmentConfiguration = EnvironmentConfiguration()
+

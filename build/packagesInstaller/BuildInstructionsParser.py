@@ -1,5 +1,7 @@
-from packagesInstaller.SystemDetection import *
-from packagesInstaller.InstallOptionsCheck import * 
+from packagesInstaller.SystemDetection import win, win32, win64, winarm, mac
+from packagesInstaller.InstallOptionsCheck import options
+
+from packagesInstaller.NativeToolsError import error
 
 from typing import List, Any
 import re
