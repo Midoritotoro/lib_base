@@ -1,0 +1,76 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.
+"libraryName": |-
+  dav1d
+"libraryVersion": |2
+
+      git clone -b 1.5.1 https://code.videolan.org/videolan/dav1d.git
+      cd dav1d
+  win32:
+      SET "TARGET=x86"
+      SET "DAV1D_ASM_DISABLE=-Denable_asm=false"
+  win64:
+      SET "TARGET=x86_64"
+      SET "DAV1D_ASM_DISABLE="
+  winarm:
+      SET "TARGET=aarch64"
+      SET "DAV1D_ASM_DISABLE="
+      SET "PATH_BACKUP_=%PATH%"
+      SET "PATH=%LIBS_DIR%\gas-preprocessor;%PATH%"
+      echo armasm64 fails with 'syntax error in expression: tbnz x14, #4, 8f' as if this instruction is unknown/unsupported.
+      git revert --no-edit d503bb0ccaf104b2f13da0f092e09cc9411b3297
+  win:
+      set FILE=cross-file.txt
+      echo [binaries] > %FILE%
+      echo c = 'cl' >> %FILE%
+      echo cpp = 'cl' >> %FILE%
+      echo ar = 'lib' >> %FILE%
+      echo windres = 'rc' >> %FILE%
+      echo [host_machine] >> %FILE%
+      echo system = 'windows' >> %FILE%
+      echo cpu_family = '%TARGET%' >> %FILE%
+      echo cpu = '%TARGET%' >> %FILE%
+      echo endian = 'little' >> %FILE%
+
+  depends:python/Scripts/activate.bat
+      %THIRDPARTY_DIR%\python\Scripts\activate.bat
+      meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Denable_tools=false -Denable_tests=false %DAV1D_ASM_DISABLE% -Db_vscrt=mtd builddir-debug
+      meson compile -C builddir-debug
+      meson install -C builddir-debug
+  release:
+      meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=release -Denable_tools=false -Denable_tests=false -Db_vscrt=mt builddir-release
+      meson compile -C builddir-release
+      meson install -C builddir-release
+  win:
+      copy %LIBS_DIR%\local\lib\libdav1d.a %LIBS_DIR%\local\lib\dav1d.lib
+      deactivate
+  winarm:
+      SET "PATH=%PATH_BACKUP_%"
+  mac:
+      buildOneArch() {
+          arch=$1
+          folder=`pwd`/$2
+
+          meson setup \
+              --cross-file ../patches/macos_meson_${arch}.txt \
+              --prefix ${USED_PREFIX} \
+              --default-library=static \
+              --buildtype=minsize \
+              -Denable_tools=false \
+              -Denable_tests=false \
+              ${folder}
+          meson compile -C ${folder}
+          meson install -C ${folder}
+
+          mv ${USED_PREFIX}/lib/libdav1d.a ${folder}/libdav1d.a
+      }
+
+      buildOneArch arm64 build.arm64
+      buildOneArch x86_64 build
+
+      lipo -create build.arm64/libdav1d.a build/libdav1d.a -output ${USED_PREFIX}/lib/libdav1d.a
+"location": ""

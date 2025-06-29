@@ -9,7 +9,7 @@ from typing import Dict, List
 class EnvironmentConfiguration:
     def __init__(self: "EnvironmentConfiguration") -> None:
         EnvironmentConfiguration.__checkEnvironment()
-        
+
         self.__qt: str | None = os.environ.get("QT")
         self.__environment: Dict[str, str] = self.__initializeEnvironment()
 
@@ -119,14 +119,7 @@ class EnvironmentConfiguration:
     
     @staticmethod
     def __checkEnvironment() -> None:        
-        if win and not 'Platform' in os.environ:
-            nativeToolsError()
-            
-        if win and not 'COMSPEC' in os.environ:
-            error('COMSPEC environment variable is not set.')
-
-        if win and not win32 and not win64 and not winarm:
-            nativeToolsError()
+       pass
 
 environmentConfiguration: EnvironmentConfiguration = EnvironmentConfiguration()
 

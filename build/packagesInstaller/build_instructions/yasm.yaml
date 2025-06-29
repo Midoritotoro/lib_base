@@ -1,0 +1,17 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  Yasm is an assembler that is an attempt to completely rewrite the NASM assembler. It is licensed under the BSD license.
+"libraryName": |-
+  yasm
+"libraryVersion": |2
+
+  mac:
+      git clone https://github.com/yasm/yasm.git
+      cd yasm
+      git checkout 41762bea
+      ./autogen.sh
+      make $MAKE_THREADS_CNT
+"location": ""

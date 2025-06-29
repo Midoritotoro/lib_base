@@ -1,0 +1,55 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.
+"libraryName": |-
+  openssl3
+"libraryVersion": |2
+
+      git clone -b openssl-3.2.1 https://github.com/openssl/openssl openssl3
+      cd openssl3
+  win32:
+      perl Configure no-shared no-tests debug-VC-WIN32 /FS
+  win64:
+      perl Configure no-shared no-tests debug-VC-WIN64A /FS
+  winarm:
+      perl Configure no-shared no-tests debug-VC-WIN64-ARM /FS
+  win:
+      jom -j%NUMBER_OF_PROCESSORS% build_libs
+      mkdir out.dbg
+      move libcrypto.lib out.dbg
+      move libssl.lib out.dbg
+      move ossl_static.pdb out.dbg
+  release:
+      move out.dbg\ossl_static.pdb out.dbg\ossl_static
+      jom clean
+      move out.dbg\ossl_static out.dbg\ossl_static.pdb
+  win32_release:
+      perl Configure no-shared no-tests VC-WIN32 /FS
+  win64_release:
+      perl Configure no-shared no-tests VC-WIN64A /FS
+  winarm_release:
+      perl Configure no-shared no-tests VC-WIN64-ARM /FS
+  win_release:
+      jom -j%NUMBER_OF_PROCESSORS% build_libs
+      mkdir out
+      move libcrypto.lib out
+      move libssl.lib out
+      move ossl_static.pdb out
+  mac:
+      ./Configure --prefix=$USED_PREFIX no-shared no-tests darwin64-arm64-cc $MIN_VER
+      make build_libs $MAKE_THREADS_CNT
+      mkdir out.arm64
+      mv libssl.a out.arm64
+      mv libcrypto.a out.arm64
+      make clean
+      ./Configure --prefix=$USED_PREFIX no-shared no-tests darwin64-x86_64-cc $MIN_VER
+      make build_libs $MAKE_THREADS_CNT
+      mkdir out.x86_64
+      mv libssl.a out.x86_64
+      mv libcrypto.a out.x86_64
+      lipo -create out.arm64/libcrypto.a out.x86_64/libcrypto.a -output libcrypto.a
+      lipo -create out.arm64/libssl.a out.x86_64/libssl.a -output libssl.a
+"location": ""

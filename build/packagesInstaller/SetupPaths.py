@@ -1,15 +1,13 @@
 from packagesInstaller.SystemDetection import win, win64
 
-from packagesInstaller.NativeToolsError import finish
-from packagesInstaller.Getch import ch
+from packagesInstaller.NativeToolsError import finish, executePath
+from packagesInstaller.Getch import getch
 
 import pathlib
 
 import os
 import sys
 
-
-executePath = os.getcwd()
 
 sys.dont_write_bytecode = True
 scriptPath = os.path.dirname(os.path.realpath(__file__))
@@ -48,24 +46,24 @@ def removeDir(folder):
         return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
     return 'rm -rf ' + folder
 
-def setupInstallingPath():
-    print('Path to installing libraries')
-    print('(d)efault, (c)ustom, (q)uit?: ')
+# def setupInstallingPath():
+#     print('Path to installing libraries')
+#     print('(d)efault, (c)ustom, (q)uit?: ')
 
-    while True:
-        if ch == 'q':
-            finish(0)
-        elif ch == 'c':
-            libsDir = input("Enter path: ")
+#     while True:
+#         if getch() == 'q':
+#             finish(0)
+#         elif getch() == 'c':
+#             libsDir = input("Enter path: ")
 
-            if os.path.exists(libsDir) == False:
-                print("Enter the correct existing path")
-                continue
+#             if os.path.exists(libsDir) == False:
+#                 print("Enter the correct existing path")
+#                 continue
 
-            print("Libs path: ", libsDir)
+#             print("Libs path: ", libsDir)
 
-            break
-        elif ch == 'd':
-            break
+#             break
+#         elif getch() == 'd':
+#             break
         
-setupInstallingPath()
+# setupInstallingPath()

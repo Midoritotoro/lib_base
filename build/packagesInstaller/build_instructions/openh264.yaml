@@ -1,0 +1,64 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  OpenH264 is a codec library which supports H.264 encoding and decoding.
+"libraryName": |-
+  openh264
+"libraryVersion": |2
+
+      git clone -b v2.6.0 https://github.com/cisco/openh264.git
+      cd openh264
+  win32:
+      SET "TARGET=x86"
+  win64:
+      SET "TARGET=x86_64"
+  winarm:
+      SET "TARGET=aarch64"
+      SET "PATH_BACKUP_=%PATH%"
+      SET "PATH=%LIBS_DIR%\gas-preprocessor;%PATH%"
+  win:
+      set FILE=cross-file.txt
+      echo [binaries] > %FILE%
+      echo c = 'cl' >> %FILE%
+      echo cpp = 'cl' >> %FILE%
+      echo ar = 'lib' >> %FILE%
+      echo windres = 'rc' >> %FILE%
+      echo [host_machine] >> %FILE%
+      echo system = 'windows' >> %FILE%
+      echo cpu_family = '%TARGET%' >> %FILE%
+      echo cpu = '%TARGET%' >> %FILE%
+      echo endian = 'little' >> %FILE%
+
+  depends:python/Scripts/activate.bat
+      %THIRDPARTY_DIR%\python\Scripts\activate.bat
+      meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Db_vscrt=mtd builddir-debug
+      meson compile -C builddir-debug
+      meson install -C builddir-debug
+  release:
+      meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=release -Db_vscrt=mt builddir-release
+      meson compile -C builddir-release
+      meson install -C builddir-release
+  win:
+      copy %LIBS_DIR%\local\lib\libopenh264.a %LIBS_DIR%\local\lib\openh264.lib
+      deactivate
+  winarm:
+      SET "PATH=%PATH_BACKUP_%"
+  mac:
+      buildOneArch() {
+          arch=$1
+          folder=`pwd`/$2
+
+          meson setup             --cross-file ../patches/macos_meson_${arch}.txt             --prefix ${USED_PREFIX}             --default-library=static             --buildtype=minsize             ${folder}
+          meson compile -C ${folder}
+          meson install -C ${folder}
+
+          mv ${USED_PREFIX}/lib/libopenh264.a ${folder}/libopenh264.a
+      }
+
+      buildOneArch aarch64 build.aarch64
+      buildOneArch x86_64 build.x86_64
+
+      lipo -create build.aarch64/libopenh264.a build.x86_64/libopenh264.a -output ${USED_PREFIX}/lib/libopenh264.a
+"location": ""

@@ -1,0 +1,49 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": "\nMozJPEG improves JPEG compression efficiency achieving higher\
+  \ visual quality and smaller file sizes at the same time. \nIt is compatible with\
+  \ the JPEG standard, and the vast majority of the world's deployed JPEG decoders.\n"
+"libraryName": |-
+  mozjpeg
+"libraryVersion": |2
+
+      git clone -b v4.1.5 https://github.com/mozilla/mozjpeg.git
+      cd mozjpeg
+  win:
+      cmake . ^
+          -A %WIN32X64% ^
+          -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ^
+          -DWITH_JPEG8=ON ^
+          -DPNG_SUPPORTED=OFF
+      cmake --build . --config Debug --parallel
+  release:
+      cmake --build . --config Release --parallel
+  mac:
+      CFLAGS="-arch arm64" cmake -B build.arm64 . \
+          -D CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+          -D CMAKE_SYSTEM_NAME=Darwin \
+          -D CMAKE_SYSTEM_PROCESSOR=arm64 \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_INSTALL_PREFIX=$USED_PREFIX \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=$MACOSX_DEPLOYMENT_TARGET \
+          -D WITH_JPEG8=ON \
+          -D ENABLE_SHARED=OFF \
+          -D PNG_SUPPORTED=OFF
+      cmake --build build.arm64 $MAKE_THREADS_CNT
+      CFLAGS="-arch x86_64" cmake -B build . \
+          -D CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+          -D CMAKE_SYSTEM_NAME=Darwin \
+          -D CMAKE_SYSTEM_PROCESSOR=x86_64 \
+          -D CMAKE_BUILD_TYPE=Release \
+          -D CMAKE_INSTALL_PREFIX=$USED_PREFIX \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=$MACOSX_DEPLOYMENT_TARGET \
+          -D WITH_JPEG8=ON \
+          -D ENABLE_SHARED=OFF \
+          -D PNG_SUPPORTED=OFF
+      cmake --build build $MAKE_THREADS_CNT
+      lipo -create build.arm64/libjpeg.a build/libjpeg.a -output build/libjpeg.a
+      lipo -create build.arm64/libturbojpeg.a build/libturbojpeg.a -output build/libturbojpeg.a
+      cmake --install build
+"location": ""

@@ -3,6 +3,13 @@ from packagesInstaller.LibraryInstallationInformation import LibraryInstallation
 
 from typing import Dict 
 
+def represent_str_literal(dumper, data):
+    if '\n' in data:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+yaml.add_representer(str, represent_str_literal)
+
 class YamlConfigLoader:
     @staticmethod
     def __LibraryInfoToDict(libraryInformation: LibraryInstallationInformation) -> Dict:
@@ -36,7 +43,7 @@ class YamlConfigLoader:
         output: str
     ) -> None:
         with open(output, 'w') as file:
-            yaml.dump(YamlConfigLoader.__LibraryInfoToDict(libraryInformation), file)
+            yaml.dump(YamlConfigLoader.__LibraryInfoToDict(libraryInformation), file, default_flow_style=False, default_style="|")
 
     @classmethod
     def ExtractLibraryInformationFromYaml(libraryName: str) -> LibraryInstallationInformation:

@@ -301,22 +301,22 @@ installCommands.append(
 )
 
 # if not mac or 'build-stackwalk' in options:
-#     installCommands.append(
-#         LibraryInstallationInformation("gyp", 
-#     "GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
-#     """
-#     win:
-#         git clone https://github.com/desktop-app/gyp.git
-#         cd gyp
-#         git checkout 618958fdbe
-#     mac:
-#         python3 -m pip install \\
-#             --ignore-installed \\
-#             --target=$THIRDPARTY_DIR/gyp \\
-#             git+https://chromium.googlesource.com/external/gyp@master
-#     """
-#     )
-#     )
+installCommands.append(
+    LibraryInstallationInformation("gyp", 
+"GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
+"""
+win:
+    git clone https://github.com/desktop-app/gyp.git
+    cd gyp
+    git checkout 618958fdbe
+mac:
+    python3 -m pip install \\
+        --ignore-installed \\
+        --target=$THIRDPARTY_DIR/gyp \\
+        git+https://chromium.googlesource.com/external/gyp@master
+"""
+)
+)
 
 
 installCommands.append(
@@ -431,6 +431,8 @@ win:
 """
 )
 )
+
+
 
 installCommands.append(
     LibraryInstallationInformation("dav1d",
@@ -804,112 +806,116 @@ qt = os.environ.get('QT')
 
 if qt < '6':
     installCommands.append(LibraryInstallationInformation('qt_' + qt, 
-    """Qt is a cross-platform application development framework for creating graphical user interfaces 
-    as well as cross-platform applications that run on various software and hardware platforms such as Linux,
-      Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still 
-      being a native application with native capabilities and speed. """
-    """
-        git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
-        cd qt_$QT
-        git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
-    depends:patches/qtbase_""" + qt + """/*.patch
-        cd qtbase
-    win:
-        setlocal enabledelayedexpansion
-        for /r %%i in (..\\..\\patches\\qtbase_%QT%\\*) do (
-            git apply %%i -v
-            if errorlevel 1 (
-                echo ERROR: Applying patch %%~nxi failed!
-                exit /b 1
-            )
+"""
+Qt is a cross-platform application development framework for creating graphical user interfaces
+as well as cross-platform applications that run on various software and hardware platforms such as Linux,
+Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
+being a native application with native capabilities and speed.
+""",
+"""
+    git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
+    cd qt_$QT
+    git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
+depends:patches/qtbase_""" + qt + """/*.patch
+    cd qtbase
+win:
+    setlocal enabledelayedexpansion
+    for /r %%i in (..\\..\\patches\\qtbase_%QT%\\*) do (
+        git apply %%i -v
+        if errorlevel 1 (
+            echo ERROR: Applying patch %%~nxi failed!
+            exit /b 1
         )
+    )
 
-        cd ..
+    cd ..
 
-        SET CONFIGURATIONS=-debug
-    release:
-        SET CONFIGURATIONS=-debug-and-release
-    win:
-        """ + removeDir('"%LIBS_DIR%\\Qt-' + qt + '"') + """
-        SET ANGLE_DIR=%LIBS_DIR%\\tg_angle
-        SET ANGLE_LIBS_DIR=%ANGLE_DIR%\\out
-        SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
-        SET OPENSSL_DIR=%LIBS_DIR%\\openssl3
-        SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\\out
-        SET ZLIB_LIBS_DIR=%LIBS_DIR%\\zlib
-        SET WEBP_DIR=%LIBS_DIR%\\libwebp
-        configure -prefix "%LIBS_DIR%\\Qt-%QT%" ^
-            %CONFIGURATIONS% ^
-            -force-debug-info ^
-            -opensource ^
-            -confirm-license ^
-            -static ^
-            -static-runtime ^
-            -opengl es2 -no-angle ^
-            -I "%ANGLE_DIR%\\include" ^
-            -D "KHRONOS_STATIC=" ^
-            -D "DESKTOP_APP_QT_STATIC_ANGLE=" ^
-            QMAKE_LIBS_OPENGL_ES2_DEBUG="%ANGLE_LIBS_DIR%\\Debug\\tg_angle.lib %ZLIB_LIBS_DIR%\\Debug\\zlibstaticd.lib d3d9.lib dxgi.lib dxguid.lib" ^
-            QMAKE_LIBS_OPENGL_ES2_RELEASE="%ANGLE_LIBS_DIR%\\Release\\tg_angle.lib %ZLIB_LIBS_DIR%\\Release\\zlibstatic.lib d3d9.lib dxgi.lib dxguid.lib" ^
-            -egl ^
-            QMAKE_LIBS_EGL_DEBUG="%ANGLE_LIBS_DIR%\\Debug\\tg_angle.lib %ZLIB_LIBS_DIR%\\Debug\\zlibstaticd.lib d3d9.lib dxgi.lib dxguid.lib Gdi32.lib User32.lib" ^
-            QMAKE_LIBS_EGL_RELEASE="%ANGLE_LIBS_DIR%\\Release\\tg_angle.lib %ZLIB_LIBS_DIR%\\Release\\zlibstatic.lib d3d9.lib dxgi.lib dxguid.lib Gdi32.lib User32.lib" ^
-            -openssl-linked ^
-            -I "%OPENSSL_DIR%\\include" ^
-            OPENSSL_LIBS_DEBUG="%OPENSSL_LIBS_DIR%.dbg\\libssl.lib %OPENSSL_LIBS_DIR%.dbg\\libcrypto.lib Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ^
-            OPENSSL_LIBS_RELEASE="%OPENSSL_LIBS_DIR%\\libssl.lib %OPENSSL_LIBS_DIR%\\libcrypto.lib Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ^
-            -I "%MOZJPEG_DIR%" ^
-            LIBJPEG_LIBS_DEBUG="%MOZJPEG_DIR%\\Debug\\jpeg-static.lib" ^
-            LIBJPEG_LIBS_RELEASE="%MOZJPEG_DIR%\\Release\\jpeg-static.lib" ^
-            -system-webp ^
-            -I "%WEBP_DIR%\\src" ^
-            -L "%WEBP_DIR%\\out\\release-static\\$X8664\\lib" ^
-            -mp ^
-            -no-feature-netlistmgr ^
-            -nomake examples ^
-            -nomake tests ^
-            -platform win32-msvc
+    SET CONFIGURATIONS=-debug
+release:
+    SET CONFIGURATIONS=-debug-and-release
+win:
+    """ + removeDir('"%LIBS_DIR%\\Qt-' + qt + '"') + """
+    SET ANGLE_DIR=%LIBS_DIR%\\tg_angle
+    SET ANGLE_LIBS_DIR=%ANGLE_DIR%\\out
+    SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
+    SET OPENSSL_DIR=%LIBS_DIR%\\openssl3
+    SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\\out
+    SET ZLIB_LIBS_DIR=%LIBS_DIR%\\zlib
+    SET WEBP_DIR=%LIBS_DIR%\\libwebp
+    configure -prefix "%LIBS_DIR%\\Qt-%QT%" ^
+        %CONFIGURATIONS% ^
+        -force-debug-info ^
+        -opensource ^
+        -confirm-license ^
+        -static ^
+        -static-runtime ^
+        -opengl es2 -no-angle ^
+        -I "%ANGLE_DIR%\\include" ^
+        -D "KHRONOS_STATIC=" ^
+        -D "DESKTOP_APP_QT_STATIC_ANGLE=" ^
+        QMAKE_LIBS_OPENGL_ES2_DEBUG="%ANGLE_LIBS_DIR%\\Debug\\tg_angle.lib %ZLIB_LIBS_DIR%\\Debug\\zlibstaticd.lib d3d9.lib dxgi.lib dxguid.lib" ^
+        QMAKE_LIBS_OPENGL_ES2_RELEASE="%ANGLE_LIBS_DIR%\\Release\\tg_angle.lib %ZLIB_LIBS_DIR%\\Release\\zlibstatic.lib d3d9.lib dxgi.lib dxguid.lib" ^
+        -egl ^
+        QMAKE_LIBS_EGL_DEBUG="%ANGLE_LIBS_DIR%\\Debug\\tg_angle.lib %ZLIB_LIBS_DIR%\\Debug\\zlibstaticd.lib d3d9.lib dxgi.lib dxguid.lib Gdi32.lib User32.lib" ^
+        QMAKE_LIBS_EGL_RELEASE="%ANGLE_LIBS_DIR%\\Release\\tg_angle.lib %ZLIB_LIBS_DIR%\\Release\\zlibstatic.lib d3d9.lib dxgi.lib dxguid.lib Gdi32.lib User32.lib" ^
+        -openssl-linked ^
+        -I "%OPENSSL_DIR%\\include" ^
+        OPENSSL_LIBS_DEBUG="%OPENSSL_LIBS_DIR%.dbg\\libssl.lib %OPENSSL_LIBS_DIR%.dbg\\libcrypto.lib Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ^
+        OPENSSL_LIBS_RELEASE="%OPENSSL_LIBS_DIR%\\libssl.lib %OPENSSL_LIBS_DIR%\\libcrypto.lib Ws2_32.lib Gdi32.lib Advapi32.lib Crypt32.lib User32.lib" ^
+        -I "%MOZJPEG_DIR%" ^
+        LIBJPEG_LIBS_DEBUG="%MOZJPEG_DIR%\\Debug\\jpeg-static.lib" ^
+        LIBJPEG_LIBS_RELEASE="%MOZJPEG_DIR%\\Release\\jpeg-static.lib" ^
+        -system-webp ^
+        -I "%WEBP_DIR%\\src" ^
+        -L "%WEBP_DIR%\\out\\release-static\\$X8664\\lib" ^
+        -mp ^
+        -no-feature-netlistmgr ^
+        -nomake examples ^
+        -nomake tests ^
+        -platform win32-msvc
 
-        jom -j%NUMBER_OF_PROCESSORS%
-        jom -j%NUMBER_OF_PROCESSORS% install
-    mac:
-        find ../../patches/qtbase_$QT -type f -print0 | sort -z | xargs -0 git apply
-        cd ..
+    jom -j%NUMBER_OF_PROCESSORS%
+    jom -j%NUMBER_OF_PROCESSORS% install
+mac:
+    find ../../patches/qtbase_$QT -type f -print0 | sort -z | xargs -0 git apply
+    cd ..
 
-        CONFIGURATIONS=-debug
-    release:
-        CONFIGURATIONS=-debug-and-release
-    mac:
-        ./configure -prefix "$USED_PREFIX/Qt-$QT" \
-            $CONFIGURATIONS \
-            -force-debug-info \
-            -opensource \
-            -confirm-license \
-            -static \
-            -opengl desktop \
-            -no-openssl \
-            -securetransport \
-            -I "$USED_PREFIX/include" \
-            LIBJPEG_LIBS="$USED_PREFIX/lib/libjpeg.a" \
-            ZLIB_LIBS="$USED_PREFIX/lib/libz.a" \
-            -nomake examples \
-            -nomake tests \
-            -platform macx-clang
+    CONFIGURATIONS=-debug
+release:
+    CONFIGURATIONS=-debug-and-release
+mac:
+    ./configure -prefix "$USED_PREFIX/Qt-$QT" \
+        $CONFIGURATIONS \
+        -force-debug-info \
+        -opensource \
+        -confirm-license \
+        -static \
+        -opengl desktop \
+        -no-openssl \
+        -securetransport \
+        -I "$USED_PREFIX/include" \
+        LIBJPEG_LIBS="$USED_PREFIX/lib/libjpeg.a" \
+        ZLIB_LIBS="$USED_PREFIX/lib/libz.a" \
+        -nomake examples \
+        -nomake tests \
+        -platform macx-clang
 
-        make $MAKE_THREADS_CNT
-        make install
-    """
+    make $MAKE_THREADS_CNT
+    make install
+"""
     )
     )
 else: # qt > '6'
     branch = 'v$QT' + ('-lts-lgpl' if qt < '6.3' else '')
     installCommands.append(
         LibraryInstallationInformation('qt_' + qt,
-    """Qt is a cross-platform application development framework for creating graphical user interfaces 
+"""
+    Qt is a cross-platform application development framework for creating graphical user interfaces
     as well as cross-platform applications that run on various software and hardware platforms such as Linux,
-      Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still 
-      being a native application with native capabilities and speed. """,
-    """
+    Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
+    being a native application with native capabilities and speed.
+""",
+"""
     git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_$QT
     cd qt_$QT
     git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
@@ -1009,3 +1015,4 @@ win:
 """
 )
 )
+    

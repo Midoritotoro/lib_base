@@ -1,0 +1,29 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  The C++ Protocol Buffers (Protobuf) library is a core component of Google's data serialization mechanism
+"libraryName": |-
+  protobuf
+"libraryVersion": |2
+
+  win:
+      git clone --recursive -b v21.9 https://github.com/protocolbuffers/protobuf
+      cd protobuf
+      git clone https://github.com/abseil/abseil-cpp third_party/abseil-cpp
+      cd third_party/abseil-cpp
+      git checkout 273292d1cf
+      cd ../..
+      mkdir build
+      cd build
+      cmake .. ^
+          -A %WIN32X64% ^
+          -Dprotobuf_BUILD_TESTS=OFF ^
+          -Dprotobuf_BUILD_PROTOBUF_BINARIES=ON ^
+          -Dprotobuf_BUILD_LIBPROTOC=ON ^
+          -Dprotobuf_WITH_ZLIB_DEFAULT=OFF ^
+          -Dprotobuf_DEBUG_POSTFIX=""
+      cmake --build . --config Release --parallel
+      cmake --build . --config Debug --parallel
+"location": ""

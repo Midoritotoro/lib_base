@@ -1,0 +1,38 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API
+"libraryName": |-
+  openal-soft
+"libraryVersion": |2
+
+      git clone https://github.com/telegramdesktop/openal-soft.git
+      cd openal-soft
+  win:
+      git checkout 291c0fdbbd
+      cmake -B build . ^
+          -A %WIN32X64% ^
+          -D LIBTYPE:STRING=STATIC ^
+          -D FORCE_STATIC_VCRT=ON ^
+          -D ALSOFT_UTILS=OFF ^
+          -D ALSOFT_EXAMPLES=OFF ^
+          -D ALSOFT_TESTS=OFF
+      cmake --build build --config Debug --parallel
+  release:
+      cmake --build build --config RelWithDebInfo --parallel
+  mac:
+      git checkout coreaudio_device_uid
+      CFLAGS=$UNGUARDED CPPFLAGS=$UNGUARDED cmake -B build . \
+          -D CMAKE_BUILD_TYPE=RelWithDebInfo \
+          -D CMAKE_INSTALL_PREFIX:PATH=$USED_PREFIX \
+          -D ALSOFT_EXAMPLES=OFF \
+          -D ALSOFT_UTILS=OFF \
+          -D ALSOFT_TESTS=OFF \
+          -D LIBTYPE:STRING=STATIC \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=$MACOSX_DEPLOYMENT_TARGET \
+          -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"
+      cmake --build build $MAKE_THREADS_CNT
+      cmake --install build
+"location": ""

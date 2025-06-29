@@ -1,6 +1,6 @@
 import sys, os
 
-def resolve(arch):
+def resolveQtVersion(arch):
     if sys.platform == 'darwin':
         os.environ['QT'] = '6.2.12'
     elif sys.platform == 'win32':

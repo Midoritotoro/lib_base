@@ -1,0 +1,15 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": |-
+  jom is a clone of nmake to support the execution of multiple independent commands in parallel.
+"libraryName": |-
+  jom
+"libraryVersion": |2
+
+  win:
+      powershell -Command "iwr -OutFile ./jom.zip https://master.qt.io/official_releases/jom/jom_1_1_3.zip"
+      powershell -Command "Expand-Archive ./jom.zip"
+      del jom.zip
+"location": ""

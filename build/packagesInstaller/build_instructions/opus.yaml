@@ -1,0 +1,28 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": ""
+"libraryInformation": "Opus is a totally open, royalty-free, highly versatile audio\
+  \ codec. "
+"libraryName": |-
+  opus
+"libraryVersion": |2
+
+      git clone -b v1.5.2 https://github.com/xiph/opus.git
+      cd opus
+  win:
+      cmake -B out . ^
+          -A %WIN32X64% ^
+          -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local ^
+          -DOPUS_STATIC_RUNTIME=ON
+      cmake --build out --config Debug --parallel
+      cmake --build out --config Release --parallel
+      cmake --install out --config Release
+  mac:
+      CFLAGS="$UNGUARDED" CPPFLAGS="$UNGUARDED" cmake -B build . \
+          -D CMAKE_OSX_DEPLOYMENT_TARGET:STRING=$MACOSX_DEPLOYMENT_TARGET \
+          -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64" \
+          -D CMAKE_INSTALL_PREFIX:STRING=$USED_PREFIX
+      cmake --build build $MAKE_THREADS_CNT
+      cmake --install build
+"location": ""
