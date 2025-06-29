@@ -1,16 +1,18 @@
+from typing import Any
+
 class Getch:
     """Gets a single character from standard input.  Does not echo to the screen."""
 
-    def __init__(self):
+    def __init__(self: 'Getch') -> None:
         try:
-            import packagesInstaller.win.GetchWindows as GetchWindows
-            self.impl = GetchWindows()
+            from packagesInstaller.win.GetchWindows import GetchWindows
+            self.__implementation: GetchWindows = GetchWindows()
         except ImportError:
-            import packagesInstaller.unix.GetchUnix as GetchUnix
-            self.impl = GetchUnix()
+            from packagesInstaller.unix.GetchUnix import GetchUnix
+            self.__implementation: GetchUnix    = GetchUnix()
 
-    def __call__(self):
-        return self.impl()
+    def __call__(self: 'Getch') -> str | Any:
+        return self.__implementation()
     
 getch = Getch()
 ch = getch()

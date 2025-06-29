@@ -6,9 +6,15 @@ set CMAKE_BINARY_DIR="..\out\build"
 set CMAKE_SOURCE_DIR="..\"
 set CMAKE_COMMAND="cmake"
 set BUILD_COMMAND="cmake --build"
-
+set PYTHON_INSTALL_PATH="C:/Python313"
 
 type nul > %CMAKE_BUILD_OPTIONS_FILE%
+
+for %%d in (%~dp0.) do set Directory=%%~fd
+echo Directory=%Directory%
+
+for %%d in (%~dp0..) do set ParentDirectory=%%~fd
+echo ParentDirectory=%ParentDirectory%
 
 :processArgs
     if "%1"=="" (
@@ -22,10 +28,14 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
 
 :pythonExistanceCheck
   echo Checking for Python 3+ existance...
-  where python >nul 2>&1
+  :: where python >nul 2>&1
 
-  if errorlevel 1 (
-      goto errorNoPython
+  :: if errorlevel 1 (
+  ::    goto errorNoPython
+  :: )
+
+  if not exist "%PYTHON_INSTALL_PATH%" (
+    goto errorNoPython
   )
 
   echo Python was found.
@@ -39,14 +49,19 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
   goto :tryToInstallPython
 
 :tryToInstallPython
-    PowerShell -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File ""powershell/pythonInstall.ps1""' -Verb RunAs}"
+    PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
+   
+  :: where python >nul 2>&1
 
-    where python >nul 2>&1
+  ::   if errorlevel 0 (
+  ::      echo Python installation successful.
+  ::      goto startPackagesInstallation
+  :: ) 
 
-    if errorlevel 0 (
+    if exist "%PYTHON_INSTALL_PATH%" (
         echo Python installation successful.
         goto startPackagesInstallation
-    ) 
+    )
     
     echo Python installation failed. Stopping the build. 
     goto eof
@@ -56,8 +71,12 @@ type nul > %CMAKE_BUILD_OPTIONS_FILE%
     python ValidateBuildOptions.py
 
 :startPackagesInstallation
-    echo Installing packages...
-    python DependencyInstaller.py
+    pushd ..
+    set upper_path=%CD%
+    popd
+
+    echo Installing Python packages...
+    PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPackagesInstallerRequirements.ps1" -Verb Runas
 
 :tryToBuildLibrary
     if not exist "%CMAKE_BUILD_OPTIONS_FILE%" (

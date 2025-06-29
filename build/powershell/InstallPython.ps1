@@ -1,16 +1,15 @@
 # This is the link to download Python 3.6.7 from Python.org
 # See https://www.python.org/downloads/
-$pythonUrl = "https://www.python.org/ftp/python/3.6.7/python-3.6.7.exe"
+$pythonUrl = "https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
 
 # This is the directory that the exe is downloaded to
-$tempDirectory = "D:\temp_provision\"
+$tempDirectory = "C:\temp_directory"
 
 # Installation Directory
-# Some packages look for Python here
-$targetDir = "D:\Python36"
+$targetDir = "C:\Python313"
 
 # Create the download directory and get the exe file
-$pythonNameLoc = $tempDirectory + "python367.exe"
+$pythonNameLoc = $tempDirectory + "python-3.13.0.exe"
 New-Item -ItemType directory -Path $tempDirectory -Force | Out-Null
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 (New-Object System.Net.WebClient).DownloadFile($pythonUrl, $pythonNameLoc)
@@ -28,7 +27,6 @@ $Arguments += 'Include_doc="1"'
 $Arguments += 'Include_debug="1"'
 $Arguments += 'Include_dev="1"'
 $Arguments += 'Include_exe="1"'
-$Arguments += 'Include_launcher="1"'
 $Arguments += 'InstallLauncherAllUsers="1"'
 $Arguments += 'Include_lib="1"'
 $Arguments += 'Include_pip="1"'
@@ -36,11 +34,6 @@ $Arguments += 'Include_symbols="1"'
 $Arguments += 'Include_tcltk="1"'
 $Arguments += 'Include_test="1"'
 $Arguments += 'Include_tools="1"'
-$Arguments += 'Include_launcher="1"'
-$Arguments += 'Include_launcher="1"'
-$Arguments += 'Include_launcher="1"'
-$Arguments += 'Include_launcher="1"'
-$Arguments += 'Include_launcher="1"'
 $Arguments += 'Include_launcher="1"'
 $Arguments += "/passive"
 
@@ -63,7 +56,7 @@ Function Add-EnvVarIfNotPresent {
         [string]$variableValueToAdd
     )
     $nameList = Get-EnvVariableNameList
-    $alreadyPresentCount = ($nameList | Where{$_ -like $variableNameToAdd}).Count
+    $alreadyPresentCount = ($nameList | Where-Object{$_ -like $variableNameToAdd}).Count
     if ($alreadyPresentCount -eq 0)
     {
         [System.Environment]::SetEnvironmentVariable($variableNameToAdd, $variableValueToAdd, [System.EnvironmentVariableTarget]::Machine)
@@ -91,7 +84,7 @@ Function Add-EnvExtension {
         [string]$pathExtToAdd
     )
     $pathList = Get-EnvExtensionList
-    $alreadyPresentCount = ($pathList | Where{$_ -like $pathToAdd}).Count
+    $alreadyPresentCount = ($pathList | Where-Object{$_ -like $pathToAdd}).Count
     if ($alreadyPresentCount -eq 0)
     {
         $pathList.Add($pathExtToAdd)
@@ -121,7 +114,7 @@ Function Add-EnvPath {
         [string]$pathToAdd
     )
     $pathList = Get-EnvPathList
-    $alreadyPresentCount = ($pathList | Where{$_ -like $pathToAdd}).Count
+    $alreadyPresentCount = ($pathList | Where-Object{$_ -like $pathToAdd}).Count
     if ($alreadyPresentCount -eq 0)
     {
         $pathList.Add($pathToAdd)
@@ -140,4 +133,4 @@ Function Add-EnvPath {
 
 Add-EnvExtension '.PY'
 Add-EnvExtension '.PYW'
-Add-EnvPath 'D:\Python36\'
+Add-EnvPath 'C:\Python313\'

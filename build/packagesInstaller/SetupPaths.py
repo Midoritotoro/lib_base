@@ -1,5 +1,13 @@
-from packagesInstaller.EnvironmentSetup import *
+from packagesInstaller.SystemDetection import win, win64
+
+import packagesInstaller.NativeToolsError
+from packagesInstaller.Getch import *
+
 import pathlib
+
+import os
+import sys
+
 
 executePath = os.getcwd()
 
@@ -39,3 +47,25 @@ def removeDir(folder):
     if win:
         return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
     return 'rm -rf ' + folder
+
+def setupInstallingPath():
+    print('Path to installing libraries')
+    print('(d)efault, (c)ustom, (q)uit?: ')
+
+    while True:
+        if ch == 'q':
+            packagesInstaller.NativeToolsError.finish(0)
+        elif ch == 'c':
+            libsDir = input("Enter path: ")
+
+            if os.path.exists(libsDir) == False:
+                print("Enter the correct existing path")
+                continue
+
+            print("Libs path: ", libsDir)
+
+            break
+        elif ch == 'd':
+            break
+        
+setupInstallingPath()

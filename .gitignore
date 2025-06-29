@@ -57,6 +57,9 @@ dlldata.c
 
 .vscode/
 
+.vs/
+build/packagesInstaller/venv
+
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 

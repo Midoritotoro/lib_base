@@ -1,3 +1,5 @@
+from packagesInstaller.SetupPaths import * 
+
 import sys
 import os
 
