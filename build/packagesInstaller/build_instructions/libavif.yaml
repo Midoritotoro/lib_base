@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  This library aims to be a friendly, portable C implementation of the AV1 Image File Format
-"libraryName": |-
-  libavif
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b v1.3.0 https://github.com/AOMediaCodec/libavif.git
       cd libavif
@@ -36,4 +31,10 @@
           -D AVIF_LIBYUV=OFF
       cmake --build . --config MinSizeRel $MAKE_THREADS_CNT
       cmake --install . --config MinSizeRel
+"libraryInformation": |-
+  This library aims to be a friendly, portable C implementation of the AV1 Image File Format
+"libraryName": |-
+  libavif
+"libraryVersion": |-
+  0
 "location": ""

@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  OpenH264 is a codec library which supports H.264 encoding and decoding.
-"libraryName": |-
-  openh264
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b v2.6.0 https://github.com/cisco/openh264.git
       cd openh264
@@ -61,4 +56,10 @@
       buildOneArch x86_64 build.x86_64
 
       lipo -create build.aarch64/libopenh264.a build.x86_64/libopenh264.a -output ${USED_PREFIX}/lib/libopenh264.a
+"libraryInformation": |-
+  OpenH264 is a codec library which supports H.264 encoding and decoding.
+"libraryName": |-
+  openh264
+"libraryVersion": |-
+  0
 "location": ""

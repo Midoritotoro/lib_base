@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  lzma is a general-purpose data compression library with a zlib-like API.
-"libraryName": |-
-  lzma
-"libraryVersion": |2
+"installCommands": |2
 
   win:
       git clone https://github.com/desktop-app/lzma.git
@@ -14,4 +9,10 @@
       msbuild -m LzmaLib.sln /property:Configuration=Debug /property:Platform="$X8664"
   release:
       msbuild -m LzmaLib.sln /property:Configuration=Release /property:Platform="$X8664"
+"libraryInformation": |-
+  lzma is a general-purpose data compression library with a zlib-like API.
+"libraryName": |-
+  lzma
+"libraryVersion": |-
+  0
 "location": ""

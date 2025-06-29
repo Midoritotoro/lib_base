@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": "WebP codec is a library to encode and decode images in WebP\
-  \ format. "
-"libraryName": |-
-  libwebp
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b v1.5.0 https://github.com/webmproject/libwebp.git
       cd libwebp
@@ -45,4 +40,10 @@
       lipo -create build.arm64/libwebpdemux.a build/libwebpdemux.a -output build/libwebpdemux.a
       lipo -create build.arm64/libwebpmux.a build/libwebpmux.a -output build/libwebpmux.a
       cmake --install build
+"libraryInformation": "WebP codec is a library to encode and decode images in WebP\
+  \ format. "
+"libraryName": |-
+  libwebp
+"libraryVersion": |-
+  0
 "location": ""

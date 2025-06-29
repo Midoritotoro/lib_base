@@ -1,7 +1,7 @@
 from packagesInstaller.EnvironmentSetup import environmentConfiguration
 from packagesInstaller.NativeToolsError import error
 
-from packagesInstaller.InstallExecutor import InstallExecutor
+from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
 from packagesInstaller.SetupPaths import keysLoc, libsDir
 
 from typing import List, Literal
@@ -34,21 +34,21 @@ class CacheManager:
         return sha1.hexdigest()
     
     @staticmethod
-    def ComputeCacheKey(installExecutor: InstallExecutor) -> str:
-        if (installExecutor.installationInformation.location == 'ThirdParty'):
+    def ComputeCacheKey(information: LibraryInstallationInformation) -> str:
+        if (information.location == 'ThirdParty'):
             envKey = environmentConfiguration.environmentForThirdPartyKey
         else:
             envKey = environmentConfiguration.environmentKey
 
         objects: List[str] = [
             envKey,
-            installExecutor.installationInformation.location,
-            installExecutor.installationInformation.libraryName,
-            installExecutor.installationInformation.libraryVersion,
-            installExecutor.installationInformation.installationCommands
+            information.location,
+            information.libraryName,
+            information.libraryVersion,
+            information.installationCommands
         ]
 
-        for pattern in installExecutor.installationInformation.dependencies:
+        for pattern in information.dependencies:
             pathlist: List[str | bytes] = glob.glob(os.path.join(libsDir, pattern))
             items: List[str] = [pattern]
 
@@ -65,22 +65,22 @@ class CacheManager:
         return hashlib.sha1(';'.join(objects).encode('utf-8')).hexdigest()
     
     @staticmethod
-    def KeyPath(installExecutor: InstallExecutor) -> str:
+    def KeyPath(information: LibraryInstallationInformation) -> str:
         return os.path.join(
-            installExecutor.installationInformation.directory, keysLoc,
-            installExecutor.installationInformation.libraryName
+            information.directory, keysLoc,
+            information.libraryName
         )
     
     @staticmethod
-    def CheckCacheKey(installExecutor: InstallExecutor) -> Literal[CacheKeyState.Stale, CacheKeyState.Good, CacheKeyState.NotFound]:
-        if len(installExecutor.installationInformation.cacheKey) <= 0:
-            error('Key not set in stage: ' + installExecutor.installationInformation.libraryName)
+    def CheckCacheKey(information: LibraryInstallationInformation) -> Literal[CacheKeyState.Stale, CacheKeyState.Good, CacheKeyState.NotFound]:
+        if len(information.cacheKey) <= 0:
+            error('Key not set in stage: ' + information.libraryName)
 
-        key: str = CacheManager.KeyPath(installExecutor)
+        key: str = CacheManager.KeyPath(information)
 
         if not os.path.exists(os.path.join(
-            installExecutor.installationInformation.directory, 
-            installExecutor.installationInformation.libraryName
+            information.directory, 
+            information.libraryName
         )):
             return CacheManager.CacheKeyState.NotFound
         
@@ -88,21 +88,21 @@ class CacheManager:
             return CacheManager.CacheKeyState.Stale
         
         with open(key, 'r') as file:
-            return CacheManager.CacheKeyState.Good if (file.read() == installExecutor.installationInformation.cacheKey) else CacheManager.CacheKeyState.Stale
+            return CacheManager.CacheKeyState.Good if (file.read() == information.cacheKey) else CacheManager.CacheKeyState.Stale
         
     @staticmethod
-    def ClearCacheKey(installExecutor: InstallExecutor):
-        key: str = CacheManager.KeyPath(installExecutor)
+    def ClearCacheKey(information: LibraryInstallationInformation):
+        key: str = CacheManager.KeyPath(information)
 
         if os.path.exists(key):
             os.remove(key)
 
     @staticmethod
-    def WriteCacheKey(installExecutor: InstallExecutor):
-        if len(installExecutor.installationInformation.cacheKey) <= 0:
-            error('Key not set in stage: ' + installExecutor.installationInformation.libraryName)
+    def WriteCacheKey(information: LibraryInstallationInformation):
+        if len(information.cacheKey) <= 0:
+            error('Key not set in stage: ' + information.libraryName)
 
-        key: str = CacheManager.KeyPath(installExecutor)
+        key: str = CacheManager.KeyPath(information)
         
         with open(key, 'w') as file:
-            file.write(installExecutor.installationInformation.cacheKey)
+            file.write(information.cacheKey)

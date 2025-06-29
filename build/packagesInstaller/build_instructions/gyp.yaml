@@ -1,13 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs
-"libraryName": |-
-  gyp
-"libraryVersion": |2
-
+"installCommands": |
+  ,
   win:
       git clone https://github.com/desktop-app/gyp.git
       cd gyp
@@ -17,4 +12,10 @@
           --ignore-installed \
           --target=$THIRDPARTY_DIR/gyp \
           git+https://chromium.googlesource.com/external/gyp@master
+"libraryInformation": |-
+  GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs
+"libraryName": |-
+  gyp
+"libraryVersion": |-
+  0
 "location": ""

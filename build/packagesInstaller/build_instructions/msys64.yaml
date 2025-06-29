@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  MSYS2 is a collection of tools and libraries providing you with an easy-to-use environment for building, installing and running native Windows software.
-"libraryName": |-
-  msys64
-"libraryVersion": |2
+"installCommands": |2
 
   win:
       SET PATH_BACKUP_=%PATH%
@@ -30,4 +25,10 @@
           mingw-w64-x86_64-yasm
 
       SET PATH=%PATH_BACKUP_%
+"libraryInformation": |-
+  MSYS2 is a collection of tools and libraries providing you with an easy-to-use environment for building, installing and running native Windows software.
+"libraryName": |-
+  msys64
+"libraryVersion": |-
+  0
 "location": ""

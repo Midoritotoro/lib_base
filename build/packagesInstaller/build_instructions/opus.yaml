@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": "Opus is a totally open, royalty-free, highly versatile audio\
-  \ codec. "
-"libraryName": |-
-  opus
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b v1.5.2 https://github.com/xiph/opus.git
       cd opus
@@ -25,4 +20,10 @@
           -D CMAKE_INSTALL_PREFIX:STRING=$USED_PREFIX
       cmake --build build $MAKE_THREADS_CNT
       cmake --install build
+"libraryInformation": "Opus is a totally open, royalty-free, highly versatile audio\
+  \ codec. "
+"libraryName": |-
+  opus
+"libraryVersion": |-
+  0
 "location": ""

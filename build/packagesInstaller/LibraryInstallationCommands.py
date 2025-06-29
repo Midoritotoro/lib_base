@@ -11,7 +11,7 @@ from packagesInstaller.InstallOptionsCheck import options
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
     "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
-    "stackwalk", "protobuf", "opus"
+    "stackwalk", "protobuf", "opus", "patches"
 ]
 
 installCommands: List[LibraryInstallationInformation] =  []
@@ -23,7 +23,9 @@ installCommands.append(
     LibraryInstallationInformation("ffmpeg", 
 """
     FFmpeg is the leading multimedia framework, able to decode, encode, transcode, mux,
-    demux, stream, filter and play pretty much anything that humans and machines have created""",
+    demux, stream, filter and play pretty much anything that humans and machines have created
+""",
+"0",
 """
     git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
     cd ffmpeg
@@ -214,6 +216,7 @@ depends:yasm/yasm
 installCommands.append(
     LibraryInstallationInformation("jom", 
 "jom is a clone of nmake to support the execution of multiple independent commands in parallel.", 
+"0",
 """
 win:
     powershell -Command "iwr -OutFile ./jom.zip https://master.qt.io/official_releases/jom/jom_1_1_3.zip"
@@ -226,6 +229,7 @@ win:
 installCommands.append(
     LibraryInstallationInformation("msys64", 
 "MSYS2 is a collection of tools and libraries providing you with an easy-to-use environment for building, installing and running native Windows software.",
+"0",
 """
 win:
     SET PATH_BACKUP_=%PATH%
@@ -257,6 +261,7 @@ win:
 installCommands.append(
     LibraryInstallationInformation("yasm", 
 "Yasm is an assembler that is an attempt to completely rewrite the NASM assembler. It is licensed under the BSD license.",
+"0",
 """
 mac:
     git clone https://github.com/yasm/yasm.git
@@ -271,6 +276,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("lzma", 
 "lzma is a general-purpose data compression library with a zlib-like API.", 
+"0",
 """
 win:
     git clone https://github.com/desktop-app/lzma.git
@@ -285,6 +291,7 @@ release:
 installCommands.append(
     LibraryInstallationInformation("xz", 
 "XZ Utils provide a general-purpose data-compression library plus command-line tools.",
+"0",
 """
 !win:
     git clone -b v5.4.5 https://github.com/tukaani-project/xz.git
@@ -304,7 +311,8 @@ installCommands.append(
 installCommands.append(
     LibraryInstallationInformation("gyp", 
 "GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
-"""
+"0",
+""",
 win:
     git clone https://github.com/desktop-app/gyp.git
     cd gyp
@@ -325,6 +333,7 @@ installCommands.append(
 MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time. 
 It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders.
 """,
+"4.1.5",
 """
     git clone -b v4.1.5 https://github.com/mozilla/mozjpeg.git
     cd mozjpeg
@@ -370,6 +379,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("openssl3", 
 "OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.",
+"0",
 """
     git clone -b openssl-3.2.1 https://github.com/openssl/openssl openssl3
     cd openssl3
@@ -422,6 +432,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("gas-preprocessor",
 "Perl script that implements a subset of the GNU as preprocessor that Apple's as doesn't ",
+"0",
 """
 win:
     git clone https://github.com/FFmpeg/gas-preprocessor
@@ -437,6 +448,7 @@ win:
 installCommands.append(
     LibraryInstallationInformation("dav1d",
 "dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.",
+"0",
 """
     git clone -b 1.5.1 https://code.videolan.org/videolan/dav1d.git
     cd dav1d
@@ -510,6 +522,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("openh264",
 "OpenH264 is a codec library which supports H.264 encoding and decoding.",
+"0",
 """
     git clone -b v2.6.0 https://github.com/cisco/openh264.git
     cd openh264
@@ -576,6 +589,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("libavif",
 "This library aims to be a friendly, portable C implementation of the AV1 Image File Format",
+"0",
 """
     git clone -b v1.3.0 https://github.com/AOMediaCodec/libavif.git
     cd libavif
@@ -612,6 +626,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("libde265",
 "libde265 is an open source implementation of the h.265 video codec. ",
+"0",
 """
     git clone -b v1.0.16 https://github.com/strukturag/libde265.git
     cd libde265
@@ -651,6 +666,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("libwebp",
 "WebP codec is a library to encode and decode images in WebP format. ",
+"0",
 """
     git clone -b v1.5.0 https://github.com/webmproject/libwebp.git
     cd libwebp
@@ -696,6 +712,7 @@ mac:
 installCommands.append(
     LibraryInstallationInformation("openal-soft",
 "OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API",
+"0",
 """
     git clone https://github.com/telegramdesktop/openal-soft.git
     cd openal-soft
@@ -732,6 +749,7 @@ if 'build-stackwalk' in options:
     installCommands.append(
         LibraryInstallationInformation("stackwalk",
     "",
+    "0",
     """
     mac:
         git clone https://chromium.googlesource.com/breakpad/breakpad stackwalk
@@ -754,6 +772,7 @@ if 'build-stackwalk' in options:
 installCommands.append(
     LibraryInstallationInformation("protobuf",
 "The C++ Protocol Buffers (Protobuf) library is a core component of Google's data serialization mechanism",
+"0",
 """
 win:
     git clone --recursive -b v21.9 https://github.com/protocolbuffers/protobuf
@@ -780,6 +799,7 @@ win:
 installCommands.append(
     LibraryInstallationInformation("opus",
 "Opus is a totally open, royalty-free, highly versatile audio codec. ",
+"0",
 """
     git clone -b v1.5.2 https://github.com/xiph/opus.git
     cd opus
@@ -812,6 +832,7 @@ as well as cross-platform applications that run on various software and hardware
 Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
 being a native application with native capabilities and speed.
 """,
+"0",
 """
     git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
     cd qt_$QT
@@ -915,6 +936,7 @@ else: # qt > '6'
     Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
     being a native application with native capabilities and speed.
 """,
+"0",
 """
     git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_$QT
     cd qt_$QT
@@ -1016,3 +1038,15 @@ win:
 )
 )
     
+installCommands.append(
+    LibraryInstallationInformation(
+"patches",
+"",
+"0",
+"""
+    git clone https://github.com/desktop-app/patches.git
+    cd patches
+    git checkout b88d491492
+"""
+)
+)

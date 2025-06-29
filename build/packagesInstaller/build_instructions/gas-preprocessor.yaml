@@ -1,16 +1,17 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": "Perl script that implements a subset of the GNU as preprocessor\
-  \ that Apple's as doesn't "
-"libraryName": |-
-  gas-preprocessor
-"libraryVersion": |2
+"installCommands": |2
 
   win:
       git clone https://github.com/FFmpeg/gas-preprocessor
       cd gas-preprocessor
       echo @echo off > cpp.bat
       echo cl %%%%%%** >> cpp.bat
+"libraryInformation": "Perl script that implements a subset of the GNU as preprocessor\
+  \ that Apple's as doesn't "
+"libraryName": |-
+  gas-preprocessor
+"libraryVersion": |-
+  0
 "location": ""

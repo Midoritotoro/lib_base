@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API
-"libraryName": |-
-  openal-soft
-"libraryVersion": |2
+"installCommands": |2
 
       git clone https://github.com/telegramdesktop/openal-soft.git
       cd openal-soft
@@ -35,4 +30,10 @@
           -D CMAKE_OSX_ARCHITECTURES="x86_64;arm64"
       cmake --build build $MAKE_THREADS_CNT
       cmake --install build
+"libraryInformation": |-
+  OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API
+"libraryName": |-
+  openal-soft
+"libraryVersion": |-
+  0
 "location": ""

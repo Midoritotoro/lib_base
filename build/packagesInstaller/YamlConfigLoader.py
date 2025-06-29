@@ -1,6 +1,7 @@
 import yaml 
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
 
+from packagesInstaller.NativeToolsError import executePath
 from typing import Dict 
 
 def represent_str_literal(dumper, data):
@@ -25,9 +26,9 @@ class YamlConfigLoader:
         }
 
     @staticmethod
-    def __LibraryInfoFromDict(data: Dict) -> LibraryInstallationInformation:
+    def __LibraryInfoFromDict(data: dict) -> LibraryInstallationInformation:
         return LibraryInstallationInformation(
-            libraryName=data['libraryName'],
+            libraryName=data.get('libraryName', ""),
             libraryInformation=data.get('libraryInformation', ""),
             libraryVersion=data.get('libraryVersion', ""),
             installCommands=data.get('installCommands', ""),
@@ -45,8 +46,9 @@ class YamlConfigLoader:
         with open(output, 'w') as file:
             yaml.dump(YamlConfigLoader.__LibraryInfoToDict(libraryInformation), file, default_flow_style=False, default_style="|")
 
-    @classmethod
+    @staticmethod
     def ExtractLibraryInformationFromYaml(libraryName: str) -> LibraryInstallationInformation:
-        with open(f"build_instructions/{libraryName}.yaml", 'r') as yaml_file:
+        with open(f"{executePath}\\packagesInstaller\\build_instructions\\{libraryName}.yaml", 'r') as yaml_file:
             data: Dict = yaml.safe_load(yaml_file)
+            print(data.get('installCommands', ""))
             return YamlConfigLoader.__LibraryInfoFromDict(data)

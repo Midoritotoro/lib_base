@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.
-"libraryName": |-
-  openssl3
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b openssl-3.2.1 https://github.com/openssl/openssl openssl3
       cd openssl3
@@ -52,4 +47,10 @@
       mv libcrypto.a out.x86_64
       lipo -create out.arm64/libcrypto.a out.x86_64/libcrypto.a -output libcrypto.a
       lipo -create out.arm64/libssl.a out.x86_64/libssl.a -output libssl.a
+"libraryInformation": |-
+  OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.
+"libraryName": |-
+  openssl3
+"libraryVersion": |-
+  0
 "location": ""

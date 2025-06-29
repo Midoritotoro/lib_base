@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": "libde265 is an open source implementation of the h.265 video\
-  \ codec. "
-"libraryName": |-
-  libde265
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b v1.0.16 https://github.com/strukturag/libde265.git
       cd libde265
@@ -39,4 +34,10 @@
           -D ENABLE_ENCODER=OFF
       cmake --build . --config MinSizeRel $MAKE_THREADS_CNT
       cmake --install . --config MinSizeRel
+"libraryInformation": "libde265 is an open source implementation of the h.265 video\
+  \ codec. "
+"libraryName": |-
+  libde265
+"libraryVersion": |-
+  0
 "location": ""

@@ -1,12 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": ""
-"libraryInformation": |-
-  dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.
-"libraryName": |-
-  dav1d
-"libraryVersion": |2
+"installCommands": |2
 
       git clone -b 1.5.1 https://code.videolan.org/videolan/dav1d.git
       cd dav1d
@@ -73,4 +68,10 @@
       buildOneArch x86_64 build
 
       lipo -create build.arm64/libdav1d.a build/libdav1d.a -output ${USED_PREFIX}/lib/libdav1d.a
+"libraryInformation": |-
+  dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.
+"libraryName": |-
+  dav1d
+"libraryVersion": |-
+  0
 "location": ""

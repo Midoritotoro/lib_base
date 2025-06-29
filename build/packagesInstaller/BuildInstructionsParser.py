@@ -8,7 +8,7 @@ import re
 
 class BuildInstructionsParser:
     @staticmethod
-    def FilterInstallationCommandsByPlatform(commands: str) -> List[str, List[str], str]:
+    def FilterInstallationCommandsByPlatform(commands: str) -> list:
         commands: List[str] = commands.split('\n')
 
         result: str = ''

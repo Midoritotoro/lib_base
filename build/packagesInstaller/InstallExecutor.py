@@ -54,10 +54,10 @@ class InstallExecutor:
 
         print(prefix + ': ', end = '', flush=True)
 
-        self.__installationInformation.setCacheKey(CacheManager.ComputeCacheKey(self))
+        self.__installationInformation.setCacheKey = CacheManager.ComputeCacheKey(self.__installationInformation)
         commands = removeDir(self.__installationInformation.libraryName) + '\n' + self.__installationInformation.installationCommands
 
-        checkResult = CacheManager.CheckCacheKey(self)
+        checkResult = CacheManager.CheckCacheKey(self.__installationInformation)
 
         if checkResult == CacheManager.CacheKeyState.Good:
             print('SKIPPING')
@@ -107,7 +107,7 @@ class InstallExecutor:
             print('SKIPPING')
             return
 
-        CacheManager.ClearCacheKey(self)
+        CacheManager.ClearCacheKey(self.__installationInformation)
         print('BUILDING:')
 
         os.chdir(self.__installationInformation.directory)
@@ -116,7 +116,7 @@ class InstallExecutor:
             print(prefix + ': FAILED')
             finish(1)
 
-        CacheManager.WriteCacheKey(self) 
+        CacheManager.WriteCacheKey(self.__installationInformation) 
 
     def runCommands(self: 'InstallExecutor') -> None | bool:
         self.printInstallationCommands()
