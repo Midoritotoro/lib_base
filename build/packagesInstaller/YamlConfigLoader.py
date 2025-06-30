@@ -57,5 +57,4 @@ class YamlConfigLoader:
     def ExtractLibraryInformationFromYaml(libraryName: str) -> LibraryInstallationInformation:
         with open(f"{executePath}\\packagesInstaller\\build_instructions\\{libraryName}.yaml", 'r') as yaml_file:
             data: Dict = yaml.safe_load(yaml_file)
-            print(data.get('installCommands', ""))
             return YamlConfigLoader.__LibraryInfoFromDict(data)

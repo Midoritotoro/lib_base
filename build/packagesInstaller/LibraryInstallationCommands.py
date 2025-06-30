@@ -1065,7 +1065,7 @@ installCommands.append(
 
         powershell -Command "iwr -OutFile ./setup-x86_64.exe https://cygwin.com/setup-x86_64.exe"
 
-        start /wait setup-x86_64.exe qnNdO -R %ROOT_DIR%\ThirdParty\cygwin -s http://mirrors.tencent.com \
+        start /wait setup-x86_64.exe qnNdO -R %ROOT_DIR%\ThirdParty\cygwin -s http://cygwin.mirror.constant.com \
             -l %ROOT_DIR%\ThirdParty\cygwin\var\cache\setup -P mingw64-i686-gcc-g++ -P mingw64-x86_64-gcc-g++ \
             -P gcc-g++ -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel \
             -P intltool -P libiconv -P pkg-config -P wget -P curl 
@@ -1078,4 +1078,33 @@ installCommands.append(
         SET PATH=%PATH_BACKUP_%
 """
 )
+)
+
+installCommands.append(
+    LibraryInstallationInformation(
+"zlib",
+"",
+"0",
+"""
+    git clone -b v1.3.1 https://github.com/madler/zlib.git
+    cd zlib
+win:
+    cmake . ^
+        -A %WIN32X64% ^
+        -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>" ^
+        -DCMAKE_POLICY_DEFAULT_CMP0091=NEW ^
+        -DCMAKE_C_FLAGS="/DZLIB_WINAPI" ^
+        -DZLIB_BUILD_EXAMPLES=OFF
+    cmake --build . --config Debug --parallel
+release:
+    cmake --build . --config Release --parallel
+mac:
+    CFLAGS="$MIN_VER $UNGUARDED" LDFLAGS="$MIN_VER" ./configure \\
+        --static \\
+        --prefix=$USED_PREFIX \\
+        --archs="-arch x86_64 -arch arm64"
+    make $MAKE_THREADS_CNT
+    make install
+"""
+    )
 )
