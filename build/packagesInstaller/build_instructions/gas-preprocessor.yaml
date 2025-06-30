@@ -1,8 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
+"installCommands": |-
   win:
       git clone https://github.com/FFmpeg/gas-preprocessor
       cd gas-preprocessor

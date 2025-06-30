@@ -1,5 +1,3 @@
-# This is the link to download Python 3.6.7 from Python.org
-# See https://www.python.org/downloads/
 $pythonUrl = "https://www.python.org/ftp/python/3.13.0/python-3.13.0.exe"
 
 # This is the directory that the exe is downloaded to
@@ -14,7 +12,6 @@ New-Item -ItemType directory -Path $tempDirectory -Force | Out-Null
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 (New-Object System.Net.WebClient).DownloadFile($pythonUrl, $pythonNameLoc)
 
-# These are the silent arguments for the install of Python
 # See https://docs.python.org/3/using/windows.html
 $Arguments = @()
 $Arguments += "/i"

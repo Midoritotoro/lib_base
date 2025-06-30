@@ -1,9 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
-      git clone https://github.com/telegramdesktop/openal-soft.git
+"installCommands": |-
+  git clone https://github.com/telegramdesktop/openal-soft.git
       cd openal-soft
   win:
       git checkout 291c0fdbbd

@@ -1,9 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
-      git clone -b v1.5.2 https://github.com/xiph/opus.git
+"installCommands": |-
+  git clone -b v1.5.2 https://github.com/xiph/opus.git
       cd opus
   win:
       cmake -B out . ^

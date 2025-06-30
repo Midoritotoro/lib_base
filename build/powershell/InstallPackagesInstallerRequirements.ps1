@@ -1,30 +1,26 @@
-# Папка, где лежит скрипт
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Путь к папке build (поднимаемся на 2 уровня вверх)
+# Path to build folder
 $buildDir = (Get-Item $scriptDir).Parent.Parent.FullName
 
-# Путь к папке packagesInstaller
+# Path to packagesInstaller folder
 $packagesInstallerDir = Join-Path $buildDir "\build\packagesInstaller\"
 
-# Пути к виртуальному окружению и скрипту активации
+# Paths to virtual environment and activation script
 $venvPath = Join-Path $packagesInstallerDir "venv"
-$activateScript = Join-Path $venvPath "\Scripts\Activate.ps1"
-
-# Путь к Python
-$pythonPath = "C:\Python313\python.exe"
+$activateScript = Join-Path $venvPath "\Scripts\Activate.bat"
 
 Function Create-PythonVenv {
     Write-Host "Creating Python venv at $venvPath..."
-    & $pythonPath -m venv $venvPath
+    python -m venv $venvPath
     Write-Host "Activating Python venv..."
     & $activateScript
 }
 
 Function Python-InstallRequirements {
-    # $requirementsPath = Join-Path $packagesInstallerDir "requirements.txt"
-    # Write-Host "Installing requirements from $requirementsPath..."
-    # & $pythonPath -m pip install -r $requirementsPath
+    $requirementsPath = Join-Path $buildDir "build\requirements.txt"
+    Write-Host "Installing requirements from $requirementsPath..."
+    python -m pip install -r $requirementsPath
 }
 
 Create-PythonVenv

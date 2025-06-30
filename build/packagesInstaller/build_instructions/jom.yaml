@@ -1,8 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
+"installCommands": |-
   win:
       powershell -Command "iwr -OutFile ./jom.zip https://master.qt.io/official_releases/jom/jom_1_1_3.zip"
       powershell -Command "Expand-Archive ./jom.zip"

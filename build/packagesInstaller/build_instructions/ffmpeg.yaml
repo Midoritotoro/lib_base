@@ -1,9 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
-      git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
+"installCommands": |-
+  git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
       cd ffmpeg
   win:
   depends:patches/ffmpeg.patch
@@ -65,9 +64,8 @@
       lipo -create out.arm64/libavutil.a out.x86_64/libavutil.a -output libavutil/libavutil.a
 
       make install
-"libraryInformation": |2
-
-      FFmpeg is the leading multimedia framework, able to decode, encode, transcode, mux,
+"libraryInformation": |-
+  FFmpeg is the leading multimedia framework, able to decode, encode, transcode, mux,
       demux, stream, filter and play pretty much anything that humans and machines have created
 "libraryName": |-
   ffmpeg

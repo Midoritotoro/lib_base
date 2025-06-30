@@ -1,9 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
-      git clone https://github.com/desktop-app/patches.git
+"installCommands": |-
+  git clone https://github.com/desktop-app/patches.git
       cd patches
       git checkout b88d491492
 "libraryInformation": ""

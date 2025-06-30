@@ -1,9 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
-      git clone -b v2.6.0 https://github.com/cisco/openh264.git
+"installCommands": |-
+  git clone -b v2.6.0 https://github.com/cisco/openh264.git
       cd openh264
   win32:
       SET "TARGET=x86"

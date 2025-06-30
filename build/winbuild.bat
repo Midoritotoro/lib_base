@@ -51,13 +51,6 @@ echo ParentDirectory=%ParentDirectory%
 :tryToInstallPython
     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
    
-  :: where python >nul 2>&1
-
-  ::   if errorlevel 0 (
-  ::      echo Python installation successful.
-  ::      goto startPackagesInstallation
-  :: ) 
-
     if exist "%PYTHON_INSTALL_PATH%" (
         echo Python installation successful.
         goto startPackagesInstallation

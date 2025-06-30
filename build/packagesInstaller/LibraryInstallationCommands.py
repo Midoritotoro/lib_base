@@ -11,8 +11,10 @@ from packagesInstaller.InstallOptionsCheck import options
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
     "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
-    "stackwalk", "protobuf", "opus", "patches"
+    "stackwalk", "protobuf", "opus", "patches", "cygwin"
 ]
+# TODO 
+# libpng, libjpegturbo
 
 installCommands: List[LibraryInstallationInformation] =  []
 
@@ -1047,6 +1049,33 @@ installCommands.append(
     git clone https://github.com/desktop-app/patches.git
     cd patches
     git checkout b88d491492
+"""
+)
+)
+
+installCommands.append(
+    LibraryInstallationInformation(
+"cygwin",
+"",
+"0",
+"""
+    win:
+        SET PATH_BACKUP_=%PATH%
+        SET PATH=%ROOT_DIR%\ThirdParty\cygwin\bin;%PATH%
+
+        powershell -Command "iwr -OutFile ./setup-x86_64.exe https://cygwin.com/setup-x86_64.exe"
+
+        start /wait setup-x86_64.exe qnNdO -R %ROOT_DIR%\ThirdParty\cygwin -s http://mirrors.tencent.com \
+            -l %ROOT_DIR%\ThirdParty\cygwin\var\cache\setup -P mingw64-i686-gcc-g++ -P mingw64-x86_64-gcc-g++ \
+            -P gcc-g++ -P autoconf -P automake -P bison -P libtool -P make -P python -P gettext-devel \
+            -P intltool -P libiconv -P pkg-config -P wget -P curl 
+
+        del setup-x86_64.exe
+
+        %ROOT_DIR%\ThirdParty\cygwin\bin\bash -lc true
+        compact /c /i /s:%ROOT_DIR%\ThirdParty\cygwin | Out-Null
+        
+        SET PATH=%PATH_BACKUP_%
 """
 )
 )

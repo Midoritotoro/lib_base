@@ -1,8 +1,7 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |2
-
+"installCommands": |-
   win:
       SET PATH_BACKUP_=%PATH%
       SET PATH=%ROOT_DIR%\ThirdParty\msys64\usr\bin;%PATH%
