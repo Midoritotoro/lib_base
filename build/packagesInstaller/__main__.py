@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
         parser.add_argument("--libraries", type=lambda s: s.split(','), default="all", help="Libraries to install. Default - all")
         parser.add_argument("--supported_libraries", action='store_true', help="Libraries supported for installation. ")
-        parser.add_argument("--silent", default=True, help="Installation without information output, only error logs. ")
+        parser.add_argument("--silent", action='store_true', help="Installation without information output, only error logs. ")
         parser.add_argument("--location", type=str, default="Libraries", help="Path to the folder where the libraries will be installed. ")
         
         args = parser.parse_args()
@@ -21,19 +21,16 @@ if __name__ == "__main__":
 
         libraries : list[str] = [lib.strip() for lib in args.libraries]
         
-        manager: InstallationManager = InstallationManager()
+        if args.libraries == "all":
+            libraries = supportedLibraries
+
+        manager: InstallationManager = InstallationManager(silentInstallation=args.silent)
         for library in libraries:
             manager.addInstallation(name=library, location=args.location)
 
         manager.executeAll() 
-
-        # manager: InstallationManager = InstallationManager()
-        # manager.addInstallation("patches")
-        # manager.addInstallation("msys64")
-        # manager.addInstallation("gas-preprocessor")
-        # manager.addInstallation("ffmpeg")
-        # manager.executeAll()
-        for command in installCommands:
-            YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
+        
+        # for command in installCommands:
+            # YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
 
     main()

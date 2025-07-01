@@ -11,7 +11,7 @@ from packagesInstaller.InstallOptionsCheck import options
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
     "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
-    "stackwalk", "protobuf", "opus", "patches", "cygwin"
+    "stackwalk", "protobuf", "opus", "patches", "cygwin", "benchmark"
 ]
 # TODO 
 # libpng, libjpegturbo
@@ -1105,6 +1105,27 @@ mac:
         --archs="-arch x86_64 -arch arm64"
     make $MAKE_THREADS_CNT
     make install
+"""
+    )
+)
+
+installCommands.append(
+    LibraryInstallationInformation(
+"benchmark",
+"",
+"0",
+"""
+    git clone https://github.com/google/benchmark.git
+    cd benchmark
+
+    cmake -E make_directory "build"
+
+    cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+    cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release -S . -B "build"
+
+    cmake --build . --config Debug --parallel
+release:
+    cmake --build . --config Release --parallel
 """
     )
 )

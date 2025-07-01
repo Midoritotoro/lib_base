@@ -11,7 +11,7 @@ endif()
 
 enable_testing()
 
-include("D:/lib_base/lib_base/cmake/Util_FindFFmpeg.cmake")
+include("D:/lib_base/cmake/Util_FindFFmpeg.cmake")
 set(Qt6_DIR "D:/Packages/Qt/6.7.0/msvc2019_64/lib/cmake/Qt6")
 
 macro(baseTests_add_test filename)

@@ -16,8 +16,12 @@ from packagesInstaller.LibraryInstallationCommands import isLibrarySupported
 import subprocess
 
 class InstallationManager: 
-    def __init__(self: 'InstallationManager') -> None:
+    def __init__(
+        self                :   'InstallationManager',
+        silentInstallation  :   bool = False
+    ) -> None:
         self.__executorsQueue: Deque[InstallExecutor] = []
+        self.__silentInstallation: bool = silentInstallation
 
     def addInstallation(
         self:       'InstallationManager',
@@ -40,11 +44,12 @@ class InstallationManager:
         if len(commands) > 0:
             self.__executorsQueue.append(
                 InstallExecutor(
-                    LibraryInstallationInformation(
+                    installationInformation=LibraryInstallationInformation(
                         libraryName=name, libraryInformation=libraryInstallationInformation.libraryInformation, libraryVersion=version, 
                         installCommands=commands, location=location,
                         directory=directory, dependencies=dependencies
-                    )
+                    ),
+                    silentInstallation=self.__silentInstallation
                 )
             )
 

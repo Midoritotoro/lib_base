@@ -20,10 +20,12 @@ import os
 class InstallExecutor: 
     def __init__(
         self:                       'InstallExecutor',
-        installationInformation:    LibraryInstallationInformation
+        installationInformation:    LibraryInstallationInformation,
+        silentInstallation:         bool = False
     ) -> None:
         self.__installationInformation: LibraryInstallationInformation = None
         self.__isLibrarySupported:      bool = False
+        self.__silentInstallation:      bool = silentInstallation
 
         self.__initializeFromInformation(information=installationInformation)
         
@@ -81,7 +83,8 @@ class InstallExecutor:
                         finish(0)
 
                     elif ch == 'p':
-                        self.printInstallationCommands(commands)
+                        if not self.__silentInstallation:
+                            self.printInstallationCommands(commands)
                         checkResult = 'Printed'
 
                         break
@@ -119,7 +122,8 @@ class InstallExecutor:
         CacheManager.WriteCacheKey(self.__installationInformation) 
 
     def runCommands(self: 'InstallExecutor') -> None | bool:
-        self.printInstallationCommands()
+        if not self.__silentInstallation:
+            self.printInstallationCommands()
 
         if win:
             if os.path.exists("command.bat"):
@@ -127,7 +131,16 @@ class InstallExecutor:
 
             with open("command.bat", 'w') as file:
                 file.write('@echo OFF\r\n' + BuildInstructionsParser.winFailOnEach(self.__installationInformation.installationCommands))
-            result = subprocess.run("command.bat", shell=True, env=environmentConfiguration.modifiedEnvironment).returncode == 0
+
+            result : bool = False
+
+            if self.__silentInstallation:
+                result = subprocess.run("command.bat", shell=True,
+                    stdout=subprocess.PIPE,
+                    env=environmentConfiguration.modifiedEnvironment).returncode == 0
+            else:
+                result = subprocess.run("command.bat", shell=True,
+                    env=environmentConfiguration.modifiedEnvironment).returncode == 0
 
             if result and os.path.exists("command.bat"):
                 os.remove("command.bat")
