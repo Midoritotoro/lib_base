@@ -5,7 +5,7 @@
   git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
       cd ffmpeg
   win:
-  depends:patches/ffmpeg.patch
+    depends:patches/ffmpeg.patch
       git apply ../patches/ffmpeg.patch
 
       SET PATH_BACKUP_=%PATH%

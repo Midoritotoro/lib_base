@@ -1,0 +1,12 @@
+"cacheKey": ""
+"dependencies": []
+"directory": ""
+"installCommands": |-
+  win:
+      git clone -b n12.1.14.0 https://github.com/FFmpeg/nv-codec-headers.git
+"libraryInformation": ""
+"libraryName": |-
+  nv-codec-headers
+"libraryVersion": |-
+  0
+"location": ""

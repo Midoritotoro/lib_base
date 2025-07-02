@@ -11,8 +11,9 @@ from packagesInstaller.InstallOptionsCheck import options
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
     "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
-    "stackwalk", "protobuf", "opus", "patches", "cygwin", "benchmark"
+    "stackwalk", "protobuf", "opus", "patches", "cygwin", "benchmark", 'nv-codec-headers'
 ]
+
 # TODO 
 # libpng, libjpegturbo
 
@@ -20,6 +21,18 @@ installCommands: List[LibraryInstallationInformation] =  []
 
 def isLibrarySupported(libraryName: str) -> bool:
     return (libraryName in supportedLibraries)
+
+installCommands.append(
+    LibraryInstallationInformation(
+"nv-codec-headers",
+"",
+"0",
+"""
+win:
+    git clone -b n12.1.14.0 https://github.com/FFmpeg/nv-codec-headers.git
+"""
+    )
+)
 
 installCommands.append(
     LibraryInstallationInformation("ffmpeg", 
@@ -221,7 +234,7 @@ installCommands.append(
 "0",
 """
 win:
-    powershell -Command "iwr -OutFile ./jom.zip https://master.qt.io/official_releases/jom/jom_1_1_3.zip"
+    powershell -Command "iwr -OutFile ./jom.zip https://mirrors.tuna.tsinghua.edu.cn/qt/official_releases/jom/jom_1_1_3.zip"
     powershell -Command "Expand-Archive ./jom.zip"
     del jom.zip
 """
@@ -825,6 +838,8 @@ mac:
 )
 
 qt = os.environ.get('QT')
+supportedLibraries.remove("qt")
+supportedLibraries.append('qt_' + qt)
 
 if qt < '6':
     installCommands.append(LibraryInstallationInformation('qt_' + qt, 

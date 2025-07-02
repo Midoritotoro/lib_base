@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
         libraries : list[str] = [lib.strip() for lib in args.libraries]
         
-        if args.libraries == "all":
+        if args.libraries[0] == "all":
             libraries = supportedLibraries
 
         manager: InstallationManager = InstallationManager(silentInstallation=args.silent)
@@ -29,7 +29,7 @@ if __name__ == "__main__":
             manager.addInstallation(name=library, location=args.location)
 
         manager.executeAll() 
-        
+
         # for command in installCommands:
             # YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
 

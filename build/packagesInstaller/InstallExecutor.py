@@ -55,12 +55,14 @@ class InstallExecutor:
         prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.__installationInformation.location + '/' + self.__installationInformation.libraryName + version + ')'
 
         print(prefix + ': ', end = '', flush=True)
-
+        print(self.__installationInformation.libraryName)
+        
         self.__installationInformation.setCacheKey = CacheManager.ComputeCacheKey(self.__installationInformation)
-        commands = removeDir(self.__installationInformation.libraryName) + '\n' + self.__installationInformation.installationCommands
-
+        self.__installationInformation.setInstallationCommands = removeDir(
+            os.path.join(self.__installationInformation.directory, self.__installationInformation.libraryName
+            )) + '\n' + self.__installationInformation.installationCommands
+    
         checkResult = CacheManager.CheckCacheKey(self.__installationInformation)
-
         if checkResult == CacheManager.CacheKeyState.Good:
             print('SKIPPING')
             return
@@ -84,7 +86,7 @@ class InstallExecutor:
 
                     elif ch == 'p':
                         if not self.__silentInstallation:
-                            self.printInstallationCommands(commands)
+                            self.printInstallationCommands(self.__installationInformation.installationCommands)
                         checkResult = 'Printed'
 
                         break
@@ -124,7 +126,8 @@ class InstallExecutor:
     def runCommands(self: 'InstallExecutor') -> None | bool:
         if not self.__silentInstallation:
             self.printInstallationCommands()
-
+            
+            
         if win:
             if os.path.exists("command.bat"):
                 os.remove("command.bat")
