@@ -9,19 +9,20 @@
 #include <src/core/string/traits/StringConverterScalarTraits.h>
 
 #include <base/core/memory/MemoryAllocation.h>
+#include <base/core/arch/CpuFeature.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_ = DefaultReplacementConversionMode>
 class StringConverter {
 public:
+	// Allocates (length * sizeof(_ToChar_)) bytes of memory for conversion from string
 	template <
 		typename _FromChar_,
 		typename _ToChar_,
 		typename = std::enable_if_t<
 			IsCompatibleCharType<_FromChar_>::value &&
 			IsCompatibleCharType<_ToChar_>::value>>
-	// Allocates (length * sizeof(_ToChar_)) bytes of memory for conversion from string
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
 		const _FromChar_* const string,
 		const size_t			length)
@@ -42,13 +43,13 @@ public:
 			string, length, nullptr);
 	}
 
+	// Converts by writing to output->data() (without memory allocation)
 	template <
 		typename _FromChar_,
 		typename _ToChar_,
 		typename = std::enable_if_t<
 			IsCompatibleCharType<_FromChar_>::value &&
 			IsCompatibleCharType<_ToChar_>::value>>
-	// Converts by writing to output->data() (without memory allocation)
 	static void convertStringStore(
 		const _FromChar_* const				string,
 		const size_t						length,
@@ -106,7 +107,7 @@ private:
 
 			_Parameters_ parameters;
 
-			if constexpr (_StringConverterTraits_::template cpuFeature == CpuFeature::None) {
+			if constexpr (_StringConverterTraits_::cpuFeature == CpuFeature::None) {
 				parameters = _Parameters_(string, stringLength, outputString, nullptr, nullptr);
 			}
 			else {

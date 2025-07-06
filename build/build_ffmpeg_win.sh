@@ -1,20 +1,21 @@
+# $1 - path to installation directory
+
 set -e
-FullExecPath=$PWD
+FullInstallationPath=$1
 pushd `dirname $0` > /dev/null
-FullScriptPath=`pwd`
 popd > /dev/null
 
-cd $FullScriptPath/../nv-codec-headers
-make PREFIX="$FullScriptPath/../local" install
-cd $FullScriptPath/../ffmpeg
+cd $FullInstallationPath/nv-codec-headers
+make PREFIX="$FullInstallationPath/local" install
+cd $FullInstallationPath/ffmpeg
 
-export PKG_CONFIG_PATH="$FullExecPath/../local/lib/pkgconfig:$PKG_CONFIG_PATH"
-export PATH="$FullExecPath/../gas-preprocessor:$PATH"
-echo \#\!/bin/sh > $FullExecPath/../gas-preprocessor/cpp
-echo cl \${@:1} >> $FullExecPath/../gas-preprocessor/cpp
-chmod a+x $FullExecPath/../gas-preprocessor/cpp
+export PKG_CONFIG_PATH="$FullInstallationPath/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PATH="$FullInstallationPath/gas-preprocessor:$PATH"
+echo \#\!/bin/sh > $FullInstallationPath/gas-preprocessor/cpp
+echo cl \${@:1} >> $FullInstallationPath/gas-preprocessor/cpp
+chmod a+x $FullInstallationPath/gas-preprocessor/cpp
 
-./configure --prefix=$FullScriptPath/../local $ARCH_PARAM \
+./configure --prefix=$FullScriptPath/local $ARCH_PARAM \
 --toolchain=msvc \
 --extra-cflags="-DCONFIG_SAFE_BITSTREAM_READER=1" \
 --extra-cxxflags="-DCONFIG_SAFE_BITSTREAM_READER=1" \

@@ -10,13 +10,11 @@
 #include <base/core/arch/KeywordSupport.h>
 
 #include <functional>
-#include <gsl/gsl>
+#include <base/core/utility/NotNull.h>
 
 #include <numeric>
 
 __BASE_NAMESPACE_BEGIN
-
-using gsl::not_null;
 
 template <typename Signature>
 using Fn = std::function<Signature>;
@@ -64,17 +62,17 @@ using ptrdiff       = IntegerForSizeof<void*>::Signed;
 using intptr        = ptrdiff;
 using sizetype      = IntegerForSizeof<std::size_t>::Signed;
 
-using byte = uint8;
-using sbyte = int8;
+using byte_t = uint8;
+using sbyte_t = int8;
 
-using word = uint16;
-using sword = int16;
+using word_t = uint16;
+using sword_t = int16;
 
-using dword = ulong32;
-using sdword = long32;
+using dword_t = ulong32;
+using sdword_t = long32;
 
-using qword = uint64;
-using sqword = int64;
+using qword_t = uint64;
+using sqword_t = int64;
 
 #if defined(OS_WIN)
     using bool_t = int;

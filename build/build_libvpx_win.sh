@@ -1,5 +1,7 @@
+# $1 - path to installation directory
+
 set -e
-FullExecPath=$PWD
+FullExecPath=$1
 pushd `dirname $0` > /dev/null
 FullScriptPath=`pwd`
 popd > /dev/null

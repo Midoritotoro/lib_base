@@ -44,7 +44,7 @@
           arch=$1
           folder=`pwd`/$2
 
-          meson setup             --cross-file ../patches/macos_meson_${arch}.txt             --prefix ${USED_PREFIX}             --default-library=static             --buildtype=minsize             ${folder}
+          meson setup             --cross-file LIB_BASE_BUILD_DIRECTORY_PATH/macos_meson_${arch}.txt             --prefix ${USED_PREFIX}             --default-library=static             --buildtype=minsize             ${folder}
           meson compile -C ${folder}
           meson install -C ${folder}
 

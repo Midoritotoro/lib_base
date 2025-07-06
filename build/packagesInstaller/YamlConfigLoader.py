@@ -20,7 +20,7 @@ class YamlConfigLoader:
             'libraryName'       :   libraryInformation.libraryName,
             'libraryInformation':   libraryInformation.libraryInformation,
             'libraryVersion'    :   libraryInformation.libraryVersion,
-            'installCommands'   :   libraryInformation.installationCommands,
+            'installCommands'   :   libraryInformation.installCommands,
             'location'          :   libraryInformation.location,
             'directory'         :   libraryInformation.directory,
             'cacheKey'          :   libraryInformation.cacheKey,

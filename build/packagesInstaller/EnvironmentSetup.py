@@ -10,10 +10,10 @@ class EnvironmentConfiguration:
     def __init__(self: "EnvironmentConfiguration") -> None:
         EnvironmentConfiguration.__checkEnvironment()
 
-        self.__qt: str | None = os.environ.get("QT")
-        self.__environment: Dict[str, str] = self.__initializeEnvironment()
+        self.qt: str | None = os.environ.get("QT")
+        self.environment: Dict[str, str] = self.__initializeEnvironment()
 
-        self.__ignoreInCacheForThirdParty: List[str] = [
+        self.ignoreInCacheForThirdParty: List[str] = [
             "USED_PREFIX",
             "LIBS_DIR",
             "SPECIAL_TARGET",
@@ -21,45 +21,17 @@ class EnvironmentConfiguration:
             "WIN32X64",
         ]
 
-        self.__environmentKeyString:                      str = "".join(f"{key}={value};" 
-            for key, value in self.__environment.items())
-        self.__environmentThirdPartyEnvironmentKeyString: str = "".join(
-            f"{key}={value};" for key, value in self.__environment.items() 
-            if key not in self.__ignoreInCacheForThirdParty
+        self.environmentKeyString:                      str = "".join(f"{key}={value};" 
+            for key, value in self.environment.items())
+        self.environmentThirdPartyEnvironmentKeyString: str = "".join(
+            f"{key}={value};" for key, value in self.environment.items() 
+            if key not in self.ignoreInCacheForThirdParty
         )
         
-        self.__environmentKey               : str       = self.__generateEnvironmentKey()
-        self.__environmentForThirdPartyKey  : str       = self.__generateThirdPartyEnvironmentKey()
+        self.environmentKey               : str       = self.__generateEnvironmentKey()
+        self.environmentForThirdPartyKey  : str       = self.__generateThirdPartyEnvironmentKey()
 
-        self.modifiedEnvironment : Dict[str, str]       = self.__createModifiedEnvironment() 
-
-    @property
-    def qt(self: 'EnvironmentConfiguration') -> str:
-        return self.__qt
-    
-    @property
-    def environment(self: 'EnvironmentConfiguration') -> Dict[str, str]:
-        return self.__environment
-    
-    @property
-    def ignoreInCacheForThirdParty(self: 'EnvironmentConfiguration') -> List[str]:
-        return self.__ignoreInCacheForThirdParty
-    
-    @property
-    def environmentKeyString(self: 'EnvironmentConfiguration') -> str:
-        return self.__environmentKeyString
-    
-    @property
-    def environmentThirdPartyEnvironmentKeyString(self: 'EnvironmentConfiguration') -> str:
-        return self.__environmentThirdPartyEnvironmentKeyString
-    
-    @property
-    def environmentKey(self: 'EnvironmentConfiguration') -> str:
-        return self.__environmentKey
-    
-    @property
-    def environmentForThirdPartyKey(self: 'EnvironmentConfiguration') -> str:
-        return self.__environmentForThirdPartyKey
+        self.modifiedEnvironment : Dict[str, str]     = self.__createModifiedEnvironment() 
 
     def __initializeEnvironment(self: 'EnvironmentConfiguration') -> Dict[str, str]:
         environment: Dict[str, str] = {
@@ -103,18 +75,18 @@ class EnvironmentConfiguration:
 
 
     def __generateEnvironmentKey(self: 'EnvironmentConfiguration') -> str:
-        return hashlib.sha1(self.__environmentKeyString.encode("utf-8")).hexdigest()
+        return hashlib.sha1(self.environmentKeyString.encode("utf-8")).hexdigest()
     
     def __generateThirdPartyEnvironmentKey(self: 'EnvironmentConfiguration') -> str:
-        return hashlib.sha1(self.__environmentKeyString.encode("utf-8")).hexdigest()
+        return hashlib.sha1(self.environmentKeyString.encode("utf-8")).hexdigest()
     
     def __createModifiedEnvironment(self: 'EnvironmentConfiguration') -> Dict[str, str]:
         modifiedEnvironment = os.environ.copy()
 
-        for key, value in self.__environment.items():
+        for key, value in self.environment.items():
             modifiedEnvironment[key] = value
 
-        modifiedEnvironment["PATH"] = self.__environment["PATH_PREFIX"] + modifiedEnvironment["PATH"]
+        modifiedEnvironment["PATH"] = self.environment["PATH_PREFIX"] + modifiedEnvironment["PATH"]
         return modifiedEnvironment
     
     @staticmethod

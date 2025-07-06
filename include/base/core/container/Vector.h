@@ -1754,7 +1754,7 @@ CONSTEXPR_CXX20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::
 	if (_Start == _End)
 		return;
 
-	::base::reverse(_Start, _End);
+	// ::base::reverse(_Start, _End);
 }
 
 template <

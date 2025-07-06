@@ -5,6 +5,8 @@
 #include <base/core/Types.h>
 #include <base/core/BaseExport.h>
 
+#include <type_traits>
+
 #include <base/core/utility/CommonMacros.h>
 #include <base/core/BaseNamespace.h>
 

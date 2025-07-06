@@ -45,7 +45,7 @@ class CacheManager:
             information.location,
             information.libraryName,
             information.libraryVersion,
-            information.installationCommands
+            information.installCommands
         ]
 
         for pattern in information.dependencies:

@@ -2,8 +2,6 @@
 
 #include <cstdio>
 #include <base/core/arch/CompilerDetection.h>
-
-#include <gsl/gsl>
 #include <base/core/system/Time.h>
 
 #include <iostream>

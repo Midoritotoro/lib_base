@@ -84,7 +84,7 @@ public:
     void unregisterCategory(LoggingCategory* category);
 
     void registerEnvironmentOverrideForCategory(const char* categoryName, const char* environment);
-    void setApiRules(const QString& content);
+    void setApiRules(const string::Utf16String& content);
 
     LoggingCategory::CategoryFilter installFilter(LoggingCategory::CategoryFilter filter);
     static LoggingRegistry* instance();
@@ -107,7 +107,7 @@ private:
     std::vector<LoggingRule> ruleSets[NumRuleSets];
     std::map<LoggingCategory*, LogMessageType> categories;
     LoggingCategory::CategoryFilter categoryFilter;
-    std::map<QByteArrayView, const char*> categoryEnvironmentOverrides;
+    std::map<string::StringView, const char*> categoryEnvironmentOverrides; // Byte array view
 };
 
 class LoggingCategoryWithEnvironmentOverride : public LoggingCategory

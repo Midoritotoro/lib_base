@@ -44,7 +44,7 @@ void WindowsNetworkInformation::scanAvailableNetworks() noexcept {
 
 	wlanInterfaceInformation_t* wlanInterfaceInformation = nullptr;
 
-	for (dword i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
+	for (dword_t i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
 		wlanInterfaceInformation = static_cast<wlanInterfaceInformation_t*>(&wlanInterfaceList->InterfaceInfo[i]);
 
 		// do something
@@ -54,7 +54,7 @@ void WindowsNetworkInformation::scanAvailableNetworks() noexcept {
 }
 
 void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkParameters) noexcept {
-	dword currentWlanApiVersion = 0;
+	dword_t currentWlanApiVersion = 0;
 
 	HANDLE wlanTempHandle = nullptr;
 	const auto isOpened = WlanOpenHandle(
@@ -142,7 +142,7 @@ void WindowsNetworkInformation::enumerateNetworks(NetworksList& outputNetworkPar
 }
 
 bool_t WindowsNetworkInformation::wlanOpen(io::WindowsSmartHandle* pHandle) noexcept {
-	dword currentWlanApiVersion = 0;
+	dword_t currentWlanApiVersion = 0;
 
 	handle_t wlanTempHandle = nullptr;
 	const auto openCode = WlanOpenHandle(BASE_WLAN_API_VERSION, nullptr, &currentWlanApiVersion, &wlanTempHandle);
@@ -165,7 +165,7 @@ bool_t WindowsNetworkInformation::wlanEnumInterfaces(handle_t handle) noexcept {
 
 	wlanInterfaceInformation_t* wlanInterfaceInformation = nullptr;
 
-	for (dword i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
+	for (dword_t i = 0; i < wlanInterfaceList->dwNumberOfItems; ++i) {
 		wlanInterfaceInformation = static_cast<wlanInterfaceInformation_t*>(&wlanInterfaceList->InterfaceInfo[i]);
 
 		// do something
@@ -173,7 +173,7 @@ bool_t WindowsNetworkInformation::wlanEnumInterfaces(handle_t handle) noexcept {
 	}
 }
 
-dword WindowsNetworkInformation::WlanCloseHandleWrap(handle_t handle) noexcept {
+dword_t WindowsNetworkInformation::WlanCloseHandleWrap(handle_t handle) noexcept {
 	return WlanCloseHandle(handle, nullptr);
 }
 

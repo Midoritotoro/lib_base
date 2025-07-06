@@ -1,9 +1,17 @@
 ﻿cmake_minimum_required (VERSION 3.29 FATAL_ERROR)
 
+set(LIB_BASE_ASM_LANGUAGE "")
+
+if (WIN32)
+    set(LIB_BASE_ASM_LANGUAGE "ASM_MASM")
+else() 
+    set(LIB_BASE_ASM_LANGUAGE "")
+endif()
+
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
-    LANGUAGES C CXX ASM_MASM)
+    LANGUAGES C CXX ${LIB_BASE_ASM_LANGUAGE})
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
@@ -20,7 +28,7 @@ endif()
 
 set(libs_loc "D:/Libraries/win64")
 
-option(LIB_BASE_BUILD_TESTS "" ON)
+option(LIB_BASE_BUILD_TESTS "" OFF)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
@@ -53,10 +61,14 @@ set(LIB_BASE_ENABLE_IMAGES OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)  
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
-enable_language(C CXX ASM_MASM)
+if (WIN32)
+    enable_language(C CXX ASM_MASM)
+    include(cmake/MasmBuildHelpers.cmake)
+    BaseBuildMasmFiles()
+else() 
+    enable_language(C CXX)
+endif() 
 
-include(cmake/MasmBuildHelpers.cmake)
-BaseBuildMasmFiles()
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -70,7 +82,7 @@ set(PRIVATE_SOURCES
 
     src/core/async/WinapiAsync.cpp
     src/core/async/WinapiList.cpp
-
+    
     src/core/async/WinapiSemaphore.cpp
 
     src/core/system/SystemInfo.cpp
@@ -341,10 +353,14 @@ set(PRIVATE_HEADERS
       src/core/logging/LoggingRegistry.h
 
       src/core/network/NetworkTypes.h
+
+      src/core/utility/IsComparableToNullptr.h
 )
 
 set(PUBLIC_HEADERS 
     include/base/core/utility/Assert.h
+    include/base/core/utility/NotNull.h
+
     include/base/core/BaseNamespace.h
 
     include/base/core/arch/CpuFeature.h
@@ -579,7 +595,7 @@ set_target_properties(
     EXPORT_NAME lib_base
     OUTPUT_NAME lib_base
 
-    LANGUAGE ASM_MASM C CXX
+    LANGUAGE ${LIB_BASE_ASM_LANGUAGE} C CXX
 )
 
 target_compile_features(lib_base PUBLIC cxx_std_23)
@@ -600,10 +616,10 @@ if(LIB_BASE_ENABLE_QT)
     add_library(lib_base::lib_baseQt ALIAS lib_baseQt)
 endif()
 
-if(LIB_BASE_ENABLE_OPENGL)
-    find_gl(lib_base)
+# if(LIB_BASE_ENABLE_OPENGL)
+    # find_gl(lib_base)
     # add_subdirectory(src/gl)
-endif()
+# endif()
 
 #if(LIB_BASE_ENABLE_ZLIB)
     #find_zlib(lib_base)

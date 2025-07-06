@@ -50,7 +50,7 @@
           folder=`pwd`/$2
 
           meson setup \
-              --cross-file ../patches/macos_meson_${arch}.txt \
+              --cross-file LIB_BASE_BUILD_DIRECTORY_PATH/macos_meson_${arch}.txt \
               --prefix ${USED_PREFIX} \
               --default-library=static \
               --buildtype=minsize \

@@ -1,17 +1,18 @@
 from typing import List
 
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
-# from packagesInstaller.SystemDetection import mac
+from packagesInstaller.SystemDetection import win
 
 import os
 from packagesInstaller.SetupPaths import removeDir
 
+from .Dependency import Dependency
 from packagesInstaller.InstallOptionsCheck import options
 
 supportedLibraries: List[str] = [
     "ffmpeg", "qt", "jom", "msys64", "zlib", "gyp", "yasm", "lzma", "xz", "mozjpeg", "openssl3",
     "gas-preprocessor", "dav1d", "openh264", "libavif", "libde265", "libwebp", "openal-soft",
-    "stackwalk", "protobuf", "opus", "patches", "cygwin", "benchmark", 'nv-codec-headers'
+    "stackwalk", "protobuf", "opus", "cygwin", "benchmark", 'nv-codec-headers', "libvpx"
 ]
 
 # TODO 
@@ -24,10 +25,10 @@ def isLibrarySupported(libraryName: str) -> bool:
 
 installCommands.append(
     LibraryInstallationInformation(
-"nv-codec-headers",
-"",
-"0",
-"""
+libraryName="nv-codec-headers",
+libraryInformation="",
+libraryVersion="0",
+installCommands="""
 win:
     git clone -b n12.1.14.0 https://github.com/FFmpeg/nv-codec-headers.git
 """
@@ -35,19 +36,17 @@ win:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("ffmpeg", 
-"""
+    LibraryInstallationInformation(
+libraryName="ffmpeg", 
+libraryInformation="""
     FFmpeg is the leading multimedia framework, able to decode, encode, transcode, mux,
     demux, stream, filter and play pretty much anything that humans and machines have created
 """,
-"0",
-"""
+libraryVersion="0",
+installCommands="""
     git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
     cd ffmpeg
 win:
-depends:patches/ffmpeg.patch
-    git apply ../patches/ffmpeg.patch
-
     SET PATH_BACKUP_=%PATH%
     SET PATH=%ROOT_DIR%\\ThirdParty\\msys64\\usr\\bin;%PATH%
 
@@ -58,14 +57,12 @@ depends:patches/ffmpeg.patch
 winarm:
     SET "ARCH_PARAM=--arch=aarch64"
 win:
-depends:patches/build_ffmpeg_win.sh
-    bash --login ../patches/build_ffmpeg_win.sh
+depends:LIB_BASE_BUILD_DIRECTORY_PATH/build_ffmpeg_win.sh
+    bash --login LIB_BASE_BUILD_DIRECTORY_PATH/build_ffmpeg_win.sh LIB_BASE_INSTALLATION_DIRECTORY
 
     SET PATH=%PATH_BACKUP_%
 mac:
     export PKG_CONFIG_PATH=$USED_PREFIX/lib/pkgconfig
-depends:yasm/yasm
-
     configureFFmpeg() {
         arch=$1
 
@@ -224,15 +221,25 @@ depends:yasm/yasm
     lipo -create out.arm64/libavutil.a out.x86_64/libavutil.a -output libavutil/libavutil.a
 
     make install
-"""
+""",
+location="",
+directory="",
+cacheKey="",
+dependencies=[
+    Dependency("win", "msys64"),
+    Dependency("win", "nv-codec-headers"),
+    Dependency("win", "gas-preprocessor"),
+    Dependency("mac", "yasm")],
+additionalDependencies=["dav1d", "libvpx", "opus", "openh264"]
 )
 )
 
 installCommands.append(
-    LibraryInstallationInformation("jom", 
-"jom is a clone of nmake to support the execution of multiple independent commands in parallel.", 
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="jom", 
+libraryInformation="jom is a clone of nmake to support the execution of multiple independent commands in parallel.", 
+libraryVersion="0",
+installCommands="""
 win:
     powershell -Command "iwr -OutFile ./jom.zip https://mirrors.tuna.tsinghua.edu.cn/qt/official_releases/jom/jom_1_1_3.zip"
     powershell -Command "Expand-Archive ./jom.zip"
@@ -242,10 +249,11 @@ win:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("msys64", 
-"MSYS2 is a collection of tools and libraries providing you with an easy-to-use environment for building, installing and running native Windows software.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="msys64", 
+libraryInformation="MSYS2 is a collection of tools and libraries providing you with an easy-to-use environment for building, installing and running native Windows software.",
+libraryVersion="0",
+installCommands="""
 win:
     SET PATH_BACKUP_=%PATH%
     SET PATH=%ROOT_DIR%\\ThirdParty\\msys64\\usr\\bin;%PATH%
@@ -274,10 +282,11 @@ win:
 
 
 installCommands.append(
-    LibraryInstallationInformation("yasm", 
-"Yasm is an assembler that is an attempt to completely rewrite the NASM assembler. It is licensed under the BSD license.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="yasm", 
+libraryInformation="Yasm is an assembler that is an attempt to completely rewrite the NASM assembler. It is licensed under the BSD license.",
+libraryVersion="0",
+installCommands="""
 mac:
     git clone https://github.com/yasm/yasm.git
     cd yasm
@@ -289,10 +298,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("lzma", 
-"lzma is a general-purpose data compression library with a zlib-like API.", 
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="lzma", 
+libraryInformation="lzma is a general-purpose data compression library with a zlib-like API.", 
+libraryVersion="0",
+installCommands="""
 win:
     git clone https://github.com/desktop-app/lzma.git
     cd lzma\\C\\Util\\LzmaLib
@@ -304,10 +314,11 @@ release:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("xz", 
-"XZ Utils provide a general-purpose data-compression library plus command-line tools.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="xz", 
+libraryInformation="XZ Utils provide a general-purpose data-compression library plus command-line tools.",
+libraryVersion="0",
+installCommands="""
 !win:
     git clone -b v5.4.5 https://github.com/tukaani-project/xz.git
     cd xz
@@ -324,10 +335,11 @@ installCommands.append(
 
 # if not mac or 'build-stackwalk' in options:
 installCommands.append(
-    LibraryInstallationInformation("gyp", 
-"GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
-"0",
-""",
+    LibraryInstallationInformation(
+libraryName="gyp", 
+libraryInformation="GYP (Generate Your Projects) is a build automation system created by Google to generate projects for various IDEs",
+libraryVersion="0",
+installCommands="""
 win:
     git clone https://github.com/desktop-app/gyp.git
     cd gyp
@@ -343,13 +355,14 @@ mac:
 
 
 installCommands.append(
-    LibraryInstallationInformation("mozjpeg", 
-"""
+    LibraryInstallationInformation(
+libraryName="mozjpeg", 
+libraryInformation="""
 MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time. 
 It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders.
 """,
-"4.1.5",
-"""
+libraryVersion="4.1.5",
+installCommands="""
     git clone -b v4.1.5 https://github.com/mozilla/mozjpeg.git
     cd mozjpeg
 win:
@@ -392,10 +405,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("openssl3", 
-"OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="openssl3", 
+libraryInformation="OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end.",
+libraryVersion="0",
+installCommands="""
     git clone -b openssl-3.2.1 https://github.com/openssl/openssl openssl3
     cd openssl3
 win32:
@@ -445,10 +459,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("gas-preprocessor",
-"Perl script that implements a subset of the GNU as preprocessor that Apple's as doesn't ",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="gas-preprocessor",
+libraryInformation="Perl script that implements a subset of the GNU as preprocessor that Apple's as doesn't ",
+libraryVersion="0",
+installCommands="""
 win:
     git clone https://github.com/FFmpeg/gas-preprocessor
     cd gas-preprocessor
@@ -461,10 +476,11 @@ win:
 
 
 installCommands.append(
-    LibraryInstallationInformation("dav1d",
-"dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="dav1d",
+libraryInformation="dav1d is an AV1 cross-platform decoder, open-source, and focused on speed and correctness.",
+libraryVersion="0",
+installCommands="""
     git clone -b 1.5.1 https://code.videolan.org/videolan/dav1d.git
     cd dav1d
 win32:
@@ -493,7 +509,6 @@ win:
     echo cpu = '%TARGET%' >> %FILE%
     echo endian = 'little' >> %FILE%
 
-depends:python/Scripts/activate.bat
     %THIRDPARTY_DIR%\\python\\Scripts\\activate.bat
     meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Denable_tools=false -Denable_tests=false %DAV1D_ASM_DISABLE% -Db_vscrt=mtd builddir-debug
     meson compile -C builddir-debug
@@ -513,7 +528,7 @@ mac:
         folder=`pwd`/$2
 
         meson setup \\
-            --cross-file ../patches/macos_meson_${arch}.txt \\
+            --cross-file LIB_BASE_BUILD_DIRECTORY_PATH/macos_meson_${arch}.txt \\
             --prefix ${USED_PREFIX} \\
             --default-library=static \\
             --buildtype=minsize \\
@@ -535,10 +550,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("openh264",
-"OpenH264 is a codec library which supports H.264 encoding and decoding.",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="openh264",
+libraryInformation="OpenH264 is a codec library which supports H.264 encoding and decoding.",
+libraryVersion="0",
+installCommands="""
     git clone -b v2.6.0 https://github.com/cisco/openh264.git
     cd openh264
 win32:
@@ -562,7 +578,6 @@ win:
     echo cpu = '%TARGET%' >> %FILE%
     echo endian = 'little' >> %FILE%
 
-depends:python/Scripts/activate.bat
     %THIRDPARTY_DIR%\\python\\Scripts\\activate.bat
     meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Db_vscrt=mtd builddir-debug
     meson compile -C builddir-debug
@@ -582,7 +597,7 @@ mac:
         folder=`pwd`/$2
 
         meson setup \
-            --cross-file ../patches/macos_meson_${arch}.txt \
+            --cross-file LIB_BASE_BUILD_DIRECTORY_PATH/macos_meson_${arch}.txt \
             --prefix ${USED_PREFIX} \
             --default-library=static \
             --buildtype=minsize \
@@ -597,15 +612,20 @@ mac:
     buildOneArch x86_64 build.x86_64
 
     lipo -create build.aarch64/libopenh264.a build.x86_64/libopenh264.a -output ${USED_PREFIX}/lib/libopenh264.a
-"""
+""",
+location="",
+directory="",
+cacheKey="",
+dependencies=[Dependency("winarm", "gas-preprocessor")] # win
 )
 )
 
 installCommands.append(
-    LibraryInstallationInformation("libavif",
-"This library aims to be a friendly, portable C implementation of the AV1 Image File Format",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="libavif",
+libraryInformation="This library aims to be a friendly, portable C implementation of the AV1 Image File Format",
+libraryVersion="0",
+installCommands="""
     git clone -b v1.3.0 https://github.com/AOMediaCodec/libavif.git
     cd libavif
 win:
@@ -639,10 +659,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("libde265",
-"libde265 is an open source implementation of the h.265 video codec. ",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="libde265",
+libraryInformation="libde265 is an open source implementation of the h.265 video codec. ",
+libraryVersion="0",
+installCommands="""
     git clone -b v1.0.16 https://github.com/strukturag/libde265.git
     cd libde265
 win:
@@ -679,10 +700,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("libwebp",
-"WebP codec is a library to encode and decode images in WebP format. ",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="libwebp",
+libraryInformation="WebP codec is a library to encode and decode images in WebP format. ",
+libraryVersion="0",
+installCommands="""
     git clone -b v1.5.0 https://github.com/webmproject/libwebp.git
     cd libwebp
 win:
@@ -725,10 +747,11 @@ mac:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("openal-soft",
-"OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="openal-soft",
+libraryInformation="OpenAL Soft is an LGPL-licensed, cross-platform, software implementation of the OpenAL 3D audio API",
+libraryVersion="0",
+installCommands="""
     git clone https://github.com/telegramdesktop/openal-soft.git
     cd openal-soft
 win:
@@ -762,16 +785,15 @@ mac:
 
 if 'build-stackwalk' in options:
     installCommands.append(
-        LibraryInstallationInformation("stackwalk",
-    "",
-    "0",
-    """
+        LibraryInstallationInformation(
+    libraryName="stackwalk",
+    libraryInformation="",
+    libraryVersion="0",
+    installCommands="""
     mac:
         git clone https://chromium.googlesource.com/breakpad/breakpad stackwalk
         cd stackwalk
         git checkout dfcb7b6799
-    depends:patches/breakpad.diff
-        git apply ../patches/breakpad.diff
         git clone -b release-1.11.0 https://github.com/google/googletest src/testing
         git clone https://chromium.googlesource.com/linux-syscall-support src/third_party/lss
         cd src/third_party/lss
@@ -785,10 +807,11 @@ if 'build-stackwalk' in options:
     )
 
 installCommands.append(
-    LibraryInstallationInformation("protobuf",
-"The C++ Protocol Buffers (Protobuf) library is a core component of Google's data serialization mechanism",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="protobuf",
+libraryInformation="The C++ Protocol Buffers (Protobuf) library is a core component of Google's data serialization mechanism",
+libraryVersion="0",
+installCommands="""
 win:
     git clone --recursive -b v21.9 https://github.com/protocolbuffers/protobuf
     cd protobuf
@@ -812,10 +835,11 @@ win:
 )
 
 installCommands.append(
-    LibraryInstallationInformation("opus",
-"Opus is a totally open, royalty-free, highly versatile audio codec. ",
-"0",
-"""
+    LibraryInstallationInformation(
+libraryName="opus",
+libraryInformation="Opus is a totally open, royalty-free, highly versatile audio codec. ",
+libraryVersion=r"0",
+installCommands="""
     git clone -b v1.5.2 https://github.com/xiph/opus.git
     cd opus
 win:
@@ -842,30 +866,22 @@ supportedLibraries.remove("qt")
 supportedLibraries.append('qt_' + qt)
 
 if qt < '6':
-    installCommands.append(LibraryInstallationInformation('qt_' + qt, 
-"""
+    installCommands.append(LibraryInstallationInformation(
+libraryName='qt_' + qt, 
+libraryInformation="""
 Qt is a cross-platform application development framework for creating graphical user interfaces
 as well as cross-platform applications that run on various software and hardware platforms such as Linux,
 Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
 being a native application with native capabilities and speed.
 """,
-"0",
-"""
+libraryVersion="0",
+installCommands="""
     git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
     cd qt_$QT
     git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
-depends:patches/qtbase_""" + qt + """/*.patch
     cd qtbase
 win:
     setlocal enabledelayedexpansion
-    for /r %%i in (..\\..\\patches\\qtbase_%QT%\\*) do (
-        git apply %%i -v
-        if errorlevel 1 (
-            echo ERROR: Applying patch %%~nxi failed!
-            exit /b 1
-        )
-    )
-
     cd ..
 
     SET CONFIGURATIONS=-debug
@@ -873,8 +889,6 @@ release:
     SET CONFIGURATIONS=-debug-and-release
 win:
     """ + removeDir('"%LIBS_DIR%\\Qt-' + qt + '"') + """
-    SET ANGLE_DIR=%LIBS_DIR%\\tg_angle
-    SET ANGLE_LIBS_DIR=%ANGLE_DIR%\\out
     SET MOZJPEG_DIR=%LIBS_DIR%\\mozjpeg
     SET OPENSSL_DIR=%LIBS_DIR%\\openssl3
     SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\\out
@@ -915,7 +929,6 @@ win:
     jom -j%NUMBER_OF_PROCESSORS%
     jom -j%NUMBER_OF_PROCESSORS% install
 mac:
-    find ../../patches/qtbase_$QT -type f -print0 | sort -z | xargs -0 git apply
     cd ..
 
     CONFIGURATIONS=-debug
@@ -940,28 +953,31 @@ mac:
 
     make $MAKE_THREADS_CNT
     make install
-"""
+""",
+location="",
+directory="",
+cacheKey="",
+dependencies=[Dependency("win", "jom")]
     )
     )
 else: # qt > '6'
     branch = 'v$QT' + ('-lts-lgpl' if qt < '6.3' else '')
     installCommands.append(
-        LibraryInstallationInformation('qt_' + qt,
-"""
+        LibraryInstallationInformation(
+libraryName='qt_' + qt,
+libraryInformation="""
     Qt is a cross-platform application development framework for creating graphical user interfaces
     as well as cross-platform applications that run on various software and hardware platforms such as Linux,
     Windows, macOS, Android or embedded systems with little or no change in the underlying codebase while still
     being a native application with native capabilities and speed.
 """,
-"0",
-"""
+libraryVersion="0",
+installCommands="""
     git clone -b """ + branch + """ https://github.com/qt/qt5.git qt_$QT
     cd qt_$QT
     git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
-depends:patches/qtbase_""" + qt + """/*.patch
     cd qtbase
 mac:
-    find ../../patches/qtbase_$QT -type f -print0 | sort -z | xargs -0 git apply -v
     cd ..
     sed -i.bak 's/tqtc-//' {qtimageformats,qtsvg}/dependencies.yaml
 
@@ -991,7 +1007,6 @@ mac:
     ninja
     ninja install
 win:
-    for /r %%i in (..\\..\\patches\\qtbase_%QT%\\*) do git apply %%i -v
     cd ..
 
     SET CONFIGURATIONS=-debug
@@ -1051,29 +1066,20 @@ win:
     cmake --install . --config Debug
     cmake --build . --parallel
     cmake --install .
-"""
-)
-)
-    
-installCommands.append(
-    LibraryInstallationInformation(
-"patches",
-"",
-"0",
-"""
-    git clone https://github.com/desktop-app/patches.git
-    cd patches
-    git checkout b88d491492
-"""
+""",
+location="",
+directory="",
+cacheKey="",
+dependencies=[Dependency("win", "jom")]
 )
 )
 
 installCommands.append(
     LibraryInstallationInformation(
-"cygwin",
-"",
-"0",
-"""
+libraryName="cygwin",
+libraryInformation="",
+libraryVersion="0",
+installCommands="""
     win:
         SET PATH_BACKUP_=%PATH%
         SET PATH=%ROOT_DIR%\ThirdParty\cygwin\bin;%PATH%
@@ -1097,10 +1103,10 @@ installCommands.append(
 
 installCommands.append(
     LibraryInstallationInformation(
-"zlib",
-"",
-"0",
-"""
+libraryName="zlib",
+libraryInformation="",
+libraryVersion="0",
+installCommands="""
     git clone -b v1.3.1 https://github.com/madler/zlib.git
     cd zlib
 win:
@@ -1126,10 +1132,10 @@ mac:
 
 installCommands.append(
     LibraryInstallationInformation(
-"benchmark",
-"",
-"0",
-"""
+libraryName="benchmark",
+libraryInformation="",
+libraryVersion="0",
+installCommands="""
     git clone https://github.com/google/benchmark.git
     cd benchmark
 
@@ -1141,6 +1147,78 @@ installCommands.append(
     cmake --build . --config Debug --parallel
 release:
     cmake --build . --config Release --parallel
-"""
+""",
+    )
+)
+
+installCommands.append(
+    LibraryInstallationInformation(
+libraryName="libvpx",
+libraryInformation="",
+libraryVersion="",
+installCommands="""
+    git clone https://github.com/webmproject/libvpx.git
+    cd libvpx
+    git checkout v1.14.1
+win:
+    SET PATH_BACKUP_=%PATH%
+    SET PATH=%ROOT_DIR%\\ThirdParty\\msys64\\usr\\bin;%PATH%
+
+    SET CHERE_INVOKING=enabled_from_arguments
+    SET MSYS2_PATH_TYPE=inherit
+
+win32:
+    SET "TOOLCHAIN=x86-win32-vs17"
+win64:
+    SET "TOOLCHAIN=x86_64-win64-vs17"
+winarm:
+    SET "TOOLCHAIN=arm64-win64-vs17"
+win:
+    depends:LIB_BASE_BUILD_DIRECTORY_PATH/build_libvpx_win.sh
+    bash --login LIB_BASE_BUILD_DIRECTORY_PATH/build_libvpx_win.sh LIB_BASE_INSTALLATION_DIRECTORY
+
+    SET PATH=%PATH_BACKUP_%
+mac:
+    ./configure --prefix=$USED_PREFIX \
+    --target=arm64-darwin20-gcc \
+    --disable-examples \
+    --disable-unit-tests \
+    --disable-tools \
+    --disable-docs \
+    --enable-vp8 \
+    --enable-vp9 \
+    --enable-webm-io \
+    --size-limit=4096x4096
+
+    make $MAKE_THREADS_CNT
+
+    mkdir out.arm64
+    mv libvpx.a out.arm64
+
+    make clean
+
+    ./configure --prefix=$USED_PREFIX \
+    --target=x86_64-darwin20-gcc \
+    --disable-examples \
+    --disable-unit-tests \
+    --disable-tools \
+    --disable-docs \
+    --enable-vp8 \
+    --enable-vp9 \
+    --enable-webm-io
+
+    make $MAKE_THREADS_CNT
+
+    mkdir out.x86_64
+    mv libvpx.a out.x86_64
+
+    lipo -create out.arm64/libvpx.a out.x86_64/libvpx.a -output libvpx.a
+
+    make install
+""",
+location="",
+directory="",
+cacheKey="",
+dependencies=[Dependency("win", "msys64"), Dependency("mac", "yasm")]
     )
 )

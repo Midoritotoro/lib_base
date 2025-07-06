@@ -3,6 +3,9 @@
 #include <type_traits>
 #include <base/core/utility/Concepts.h>
 
+#include <optional>
+#include <variant>
+
 __BASE_NAMESPACE_BEGIN
 
 using namespace ::std::ranges;
@@ -259,7 +262,7 @@ struct IsCharacterOrByteOrBool :
 #ifdef __cpp_lib_byte
 
 template <>
-struct IsCharacterOrByteOrBool<byte> : 
+struct IsCharacterOrByteOrBool<std::byte> : 
 	std::true_type 
 {};
 
@@ -670,7 +673,7 @@ constexpr bool IsTriviallySwappable_v = std::conjunction_v<
 
 #ifdef __cpp_lib_byte
 template <>
-inline constexpr bool IsTriviallySwappable_v<byte> = true;
+inline constexpr bool IsTriviallySwappable_v<std::byte> = true;
 #endif // defined(__cpp_lib_byte)
 
 template <class _Type_>

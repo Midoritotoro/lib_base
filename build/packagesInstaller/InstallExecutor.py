@@ -11,6 +11,9 @@ from packagesInstaller.Getch import getch
 from packagesInstaller.SetupPaths import removeDir
 
 from packagesInstaller.EnvironmentSetup import environmentConfiguration
+from packagesInstaller.Dependency import Dependency
+
+from packagesInstaller.YamlConfigLoader import YamlConfigLoader
 
 import subprocess
 import re
@@ -23,9 +26,9 @@ class InstallExecutor:
         installationInformation:    LibraryInstallationInformation,
         silentInstallation:         bool = False
     ) -> None:
-        self.__installationInformation: LibraryInstallationInformation = None
-        self.__isLibrarySupported:      bool = False
-        self.__silentInstallation:      bool = silentInstallation
+        self.installationInformation: LibraryInstallationInformation = None
+        self.isLibrarySupported:      bool = False
+        self.silentInstallation:      bool = silentInstallation
 
         self.__initializeFromInformation(information=installationInformation)
         
@@ -33,36 +36,49 @@ class InstallExecutor:
         self:           'InstallExecutor', 
         information:    LibraryInstallationInformation
     ) -> None: 
-        self.__installationInformation = information
-        self.__isLibrarySupported = isLibrarySupported(libraryName=information.libraryName)
+        self.installationInformation = information
+        self.isLibrarySupported = isLibrarySupported(libraryName=information.libraryName)
         
-        if self.__isLibrarySupported == False: 
-            print(f"WARNING: Library {self.__installationInformation.libraryName} is not supported. ")
+        if self.isLibrarySupported == False: 
+            print(f"WARNING: Library {self.installationInformation.libraryName} is not supported. ")
     
-    def printInstallationCommands(self: 'InstallExecutor') -> None:
+    def printInstallationCommands(
+        self: 'InstallExecutor',
+        installationInformation: LibraryInstallationInformation
+    ) -> None:
         print('---------------------------------COMMANDS-LIST----------------------------------')
-        print(self.__installationInformation.installationCommands, end='')
+        print(installationInformation.installCommands, end='')
         print('--------------------------------------------------------------------------------')
 
-    def install(
+    def __installDependencies(
         self: 'InstallExecutor',
-        queueLength: int,
-        indexInQueue: int
-    ) -> None:
+        installationInformation: LibraryInstallationInformation
+    ) -> bool:
+        for dependency in installationInformation.dependencies:
+            information: LibraryInstallationInformation = YamlConfigLoader.ExtractLibraryInformationFromYaml(dependency.dependencyName)
+            commands: str = BuildInstructionsParser.FilterInstallationCommandsByPlatform(
+                information.installCommands).replace(
+                "LIB_BASE_INSTALLATION_DIRECTORY", installationInformation.directory)
+            
+            information.installCommands = commands 
+
+            if not self.__installLibrary(information):
+                return False
+            
+        return True
+
+    def __installLibrary(
+        self:                       'InstallExecutor',
+        installationInformation:    LibraryInstallationInformation
+    ) -> bool: 
         rebuildStale = False
 
-        version = ('#' + str(self.__installationInformation.libraryVersion)) if (self.__installationInformation.libraryVersion != '0') else '' 
-        prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.__installationInformation.location + '/' + self.__installationInformation.libraryName + version + ')'
-
-        print(prefix + ': ', end = '', flush=True)
-        print(self.__installationInformation.libraryName)
-        
-        self.__installationInformation.setCacheKey = CacheManager.ComputeCacheKey(self.__installationInformation)
-        self.__installationInformation.setInstallationCommands = removeDir(
-            os.path.join(self.__installationInformation.directory, self.__installationInformation.libraryName
-            )) + '\n' + self.__installationInformation.installationCommands
+        installationInformation.cacheKey = CacheManager.ComputeCacheKey(installationInformation)
+        installationInformation.installCommands = removeDir(
+            os.path.join(installationInformation.directory, installationInformation.libraryName
+        )) + '\n' + installationInformation.installCommands
     
-        checkResult = CacheManager.CheckCacheKey(self.__installationInformation)
+        checkResult = CacheManager.CheckCacheKey(installationInformation)
         if checkResult == CacheManager.CacheKeyState.Good:
             print('SKIPPING')
             return
@@ -85,8 +101,8 @@ class InstallExecutor:
                         finish(0)
 
                     elif ch == 'p':
-                        if not self.__silentInstallation:
-                            self.printInstallationCommands(self.__installationInformation.installationCommands)
+                        if not self.silentInstallation:
+                            self.printInstallationCommands(installationInformation.installCommands)
                         checkResult = 'Printed'
 
                         break
@@ -112,32 +128,51 @@ class InstallExecutor:
             print('SKIPPING')
             return
 
-        CacheManager.ClearCacheKey(self.__installationInformation)
+        CacheManager.ClearCacheKey(installationInformation)
         print('BUILDING:')
 
-        os.chdir(self.__installationInformation.directory)
+        os.chdir(installationInformation.directory)
 
         if not self.runCommands():
+            return False
+
+        CacheManager.WriteCacheKey(installationInformation) 
+
+
+    def install(
+        self: 'InstallExecutor',
+        queueLength: int,
+        indexInQueue: int
+    ) -> None:
+        prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.installationInformation.location + '/' + self.installationInformation.libraryName + version + ')'
+
+        print(prefix + ': ', end = '', flush=True)
+        print(self.installationInformation.libraryName)
+
+        if not self.__installLibrary(self.installationInformation):
             print(prefix + ': FAILED')
             finish(1)
 
-        CacheManager.WriteCacheKey(self.__installationInformation) 
+        
+    def runCommands(
+        self: 'InstallExecutor',
+        inslallationInformation: LibraryInstallationInformation
+    ) -> None | bool:
+        self.__installDependencies(inslallationInformation)
 
-    def runCommands(self: 'InstallExecutor') -> None | bool:
-        if not self.__silentInstallation:
+        if not self.silentInstallation:
             self.printInstallationCommands()
-            
             
         if win:
             if os.path.exists("command.bat"):
                 os.remove("command.bat")
 
             with open("command.bat", 'w') as file:
-                file.write('@echo OFF\r\n' + BuildInstructionsParser.winFailOnEach(self.__installationInformation.installationCommands))
+                file.write('@echo OFF\r\n' + BuildInstructionsParser.winFailOnEach(self.installationInformation.installCommands))
 
             result : bool = False
 
-            if self.__silentInstallation:
+            if self.silentInstallation:
                 result = subprocess.run("command.bat", shell=True,
                     stdout=subprocess.PIPE,
                     env=environmentConfiguration.modifiedEnvironment).returncode == 0
@@ -149,22 +184,9 @@ class InstallExecutor:
                 os.remove("command.bat")
             return result
         
-        elif re.search(r'\%', self.__installationInformation.installationCommands):
-            error('Bad command: ' + self.__installationInformation.installationCommands)
+        elif re.search(r'\%', self.installationInformation.installCommands):
+            error('Bad command: ' + self.installationInformation.installCommands)
         else:
             return subprocess.run(
-                "set -e\n" + self.__installationInformation.installationCommands, shell=True,
+                "set -e\n" + self.installationInformation.installCommands, shell=True,
                 env=environmentConfiguration.modifiedEnvironment).returncode == 0
-
-
-    @property
-    def installationInformation(self: 'InstallExecutor') -> LibraryInstallationInformation:
-        return self.__installationInformation
-    
-    @installationInformation.setter
-    def setInstallationInformation(
-        self: 'InstallExecutor', 
-        information: LibraryInstallationInformation
-    ) -> None: 
-        self.__installationInformation = information
-

@@ -5,18 +5,9 @@
   git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
       cd qt_$QT
       git submodule update --init --recursive --progress qtbase qtimageformats qtsvg
-  depends:patches/qtbase_5.15.17/*.patch
       cd qtbase
   win:
       setlocal enabledelayedexpansion
-      for /r %%i in (..\..\patches\qtbase_%QT%\*) do (
-          git apply %%i -v
-          if errorlevel 1 (
-              echo ERROR: Applying patch %%~nxi failed!
-              exit /b 1
-          )
-      )
-
       cd ..
 
       SET CONFIGURATIONS=-debug
@@ -67,7 +58,6 @@
       jom -j%NUMBER_OF_PROCESSORS%
       jom -j%NUMBER_OF_PROCESSORS% install
   mac:
-      find ../../patches/qtbase_$QT -type f -print0 | sort -z | xargs -0 git apply
       cd ..
 
       CONFIGURATIONS=-debug

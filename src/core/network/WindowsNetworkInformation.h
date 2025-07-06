@@ -19,7 +19,7 @@ private:
 	static NODISCARD bool_t wlanOpen(io::WindowsSmartHandle* pHandle) noexcept;
 	static NODISCARD bool_t wlanEnumInterfaces(handle_t handle) noexcept;
 
-	static NODISCARD dword WlanCloseHandleWrap(handle_t handle) noexcept;
+	static NODISCARD dword_t WlanCloseHandleWrap(handle_t handle) noexcept;
 
 	static NODISCARD Dot11AuthenticationAlgorithm AuthenticationAlgorithmFromWinApi(
 		WinApiDot11AuthAlgorithm_t winApiAuthAlgorithm) noexcept;

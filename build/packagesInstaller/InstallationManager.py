@@ -20,8 +20,8 @@ class InstallationManager:
         self                :   'InstallationManager',
         silentInstallation  :   bool = False
     ) -> None:
-        self.__executorsQueue: Deque[InstallExecutor] = []
-        self.__silentInstallation: bool = silentInstallation
+        self.executorsQueue: Deque[InstallExecutor] = []
+        self.silentInstallation: bool = silentInstallation
 
     def addInstallation(
         self:       'InstallationManager',
@@ -38,18 +38,21 @@ class InstallationManager:
 
         libraryInstallationInformation: LibraryInstallationInformation = YamlConfigLoader.ExtractLibraryInformationFromYaml(name)
 
-        [commands, dependencies, version] = BuildInstructionsParser.FilterInstallationCommandsByPlatform(
-            libraryInstallationInformation.installationCommands)
+        commands = BuildInstructionsParser.FilterInstallationCommandsByPlatform(
+            libraryInstallationInformation.installCommands)
+        
+        commands = commands.replace("LIB_BASE_INSTALLATION_DIRECTORY", directory)
 
         if len(commands) > 0:
-            self.__executorsQueue.append(
+            self.executorsQueue.append(
                 InstallExecutor(
                     installationInformation=LibraryInstallationInformation(
-                        libraryName=name, libraryInformation=libraryInstallationInformation.libraryInformation, libraryVersion=version, 
+                        libraryName=name, libraryInformation=libraryInstallationInformation.libraryInformation,
+                        libraryVersion=libraryInstallationInformation.libraryVersion, 
                         installCommands=commands, location=location,
-                        directory=directory, dependencies=dependencies
+                        directory=directory, dependencies=libraryInstallationInformation.dependencies
                     ),
-                    silentInstallation=self.__silentInstallation
+                    silentInstallation=self.silentInstallation
                 )
             )
 
@@ -67,9 +70,9 @@ class InstallationManager:
             self.__runStages()
 
     def __runStages(self: 'InstallationManager') -> None:
-        count = len(self.__executorsQueue)
+        count = len(self.executorsQueue)
         index = 0
 
-        for executor in self.__executorsQueue:
+        for executor in self.executorsQueue:
             index = index + 1
             executor.install(queueLength=count, indexInQueue=index)
