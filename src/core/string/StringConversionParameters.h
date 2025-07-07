@@ -12,18 +12,6 @@ template <
 struct StringConversionParameters
 {
 	using SimdVectorType = SimdVectorIntType<_SimdType_>;
-private:
-	/*template <typename _BaseVector_>
-	static NODISCARD SimdVectorType simdVectorFromBaseVector(const std::remove_pointer_t<std::remove_cvref_t<_BaseVector_>>* vectorBase) noexcept {
-		if constexpr (std::is_same_v<_BaseVector_, base_vec128i_t>)
-			return *base_vec128i_t_pointer_as_m128i_pointer(vectorBase);
-		else if constexpr (std::is_same_v<_BaseVector_, base_vec256i_t>)
-			return *base_vec256i_t_pointer_as_m256i_pointer(vectorBase);
-		else if constexpr (std::is_same_v<_BaseVector_, base_vec512i_t>)
-			return *base_vec512i_t_pointer_as_m512i_pointer(vectorBase);
-
-		return *vectorBase;
-	}*/
 public:
 	StringConversionParameters() noexcept = default;
 	~StringConversionParameters() noexcept = default;
@@ -49,6 +37,9 @@ public:
 	size_t stringLength = 0;
 
 	_ToChar_* outputStringDataStart = nullptr;
+
+	const _FromChar_* originalInputStringDataStart = nullptr;
+	_ToChar_* originalOutputStringDataStart = nullptr;
 };
 
 

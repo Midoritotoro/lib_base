@@ -8,6 +8,20 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+template <
+	typename	_FromChar_,
+	typename	_ToChar_,
+	CpuFeature	_SimdType_>
+class TempStringConversionResult {
+public:
+	constexpr NODISCARD bool isConversionComplete() const noexcept {
+		return _parameters.n
+	}
+private:
+	StringConversionResult<_ToChar_> _result;
+	StringConversionParameters< _FromChar_, _ToChar_, _SimdType> _parameters;
+};
+
 #if !defined(__baseInitConversionParameters)
 #  define __baseInitConversionParameters(_FromChar_, alignment) \
 	    size_t alignedBytes					= (parameters.stringLength * sizeof(_FromChar_)) & ~size_t(alignment - 1); \

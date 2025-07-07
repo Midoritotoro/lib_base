@@ -13,6 +13,7 @@ class StringConverterTraits<
 {
 public:
 	constexpr inline auto static cpuFeature = CpuFeature::AVX;
+	using FallbackTraits = StringConverterTraits<CpuFeature::SSE, _NarrowingConversionBehaviour_>
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec256i_t, 256);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec256i_t, 256);
@@ -41,10 +42,6 @@ private:
 			return base_constexpr_mm256_set1_epu32(
 				static_cast<uint32>(conversionToLimit));
 	}
-
-	using FallbackTraits = StringConverterTraits<
-		CpuFeature::SSE,
-		_NarrowingConversionBehaviour_>;
 };
 
 __BASE_STRING_NAMESPACE_END

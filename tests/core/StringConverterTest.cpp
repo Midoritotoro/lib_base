@@ -115,7 +115,29 @@ public:
 };
 int main(int argc, char** argv) {
     StringConverterTest<char, wchar_t>::ConvertString();
+    //StringConverterTest<char, char8_t>::ConvertString();
+    //StringConverterTest<char, char16_t>::ConvertString();
+    //StringConverterTest<char, char32_t>::ConvertString();
 
+    //StringConverterTest<wchar_t, char>::ConvertString();
+    //StringConverterTest<wchar_t, char8_t>::ConvertString();
+    //StringConverterTest<wchar_t, char16_t>::ConvertString();
+    //StringConverterTest<wchar_t, char32_t>::ConvertString();
+    
+    //StringConverterTest<char8_t, char>::ConvertString();
+    //StringConverterTest<char8_t, wchar_t>::ConvertString();
+    //StringConverterTest<char8_t, char16_t>::ConvertString();
+    //StringConverterTest<char8_t, char32_t>::ConvertString();
+
+    //StringConverterTest<char16_t, char>::ConvertString();
+    //StringConverterTest<char16_t, wchar_t>::ConvertString();
+    //StringConverterTest<char16_t, char8_t>::ConvertString();
+    //StringConverterTest<char16_t, char32_t>::ConvertString();
+
+    //StringConverterTest<char32_t, char>::ConvertString();
+    //StringConverterTest<char32_t, wchar_t>::ConvertString();
+    //StringConverterTest<char32_t, char8_t>::ConvertString();
+    //StringConverterTest<char32_t, char16_t>::ConvertString();
 
 	return 0;
 }

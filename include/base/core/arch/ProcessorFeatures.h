@@ -3,6 +3,8 @@
 #include <bitset>
 #include <vector>
 
+#include <array>
+
 #include <base/core/arch/CpuId.h>
 
 __BASE_NAMESPACE_BEGIN

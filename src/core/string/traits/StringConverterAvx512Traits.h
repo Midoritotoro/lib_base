@@ -7,6 +7,9 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_>
+class StringConverterTraits<CpuFeature::AVX, _NarrowingConversionBehaviour_>;
+
+template <class _NarrowingConversionBehaviour_>
 class StringConverterTraits<
 	CpuFeature::AVX512, 
 	_NarrowingConversionBehaviour_>
@@ -73,8 +76,11 @@ public:
 		if (inputStringVoidPointer == base::memory::UnCheckedToConstChar(parameters.inputStringDataStart + parameters.stringLength)) {
 			return base::string::StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters.stringLength, false);
 		}
-	//	return FallbackTraits::convertString<char, wchar_t>(StringConversionParameters<char, wchar_t, CpuFeature::AVX>(
-	//		static_cast<const char*>(inputStringVoidPointer), parameters.stringLength -(alignedBytes / sizeof(char)), reinterpret_cast<wchar_t*>(outputStringVoidPointer)));
+
+		auto p = StringConversionParameters<char, wchar_t, CpuFeature::AVX>(
+			nullptr, 0, nullptr);
+
+		return StringConverterTraits<CpuFeature::AVX, NarrowingConversionMode::DefaultReplacement>::convertString<char, wchar_t>(p);
 	}
 
 //	template <>

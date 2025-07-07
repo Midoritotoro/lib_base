@@ -85,7 +85,7 @@ private:
 			const size_t			stringLength,	
 			_ToChar_*				outputString)
 	{
-		using _Parameters_ = StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::template cpuFeature>;
+		using _Parameters_ = StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::cpuFeature>;
 
 		if (string == nullptr || stringLength == 0)
 			return {};
@@ -133,7 +133,7 @@ private:
 			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
 		}
 		else {
-			StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::template cpuFeature> parameters(
+			StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::cpuFeature> parameters(
 				string, stringLength, outputString);
 			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
 		}
