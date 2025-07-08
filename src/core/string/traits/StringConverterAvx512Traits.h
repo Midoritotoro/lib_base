@@ -15,7 +15,6 @@ public:
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec512i_t, 512);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec512i_t, 512);
-	__BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION();
 
 	template <
 		typename _FromChar_,
@@ -31,46 +30,45 @@ public:
 	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
 		 StringConversionParameters<char, wchar_t> parameters) noexcept
 	{
-		//__baseInitConversionParameters(char, 64);
+		__baseInitConversionParameters(char, 64);
 
-		//if (alignedBytes != 0) {
-		//	do {
-		//		if constexpr (sizeof(wchar_t) == 4) {
-		//			const char* inputStringDataStartChar = memory::UnCheckedToConstChar(parameters.inputStringDataStart);
-		//			char* outputStringCharPointer = memory::UnCheckedToChar(parameters.outputStringDataStart);
-		//			
-		//			_mm512_store_si512(parameters.outputStringDataStart, _mm512_cvtepi8_epi32(
-		//				_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar))));
+		if (alignedBytes != 0) {
+			do {
+				if constexpr (sizeof(wchar_t) == 4) {
+					const char* inputStringDataStartChar = memory::UnCheckedToConstChar(parameters.inputStringDataStart);
+					char* outputStringCharPointer = memory::UnCheckedToChar(parameters.outputStringDataStart);
+					
+					_mm512_store_si512(parameters.outputStringDataStart, _mm512_cvtepi8_epi32(
+						_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar))));
 
-		//			_mm512_store_si512(outputStringCharPointer + 64, _mm512_cvtepi8_epi32(
-		//				_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 16))));
+					_mm512_store_si512(outputStringCharPointer + 64, _mm512_cvtepi8_epi32(
+						_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 16))));
 
-		//			_mm512_store_si512(outputStringCharPointer + 128, _mm512_cvtepi8_epi32(
-		//				_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 32))));
+					_mm512_store_si512(outputStringCharPointer + 128, _mm512_cvtepi8_epi32(
+						_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 32))));
 
-		//			_mm512_store_si512(outputStringCharPointer + 192, _mm512_cvtepi8_epi32(
-		//				_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 48))));
+					_mm512_store_si512(outputStringCharPointer + 192, _mm512_cvtepi8_epi32(
+						_mm_loadu_si128(reinterpret_cast<const __m128i*>(inputStringDataStartChar + 48))));
 
-		//			memory::AdvanceBytes(parameters.outputStringDataStart, 256);
-		//		}
-		//		else if constexpr (sizeof(wchar_t) == 2) {
-		//			_mm512_store_si512(parameters.outputStringDataStart, _mm512_cvtepi8_epi16(
-		//				_mm256_loadu_si256(reinterpret_cast<const __m256i*>(parameters.inputStringDataStart))));
+					memory::AdvanceBytes(parameters.outputStringDataStart, 256);
+				}
+				else if constexpr (sizeof(wchar_t) == 2) {
+					_mm512_store_si512(parameters.outputStringDataStart, _mm512_cvtepi8_epi16(
+						_mm256_loadu_si256(reinterpret_cast<const __m256i*>(parameters.inputStringDataStart))));
 
-		//			_mm512_store_si512(memory::UnCheckedToChar(parameters.outputStringDataStart) + 64, _mm512_cvtepi8_epi16(
-		//				_mm256_loadu_si256(reinterpret_cast<const __m256i*>(
-		//					memory::UnCheckedToConstChar(parameters.inputStringDataStart) + 32))));
+					_mm512_store_si512(memory::UnCheckedToChar(parameters.outputStringDataStart) + 64, _mm512_cvtepi8_epi16(
+						_mm256_loadu_si256(reinterpret_cast<const __m256i*>(
+							memory::UnCheckedToConstChar(parameters.inputStringDataStart) + 32))));
 
-		//			memory::AdvanceBytes(parameters.outputStringDataStart, 128);
-		//		}
+					memory::AdvanceBytes(parameters.outputStringDataStart, 128);
+				}
 
-		//		memory::AdvanceBytes(parameters.inputStringDataStart, 64);
-		//	} while (parameters.inputStringDataStart != stopAt);
-		//}
+				memory::AdvanceBytes(parameters.inputStringDataStart, 64);
+			} while (parameters.inputStringDataStart != stopAt);
+		}
 
-		//if (parameters.inputStringDataStart == base::memory::UnCheckedToConstChar(parameters.originalInputStringDataStart + parameters.stringLength)) {
-		//	return base::string::StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters.stringLength, false);
-		//}
+		if (parameters.inputStringDataStart == base::memory::UnCheckedToConstChar(parameters.originalInputStringDataStart + parameters.stringLength))
+			return StringConversionResult<wchar_t>(static_cast<wchar_t*>(parameters.outputStringDataStart), parameters.stringLength, false);
 
 		return FallbackTraits::convertString<char, wchar_t>(parameters);
 	}
@@ -129,9 +127,12 @@ public:
 //						// If a character in 'convertedToCharVector' is greater than the threshold (mask bit is 1), it's replaced with
 //						// 'replacementCharacter'. Otherwise, it's copied from 'convertedToCharVector'.
 //
-//						_mm512_mask_storeu_epi8(outputStringVoidPointer, ~comparedGreaterThan, convertedToCharVector);
-//						_mm512_mask_storeu_epi8(outputStringVoidPointer, comparedGreaterThan, parameters.replacementVector);
-//
+//						// _mm512_mask_storeu_epi8(outputStringVoidPointer, ~comparedGreaterThan, convertedToCharVector);
+//						// _mm512_mask_storeu_epi8(outputStringVoidPointer, comparedGreaterThan, parameters.replacementVector);
+// 
+//						convertedToCharVector = _mm512_mask_blend_epi64(comparedGreaterThan, convertedToCharVector, parameters.replacementVector)
+//						_mm512_storeu_si512(outputStringVoidPointer, convertedToCharVector);
+// 
 //						break;
 //					default:
 //						AssertUnreachable();

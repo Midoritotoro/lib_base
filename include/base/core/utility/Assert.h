@@ -53,7 +53,7 @@ static inline constexpr NODISCARD
 	
 
 #define AssertValidationCondition(condition, message, file, line)\
-	((UNLIKELY(!(condition)))\
+	((UNLIKELY(!((condition))))\
 		? fail(message, file, line)\
 		: void(0))
 
@@ -80,7 +80,7 @@ static inline constexpr NODISCARD
 	return_value)
 
 
-#define Assert(condition) AssertLog(condition, "\"" #condition "\"")
+#define Assert(condition) AssertLog((condition), "\"" #condition "\"")
 #define AssertUnreachable() Assert(!"unreachable", UNREACHABLE())
 
 

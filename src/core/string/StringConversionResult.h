@@ -59,6 +59,10 @@ public:
 	constexpr inline void setNarrowingConversion(bool isNarrowingConversion) noexcept {
 		_isNarrowingConversion = isNarrowingConversion;
 	}
+
+	bool operator==(const StringConversionResult& other) noexcept {
+		return base_any_strcmp()
+	}
 private:
 	_Char_* _dataStart = nullptr;
 	size_t _dataLength = 0;

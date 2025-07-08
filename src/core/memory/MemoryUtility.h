@@ -70,5 +70,4 @@ always_inline void AdvanceBytes(
     _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
 }
 
-
 __BASE_MEMORY_NAMESPACE_END

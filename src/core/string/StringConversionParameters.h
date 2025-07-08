@@ -10,10 +10,7 @@ template <
 	typename	_ToChar_>
 struct StringConversionParameters
 {
-	using SimdVectorType = SimdVectorIntType<_SimdType_>;
 public:
-	static constexpr const CpuFeature feature = _SimdType_;
-
 	StringConversionParameters() noexcept = default;
 	~StringConversionParameters() noexcept = default;
 
@@ -24,16 +21,18 @@ public:
 	) noexcept:
 		inputStringDataStart(inputString),
 		stringLength(inputStringLength),
-		outputStringDataStart(outputString)
+		outputStringDataStart(outputString),
+		originalInputStringDataStart(inputString),
+		originalOutputStringDataStart(outputString)
 	{}
 
-	const _FromChar_* inputStringDataStart = nullptr;
+	const void* inputStringDataStart = nullptr;
 	size_t stringLength = 0;
 
-	_ToChar_* outputStringDataStart = nullptr;
+	void* outputStringDataStart = nullptr;
 
-	const _FromChar_* originalInputStringDataStart = nullptr;
-	_ToChar_* originalOutputStringDataStart = nullptr;
+	const _FromChar_* const originalInputStringDataStart = nullptr;
+	const _ToChar_* const originalOutputStringDataStart = nullptr;
 };
 
 

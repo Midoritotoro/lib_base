@@ -29,7 +29,6 @@ __BASE_STRING_NAMESPACE_BEGIN
 template <CpuFeature _SimdType_> // ,class _NarrowingConversionBehaviour_>
 class StringConverterTraits
 {
-	__BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION();
 	//static_assert(
 		//false,
 		//"base::core::string::StringConverterTraits<_SimdType_, _NarrowingConversionBehaviour_>: Invalid _SimdType_");

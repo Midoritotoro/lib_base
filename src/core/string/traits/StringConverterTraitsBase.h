@@ -17,26 +17,26 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 #if __cpp_lib_char8_t && !defined(__BASE_CONVERTER_SIMD_SET1_FROM_CHAR8_TYPE)
 #define __BASE_CONVERTER_SIMD_SET1_FROM_CHAR8_TYPE(bits)														\
-	 else if constexpr (std::is_same_v<_ToChar_, char8_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu8(_NarrowingConversionBehaviour_::replacementCharacter));}
+	 else if constexpr (std::is_same_v<_ToChar_, char8_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu8(character));}
 #else 
 #  define __BASE_CONVERTER_SIMD_SET1_FROM_CHAR8_TYPE(bits)
 #endif		
 
 #if !defined(__BASE_CONVERTER_SIMD_SET1_FROM_CHAR_TYPE)
 #  define __BASE_CONVERTER_SIMD_SET1_FROM_CHAR_TYPE(bits)																															\
-	if constexpr (std::is_same_v<_ToChar_, char>) {			 return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epi8(_NarrowingConversionBehaviour_::replacementCharacter));}		\
-	else if constexpr (std::is_same_v<_ToChar_, char16_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu16(_NarrowingConversionBehaviour_::replacementCharacter));}	\
-	else if constexpr (std::is_same_v<_ToChar_, char32_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu32(_NarrowingConversionBehaviour_::replacementCharacter));}	\
+	if constexpr (std::is_same_v<_ToChar_, char>) {			 return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epi8(character));}		\
+	else if constexpr (std::is_same_v<_ToChar_, char16_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu16(character));}	\
+	else if constexpr (std::is_same_v<_ToChar_, char32_t>) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu32(character));}	\
 	else if constexpr (std::is_same_v<_ToChar_, wchar_t>) {																															\
-		if constexpr (sizeof(wchar_t) == 2) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu16(_NarrowingConversionBehaviour_::replacementCharacter));}					\
-		else if constexpr (sizeof(wchar_t) == 4) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu32(_NarrowingConversionBehaviour_::replacementCharacter));}				\
+		if constexpr (sizeof(wchar_t) == 2) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu16(character));}					\
+		else if constexpr (sizeof(wchar_t) == 4) { return PP_CAT(PP_CAT(base::base_constexpr_mm, bits), _set1_epu32(character));}				\
 	}																																												\
 	__BASE_CONVERTER_SIMD_SET1_FROM_CHAR8_TYPE(bits);
 #endif
 
 #if !defined(__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR)
 #  define __BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(vectorType, bits)								\
-	template <typename _ToChar_> static constexpr NODISCARD vectorType replacementVector() noexcept { __BASE_CONVERTER_SIMD_SET1_FROM_CHAR_TYPE(bits) return {}; }
+	template <typename _ToChar_, _ToChar_ character> static constexpr NODISCARD vectorType replacementVector() noexcept { __BASE_CONVERTER_SIMD_SET1_FROM_CHAR_TYPE(bits) return {}; }
 #endif
 
 // ====================================================================================================================================

@@ -10,8 +10,6 @@ class StringConverterTraits<CpuFeature::None>
 public:
 	constexpr inline static auto cpuFeature = CpuFeature::None;
 
-	__BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION();
-
 	template <
 		typename _FromChar_,
 		typename _ToChar_>

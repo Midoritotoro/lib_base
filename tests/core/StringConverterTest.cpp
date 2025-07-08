@@ -3,6 +3,8 @@
 #include <cuchar>
 #include <cwchar>
 
+WARNING_DISABLE_MSVC(VCR001)
+
 using namespace base;
 
 enum StringAlignedSize {
@@ -81,12 +83,12 @@ class CRTStringConverterTest {
     }
 
 public:
-    static auto ConvertString() {
+    static string::StringConversionResult<_ToChar_> ConvertString() {
         static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSize>{};
         _ToChar_* ch = static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSize * sizeof(_ToChar_), 64));
 
         ConvertStringHelper(textArray.data, stringAlignedSize, ch);
-        std::wcout << (wchar_t*)ch;
+        return string::StringConversionResult<_ToChar_>(textArray.data, stringAlignedSize, false);
     }
 };
 
@@ -100,21 +102,25 @@ class StringConverterTest {
         size_t length,
         string::StringConversionResult<_ToChar_>& result)
     {
-        string::StringConverter<>::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
+        string::StringConverter::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
         return result;
     }
 
 public:
-    static void ConvertString() {
+    static NODISCARD bool ConvertString() {
         string::StringConversionResult<_ToChar_> result;
         static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSize>{};
 
         result.setData(static_cast<_ToChar_*>(memory::AllocateAligned(stringAlignedSize * sizeof(_ToChar_), 64)));
         ConvertStringHelper(textArray.data, stringAlignedSize, result);
+
+        return (
+            CRTStringConverterTest<_FromChar_, _ToChar_, stringAlignedSize>::ConvertString() == 
+            string::StringConversionResult<_ToChar_>(textArray.data, stringAlignedSize, false));
     }
 };
 int main(int argc, char** argv) {
-    StringConverterTest<char, wchar_t>::ConvertString();
+    Assert((StringConverterTest<char, wchar_t, StringAlignedSize::Large>::ConvertString()));
     //StringConverterTest<char, char8_t>::ConvertString();
     //StringConverterTest<char, char16_t>::ConvertString();
     //StringConverterTest<char, char32_t>::ConvertString();
