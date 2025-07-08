@@ -14,20 +14,45 @@ template <
 	CpuFeature	_SimdType_>
 class TempStringConversionResult {
 public:
+	TempStringConversionResult(
+		const StringConversionResult<_ToChar_>& result,
+		const StringConversionParameters< _FromChar_, _ToChar_, _SimdType_>& parameters
+	) noexcept :
+		_result(result),
+		_parameters(parameters)
+	{}
+
 	constexpr NODISCARD bool isConversionComplete() const noexcept {
-		return _parameters.n
+		const auto equalFirst = ((_parameters.originalInputStringDataStart + _parameters.stringLength) == _parameters.inputStringDataStart);
+		const auto equalSecond = ((_parameters.originalOutputStringDataStart + _parameters.stringLength) == _parameters.outputStringDataStart);
+		
+		return (equalFirst && equalSecond);
+	}
+
+	constexpr NODISCARD StringConversionResult<_ToChar_> conversionResult() const noexcept {
+		return _result;
+	}
+
+	constexpr NODISCARD StringConversionResult<_FromChar_> conversionParameters() const noexcept {
+		return _parameters;
+	}
+
+	constexpr void setConversionResult(const StringConversionResult<_ToChar_>& result) noexcept {
+		_result = result;
+	}
+
+	constexpr void conversionParameters(const StringConversionParameters< _FromChar_, _ToChar_, _SimdType_>& parameters) noexcept {
+		_parameters = parameters;
 	}
 private:
 	StringConversionResult<_ToChar_> _result;
-	StringConversionParameters< _FromChar_, _ToChar_, _SimdType> _parameters;
+	StringConversionParameters< _FromChar_, _ToChar_, _SimdType_> _parameters;
 };
 
 #if !defined(__baseInitConversionParameters)
 #  define __baseInitConversionParameters(_FromChar_, alignment) \
-	    size_t alignedBytes					= (parameters.stringLength * sizeof(_FromChar_)) & ~size_t(alignment - 1); \
-		const void* stopAt					= parameters.inputStringDataStart; \
-		void* outputStringVoidPointer		= parameters.outputStringDataStart; \
-		const void* inputStringVoidPointer	= parameters.inputStringDataStart; \
+	    size_t alignedBytes					= (parameters.stringLength * sizeof(_FromChar_)) & ~size_t(alignment - 1);	\
+		const void* stopAt					= parameters.originalInputStringDataStart;									\
 		base::memory::AdvanceBytes(stopAt, alignedBytes);
 #endif // __baseInitConversionParameters
 

@@ -17,8 +17,8 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD StringConversionResult<_ToChar_> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, CpuFeature::None>& parameters) noexcept
+	static NODISCARD TempStringConversionResult<_FromChar_, _ToChar_, cpuFeature> convertString(
+		StringConversionParameters<_FromChar_, _ToChar_, cpuFeature>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};

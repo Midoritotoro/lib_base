@@ -95,8 +95,6 @@ private:
 		if (outputString == nullptr)
 			outputString = static_cast<_ToChar_*>(memory::AllocateAligned(stringLength * sizeof(_ToChar_), 64));
 
-		StringConversionResult<_ToChar_> conversionResult;
-
 		if constexpr (_StringConverterTraits_::template maybeNarrowingConversion<_FromChar_, _ToChar_>()) {
 			constexpr auto toLimit = MaximumIntegralLimit<_ToChar_>();
 
@@ -138,7 +136,7 @@ private:
 			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
 		}
 
-		return conversionResult;
+		return {};
 	}
 };
 

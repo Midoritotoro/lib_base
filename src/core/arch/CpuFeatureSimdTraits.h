@@ -85,4 +85,26 @@ BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorIntType, base_vec128i_t, base_vec2
 BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorFloatType, base_vec128f_t, base_vec256f_t, base_vec512f_t, float);
 BASE_DECLARE_SIMD_TYPE_SELECTOR(BaseSimdVectorDoubleType, base_vec128d_t, base_vec256d_t, base_vec512d_t, double);
 
+template <CpuFeature feature>
+constexpr NODISCARD CpuFeature DowncastSimdFeatureHelper() noexcept;
+
+template <CpuFeature feature> 
+struct DowncastSimdFeature {
+	static_assert(is_xmm_simd_feature_v<feature> && is_ymm_simd_feature_v<feature> && is_zmm_simd_feature_v<feature>, "Invalid feature");
+	static constexpr CpuFeature value = DowncastSimdFeatureHelper(feature);
+};
+
+template <CpuFeature feature> 
+constexpr CpuFeature downcast_simd_feature_v = DowncastSimdFeature<feature>::value;
+
+template <CpuFeature feature>
+constexpr NODISCARD CpuFeature DowncastSimdFeatureHelper() noexcept {
+	if constexpr (is_zmm_simd_feature_v<feature>)
+		return CpuFeature::AVX;
+	else if constexpr (is_ymm_simd_feature_v<feature>)
+		return CpuFeature::SSE;
+	else if constexpr (is_xmm_simd_feature_v<feature>)
+		return CpuFeature::None;
+}
+
 __BASE_NAMESPACE_END
