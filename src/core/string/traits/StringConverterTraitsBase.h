@@ -7,18 +7,6 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-class StringConverterTraitsBase {
-public:
-	template <
-		typename _FromChar_,
-		typename _ToChar_>
-	// Is data loss possible when converting from _FromChar_ to _ToChar_
-	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
-		return (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>());
-	}
-};
-
-
 #if !defined(__BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION)
 #  define __BASE_DECLARE_CONVERTER_TRAITS_MAYBE_NARROWING_CONVERSION()																							\
 	template <typename _FromChar_, typename _ToChar_, typename = std::enable_if_t<IsCompatibleCharType<_FromChar_>::value && IsCompatibleCharType<_ToChar_>::value>>	\

@@ -6,15 +6,12 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-
-template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<
-	CpuFeature::AVX512, 
-	_NarrowingConversionBehaviour_>
+template <>
+class StringConverterTraits<CpuFeature::AVX512>
 {
 public:
 	constexpr inline auto static cpuFeature = CpuFeature::AVX512;
-	using FallbackTraits = StringConverterTraits<CpuFeature::AVX, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<CpuFeature::AVX>;
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec512i_t, 512);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec512i_t, 512);
@@ -23,16 +20,16 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD TempStringConversionResult<_FromChar_, _ToChar_, cpuFeature> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, cpuFeature>& parameters) noexcept
+	static NODISCARD StringConversionResult<_ToChar_> convertString(
+		StringConversionParameters<_FromChar_, _ToChar_> parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};
 	}
 
 	template <>
-	static NODISCARD TempStringConversionResult<char, wchar_t, cpuFeature> convertString<char, wchar_t>(
-		StringConversionParameters<char, wchar_t, cpuFeature>& parameters) noexcept
+	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
+		 StringConversionParameters<char, wchar_t> parameters) noexcept
 	{
 		//__baseInitConversionParameters(char, 64);
 
@@ -75,10 +72,7 @@ public:
 		//	return base::string::StringConversionResult<wchar_t>(parameters.outputStringDataStart, parameters.stringLength, false);
 		//}
 
-		auto p = StringConversionParameters<char, wchar_t, CpuFeature::AVX>(nullptr, 0, nullptr);
-
-		StringConverterTraits<CpuFeature::AVX, DefaultReplacementConversionMode>::convertString<char, wchar_t>(p);
-		return {};
+		return FallbackTraits::convertString<char, wchar_t>(parameters);
 	}
 
 //	template <>

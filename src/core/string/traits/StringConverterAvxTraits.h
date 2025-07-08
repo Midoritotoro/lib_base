@@ -6,14 +6,12 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<
-	CpuFeature::AVX, 
-	_NarrowingConversionBehaviour_>
+template <>
+class StringConverterTraits<CpuFeature::AVX>
 {
 public:
 	constexpr inline auto static cpuFeature = CpuFeature::AVX;
-	using FallbackTraits = StringConverterTraits<CpuFeature::SSE, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<CpuFeature::SSE>;
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec256i_t, 256);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec256i_t, 256);
@@ -23,7 +21,7 @@ public:
 		typename _FromChar_,
 		typename _ToChar_>
 	static NODISCARD StringConversionResult<_ToChar_> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, CpuFeature::AVX>& parameters) noexcept
+		const StringConversionParameters<_FromChar_, _ToChar_>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};

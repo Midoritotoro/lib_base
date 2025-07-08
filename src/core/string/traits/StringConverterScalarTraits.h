@@ -4,10 +4,8 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<
-	CpuFeature::None, 
-	_NarrowingConversionBehaviour_>
+template <>
+class StringConverterTraits<CpuFeature::None>
 {
 public:
 	constexpr inline static auto cpuFeature = CpuFeature::None;
@@ -17,8 +15,8 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD TempStringConversionResult<_FromChar_, _ToChar_, cpuFeature> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, cpuFeature>& parameters) noexcept
+	static NODISCARD StringConversionResult<_ToChar_> convertString(
+		const StringConversionParameters<_FromChar_, _ToChar_>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};

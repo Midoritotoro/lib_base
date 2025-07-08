@@ -24,8 +24,8 @@ static inline void fail(
 {
 	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line);
 
-	// Сбой из-за нарушения прав доступа и создание отчета о сбое.
-
+	// Crash due to access violation and create crash report.
+	 
 	volatile auto nullptr_value = (int*)nullptr;
 	*nullptr_value = 0;
 

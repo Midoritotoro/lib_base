@@ -5,14 +5,12 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <class _NarrowingConversionBehaviour_>
-class StringConverterTraits<
-	CpuFeature::SSE, 
-	_NarrowingConversionBehaviour_>
+template <>
+class StringConverterTraits<CpuFeature::SSE>
 {
 public:
 	constexpr inline static auto cpuFeature = CpuFeature::SSE;
-	using FallbackTraits = StringConverterTraits<CpuFeature::None, _NarrowingConversionBehaviour_>;
+	using FallbackTraits = StringConverterTraits<CpuFeature::None>;
 
 	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec128i_t, 128);
 	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec128i_t, 128);
@@ -21,8 +19,8 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD TempStringConversionResult<_FromChar_, _ToChar_, cpuFeature> convertString(
-		StringConversionParameters<_FromChar_, _ToChar_, cpuFeature>& parameters) noexcept
+	static NODISCARD StringConversionResult<_ToChar_> convertString(
+		const StringConversionParameters<_FromChar_, _ToChar_>& parameters) noexcept
 	{
 		AssertUnreachable();
 		return {};

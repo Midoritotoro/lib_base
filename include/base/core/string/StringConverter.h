@@ -15,6 +15,13 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 template <class _NarrowingConversionBehaviour_ = DefaultReplacementConversionMode>
 class StringConverter {
+	template <
+		typename _FromChar_,
+		typename _ToChar_>
+	// Is data loss possible when converting from _FromChar_ to _ToChar_
+	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
+		return (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>());
+	}
 public:
 	// Allocates (length * sizeof(_ToChar_)) bytes of memory for conversion from string
 	template <
@@ -95,7 +102,9 @@ private:
 		if (outputString == nullptr)
 			outputString = static_cast<_ToChar_*>(memory::AllocateAligned(stringLength * sizeof(_ToChar_), 64));
 
-		if constexpr (_StringConverterTraits_::template maybeNarrowingConversion<_FromChar_, _ToChar_>()) {
+		StringConversionResult<_ToChar_> conversionResult;
+
+		if constexpr (maybeNarrowingConversion<_FromChar_, _ToChar_>() && _StringConverterTraits_::cpuFeature != CpuFeature::None) {
 			constexpr auto toLimit = MaximumIntegralLimit<_ToChar_>();
 
 			static_assert(
@@ -105,38 +114,34 @@ private:
 
 			_Parameters_ parameters;
 
-			if constexpr (_StringConverterTraits_::cpuFeature == CpuFeature::None) {
-				parameters = _Parameters_(string, stringLength, outputString, nullptr, nullptr);
-			}
-			else {
-				constexpr const auto replacementVector = _StringConverterTraits_::template replacementVector<_ToChar_>();
-				constexpr const auto narrowingLimitVector = _StringConverterTraits_::template narrowingLimitVector<_FromChar_>();
+			constexpr const auto replacementVector = _StringConverterTraits_::template replacementVector<_ToChar_>();
+			constexpr const auto narrowingLimitVector = _StringConverterTraits_::template narrowingLimitVector<_FromChar_>();
 
-				if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec128i_t>)
-					parameters = _Parameters_(string, stringLength, outputString, 
-						base_vec128i_t_pointer_as_m128i_pointer(&replacementVector), 
-						base_vec128i_t_pointer_as_m128i_pointer(&narrowingLimitVector));
+			if constexpr (is_xmm_simd_feature_v<_StringConverterTraits_::cpuFeature>)
+				parameters = _Parameters_(string, stringLength, outputString, 
+					base_vec128i_t_pointer_as_m128i_pointer(&replacementVector), 
+					base_vec128i_t_pointer_as_m128i_pointer(&narrowingLimitVector));
 
-				else if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec256i_t>)
-					parameters = _Parameters_(string, stringLength, outputString, 
-						base_vec256i_t_pointer_as_m256i_pointer(&replacementVector), 
-						base_vec256i_t_pointer_as_m256i_pointer(&narrowingLimitVector));
+			else if constexpr (is_ymm_simd_feature_v<_StringConverterTraits_::cpuFeature>)
+				parameters = _Parameters_(string, stringLength, outputString, 
+					base_vec256i_t_pointer_as_m256i_pointer(&replacementVector), 
+					base_vec256i_t_pointer_as_m256i_pointer(&narrowingLimitVector));
 
-				else if constexpr (std::is_same_v<std::remove_cvref_t<decltype(replacementVector)>, base_vec512i_t>)
-					parameters = _Parameters_(string, stringLength, outputString, 
-						base_vec512i_t_pointer_as_m512i_pointer(&replacementVector),
-						base_vec512i_t_pointer_as_m512i_pointer(&narrowingLimitVector));
-			}
-
+			else if constexpr (is_zmm_simd_feature_v<_StringConverterTraits_::cpuFeature>)
+				parameters = _Parameters_(string, stringLength, outputString, 
+					base_vec512i_t_pointer_as_m512i_pointer(&replacementVector),
+					base_vec512i_t_pointer_as_m512i_pointer(&narrowingLimitVector));
+			
 			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
 		}
 		else {
-			StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::cpuFeature> parameters(
-				string, stringLength, outputString);
-			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(parameters);
+			conversionResult = _StringConverterTraits_::template convertString<_FromChar_, _ToChar_>(
+				StringConversionParameters<_FromChar_, _ToChar_, _StringConverterTraits_::cpuFeature>(
+					string, stringLength, outputString)
+			);
 		}
 
-		return {};
+		return conversionResult;
 	}
 };
 

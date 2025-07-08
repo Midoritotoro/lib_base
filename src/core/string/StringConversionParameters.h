@@ -7,8 +7,7 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 template <
 	typename	_FromChar_,
-	typename	_ToChar_,
-	CpuFeature _SimdType_>
+	typename	_ToChar_>
 struct StringConversionParameters
 {
 	using SimdVectorType = SimdVectorIntType<_SimdType_>;
@@ -18,42 +17,15 @@ public:
 	StringConversionParameters() noexcept = default;
 	~StringConversionParameters() noexcept = default;
 
-	template <
-		typename	_FromChar_,
-		typename	_ToChar_, 
-		CpuFeature	_SimdType_> 
-	static NODISCARD StringConversionParameters<_FromChar_, _ToChar_, downcast_simd_feature_v<_SimdType_>>
-		downcast(StringConversionParameters<_FromChar_, _ToChar_, _SimdType_>* parameters) noexcept
-	{
-		if constexpr (downcast_simd_feature_v<_SimdType_> == CpuFeature::None)
-			return *parameters;
-		
-		using DowncastedSimdVectorType = SimdVectorIntType<downcast_simd_feature_v<_SimdType_>>;
-
-		return StringConversionParameters<_FromChar_, _ToChar_, downcast_simd_feature_v<_SimdType_>>(
-			parameters->inputStringDataStart, 
-			parameters->stringLength, 
-			parameters->outputStringDataStart,
-			reinterpret_cast<const DowncastedSimdVectorType*>(parameters->replacementVector),
-			reinterpret_cast<const DowncastedSimdVectorType*>(parameters->narrowingLimitVector));
-	}
-
 	StringConversionParameters(
 		const _FromChar_*		inputString,
 		size_t					inputStringLength,
-		_ToChar_*				outputString,
-		const SimdVectorType*	replacementVectorSimd = nullptr,
-		const SimdVectorType*	narrowingLimitVectorSimd = nullptr
+		_ToChar_*				outputString
 	) noexcept:
 		inputStringDataStart(inputString),
 		stringLength(inputStringLength),
-		outputStringDataStart(outputString),
-		replacementVector((replacementVectorSimd)),
-		narrowingLimitVector((narrowingLimitVectorSimd))
+		outputStringDataStart(outputString)
 	{}
-
-	const SimdVectorType* replacementVector = nullptr;
-	const SimdVectorType* narrowingLimitVector = nullptr;
 
 	const _FromChar_* inputStringDataStart = nullptr;
 	size_t stringLength = 0;
