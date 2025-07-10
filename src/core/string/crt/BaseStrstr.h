@@ -5,11 +5,11 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-extern "C" {
-    DECLARE_NOALIAS NODISCARD const char* __base_strstr(
-        const char* string,
-        const char* needle);
-}
+
+DECLARE_NOALIAS NODISCARD const char* __base_strstr(
+    const char* string,
+    const char* needle);
+
 
 __BASE_STRING_NAMESPACE_END
 

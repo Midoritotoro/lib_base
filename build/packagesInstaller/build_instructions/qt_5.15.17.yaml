@@ -1,5 +1,10 @@
 "cacheKey": ""
-"dependencies": []
+"dependencies":
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    jom
+  "platformName": |-
+    win
 "directory": ""
 "installCommands": |-
   git clone -b v$QT-lts-lgpl https://github.com/qt/qt5.git qt_$QT
@@ -16,8 +21,6 @@
   win:
       if exist "%LIBS_DIR%\Qt-5.15.17" rmdir /Q /S "%LIBS_DIR%\Qt-5.15.17"
   if exist "%LIBS_DIR%\Qt-5.15.17" exit /b 1
-      SET ANGLE_DIR=%LIBS_DIR%\tg_angle
-      SET ANGLE_LIBS_DIR=%ANGLE_DIR%\out
       SET MOZJPEG_DIR=%LIBS_DIR%\mozjpeg
       SET OPENSSL_DIR=%LIBS_DIR%\openssl3
       SET OPENSSL_LIBS_DIR=%OPENSSL_DIR%\out

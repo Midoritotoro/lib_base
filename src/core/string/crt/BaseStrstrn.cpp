@@ -15,23 +15,13 @@ DECLARE_NOALIAS const char* CDECL __base_strstrn(
 	const std::size_t	subLength) noexcept
 {
     if (ProcessorFeatures::AVX512F())
-        return __base_strstrnAvx512F(
-            memory::UnCheckedToChar(mainString), mainLength,
-            memory::UnCheckedToChar(subString), subLength);
-
+        return __base_strstrnAvx512F(mainString, mainLength, subString, subLength);
     else if (ProcessorFeatures::AVX2())
-        return __base_strstrnAvx2(
-            memory::UnCheckedToChar(mainString), mainLength,
-            memory::UnCheckedToChar(subString), subLength);
-
+        return __base_strstrnAvx2(mainString, mainLength, subString, subLength);
     else if (ProcessorFeatures::SSE2())
-        return __base_strstrnSse2(
-            memory::UnCheckedToChar(mainString), mainLength,
-            memory::UnCheckedToChar(subString), subLength);
+        return __base_strstrnSse2(mainString, mainLength, subString, subLength);
 
-    return __base_strstrnScalar(
-        memory::UnCheckedToChar(mainString), mainLength,
-        memory::UnCheckedToChar(subString), subLength);
+    return __base_strstrnScalar(mainString, mainLength, subString, subLength);
 }
 
 //DECLARE_NOALIAS const wchar_t* CDECL __base_wcsstrn(

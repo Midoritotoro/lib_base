@@ -17,6 +17,8 @@ macro(baseTestsCore_add_test filename)
       lib_base::lib_base
     )
     add_test(${filename} ${CMAKE_CURRENT_BINARY_DIR}/"core"/${filename})
+  
+    target_compile_features(${filename} PUBLIC cxx_std_23)
 endmacro(baseTestsCore_add_test)
 
 set(CMAKE_CXX_STANDARD 23)

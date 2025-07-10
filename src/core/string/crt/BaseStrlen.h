@@ -7,11 +7,9 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-extern "C" {
-	DECLARE_NOALIAS std::size_t	__CDECL __base_strlen(const char* string) noexcept;
-	DECLARE_NOALIAS std::size_t __CDECL __base_wcslen(const wchar_t* string) noexcept;
-	DECLARE_NOALIAS std::size_t __CDECL __base_c32len(const char32_t* string) noexcept;
-}
+DECLARE_NOALIAS std::size_t	__CDECL __base_strlen(const char* string) noexcept;
+DECLARE_NOALIAS std::size_t __CDECL __base_wcslen(const wchar_t* string) noexcept;
+DECLARE_NOALIAS std::size_t __CDECL __base_c32len(const char32_t* string) noexcept;
 
 template <
 	typename _Char_,

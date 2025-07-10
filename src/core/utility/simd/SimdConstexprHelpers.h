@@ -144,56 +144,56 @@ __BASE_DECLARE_CONSTEXPR_SET1(_base_constexpr_mm512_set1_epu64, base_v8du_t, uin
 
 // XMM
 
-#define base_constexpr_mm_set1_epi8(value)  _base_constexpr_mm_set1_epi8<value>()
-#define base_constexpr_mm_set1_epi16(value) _base_constexpr_mm_set1_epi16<value>()
-#define base_constexpr_mm_set1_epi32(value) _base_constexpr_mm_set1_epi32<value>()
-#define base_constexpr_mm_set1_epi64(value) _base_constexpr_mm_set1_epi64<value>()
+#define base_constexpr_mm_set1_epi8(value)  base::_base_constexpr_mm_set1_epi8<value>()
+#define base_constexpr_mm_set1_epi16(value) base::_base_constexpr_mm_set1_epi16<value>()
+#define base_constexpr_mm_set1_epi32(value) base::_base_constexpr_mm_set1_epi32<value>()
+#define base_constexpr_mm_set1_epi64(value) base::_base_constexpr_mm_set1_epi64<value>()
 
-#define base_constexpr_mm_set1_epu8(value)  _base_constexpr_mm_set1_epu8<value>()
-#define base_constexpr_mm_set1_epu16(value) _base_constexpr_mm_set1_epu16<value>()
-#define base_constexpr_mm_set1_epu32(value) _base_constexpr_mm_set1_epu32<value>()
-#define base_constexpr_mm_set1_epu64(value) _base_constexpr_mm_set1_epu64<value>()
+#define base_constexpr_mm_set1_epu8(value)  base::_base_constexpr_mm_set1_epu8<value>()
+#define base_constexpr_mm_set1_epu16(value) base::_base_constexpr_mm_set1_epu16<value>()
+#define base_constexpr_mm_set1_epu32(value) base::_base_constexpr_mm_set1_epu32<value>()
+#define base_constexpr_mm_set1_epu64(value) base::_base_constexpr_mm_set1_epu64<value>()
 
 #define base_constexpr_mm_setzero()          base_constexpr_mm_set1_epi64(0)
 
-#define base_constexpr_mm128_set1_epi8(value)  _base_constexpr_mm_set1_epi8<value>()
-#define base_constexpr_mm128_set1_epi16(value) _base_constexpr_mm_set1_epi16<value>()
-#define base_constexpr_mm128_set1_epi32(value) _base_constexpr_mm_set1_epi32<value>()
-#define base_constexpr_mm128_set1_epi64(value) _base_constexpr_mm_set1_epi64<value>()
+#define base_constexpr_mm128_set1_epi8(value)  base::_base_constexpr_mm_set1_epi8<value>()
+#define base_constexpr_mm128_set1_epi16(value) base::_base_constexpr_mm_set1_epi16<value>()
+#define base_constexpr_mm128_set1_epi32(value) base::_base_constexpr_mm_set1_epi32<value>()
+#define base_constexpr_mm128_set1_epi64(value) base::_base_constexpr_mm_set1_epi64<value>()
 
-#define base_constexpr_mm128_set1_epu8(value)  _base_constexpr_mm_set1_epu8<value>()
-#define base_constexpr_mm128_set1_epu16(value) _base_constexpr_mm_set1_epu16<value>()
-#define base_constexpr_mm128_set1_epu32(value) _base_constexpr_mm_set1_epu32<value>()
-#define base_constexpr_mm128_set1_epu64(value) _base_constexpr_mm_set1_epu64<value>()
+#define base_constexpr_mm128_set1_epu8(value)  base::_base_constexpr_mm_set1_epu8<value>()
+#define base_constexpr_mm128_set1_epu16(value) base::_base_constexpr_mm_set1_epu16<value>()
+#define base_constexpr_mm128_set1_epu32(value) base::_base_constexpr_mm_set1_epu32<value>()
+#define base_constexpr_mm128_set1_epu64(value) base::_base_constexpr_mm_set1_epu64<value>()
 
 #define base_constexpr_mm128_setzero()          base_constexpr_mm_set1_epi64(0)
 
 // YMM
 
-#define base_constexpr_mm256_set1_epi8(value)   _base_constexpr_mm256_set1_epi8<value>()
-#define base_constexpr_mm256_set1_epi16(value)  _base_constexpr_mm256_set1_epi16<value>()
-#define base_constexpr_mm256_set1_epi32(value)  _base_constexpr_mm256_set1_epi32<value>()
-#define base_constexpr_mm256_set1_epi64(value)  _base_constexpr_mm256_set1_epi64<value>()
+#define base_constexpr_mm256_set1_epi8(value)   base::_base_constexpr_mm256_set1_epi8<value>()
+#define base_constexpr_mm256_set1_epi16(value)  base::_base_constexpr_mm256_set1_epi16<value>()
+#define base_constexpr_mm256_set1_epi32(value)  base::_base_constexpr_mm256_set1_epi32<value>()
+#define base_constexpr_mm256_set1_epi64(value)  base::_base_constexpr_mm256_set1_epi64<value>()
 
-#define base_constexpr_mm256_set1_epu8(value)   _base_constexpr_mm256_set1_epu8<value>()
-#define base_constexpr_mm256_set1_epu16(value)  _base_constexpr_mm256_set1_epu16<value>()
-#define base_constexpr_mm256_set1_epu32(value)  _base_constexpr_mm256_set1_epu32<value>()
-#define base_constexpr_mm256_set1_epu64(value)  _base_constexpr_mm256_set1_epu64<value>()
+#define base_constexpr_mm256_set1_epu8(value)   base::_base_constexpr_mm256_set1_epu8<value>()
+#define base_constexpr_mm256_set1_epu16(value)  base::_base_constexpr_mm256_set1_epu16<value>()
+#define base_constexpr_mm256_set1_epu32(value)  base::_base_constexpr_mm256_set1_epu32<value>()
+#define base_constexpr_mm256_set1_epu64(value)  base::_base_constexpr_mm256_set1_epu64<value>()
 
 #define base_constexpr_mm256_setzero()          base_constexpr_mm256_set1_epi64(0)
 
 // ZMM
 
-#define base_constexpr_mm512_set1_epi8(value)   _base_constexpr_mm512_set1_epi8<value>()
-#define base_constexpr_mm512_set1_epi16(value)  _base_constexpr_mm512_set1_epi16<value>()
-#define base_constexpr_mm512_set1_epi32(value)  _base_constexpr_mm512_set1_epi32<value>()
-#define base_constexpr_mm512_set1_epi64(value)  _base_constexpr_mm512_set1_epi64<value>()
+#define base_constexpr_mm512_set1_epi8(value)   base::_base_constexpr_mm512_set1_epi8<value>()
+#define base_constexpr_mm512_set1_epi16(value)  base::_base_constexpr_mm512_set1_epi16<value>()
+#define base_constexpr_mm512_set1_epi32(value)  base::_base_constexpr_mm512_set1_epi32<value>()
+#define base_constexpr_mm512_set1_epi64(value)  base::_base_constexpr_mm512_set1_epi64<value>()
 
 
-#define base_constexpr_mm512_set1_epu8(value)   _base_constexpr_mm512_set1_epu8<value>()
-#define base_constexpr_mm512_set1_epu16(value)  _base_constexpr_mm512_set1_epu16<value>()
-#define base_constexpr_mm512_set1_epu32(value)  _base_constexpr_mm512_set1_epu32<value>()
-#define base_constexpr_mm512_set1_epu64(value)  _base_constexpr_mm512_set1_epu64<value>()
+#define base_constexpr_mm512_set1_epu8(value)   base::_base_constexpr_mm512_set1_epu8<value>()
+#define base_constexpr_mm512_set1_epu16(value)  base::_base_constexpr_mm512_set1_epu16<value>()
+#define base_constexpr_mm512_set1_epu32(value)  base::_base_constexpr_mm512_set1_epu32<value>()
+#define base_constexpr_mm512_set1_epu64(value)  base::_base_constexpr_mm512_set1_epu64<value>()
 
 #define base_constexpr_mm512_setzero()          base_constexpr_mm512_set1_epi64(0)
 

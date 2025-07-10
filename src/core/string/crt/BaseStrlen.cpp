@@ -23,7 +23,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenSse2(const char* string) noexce
 
 	while (true) {
 		const auto loadedString = _mm_loadu_epi8(current);
-		const uint16 bingo = _mm_cmpeq_epi8_mask(loadedString, comparand);
+		const uint16 bingo = _mm_movemask_epi8(_mm_cmpeq_epi8(loadedString, comparand));
 
 		if (bingo != 0)
 			return (static_cast<std::size_t>(
@@ -97,14 +97,15 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenSse2(const wchar_t* string) noe
 	const void* current = string;
 
 	while (true) {
+		// *
 		const auto loadedString = _mm_loadu_epi16(current);
-		const uint8 bingo = _mm_cmpeq_epi16_mask(loadedString, comparand);
+		const uint8 bingo = _mm_movemask_epi8(_mm_cmpeq_epi16(loadedString, comparand));
 
 		if (bingo != 0)
 			return (static_cast<std::size_t>(
 				reinterpret_cast<const wchar_t*>(current) 
 				- string + CountTrailingZeroBits(bingo)));
-
+		// *
 		memory::AdvanceBytes(current, 16);
 	}
 
@@ -210,7 +211,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenSse2(const char32_t* string) no
 
 	while (true) {
 		const auto str = _mm_loadu_epi32(current);
-		const uint8 bingo = _mm_cmpeq_epi32_mask(str, comparand);
+		const uint8 bingo = _mm_movemask_epi8(_mm_cmpeq_epi32(str, comparand));
 
 		if (bingo != 0)
 			return (static_cast<std::size_t>(

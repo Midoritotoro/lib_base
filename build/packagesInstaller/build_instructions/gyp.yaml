@@ -2,7 +2,6 @@
 "dependencies": []
 "directory": ""
 "installCommands": |-
-  ,
   win:
       git clone https://github.com/desktop-app/gyp.git
       cd gyp

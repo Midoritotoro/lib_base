@@ -30,7 +30,6 @@
       echo cpu = '%TARGET%' >> %FILE%
       echo endian = 'little' >> %FILE%
 
-  depends:python/Scripts/activate.bat
       %THIRDPARTY_DIR%\python\Scripts\activate.bat
       meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Denable_tools=false -Denable_tests=false %DAV1D_ASM_DISABLE% -Db_vscrt=mtd builddir-debug
       meson compile -C builddir-debug

@@ -54,20 +54,24 @@ always_inline void RewindBytes(
     _Target = UnCheckedToConstUnsignedChar(_Target) - _Offset;
 }
 
-template <class _Integral_>
+template <
+    typename T,
+    class _Integral_>
 always_inline void AdvanceBytes(
-    void*& _Target,
+    T*& _Target,
     _Integral_  _Offset) noexcept
 {
-    _Target = UnCheckedToUnsignedChar(_Target) + _Offset;
+    _Target = reinterpret_cast<T*>(UnCheckedToUnsignedChar(_Target) + _Offset);
 }
 
-template <class _Integral_>
+template <
+    typename T,
+    class _Integral_>
 always_inline void AdvanceBytes(
-    const void*& _Target,
+    const T*&       _Target,
     _Integral_      _Offset) noexcept
 {
-    _Target = UnCheckedToConstUnsignedChar(_Target) + _Offset;
+    _Target = reinterpret_cast<const T*>(UnCheckedToConstUnsignedChar(_Target) + _Offset);
 }
 
 __BASE_MEMORY_NAMESPACE_END

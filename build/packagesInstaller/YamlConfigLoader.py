@@ -5,13 +5,11 @@ from packagesInstaller.NativeToolsError import executePath
 from typing import Dict 
 
 def YamlMultilineStringPresenter(dumper: yaml.Dumper, data: str | bytes) -> yaml.ScalarNode:
-    if len(data.splitlines()) > 1:
-        data = '\n'.join([line.rstrip() for line in data.strip().splitlines()])
+    if '\n' in data:
         return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
-    
     return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
-yaml.add_representer(str, YamlMultilineStringPresenter)
+# yaml.add_representer(str, YamlMultilineStringPresenter)
 
 class YamlConfigLoader:
     @staticmethod

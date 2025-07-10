@@ -1,5 +1,10 @@
 "cacheKey": ""
-"dependencies": []
+"dependencies":
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    gas-preprocessor
+  "platformName": |-
+    winarm
 "directory": ""
 "installCommands": |-
   git clone -b v2.6.0 https://github.com/cisco/openh264.git
@@ -25,7 +30,6 @@
       echo cpu = '%TARGET%' >> %FILE%
       echo endian = 'little' >> %FILE%
 
-  depends:python/Scripts/activate.bat
       %THIRDPARTY_DIR%\python\Scripts\activate.bat
       meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Db_vscrt=mtd builddir-debug
       meson compile -C builddir-debug

@@ -61,7 +61,7 @@ public:
 	}
 
 	bool operator==(const StringConversionResult& other) noexcept {
-		return base_any_strcmp()
+		return true;// return base_any_strcmp()
 	}
 private:
 	_Char_* _dataStart = nullptr;

@@ -149,7 +149,7 @@ public:
 	}
 
 	CONSTEXPR_CXX20 bool operator>(const StringConstIterator& other) const noexcept {
-		return !(*this < other)
+		return !(*this < other);
 	}
 
 	CONSTEXPR_CXX20 bool operator<=(const StringConstIterator& other) const noexcept {

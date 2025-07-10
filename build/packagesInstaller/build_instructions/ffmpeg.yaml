@@ -1,5 +1,25 @@
 "cacheKey": ""
-"dependencies": []
+"dependencies":
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    msys64
+  "platformName": |-
+    win
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    nv-codec-headers
+  "platformName": |-
+    win
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    gas-preprocessor
+  "platformName": |-
+    win
+- !!python/object:packagesInstaller.Dependency.Dependency
+  "dependencyName": |-
+    yasm
+  "platformName": |-
+    mac
 "directory": ""
 "installCommands": |-
   git clone -b n6.1.1 https://github.com/FFmpeg/FFmpeg.git ffmpeg
@@ -15,14 +35,12 @@
   winarm:
       SET "ARCH_PARAM=--arch=aarch64"
   win:
-      depends:LIB_BASE_BUILD_DIRECTORY_PATH/build_ffmpeg_win.sh
+  depends:LIB_BASE_BUILD_DIRECTORY_PATH/build_ffmpeg_win.sh
       bash --login LIB_BASE_BUILD_DIRECTORY_PATH/build_ffmpeg_win.sh LIB_BASE_INSTALLATION_DIRECTORY
 
       SET PATH=%PATH_BACKUP_%
   mac:
       export PKG_CONFIG_PATH=$USED_PREFIX/lib/pkgconfig
-  depends:yasm/yasm
-
       configureFFmpeg() {
           arch=$1
 

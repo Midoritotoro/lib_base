@@ -102,7 +102,7 @@ class InstallExecutor:
 
                     elif ch == 'p':
                         if not self.silentInstallation:
-                            self.printInstallationCommands(installationInformation.installCommands)
+                            self.printInstallationCommands(installationInformation)
                         checkResult = 'Printed'
 
                         break
@@ -133,7 +133,7 @@ class InstallExecutor:
 
         os.chdir(installationInformation.directory)
 
-        if not self.runCommands():
+        if not self.runCommands(installationInformation):
             return False
 
         CacheManager.WriteCacheKey(installationInformation) 
@@ -144,7 +144,7 @@ class InstallExecutor:
         queueLength: int,
         indexInQueue: int
     ) -> None:
-        prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.installationInformation.location + '/' + self.installationInformation.libraryName + version + ')'
+        prefix = '[' + str(indexInQueue) + '/' + str(queueLength) + '](' + self.installationInformation.location + '/' + self.installationInformation.libraryName + self.installationInformation.libraryVersion + ')'
 
         print(prefix + ': ', end = '', flush=True)
         print(self.installationInformation.libraryName)
@@ -156,12 +156,12 @@ class InstallExecutor:
         
     def runCommands(
         self: 'InstallExecutor',
-        inslallationInformation: LibraryInstallationInformation
+        installationInformation: LibraryInstallationInformation
     ) -> None | bool:
-        self.__installDependencies(inslallationInformation)
+        self.__installDependencies(installationInformation)
 
         if not self.silentInstallation:
-            self.printInstallationCommands()
+            self.printInstallationCommands(installationInformation)
             
         if win:
             if os.path.exists("command.bat"):
@@ -169,7 +169,7 @@ class InstallExecutor:
 
             with open("command.bat", 'w') as file:
                 file.write('@echo OFF\r\n' + BuildInstructionsParser.winFailOnEach(self.installationInformation.installCommands))
-
+            
             result : bool = False
 
             if self.silentInstallation:

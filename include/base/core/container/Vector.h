@@ -858,12 +858,11 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-constexpr inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference
+CONSTEXPR_CXX20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::
 		operator[](const SizeType offset) noexcept 
 {
-	auto& pairValue = _pair._secondValue;
-	return *(pairValue._current + offset);
+	return *(_pair._secondValue._current + offset);
 }
 
 template <
