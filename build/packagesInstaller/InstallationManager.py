@@ -1,7 +1,7 @@
 from packagesInstaller.InstallExecutor import InstallExecutor
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
 
-from packagesInstaller.SetupPaths import libsDir
+from packagesInstaller.SetupPaths import libsDir, thirdPartyDir
 from packagesInstaller.NativeToolsError import error
 
 from packagesInstaller.BuildInstructionsParser import BuildInstructionsParser
@@ -33,15 +33,15 @@ class InstallationManager:
         
         if location == 'Libraries':
             directory = libsDir
+        elif location == 'ThirdParty':
+            directory = thirdPartyDir
         else:
             error('Unknown location: ' + location)
 
         libraryInstallationInformation: LibraryInstallationInformation = YamlConfigLoader.ExtractLibraryInformationFromYaml(name)
 
         commands = BuildInstructionsParser.FilterInstallationCommandsByPlatform(
-            libraryInstallationInformation.installCommands)
-        
-        commands = commands.replace("LIB_BASE_INSTALLATION_DIRECTORY", directory)
+            libraryInstallationInformation.installCommands).replace("LIB_BASE_INSTALLATION_DIRECTORY", directory)
 
         if len(commands) > 0:
             self.executorsQueue.append(
@@ -52,7 +52,7 @@ class InstallationManager:
                         installCommands=commands, location=location,
                         directory=directory, dependencies=libraryInstallationInformation.dependencies
                     ),
-                    silentInstallation=self.silentInstallation
+                  
                 )
             )
 

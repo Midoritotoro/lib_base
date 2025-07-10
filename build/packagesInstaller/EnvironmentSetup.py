@@ -78,7 +78,7 @@ class EnvironmentConfiguration:
         return hashlib.sha1(self.environmentKeyString.encode("utf-8")).hexdigest()
     
     def __generateThirdPartyEnvironmentKey(self: 'EnvironmentConfiguration') -> str:
-        return hashlib.sha1(self.environmentKeyString.encode("utf-8")).hexdigest()
+        return hashlib.sha1(self.environmentThirdPartyEnvironmentKeyString.encode("utf-8")).hexdigest()
     
     def __createModifiedEnvironment(self: 'EnvironmentConfiguration') -> Dict[str, str]:
         modifiedEnvironment = os.environ.copy()

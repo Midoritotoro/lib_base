@@ -21,6 +21,7 @@ keysLoc = 'cache_keys'
 
 rootDir = os.getcwd()
 libsDir = os.path.realpath(os.path.join(rootDir, libsLoc))
+thirdPartyDir = os.path.realpath(os.path.join(rootDir, 'ThirdParty'))
 
 usedPrefix = os.path.realpath(os.path.join(libsDir, 'local'))
 
@@ -45,25 +46,3 @@ def removeDir(folder: str):
     if win:
         return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
     return 'rm -rf ' + folder
-
-# def setupInstallingPath():
-#     print('Path to installing libraries')
-#     print('(d)efault, (c)ustom, (q)uit?: ')
-
-#     while True:
-#         if getch() == 'q':
-#             finish(0)
-#         elif getch() == 'c':
-#             libsDir = input("Enter path: ")
-
-#             if os.path.exists(libsDir) == False:
-#                 print("Enter the correct existing path")
-#                 continue
-
-#             print("Libs path: ", libsDir)
-
-#             break
-#         elif getch() == 'd':
-#             break
-        
-# setupInstallingPath()

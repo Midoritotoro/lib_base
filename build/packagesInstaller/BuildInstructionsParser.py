@@ -20,7 +20,7 @@ class BuildInstructionsParser:
             command = command.replace("LIB_BASE_BUILD_DIRECTORY_PATH", executePath.replace("\\", "/"))
             match = re.match(r'(!?)([a-z0-9_]+):', command)
 
-            if match and match.group(2):
+            if match:
                 scopes: List[str] | Any = match.group(2).split('_')
                 inscope : bool = 'common' in scopes
 
