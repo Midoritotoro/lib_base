@@ -1,8 +1,9 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  git clone -b v4.1.5 https://github.com/mozilla/mozjpeg.git
+"installCommands": |2
+
+      git clone -b v4.1.5 https://github.com/mozilla/mozjpeg.git
       cd mozjpeg
   win:
       cmake . ^
@@ -39,9 +40,9 @@
       lipo -create build.arm64/libjpeg.a build/libjpeg.a -output build/libjpeg.a
       lipo -create build.arm64/libturbojpeg.a build/libturbojpeg.a -output build/libturbojpeg.a
       cmake --install build
-"libraryInformation": |-
-  MozJPEG improves JPEG compression efficiency achieving higher visual quality and smaller file sizes at the same time.
-  It is compatible with the JPEG standard, and the vast majority of the world's deployed JPEG decoders.
+"libraryInformation": "\nMozJPEG improves JPEG compression efficiency achieving higher\
+  \ visual quality and smaller file sizes at the same time. \nIt is compatible with\
+  \ the JPEG standard, and the vast majority of the world's deployed JPEG decoders.\n"
 "libraryName": |-
   mozjpeg
 "libraryVersion": |-

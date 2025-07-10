@@ -49,11 +49,14 @@ class CacheManager:
         ]
 
         for pattern in information.dependencies:
-            pathlist: List[str | bytes] = glob.glob(os.path.join(libsDir, pattern))
-            items: List[str] = [pattern]
+            if not pattern.isSupportedForSystem():
+                continue
+
+            pathlist: List[str | bytes] = glob.glob(os.path.join(libsDir, pattern.dependencyName))
+            items: List[str] = [pattern.dependencyName]
 
             if len(pathlist) == 0:
-                error('Nothing found: ' + pattern)
+                error('Nothing found: ' + pattern.dependencyName)
 
             for path in pathlist:
                 if not os.path.exists(path):

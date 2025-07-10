@@ -1,16 +1,16 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": "win:\n        SET PATH_BACKUP_=%PATH%\n        SET PATH=%ROOT_DIR%\\\
+"installCommands": "\n    win:\n        SET PATH_BACKUP_=%PATH%\n        SET PATH=%ROOT_DIR%\\\
   ThirdParty\\cygwin\bin;%PATH%\n\n        powershell -Command \"iwr -OutFile ./setup-x86_64.exe\
   \ https://cygwin.com/setup-x86_64.exe\"\n\n        start /wait setup-x86_64.exe\
   \ qnNdO -R %ROOT_DIR%\\ThirdParty\\cygwin -s http://cygwin.mirror.constant.com \
-  \            -l %ROOT_DIR%\\ThirdParty\\cygwin\nar\\cache\\setup -P mingw64-i686-gcc-g++\
+  \            -l %ROOT_DIR%\\ThirdParty\\cygwin\var\\cache\\setup -P mingw64-i686-gcc-g++\
   \ -P mingw64-x86_64-gcc-g++             -P gcc-g++ -P autoconf -P automake -P bison\
   \ -P libtool -P make -P python -P gettext-devel             -P intltool -P libiconv\
-  \ -P pkg-config -P wget -P curl\n\n        del setup-x86_64.exe\n\n        %ROOT_DIR%\\\
+  \ -P pkg-config -P wget -P curl \n\n        del setup-x86_64.exe\n\n        %ROOT_DIR%\\\
   ThirdParty\\cygwin\bin\bash -lc true\n        compact /c /i /s:%ROOT_DIR%\\ThirdParty\\\
-  cygwin | Out-Null\n\n        SET PATH=%PATH_BACKUP_%"
+  cygwin | Out-Null\n        \n        SET PATH=%PATH_BACKUP_%\n"
 "libraryInformation": ""
 "libraryName": |-
   cygwin

@@ -1,8 +1,9 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  git clone -b v1.5.0 https://github.com/webmproject/libwebp.git
+"installCommands": |2
+
+      git clone -b v1.5.0 https://github.com/webmproject/libwebp.git
       cd libwebp
   win:
       nmake /f Makefile.vc CFG=debug-static OBJDIR=out RTLIBCFG=static all

@@ -1,19 +1,14 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  mac:
-          git clone https://chromium.googlesource.com/breakpad/breakpad stackwalk
-          cd stackwalk
-          git checkout dfcb7b6799
-          git clone -b release-1.11.0 https://github.com/google/googletest src/testing
-          git clone https://chromium.googlesource.com/linux-syscall-support src/third_party/lss
-          cd src/third_party/lss
-          git checkout e1e7b0ad8e
-          cd ../../build
-          PYTHONPATH=$THIRDPARTY_DIR/gyp python3 gyp_breakpad
-          cd ../processor
-          xcodebuild -project processor.xcodeproj -target minidump_stackwalk -configuration Release build
+"installCommands": "\n    mac:\n        git clone https://chromium.googlesource.com/breakpad/breakpad\
+  \ stackwalk\n        cd stackwalk\n        git checkout dfcb7b6799\n        git\
+  \ clone -b release-1.11.0 https://github.com/google/googletest src/testing\n   \
+  \     git clone https://chromium.googlesource.com/linux-syscall-support src/third_party/lss\n\
+  \        cd src/third_party/lss\n        git checkout e1e7b0ad8e\n        cd ../../build\n\
+  \        PYTHONPATH=$THIRDPARTY_DIR/gyp python3 gyp_breakpad\n        cd ../processor\n\
+  \        xcodebuild -project processor.xcodeproj -target minidump_stackwalk -configuration\
+  \ Release build\n    "
 "libraryInformation": ""
 "libraryName": |-
   stackwalk

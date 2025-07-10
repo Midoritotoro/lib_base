@@ -1,8 +1,9 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  git clone https://github.com/google/benchmark.git
+"installCommands": |2
+
+      git clone https://github.com/google/benchmark.git
       cd benchmark
 
       cmake -E make_directory "build"

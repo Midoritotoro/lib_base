@@ -1,7 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
+"installCommands": |2
+
   mac:
       git clone https://github.com/yasm/yasm.git
       cd yasm

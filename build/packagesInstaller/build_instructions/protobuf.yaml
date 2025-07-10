@@ -1,7 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
+"installCommands": |2
+
   win:
       git clone --recursive -b v21.9 https://github.com/protocolbuffers/protobuf
       cd protobuf

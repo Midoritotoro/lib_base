@@ -14,12 +14,13 @@ class LibraryInstallationInformation:
         dependencies:       List[Dependency]   = [],
         additionalDependencies: List[Dependency] = []
     ):
-        self.libraryName:             str         = libraryName
-        self.libraryInformation:      str         = libraryInformation 
-        self.libraryVersion:          str         = libraryVersion
-        self.installCommands:         str         = installCommands
-        self.location:                str         = location
-        self.directory:               str         = directory
-        self.cacheKey:                str         = cacheKey
-        self.dependencies:            List[Dependency]   = dependencies
-        self.additionalDependencies:  List[Dependency]   = additionalDependencies
+        self.libraryName:             str               = libraryName
+        self.libraryInformation:      str               = libraryInformation 
+        self.libraryVersion:          str               = libraryVersion
+        self.installCommands:         str               = installCommands
+        self.location:                str               = location
+        self.directory:               str               = directory
+        self.cacheKey:                str               = cacheKey
+        self.dependencies:            List[Dependency]  = dependencies
+        self.additionalDependencies:  List[Dependency]  = additionalDependencies
+

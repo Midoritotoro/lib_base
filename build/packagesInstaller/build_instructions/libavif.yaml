@@ -1,8 +1,9 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  git clone -b v1.3.0 https://github.com/AOMediaCodec/libavif.git
+"installCommands": |2
+
+      git clone -b v1.3.0 https://github.com/AOMediaCodec/libavif.git
       cd libavif
   win:
       cmake . ^

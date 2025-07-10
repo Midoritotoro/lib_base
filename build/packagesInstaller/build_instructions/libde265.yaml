@@ -1,8 +1,9 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
-  git clone -b v1.0.16 https://github.com/strukturag/libde265.git
+"installCommands": |2
+
+      git clone -b v1.0.16 https://github.com/strukturag/libde265.git
       cd libde265
   win:
       cmake . ^

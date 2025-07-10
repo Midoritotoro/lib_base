@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
             manager.executeAll() 
 
+       #  print(YamlConfigLoader.ExtractLibraryInformationFromYaml("ffmpeg").dependencies)
         # for command in installCommands:
             # YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
 

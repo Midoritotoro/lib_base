@@ -1,7 +1,8 @@
 "cacheKey": ""
 "dependencies": []
 "directory": ""
-"installCommands": |-
+"installCommands": |2
+
   !win:
       git clone -b v5.4.5 https://github.com/tukaani-project/xz.git
       cd xz

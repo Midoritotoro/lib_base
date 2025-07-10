@@ -1,4 +1,5 @@
 import yaml 
+from packagesInstaller.Dependency import Dependency
 from packagesInstaller.LibraryInstallationInformation import LibraryInstallationInformation
 
 from packagesInstaller.NativeToolsError import executePath
@@ -9,11 +10,16 @@ def YamlMultilineStringPresenter(dumper: yaml.Dumper, data: str | bytes) -> yaml
         return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
     return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
-# yaml.add_representer(str, YamlMultilineStringPresenter)
+yaml.add_representer(str, YamlMultilineStringPresenter)
 
 class YamlConfigLoader:
     @staticmethod
     def __LibraryInfoToDict(libraryInformation: LibraryInstallationInformation) -> Dict:
+        dependenciesInDict: list[dict[str, str]] = []
+
+        for dependency in libraryInformation.dependencies:
+            dependenciesInDict.append(dependency.toDict())
+
         return {
             'libraryName'       :   libraryInformation.libraryName,
             'libraryInformation':   libraryInformation.libraryInformation,
@@ -22,11 +28,16 @@ class YamlConfigLoader:
             'location'          :   libraryInformation.location,
             'directory'         :   libraryInformation.directory,
             'cacheKey'          :   libraryInformation.cacheKey,
-            'dependencies'      :   libraryInformation.dependencies,
+            'dependencies'      :   dependenciesInDict,
         }
 
     @staticmethod
     def __LibraryInfoFromDict(data: dict) -> LibraryInstallationInformation:
+        dependenciesInList: list[Dependency] = []
+
+        for dependency in data.get('dependencies', []):
+            dependenciesInList.append(Dependency.fromDict(dependency))
+
         return LibraryInstallationInformation(
             libraryName=data.get('libraryName', ""),
             libraryInformation=data.get('libraryInformation', ""),
@@ -35,7 +46,7 @@ class YamlConfigLoader:
             location=data.get('location', ""),
             directory=data.get('directory', ""),
             cacheKey=data.get('cacheKey', ""),
-            dependencies=data.get('dependencies', [])
+            dependencies=dependenciesInList
         )
 
     @staticmethod
