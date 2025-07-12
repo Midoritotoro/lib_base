@@ -120,7 +120,7 @@ class StringConverterBenchmark {
         size_t length,
         string::StringConversionResult<_ToChar_>& result)
     {
-        string::StringConverter<>::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
+        string::StringConverter::convertStringStore<_FromChar_, _ToChar_>(input, length, &result);
         return result;
     }
 
@@ -145,11 +145,11 @@ public:
 // ========================================================================================
 
 
-//BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
-//    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
-//    ->Repetitions(1000)
-//    ->ReportAggregatesOnly(true)
-//    ->DisplayAggregatesOnly(true);
+BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString)
+    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
+    ->Repetitions(1000)
+    ->ReportAggregatesOnly(true)
+    ->DisplayAggregatesOnly(true);
 //
 //BENCHMARK(CRTStringConverterBenchmark<char, wchar_t>::ConvertString)
 //    ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)

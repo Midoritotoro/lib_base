@@ -28,7 +28,10 @@ endif()
 
 set(libs_loc "D:/Libraries/win64")
 
-option(LIB_BASE_BUILD_TESTS "" OFF)
+
+option(LIB_BASE_BUILD_BENCHMARKS "" ON)
+
+option(LIB_BASE_BUILD_TESTS "" ON)
 option(LIB_BASE_BUILD_EXAMPLES "" OFF)
 
 option(LIB_BASE_INSTALL "Генерация цели для установки библиотеки" ${PROJECT_IS_TOP_LEVEL})
@@ -48,7 +51,7 @@ endif()
 set(LIB_BASE_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lib_base")
 
 set(LIB_BASE_BUILD_TESTS ON)
-set(LIB_BASE_BUILD_BENCHMARKS OFF)
+set(LIB_BASE_BUILD_BENCHMARKS ON)
 
 set(BUILD_SHARED_LIBS OFF)
 set(LIB_BASE_ENABLE_QT OFF)
@@ -177,6 +180,9 @@ set(PRIVATE_SOURCES
     src/core/string/crt/simd/BaseStrstrAvx512F.cpp
     src/core/string/crt/simd/BaseStrstrSse2.cpp
 
+    src/core/string/crt/BaseStrlenInternal.h
+    src/core/string/crt/BaseStrlenInternal.cpp
+
     src/core/memory/MemoryAllocation.cpp
 
     src/core/network/Socket.cpp
@@ -227,8 +233,6 @@ set(PRIVATE_HEADERS
     src/core/utility/simd/traits/MinMaxTraitsAVX512.h
     
     src/core/utility/simd/traits/MinMaxTraitsSSE2.h
-
-    src/core/string/traits/StringConverterTraitsBase.h
 
     src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
@@ -321,7 +325,6 @@ set(PRIVATE_HEADERS
     src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h
 
-    src/core/utility/simd/SimdConstexprHelpers.h
     src/core/utility/simd/SimdVectorType.h
 
     src/core/string/traits/StringConverterAvxTraits.h

@@ -1,10 +1,8 @@
 #include <src/core/string/crt/BaseStrlen.h>
-#include <base/core/arch/ProcessorFeatures.h>
+#include <src/core/string/crt/BaseStrlenInternal.h>
 
 #include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/BitOps.h>
-
-#include <src/core/utility/simd/SimdConstexprHelpers.h>
+#include <base/core/arch/ProcessorFeatures.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -16,19 +14,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenScalar(const char* string) noex
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_strlenSse2(const char* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm128_setzero();
-	const auto comparand = base_vec128i_t_pointer_as_m128i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto loadedString = _mm_loadu_epi8(current);
-		const uint16 bingo = _mm_movemask_epi8(_mm_cmpeq_epi8(loadedString, comparand));
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::SSE, 1>(_mm_loadu_epi8(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char*>(current) - 
-				string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 16);
 	}
@@ -38,19 +31,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenSse2(const char* string) noexce
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx(const char* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm256_setzero();
-	const auto comparand = base_vec256i_t_pointer_as_m256i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto loadedString = _mm256_loadu_epi8(current);
-		const uint bingo = _mm256_cmpeq_epi8_mask(loadedString, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX, 1>(_mm256_loadu_epi8(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char*>(current) - 
-				string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 32);
 	}
@@ -60,19 +48,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx(const char* string) noexcep
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx512(const char* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm512_setzero();
-	const auto comparand = base_vec512i_t_pointer_as_m512i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto loadedString = _mm512_loadu_epi8(current);
-		const uint64 bingo = _mm512_cmpeq_epi8_mask(loadedString, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX512, 1>(_mm512_loadu_epi8(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char*>(current) - 
-				string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 64);
 	}
@@ -91,21 +74,15 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenScalar(const wchar_t* string) n
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_wcslenSse2(const wchar_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm128_setzero();
-	const auto comparand = base_vec128i_t_pointer_as_m128i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		// *
-		const auto loadedString = _mm_loadu_epi16(current);
-		const uint8 bingo = _mm_movemask_epi8(_mm_cmpeq_epi16(loadedString, comparand));
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::SSE, 2>(_mm_loadu_epi16(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const wchar_t*>(current) 
-				- string + CountTrailingZeroBits(bingo)));
-		// *
+				reinterpret_cast<const wchar_t*>(current) - string + comparisonResult.trailingZeros));
+
 		memory::AdvanceBytes(current, 16);
 	}
 
@@ -114,19 +91,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenSse2(const wchar_t* string) noe
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx(const wchar_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm256_setzero();
-	const auto comparand = base_vec256i_t_pointer_as_m256i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto loadedString = _mm256_loadu_epi16(current);
-		const ushort bingo = _mm256_cmpeq_epi16_mask(loadedString, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX, 2>(_mm256_loadu_epi16(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const wchar_t*>(current) 
-				- string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const wchar_t*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 32);
 	}
@@ -136,19 +108,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx(const wchar_t* string) noex
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx512(const wchar_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm512_setzero();
-	const auto comparand = base_vec512i_t_pointer_as_m512i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm512_loadu_epi16(current);
-		const uint64 bingo = _mm512_cmpeq_epi16_mask(str, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX512, 2>(_mm512_loadu_epi16(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const wchar_t*>(current) 
-				- string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const wchar_t*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 64);
 	}
@@ -160,19 +127,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx512(const wchar_t* string) n
 // ===================================================================================
 
 DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx512(const char32_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm512_setzero();
-	const auto comparand = base_vec512i_t_pointer_as_m512i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm512_loadu_epi32(current);
-		const uint32 bingo = _mm512_cmpeq_epi32_mask(str, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX512, 4>(_mm512_loadu_epi32(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current)
-				- string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char32_t*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 64);
 	}
@@ -182,19 +144,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx512(const char32_t* string) 
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx(const char32_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm256_setzero();
-	const auto comparand = base_vec256i_t_pointer_as_m256i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm256_loadu_epi32(current);
-		const uint8 bingo = _mm256_cmpeq_epi32_mask(str, comparand);
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX, 4>(_mm256_loadu_epi32(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current)
-				- string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char32_t*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 32);
 	}
@@ -204,19 +161,14 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx(const char32_t* string) noe
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_c32lenSse2(const char32_t* string) noexcept {
-	static constexpr const auto constexprComparand = base_constexpr_mm128_setzero();
-	const auto comparand = base_vec128i_t_pointer_as_m128i(&constexprComparand);
-
 	const void* current = string;
 
 	while (true) {
-		const auto str = _mm_loadu_epi32(current);
-		const uint8 bingo = _mm_movemask_epi8(_mm_cmpeq_epi32(str, comparand));
+		const auto comparisonResult = __checkForZeroBytes<CpuFeature::SSE, 4>(_mm_loadu_epi32(current));
 
-		if (bingo != 0)
+		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current)
-				- string + CountTrailingZeroBits(bingo)));
+				reinterpret_cast<const char32_t*>(current) - string + comparisonResult.trailingZeros));
 
 		memory::AdvanceBytes(current, 16);
 	}

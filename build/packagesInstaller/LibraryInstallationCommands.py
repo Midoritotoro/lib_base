@@ -1140,14 +1140,12 @@ installCommands="""
     cd benchmark
 
     cmake -E make_directory "build"
-
-    cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
     cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release -S . -B "build"
 
-    cmake --build . --config Debug --parallel
+    cmake --build "build" --config Debug
 release:
-    cmake --build . --config Release --parallel
-""",
+    cmake --build "build" --config Release
+"""
     )
 )
 

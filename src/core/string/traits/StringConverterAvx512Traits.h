@@ -13,9 +13,6 @@ public:
 	constexpr inline auto static cpuFeature = CpuFeature::AVX512;
 	using FallbackTraits = StringConverterTraits<CpuFeature::AVX>;
 
-	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec512i_t, 512);
-	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec512i_t, 512);
-
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
@@ -30,7 +27,10 @@ public:
 	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
 		 StringConversionParameters<char, wchar_t> parameters) noexcept
 	{
-		__baseInitConversionParameters(char, 64);
+		const size_t alignedBytes = (parameters.stringLength * sizeof(char)) & ~size_t(0x3F);
+
+		const void* stopAt = parameters.originalInputStringDataStart;
+		memory::AdvanceBytes(stopAt, alignedBytes);
 
 		if (alignedBytes != 0) {
 			do {

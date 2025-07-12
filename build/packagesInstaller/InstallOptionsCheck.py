@@ -1,5 +1,5 @@
 options = [
     'qt6',
-    'skip-release',
+    # 'skip-release',
     'build-stackwalk',
 ]

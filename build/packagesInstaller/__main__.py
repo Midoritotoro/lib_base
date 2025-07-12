@@ -9,6 +9,9 @@ import argparse
 
 if __name__ == "__main__":
     def main() -> None: 
+        # for command in installCommands:
+            # YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
+
         parser = argparse.ArgumentParser(description="Script to install lib_base dependencies. ")
 
         parser.add_argument("--libraries", type=lambda s: s.split(','), default="all", help="Libraries to install. Default - all")
@@ -34,7 +37,5 @@ if __name__ == "__main__":
             manager.executeAll() 
 
        #  print(YamlConfigLoader.ExtractLibraryInformationFromYaml("ffmpeg").dependencies)
-        # for command in installCommands:
-            # YamlConfigLoader.DumpLibraryInformationToYaml(command, f"D:/lib_base/build/packagesInstaller/build_instructions/{command.libraryName}.yaml")
 
     main()

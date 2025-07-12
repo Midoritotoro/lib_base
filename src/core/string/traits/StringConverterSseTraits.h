@@ -12,9 +12,6 @@ public:
 	constexpr inline static auto cpuFeature = CpuFeature::SSE;
 	using FallbackTraits = StringConverterTraits<CpuFeature::None>;
 
-	__BASE_DECLARE_CONVERTER_TRAITS_NARROWING_CONVERSION_LIMIT_VECTOR(base_vec128i_t, 128);
-	__BASE_DECLARE_CONVERTER_TRAITS_REPLACEMENT_VECTOR(base_vec128i_t, 128);
-
 	template <
 		typename _FromChar_,
 		typename _ToChar_>

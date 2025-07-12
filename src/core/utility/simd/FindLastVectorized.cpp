@@ -45,11 +45,10 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialSse2(
             memory::RewindBytes(lastPointer, 16);
 
             const __m128i data = _mm_loadu_si128(static_cast<const __m128i*>(lastPointer));
-            const int bingo = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
+            const uint bingo = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
             if (bingo != 0) {
-                unsigned long offset;
-                _BitScanReverse(&offset, bingo);
+                unsigned long offset = CountLeadingZeroBits(bingo);
 
                 memory::AdvanceBytes(lastPointer, offset - (sizeof(_Type_) - 1));
                 return lastPointer;
@@ -96,10 +95,10 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
             memory::RewindBytes(lastPointer, 32);
 
             const __m256i data = _mm256_loadu_si256(static_cast<const __m256i*>(lastPointer));
-            const int bingo    = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
+            const uint bingo    = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
 
             if (bingo != 0) {
-                const unsigned long offset = _lzcnt_u32(bingo);
+                const unsigned long offset = CountLeadingZeroBits(bingo);
                 memory::AdvanceBytes(lastPointer, (31 - offset) - (sizeof(_Type_) - 1));
 
                 return lastPointer;
@@ -114,12 +113,12 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
             const __m256i tailMask  = Avx2TailMask32(BytesToDoubleWordsCount(avxTailSize));
             const __m256i data      = _mm256_maskload_epi32(static_cast<const int*>(lastPointer), tailMask);
             
-            const int bingo =
+            const uint bingo =
                 _mm256_movemask_epi8(
                     _mm256_and_si256(_Traits_::CompareAvx(data, comparand), tailMask));
 
             if (bingo != 0) {
-                const ulong offset = _lzcnt_u32(bingo);
+                const ulong offset = CountLeadingZeroBits(bingo);
                 memory::AdvanceBytes(lastPointer, (31 - offset) - (sizeof(_Type_) - 1));
 
                 return lastPointer;
@@ -160,7 +159,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
             const uint64 bingo = _Traits_::CompareAvx512(data, comparand);
 
             if (bingo != 0) {
-                const unsigned long offset = _lzcnt_u64(bingo);
+                const unsigned long offset = CountLeadingZeroBits(bingo);
                 memory::AdvanceBytes(lastPointer, (63 - offset) - (sizeof(_Type_) - 1));
 
                 return lastPointer;
@@ -181,7 +180,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
                         _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask))); 
 
             if (bingo != 0) {
-                const unsigned long offset = _lzcnt_u64(bingo);
+                const unsigned long offset = CountLeadingZeroBits(bingo);
                 memory::AdvanceBytes(lastPointer, (63 - offset) - (sizeof(_Type_) - 1));
 
                 return lastPointer;

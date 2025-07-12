@@ -3,16 +3,16 @@ from .Dependency import Dependency
 
 class LibraryInstallationInformation: 
     def __init__(
-        self:               'LibraryInstallationInformation',
-        libraryName:        str, 
-        libraryInformation: str         = "", 
-        libraryVersion:     str         = "",
-        installCommands:    str         = "",
-        location:           str         = "",
-        directory:          str         = "",
-        cacheKey:           str         = "",
-        dependencies:       List[Dependency]   = [],
-        additionalDependencies: List[Dependency] = []
+        self:                   'LibraryInstallationInformation',
+        libraryName:            str, 
+        libraryInformation:     str                 = "", 
+        libraryVersion:         str                 = "",
+        installCommands:        str                 = "",
+        location:               str                 = "",
+        directory:              str                 = "",
+        cacheKey:               str                 = "",
+        dependencies:           List[Dependency]    = [],
+        additionalDependencies: List[Dependency]    = []
     ):
         self.libraryName:             str               = libraryName
         self.libraryInformation:      str               = libraryInformation 

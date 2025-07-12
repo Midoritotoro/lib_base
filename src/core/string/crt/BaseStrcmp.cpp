@@ -4,23 +4,18 @@
 #include <src/core/memory/MemoryUtility.h>
 #include <base/core/utility/BitOps.h>
 
-#include <src/core/utility/simd/SimdConstexprHelpers.h>
+#include <src/core/string/crt/BaseStrlenInternal.h>
 
 always_inline NODISCARD bool IsXmmZero(__m128i xmmRegister) noexcept {
-	constexpr const auto cmp = base_constexpr_mm_setzero();
-	return _mm_movemask_epi8(
-		_mm_cmpeq_epi64(xmmRegister, 
-			base_vec128i_t_pointer_as_m128i(&cmp))) == 0xFFFFFFFFFFFFFFFF;
+	return _mm_movemask_epi8(_mm_cmpeq_epi64(xmmRegister, _mm_setzero_si128())) == 0xFFFFFFFFFFFFFFFF;
 }
 
 always_inline NODISCARD bool IsYmmZero(__m256i ymmRegister) noexcept {
-	constexpr const auto cmp = base_constexpr_mm256_setzero();
-	return _mm256_cmpeq_epi64_mask(ymmRegister, base_vec256i_t_pointer_as_m256i(&cmp))== 0xFFFFFFFFFFFFFFFF;
+	return _mm256_cmpeq_epi64_mask(ymmRegister, _mm256_setzero_si256()) == 0xFFFFFFFFFFFFFFFF;
 }
 
 always_inline NODISCARD bool IsZmmZero(__m512i zmmRegister) noexcept {
-	constexpr const auto cmp = base_constexpr_mm512_setzero();
-	return _mm512_cmpeq_epi64_mask(zmmRegister, base_vec512i_t_pointer_as_m512i(&cmp)) == 0xFFFFFFFFFFFFFFFF;
+	return _mm512_cmpeq_epi64_mask(zmmRegister, _mm512_setzero_si512()) == 0xFFFFFFFFFFFFFFFF;
 }
 
 __BASE_STRING_NAMESPACE_BEGIN
@@ -50,12 +45,18 @@ DECLARE_NOALIAS int __CDECL __base_strcmpSse2(
 		const auto loadedSecond = _mm_loadu_epi8(secondString);
 
 		ret = ((_mm_movemask_epi8(_mm_sub_epi8(loadedFirst, loadedSecond))) == 0);
-		const uint16 bingo = _mm_cmpeq_epi8_mask(loadedFirst, comparand);
 
-		if (bingo != 0)
-			return (static_cast<std::size_t>(
-				reinterpret_cast<const char*>(current) -
-				string + CountTrailingZeroBits(bingo)));
+		if (ret == 0)
+			break;
+
+		const auto availableStringSize = __checkForZeroBytes<CpuFeature::SSE, 1>(loadedSecond);
+
+		//const uint16 bingo = _mm_cmpeq_epi8_mask(loadedFirst, comparand);
+
+		//if (bingo != 0)
+		//	return (static_cast<std::size_t>(
+		//		reinterpret_cast<const char*>(current) -
+		//		string + CountTrailingZeroBits(bingo)));
 
 		memory::AdvanceBytes(firstString, 16);
 		memory::AdvanceBytes(secondString, 16);
