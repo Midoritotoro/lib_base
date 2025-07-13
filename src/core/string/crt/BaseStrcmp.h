@@ -20,11 +20,6 @@ DECLARE_NOALIAS int __CDECL __base_c32cmp(
 	const char32_t* firstString,
 	const char32_t* secondString) noexcept;
 
-
-DECLARE_NOALIAS int __CDECL __base_strcmpScalar(
-	const char* firstString,
-	const char* secondString) noexcept;
-
 template <
 	typename _Char_,
 	typename = std::enable_if_t<string::IsCompatibleCharType<_Char_>::value>>

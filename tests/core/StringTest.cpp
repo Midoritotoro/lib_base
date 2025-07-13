@@ -4,18 +4,24 @@
 #include <src/core/string/crt/BaseStrcmp.h>
 
 int main(int argc, char** argv) {
-	base::string::String string{ std::string("Some test string!") };
-	std::wstring str(L"Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!Some test string!");
+	// Strcmp 
 
-	std::cout << base::string::__base_any_strlen(str.data());
+    static const char abcde[] = "abcde";
+    static const char abcdx[] = "abcdx";
 
+	Assert(base::string::__base_strcmp(&abcde[0], "abcde") == 0);
+	Assert(base::string::__base_strcmp(abcde, abcdx) == strcmp(abcde, abcdx));
 
-	
+	static const wchar_t abcde_W[] = L"abcde";
+	static const wchar_t abcdx_W[] = L"abcdx";
 
-	/*char a[16] = "aazf01010101010";
-	char b[12] = "zzzzzzgdgfd";
+	Assert(base::string::__base_wcscmp(&abcde_W[0], L"abcde") == 0);
+	Assert(base::string::__base_wcscmp(abcde_W, abcdx_W) == wcscmp(abcde_W, abcdx_W));
 
+	static const char32_t abcde_32[] = U"abcde";
+	static const char32_t abcdx_32[] = U"abcdx";
 
-	std::cout << base::string::__base_strcmpScalar(a, b);*/
+	Assert(base::string::__base_c32cmp(&abcde_32[0], U"abcde") == 0);
+
 	return 0;
 }
