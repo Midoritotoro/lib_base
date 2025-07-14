@@ -97,85 +97,20 @@ DECLARE_NOALIAS NODISCARD const char* __base_strstrnSse2(
         return result;
 
     switch (needleLength) {
-        case 0:
-            return 0;
-
-        case 1: {
-            const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));
-            return res;
-        }
-
-        case 2:
-            result = __base_strstrnSse2Memcmp<2>(
-                string, stringLength, 
-                needle, memory::alwaysTrue);
-            break;
-
-        case 3:
-            result = __base_strstrnSse2Memcmp<3>(
-                string, stringLength,
-                needle, memory::memcmp1);
-            break;
-
-        case 4:
-            result = __base_strstrnSse2Memcmp<4>(
-                string, stringLength,
-                needle, memory::memcmp2);
-            break;
-
-        case 5:
-            result = __base_strstrnSse2Memcmp<5>(
-                string, stringLength, 
-                needle, memory::memcmp4);
-            break;
-
-        case 6:
-            result = __base_strstrnSse2Memcmp<6>(
-                string, stringLength, 
-                needle, memory::memcmp4);
-            break;
-
-        case 7:
-            result = __base_strstrnSse2Memcmp<7>(
-                string, stringLength, 
-                needle, memory::memcmp5);
-            break;
-
-        case 8:
-            result = __base_strstrnSse2Memcmp<8>(
-                string, stringLength,
-                needle, memory::memcmp6);
-            break;
-
-        case 9:
-            result = __base_strstrnSse2Memcmp<9>(
-                string, stringLength,
-                needle, memory::memcmp8);
-            break;
-
-        case 10:
-            result = __base_strstrnSse2Memcmp<10>(
-                string, stringLength,
-                needle, memory::memcmp8);
-            break;
-
-        case 11:
-            result = __base_strstrnSse2Memcmp<11>(
-                string, stringLength,
-                needle, memory::memcmp9);
-            break;
-
-        case 12:
-            result = __base_strstrnSse2Memcmp<12>(
-                string, stringLength, 
-                needle, memory::memcmp10);
-            break;
-
-        default:
-            result = __base_strstrnSse2AnySize(
-                string, stringLength,
-                needle, needleLength);
-            break;
+        case 0:                                                                                             return 0;
+        case 1:     const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));             return res;
+        case 2:     result = __base_strstrnSse2Memcmp<2>(string, stringLength, needle, memory::alwaysTrue); break;
+        case 3:     result = __base_strstrnSse2Memcmp<3>(string, stringLength, needle, memory::memcmp1);    break;
+        case 4:     result = __base_strstrnSse2Memcmp<4>(string, stringLength, needle, memory::memcmp2);    break;
+        case 5:     result = __base_strstrnSse2Memcmp<5>(string, stringLength, needle, memory::memcmp4);    break;
+        case 6:     result = __base_strstrnSse2Memcmp<6>(string, stringLength, needle, memory::memcmp4);    break;
+        case 7:     result = __base_strstrnSse2Memcmp<7>(string, stringLength, needle, memory::memcmp5);    break;
+        case 8:     result = __base_strstrnSse2Memcmp<8>(string, stringLength, needle, memory::memcmp6);    break;
+        case 9:     result = __base_strstrnSse2Memcmp<9>(string, stringLength, needle, memory::memcmp8);    break;
+        case 10:    result = __base_strstrnSse2Memcmp<10>(string, stringLength, needle, memory::memcmp8);   break;
+        case 11:    result = __base_strstrnSse2Memcmp<11>(string, stringLength, needle, memory::memcmp9);   break;
+        case 12:    result = __base_strstrnSse2Memcmp<12>(string, stringLength, needle, memory::memcmp10);  break;
+        default:    result = __base_strstrnSse2AnySize(string, stringLength, needle, needleLength);         break;
      }
 
     if (result - string <= stringLength - needleLength)

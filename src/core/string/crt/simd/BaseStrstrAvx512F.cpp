@@ -151,82 +151,19 @@ DECLARE_NOALIAS NODISCARD const char* __base_strstrnAvx512F(
         case 0:
             return 0;
 
-        case 1: {
-            const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));
-            return res;
-        }
-
-        case 2:
-            result = __base_strstrnAvx512FMemcmp<2>(
-                string, stringLength,
-                needle, memory::memcmp2);
-            break;
-
-        case 3:
-            result = __base_strstrnAvx512FMemcmp<3>(
-                string, stringLength,
-                needle, memory::memcmp3);
-            break;
-
-        case 4:
-            result = __base_strstrnAvx512FMemcmp<4>(
-                string, stringLength,
-                needle, memory::memcmp4);
-            break;
-
-        case 5:
-            result = __base_strstrnAvx512FMemcmp<5>(
-                string, stringLength,
-                needle, memory::memcmp5);
-            break;
-
-        case 6:
-            result = __base_strstrnAvx512FMemcmp<6>(
-                string, stringLength,
-                needle, memory::memcmp6);
-            break;
-
-        case 7:
-            result = __base_strstrnAvx512FMemcmp<7>(
-                string, stringLength, 
-                needle, memory::memcmp7);
-            break;
-
-        case 8:
-            result = __base_strstrnAvx512FMemcmp<8>(
-                string, stringLength,
-                needle, memory::memcmp8);
-            break;
-
-        case 9:
-            result = __base_strstrnAvx512FMemcmp<9>(
-                string, stringLength,
-                needle, memory::memcmp9);
-            break;
-
-        case 10:
-            result = __base_strstrnAvx512FMemcmp<10>(
-                string, stringLength,
-                needle, memory::memcmp10);
-            break;
-
-        case 11:
-            result = __base_strstrnAvx512FMemcmp<11>(
-                string, stringLength,
-                needle, memory::memcmp11);
-            break;
-
-        case 12:
-            result = __base_strstrnAvx512FMemcmp<12>(
-                string, stringLength,
-                needle, memory::memcmp12);
-            break;
-
-        default:
-            result = __base_strstrnAvx512FAnySize(
-                string, stringLength, 
-                needle, needleLength);
-            break;
+        case 1:     const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));                 return res;
+        case 2:     result = __base_strstrnAvx512FMemcmp<2>(string, stringLength, needle, memory::memcmp2);     break;
+        case 3:     result = __base_strstrnAvx512FMemcmp<3>(string, stringLength, needle, memory::memcmp3);     break;
+        case 4:     result = __base_strstrnAvx512FMemcmp<4>(string, stringLength, needle, memory::memcmp4);     break;
+        case 5:     result = __base_strstrnAvx512FMemcmp<5>(string, stringLength, needle, memory::memcmp5);     break;
+        case 6:     result = __base_strstrnAvx512FMemcmp<6>(string, stringLength, needle, memory::memcmp6);     break;
+        case 7:     result = __base_strstrnAvx512FMemcmp<7>(string, stringLength, needle, memory::memcmp7);     break;
+        case 8:     result = __base_strstrnAvx512FMemcmp<8>(string, stringLength, needle, memory::memcmp8);     break;
+        case 9:     result = __base_strstrnAvx512FMemcmp<9>(string, stringLength, needle, memory::memcmp9);     break;
+        case 10:    result = __base_strstrnAvx512FMemcmp<10>(string, stringLength, needle, memory::memcmp10);   break;
+        case 11:    result = __base_strstrnAvx512FMemcmp<11>(string, stringLength, needle, memory::memcmp11);   break;
+        case 12:    result = __base_strstrnAvx512FMemcmp<12>(string, stringLength, needle, memory::memcmp12);   break;
+        default:    result = __base_strstrnAvx512FAnySize(string, stringLength, needle, needleLength);          break;
     }
 
     if (result - string <= stringLength - needleLength)
