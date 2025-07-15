@@ -17,4 +17,10 @@ DECLARE_NOALIAS const wchar_t* CDECL __base_wcsstrn(
 	const wchar_t*		subString,
 	const std::size_t	subLength) noexcept;
 
+DECLARE_NOALIAS const wchar_t* CDECL __base_c32strn(
+	const char32_t*		mainString,
+	const std::size_t	mainLength,
+	const char32_t*		subString,
+	const std::size_t	subLength) noexcept;
+
 __BASE_STRING_NAMESPACE_END

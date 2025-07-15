@@ -9,10 +9,10 @@ struct ZeroComparison {
 	uint64	trailingZeros = 0;
 };
 
-template <CpuFeature feature, uint64 byteCount>
+template <CpuFeature feature, uint64 bytesCount>
 DECLARE_NOALIAS NODISCARD ZeroComparison __checkForZeroBytes(const void* start) noexcept;
 
-template <CpuFeature feature, uint64 byteCount>
+template <CpuFeature feature, uint64 bytesCount>
 DECLARE_NOALIAS NODISCARD ZeroComparison __checkForZeroBytes(__m128i vector) noexcept;
 template <CpuFeature feature, uint64 bytesCount>
 DECLARE_NOALIAS NODISCARD ZeroComparison __checkForZeroBytes(__m256i vector) noexcept;
