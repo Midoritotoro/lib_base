@@ -50,7 +50,7 @@ DECLARE_NOALIAS NODISCARD const char* CDECL __base_strstr(
 	const char* string,
 	const char* needle) noexcept
 {
-	if (ProcessorFeatures::AVX512F())
+	/*if (ProcessorFeatures::AVX512F())
 		return __base_strstrnAvx512F(
 			string, __base_strlen(string), 
 			needle, __base_strlen(needle));
@@ -67,7 +67,8 @@ DECLARE_NOALIAS NODISCARD const char* CDECL __base_strstr(
 
 	return __base_strstrnScalar(
 		string, __base_strlen(string),
-		needle, __base_strlen(needle));
+		needle, __base_strlen(needle));*/
+    return "";
 }
 
 

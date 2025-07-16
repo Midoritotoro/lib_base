@@ -122,4 +122,20 @@ DECLARE_NOALIAS int __CDECL __base_c32cmpScalar(
 	return ((-ret) < 0) - (ret < 0);
 }
 
+
+DECLARE_NOALIAS int __CDECL __base_c32cmp(
+	const char32_t* firstString,
+	const char32_t* secondString) noexcept
+{
+	if (ProcessorFeatures::AVX512F())
+		return __base_c32cmpAvx512(firstString, secondString);
+	else if (ProcessorFeatures::AVX())
+		return __base_c32cmpAvx(firstString, secondString);
+	else if (ProcessorFeatures::SSE2())
+		return __base_c32cmpSse2(firstString, secondString);
+
+	return __base_c32cmpScalar(firstString, secondString);
+}
+
+
 __BASE_STRING_NAMESPACE_END

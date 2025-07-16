@@ -168,14 +168,9 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/ReverseTriviallySwappableVectorized.cpp
     src/core/utility/simd/ReverseTriviallyCopyableVectorized.cpp
 
-    src/core/string/crt/BaseStrstrn.cpp
-    src/core/string/crt/BaseStrstr.cpp
-
-    src/core/string/crt/BaseStrlen.cpp
     src/core/memory/crt/BaseMemmove.cpp
 
     src/core/memory/crt/BaseMemcpy.cpp
-    src/core/string/crt/simd/BaseStrstrAvx2.cpp
 
     src/core/string/crt/simd/BaseStrstrAvx512F.cpp
     src/core/string/crt/simd/BaseStrstrSse2.cpp
@@ -209,8 +204,55 @@ set(PRIVATE_SOURCES
       src/core/logging/LoggingCategory.cpp
       src/core/logging/LoggingRegistry.cpp
 
-      src/core/string/crt/BaseStrcmp.cpp
-      src/core/string/crt/BaseStrcmp.h
+      
+
+    src/core/string/crt/BaseAnyStrcmp.h
+    src/core/string/crt/BaseAnyStrcmp.cpp
+
+    src/core/string/crt/BaseAnyStrlen.h
+    src/core/string/crt/BaseAnyStrlen.cpp
+
+    src/core/string/crt/BaseAnyStrstr.h
+    src/core/string/crt/BaseAnyStrstr.cpp
+
+    src/core/string/crt/BaseAnyStrstrn.h
+    src/core/string/crt/BaseAnyStrstrn.cpp
+
+
+    src/core/string/crt/wcs/BaseWcscmp.h
+    src/core/string/crt/wcs/BaseWcscmp.cpp
+
+    src/core/string/crt/wcs/BaseWcslen.h
+    src/core/string/crt/wcs/BaseWcslen.cpp
+
+    src/core/string/crt/wcs/BaseWcsstr.h
+    src/core/string/crt/wcs/BaseWcsstr.cpp
+
+    src/core/string/crt/wcs/BaseWcsstrn.h
+    src/core/string/crt/wcs/BaseWcsstrn.cpp
+
+
+    src/core/string/crt/c32/BaseC32cmp.h
+    src/core/string/crt/c32/BaseC32cmp.cpp
+
+    src/core/string/crt/c32/BaseC32len.h
+    src/core/string/crt/c32/BaseC32len.cpp
+
+    src/core/string/crt/c32/BaseC32str.h
+    src/core/string/crt/c32/BaseC32str.cpp
+
+    src/core/string/crt/c32/BaseC32strn.h
+    src/core/string/crt/c32/BaseC32strn.cpp
+
+    src/core/string/crt/cs/BaseStrstrn.cpp
+    src/core/string/crt/cs/BaseStrstr.cpp
+
+    src/core/string/crt/cs/BaseStrcmp.cpp
+    src/core/string/crt/cs/BaseStrcmp.h
+
+    src/core/string/crt/cs/BaseStrlen.h
+    src/core/string/crt/cs/BaseStrlen.cpp
+
 
     ${BASE_MASM_FILES}
 )

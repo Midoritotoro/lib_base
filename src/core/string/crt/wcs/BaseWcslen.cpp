@@ -66,9 +66,6 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx512(const wchar_t* string) n
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_wcslen(const wchar_t* string) noexcept {
-	if constexpr (sizeof(wchar_t) == 8)
-		return __base_c32len(reinterpret_cast<const char32_t*>(string));
-
 	if (ProcessorFeatures::AVX512F())
 		return __base_wcslenAvx512(string);
 	else if (ProcessorFeatures::AVX())
