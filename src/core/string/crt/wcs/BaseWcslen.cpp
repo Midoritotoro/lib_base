@@ -1,4 +1,4 @@
-#include <src/core/string/crt/wcx/BaseWcslen.h>
+#include <src/core/string/crt/wcs/BaseWcslen.h>
 #include <src/core/string/crt/BaseStrlenInternal.h>
 
 #include <src/core/memory/MemoryUtility.h>

@@ -1,4 +1,4 @@
-#include <src/core/string/crt/BaseStrcmp.h>
+#include <src/core/string/crt/cs/BaseStrcmp.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
 #include <src/core/memory/MemoryUtility.h>
@@ -20,7 +20,7 @@ always_inline NODISCARD bool IsZmmZero(__m512i zmmRegister) noexcept {
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS int __CDECL __base_strcmpScalar(
+DECLARE_NOALIAS int __CDECL __base_strcmpImplementationScalar(
 	const char* firstString,
 	const char* secondString) noexcept 
 {

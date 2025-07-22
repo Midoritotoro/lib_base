@@ -1,50 +1,15 @@
-#include <src/core/string/crt/BaseStrlen.h>
+#include <src/core/string/crt/cs/BaseStrlen.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
 #include <src/core/memory/MemoryUtility.h>
 #include <base/core/utility/BitOps.h>
 
-#include <src/core/string/crt/simd/VectorizedSafeStringAlgorithm.h>
+#include <src/core/string/crt/VectorizedSafeStringAlgorithm.h>
+#include <src/core/memory/crt/FixedMemcmp.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD const char* CDECL __base_strstrnScalar(
-    const char* hay,
-    std::size_t size, 
-    const char* needle,
-    std::size_t needlesize) noexcept
-{
-    if (size == needlesize)
-        return memcmp(hay, needle, size) == 0
-            ? hay 
-            : nullptr;
 
-    const char first = needle[0];
-    const std::size_t maxpos = std::size_t(size) - std::size_t(needlesize) + 1;
-    
-    for (std::size_t i = 0; i < maxpos; i++) {
-        if (hay[i] != first) {
-            i++;
-
-            while (i < maxpos && hay[i] != first)
-                i++;
-
-            if (i == maxpos)
-                break;
-        }
-
-        std::size_t j = 1;
-        
-        for (; j < needlesize; ++j)
-            if (hay[i + j] != needle[j]) 
-                break;
-        
-        if (j == needlesize)
-            return (hay + i);
-    }
-
-    return nullptr;
-}
 
 DECLARE_NOALIAS NODISCARD const char* CDECL __base_strstr(
 	const char* string,

@@ -1,4 +1,4 @@
-#include <src/core/string/crt/BaseStrlen.h>
+#include <src/core/string/crt/cs/BaseStrlen.h>
 #include <src/core/string/crt/BaseStrlenInternal.h>
 
 #include <src/core/memory/MemoryUtility.h>

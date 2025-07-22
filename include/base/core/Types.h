@@ -60,22 +60,24 @@ using uintptr       = IntegerForSizeof<void*>::Unsigned;
 using ptrdiff       = IntegerForSizeof<void*>::Signed;
 
 using intptr        = ptrdiff;
-using sizetype      = IntegerForSizeof<std::size_t>::Signed;
+using sizetype      = IntegerForSizeof<std::size_t>::Unsigned;
 
-using byte_t = uint8;
-using sbyte_t = int8;
+using byte_t    = uint8;
+using sbyte_t   = int8;
 
-using word_t = uint16;
-using sword_t = int16;
+using word_t    = uint16;
+using sword_t   = int16;
 
-using dword_t = ulong32;
-using sdword_t = long32;
+using dword_t   = ulong32;
+using sdword_t  = long32;
 
-using qword_t = uint64;
-using sqword_t = int64;
+using qword_t   = uint64;
+using sqword_t  = int64;
 
 #if defined(OS_WIN)
     using bool_t = int;
+#else
+    using bool_t = bool;
 #endif
 
 __BASE_NAMESPACE_END

@@ -36,12 +36,12 @@ __BASE_IO_NAMESPACE_END
 
 #if defined(OS_MAC) || defined(OS_LINUX)
     #include <unistd.h>
-    #include <fcntl.h> // Для fcntl
+    #include <fcntl.h> // For fcntl
 #elif defined(OS_WIN)
-    #include <io.h> // Для _get_osfhandle
+    #include <io.h> // For _get_osfhandle
 #endif
 
-#include <limits>  // Для PATH_MAX
+#include <limits>  // For PATH_MAX
 
 #if defined(LIB_BASE_IO_NO_FAILURE)
 	#define IOAssert						AssertReturn
