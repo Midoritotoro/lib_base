@@ -44,7 +44,7 @@ public:
 class CountTraits16Bit : public FindTraits16Bit {
 public:
     // For both AVX2 and SSE4.2, we use hadd_epi16 once to combine pairs of 16-bit counters into 16-bit results.
-    // Therefore, _Max_count is 0x7FFF, which is 0xFFFE when doubled; any more would overflow.
+    // Therefore, maxCount is 0x7FFF, which is 0xFFFE when doubled; any more would overflow.
 
     static constexpr size_t maxCount = 0x7FFF;
 

@@ -1,6 +1,6 @@
 #include <base/core/arch/ProcessorFeatures.h>
 
-__BASE_NAMESPACE_BEGIN
+__BASE_ARCH_NAMESPACE_BEGIN
 
 std::string ProcessorFeatures::Vendor() noexcept {
     return CPU_Rep._vendor;
@@ -289,4 +289,4 @@ ProcessorFeatures::ProcessorFeaturesInternal::ProcessorFeaturesInternal()
     }
 };
 
-__BASE_NAMESPACE_END
+__BASE_ARCH_NAMESPACE_END

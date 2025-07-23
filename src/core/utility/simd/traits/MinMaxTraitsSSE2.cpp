@@ -136,11 +136,11 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-    NODISCARD xmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::xmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
         return _mm_cvtepi32_pd(_Vector);
     }
 
-    NODISCARD xmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::xmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
         return _mm_cvtepi32_ps(_Vector);
     }
 
@@ -278,11 +278,11 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-    NODISCARD xmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::xmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
         return _mm_cvtepi32_pd(_Vector);
     }
 
-    NODISCARD xmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::xmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
         return _mm_cvtepi32_ps(_Vector);
     }
 
@@ -413,11 +413,11 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-    NODISCARD xmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::xmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
         return _mm_cvtepi32_pd(_Vector);
     }
 
-    NODISCARD xmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::xmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
         return _mm_cvtepi32_ps(_Vector);
     }
 
@@ -551,11 +551,11 @@ namespace SSE2 {
         return _Array[_H_pos >> 3];
     }
 
-    NODISCARD xmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::xmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
         return _mm_cvtepi64_pd(_Vector);
     }
 
-    NODISCARD xmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::xmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
         return _mm_cvtepi64_ps(_Vector);
     }
 } // namespace SSE2

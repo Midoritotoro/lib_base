@@ -11,7 +11,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx512(const char32_t* string) 
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX512, 4>(_mm512_loadu_epi32(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX512, 4>(_mm512_loadu_epi32(current));
 
 		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
@@ -28,7 +28,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx(const char32_t* string) noe
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX, 4>(_mm256_loadu_epi32(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX, 4>(_mm256_loadu_epi32(current));
 
 		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
@@ -45,7 +45,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenSse2(const char32_t* string) no
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::SSE, 4>(_mm_loadu_epi32(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::SSE, 4>(_mm_loadu_epi32(current));
 
 		if (comparisonResult.mask != 0)
 			return (static_cast<std::size_t>(
@@ -66,11 +66,11 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenScalar(const char32_t* string) 
 }
 
 DECLARE_NOALIAS std::size_t __CDECL __base_c32len(const char32_t* string) noexcept {
-	if (ProcessorFeatures::AVX512F())
+	if (arch::ProcessorFeatures::AVX512F())
 		return __base_c32lenAvx512(string);
-	else if (ProcessorFeatures::AVX())
+	else if (arch::ProcessorFeatures::AVX())
 		return __base_c32lenAvx(string);
-	else if (ProcessorFeatures::SSE2())
+	else if (arch::ProcessorFeatures::SSE2())
 		return __base_c32lenSse2(string);
 
 	return __base_c32lenScalar(string);

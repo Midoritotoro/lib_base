@@ -152,13 +152,13 @@ DECLARE_NOALIAS void __CDECL SwapRangesTriviallySwappable(
     void* lastPointer1,
     void* firstPointer2) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return SwapRangesTriviallySwappableAvx512(
             firstPointer1, lastPointer1, firstPointer2);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return SwapRangesTriviallySwappableAvx(
             firstPointer1, lastPointer1, firstPointer2);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return SwapRangesTriviallySwappableSse2(
             firstPointer1, lastPointer1, firstPointer2);
 

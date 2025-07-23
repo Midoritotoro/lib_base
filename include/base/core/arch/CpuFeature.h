@@ -2,9 +2,9 @@
 
 #include <base/core/Types.h>
 
-__BASE_NAMESPACE_BEGIN
+__BASE_ARCH_NAMESPACE_BEGIN
 
-enum class CpuFeature : uchar {
+enum class CpuFeature : base::uchar {
 	None,
 	MMX,
 	SSE,
@@ -90,5 +90,4 @@ enum class CpuFeature : uchar {
 };
 
 
-
-__BASE_NAMESPACE_END
+__BASE_ARCH_NAMESPACE_END

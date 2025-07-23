@@ -6,7 +6,7 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::None>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::None>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -20,7 +20,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::None>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::SSE2>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -30,7 +30,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::SSE2>(
 		const auto loadedFirst = _mm_loadu_epi8(firstString);
 		const auto loadedSecond = _mm_loadu_epi8(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::SSE, 1>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE, 1>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -55,7 +55,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::SSE2>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -65,7 +65,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX>(
 		const auto loadedFirst = _mm256_loadu_epi8(firstString);
 		const auto loadedSecond = _mm256_loadu_epi8(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::AVX, 1>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX, 1>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -90,7 +90,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX512F>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512F>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -100,7 +100,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX512F>(
 		const auto loadedFirst = _mm512_loadu_epi8(firstString);
 		const auto loadedSecond = _mm512_loadu_epi8(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::AVX512, 1>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512, 1>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {

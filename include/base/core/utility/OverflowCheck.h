@@ -119,16 +119,6 @@ bool UnsignedLongLongMultiplyOverflow(
 }
 
 always_inline static NODISCARD
-bool SizetypeMultiplyOverflow(
-    sizetype a,
-    sizetype b,
-    sizetype* res)
-{
-    *res = a * b;
-    return b > 0 && a > (LLONG_MAX / b);
-}
-
-always_inline static NODISCARD
 bool SignedMultiplyOverflow(
     int a,
     int b,
@@ -139,6 +129,20 @@ bool SignedMultiplyOverflow(
 #else
     * res = a * b;
     return b > 0 && a > (INT_MAX / b);
+#endif
+}
+
+always_inline static NODISCARD
+bool SignedMultiplyOverflow(
+    int64 a,
+    int64 b,
+    int64* res)
+{
+#if defined(CPP_GNU) || defined(CPP_CLANG)
+    return __builtin_umulll_overflow(a, b, res);
+#else
+    * res = a * b;
+    return b > 0 && a > (LLONG_MAX / b);
 #endif
 }
 
@@ -181,11 +185,11 @@ bool MultiplyOverflow(
 always_inline static
 NODISCARD
 bool MultiplyOverflow(
-    sizetype a,
-    sizetype b,
-    sizetype* res)
+    int64 a,
+    int64 b,
+    int64* res)
 {
-    return SizetypeMultiplyOverflow(a, b, res);
+    return SignedMultiplyOverflow(a, b, res);
 }
 
 always_inline static NODISCARD

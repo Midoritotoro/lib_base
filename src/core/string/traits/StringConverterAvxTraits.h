@@ -7,11 +7,11 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <>
-class StringConverterTraits<CpuFeature::AVX>
+class StringConverterTraits<arch::CpuFeature::AVX>
 {
 public:
-	constexpr inline auto static cpuFeature = CpuFeature::AVX;
-	using FallbackTraits = StringConverterTraits<CpuFeature::SSE>;
+	constexpr inline auto static cpuFeature = arch::CpuFeature::AVX;
+	using FallbackTraits = StringConverterTraits<arch::CpuFeature::SSE>;
 
 	template <
 		typename _FromChar_,

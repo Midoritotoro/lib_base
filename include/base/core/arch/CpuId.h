@@ -3,7 +3,7 @@
 #include <base/core/arch/Platform.h>
 
 
-__BASE_NAMESPACE_BEGIN
+__BASE_ARCH_NAMESPACE_BEGIN
 
 #if defined(CPP_GNU) && !defined(BaseGCCCpuIdCall)
 // gcc won't allow us to clobber ebx since its used to store the got. so we need to
@@ -79,4 +79,4 @@ DECLARE_NOALIAS inline void CpuIdExtended(int32 op,
 #endif
 }
 
-__BASE_NAMESPACE_END
+__BASE_ARCH_NAMESPACE_END

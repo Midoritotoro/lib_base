@@ -34,19 +34,19 @@ public:
 		const size_t			length,
 		_ToChar_				replacementCharacter = _ToChar_('?'))
 	{
-		if (ProcessorFeatures::AVX512F())
-			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX512>>(
+		if (arch::ProcessorFeatures::AVX512F())
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::AVX512>>(
 				string, length, nullptr, replacementCharacter);
 
-		else if (ProcessorFeatures::AVX())
-			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX>>(
+		else if (arch::ProcessorFeatures::AVX())
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::AVX>>(
 				string, length, nullptr, replacementCharacter);
 
-		else if (ProcessorFeatures::SSE())
-			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::SSE>>(
+		else if (arch::ProcessorFeatures::SSE())
+			return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::SSE>>(
 				string, length, nullptr, replacementCharacter);
 
-		return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::None>>(
+		return convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::None>>(
 			string, length, nullptr, replacementCharacter);
 	}
 
@@ -63,20 +63,20 @@ public:
 		StringConversionResult<_ToChar_>*	output,
 		_ToChar_							replacementCharacter = _ToChar_('?'))
 	{
-		if (ProcessorFeatures::AVX512F())
-			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX512>>(
+		if (arch::ProcessorFeatures::AVX512F())
+			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::AVX512>>(
 				string, length, output->data(), replacementCharacter);
 
-		else if (ProcessorFeatures::AVX())
-			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::AVX>>(
+		else if (arch::ProcessorFeatures::AVX())
+			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::AVX>>(
 				string, length, output->data(), replacementCharacter);
 
-		else if (ProcessorFeatures::SSE())
-			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::SSE>>(
+		else if (arch::ProcessorFeatures::SSE())
+			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::SSE>>(
 				string, length, output->data(), replacementCharacter);
 
 		else
-			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<CpuFeature::None>>(
+			*output = convertStringImplementation<_FromChar_, _ToChar_, StringConverterTraits<arch::CpuFeature::None>>(
 				string, length, output->data(), replacementCharacter);
 	}
 private:

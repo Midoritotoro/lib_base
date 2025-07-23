@@ -16,7 +16,7 @@ namespace AVX512 {
         using SignedType = int8;
         using UnsignedType = uint8;
 
-        using SimdType = zmmint;
+        using SimdType = arch::zmmint;
 
         static constexpr auto MaxInt = BASE_INT8_MAX;
         static constexpr auto MaxUInt = BASE_UINT8_MAX;
@@ -65,8 +65,8 @@ namespace AVX512 {
         NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static zmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -77,7 +77,7 @@ namespace AVX512 {
         using SignedType = int16;
         using UnsignedType = uint16;
 
-        using SimdType = zmmint;
+        using SimdType = arch::zmmint;
 
         static constexpr auto MaxInt = BASE_INT16_MAX;
         static constexpr auto MaxUInt = BASE_UINT16_MAX;
@@ -126,8 +126,8 @@ namespace AVX512 {
         NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static zmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -138,7 +138,7 @@ namespace AVX512 {
         using SignedType = int32;
         using UnsignedType = uint32;
 
-        using SimdType = zmmint;
+        using SimdType = arch::zmmint;
 
         static constexpr auto MaxInt = BASE_INT32_MAX;
         static constexpr auto MaxUInt = BASE_UINT32_MAX;
@@ -187,8 +187,8 @@ namespace AVX512 {
         NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static zmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -199,7 +199,7 @@ namespace AVX512 {
         using SignedType = int64;
         using UnsignedType = uint64;
 
-        using SimdType = zmmint;
+        using SimdType = arch::zmmint;
 
         static constexpr auto MaxInt = BASE_INT64_MAX;
         static constexpr auto MaxUInt = BASE_UINT64_MAX;
@@ -252,8 +252,8 @@ namespace AVX512 {
             const SimdType _Idx,
             const unsigned long _H_pos) noexcept;
 
-        NODISCARD static zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static zmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 } // namespace AVX512
 

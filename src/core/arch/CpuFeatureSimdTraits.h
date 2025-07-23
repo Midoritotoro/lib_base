@@ -3,7 +3,7 @@
 #include <base/core/arch/CpuFeature.h>
 #include <src/core/utility/simd/SimdVectorType.h>
 
-__BASE_NAMESPACE_BEGIN
+__BASE_ARCH_NAMESPACE_BEGIN
 
 template <CpuFeature feature>
 struct IsXmmSimdFeature:
@@ -102,4 +102,4 @@ template <CpuFeature feature>
 constexpr CpuFeature downcast_simd_feature_v = DowncastSimdFeature<feature>::value;
 
 
-__BASE_NAMESPACE_END
+__BASE_ARCH_NAMESPACE_END

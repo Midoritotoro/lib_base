@@ -22,7 +22,8 @@ DECLARE_NOALIAS int	__CDECL __base_strcmp(
 	const char* firstString,
 	const char* secondString) noexcept 
 {
-	return ProcessorFeatures::dispatch(__baseFeatureAwareStrcmp<CpuFeature::None>, firstString, secondString);
+	return 0;
+	// return ProcessorFeatures::dispatch(__baseFeatureAwareStrcmp<CpuFeature::None>, firstString, secondString);
 }
 
 __BASE_STRING_NAMESPACE_END

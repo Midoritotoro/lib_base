@@ -14,7 +14,7 @@ namespace SSE2 {
         using SignedType = int8;
         using UnsignedType = uint8;
 
-        using SimdType = xmmint;
+        using SimdType = arch::xmmint;
 
         static constexpr auto MaxInt    = BASE_INT8_MAX;
         static constexpr auto MaxUInt = BASE_UINT8_MAX;
@@ -63,8 +63,8 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static xmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -75,7 +75,7 @@ namespace SSE2 {
         using SignedType = int16;
         using UnsignedType = uint16;
 
-        using SimdType = xmmint;
+        using SimdType = arch::xmmint;
 
         static constexpr auto MaxInt = BASE_INT16_MAX;
         static constexpr auto MaxUInt = BASE_UINT16_MAX;
@@ -124,8 +124,8 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static xmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -136,7 +136,7 @@ namespace SSE2 {
         using SignedType = int32;
         using UnsignedType = uint32;
 
-        using SimdType = xmmint;
+        using SimdType = arch::xmmint;
 
         static constexpr auto MaxInt = BASE_INT32_MAX;
         static constexpr auto MaxUInt = BASE_UINT32_MAX;
@@ -185,8 +185,8 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
         NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static xmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -197,7 +197,7 @@ namespace SSE2 {
         using SignedType = int64;
         using UnsignedType = uint64;
 
-        using SimdType = xmmint;
+        using SimdType = arch::xmmint;
 
         static constexpr auto MaxInt = BASE_INT64_MAX;
         static constexpr auto MaxUInt = BASE_UINT64_MAX;
@@ -250,8 +250,8 @@ namespace SSE2 {
             const SimdType _Idx,
             const unsigned long _H_pos) noexcept;
 
-        NODISCARD static xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static xmmfloat ToFloat(SimdType _Vector);
+        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
+        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 } // namespace SSE2
 

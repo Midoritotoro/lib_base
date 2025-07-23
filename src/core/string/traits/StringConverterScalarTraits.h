@@ -5,10 +5,10 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <>
-class StringConverterTraits<CpuFeature::None>
+class StringConverterTraits<arch::CpuFeature::None>
 {
 public:
-	constexpr inline static auto cpuFeature = CpuFeature::None;
+	constexpr inline static auto cpuFeature = arch::CpuFeature::None;
 
 	template <
 		typename _FromChar_,

@@ -399,11 +399,11 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized8Bit(
     void* lastPointer,
     void* destinationPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallyCopyable8BitAvx512(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallyCopyable8BitAvx(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallyCopyable8BitSse2(firstPointer, lastPointer, destinationPointer);
 
     return memory::ReverseCopyTail(
@@ -417,11 +417,11 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized16Bit(
     void* lastPointer,
     void* destinationPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallyCopyable16BitAvx512(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallyCopyable16BitAvx(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallyCopyable16BitSse2(firstPointer, lastPointer, destinationPointer);
 
     return memory::ReverseCopyTail(
@@ -435,11 +435,11 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized32Bit(
     void* lastPointer,
     void* destinationPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallyCopyable32BitAvx512(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallyCopyable32BitAvx(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallyCopyable32BitSse2(firstPointer, lastPointer, destinationPointer);
 
     return memory::ReverseCopyTail(
@@ -453,11 +453,11 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized64Bit(
     void* lastPointer,
     void* destinationPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallyCopyable64BitAvx512(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallyCopyable64BitAvx(firstPointer, lastPointer, destinationPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallyCopyable64BitSse2(firstPointer, lastPointer, destinationPointer);
 
     return memory::ReverseCopyTail(

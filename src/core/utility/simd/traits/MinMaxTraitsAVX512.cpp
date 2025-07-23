@@ -130,11 +130,11 @@ namespace AVX512 {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    NODISCARD zmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::zmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    NODISCARD zmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::zmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -254,11 +254,11 @@ namespace AVX512 {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    NODISCARD zmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::zmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    NODISCARD zmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::zmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -378,11 +378,11 @@ namespace AVX512 {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    NODISCARD zmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::zmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    NODISCARD zmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::zmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -509,11 +509,11 @@ namespace AVX512 {
         return _Array[_H_pos >> 3];
     }
 
-    NODISCARD zmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::zmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    NODISCARD zmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::zmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 } // namespace AVX512

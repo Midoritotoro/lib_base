@@ -4,28 +4,28 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <CpuFeature feature>
+template <arch::CpuFeature feature>
 DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp(
 	const char* firstString,
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::None>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::None>(
 	const char* firstString,
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::SSE2>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 	const char* firstString,
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX>(
 	const char* firstString,
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<CpuFeature::AVX512F>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512F>(
 	const char* firstString,
 	const char* secondString) noexcept;
 

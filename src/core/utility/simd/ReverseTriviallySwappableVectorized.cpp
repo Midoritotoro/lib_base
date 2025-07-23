@@ -437,11 +437,11 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized8Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallySwappable8BitAvx512(firstPointer, lastPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallySwappable8BitAvx(firstPointer, lastPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
 
     return memory::ReverseTail(
@@ -453,11 +453,11 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized16Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallySwappable16BitAvx512(firstPointer, lastPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallySwappable16BitAvx(firstPointer, lastPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallySwappable16BitSse2(firstPointer, lastPointer);
 
     return memory::ReverseTail(
@@ -469,11 +469,11 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized32Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallySwappable32BitAvx512(firstPointer, lastPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallySwappable32BitAvx(firstPointer, lastPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallySwappable32BitSse2(firstPointer, lastPointer);
 
     return memory::ReverseTail(
@@ -485,11 +485,11 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized64Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return ReverseTriviallySwappable64BitAvx512(firstPointer, lastPointer);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return ReverseTriviallySwappable64BitAvx(firstPointer, lastPointer);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
 
     return memory::ReverseTail(

@@ -6,11 +6,11 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <>
-class StringConverterTraits<CpuFeature::SSE>
+class StringConverterTraits<arch::CpuFeature::SSE>
 {
 public:
-	constexpr inline static auto cpuFeature = CpuFeature::SSE;
-	using FallbackTraits = StringConverterTraits<CpuFeature::None>;
+	constexpr inline static auto cpuFeature = arch::CpuFeature::SSE;
+	using FallbackTraits = StringConverterTraits<arch::CpuFeature::None>;
 
 	template <
 		typename _FromChar_,

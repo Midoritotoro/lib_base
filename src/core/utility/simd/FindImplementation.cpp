@@ -182,11 +182,11 @@ DECLARE_NOALIAS NODISCARD const void* FindVectorized8Bit(
     const void* lastPointer,
     uint8       value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindAVX512<FindTraits8Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindAVX<FindTraits8Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindSSE2<FindTraits8Bit>(firstPointer, lastPointer, value);
 
     return FindScalar(firstPointer, lastPointer, value);
@@ -197,11 +197,11 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized16Bit(
     const void* lastPointer,
     uint16      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindAVX512<FindTraits16Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindAVX<FindTraits16Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindSSE2<FindTraits16Bit>(firstPointer, lastPointer, value);
 
     return FindScalar(firstPointer, lastPointer, value);
@@ -212,11 +212,11 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized32Bit(
     const void* lastPointer,
     uint32      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindAVX512<FindTraits32Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindAVX<FindTraits32Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindSSE2<FindTraits32Bit>(firstPointer, lastPointer, value);
 
     return FindScalar(firstPointer, lastPointer, value);
@@ -227,11 +227,11 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized64Bit(
     const void* lastPointer,
     uint64      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindAVX512<FindTraits64Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindAVX<FindTraits64Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindSSE2<FindTraits64Bit>(firstPointer, lastPointer, value);
 
     return FindScalar(firstPointer, lastPointer, value);

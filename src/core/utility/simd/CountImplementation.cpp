@@ -29,8 +29,6 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
     return count;
 }
 
-
-
 template <
     class _Traits_,
     class _Type_>
@@ -82,7 +80,6 @@ inline NODISCARD std::size_t CountSSE42(
             break;
     }
 }
-
 
 template <
     class _Traits_,
@@ -228,11 +225,11 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count8Bit(
     const void* lastPointer,
     uint8       value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return CountAVX512<CountTraits8Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return CountAVX<CountTraits8Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE42())
+    else if (arch::ProcessorFeatures::SSE42())
         return CountSSE42<CountTraits8Bit>(firstPointer, lastPointer, value);
 
     return CountScalar(firstPointer, lastPointer, value);
@@ -244,11 +241,11 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count16Bit(
     const void* lastPointer,
     uint16      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return CountAVX512<CountTraits16Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return CountAVX<CountTraits16Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE42())
+    else if (arch::ProcessorFeatures::SSE42())
         return CountSSE42<CountTraits16Bit>(firstPointer, lastPointer, value);
 
     return CountScalar(firstPointer, lastPointer, value);
@@ -259,11 +256,11 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count32Bit(
     const void* lastPointer,
     uint32      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return CountAVX512<CountTraits32Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return CountAVX<CountTraits32Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE42())
+    else if (arch::ProcessorFeatures::SSE42())
         return CountSSE42<CountTraits32Bit>(firstPointer, lastPointer, value);
 
     return CountScalar(firstPointer, lastPointer, value);
@@ -274,11 +271,11 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count64Bit(
     const void* lastPointer,
     uint64      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return CountAVX512<CountTraits64Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return CountAVX<CountTraits64Bit>(firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE42())
+    else if (arch::ProcessorFeatures::SSE42())
         return CountSSE42<CountTraits64Bit>(firstPointer, lastPointer, value);
 
     return CountScalar(firstPointer, lastPointer, value);

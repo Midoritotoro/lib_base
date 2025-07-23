@@ -205,7 +205,7 @@ DECLARE_NOALIAS NODISCARD const char* __base_strstrnSse2(
 
     switch (needleLength) {
         case 0:                                                                                             return 0;
-        case 1:     const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));             return res;
+        case 1:     { const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));           return res; }
         case 2:     result = __base_strstrnSse2Memcmp<2>(string, stringLength, needle, memory::alwaysTrue); break;
         case 3:     result = __base_strstrnSse2Memcmp<3>(string, stringLength, needle, memory::memcmp1);    break;
         case 4:     result = __base_strstrnSse2Memcmp<4>(string, stringLength, needle, memory::memcmp2);    break;
@@ -368,7 +368,7 @@ DECLARE_NOALIAS NODISCARD const char* __base_strstrnAvx2(
 
     switch (needleLength) {
         case 0:                                                                                             return 0;
-        case 1:     const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));             return res;
+        case 1:     { const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));           return res; }
         case 2:     result = __base_strstrnAvx2Equal<2>(string, stringLength, needle);                      break;
         case 3:     result = __base_strstrnAvx2Memcmp<3>(string, stringLength, needle, memory::memcmp1);    break;
         case 4:     result = __base_strstrnAvx2Memcmp<4>(string, stringLength, needle, memory::memcmp2);    break;
@@ -535,7 +535,7 @@ DECLARE_NOALIAS NODISCARD const char* __base_strstrnAvx512F(
 
     switch (needleLength) {
         case 0:                                                                                                 return 0;
-        case 1:     const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));                 return res;
+        case 1:     { const char* res = reinterpret_cast<const char*>(strchr(string, needle[0]));               return res; }
         case 2:     result = __base_strstrnAvx512FMemcmp<2>(string, stringLength, needle, memory::memcmp2);     break;
         case 3:     result = __base_strstrnAvx512FMemcmp<3>(string, stringLength, needle, memory::memcmp3);     break;
         case 4:     result = __base_strstrnAvx512FMemcmp<4>(string, stringLength, needle, memory::memcmp4);     break;
@@ -563,11 +563,11 @@ DECLARE_NOALIAS const char* CDECL __base_strstrn(
 	const char*			subString,
 	const sizetype	subLength) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return __base_strstrnAvx512F(mainString, mainLength, subString, subLength);
-    else if (ProcessorFeatures::AVX2())
+    else if (arch::ProcessorFeatures::AVX2())
         return __base_strstrnAvx2(mainString, mainLength, subString, subLength);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return __base_strstrnSse2(mainString, mainLength, subString, subLength);
 
     return __base_strstrnScalar(mainString, mainLength, subString, subLength);

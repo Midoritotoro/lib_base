@@ -30,7 +30,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpSse2(
 		const auto loadedFirst = _mm_loadu_epi16(firstString);
 		const auto loadedSecond = _mm_loadu_epi16(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::SSE, 2>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE, 2>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -64,7 +64,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx(
 		const auto loadedFirst = _mm256_loadu_epi16(firstString);
 		const auto loadedSecond = _mm256_loadu_epi16(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::AVX, 2>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX, 2>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -98,7 +98,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx512(
 		const auto loadedFirst = _mm512_loadu_epi16(firstString);
 		const auto loadedSecond = _mm512_loadu_epi16(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<CpuFeature::AVX512, 2>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512, 2>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -126,11 +126,11 @@ DECLARE_NOALIAS int __CDECL __base_wcscmp(
 	const wchar_t* firstString,
 	const wchar_t* secondString) noexcept
 {
-	if (ProcessorFeatures::AVX512F())
+	if (arch::ProcessorFeatures::AVX512F())
 		return __base_wcscmpAvx512(firstString, secondString);
-	else if (ProcessorFeatures::AVX())
+	else if (arch::ProcessorFeatures::AVX())
 		return __base_wcscmpAvx(firstString, secondString);
-	else if (ProcessorFeatures::SSE2())
+	else if (arch::ProcessorFeatures::SSE2())
 		return __base_wcscmpSse2(firstString, secondString);
 
 	return __base_wcscmpScalar(firstString, secondString);

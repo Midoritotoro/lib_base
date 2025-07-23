@@ -200,13 +200,13 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial8Bit(
     const void* lastPointer,
     uint8       value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindLastTrivialAvx512<FindTraits8Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindLastTrivialAvx<FindTraits8Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindLastTrivialSse2<FindTraits8Bit>(
             firstPointer, lastPointer, value);
 
@@ -218,13 +218,13 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial16Bit(
     const void* lastPointer,
     uint16      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindLastTrivialAvx512<FindTraits16Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindLastTrivialAvx<FindTraits16Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindLastTrivialSse2<FindTraits16Bit>(
             firstPointer, lastPointer, value);
 
@@ -236,13 +236,13 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial32Bit(
     const void* lastPointer,
     uint32      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindLastTrivialAvx512<FindTraits32Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindLastTrivialAvx<FindTraits32Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindLastTrivialSse2<FindTraits32Bit>(
             firstPointer, lastPointer, value);
 
@@ -254,13 +254,13 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial64Bit(
     const void* lastPointer,
     uint64      value) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return FindLastTrivialAvx512<FindTraits64Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return FindLastTrivialAvx<FindTraits64Bit>(
             firstPointer, lastPointer, value);
-    else if (ProcessorFeatures::SSE2())
+    else if (arch::ProcessorFeatures::SSE2())
         return FindLastTrivialSse2<FindTraits64Bit>(
             firstPointer, lastPointer, value);
 

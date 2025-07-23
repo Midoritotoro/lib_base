@@ -3,8 +3,8 @@
 #include <base/core/arch/Platform.h>
 
 #ifdef CPP_MSVC_ONLY
-// MSVC определяет _YIELD_PROCESSOR()(_mm_pause) в <xatomic.h>
-// Компилятор иногда распознает _mm_pause как интринсик
+// MSVC defines _YIELD_PROCESSOR()(_mm_pause) in <xatomic.h>
+// Compiler sometimes recognizes _mm_pause as intrinsic
 #  ifdef __cplusplus
 #    include <atomic>
 extern "C"
@@ -12,7 +12,8 @@ extern "C"
 void _mm_pause(void);
 #endif
 
-namespace base {
+__BASE_ARCH_NAMESPACE_BEGIN
+
 #ifdef CPP_GNU
     __attribute__((artificial))
 #endif
@@ -33,7 +34,7 @@ namespace base {
         __builtin_ia32_pause();
 
 #elif defined(PROCESSOR_X86) && defined(CPP_GNU)
-        // GCC < 10 не имеет __has_builtin()
+        // GCC < 10 don`t have __has_builtin()
         __builtin_ia32_pause();
 
 #elif defined(PROCESSOR_X86) && defined(CPP_MSVC)
@@ -53,4 +54,5 @@ namespace base {
 
 #endif
     }
-} // namespace base
+
+__BASE_ARCH_NAMESPACE_END

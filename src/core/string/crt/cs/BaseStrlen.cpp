@@ -17,7 +17,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenSse2(const char* string) noexce
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::SSE, 1>(_mm_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::SSE, 1>(_mm_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;
@@ -33,7 +33,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx(const char* string) noexcep
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX, 1>(_mm256_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX, 1>(_mm256_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;
@@ -49,7 +49,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx512(const char* string) noex
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<CpuFeature::AVX512, 1>(_mm512_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX512, 1>(_mm512_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;
@@ -62,11 +62,11 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx512(const char* string) noex
 }
 
 DECLARE_NOALIAS std::size_t	__CDECL __base_strlen(const char* string) noexcept {
-	if (ProcessorFeatures::AVX512F())
+	if (arch::ProcessorFeatures::AVX512F())
 		return __base_strlenAvx512(string);
-	else if (ProcessorFeatures::AVX())
+	else if (arch::ProcessorFeatures::AVX())
 		return __base_strlenAvx(string);
-	else if (ProcessorFeatures::SSE2())
+	else if (arch::ProcessorFeatures::SSE2())
 		return __base_strlenSse2(string);
 
 	return __base_strlenScalar(string);

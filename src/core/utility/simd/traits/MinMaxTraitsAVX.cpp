@@ -114,11 +114,11 @@ namespace AVX {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD ymmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::ymmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD ymmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::ymmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -251,11 +251,11 @@ namespace AVX {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD ymmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::ymmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD ymmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::ymmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -381,11 +381,11 @@ namespace AVX {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD ymmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::ymmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD ymmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::ymmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -523,11 +523,11 @@ namespace AVX {
         return _Array[_H_pos >> 3];
     }
 
-    NODISCARD ymmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
+    NODISCARD arch::ymmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD ymmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
+    NODISCARD arch::ymmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 } // namespace AVX

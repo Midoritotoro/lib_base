@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/arch/Platform.h>
+#include <base/core/arch/KeywordSupport.h>
 
 #if BASE_HAS_CXX20
 

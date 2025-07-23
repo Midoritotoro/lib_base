@@ -30,11 +30,11 @@ BASE_ASM_EXTERN DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpy(
     void const* source,
     size_t      size) noexcept
 {
-    if (ProcessorFeatures::AVX512F())
+    if (arch::ProcessorFeatures::AVX512F())
         return __base_memcpyAvx512(destination, source, size);
-    else if (ProcessorFeatures::AVX())
+    else if (arch::ProcessorFeatures::AVX())
         return __base_memcpyAvx(destination, source, size);
-    else if (ProcessorFeatures::SSE())
+    else if (arch::ProcessorFeatures::SSE())
         return __base_memcpySse(destination, source, size);
 
     return __base_memcpyScalar(destination, source, size);

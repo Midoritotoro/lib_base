@@ -7,7 +7,7 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <CpuFeature _SimdType_> // ,class _NarrowingConversionBehaviour_>
+template <arch::CpuFeature _SimdType_> // ,class _NarrowingConversionBehaviour_>
 class StringConverterTraits
 {
 	//static_assert(

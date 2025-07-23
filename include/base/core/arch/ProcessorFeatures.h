@@ -7,40 +7,40 @@
 
 #include <base/core/arch/CpuId.h>
 
-__BASE_NAMESPACE_BEGIN
+__BASE_ARCH_NAMESPACE_BEGIN
 
 class ProcessorFeatures
 {
     class ProcessorFeaturesInternal;
 public:
-    template <typename FunctionType, CpuFeature Feature, typename... Args>
-    using FeatureAwareFunction = std::conditional_t<true, FunctionType, void>;
-
-    template <typename FunctionType, typename... Args,
-              typename = std::enable_if_t<std::is_invocable_v<FunctionType, Args...>>>
-    static auto dispatch(FunctionType&& func, Args&&... args) {
-        using ResultType = decltype(std::forward<FunctionType>(func)(std::forward<Args>(args)...));
-
-        if (AVX512F()) {
-            return dispatchImpl<FunctionType, CpuFeature::AVX512F>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
-        } else if (AVX()) {
-            return dispatchImpl<FunctionType, CpuFeature::AVX>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
-        } else if (SSE2()) {
-            return dispatchImpl<FunctionType, CpuFeature::SSE2>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
-        } else {
-            return dispatchImpl<FunctionType, CpuFeature::None>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
-        }
-    }
-
-private:
-
-    template <typename FunctionType, CpuFeature Feature, typename... Args,
-              typename = std::enable_if_t<std::is_invocable_v<FunctionType, Args...>>>
-    static auto dispatchImpl(FunctionType&& func, Args&&... args) -> decltype(std::forward<FunctionType>(func)(std::forward<Args>(args)...))
-    {
-        // This cast is crucial and relies on type erasure to avoid a static_assert
-        return (func)(std::forward<Args>(args)...);
-    }
+   // template <typename FunctionType, CpuFeature Feature, typename... Args>
+  //  using FeatureAwareFunction = std::conditional_t<true, FunctionType, void>;
+//
+//    template <typename FunctionType, typename... Args,
+//              typename = std::enable_if_t<std::is_invocable_v<FunctionType, Args...>>>
+//    static auto dispatch(FunctionType&& func, Args&&... args) {
+//        using ResultType = decltype(std::forward<FunctionType>(func)(std::forward<Args>(args)...));
+//
+//        if (AVX512F()) {
+//            return dispatchImpl<FunctionType, CpuFeature::AVX512F>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
+//        } else if (AVX()) {
+//            return dispatchImpl<FunctionType, CpuFeature::AVX>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
+//        } else if (SSE2()) {
+//            return dispatchImpl<FunctionType, CpuFeature::SSE2>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
+//        } else {
+//            return dispatchImpl<FunctionType, CpuFeature::None>(std::forward<FunctionType>(func), std::forward<Args>(args)...);
+//        }
+//    }
+//
+//private:
+//
+//    template <typename FunctionType, CpuFeature Feature, typename... Args,
+//              typename = std::enable_if_t<std::is_invocable_v<FunctionType, Args...>>>
+//    static auto dispatchImpl(FunctionType&& func, Args&&... args) -> decltype(std::forward<FunctionType>(func)(std::forward<Args>(args)...))
+//    {
+//        // This cast is crucial and relies on type erasure to avoid a static_assert
+//        return (func)(std::forward<Args>(args)...);
+//    }
 public:
 
     static NODISCARD std::string Vendor() noexcept;
@@ -131,4 +131,5 @@ private:
     inline static ProcessorFeaturesInternal CPU_Rep = {};
 };
 
-__BASE_NAMESPACE_END
+__BASE_ARCH_NAMESPACE_END
+
