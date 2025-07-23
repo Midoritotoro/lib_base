@@ -36,7 +36,7 @@ public:
 
                 return {};
             }
-        private:
+        public:
             template <
                 typename    _SpecializedCallable_,
                 CpuFeature  feature,
@@ -47,12 +47,32 @@ public:
                 _Args_&& ...            args) noexcept(noexcept(std::is_nothrow_invocable_v<_SpecializedCallable_, _Args_...>))
                 -> decltype(std::forward<_SpecializedCallable_>(specializedCallable)(std::forward<_Args_>(args)...))
             {
-                std::views
                 return (specializedCallable)(std::forward<_Args_>(args)...);
             }
 
-            static consteval int GreatestCpuFeature() noexcept {
-                return static_cast<int>((features > ... > CpuFeature::None) ? (features > ... > CpuFeature::None) : CpuFeature::None);
+            template <CpuFeature First, CpuFeature Second, CpuFeature... Rest>
+            static constexpr CpuFeature GreatestOfTwo() noexcept {
+                if constexpr (sizeof...(Rest) > 0) {
+                    return GreatestOfTwo< (First > Second ? First : Second), Rest... >();
+                }
+                else {
+                    return (First > Second ? First : Second);
+                }
+            }
+
+            template <CpuFeature Last>
+            static constexpr CpuFeature GreatestOfTwo() noexcept {
+                return Last;
+            }
+
+
+            static constexpr CpuFeature GreatestCpuFeature() noexcept {
+                if constexpr (sizeof...(features) == 0) {
+                    return CpuFeature::None;
+                }
+                else {
+                    return GreatestOfTwo<features...>();
+                }
             }
     };
 public:
