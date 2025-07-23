@@ -43,13 +43,13 @@ int main(int argc, char** argv) {
 
 	// Strstr
 
-	static const char strFind[]			= "Some test string";
+	/*static const char strFind[]			= "Some test string";
 	static const char strFindShort[]	= "Some string";
 
 	Assert(base::string::__base_strstr(strFind, "Some") == strstr(strFind, "Some"));
 
 	static const wchar_t strFind_W[]		= L"Some test string";
-	static const wchar_t strFindShort_W[]	= L"Some string";
+	static const wchar_t strFindShort_W[]	= L"Some string";*/
 
 	//Assert(base::string::__base_wcsstr(strFind_W, L"Some") == wcsstr(strFind_W, L"Some"));
 

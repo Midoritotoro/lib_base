@@ -4,6 +4,7 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+
 template <arch::CpuFeature feature>
 DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp(
 	const char* firstString,

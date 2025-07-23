@@ -4,7 +4,7 @@
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
-enum class CpuFeature : base::uchar {
+enum CpuFeature : base::uchar {
 	None,
 	MMX,
 	SSE,

@@ -5,6 +5,15 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
+template <arch::CpuFeature feature>
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp(
+	const char* firstString,
+	const char* secondString) noexcept
+{
+	AssertUnreachable();
+	return -1;
+}
+
 template <>
 DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::None>(
 	const char* firstString,
@@ -24,6 +33,8 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
+	printf("sse\n");
+
 	int ret = 0;
 
 	while (true) {
@@ -59,6 +70,8 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
+	printf("avx2\n");
+
 	int ret = 0;
 
 	while (true) {
@@ -94,6 +107,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512F>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
+	printf("avx512f\n");
 	int ret = 0;
 
 	while (true) {
