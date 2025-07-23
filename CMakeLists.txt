@@ -359,6 +359,18 @@ set(PRIVATE_HEADERS
     src/core/string/crt/wcs/BaseWcsstr.h
     src/core/string/crt/wcs/BaseWcsstrn.h
 
+    src/core/string/crt/cs/internal/BaseStrcmpInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrcmpInternal.h
+
+    src/core/string/crt/cs/internal/BaseStrlenInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrlenInternal.h
+
+    src/core/string/crt/cs/internal/BaseStrstrInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrstrInternal.h
+
+    src/core/string/crt/cs/internal/BaseStrstrnInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrstrnInternal.h
+
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h
 
