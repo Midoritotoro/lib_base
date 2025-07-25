@@ -400,11 +400,18 @@ set(PRIVATE_HEADERS
 
     src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h
 
+    src/core/string/crt/cs/internal/BaseStrstrnMemcmpInternal.h
+    src/core/string/crt/cs/internal/BaseStrstrnMemcmpInternal.cpp
+
+    src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.h
 
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h
 
     src/core/utility/simd/SimdVectorType.h
+
+    src/core/utility/simd/SimdHelpers.h
 
     src/core/string/traits/StringConverterAvxTraits.h
 

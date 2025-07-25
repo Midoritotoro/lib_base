@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/Types.h>
+#include <base/core/utility/CommonMacros.h>
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
@@ -87,7 +88,34 @@ enum CpuFeature : base::uchar {
 	XSAVEC,
 	XSAVEOPT,
 	XSS
+}; 
+
+
+//#ifndef BASE_STATIC_ASSERT_FEATURE_CHECK
+//#define BASE_STATIC_ASSERT_FEATURE_CHECK(N, log, current, ...)	\
+//	static_assert(current == __BASE_PICK_N(N, __VA_ARGS__), log)
+//#endif // BASE_STATIC_ASSERT_FEATURE_CHECK
+template <CpuFeature Feature, CpuFeature Candidate, typename Enable = void>
+struct IsInListHelper : std::false_type {};
+
+template <CpuFeature Feature, CpuFeature Candidate>
+struct IsInListHelper<Feature, Candidate, std::enable_if_t<(Feature == Candidate)>> : std::true_type {};
+
+template <CpuFeature Feature, CpuFeature ... List>
+struct Contains {
+	static constexpr bool value = (IsInListHelper<Feature, List>::value || ...);
 };
 
+#define STATIC_ASSERT_IN_LIST(current, ...)                                                   \
+    static_assert(                                                                         \
+        Contains<current, __VA_ARGS__>::value,                                         \
+        "Error: " #current " not found in list (" #__VA_ARGS__ "). "                         \
+        "Please verify the list or add " #current " to the list. "                           \
+        /* Add your custom log here if needed: */                                             \
+    )
+
+int p() {
+	STATIC_ASSERT_IN_LIST(CpuFeature::None, CpuFeature::XSS, CpuFeature::AVX2);
+}
 
 __BASE_ARCH_NAMESPACE_END

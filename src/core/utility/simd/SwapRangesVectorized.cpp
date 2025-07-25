@@ -104,8 +104,8 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx(
         memory::AdvanceBytes(stopAt, length & mask32);
 
         do {
-            const __m256i left = _mm256_loadu_si256(static_cast<__m256i*>(firstPointer1));
-            const __m256i right = _mm256_loadu_si256(static_cast<__m256i*>(firstPointer2));
+            const __m256i left  = _mm256_lddqu_si256(static_cast<__m256i*>(firstPointer1));
+            const __m256i right = _mm256_lddqu_si256(static_cast<__m256i*>(firstPointer2));
 
             _mm256_storeu_si256(static_cast<__m256i*>(firstPointer1), right);
             _mm256_storeu_si256(static_cast<__m256i*>(firstPointer2), left);
@@ -133,7 +133,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx512(
         memory::AdvanceBytes(stopAt, length & mask64);
 
         do {
-            const __m512i left = _mm512_loadu_si512(firstPointer1);
+            const __m512i left  = _mm512_loadu_si512(firstPointer1);
             const __m512i right = _mm512_loadu_si512(firstPointer2);
 
             _mm512_storeu_si512(firstPointer1, right);
