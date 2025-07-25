@@ -15,7 +15,7 @@ BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(
 	),
 	feature,
 	"base::string",
-	arch::CpuFeature::None, arch::CpuFeature::AVX512BW, arch::CpuFeature::AVX2, arch::CpuFeature::SSE2
+	arch::CpuFeature::None, arch::CpuFeature::AVX512F, arch::CpuFeature::AVX2, arch::CpuFeature::SSE2
 )
 
 template <>
@@ -26,7 +26,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::None>(
 	const sizetype	subLength) noexcept;
 
 template <>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::AVX512BW>(
+DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::AVX512F>(
 	const char*		mainString,
 	const sizetype	mainLength,
 	const char*		subString,

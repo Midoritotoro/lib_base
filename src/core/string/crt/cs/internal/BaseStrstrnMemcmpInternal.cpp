@@ -1,7 +1,6 @@
 #include <src/core/string/crt/cs/internal/BaseStrstrnMemcmpInternal.h>
 #include <base/core/utility/BitOps.h>
 
-#include <src/core/utility/simd/SimdHelpers.h>
 
 #if defined(CPP_CLANG) || defined(CPP_MSVC)
     #include <src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h>
@@ -12,7 +11,7 @@ __BASE_STRING_NAMESPACE_BEGIN
 template <
 	sizetype needleLength,
 	typename _MemCmpLike_>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::AVX512F>(
+DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<needleLength, _MemCmpLike_, arch::CpuFeature::AVX512F>(
 	const char*		mainString,
 	const sizetype	mainLength,
 	const char*		subString,
@@ -21,14 +20,14 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::AVX5
     if constexpr (needleLength <= 0)
         return nullptr;
 
-    if (stringLength <= 0)
+    if (mainLength <= 0)
         return nullptr;
 
     const auto first    = _mm512_set1_epi8(subString[0]);
     const auto last     = _mm512_set1_epi8(subString[needleLength - 1]);
 
     char* haystack = const_cast<char*>(mainString);
-    char* end = haystack + stringLength;
+    char* end = haystack + mainLength;
 
     for (/**/; haystack < end; haystack += 64) {
 
@@ -66,7 +65,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::AVX5
 template <
 	sizetype needleLength,
 	typename _MemCmpLike_>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::AVX2>(
+DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<needleLength, _MemCmpLike_, arch::CpuFeature::AVX2>(
 	const char*		mainString,
 	const sizetype	mainLength,
 	const char*		subString,
@@ -107,7 +106,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::AVX2
 template <
 	sizetype needleLength,
 	typename _MemCmpLike_>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<arch::CpuFeature::SSE2>(
+DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp<needleLength, _MemCmpLike_, arch::CpuFeature::SSE2>(
 	const char*		mainString,
 	const sizetype	mainLength,
 	const char*		subString,

@@ -4,7 +4,7 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <sizetype needleLength>
-DECLARE_NOALIAS NODISCARD always_inline const char* BaseFeatureAwareStrstrnEqual<arch::CpuFeature::AVX2>(
+DECLARE_NOALIAS NODISCARD const char* BaseFeatureAwareStrstrnEqual<needleLength, arch::CpuFeature::AVX2>(
 	const char* string,
 	sizetype    stringLength,
 	const char* needle) noexcept

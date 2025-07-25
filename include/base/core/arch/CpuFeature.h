@@ -118,7 +118,7 @@ struct Contains {
 #ifndef BASE_STATIC_VERIFY_CPU_FEATURE
 #define BASE_STATIC_VERIFY_CPU_FEATURE(current, failureLogPrefix, ...)                       \
     static_assert(                                                                 \
-        Contains<current, __VA_ARGS__>::value,                                     \
+        base::arch::Contains<current, __VA_ARGS__>::value,                                     \
         failureLogPrefix": "  #current " not found in supported features (" #__VA_ARGS__ ")" \
     )
 #endif // BASE_STATIC_VERIFY_CPU_FEATURE
