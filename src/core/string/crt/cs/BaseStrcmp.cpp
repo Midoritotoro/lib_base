@@ -22,12 +22,14 @@ DECLARE_NOALIAS int	__CDECL __base_strcmp(
 	const char* firstString,
 	const char* secondString) noexcept 
 {
-	return arch::ProcessorFeatures::SpecializationSelector<
-		arch::CpuFeature::None, arch::CpuFeature::AVX512F, 
-		arch::CpuFeature::SSE2, arch::CpuFeature::AVX
-	>::Dispatch(
-		&__baseFeatureAwareStrcmp<arch::CpuFeature::None>,
-		firstString, secondString);
+	if (arch::ProcessorFeatures::AVX512BW())
+		return __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(firstString, secondString);
+	else if (arch::ProcessorFeatures::AVX2())
+		return __baseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(firstString, secondString);
+	else if (arch::ProcessorFeatures::SSE2())
+		return __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(firstString, secondString);
+
+	return __baseFeatureAwareStrcmp<arch::CpuFeature::None>(firstString, secondString);
 }
 
 __BASE_STRING_NAMESPACE_END

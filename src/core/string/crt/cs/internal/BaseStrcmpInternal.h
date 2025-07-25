@@ -21,12 +21,12 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(
 	const char* firstString,
 	const char* secondString) noexcept;
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512F>(
+DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(
 	const char* firstString,
 	const char* secondString) noexcept;
 

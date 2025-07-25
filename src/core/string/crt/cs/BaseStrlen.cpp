@@ -1,5 +1,5 @@
 #include <src/core/string/crt/cs/BaseStrlen.h>
-#include <src/core/string/crt/BaseStrlenInternal.h>
+#include <src/core/string/crt/BaseStrlenCheckForZeroBytes.h>
 
 #include <src/core/memory/MemoryUtility.h>
 #include <base/core/arch/ProcessorFeatures.h>
@@ -17,7 +17,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenSse2(const char* string) noexce
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::SSE, 1>(_mm_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::SSE2, 1>(_mm_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;
@@ -33,7 +33,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx(const char* string) noexcep
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX, 1>(_mm256_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX2, 1>(_mm256_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;
@@ -49,7 +49,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_strlenAvx512(const char* string) noex
 	const void* current = string;
 
 	while (true) {
-		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX512, 1>(_mm512_loadu_epi8(current));
+		const auto comparisonResult = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 1>(_mm512_loadu_epi8(current));
 
 		if (comparisonResult.mask != 0)
 			return reinterpret_cast<const char*>(current) - string + comparisonResult.trailingZeros;

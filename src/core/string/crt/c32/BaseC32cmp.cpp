@@ -1,5 +1,5 @@
 #include <src/core/string/crt/wcs/BaseWcslen.h>
-#include <src/core/string/crt/BaseStrlenInternal.h>
+#include <src/core/string/crt/BaseStrlenCheckForZeroBytes.h>
 
 #include <src/core/memory/MemoryUtility.h>
 #include <base/core/arch/ProcessorFeatures.h>
@@ -17,7 +17,7 @@ DECLARE_NOALIAS int __CDECL __base_c32cmpAvx512(
 		const auto loadedFirst = _mm512_loadu_epi32(firstString);
 		const auto loadedSecond = _mm512_loadu_epi32(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512, 4>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 4>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -51,7 +51,7 @@ DECLARE_NOALIAS int __CDECL __base_c32cmpAvx(
 		const auto loadedFirst = _mm256_loadu_epi32(firstString);
 		const auto loadedSecond = _mm256_loadu_epi32(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX, 4>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX2, 4>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {
@@ -85,7 +85,7 @@ DECLARE_NOALIAS int __CDECL __base_c32cmpSse2(
 		const auto loadedFirst = _mm_loadu_epi32(firstString);
 		const auto loadedSecond = _mm_loadu_epi32(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE, 4>(loadedSecond);
+		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE2, 4>(loadedSecond);
 
 		// End of string not found
 		if (zeroComparison.mask == 0) {

@@ -6,13 +6,11 @@
 #include <src/core/string/crt/cs/BaseStrstr.h>
 #include <src/core/string/crt/cs/BaseStrstrn.h>
 
-
 #include <src/core/string/crt/wcs/BaseWcscmp.h>
 #include <src/core/string/crt/wcs/BaseWcslen.h>
 
 #include <src/core/string/crt/wcs/BaseWcsstr.h>
 #include <src/core/string/crt/wcs/BaseWcsstrn.h>
-
 
 #include <src/core/string/crt/c32/BaseC32cmp.h>
 #include <src/core/string/crt/c32/BaseC32len.h>
@@ -41,7 +39,19 @@ int main(int argc, char** argv) {
 
 	Assert(base::string::__base_c32cmp(&abcde_32[0], U"abcde") == 0);
 
+	// Strlen
+
+	Assert(base::string::__base_strlen(&abcde[0]) == 6);
+	Assert(base::string::__base_strlen(&abcde[0]) == strlen(&abcde[0]));
+
+	Assert(base::string::__base_wcslen(&abcde_W[0]) == 6);
+	Assert(base::string::__base_wcslen(&abcde_W[0]) == wcslen(&abcde_W[0]));
+
+	Assert(base::string::__base_c32len(&abcde_32[0]) == 6);
+
 	// Strstr
+
+
 
 	/*static const char strFind[]			= "Some test string";
 	static const char strFindShort[]	= "Some string";

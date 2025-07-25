@@ -10,73 +10,11 @@
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
+
 class ProcessorFeatures
 {
     class ProcessorFeaturesInternal;
 public:
-    template <CpuFeature... features>
-    class SpecializationSelector {
-        public:
-            template <
-                typename    _SpecializedCallable_,
-                typename... _Args_,
-                typename = std::enable_if_t<std::is_invocable_v<_SpecializedCallable_, _Args_...>>>
-            static auto Dispatch(
-                _SpecializedCallable_&& specializedCallable,
-                _Args_&& ...            args) noexcept(noexcept(std::is_nothrow_invocable_v<_SpecializedCallable_, _Args_...>))
-                -> decltype(std::forward<_SpecializedCallable_>(specializedCallable)(std::forward<_Args_>(args)...))
-            {
-                constexpr auto greatestCpuFeature = GreatestCpuFeature();
-                printf("greatest: %d\n", greatestCpuFeature);
-                /*
-                if constexpr (greatestCpuFeature == CpuFeature::AVX512F)
-                    return DispatchImplementation<_SpecializedCallable_, CpuFeature::AVX512F>(
-                        std::forward<_SpecializedCallable_>(specializedCallable),
-                        std::forward<_Args_>(args)...);*/
-
-                return {};
-            }
-        public:
-            template <
-                typename    _SpecializedCallable_,
-                CpuFeature  feature,
-                typename... _Args_,
-                typename = std::enable_if_t<std::is_invocable_v<_SpecializedCallable_, _Args_...>>>
-            static auto DispatchImplementation(
-                _SpecializedCallable_&& specializedCallable,
-                _Args_&& ...            args) noexcept(noexcept(std::is_nothrow_invocable_v<_SpecializedCallable_, _Args_...>))
-                -> decltype(std::forward<_SpecializedCallable_>(specializedCallable)(std::forward<_Args_>(args)...))
-            {
-                return (specializedCallable)(std::forward<_Args_>(args)...);
-            }
-
-            template <CpuFeature First, CpuFeature Second, CpuFeature... Rest>
-            static constexpr CpuFeature GreatestOfTwo() noexcept {
-                if constexpr (sizeof...(Rest) > 0) {
-                    return GreatestOfTwo< (First > Second ? First : Second), Rest... >();
-                }
-                else {
-                    return (First > Second ? First : Second);
-                }
-            }
-
-            template <CpuFeature Last>
-            static constexpr CpuFeature GreatestOfTwo() noexcept {
-                return Last;
-            }
-
-
-            static constexpr CpuFeature GreatestCpuFeature() noexcept {
-                if constexpr (sizeof...(features) == 0) {
-                    return CpuFeature::None;
-                }
-                else {
-                    return GreatestOfTwo<features...>();
-                }
-            }
-    };
-public:
-
     static NODISCARD std::string Vendor() noexcept;
     static NODISCARD std::string Brand() noexcept;
 
@@ -90,9 +28,11 @@ public:
     static NODISCARD bool AVX() noexcept;
     static NODISCARD bool AVX2() noexcept;
     static NODISCARD bool AVX512F() noexcept;
+    static NODISCARD bool AVX512BW() noexcept;
     static NODISCARD bool AVX512PF() noexcept;
     static NODISCARD bool AVX512ER() noexcept;
     static NODISCARD bool AVX512CD() noexcept;
+    static NODISCARD bool AVX512VL() noexcept;
     static NODISCARD bool F16C() noexcept;
     static NODISCARD bool FMA() noexcept;
     static NODISCARD bool ADX() noexcept;

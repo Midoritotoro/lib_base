@@ -172,8 +172,8 @@ set(PRIVATE_SOURCES
 
     src/core/memory/crt/BaseMemcpy.cpp
 
-    src/core/string/crt/BaseStrlenInternal.h
-    src/core/string/crt/BaseStrlenInternal.cpp
+    src/core/string/crt/BaseStrlenCheckForZeroBytes.h
+    src/core/string/crt/BaseStrlenCheckForZeroBytes.cpp
 
     src/core/memory/MemoryAllocation.cpp
 

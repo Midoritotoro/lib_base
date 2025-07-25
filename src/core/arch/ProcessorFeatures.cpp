@@ -146,6 +146,10 @@ bool ProcessorFeatures::AVX512F() noexcept {
     return CPU_Rep.f_7_EBX_[16];
 }
 
+bool ProcessorFeatures::AVX512BW() noexcept {
+    return CPU_Rep.f_7_EBX_[30];
+}
+
 bool ProcessorFeatures::RDSEED() noexcept {
     return CPU_Rep.f_7_EBX_[18];
 }
@@ -164,6 +168,10 @@ bool ProcessorFeatures::AVX512ER() noexcept {
 
 bool ProcessorFeatures::AVX512CD() noexcept {
     return CPU_Rep.f_7_EBX_[28];
+}
+
+bool ProcessorFeatures::AVX512VL() noexcept {
+    return CPU_Rep.f_7_EBX_[31];
 }
 
 bool ProcessorFeatures::SHA() noexcept {
