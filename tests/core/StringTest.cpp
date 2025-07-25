@@ -41,13 +41,13 @@ int main(int argc, char** argv) {
 
 	// Strlen
 
-	Assert(base::string::__base_strlen(&abcde[0]) == 6);
+	Assert(base::string::__base_strlen(&abcde[0]) == 5);
 	Assert(base::string::__base_strlen(&abcde[0]) == strlen(&abcde[0]));
 
-	Assert(base::string::__base_wcslen(&abcde_W[0]) == 6);
+	Assert(base::string::__base_wcslen(&abcde_W[0]) == 5);
 	Assert(base::string::__base_wcslen(&abcde_W[0]) == wcslen(&abcde_W[0]));
 
-	Assert(base::string::__base_c32len(&abcde_32[0]) == 6);
+	Assert(base::string::__base_c32len(&abcde_32[0]) == 5);
 
 	// Strstr
 

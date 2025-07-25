@@ -359,6 +359,7 @@ set(PRIVATE_HEADERS
     src/core/string/crt/wcs/BaseWcsstr.h
     src/core/string/crt/wcs/BaseWcsstrn.h
 
+
     src/core/string/crt/cs/internal/BaseStrcmpInternal.cpp
     src/core/string/crt/cs/internal/BaseStrcmpInternal.h
 
@@ -370,6 +371,33 @@ set(PRIVATE_HEADERS
 
     src/core/string/crt/cs/internal/BaseStrstrnInternal.cpp
     src/core/string/crt/cs/internal/BaseStrstrnInternal.h
+
+
+    src/core/string/crt/wcs/internal/BaseWcscmpInternal.cpp
+    src/core/string/crt/wcs/internal/BaseWcscmpInternal.h
+
+    src/core/string/crt/wcs/internal/BaseWcslenInternal.cpp
+    src/core/string/crt/wcs/internal/BaseWcslenInternal.h
+
+    src/core/string/crt/wcs/internal/BaseWcsstrInternal.cpp
+    src/core/string/crt/wcs/internal/BaseWcsstrInternal.h
+
+    src/core/string/crt/wcs/internal/BaseWcsstrnInternal.cpp
+    src/core/string/crt/wcs/internal/BaseWcsstrnInternal.h
+
+
+    src/core/string/crt/c32/internal/BaseC32cmpInternal.cpp
+    src/core/string/crt/c32/internal/BaseC32cmpInternal.h
+
+    src/core/string/crt/c32/internal/BaseC32lenInternal.cpp
+    src/core/string/crt/c32/internal/BaseC32lenInternal.h
+
+    src/core/string/crt/c32/internal/BaseC32strInternal.cpp
+    src/core/string/crt/c32/internal/BaseC32strInternal.h
+
+    src/core/string/crt/c32/internal/BaseC32strnInternal.cpp
+    src/core/string/crt/c32/internal/BaseC32strnInternal.h
+
 
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h
