@@ -27,8 +27,8 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpSse2(
 	int ret = 0;
 
 	while (true) {
-		const auto loadedFirst = _mm_loadu_epi16(firstString);
-		const auto loadedSecond = _mm_loadu_epi16(secondString);
+		const auto loadedFirst	= _mm_loadu_si128(reinterpret_cast<const __m128i*>(firstString));
+		const auto loadedSecond = _mm_loadu_si128(reinterpret_cast<const __m128i*>(secondString));
 
 		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE2, 2>(loadedSecond);
 
@@ -61,7 +61,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx(
 	int ret = 0;
 
 	while (true) {
-		const auto loadedFirst = _mm256_loadu_epi16(firstString);
+		const auto loadedFirst	= _mm256_loadu_epi16(firstString);
 		const auto loadedSecond = _mm256_loadu_epi16(secondString);
 
 		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX2, 2>(loadedSecond);

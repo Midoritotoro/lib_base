@@ -398,6 +398,8 @@ set(PRIVATE_HEADERS
     src/core/string/crt/c32/internal/BaseC32strnInternal.cpp
     src/core/string/crt/c32/internal/BaseC32strnInternal.h
 
+    src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h
+
 
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h

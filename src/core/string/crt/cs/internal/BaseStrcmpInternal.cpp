@@ -106,8 +106,8 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>
 	int ret = 0;
 
 	while (true) {
-		const auto loadedFirst = _mm512_loadu_epi8(firstString);
-		const auto loadedSecond = _mm512_loadu_epi8(secondString);
+		const auto loadedFirst	= _mm512_loadu_si512(firstString);
+		const auto loadedSecond = _mm512_loadu_si512(secondString);
 
 		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 1>(loadedSecond);
 
