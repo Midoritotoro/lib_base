@@ -4,12 +4,19 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <arch::CpuFeature feature>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize(
-	const char*		mainString,
-	const sizetype	mainLength,
-	const char*		subString,
-	const sizetype	subLength) noexcept;
+BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(
+	BASE_ECHO(
+		template <arch::CpuFeature feature>
+		DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize(
+			const char*		mainString,
+			const sizetype	mainLength,
+			const char*		subString,
+			const sizetype	subLength) noexcept
+	),
+	feature,
+	"base::string",
+	arch::CpuFeature::AVX512F, arch::CpuFeature::AVX2, arch::CpuFeature::SSE2
+)
 
 template <>
 DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize<arch::CpuFeature::AVX512F>(

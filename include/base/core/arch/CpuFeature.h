@@ -91,31 +91,42 @@ enum CpuFeature : base::uchar {
 }; 
 
 
-//#ifndef BASE_STATIC_ASSERT_FEATURE_CHECK
-//#define BASE_STATIC_ASSERT_FEATURE_CHECK(N, log, current, ...)	\
-//	static_assert(current == __BASE_PICK_N(N, __VA_ARGS__), log)
-//#endif // BASE_STATIC_ASSERT_FEATURE_CHECK
-template <CpuFeature Feature, CpuFeature Candidate, typename Enable = void>
-struct IsInListHelper : std::false_type {};
+template <
+	CpuFeature	Feature,
+	CpuFeature	Candidate,
+	typename	Enable = void>
+struct IsInListHelper:
+	std::false_type 
+{};
 
-template <CpuFeature Feature, CpuFeature Candidate>
-struct IsInListHelper<Feature, Candidate, std::enable_if_t<(Feature == Candidate)>> : std::true_type {};
+template <
+	CpuFeature Feature, 
+	CpuFeature Candidate>
+struct IsInListHelper<
+	Feature, Candidate, 
+	std::enable_if_t<(Feature == Candidate)>>: 
+		std::true_type
+{};
 
-template <CpuFeature Feature, CpuFeature ... List>
+template <
+	CpuFeature		Feature,
+	CpuFeature ...	List>
 struct Contains {
 	static constexpr bool value = (IsInListHelper<Feature, List>::value || ...);
 };
 
-#define STATIC_ASSERT_IN_LIST(current, ...)                                                   \
-    static_assert(                                                                         \
-        Contains<current, __VA_ARGS__>::value,                                         \
-        "Error: " #current " not found in list (" #__VA_ARGS__ "). "                         \
-        "Please verify the list or add " #current " to the list. "                           \
-        /* Add your custom log here if needed: */                                             \
+#ifndef BASE_STATIC_VERIFY_CPU_FEATURE
+#define BASE_STATIC_VERIFY_CPU_FEATURE(current, failureLogPrefix, ...)                       \
+    static_assert(                                                                 \
+        Contains<current, __VA_ARGS__>::value,                                     \
+        failureLogPrefix": "  #current " not found in supported features (" #__VA_ARGS__ ")" \
     )
+#endif // BASE_STATIC_VERIFY_CPU_FEATURE
 
-int p() {
-	STATIC_ASSERT_IN_LIST(CpuFeature::None, CpuFeature::XSS, CpuFeature::AVX2);
-}
+#ifndef BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION
+#define BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(functionDeclaration, featureVariableName, failureLogPrefix, ...)	\
+	functionDeclaration { BASE_STATIC_VERIFY_CPU_FEATURE(featureVariableName, failureLogPrefix, __VA_ARGS__); return {}; }
+#endif // BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION
+
 
 __BASE_ARCH_NAMESPACE_END

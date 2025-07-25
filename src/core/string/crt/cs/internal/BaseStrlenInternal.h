@@ -5,8 +5,15 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <arch::CpuFeature feature>
-DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen(const char* string) noexcept;
+BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(
+	BASE_ECHO(
+		template <arch::CpuFeature feature>
+		DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen(const char* string) noexcept
+	),
+	feature,
+	"base::string",
+	arch::CpuFeature::None, arch::CpuFeature::SSE2, arch::CpuFeature::AVX2, arch::CpuFeature::AVX512BW
+)
 
 template <>
 DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen<arch::CpuFeature::None>(const char* string) noexcept;

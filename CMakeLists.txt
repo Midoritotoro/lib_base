@@ -406,6 +406,9 @@ set(PRIVATE_HEADERS
     src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.cpp
     src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.h
 
+    src/core/string/crt/cs/internal/BaseStrstrnEqualInternal.h
+    src/core/string/crt/cs/internal/BaseStrstrnEqualInternal.cpp
+
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h
 

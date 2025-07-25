@@ -64,6 +64,10 @@
 #define _PP_CAT(a,b) a##b
 #define PP_CAT(a,b) _PP_CAT(a,b)
 
+#ifndef BASE_ECHO
+#define BASE_ECHO(...)	__VA_ARGS__
+#endif // BASE_ECHO
+
 
 #define __BASE_ARG_N( \
      _1,  _2,  _3,  _4,  _5,  _6,  _7,  _8,  _9, _10, \

@@ -3,21 +3,11 @@
 
 #include <src/core/utility/simd/SimdHelpers.h>
 
-__BASE_STRING_NAMESPACE_BEGIN
+#if defined(CPP_CLANG) || defined(CPP_MSVC)
+    #include <src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h>
+#endif
 
-template <
-	arch::CpuFeature feature,
-	sizetype needleLength,
-	typename _MemCmpLike_>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnMemcmp(
-	const char*		mainString,
-	const sizetype	mainLength,
-	const char*		subString,
-	_MemCmpLike_	memcmpLike) noexcept
-{
-	AssertUnreachable();
-	return nullptr;
-}
+__BASE_STRING_NAMESPACE_BEGIN
 
 template <
 	sizetype needleLength,

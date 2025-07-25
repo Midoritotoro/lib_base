@@ -5,17 +5,8 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <arch::CpuFeature feature>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp(
-	const char* firstString,
-	const char* secondString) noexcept
-{
-	AssertUnreachable();
-	return -1;
-}
-
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::None>(
+DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::None>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -29,7 +20,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::None>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
+DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -64,7 +55,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(
+DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(
 	const char* firstString,
 	const char* secondString) noexcept
 {
@@ -99,7 +90,7 @@ DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(
 }
 
 template <>
-DECLARE_NOALIAS int __CDECL __baseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(
+DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(
 	const char* firstString,
 	const char* secondString) noexcept
 {

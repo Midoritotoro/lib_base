@@ -3,14 +3,8 @@
 
 #include <src/core/memory/MemoryUtility.h>
 
-__BASE_STRING_NAMESPACE_BEGIN
 
-template <arch::CpuFeature feature>
-DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen(const char* string) noexcept
-{
-	AssertUnreachable();
-	return -1;
-}
+__BASE_STRING_NAMESPACE_BEGIN
 
 template <>
 DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen<arch::CpuFeature::None>(const char* string) noexcept {

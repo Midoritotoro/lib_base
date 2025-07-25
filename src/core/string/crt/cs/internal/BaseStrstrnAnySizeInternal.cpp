@@ -1,20 +1,11 @@
 #include <src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.h>
 #include <base/core/utility/BitOps.h>
 
-#include <src/core/string/crt/cs/internal/ZeroByteMaskAvx512F.h>
+#include <src/core/utility/simd/SimdHelpers.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-template <arch::CpuFeature feature>
-DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize(
-	const char*		mainString,
-	const sizetype	mainLength,
-	const char*		subString,
-	const sizetype	subLength) noexcept
-{
-	AssertUnreachable();
-	return nullptr;
-}
+#define _mm512_set1_epu8(c) _mm512_set1_epi32(uint32_t(c) * 0x01010101u)
 
 template <>
 DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize<arch::CpuFeature::AVX512F>(
@@ -23,11 +14,12 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrnAnySize<arch::CpuFeature::AVX
 	const char*		subString,
 	const sizetype	subLength) noexcept
 {
+
 	if (mainLength <= 0 || subLength <= 0)
         return nullptr;
 
-    const auto first    = _mm512_set1_epi8(subString[0]);
-    const auto last     = _mm512_set1_epi8(subString[subLength - 1]);
+    const auto first    = _mm512_set1_epu8(subString[0]);
+    const auto last     = _mm512_set1_epu8(subString[subLength - 1]);
 
     char* haystack  = const_cast<char*>(mainString);
     char* end       = haystack + mainLength;
