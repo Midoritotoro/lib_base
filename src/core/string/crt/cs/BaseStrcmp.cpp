@@ -10,8 +10,6 @@ DECLARE_NOALIAS int	__CDECL __base_strcmp(
 	const char* firstString,
 	const char* secondString) noexcept 
 {
-	//BaseFeatureAwareStrcmp<arch::CpuFeature::ADX>(firstString, secondString);
-
 	if (arch::ProcessorFeatures::AVX512BW())
 		return BaseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(firstString, secondString);
 	else if (arch::ProcessorFeatures::AVX2())

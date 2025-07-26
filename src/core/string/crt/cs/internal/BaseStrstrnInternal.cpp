@@ -1,7 +1,7 @@
 #include <src/core/string/crt/cs/internal/BaseStrstrnInternal.h>
 
 #include <src/core/string/crt/cs/internal/BaseStrstrnImplementationsInternal.h>
-#include <src/core/memory/crt/FixedMemcmp.h>
+#include <base/core/memory/FixedMemcmp.h>
 
 
 __BASE_STRING_NAMESPACE_BEGIN

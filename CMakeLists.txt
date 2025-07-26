@@ -334,8 +334,7 @@ set(PRIVATE_HEADERS
 
     src/core/memory/crt/BaseMemmove.h
 
-   
-    src/core/memory/crt/FixedMemcmp.h
+
 
     src/core/memory/crt/BaseMemcpy.h
     
@@ -401,7 +400,7 @@ set(PRIVATE_HEADERS
     src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h
     src/core/string/crt/cs/internal/BaseStrstrnImplementationsInternal.h
 
-    src/core/string/crt/VectorizedSafeStringAlgorithm.h
+    src/core/string/StringConversionOptions.h
     src/core/string/StringConversionOptions.h
 
     src/core/utility/simd/SimdVectorType.h
@@ -589,6 +588,7 @@ set(PUBLIC_HEADERS
     include/base/core/container/Vector.h
 
     include/base/core/memory/Memory.h
+    include/base/core/memory/FixedMemcmp.h
 
     include/base/core/container/VectorIterator.h
     include/base/core/container/VectorConstIterator.h
