@@ -160,8 +160,10 @@ set(PRIVATE_SOURCES
     src/core/memory/crt/BaseMemcmp.h
     src/core/memory/crt/BaseMemcmp.cpp
 
-    src/core/memory/crt/internal/BaseMemcpyInternal.cpp
     src/core/memory/crt/internal/BaseMemcpyInternal.h
+    src/core/memory/crt/internal/BaseMemcpyInternal.cpp
+
+    src/core/memory/crt/internal/BaseMemcpyImplementationInternal.h
 
     src/core/string/crt/BaseStrlenCheckForZeroBytes.h
     src/core/string/crt/BaseStrlenCheckForZeroBytes.cpp
