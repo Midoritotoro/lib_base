@@ -2,30 +2,8 @@
 
 #include <cstdio>
 #include <base/core/arch/CompilerDetection.h>
-#include <base/core/system/Time.h>
 
 #include <iostream>
-
-#define measureExecutionTimeAuto()							\
-	const auto ms = base::Time::now();						\
-	const auto timer = gsl::finally([&]() {					\
-	std::cout << FUNC_INFO << " completed for: "			\
-			<< base::Time::now() - ms << " ms" << '\n'; });
-
-#define measureExecutionTime(name)							\
-	const auto ms = base::Time::now();						\
-	const auto timer = gsl::finally([&]() {					\
-	std::cout << name << " completed for: "					\
-		<< base::Time::now() - ms << " ms" << '\n'; });
-
-//!
-//! \brief
-//! После выхода из текущей области видимости записывает затраченное на выполнение этого блока кода время в value
-//! 
-#define measureExecutionTimeToValue(value) \
-	const auto ms = base::Time::now(); \
-	const auto timer = gsl::finally([&]() mutable { \
-		value = base::Time::now() - ms; });
 
 //!
 //! \brief

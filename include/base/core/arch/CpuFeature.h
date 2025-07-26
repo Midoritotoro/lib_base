@@ -5,7 +5,7 @@
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
-enum CpuFeature : base::uchar {
+enum class CpuFeature : base::uchar {
 	None,
 	MMX,
 	SSE,
@@ -127,6 +127,11 @@ struct Contains {
 #define BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(functionDeclaration, featureVariableName, failureLogPrefix, ...)	\
 	functionDeclaration { BASE_STATIC_VERIFY_CPU_FEATURE(featureVariableName, failureLogPrefix, __VA_ARGS__); return {}; }
 #endif // BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION
+
+#ifndef BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS
+#define BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS(_class, featureVariableName, failureLogPrefix, ...)	\
+	_class { BASE_STATIC_VERIFY_CPU_FEATURE(featureVariableName, failureLogPrefix, __VA_ARGS__); }
+#endif // BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS
 
 
 __BASE_ARCH_NAMESPACE_END

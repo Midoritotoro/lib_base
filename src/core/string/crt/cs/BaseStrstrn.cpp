@@ -5,11 +5,10 @@
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-
-DECLARE_NOALIAS const char* CDECL __base_strstrn(
-    const char* mainString,
+DECLARE_NOALIAS const char* __base_strstrn(
+    const char*     mainString,
     const sizetype	mainLength,
-    const char* subString,
+    const char*     subString,
     const sizetype	subLength) noexcept
 {
     if (arch::ProcessorFeatures::AVX512F())

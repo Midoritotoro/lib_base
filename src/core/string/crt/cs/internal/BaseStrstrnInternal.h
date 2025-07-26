@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/arch/CpuFeature.h>
+#include <base/core/arch/Platform.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 

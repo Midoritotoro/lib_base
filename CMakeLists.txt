@@ -399,15 +399,7 @@ set(PRIVATE_HEADERS
     src/core/string/crt/c32/internal/BaseC32strnInternal.h
 
     src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h
-
-    src/core/string/crt/cs/internal/BaseStrstrnMemcmpInternal.h
-    src/core/string/crt/cs/internal/BaseStrstrnMemcmpInternal.cpp
-
-    src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.cpp
-    src/core/string/crt/cs/internal/BaseStrstrnAnySizeInternal.h
-
-    src/core/string/crt/cs/internal/BaseStrstrnEqualInternal.h
-    src/core/string/crt/cs/internal/BaseStrstrnEqualInternal.cpp
+    src/core/string/crt/cs/internal/BaseStrstrnImplementationsInternal.h
 
     src/core/string/crt/VectorizedSafeStringAlgorithm.h
     src/core/string/StringConversionOptions.h

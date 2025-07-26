@@ -1,7 +1,6 @@
 #pragma once 
 
-#include <base/core/Types.h>
-
+#include <base/core/arch/SimdHelpers.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
