@@ -277,9 +277,9 @@ public:
 		sizetype needleLength,
 		typename _MemCmpLike_>
 	static DECLARE_NOALIAS const char* Memcmp(
-		const char* mainString,
+		const char*		mainString,
 		const sizetype	mainLength,
-		const char* subString,
+		const char*		subString,
 		_MemCmpLike_	memcmpLike) noexcept
 	{
 		if constexpr (needleLength <= 0)

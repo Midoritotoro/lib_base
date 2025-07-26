@@ -1,17 +1,9 @@
 ﻿cmake_minimum_required (VERSION 3.29 FATAL_ERROR)
 
-set(LIB_BASE_ASM_LANGUAGE "")
-
-if (WIN32)
-    set(LIB_BASE_ASM_LANGUAGE "ASM_MASM")
-else() 
-    set(LIB_BASE_ASM_LANGUAGE "")
-endif()
-
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
-    LANGUAGES C CXX ${LIB_BASE_ASM_LANGUAGE})
+    LANGUAGES C CXX)
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
@@ -64,14 +56,7 @@ set(LIB_BASE_ENABLE_IMAGES OFF)
 set(LIB_BASE_ENABLE_ZLIB OFF)  
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
-if (WIN32)
-    enable_language(C CXX ASM_MASM)
-    include(cmake/MasmBuildHelpers.cmake)
-    BaseBuildMasmFiles()
-else() 
-    enable_language(C CXX)
-endif() 
-
+enable_language(C CXX)
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -172,6 +157,12 @@ set(PRIVATE_SOURCES
 
     src/core/memory/crt/BaseMemcpy.cpp
 
+    src/core/memory/crt/BaseMemcmp.h
+    src/core/memory/crt/BaseMemcmp.cpp
+
+    src/core/memory/crt/internal/BaseMemcpyInternal.cpp
+    src/core/memory/crt/internal/BaseMemcpyInternal.h
+
     src/core/string/crt/BaseStrlenCheckForZeroBytes.h
     src/core/string/crt/BaseStrlenCheckForZeroBytes.cpp
 
@@ -234,9 +225,6 @@ set(PRIVATE_SOURCES
     src/core/string/crt/cs/BaseStrcmp.cpp
 
     src/core/string/crt/cs/BaseStrlen.cpp
-
-    
-    ${BASE_MASM_FILES}
 )
 
 set(PRIVATE_HEADERS
@@ -334,7 +322,8 @@ set(PRIVATE_HEADERS
 
     src/core/memory/crt/BaseMemmove.h
 
-
+    src/core/memory/crt/BaseMemset.h
+    src/core/memory/crt/BaseMemset.cpp
 
     src/core/memory/crt/BaseMemcpy.h
     
@@ -678,8 +667,6 @@ set_target_properties(
 
     EXPORT_NAME lib_base
     OUTPUT_NAME lib_base
-
-    LANGUAGE ${LIB_BASE_ASM_LANGUAGE} C CXX
 )
 
 target_compile_features(lib_base PUBLIC cxx_std_23)
