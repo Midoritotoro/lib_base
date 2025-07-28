@@ -1,5 +1,5 @@
-#include <src/core/string/crt/cs/BaseStrlen.h>
-#include <src/core/string/crt/BaseAnyStrlen.h>
+#include <src/core/string/crt/cs/BaseStrcmp.h>
+#include <src/core/string/crt/BaseAnyStrcmp.h>
 
 #include <base/core/arch/Platform.h>
 #include <benchmark/benchmark.h>
@@ -40,6 +40,19 @@ enum StringAlignedSizeForBenchmark {
         }\
     };
 
+#define BASE_FIXED_REVERSED_CHAR_ARRAY(name, prefix) \
+    template <typename _Type_, size_t N>\
+    struct name {\
+        _Type_ data[N + 1]{};\
+    \
+        constexpr name() {\
+            for (size_t i = 0; i < N; ++i) {\
+                data[i] = prefix'Z' - (i % 26);\
+            }\
+            data[N] = prefix'\0';\
+        }\
+    };
+
 #define BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(name, type, prefix) \
     template <size_t N>\
     struct name<type, N> {\
@@ -53,6 +66,20 @@ enum StringAlignedSizeForBenchmark {
         }\
     };
 
+#define BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(name, type, prefix) \
+    template <size_t N>\
+    struct name<type, N> {\
+        type data[N + 1]{};\
+    \
+        constexpr name() {\
+            for (size_t i = 0; i < N; ++i) {\
+                data[i] = prefix'Z' - (i % 26);\
+            }\
+            data[N] = prefix'\0';\
+        }\
+    };
+
+
 BASE_FIXED_CHAR_ARRAY(FixedArray, );
 #if __cpp_lib_char8_t
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char8_t, u8);
@@ -60,6 +87,17 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char8_t, u8);
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char16_t, u);
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, char32_t, U);
 BASE_ADD_SPECIALIZATION_TO_FIXED_CHAR_ARRAY(FixedArray, wchar_t, L);
+
+
+
+BASE_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, );
+#if __cpp_lib_char8_t
+BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, char8_t, u8);
+#endif
+BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, char16_t, u);
+BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, char32_t, U);
+BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, wchar_t, L);
+
 
 static struct Loc {
     Loc() {
@@ -71,21 +109,24 @@ template <
     typename _Char_,
     StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class CRTStrlenBenchmark {
-    static auto StrlenHelper(const _Char_* const string)
+    static auto StrcmpHelper(
+        const _Char_* const string1,
+        const _Char_* const string2)
     {
         if constexpr (std::is_same_v<_Char_, char>)
-            return strlen(string);
+            return strcmp(string1, string2);
         else if constexpr (std::is_same_v<_Char_, wchar_t>)
-            return wcslen(string);
+            return wcscmp(string1, string2);
     }
 
 public:
-    static auto Strlen(benchmark::State& state) {
+    static auto Strcmp(benchmark::State& state) {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
+        static constexpr auto textReversedArray = FixedReversedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         for (auto _ : state) {
             benchmark::DoNotOptimize(
-                StrlenHelper(textArray.data)
+                StrcmpHelper(textArray.data, textReversedArray.data)
             );
         }
     }
@@ -95,18 +136,21 @@ template <
     typename _Char_,
     StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
 class StrlenBenchmark {
-    static auto StrlenHelper(const _Char_* const string)
+    static auto StrcmpHelper(
+        const _Char_* const string1,
+        const _Char_* const string2)
     {
-        return base::string::__base_any_strlen(string);
+        return base::string::__base_any_strcmp(string1, string2);
     }
 
 public:
-    static auto Strlen(benchmark::State& state) {
+    static auto Strcmp(benchmark::State& state) {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
+        static constexpr auto textReversedArray = FixedReversedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         for (auto _ : state) {
             benchmark::DoNotOptimize(
-                StrlenHelper(textArray.data)
+                StrcmpHelper(textArray.data, textReversedArray.data)
             );
         }
     }
@@ -114,21 +158,19 @@ public:
 
 // ========================================================================================
 
-
-
-BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen)
+BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen)
+BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen)
+BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
@@ -136,19 +178,19 @@ BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen)
 
 // ========================================================================================
 
-BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
@@ -160,19 +202,19 @@ BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen
 // ========================================================================================
 
 
-BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen)
+BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen)
+BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen)
+BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
@@ -180,19 +222,19 @@ BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen
 
 // ========================================================================================
 
-BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen)
+BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
@@ -204,23 +246,25 @@ BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Str
 // ========================================================================================
 
 
-BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Small>::Strlen)
+BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Small>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Medium>::Strlen)
+BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Medium>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
 
-BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strlen)
+BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strcmp)
     ->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)
     ->Repetitions(1000)
     ->ReportAggregatesOnly(true)
     ->DisplayAggregatesOnly(true);
+
+// ========================================================================================
 
 
 int main(int argc, char** argv) {
