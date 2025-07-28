@@ -14,11 +14,12 @@ set(benchmark_DIR "D:/Libraries/win64/benchmark/build")
 find_package(benchmark REQUIRED)
 
 macro(baseBenchmarks_add_benchmark filename)
-    add_executable(${filename} ${filename}.cpp)
+    add_executable(${filename} ${filename}.cpp ${CMAKE_CURRENT_SOURCE_DIR}/tools/BenchmarkHelper.h)
+    target_include_directories(${filename} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/tools)
 
     set(CMAKE_CXX_FLAGS "-march=native")
     target_link_libraries(
-      ${filename} PRIVATE
+      ${filename} PUBLIC
       lib_base::lib_base
       benchmark::benchmark
     )
