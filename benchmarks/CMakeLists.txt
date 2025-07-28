@@ -28,7 +28,7 @@ endmacro(baseBenchmarks_add_benchmark)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FILE(GLOB baseBenchmarks *.cpp )
+FILE(GLOB baseBenchmarks *.cpp *.h)
 
 FOREACH(benchsource ${baseBenchmarks})
    GET_FILENAME_COMPONENT(filename ${benchsource} NAME_WE)

@@ -15,9 +15,10 @@ __BASE_MEMORY_NAMESPACE_BEGIN
     {                                                               \
         static_assert(                                              \
             base::arch::Contains<byteCount, __VA_ARGS__>::value,    \
-            "base::memory::Memcpy: Unsupported byteCount. "         \
+            "base::memory::Memcpy: Unsupported byteCount. ");       \
     }   
 #endif // __BASE_DEFINE_DEFAULT_MEMCPY
+
 
 
 #ifndef __BASE_DEFINE_MEMCPY
@@ -28,12 +29,16 @@ __BASE_MEMORY_NAMESPACE_BEGIN
         const void* const   source,                                                 \
         sizetype            size) noexcept                                          \
     {                                                                               \
+        DebugAssert(destination != nullptr);                                        \
+        DebugAssert(source != nullptr);                                             \
+        DebugAssert(size > 0);                                                      \
         copyType* dest          = reinterpret_cast<copyType*>(destination);         \
         const copyType* src     = reinterpret_cast<const copyType*>(source);        \
-        for (sizetype current = 0; current < size; ++current) { copyCommand; }      \
+        while (size--) { copyCommand; }                                             \
         return destination;                                                         \
     }
 #endif // __BASE_DEFINE_MEMCPY
+
 
 
 BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS(
@@ -54,12 +59,12 @@ public:
     __BASE_DEFINE_DEFAULT_MEMCPY(1, 2, 4)
 #endif 
 
-    __BASE_DEFINE_MEMCPY(1, false, char, BASE_ECHO(dest[current] == src[current]; ++dest; ++src));
-    __BASE_DEFINE_MEMCPY(2, false, char, BASE_ECHO(dest[current] == src[current]; ++dest; ++src));
-    __BASE_DEFINE_MEMCPY(4, false, char, BASE_ECHO(dest[current] == src[current]; ++dest; ++src));
+    __BASE_DEFINE_MEMCPY(1, false, char, BASE_ECHO(*dest++ == *src++;));
+    __BASE_DEFINE_MEMCPY(2, false, char, BASE_ECHO(*dest++ == *src++;));
+    __BASE_DEFINE_MEMCPY(4, false, char, BASE_ECHO(*dest++ == *src++;));
 
 #if defined(PROCESSOR_X86_64)
-    __BASE_DEFINE_MEMCPY(8, false, char, BASE_ECHO(dest[current] == src[current]; ++dest; ++src));
+    __BASE_DEFINE_MEMCPY(8, false, char, BASE_ECHO(*dest++ == *src++;));
 #endif
 };
 

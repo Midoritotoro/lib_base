@@ -196,13 +196,6 @@ set(PRIVATE_SOURCES
 
       
 
-
-    src/core/string/crt/BaseAnyStrcmp.cpp
-    src/core/string/crt/BaseAnyStrlen.cpp
- 
-    src/core/string/crt/BaseAnyStrstr.cpp
-    src/core/string/crt/BaseAnyStrstrn.cpp
-
     src/core/string/crt/wcs/BaseWcscmp.cpp
     src/core/string/crt/wcs/BaseWcslen.cpp
 
@@ -287,6 +280,9 @@ set(PRIVATE_HEADERS
     src/core/utility/algorithm/IteratorWrap.h
 
     src/core/memory/crt/BaseMemcpySimd.h
+
+    src/core/memory/crt/internal/BaseMemcpyOptimized.h
+    src/core/memory/crt/internal/BaseMemcpyOptimized.cpp
 
     src/core/memory/UninitializedBackout.h
 

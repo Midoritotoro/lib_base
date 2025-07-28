@@ -211,6 +211,12 @@ using xmmfloat  = __m128;
 using ymmfloat  = __m256;
 using zmmfloat  = __m512;
 
+// Size limit (in bytes) before switching to non-temporal/streaming loads & stores
+// Applies to: memmove, memset, and memcpy
+#ifndef BASE_SIMD_CACHE_SIZE_LIMIT
+#define BASE_SIMD_CACHE_SIZE_LIMIT 3*1024*1024 // 3 MB
+#endif // BASE_SIMD_CACHE_SIZE_LIMIT
+
 __BASE_ARCH_NAMESPACE_END
 
 #endif
