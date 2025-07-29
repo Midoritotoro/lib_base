@@ -9,6 +9,8 @@
 #include <sstream>
 #include <array>
 
+#include <iomanip>
+
 #if !defined(BASE_BENCHMARK_REPITITIONS)
 #  define BASE_BENCHMARK_REPITITIONS 10000
 #endif // BASE_BENCHMARK_REPITITIONS
@@ -114,23 +116,25 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, wchar_t
         ->DisplayAggregatesOnly(true);                                   
 #endif // BASE_ADD_BENCHMARK
 
+
 #if !defined(BASE_BENCHMARK_MAIN)
-#define BASE_BENCHMARK_MAIN                                         \
-    int main(int argc, char** argv) {                               \
-        ::benchmark::MaybeReenterWithoutASLR(argc, argv);           \
-        char arg0_default[] = "benchmark";                          \
-        char* args_default = reinterpret_cast<char*>(arg0_default); \
-        if (!argv) {                                                \
-            argc = 1;                                               \
-            argv = &args_default;                                   \
-        }                                                           \
-        ::benchmark::Initialize(&argc, argv);                       \
-        if (::benchmark::ReportUnrecognizedArguments(argc, argv))   \
-            return 1;                                               \
-        BenchmarksCompareReporter reporter;                         \
-        ::benchmark::RunSpecifiedBenchmarks(&reporter);             \
-        ::benchmark::Shutdown();                                    \
-    return 0;}
+#define BASE_BENCHMARK_MAIN()                                                   \
+    int main(int argc, char** argv) {                                           \
+        benchmark::MaybeReenterWithoutASLR(argc, argv);                         \
+        char arg0_default[] = "benchmark";                                      \
+        char* args_default = reinterpret_cast<char*>(arg0_default);             \
+        if (!argv) {                                                            \
+            argc = 1;                                                           \
+            argv = &args_default;                                               \
+        }                                                                       \
+        ::benchmark::Initialize(&argc, argv);                                   \
+        if (::benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;     \
+        BenchmarksCompareReporter reporter;                                     \
+        ::benchmark::RunSpecifiedBenchmarks(&reporter);                         \
+        ::benchmark::Shutdown();                                                \
+        return 0;                                                               \
+    }                                                                           \
+    int main(int, char**)
 #endif // BASE_BENCHMARK_MAIN
 
 
@@ -237,6 +241,7 @@ std::string FormatString(const char* msg, ...) {
 
 
 void ColorPrintf(
+    std::ostream& out,
     LogColor color,
     const char* fmt,
     ...) 
@@ -259,17 +264,17 @@ void ColorPrintf(
     SetConsoleTextAttribute(stdout_handle, GetPlatformColorCode(color) |
         FOREGROUND_INTENSITY |
         original_background_attrs);
-    std::cout << FormatString(fmt, args);
+    out << FormatString(fmt, args);
 
-    std::cout << std::flush;
+    out << std::flush;
     // Restores the text and background color.
     SetConsoleTextAttribute(stdout_handle, original_color_attrs);
 #else
     const char* color_code = GetPlatformColorCode(color);
     if (color_code != nullptr) {
-        std::cout << FormatString("\033[0;3%sm", color_code);
+        out << FormatString("\033[0;3%sm", color_code);
     }
-    std::cout << FormatString(fmt, args) << "\033[m";
+    out << FormatString(fmt, args) << "\033[m";
 #endif
     va_end(args);
 }
@@ -287,29 +292,29 @@ public:
     }
 
     void ReportRuns(const std::vector<Run>& reports) override {
-        std::ostream& Out = GetOutputStream();
+        std::ostream& out = GetOutputStream();
+        ConsoleReporter::ReportRuns(reports);
 
         for (const auto& run : reports) {
             _benchmarks.push_back(run);
 
-            if (_benchmarks.size() % 2 == 0) {
-                ColorPrintf(COLOR_RED, "Real time difference: %f", _benchmarks[0].GetAdjustedRealTime() / _benchmarks[1].GetAdjustedRealTime());
+            if (_benchmarks.size() % 8 == 0) {
+                const auto realTimeDifference = (_benchmarks[0].GetAdjustedRealTime() / _benchmarks[4].GetAdjustedRealTime());
+
+                out << "Benchmark 1: " << _benchmarks[0].GetAdjustedRealTime() << " " << _benchmarks[0].benchmark_name() << std::endl;
+                out << "Benchmark 2: " << _benchmarks[4].GetAdjustedRealTime() << " " << _benchmarks[4].benchmark_name() << std::endl;
+
+                if (realTimeDifference > 1.0f)
+                    ColorPrintf(out, COLOR_RED, "Benchmark 1 slower than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+
+                else if (realTimeDifference < 1.0f)
+                    ColorPrintf(out, COLOR_BLUE, "Benchmark 1 faster than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+
+                else
+                    ColorPrintf(out, COLOR_WHITE, "Benchmark 1 and Benchmark 2 are equal");
+
                 _benchmarks.resize(0);
             }
         }
-
-        return ConsoleReporter::ReportRuns(reports);
     }
-
-private:
-  /*  void PrintRunData(const Run& run) {
-        _benchmarks.push_back(run);
-        
-        if (_benchmarks.size() % 2 == 0) {
-            printf("Real time difference: %f", _benchmarks[0].GetAdjustedRealTime() / _benchmarks[1].GetAdjustedRealTime());
-            printf("Cpu time difference: %f", _benchmarks[0].GetAdjustedCPUTime() / _benchmarks[1].GetAdjustedCPUTime());
-
-            _benchmarks.resize(0);
-        }
-    }*/
 };

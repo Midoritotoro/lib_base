@@ -5,7 +5,7 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _BidirectionalIterator_>
-inline constexpr void ReverseTail(
+constexpr void ReverseTail(
     _BidirectionalIterator_ _First,
     _BidirectionalIterator_ _Last) noexcept
 {
@@ -20,7 +20,7 @@ inline constexpr void ReverseTail(
 template <
     class _BidirectionalIterator_,
     class _OutIterator_>
-inline constexpr void ReverseCopyTail(
+constexpr void ReverseCopyTail(
     _BidirectionalIterator_ _First,
     _BidirectionalIterator_ _Last,
     _OutIterator_           _Destination) noexcept

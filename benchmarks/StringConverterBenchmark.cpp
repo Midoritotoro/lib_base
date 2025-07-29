@@ -90,7 +90,7 @@ public:
 // ========================================================================================
 
 
-BASE_ADD_BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString);
+//BASE_ADD_BENCHMARK(StringConverterBenchmark<char, wchar_t>::ConvertString);
 
 int main(int argc, char** argv) {
     ::benchmark::MaybeReenterWithoutASLR(argc, argv);

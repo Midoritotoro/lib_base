@@ -3,6 +3,9 @@
 #include <src/core/string/crt/BaseStrlenCheckForZeroBytes.h>
 #include <src/core/memory/MemoryUtility.h>
 
+#include <base/core/utility/BitOps.h>
+
+
 __BASE_STRING_NAMESPACE_BEGIN
 
 template <>
@@ -30,18 +33,20 @@ DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::SSE2>(
 		const auto loadedFirst	= _mm_loadu_si128(reinterpret_cast<const __m128i*>(firstString));
 		const auto loadedSecond = _mm_loadu_si128(reinterpret_cast<const __m128i*>(secondString));
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::SSE2, 1>(loadedSecond);
+		const auto mask = __checkForZeroBytes<arch::CpuFeature::SSE2, 1>(loadedSecond);
 
 		// End of string not found
-		if (zeroComparison.mask == 0) {
+		if (mask == 0) {
 			ret = ((_mm_movemask_epi8(_mm_sub_epi8(loadedFirst, loadedSecond))) == 0);
 
 			if (ret == 0)
 				break;
 		}
 		else {
-			auto current = size_t(0);
-			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < zeroComparison.trailingZeros)
+			auto current = uint8(0);
+			const auto trailingZeros = CountTrailingZeroBits(mask);
+
+			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < trailingZeros)
 				++firstString, ++secondString, ++current;
 
 			break;
@@ -65,18 +70,20 @@ DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::AVX2>(
 		const auto loadedFirst	= _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(firstString));
 		const auto loadedSecond = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(secondString));
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX2, 1>(loadedSecond);
+		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX2, 1>(loadedSecond);
 
 		// End of string not found
-		if (zeroComparison.mask == 0) {
+		if (mask == 0) {
 			ret = ((_mm256_movemask_epi8(_mm256_sub_epi8(loadedFirst, loadedSecond))) == 0);
 
 			if (ret == 0)
 				break;
 		}
 		else {
-			auto current = size_t(0);
-			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < zeroComparison.trailingZeros)
+			auto current = uint8(0);
+			const auto trailingZeroes = CountTrailingZeroBits(mask);
+
+			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < trailingZeroes)
 				++firstString, ++secondString, ++current;
 
 			break;
@@ -100,18 +107,20 @@ DECLARE_NOALIAS int __CDECL BaseFeatureAwareStrcmp<arch::CpuFeature::AVX512BW>(
 		const auto loadedFirst	= _mm512_loadu_si512(firstString);
 		const auto loadedSecond = _mm512_loadu_si512(secondString);
 
-		const auto zeroComparison = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 1>(loadedSecond);
+		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 1>(loadedSecond);
 
 		// End of string not found
-		if (zeroComparison.mask == 0) {
+		if (mask == 0) {
 			ret = ((_mm512_movepi8_mask(_mm512_sub_epi8(loadedFirst, loadedSecond))) == 0);
 
 			if (ret == 0)
 				break;
 		}
 		else {
-			auto current = size_t(0);
-			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < zeroComparison.trailingZeros)
+			auto current = uint8(0);
+			const auto trailingZeros = CountTrailingZeroBits(mask);
+
+			while ((ret = *(uchar*)firstString - *(uchar*)secondString) == 0 && current < trailingZeros)
 				++firstString, ++secondString, ++current;
 
 			break;
