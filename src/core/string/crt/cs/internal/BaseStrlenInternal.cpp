@@ -97,6 +97,7 @@ DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen<arch::CpuFeature::AVX2>(
 	return -1;
 }
 
+
 template <>
 DECLARE_NOALIAS sizetype __CDECL BaseFeatureAwareStrlen<arch::CpuFeature::AVX512BW>(const char* string) noexcept {
 	const void* current = string;

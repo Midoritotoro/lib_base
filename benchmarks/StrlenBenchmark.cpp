@@ -74,8 +74,8 @@ public:
 //BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strlen);
 
 BASE_ADD_BENCHMARK(
-    BASE_ECHO(StrlenBenchmark<char>::Strlen),
-    BASE_ECHO(CRTStrlenBenchmark<char>::Strlen)
+    BASE_ECHO(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen),
+    BASE_ECHO(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen)
 );
 
 BASE_BENCHMARK_MAIN();
