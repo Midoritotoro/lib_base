@@ -55,38 +55,38 @@ public:
 // ========================================================================================
 
 
-
-BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen);
-
-// ========================================================================================
-
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen);
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen);
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen);
-
-// ========================================================================================
-// ========================================================================================
-// ========================================================================================
-
-BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen);
-
-// ========================================================================================
-
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen);
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
-BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen);
-
-// ========================================================================================
-// ========================================================================================
-// ========================================================================================
-
-BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Small>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
-BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strlen);
+//
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen);
+//
+//// ========================================================================================
+//
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen);
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Medium>::Strlen);
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Large>::Strlen);
+//
+//// ========================================================================================
+//// ========================================================================================
+//// ========================================================================================
+//
+//BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen);
+//
+//// ========================================================================================
+//
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Small>::Strlen);
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
+//BASE_ADD_BENCHMARK(CRTStrlenBenchmark<wchar_t, StringAlignedSizeForBenchmark::Large>::Strlen);
+//
+//// ========================================================================================
+//// ========================================================================================
+//// ========================================================================================
+//
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Small>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
+//BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strlen);
 
 
 int main(int argc, char** argv) {

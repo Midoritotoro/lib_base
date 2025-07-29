@@ -101,8 +101,38 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, char32_
 BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, wchar_t, L);
 
 #if !defined(BASE_ADD_BENCHMARK)
-#  define BASE_ADD_BENCHMARK(...) BENCHMARK(__VA_ARGS__)->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)->Iterations(BASE_BENCHMARK_ITERATIONS)->Repetitions(BASE_BENCHMARK_REPITITIONS)->ReportAggregatesOnly(true)->DisplayAggregatesOnly(true)                                       
+#  define BASE_ADD_BENCHMARK(benchFirst, benchSecond)                   \
+     BENCHMARK(benchFirst)->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)    \
+        ->Iterations(BASE_BENCHMARK_ITERATIONS)                         \
+        ->Repetitions(BASE_BENCHMARK_REPITITIONS)                       \
+        ->ReportAggregatesOnly(true)                                    \
+        ->DisplayAggregatesOnly(true);                                  \
+    BENCHMARK(benchSecond)->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)    \
+        ->Iterations(BASE_BENCHMARK_ITERATIONS)                         \
+        ->Repetitions(BASE_BENCHMARK_REPITITIONS)                       \
+        ->ReportAggregatesOnly(true)                                    \
+        ->DisplayAggregatesOnly(true);                                   
 #endif // BASE_ADD_BENCHMARK
+
+#if !defined(BASE_BENCHMARK_MAIN)
+#define BASE_BENCHMARK_MAIN                                         \
+    int main(int argc, char** argv) {                               \
+        ::benchmark::MaybeReenterWithoutASLR(argc, argv);           \
+        char arg0_default[] = "benchmark";                          \
+        char* args_default = reinterpret_cast<char*>(arg0_default); \
+        if (!argv) {                                                \
+            argc = 1;                                               \
+            argv = &args_default;                                   \
+        }                                                           \
+        ::benchmark::Initialize(&argc, argv);                       \
+        if (::benchmark::ReportUnrecognizedArguments(argc, argv))   \
+            return 1;                                               \
+        BenchmarksCompareReporter reporter;                         \
+        ::benchmark::RunSpecifiedBenchmarks(&reporter);             \
+        ::benchmark::Shutdown();                                    \
+    return 0;}
+#endif // BASE_BENCHMARK_MAIN
+
 
 static struct Loc {
     Loc() {
@@ -205,29 +235,22 @@ std::string FormatString(const char* msg, ...) {
     return tmp;
 }
 
-void ColorPrintf(std::ostream& out, LogColor color, const char* fmt, ...) {
+
+void ColorPrintf(
+    LogColor color,
+    const char* fmt,
+    ...) 
+{
     va_list args;
     va_start(args, fmt);
-    ColorPrintf(out, color, fmt, args);
-    va_end(args);
-}
 
-void ColorPrintf(std::ostream& out, LogColor color, const char* fmt,
-    va_list args) {
 #ifdef OS_WIN
-    ((void)out);  // suppress unused warning
-
     const HANDLE stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
     // Gets the current text color.
     CONSOLE_SCREEN_BUFFER_INFO buffer_info;
     GetConsoleScreenBufferInfo(stdout_handle, &buffer_info);
     const WORD original_color_attrs = buffer_info.wAttributes;
-
-    // We need to flush the stream buffers into the console before each
-    // SetConsoleTextAttribute call lest it affect the text that is already
-    // printed but has not yet reached the console.
-    out.flush();
 
     const WORD original_background_attrs =
         original_color_attrs & (BACKGROUND_RED | BACKGROUND_GREEN |
@@ -236,197 +259,19 @@ void ColorPrintf(std::ostream& out, LogColor color, const char* fmt,
     SetConsoleTextAttribute(stdout_handle, GetPlatformColorCode(color) |
         FOREGROUND_INTENSITY |
         original_background_attrs);
-    out << FormatString(fmt, args);
+    std::cout << FormatString(fmt, args);
 
-    out.flush();
+    std::cout << std::flush;
     // Restores the text and background color.
     SetConsoleTextAttribute(stdout_handle, original_color_attrs);
 #else
     const char* color_code = GetPlatformColorCode(color);
     if (color_code != nullptr) {
-        out << FormatString("\033[0;3%sm", color_code);
+        std::cout << FormatString("\033[0;3%sm", color_code);
     }
-    out << FormatString(fmt, args) << "\033[m";
+    std::cout << FormatString(fmt, args) << "\033[m";
 #endif
-}
-
-static std::string FormatTime(double time) {
-    // For the time columns of the console printer 13 digits are reserved. One of
-    // them is a space and max two of them are the time unit (e.g ns). That puts
-    // us at 10 digits usable for the number.
-    // Align decimal places...
-    if (time < 1.0) {
-        return FormatString("%10.3f", time);
-    }
-    if (time < 10.0) {
-        return FormatString("%10.2f", time);
-    }
-    if (time < 100.0) {
-        return FormatString("%10.1f", time);
-    }
-    // Assuming the time is at max 9.9999e+99 and we have 10 digits for the
-    // number, we get 10-1(.)-1(e)-1(sign)-2(exponent) = 5 digits to print.
-    if (time > 9999999999 /*max 10 digit number*/) {
-        return FormatString("%1.4e", time);
-    }
-    return FormatString("%10.0f", time);
-}
-
-// kilo, Mega, Giga, Tera, Peta, Exa, Zetta, Yotta.
-const char* const kBigSIUnits[] = { "k", "M", "G", "T", "P", "E", "Z", "Y" };
-// Kibi, Mebi, Gibi, Tebi, Pebi, Exbi, Zebi, Yobi.
-const char* const kBigIECUnits[] = { "Ki", "Mi", "Gi", "Ti",
-                                    "Pi", "Ei", "Zi", "Yi" };
-// milli, micro, nano, pico, femto, atto, zepto, yocto.
-const char* const kSmallSIUnits[] = { "m", "u", "n", "p", "f", "a", "z", "y" };
-
-template <typename T, size_t N>
-char(&ArraySizeHelper(T(&array)[N]))[N];
-
-// That gcc wants both of these prototypes seems mysterious. VC, for
-// its part, can't decide which to use (another mystery). Matching of
-// template overloads: the final frontier.
-#ifndef CPP_MSVC
-template <typename T, size_t N>
-char(&ArraySizeHelper(const T(&array)[N]))[N];
-#endif
-
-#define arraysize(array) (sizeof(ArraySizeHelper(array)))
-
-// We require that all three arrays have the same size.
-static_assert(arraysize(kBigSIUnits) == arraysize(kBigIECUnits),
-    "SI and IEC unit arrays must be the same size");
-static_assert(arraysize(kSmallSIUnits) == arraysize(kBigSIUnits),
-    "Small SI and Big SI unit arrays must be the same size");
-
-const int64_t kUnitsSize = arraysize(kBigSIUnits);
-
-void ToExponentAndMantissa(double val, int precision, double one_k,
-    std::string* mantissa, int64_t* exponent) {
-    std::stringstream mantissa_stream;
-
-    if (val < 0) {
-        mantissa_stream << "-";
-        val = -val;
-    }
-
-    // Adjust threshold so that it never excludes things which can't be rendered
-    // in 'precision' digits.
-    const double adjusted_threshold =
-        std::max(1.0, 1.0 / std::pow(10.0, precision));
-    const double big_threshold = (adjusted_threshold * one_k) - 1;
-    const double small_threshold = adjusted_threshold;
-    // Values in ]simple_threshold,small_threshold[ will be printed as-is
-    const double simple_threshold = 0.01;
-
-    if (val > big_threshold) {
-        // Positive powers
-        double scaled = val;
-        for (size_t i = 0; i < arraysize(kBigSIUnits); ++i) {
-            scaled /= one_k;
-            if (scaled <= big_threshold) {
-                mantissa_stream << scaled;
-                *exponent = static_cast<int64_t>(i + 1);
-                *mantissa = mantissa_stream.str();
-                return;
-            }
-        }
-        mantissa_stream << val;
-        *exponent = 0;
-    }
-    else if (val < small_threshold) {
-        // Negative powers
-        if (val < simple_threshold) {
-            double scaled = val;
-            for (size_t i = 0; i < arraysize(kSmallSIUnits); ++i) {
-                scaled *= one_k;
-                if (scaled >= small_threshold) {
-                    mantissa_stream << scaled;
-                    *exponent = -static_cast<int64_t>(i + 1);
-                    *mantissa = mantissa_stream.str();
-                    return;
-                }
-            }
-        }
-        mantissa_stream << val;
-        *exponent = 0;
-    }
-    else {
-        mantissa_stream << val;
-        *exponent = 0;
-    }
-    *mantissa = mantissa_stream.str();
-}
-
-std::string ExponentToPrefix(int64_t exponent, bool iec) {
-    if (exponent == 0) {
-        return {};
-    }
-
-    const int64_t index = (exponent > 0 ? exponent - 1 : -exponent - 1);
-    if (index >= kUnitsSize) {
-        return {};
-    }
-
-    const char* const* array =
-        (exponent > 0 ? (iec ? kBigIECUnits : kBigSIUnits) : kSmallSIUnits);
-
-    return std::string(array[index]);
-}
-
-std::string ToBinaryStringFullySpecified(double value, int precision,
-    benchmark::Counter::OneK one_k) {
-    std::string mantissa;
-    int64_t exponent = 0;
-    ToExponentAndMantissa(value, precision,
-        one_k == benchmark::Counter::kIs1024 ? 1024.0 : 1000.0, &mantissa,
-        &exponent);
-    return mantissa + ExponentToPrefix(exponent, one_k == benchmark::Counter::kIs1024);
-}
-
-std::string StrFormatImp(const char* msg, va_list args) {
-    // we might need a second shot at this, so pre-emptivly make a copy
-    va_list args_cp;
-    va_copy(args_cp, args);
-
-    // TODO(ericwf): use std::array for first attempt to avoid one memory
-    // allocation guess what the size might be
-    std::array<char, 256> local_buff = {};
-
-    // 2015-10-08: vsnprintf is used instead of snd::vsnprintf due to a limitation
-    // in the android-ndk
-    auto ret = vsnprintf(local_buff.data(), local_buff.size(), msg, args_cp);
-
-    va_end(args_cp);
-
-    // handle empty expansion
-    if (ret == 0) {
-        return {};
-    }
-    if (static_cast<std::size_t>(ret) < local_buff.size()) {
-        return std::string(local_buff.data());
-    }
-
-    // we did not provide a long enough buffer on our first attempt.
-    // add 1 to size to account for null-byte in size cast to prevent overflow
-    std::size_t size = static_cast<std::size_t>(ret) + 1;
-    auto buff_ptr = std::unique_ptr<char[]>(new char[size]);
-    // 2015-10-08: vsnprintf is used instead of snd::vsnprintf due to a limitation
-    // in the android-ndk
-    vsnprintf(buff_ptr.get(), size, msg, args);
-    return std::string(buff_ptr.get());
-}
-
-std::string HumanReadableNumber(double n, benchmark::Counter::OneK one_k) {
-    return ToBinaryStringFullySpecified(n, 1, one_k);
-}
-
-std::string StrFormat(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    std::string tmp = StrFormatImp(format, args);
     va_end(args);
-    return tmp;
 }
 
 
@@ -448,7 +293,7 @@ public:
             _benchmarks.push_back(run);
 
             if (_benchmarks.size() % 2 == 0) {
-                ColorPrintf(Out, COLOR_RED, "Real time difference: %f", _benchmarks[0].GetAdjustedRealTime() / _benchmarks[1].GetAdjustedRealTime());
+                ColorPrintf(COLOR_RED, "Real time difference: %f", _benchmarks[0].GetAdjustedRealTime() / _benchmarks[1].GetAdjustedRealTime());
                 _benchmarks.resize(0);
             }
         }

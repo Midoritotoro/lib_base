@@ -3,7 +3,6 @@
 
 #include <vector>
 
-
 int main(int argc, char** argv) {
 	std::vector<int> oldVector;
 	oldVector.resize(1000000000);
@@ -16,8 +15,6 @@ int main(int argc, char** argv) {
 	//memcpy(newVector.data(), oldVector.data(), newVector.size() * sizeof(int));
 
 	Assert(oldVector == newVector);
-
-
 
 
 	return 0;
