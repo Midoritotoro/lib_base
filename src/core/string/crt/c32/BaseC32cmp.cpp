@@ -134,12 +134,12 @@ DECLARE_NOALIAS int __CDECL __base_c32cmp(
 	const char32_t* firstString,
 	const char32_t* secondString) noexcept
 {
-	if (arch::ProcessorFeatures::AVX512F())
-		return __base_c32cmpAvx512(firstString, secondString);
-	else if (arch::ProcessorFeatures::AVX())
-		return __base_c32cmpAvx(firstString, secondString);
-	else if (arch::ProcessorFeatures::SSE2())
-		return __base_c32cmpSse2(firstString, secondString);
+	//if (arch::ProcessorFeatures::AVX512F())
+	//	return __base_c32cmpAvx512(firstString, secondString);
+	//else if (arch::ProcessorFeatures::AVX())
+	//	return __base_c32cmpAvx(firstString, secondString);
+	//else if (arch::ProcessorFeatures::SSE2())
+	//	return __base_c32cmpSse2(firstString, secondString);
 
 	return __base_c32cmpScalar(firstString, secondString);
 }

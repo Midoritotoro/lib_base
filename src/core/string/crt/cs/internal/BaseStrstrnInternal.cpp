@@ -59,7 +59,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::AVX512F>(
 
     switch (subLength) {
         case 0:
-            return 0;
+            return mainString;
 
         case 1: {   
             const char* res = reinterpret_cast<const char*>(strchr(mainString, subString[0]));
@@ -137,7 +137,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::AVX2>(
 
     switch (subLength) {
         case 0:
-            return 0;
+            return mainString;
 
         case 1: {   
             const char* res = reinterpret_cast<const char*>(strchr(mainString, subString[0]));
@@ -215,7 +215,7 @@ DECLARE_NOALIAS const char* BaseFeatureAwareStrstrn<arch::CpuFeature::SSE2>(
 
     switch (subLength) {
         case 0:
-            return 0;
+            return mainString;
 
         case 1: {   
             const char* res = reinterpret_cast<const char*>(strchr(mainString, subString[0]));
