@@ -17,9 +17,9 @@ public:
 
         while (state.KeepRunning()) {
             if constexpr (std::is_same_v<_Char_, char>)
-                strcmp(textArray.data, textReversedArray.data);
+                benchmark::DoNotOptimize(strcmp(textArray.data, textReversedArray.data));
             else if constexpr (std::is_same_v<_Char_, wchar_t>)
-                wcscmp(textArray.data, textReversedArray.data);
+                benchmark::DoNotOptimize(wcscmp(textArray.data, textReversedArray.data));
         }
     }
 };
@@ -34,7 +34,7 @@ public:
         static constexpr auto textReversedArray = FixedReversedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         while (state.KeepRunning())
-            base::string::__base_any_strcmp(textArray.data, textReversedArray.data);
+            benchmark::DoNotOptimize(base::string::__base_any_strcmp(textArray.data, textReversedArray.data));
     }
 };
 

@@ -9,7 +9,7 @@
 
 template <
     typename _Char_,
-    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
+    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark>
 class CRTStrlenBenchmark {
 public:
     static void Strlen(benchmark::State& state) noexcept {
@@ -17,23 +17,23 @@ public:
 
         while (state.KeepRunning()) {
             if constexpr (std::is_same_v<_Char_, char>)
-                strlen(textArray.data);
+                benchmark::DoNotOptimize(strlen(textArray.data));
             else if constexpr (std::is_same_v<_Char_, wchar_t>)
-                wcslen(textArray.data);
+                benchmark::DoNotOptimize(wcslen(textArray.data));
         }
     }
 };
 
 template <
     typename _Char_,
-    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark = StringAlignedSizeForBenchmark::Large>
+    StringAlignedSizeForBenchmark stringAlignedSizeForBenchmark>
 class StrlenBenchmark {
 public:
     static void Strlen(benchmark::State& state) noexcept {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         while (state.KeepRunning())
-            base::string::__base_any_strlen(textArray.data);
+            benchmark::DoNotOptimize(base::string::__base_any_strlen(textArray.data));
     }
 };
 
@@ -73,9 +73,6 @@ public:
 //BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Medium>::Strlen);
 //BASE_ADD_BENCHMARK(StrlenBenchmark<char32_t, StringAlignedSizeForBenchmark::Large>::Strlen);
 
-BASE_ADD_BENCHMARK(
-    BASE_ECHO(StrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen),
-    BASE_ECHO(CRTStrlenBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strlen)
-);
+BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE(StrlenBenchmark, CRTStrlenBenchmark, char, Strlen);
 
 BASE_BENCHMARK_MAIN();

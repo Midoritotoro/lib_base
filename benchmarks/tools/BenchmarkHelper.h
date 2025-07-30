@@ -26,9 +26,19 @@
 #endif // BASE_BENCHMARK_UNIT_OF_MEASUREMENT
 
 enum StringAlignedSizeForBenchmark {
-    Large = 4096,
-    Medium = 1024,
-    Small = 512
+    Tiny        = 16,       
+    VerySmall   = 32,   
+    Small       = 64,    
+    MediumSmall = 128,
+    Medium      = 256,
+    MediumLarge = 512,
+    Large       = 1024,
+    VeryLarge   = 2048,
+    Huge        = 4096,
+    ExtraHuge   = 8192,
+    MegaHuge    = 16384,
+    GigaHuge    = 32768,
+    TeraHuge    = 65536  
 };
 
 #define BASE_FIXED_CHAR_ARRAY(name, prefix) \
@@ -116,6 +126,23 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, wchar_t
         ->DisplayAggregatesOnly(true);                                   
 #endif // BASE_ADD_BENCHMARK
 
+
+#if !defined(BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE)
+#  define BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE(nameFirst, nameSecond, charType, funcN)              \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Tiny>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Tiny>::funcN));                   \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN));              \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Small>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Small>::funcN));                  \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN));            \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Medium>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Medium>::funcN));                 \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN));            \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Large>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Large>::funcN));                  \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN));              \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Huge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Huge>::funcN));                   \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN));              \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN));               \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN));               \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN));
+#endif // BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE
 
 #if !defined(BASE_BENCHMARK_MAIN)
 #define BASE_BENCHMARK_MAIN()                                                   \
@@ -299,16 +326,16 @@ public:
             _benchmarks.push_back(run);
 
             if (_benchmarks.size() % 8 == 0) {
-                const auto realTimeDifference = (_benchmarks[0].GetAdjustedRealTime() / _benchmarks[4].GetAdjustedRealTime());
+                const auto realTimeDifference = (_benchmarks[4].GetAdjustedRealTime() / _benchmarks[0].GetAdjustedRealTime());
 
-                out << "Benchmark 1: " << _benchmarks[0].GetAdjustedRealTime() << " " << _benchmarks[0].benchmark_name() << std::endl;
-                out << "Benchmark 2: " << _benchmarks[4].GetAdjustedRealTime() << " " << _benchmarks[4].benchmark_name() << std::endl;
+                out << "Benchmark 1: " << _benchmarks[0].benchmark_name() << std::endl;
+                out << "Benchmark 2: " << _benchmarks[4].benchmark_name() << std::endl;
 
                 if (realTimeDifference > 1.0f)
-                    ColorPrintf(out, COLOR_RED, "Benchmark 1 slower than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+                    ColorPrintf(out, COLOR_BLUE, "Benchmark 1 faster than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
 
                 else if (realTimeDifference < 1.0f)
-                    ColorPrintf(out, COLOR_BLUE, "Benchmark 1 faster than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+                    ColorPrintf(out, COLOR_RED, "Benchmark 1 slower than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
 
                 else
                     ColorPrintf(out, COLOR_WHITE, "Benchmark 1 and Benchmark 2 are equal");
