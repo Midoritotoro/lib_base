@@ -1,8 +1,6 @@
 #include <src/core/string/crt/cs/internal/BaseStrcmpInternal.h>
 
-#include <src/core/string/crt/BaseStrlenCheckForZeroBytes.h>
 #include <src/core/memory/MemoryUtility.h>
-
 #include <base/core/utility/BitOps.h>
 
 

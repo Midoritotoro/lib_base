@@ -1,5 +1,4 @@
 #include <src/core/string/crt/cs/BaseStrlen.h>
-#include <src/core/string/crt/BaseStrlenCheckForZeroBytes.h>
 
 #include <src/core/memory/MemoryUtility.h>
 #include <base/core/arch/ProcessorFeatures.h>
@@ -12,11 +11,10 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx512(const char32_t* string) 
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 4>(_mm512_loadu_epi32(current));
+		const uint16 mask = _mm512_cmpeq_epi32_mask(_mm512_loadu_epi32(current), _mm512_setzero_si512());
 
 		if (mask != 0)
-			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(static_cast<uint16>(mask))));
+			return reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(mask);
 
 		memory::AdvanceBytes(current, 64);
 	}
@@ -29,11 +27,12 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenAvx(const char32_t* string) noe
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX2, 4>(_mm256_loadu_epi32(current));
+		const uint8 mask = _mm256_movemask_epi8(
+			_mm256_cmpeq_epi32(
+				_mm256_lddqu_si256(reinterpret_cast<const __m256i*>(current)), _mm256_setzero_si256()));
 
 		if (mask != 0)
-			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(static_cast<uint16>(mask))));
+			return reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(mask);
 
 		memory::AdvanceBytes(current, 32);
 	}
@@ -46,11 +45,12 @@ DECLARE_NOALIAS std::size_t __CDECL __base_c32lenSse2(const char32_t* string) no
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::SSE2, 4>(_mm_loadu_epi32(current));
+		const uint8 mask = _mm_movemask_epi8(
+			_mm_cmpeq_epi32(
+				_mm_loadu_si128(reinterpret_cast<const __m128i*>(current)), _mm_setzero_si128()));
 
 		if (mask != 0)
-			return (static_cast<std::size_t>(
-				reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(static_cast<uint16>(mask))));
+			return reinterpret_cast<const char32_t*>(current) - string + CountTrailingZeroBits(mask);
 
 		memory::AdvanceBytes(current, 16);
 	}
