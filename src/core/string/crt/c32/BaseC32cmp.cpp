@@ -19,7 +19,7 @@ DECLARE_NOALIAS int __CDECL __base_c32cmpAvx512(
 		const auto loadedFirst = _mm512_loadu_epi32(firstString);
 		const auto loadedSecond = _mm512_loadu_epi32(secondString);
 
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 4>(loadedSecond);
+		const auto mask = _mm512_cmpeq_epi32_mask(loadedSecond, _mm512_setzero_si512());
 
 		// End of string not found
 		if (mask == 0) {

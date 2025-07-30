@@ -328,17 +328,17 @@ public:
             if (_benchmarks.size() % 8 == 0) {
                 const auto realTimeDifference = (_benchmarks[4].GetAdjustedRealTime() / _benchmarks[0].GetAdjustedRealTime());
 
-                out << "Benchmark 1: " << _benchmarks[0].benchmark_name() << std::endl;
-                out << "Benchmark 2: " << _benchmarks[4].benchmark_name() << std::endl;
+                ColorPrintf(out, COLOR_MAGENTA, "Benchmark 1: %s\n", _benchmarks[0].benchmark_name().c_str());
+                ColorPrintf(out, COLOR_MAGENTA, "Benchmark 2: %s\n", _benchmarks[4].benchmark_name().c_str());
 
                 if (realTimeDifference > 1.0f)
-                    ColorPrintf(out, COLOR_BLUE, "Benchmark 1 faster than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+                    ColorPrintf(out, COLOR_BLUE, "Benchmark 1 faster than Benchmark 2 by a %f%s\n", std::abs(realTimeDifference * 100 - 100), "%");
 
                 else if (realTimeDifference < 1.0f)
-                    ColorPrintf(out, COLOR_RED, "Benchmark 1 slower than Benchmark 2 by a %f%s", realTimeDifference * 100, "%");
+                    ColorPrintf(out, COLOR_RED, "Benchmark 1 slower than Benchmark 2 by a %f%s\n", std::abs(realTimeDifference * 100 - 100), "%");
 
                 else
-                    ColorPrintf(out, COLOR_WHITE, "Benchmark 1 and Benchmark 2 are equal");
+                    ColorPrintf(out, COLOR_WHITE, "Benchmark 1 and Benchmark 2 are equal\n");
 
                 _benchmarks.resize(0);
             }

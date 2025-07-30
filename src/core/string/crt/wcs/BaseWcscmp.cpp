@@ -32,7 +32,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpSse2(
 		const auto loadedFirst	= _mm_loadu_si128(reinterpret_cast<const __m128i*>(firstString));
 		const auto loadedSecond = _mm_loadu_si128(reinterpret_cast<const __m128i*>(secondString));
 
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::SSE2, 2>(loadedSecond);
+		const uint8 mask = _mm_movemask_epi8(_mm_cmpeq_epi16(loadedSecond, _mm_setzero_si128()));
 
 		// End of string not found
 		if (mask == 0) {
@@ -43,7 +43,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpSse2(
 		}
 		else {
 			auto current = uint8(0);
-			const auto trailingZeros = CountTrailingZeroBits(static_cast<uint8>(mask));
+			const auto trailingZeros = CountTrailingZeroBits(mask);
 
 			while ((ret = *firstString - *secondString) == 0 && current < trailingZeros)
 				++firstString, ++secondString, ++current;
@@ -65,10 +65,10 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx(
 	int ret = 0;
 
 	while (true) {
-		const auto loadedFirst	= _mm256_loadu_epi16(firstString);
-		const auto loadedSecond = _mm256_loadu_epi16(secondString);
+		const auto loadedFirst	= _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(firstString));
+		const auto loadedSecond = _mm256_lddqu_si256(reinterpret_cast<const __m256i*>(secondString));
 
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX2, 2>(loadedSecond);
+		const uint16 mask = _mm256_movemask_epi8(_mm256_cmpeq_epi16(loadedSecond, _mm256_setzero_si256()));
 
 		// End of string not found
 		if (mask == 0) {
@@ -79,7 +79,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx(
 		}
 		else {
 			auto current = uint8(0);
-			const auto trailingZeros = CountTrailingZeroBits(static_cast<uint16>(mask));
+			const auto trailingZeros = CountTrailingZeroBits(mask);
 
 			while ((ret = *firstString - *secondString) == 0 && current < trailingZeros)
 				++firstString, ++secondString, ++current;
@@ -104,7 +104,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx512(
 		const auto loadedFirst = _mm512_loadu_epi16(firstString);
 		const auto loadedSecond = _mm512_loadu_epi16(secondString);
 
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 2>(loadedSecond);
+		const uint32 mask = _mm512_cmpeq_epi16_mask(loadedSecond, _mm512_setzero_si512());
 
 		// End of string not found
 		if (mask == 0) {
@@ -115,7 +115,7 @@ DECLARE_NOALIAS int __CDECL __base_wcscmpAvx512(
 		}
 		else {
 			auto current = uint8(0);
-			const auto trailingZeros = CountTrailingZeroBits(static_cast<uint32>(mask));
+			const auto trailingZeros = CountTrailingZeroBits(mask);
 
 			while ((ret = *firstString - *secondString) == 0 && current < trailingZeros)
 				++firstString, ++secondString, ++current;

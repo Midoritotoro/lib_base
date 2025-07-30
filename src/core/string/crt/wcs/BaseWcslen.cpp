@@ -19,11 +19,13 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenSse2(const wchar_t* string) noe
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::SSE2, 2>(_mm_loadu_epi16(current));
+		const uint8 mask = _mm_movemask_epi8(
+			_mm_cmpeq_epi16(
+				_mm_loadu_si128(reinterpret_cast<const __m128i*>(current)), _mm_setzero_si128()));
 
 		if (mask != 0)
 			return (static_cast<std::size_t>(
-				reinterpret_cast<const wchar_t*>(current) - string + CountTrailingZeroBits(static_cast<uint8>(mask))));
+				reinterpret_cast<const wchar_t*>(current) - string + CountTrailingZeroBits(mask)));
 
 		memory::AdvanceBytes(current, 16);
 	}
@@ -36,7 +38,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx(const wchar_t* string) noex
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX2, 2>(_mm256_loadu_epi16(current));
+		const auto mask = _mm256_movemask_epi8(_mm256_cmpeq_epi16(_mm256_loadu_epi16(current), _mm256_setzero_si256()));
 
 		if (mask != 0)
 			return (static_cast<std::size_t>(
@@ -53,7 +55,7 @@ DECLARE_NOALIAS std::size_t __CDECL __base_wcslenAvx512(const wchar_t* string) n
 	const void* current = string;
 
 	while (true) {
-		const auto mask = __checkForZeroBytes<arch::CpuFeature::AVX512BW, 2>(_mm512_loadu_epi16(current));
+		const auto mask = _mm512_cmpeq_epi16_mask(_mm512_loadu_epi16(current), _mm512_setzero_si512());
 
 		if (mask != 0)
 			return (static_cast<std::size_t>(

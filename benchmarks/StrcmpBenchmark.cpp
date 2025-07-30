@@ -13,7 +13,7 @@ class CRTStrcmpBenchmark {
 public:
     static void Strcmp(benchmark::State& state) {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
-        static constexpr auto textReversedArray = FixedReversedArray<_Char_, stringAlignedSizeForBenchmark>{};
+        static constexpr auto textReversedArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         while (state.KeepRunning()) {
             if constexpr (std::is_same_v<_Char_, char>)
@@ -31,7 +31,7 @@ class StrcmpBenchmark {
 public:
     static auto Strcmp(benchmark::State& state) {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
-        static constexpr auto textReversedArray = FixedReversedArray<_Char_, stringAlignedSizeForBenchmark>{};
+        static constexpr auto textReversedArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
         while (state.KeepRunning())
             benchmark::DoNotOptimize(base::string::__base_any_strcmp(textArray.data, textReversedArray.data));
@@ -39,10 +39,7 @@ public:
 };
 
 
-BASE_ADD_BENCHMARK(
-    BASE_ECHO(StrcmpBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strcmp),
-    BASE_ECHO(CRTStrcmpBenchmark<char, StringAlignedSizeForBenchmark::Small>::Strcmp)
-);
+BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE(StrcmpBenchmark, CRTStrcmpBenchmark, char, Strcmp);
 
 
 BASE_BENCHMARK_MAIN();
