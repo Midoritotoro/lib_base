@@ -25,7 +25,7 @@
 #  define BASE_BENCHMARK_UNIT_OF_MEASUREMENT benchmark::kNanosecond
 #endif // BASE_BENCHMARK_UNIT_OF_MEASUREMENT
 
-enum StringAlignedSizeForBenchmark {
+enum StringAlignedSizeForBenchmark : base::uint32 {
     Tiny        = 16,       
     VerySmall   = 32,   
     Small       = 64,    
@@ -126,23 +126,56 @@ BASE_ADD_SPECIALIZATION_TO_FIXED_REVERSED_CHAR_ARRAY(FixedReversedArray, wchar_t
         ->DisplayAggregatesOnly(true);                                   
 #endif // BASE_ADD_BENCHMARK
 
+#if !defined(BASE_ADD_BENCHMARK_ARGS)
+#  define BASE_ADD_BENCHMARK_ARGS(benchFirst, benchSecond, ...)         \
+     BENCHMARK(benchFirst)->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)    \
+        ->Iterations(BASE_BENCHMARK_ITERATIONS)                         \
+        ->Repetitions(BASE_BENCHMARK_REPITITIONS)                       \
+        ->ReportAggregatesOnly(true)                                    \
+        ->DisplayAggregatesOnly(true)                                   \
+        ->Args({__VA_ARGS__});                                          \
+    BENCHMARK(benchSecond)->Unit(BASE_BENCHMARK_UNIT_OF_MEASUREMENT)    \
+        ->Iterations(BASE_BENCHMARK_ITERATIONS)                         \
+        ->Repetitions(BASE_BENCHMARK_REPITITIONS)                       \
+        ->ReportAggregatesOnly(true)                                    \
+        ->DisplayAggregatesOnly(true)                                   \
+        ->Args({__VA_ARGS__});                                            
+#endif // BASE_ADD_BENCHMARK_ARGS
+
 
 #if !defined(BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE)
-#  define BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE(nameFirst, nameSecond, charType, funcN)              \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Tiny>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Tiny>::funcN));                   \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN));              \
+#  define BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE(nameFirst, nameSecond, charType, funcN)                                                                                                          \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Tiny>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Tiny>::funcN));                    \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN));           \
     BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Small>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Small>::funcN));                  \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN));            \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Medium>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Medium>::funcN));                 \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN));            \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Large>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Large>::funcN));                  \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN));              \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Huge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Huge>::funcN));                   \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN));              \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN));               \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN));               \
-    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN));
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN));      \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Medium>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Medium>::funcN));                \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN));       \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Large>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Large>::funcN));                   \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN));           \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Huge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Huge>::funcN));                    \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN));          \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN));            \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN));            \
+    BASE_ADD_BENCHMARK(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::TeraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::TeraHuge>::funcN));
 #endif // BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE
+
+#if !defined(BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE_ARGS)
+#  define BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE_ARGS(nameFirst, nameSecond, charType, funcN, ...)                                                                                                                \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Tiny>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Tiny>::funcN), __VA_ARGS__);                  \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VerySmall>::funcN), __VA_ARGS__);         \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Small>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Small>::funcN), __VA_ARGS__);                \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumSmall>::funcN), __VA_ARGS__);    \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Medium>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Medium>::funcN), __VA_ARGS__);              \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MediumLarge>::funcN), __VA_ARGS__);     \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Large>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Large>::funcN), __VA_ARGS__);                 \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN),BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::VeryLarge>::funcN), __VA_ARGS__);         \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::Huge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::Huge>::funcN), __VA_ARGS__);                  \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::ExtraHuge>::funcN), __VA_ARGS__);        \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::MegaHuge>::funcN), __VA_ARGS__);          \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::GigaHuge>::funcN), __VA_ARGS__);          \
+    BASE_ADD_BENCHMARK_ARGS(BASE_ECHO(nameFirst<charType, StringAlignedSizeForBenchmark::TeraHuge>::funcN), BASE_ECHO(nameSecond<charType, StringAlignedSizeForBenchmark::TeraHuge>::funcN), __VA_ARGS__);
+#endif // BASE_ADD_STRING_BENCHMARKS_FOR_EACH_SIZE_ARGS
 
 #if !defined(BASE_BENCHMARK_MAIN)
 #define BASE_BENCHMARK_MAIN()                                                   \

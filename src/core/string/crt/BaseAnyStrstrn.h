@@ -9,7 +9,7 @@
 __BASE_STRING_NAMESPACE_BEGIN
 
 
-DECLARE_NOALIAS NODISCARD inline sizetype __base_any_strstrn(
+DECLARE_NOALIAS NODISCARD inline const char* __base_any_strstrn(
 	const char* string,
 	sizetype	stringLength,
 	const char* needle,
@@ -18,7 +18,7 @@ DECLARE_NOALIAS NODISCARD inline sizetype __base_any_strstrn(
 	return __base_strstrn(string, stringLength, needle, needleLength);
 }
 
-DECLARE_NOALIAS NODISCARD inline sizetype __base_any_strstrn(
+DECLARE_NOALIAS NODISCARD inline const wchar_t* __base_any_strstrn(
 	const whar_t*	string,
 	sizetype		stringLength,
 	const wchar_t*	needle,
@@ -27,7 +27,7 @@ DECLARE_NOALIAS NODISCARD inline sizetype __base_any_strstrn(
 	return __base_wcsstrn(string, stringLength, needle, needleLength);
 }
 
-DECLARE_NOALIAS NODISCARD inline sizetype __base_any_strstrn(
+DECLARE_NOALIAS NODISCARD inline const char32_t* __base_any_strstrn(
 	const char32_t* string,
 	sizetype		stringLength,
 	const char32_t* needle,
