@@ -1,4 +1,4 @@
-#include <src/core/string/crt/BaseAnyStrstr.h>
+#include <src/core/string/crt/BaseAnyStrstrn.h>
 #include <benchmarks/tools/BenchmarkHelper.h>
 
 #include <uchar.h>
@@ -12,13 +12,13 @@ class CRTStrstrBenchmark {
 public:
     static void Strstr(benchmark::State& state) noexcept {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
-        static constexpr auto needle = FixedReversedArray<_Char_, state.range(0)>{};
+        static constexpr auto needle = FixedReversedArray<_Char_, 16>{};
 
         while (state.KeepRunning()) {
             if constexpr (std::is_same_v<_Char_, char>)
-                benchmark::DoNotOptimize(strstr(textArray.data, FixedReversedArray<_Char_, needle.data));
+                benchmark::DoNotOptimize(strstr(textArray.data, needle.data));
             else if constexpr (std::is_same_v<_Char_, wchar_t>)
-                benchmark::DoNotOptimize(wcsstr(textArray.data, FixedReversedArray<_Char_, needle.data));
+                benchmark::DoNotOptimize(wcsstr(textArray.data, needle.data));
         }
     }
 };
@@ -30,10 +30,10 @@ class StrstrBenchmark {
 public:
     static void Strstr(benchmark::State& state) noexcept {
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
-        static constexpr auto needle = FixedReversedArray<_Char_, state.range(0)>{}
+        static constexpr auto needle = FixedReversedArray<_Char_, 16>{};
 
         while (state.KeepRunning())
-            benchmark::DoNotOptimize(base::string::__base_any_strstr(textArray.data, needle.data));
+            benchmark::DoNotOptimize(base::string::__base_any_strstrn(textArray.data, stringAlignedSizeForBenchmark, needle.data, 16));
     }
 };
 

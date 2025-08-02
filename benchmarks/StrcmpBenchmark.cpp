@@ -17,7 +17,7 @@ public:
 
         while (state.KeepRunning()) {
             if constexpr (std::is_same_v<_Char_, char>)
-                benchmark::DoNotOptimize(strcmp(textArray.data, textReversedArray.data));
+                benchmark::DoNotOptimize(std::find(textArray.data, textArray.data + 4096,  textReversedArray.data, textReversedArray.data + 16));
             else if constexpr (std::is_same_v<_Char_, wchar_t>)
                 benchmark::DoNotOptimize(wcscmp(textArray.data, textReversedArray.data));
         }

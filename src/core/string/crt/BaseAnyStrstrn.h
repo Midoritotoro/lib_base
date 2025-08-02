@@ -19,7 +19,7 @@ DECLARE_NOALIAS NODISCARD inline const char* __base_any_strstrn(
 }
 
 DECLARE_NOALIAS NODISCARD inline const wchar_t* __base_any_strstrn(
-	const whar_t*	string,
+	const wchar_t*	string,
 	sizetype		stringLength,
 	const wchar_t*	needle,
 	sizetype		needleLength) noexcept
