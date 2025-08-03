@@ -22,7 +22,7 @@ CONSTEXPR_CXX20 void VerifyRange(
 	const _Iterator_& firstIterator,
 	const _Sentinel_& lastIterator) noexcept
 {
-#ifdef _DEBUG
+#infdef NDEBUG
 	if constexpr (std::is_pointer_v<_Iterator_> && std::is_pointer_v<_Sentinel_>) {
 		DebugAssertLog(firstIterator <= lastIterator, "transposed pointer range");
 		return;

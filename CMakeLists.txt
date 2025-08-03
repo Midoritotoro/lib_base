@@ -242,36 +242,6 @@ set(PRIVATE_HEADERS
 
     src/core/utility/simd/SimdAlgorithm.h
 
-    src/core/utility/algorithm/AllOf.h
-    src/core/utility/algorithm/AnyOf.h
-
-    src/core/utility/algorithm/NoneOf.h
-    src/core/utility/algorithm/Copy.h
-
-    src/core/utility/algorithm/Count.h
-    src/core/utility/algorithm/Find.h
-
-    src/core/utility/algorithm/ForEach.h
-    src/core/utility/algorithm/PartialSort.h
-
-    src/core/utility/algorithm/Remove.h
-    src/core/utility/algorithm/Replace.h
-
-    src/core/utility/algorithm/Reverse.h
-    src/core/utility/algorithm/Sort.h
-
-    src/core/utility/algorithm/SwapRanges.h
-    src/core/utility/algorithm/Transform.h
-    
-    src/core/utility/algorithm/ReverseCopy.h
-    src/core/utility/algorithm/Rotate.h
-
-    src/core/utility/algorithm/Fill.h
-    src/core/utility/algorithm/Mismatch.h
-
-    src/core/utility/algorithm/Search.h
-    src/core/utility/algorithm/Move.h
-
     src/core/utility/algorithm/AlgorithmDebug.h
     src/core/utility/algorithm/IteratorWrap.h
 
@@ -320,68 +290,6 @@ set(PRIVATE_HEADERS
     src/core/memory/crt/BaseMemset.cpp
 
     src/core/memory/crt/BaseMemcpy.h
-    
-    src/core/string/crt/c32/BaseC32len.h
-    src/core/string/crt/c32/BaseC32cmp.h
-    src/core/string/crt/c32/BaseC32str.h
-    src/core/string/crt/c32/BaseC32strn.h
-
-    src/core/string/crt/cs/BaseStrcmp.h
-    src/core/string/crt/cs/BaseStrlen.h
-    src/core/string/crt/cs/BaseStrstr.h
-    src/core/string/crt/cs/BaseStrstrn.h
-
-    src/core/string/crt/BaseAnyStrcmp.h
-    src/core/string/crt/BaseAnyStrlen.h
-    src/core/string/crt/BaseAnyStrstr.h
-    src/core/string/crt/BaseAnyStrstrn.h
-
-    src/core/string/crt/wcs/BaseWcscmp.h
-    src/core/string/crt/wcs/BaseWcslen.h
-    src/core/string/crt/wcs/BaseWcsstr.h
-    src/core/string/crt/wcs/BaseWcsstrn.h
-
-
-    src/core/string/crt/cs/internal/BaseStrcmpInternal.cpp
-    src/core/string/crt/cs/internal/BaseStrcmpInternal.h
-
-    src/core/string/crt/cs/internal/BaseStrlenInternal.cpp
-    src/core/string/crt/cs/internal/BaseStrlenInternal.h
-
-    src/core/string/crt/cs/internal/BaseStrstrInternal.cpp
-    src/core/string/crt/cs/internal/BaseStrstrInternal.h
-
-    src/core/string/crt/cs/internal/BaseStrstrnInternal.cpp
-    src/core/string/crt/cs/internal/BaseStrstrnInternal.h
-
-
-    src/core/string/crt/wcs/internal/BaseWcscmpInternal.cpp
-    src/core/string/crt/wcs/internal/BaseWcscmpInternal.h
-
-    src/core/string/crt/wcs/internal/BaseWcslenInternal.cpp
-    src/core/string/crt/wcs/internal/BaseWcslenInternal.h
-
-    src/core/string/crt/wcs/internal/BaseWcsstrInternal.cpp
-    src/core/string/crt/wcs/internal/BaseWcsstrInternal.h
-
-    src/core/string/crt/wcs/internal/BaseWcsstrnInternal.cpp
-    src/core/string/crt/wcs/internal/BaseWcsstrnInternal.h
-
-
-    src/core/string/crt/c32/internal/BaseC32cmpInternal.cpp
-    src/core/string/crt/c32/internal/BaseC32cmpInternal.h
-
-    src/core/string/crt/c32/internal/BaseC32lenInternal.cpp
-    src/core/string/crt/c32/internal/BaseC32lenInternal.h
-
-    src/core/string/crt/c32/internal/BaseC32strInternal.cpp
-    src/core/string/crt/c32/internal/BaseC32strInternal.h
-
-    src/core/string/crt/c32/internal/BaseC32strnInternal.cpp
-    src/core/string/crt/c32/internal/BaseC32strnInternal.h
-
-    src/core/string/crt/cs/internal/BaseStrstrClangMsvcHelper.h
-    src/core/string/crt/cs/internal/BaseStrstrnImplementationsInternal.h
 
     src/core/string/StringConversionOptions.h
     src/core/string/StringConversionOptions.h
@@ -440,7 +348,7 @@ set(PUBLIC_HEADERS
     include/base/core/system/Time.h
 
     include/base/core/arch/Platform.h
-    include/base/core/utility/OverflowCheck.h
+    include/base/core/math/OverflowCheck.h
 
     include/base/core/system/Windows.h
     include/base/core/arch/ProcessorDetection.h
@@ -499,10 +407,10 @@ set(PUBLIC_HEADERS
 
     include/base/core/utility/TypeInfo.h
 
-    include/base/core/utility/BitOps.h
-    include/base/core/utility/Random.h
+    include/base/core/math/BitMath.h
+    include/base/core/math/Random.h
 
-    include/base/core/utility/MathConstants.h
+    include/base/core/math/MathConstants.h
     include/base/core/arch/Endian.h
 
     include/base/core/thread/Thread.h
@@ -594,6 +502,36 @@ set(PUBLIC_HEADERS
 
     include/base/core/logging/MessageLogger.h
     include/base/core/string/StringView.h
+
+    include/base/core/algorithm/AllOf.h
+    include/base/core/algorithm/AnyOf.h
+
+    include/base/core/algorithm/NoneOf.h
+    include/base/core/algorithm/Copy.h
+
+    include/base/core/algorithm/Count.h
+    include/base/core/algorithm/Find.h
+
+    include/base/core/algorithm/ForEach.h
+    include/base/core/algorithm/PartialSort.h
+
+    include/base/core/algorithm/Remove.h
+    include/base/core/algorithm/Replace.h
+
+    include/base/core/algorithm/Reverse.h
+    include/base/core/algorithm/Sort.h
+
+    include/base/core/algorithm/SwapRanges.h
+    include/base/core/algorithm/Transform.h
+    
+    include/base/core/algorithm/ReverseCopy.h
+    include/base/core/algorithm/Rotate.h
+
+    include/base/core/algorithm/Fill.h
+    include/base/core/algorithm/Mismatch.h
+
+    include/base/core/algorithm/Search.h
+    include/base/core/algorithm/Move.h
 )
 
 include(CMakePackageConfigHelpers)
