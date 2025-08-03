@@ -329,6 +329,8 @@ set(PRIVATE_HEADERS
       src/core/network/NetworkTypes.h
 
       src/core/utility/IsComparableToNullptr.h
+
+      src/core/time/MachineClock.h
 )
 
 set(PUBLIC_HEADERS 

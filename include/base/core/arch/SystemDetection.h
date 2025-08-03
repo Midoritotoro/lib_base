@@ -19,10 +19,53 @@
 #    define OS_WIN32
 #elif defined(__linux__) || defined(__linux)
 #  define OS_LINUX
+
 #elif defined(__Lynx__)
 #  define OS_LYNX
+
 #elif defined(__GNU__)
 #  define OS_HURD
+
+#elif defined(__FreeBSD__)
+#  define OS_FREEBSD
+
+#elif defined(__NetBSD__)
+#  define OS_NETBSD
+
+#elif defined(__OpenBSD__)
+#  define OS_OPENBSD
+
+#elif defined(__DragonFly__)
+#  define OS_DRAGONFLY
+
+#elif defined(__linux__)
+#  define OS_LINUX
+
+#elif defined(__native_client__)
+#  define OS_NACL
+
+#elif defined(__EMSCRIPTEN__)
+#  define OS_EMSCRIPTEN
+
+#elif defined(__rtems__)
+#  define OS_RTEMS
+
+#elif defined(__Fuchsia__)
+#  define OS_FUCHSIA
+
+#elif defined (__SVR4) && defined (__sun)
+#  define OS_SOLARIS
+
+#elif defined(__QNX__)
+#  define OS_QNX
+
+#elif defined(__MVS__)
+#  define OS_ZOS
+
+#elif defined(__hexagon__)
+#  define OS_QURT
+
+#endif
 #else
 #  error ""
 #endif
