@@ -5,6 +5,8 @@
 #include <base/core/arch/CompilerDetection.h>
 #include <base/core/arch/SystemDetection.h>
 
+#include <base/core/arch/KeywordSupport.h>
+
 #if defined(OS_MAC)
 #include <mach/mach_time.h>
 #endif

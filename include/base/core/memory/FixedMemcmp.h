@@ -4,111 +4,149 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD always_inline bool alwaysTrue(const char*, const char*) noexcept {
+DECLARE_NOALIAS NODISCARD always_inline bool alwaysTrue(
+    const char*,
+    const char*) noexcept
+{
     return true;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp1(const char* a, const char* b) noexcept {
-    return a[0] == b[0];
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp1(
+    const char* first,
+    const char* second) noexcept 
+{
+    return first[0] == second[0];
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp2(const char* a, const char* b) noexcept {
-    const uint16_t A = *reinterpret_cast<const uint16_t*>(a);
-    const uint16_t B = *reinterpret_cast<const uint16_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp2(
+    const char* first,
+    const char* second) noexcept 
+{
+    const uint16 __first    = *reinterpret_cast<const uint16*>(first);
+    const uint16 __second   = *reinterpret_cast<const uint16*>(second);
 
-    return A == B;
+    return __first == __second;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp3(const char* a, const char* b) noexcept {
-    const uint32_t A = *reinterpret_cast<const uint32_t*>(a);
-    const uint32_t B = *reinterpret_cast<const uint32_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp3(
+    const char* first, 
+    const char* second) noexcept 
+{
+    const uint32 __first    = *reinterpret_cast<const uint32*>(first);
+    const uint32 __second   = *reinterpret_cast<const uint32*>(second);
 
-    return (A & 0x00ffffff) == (B & 0x00ffffff);
+    return (__first & 0x00ffffff) == (__second & 0x00ffffff);
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp4(const char* a, const char* b) noexcept {
-    const uint32_t A = *reinterpret_cast<const uint32_t*>(a);
-    const uint32_t B = *reinterpret_cast<const uint32_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp4(
+    const char* first,
+    const char* second) noexcept 
+{
+    const uint32 __first    = *reinterpret_cast<const uint32*>(first);
+    const uint32 __second   = *reinterpret_cast<const uint32*>(second);
 
-    return A == B;
+    return __first == __second;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp5(const char* a, const char* b) noexcept {
-    const uint64_t A = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t B = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp5(
+    const char* first, 
+    const char* second) noexcept 
+{
+    const uint64 __first    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __second   = *reinterpret_cast<const uint64*>(second);
 
-    return ((A ^ B) & 0x000000fffffffffflu) == 0;
+    return ((__first ^ __second) & 0x000000fffffffffflu) == 0;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp6(const char* a, const char* b) noexcept {
-    const uint64_t A = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t B = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp6(
+    const char* first, 
+    const char* second) noexcept 
+{
+    const uint64 __first    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __second   = *reinterpret_cast<const uint64*>(second);
 
-    return ((A ^ B) & 0x0000fffffffffffflu) == 0;
+    return ((__first ^ __second) & 0x0000fffffffffffflu) == 0;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp7(const char* a, const char* b) noexcept {
-    const uint64_t A = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t B = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp7(
+    const char* first, 
+    const char* second) noexcept
+{
+    const uint64 __first    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __second   = *reinterpret_cast<const uint64*>(second);
 
-    return ((A ^ B) & 0x00fffffffffffffflu) == 0;
+    return ((__first ^ __second) & 0x00fffffffffffffflu) == 0;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp8(const char* a, const char* b) noexcept {
-    const uint64_t A = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t B = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp8(
+    const char* first,
+    const char* second) noexcept
+{
+    const uint64 __first    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __second   = *reinterpret_cast<const uint64*>(second);
 
-    return A == B;
+    return __first == __second;
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp9(const char* a, const char* b) noexcept {
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp9(
+    const char* first,
+    const char* second) noexcept
+{
+    const uint64 __first    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __second   = *reinterpret_cast<const uint64*>(second);
 
-    const uint64_t A = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t B = *reinterpret_cast<const uint64_t*>(b);
-
-    return (A == B) & (a[8] == b[8]);
+    return (__first == __second) & (first[8] == second[8]);
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp10(const char* a, const char* b) noexcept {
-    const uint64_t Aq = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t Bq = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp10(
+    const char* first, 
+    const char* second) noexcept 
+{
+    const uint64 __firstQuad    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __secondQuad   = *reinterpret_cast<const uint64*>(second);
 
-    const uint16_t Aw = *reinterpret_cast<const uint16_t*>(a + 8);
-    const uint16_t Bw = *reinterpret_cast<const uint16_t*>(b + 8);
+    const uint16 __firstWord    = *reinterpret_cast<const uint16*>(first + 8);
+    const uint16 __secondWord   = *reinterpret_cast<const uint16*>(second + 8);
 
-    return (Aq == Bq) & (Aw == Bw);
+    return (__firstQuad == __secondQuad) & (__firstWord == __secondWord);
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp11(const char* a, const char* b) noexcept {
-    const uint64_t Aq = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t Bq = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp11(
+    const char* first,
+    const char* second) noexcept 
+{
+    const uint64 __firstQuad      = *reinterpret_cast<const uint64*>(first);
+    const uint64 __secondQuad     = *reinterpret_cast<const uint64*>(second);
 
-    const uint32_t Ad = *reinterpret_cast<const uint32_t*>(a + 8);
-    const uint32_t Bd = *reinterpret_cast<const uint32_t*>(b + 8);
+    const uint32 __firstDWord     = *reinterpret_cast<const uint32*>(first + 8);
+    const uint32 __secondDWord    = *reinterpret_cast<const uint32*>(second + 8);
 
-    return (Aq == Bq) & ((Ad & 0x00ffffff) == (Bd & 0x00ffffff));
+    return (__firstQuad == __secondQuad) & ((__firstDWord & 0x00ffffff) == (__secondDWord & 0x00ffffff));
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp12(const char* a, const char* b) noexcept {
-    const uint64_t Aq = *reinterpret_cast<const uint64_t*>(a);
-    const uint64_t Bq = *reinterpret_cast<const uint64_t*>(b);
+DECLARE_NOALIAS NODISCARD always_inline bool memcmp12(
+    const char* first,
+    const char* second) noexcept
+{
+    const uint64 __firstQuad    = *reinterpret_cast<const uint64*>(first);
+    const uint64 __secondQuad   = *reinterpret_cast<const uint64*>(second);
 
-    const uint32_t Ad = *reinterpret_cast<const uint32_t*>(a + 8);
-    const uint32_t Bd = *reinterpret_cast<const uint32_t*>(b + 8);
+    const uint32 __firstDWord   = *reinterpret_cast<const uint32*>(first + 8);
+    const uint32 __secondDWord  = *reinterpret_cast<const uint32*>(second + 8);
 
-    return (Aq == Bq) & (Ad == Bd);
+    return (__firstQuad == __secondQuad) & (__firstDWord == __secondDWord);
 }
 
 __BASE_MEMORY_NAMESPACE_END
