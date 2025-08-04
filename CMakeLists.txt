@@ -1,9 +1,18 @@
 ﻿cmake_minimum_required (VERSION 3.29 FATAL_ERROR)
 
+include(CMakeForceCompiler)
+
+set(CMAKE_C_COMPILER_ID GNU)
+set(CMAKE_CXX_COMPILER_ID GNU)
+set(CMAKE_C_COMPILER "D:\\Libraries\\win64\\msys64\\mingw64\\bin\\gcc.exe")
+set(CMAKE_CXX_COMPILER "D:\\Libraries\\win64\\msys64\\mingw64\\bin\\gcc.exe")
+
+
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
     LANGUAGES C CXX)
+
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
@@ -54,8 +63,6 @@ set(LIB_BASE_ENABLE_IMAGES OFF)
 
 set(LIB_BASE_ENABLE_ZLIB OFF)  
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
-
-enable_language(C CXX)
 
 set(PRIVATE_SOURCES
     src/core/utility/Math.cpp
@@ -252,25 +259,8 @@ set(PRIVATE_HEADERS
 
     src/core/memory/UninitializedBackout.h
 
-    src/core/memory/Copy.h
-    src/core/memory/Construct.h
-
-    src/core/memory/Deallocate.h
-    src/core/memory/IteratorCategory.h
-
-    src/core/memory/ToAddress.h
-    src/core/memory/Destroy.h
-
-    src/core/memory/Alignment.h
-    src/core/memory/AlignmentOf.h
-
-    src/core/memory/AddressOf.h
-    src/core/memory/PointerConversion.h
-
-    src/core/memory/AllocatorUtility.h
     src/core/memory/IteratorsDifference.h
 
-    src/core/memory/MemoryUtility.h
     src/core/system/WindowsVersion.h
 
     src/core/string/BasicString.h
@@ -534,6 +524,24 @@ set(PUBLIC_HEADERS
 
     include/base/core/algorithm/Search.h
     include/base/core/algorithm/Move.h
+
+    include/base/core/memory/Copy.h
+    include/base/core/memory/Construct.h
+
+    include/base/core/memory/Deallocate.h
+    include/base/core/memory/IteratorCategory.h
+
+    include/base/core/memory/ToAddress.h
+    include/base/core/memory/Destroy.h
+
+    include/base/core/memory/Alignment.h
+    include/base/core/memory/AlignmentOf.h
+
+    include/base/core/memory/AddressOf.h
+    include/base/core/memory/PointerConversion.h
+
+    include/base/core/memory/AllocatorUtility.h
+    include/base/core/memory/MemoryUtility.h
 )
 
 include(CMakePackageConfigHelpers)

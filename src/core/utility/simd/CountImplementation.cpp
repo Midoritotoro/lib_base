@@ -47,7 +47,7 @@ inline NODISCARD std::size_t CountSSE42(
    
     const auto comparand = _Traits_::SetSse(_Value);
     const void* stopAt = _First;
-
+    
     for (;;) {
         if constexpr (sizeof(_Type_) >= sizeof(size_t)) {
             memory::AdvanceBytes(stopAt, sseSize);

@@ -1,7 +1,6 @@
 @echo off
 setlocal
 
-set CMAKE_COMMAND="cmake"
 set PYTHON_INSTALL_PATH="C:/Python313"
 
 for %%d in (%~dp0.) do set Directory=%%~fd
@@ -13,62 +12,62 @@ echo ParentDirectory=%ParentDirectory%
 set CMAKE_BINARY_DIR="%ParentDirectory%\out\build"
 set CMAKE_SOURCE_DIR="%ParentDirectory%"
 
-:pythonExistanceCheck
-  echo Checking for Python 3+ existance...
-  :: where python >nul 2>&1
+@REM :pythonExistanceCheck
+@REM   echo Checking for Python 3+ existance...
+@REM   :: where python >nul 2>&1
 
-  :: if errorlevel 1 (
-  ::    goto errorNoPython
-  :: )
+@REM   :: if errorlevel 1 (
+@REM   ::    goto errorNoPython
+@REM   :: )
 
-  if not exist "%PYTHON_INSTALL_PATH%" (
-    goto errorNoPython
-  )
+@REM   if not exist "%PYTHON_INSTALL_PATH%" (
+@REM     goto errorNoPython
+@REM   )
 
-  echo Python was found.
-  goto startPackagesInstallation
+@REM   echo Python was found.
+@REM   goto startPackagesInstallation
 
-:errorNoPython
-  echo.
-  echo Python is not installed.
+@REM :errorNoPython
+@REM   echo.
+@REM   echo Python is not installed.
   
-  echo Attempting to install python...
-  goto :tryToInstallPython
+@REM   echo Attempting to install python...
+@REM   goto :tryToInstallPython
 
-:tryToInstallPython
-    PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
+@REM :tryToInstallPython
+@REM     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
    
-    if exist "%PYTHON_INSTALL_PATH%" (
-        echo Python installation successful.
-        goto startPackagesInstallation
-        python -m "%ParentDirectory%\build\packagesInstaller" %*
-    )
+@REM     if exist "%PYTHON_INSTALL_PATH%" (
+@REM         echo Python installation successful.
+@REM         goto startPackagesInstallation
+@REM         python -m "%ParentDirectory%\build\packagesInstaller" %*
+@REM     )
     
-    echo Python installation failed. Stopping the build. 
-    goto eof
+@REM     echo Python installation failed. Stopping the build. 
+@REM     goto eof
 
-:checkOptionsValidity
-    echo Checking validity of the given build options.
-    python ValidateBuildOptions.py
+@REM :checkOptionsValidity
+@REM     echo Checking validity of the given build options.
+@REM     python ValidateBuildOptions.py
 
-:startPackagesInstallation
-    pushd ..
-    set upper_path=%CD%
-    popd
+@REM :startPackagesInstallation
+@REM     pushd ..
+@REM     set upper_path=%CD%
+@REM     popd
 
-    echo Installing Python packages...
-    PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPackagesInstallerRequirements.ps1" -Verb Runas
+@REM     echo Installing Python packages...
+@REM     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPackagesInstallerRequirements.ps1" -Verb Runas
 
 :tryToBuildLibrary
     if not exist "%CMAKE_BINARY_DIR%" (
       echo Creating build directory: "%CMAKE_BINARY_DIR%"
-      mkdir "%CMAKE_BINARY_DIR%"
+      cmake -E make_directory "%CMAKE_BINARY_DIR%"
     )
 
     echo Configuring CMake project...
     pushd "%CMAKE_BINARY_DIR%"
 
-    "%CMAKE_COMMAND%" "%CMAKE_SOURCE_DIR%"
+      cmake -DCMAKE_BUILD_TYPE=Release -S "%CMAKE_SOURCE_DIR%" -B "%CMAKE_BINARY_DIR%"
 
       if errorlevel 1 (
           echo Error: CMake configuration failed.
@@ -78,8 +77,8 @@ set CMAKE_SOURCE_DIR="%ParentDirectory%"
       echo Building the project...
       echo "%BUILD_DEBUG_COMMAND%" "%CMAKE_SOURCE_DIR%"
       
-      cmake --build "%CMAKE_SOURCE_DIR%" --config Debug --parallel 
-      cmake --build "%CMAKE_SOURCE_DIR%" --config Release --parallel 
+      cmake --build "%CMAKE_BINARY_DIR%" --config Debug --parallel 
+      cmake --build "%CMAKE_BINARY_DIR%" --config Release --parallel 
 
       if errorlevel 1 (
           echo Error: Project build failed.
