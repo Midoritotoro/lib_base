@@ -14,14 +14,9 @@
 #    define base_cpp_clang ((__clang_major__ * 100) + __clang_minor__)
 #    define base_cpp_clang_only base_cpp_clang
 #  endif // __clang__
-
-#  define base_compiler_mangles_return_type
-#  define base_compiler_mangles_access_specifier
 #
-#  define base_func_info __FUNCSIG__
+
 #  define base_unreachable_impl() __assume(0)
-
-
 
 #  define base_compiler_complains_about_return_after_unreachable
 #elif defined(__GNUC__)
@@ -92,7 +87,7 @@
 #    define base_decl_export_overridable    __attribute__((visibility("default"), weak))
 #  endif
 
-#  define base_func_info       __PRETTY_FUNCTION__
+
 
 #  define base_typeof(expr)    __typeof__(expr)
 #  define base_decl_deprecated __attribute__ ((__deprecated__))
@@ -100,11 +95,7 @@
 #  define base_likely(expr)    __builtin_expect(!!(expr), true)
 
 #  define base_unlikely(expr)  __builtin_expect(!!(expr), false)
-#  define base_required_result __attribute__ ((__warn_unused_result__))
-#  define base_decl_pure_function __attribute__((pure))
 
-#  define base_decl_const_function __attribute__((const))
-#  define base_decl_cold_function __attribute__((cold))
 
 # else 
 # endif

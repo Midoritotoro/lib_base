@@ -3,6 +3,18 @@
 #include <base/core/arch/CompilerDetection.h>
 
 
+// Clang attributes
+// https://clang.llvm.org/docs/AttributeReference.html#always-inline-force-inline
+
+// Msvc attributes
+// https://learn.microsoft.com/en-us/cpp/cpp/declspec?view=msvc-170
+// Msvc SAL
+// https://learn.microsoft.com/en-us/cpp/code-quality/using-sal-annotations-to-reduce-c-cpp-code-defects?view=msvc-170
+
+// Gcc attributes
+// https://ohse.de/uwe/articles/gcc-attributes.html and https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
+
+
 base_disable_warning_msvc(4067)
 
 // #define base_use_protected_visibility
@@ -14,13 +26,13 @@ base_disable_warning_msvc(4067)
 #  include <stdnoreturn.h> 
 #endif // defined(base_cpp_msvc) || defined(base_cpp_clang)
 
-#ifdef __cpp_conditional_explicit 
+#if defined(__cpp_conditional_explicit)
 #  if !defined(base_implicit)
 #    define base_implicit explicit(false)
 #  else
 #    define base_implicit
 #  endif // base_implicit
-#endif // __cpp_conditional_explicit
+#endif // defined(__cpp_conditional_explicit)
 
 
 #if !defined(base_fastcall)
@@ -34,8 +46,8 @@ base_disable_warning_msvc(4067)
 #    endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
 #  else
 #    define base_fastcall
-#  endif // PROCESSOR_X86_32
-#endif // base_fastcall
+#  endif // defined(PROCESSOR_X86_32)
+#endif // !defined(base_fastcall)
 
 
 #if __has_cpp_attribute(clang::fallthrough)
@@ -53,40 +65,28 @@ base_disable_warning_msvc(4067)
 #  else
 #    define base_fallthrough() (void)0
 #  endif // base_cpp_gnu
-#endif // base_fallthrough
+#endif // !defined(base_fallthrough)
 
-
-#if defined(base_cpp_msvc) || defined(base_cpp_clang)
 
 #if !defined(base_stdcall)
-#  define base_stdcall      __stdcall
-#endif // base_stdcall
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_stdcall         __stdcall
+#  elif defined(base_cpp_gnu)
+#    define base_stdcall        __attribute__((__stdcall__))
+#  else
+#    define base_stdcall        
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
+#endif // !defined(base_stdcall)
 
 #if !defined(base_cdecl)
-#  define base_cdecl        __cdecl
-#endif // base_cdecl
-
-#elif defined(base_cpp_gnu)
-
-#if !defined(base_stdcall)
-#  define base_stdcall      __attribute__((__stdcall__))
-#endif // base_stdcall
-
-#if !defined(base_cdecl)
-#  define base_cdecl       __attribute__((__cdecl__))
-#endif // base_cdecl
-
-#else 
-
-#if !defined(base_stdcall)
-#  define base_stdcall      
-#endif // base_stdcall
-
-#if !defined(base_cdecl)
-#  define base_cdecl       
-#endif // base_cdecl
-
-#endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_cdecl          __cdecl
+#  elif defined(base_cpp_gnu)
+#    define base_cdecl          __attribute__((__cdecl__))
+#  else
+#    define base_cdecl        
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
+#endif // !defined(base_cdecl)
 
 
 #if !defined(base_noreturn)
@@ -97,7 +97,7 @@ base_disable_warning_msvc(4067)
 #  else 
 #    define base_noreturn       
 #  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
-#endif // base_noreturn
+#endif // !defined(base_noreturn)
 
 
 #if !defined(base_decl_export)
@@ -111,12 +111,12 @@ base_disable_warning_msvc(4067)
 #         define base_decl_export         __attribute__((visibility("protected")))
 #      else
 #         define base_decl_export         __attribute__((visibility("default")))
-#      endif // base_use_protected_visibility
-#    endif // base_os_windows
+#      endif // defined(base_use_protected_visibility)
+#    endif // defined(base_os_windows)
 #  else
 #    define base_decl_export    
 #  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
-#endif // base_decl_export
+#endif // !defined(base_decl_export)
 
 
 #if !defined(base_decl_export_overridable)
@@ -138,176 +138,149 @@ base_disable_warning_msvc(4067)
 #  else
 #    define base_decl_import
 #  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
-#endif // base_decl_import
+#endif // !defined(base_decl_import)
 
 
 #if !defined(base_decl_hidden)
 #  if defined(base_cpp_gnu)
-#    define base_decl_hidden                __attribute__((visibility("hidden")))
+#    define base_decl_hidden        __attribute__((visibility("hidden")))
 #  elif defined(base_cpp_clang)
-#    define base_decl_hidden                __attribute__((__visibility__("hidden")))
+#    define base_decl_hidden        __attribute__((__visibility__("hidden")))
 #  else
 #    define base_decl_hidden                
 #  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
-#endif // base_decl_hidden
+#endif // !defined(base_decl_hidden)
 
 
 #if !defined(base_decl_unused)
 #  if defined(base_cpp_gnu)
-#    define base_decl_unused     __attribute__((__unused__))
+#    define base_decl_unused        __attribute__((__unused__))
 #  elif defined(base_cpp_clang)
-#    define base_decl_unused     __attribute__((unused))
+#    define base_decl_unused        __attribute__((unused))
 #  else
 #    define base_decl_unused    
 #  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
-#endif // base_decl_unused
+#endif // !defined(base_decl_unused)
 
 
-#ifndef FUNC_INFO
-#  define FUNC_INFO __FILE__ ":" stringify(__LINE__)
-#endif
-
-#ifndef DECL_CF_RETURNS_RETAINED
-#  define DECL_CF_RETURNS_RETAINED
-#endif
-
-#ifndef DECL_NS_RETURNS_AUTORELEASED
-#  define DECL_NS_RETURNS_AUTORELEASED
-#endif
-
-#ifndef DECL_PURE_FUNCTION
-#  define DECL_PURE_FUNCTION
-#endif
-
-#ifndef DECL_CONST_FUNCTION
-#  define DECL_CONST_FUNCTION DECL_PURE_FUNCTION
-#endif
-
-#ifndef DECL_COLD_FUNCTION
-#  define DECL_COLD_FUNCTION
-#endif
-
-#ifndef WEAK_OVERLOAD
-#  define WEAK_OVERLOAD template <typename = void>
-#endif
-
-#if defined(CPP_GNU) && !defined(__INSURE__) && !defined(ATTRIBUTE_FORMAT_PRINTF)
-#  if defined(CPP_MINGW) && !defined(CPP_CLANG)
-#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
-         __attribute__((format(gnu_printf, (A), (B))))
+#if !defined(base_func_info)
+#  if defined(base_cpp_msvc)
+#    define base_func_info          __FUNCSIG__
+#  elif defined(base_cpp_gnu)
+#    define base_func_info          __PRETTY_FUNCTION__
 #  else
-#    define ATTRIBUTE_FORMAT_PRINTF(A, B) \
-         __attribute__((format(printf, (A), (B))))
+#    define base_func_info          __FILE__ ":" stringify(__LINE__)
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_gnu)
+#endif // !defined(base_func_info)
+
+
+#if !defined(base_decl_pure_function)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_decl_pure_function __attribute__((pure))
+#  else
+#    define base_decl_pure_function
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // !defined(base_decl_pure_function)
+
+
+#if !defined(base_decl_const_function)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_decl_const_function __attribute__((const))
+#  elif defined(base_cpp_msvc)
+#    define base_decl_const_function __declspec(noalias)
+#  else
+#    define base_decl_const_function
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang) || defined(base_cpp_msvc)
+#endif // !defined(base_decl_const_function)
+
+
+#if !defined(base_decl_cold_function)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_decl_cold_function __attribute__((cold))
+#  else 
+#    define base_decl_cold_function
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // !defined(base_decl_cold_function)
+
+
+#if !defined(base_attribute_format_printf)
+#  if defined(base_cpp_gnu) && !defined(__INSURE__)
+#    if defined(base_cpp_mingw) && !defined(base_cpp_clang)
+#      define base_attribute_format_printf(A, B) __attribute__((format(gnu_printf, (A), (B))))
+#    else
+#      define base_attribute_format_printf(A, B) __attribute__((format(printf, (A), (B))))
+#    endif // defined(base_cpp_mingw) && !defined(base_cpp_clang)
+#  else
+#    define base_attribute_format_printf(A, B)
+#  endif // defined(base_cpp_gnu) && !defined(__INSURE__)
+#endif // !defined(base_attribute_format_printf)
+
+
+#if !defined(base_never_inline)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#     define never_inline __declspec(noinline)
+#  elif defined(base_cpp_gnu) 
+#    define never_inline __attribute__((noinline))
+#  else 
+#    define never_inline 
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
+#endif // !defined(base_never_inline)
+
+
+#if !defined(base_always_inline)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_always_inline __forceinline
+#  elif defined(base_cpp_gnu)
+#    define base_always_inline inline __attribute__((always_inline))
+#  else 
+#    define base_always_inline inline
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
+#endif // !defined(base_always_inline)
+
+
+#if !defined(base_has_nodiscard)
+#  if !defined(__has_cpp_attribute)
+#    define base_has_nodiscard 0
+#  elif __has_cpp_attribute(nodiscard) >= 201603L
+#    define base_has_nodiscard 1
+#  else
+#    define base_has_nodiscard 0
 #  endif
-#else
+#endif // !defined(base_has_nodiscard)
 
-#ifndef ATTRIBUTE_FORMAT_PRINTF
-#  define ATTRIBUTE_FORMAT_PRINTF(A, B)
-#endif
 
-#endif
+#if !defined(base_nodiscard)
+#  if base_has_nodiscard
+#    define base_nodiscard  [[nodiscard]]
+#  elif defined(base_cpp_gnu)
+#    define base_nodiscard  __attribute__((__warn_unused_result__))
+#  elif defined(base_cpp_clang)
+#    define base_nodiscard  __attribute__(warn_unused_result)
+#  elif defined(base_cpp_msvc)
+#    define base_nodiscard  _Check_return_
+#  else
+#    define base_nodiscard
+#  endif // base_has_nodiscard || defined(base_cpp_gnu) || defined(base_cpp_clang) || defined(base_cpp_msvc)
+#endif // !defined(base_nodiscard)
 
-#ifdef base_cpp_msvc
 
-#ifndef never_inline
-#  define never_inline          __declspec(noinline)
-#endif
-
-#ifndef always_inline
-#  define always_inline         __forceinline
-#endif
-
-#elif defined(CPP_GNU)
-
-#ifndef never_inline
-#  define never_inline          __attribute__((noinline))
-#endif
-
-#ifndef always_inline
-#  define always_inline         inline __attribute__((always_inline))
-#endif 
-
-#else
-#  define never_inline
-#  define always_inline         inline
-
-#endif
-
-#ifndef ALWAYS_INLINE
-#  define ALWAYS_INLINE         always_inline
-#endif
-
-#ifndef NEVER_INLINE
-#  define NEVER_INLINE          never_inline
-#endif
-
-#ifndef HAS_NODISCARD
-    #ifndef __has_cpp_attribute
-        #define HAS_NODISCARD 0
-    #elif __has_cpp_attribute(nodiscard) >= 201603L
-        #define HAS_NODISCARD 1
-    #else
-        #define HAS_NODISCARD 0
-    #endif
-#endif // HAS_NODISCARD
-
-#if HAS_NODISCARD
-#  ifndef NODISCARD
-#    define NODISCARD [[nodiscard]]
+#if !defined(base_likely_attribute)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(likely) >= 201803L
+#    define base_likely_attribute [[likely]]
+#  else
+#    define base_likely_attribute
 #  endif
-#else
-#  define NODISCARD
-#endif
+#endif // !defined(base_likely_attribute)
 
-#ifndef __has_cpp_attribute
 
-#ifndef likely_attribute
-#  define likely_attribute
-#endif
+#if !defined(base_unlikely_attribute)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely) >= 201803L
+#    define base_unlikely_attribute [[unlikely]]
+#  else
+#    define base_unlikely_attribute
+#  endif
+#endif // !defined(base_unlikely_attribute)
 
-#ifndef unlikely_attribute
-#  define unlikely_attribute
-#endif
-
-#elif __has_cpp_attribute(likely) >= 201803L && __has_cpp_attribute(unlikely) >= 201803L
-
-#ifndef likely_attribute
-#  define likely_attribute   [[likely]]
-#endif 
-
-#ifndef unlikely_attribute
-#  define unlikely_attribute [[unlikely]]
-#endif
-
-#elif defined(CPP_CLANG)
-
-#ifndef likely_attribute
-#  define likely_attribute   [[__likely__]]
-#endif
-
-#ifndef unlikely_attribute
-#  define unlikely_attribute [[__unlikely__]]
-#endif 
-
-#else
-
-#ifndef likely_attribute
-#  define likely_attribute
-#endif 
-
-#ifndef unlikely_attribute
-#  define unlikely_attribute
-#endif 
-
-#endif
-
-#ifndef LIKELY_ATTRIBUTE
-#  define LIKELY_ATTRIBUTE likely_attribute
-#endif
-
-#ifndef UNLIKELY_ATTRIBUTE
-#  define UNLIKELY_ATTRIBUTE unlikely_attribute
-#endif
 
 #ifndef __has_cpp_attribute && !defined(maybe_unused_attribute)
 #  define maybe_unused_attribute
@@ -321,9 +294,6 @@ base_disable_warning_msvc(4067)
 
 #endif
 
-#ifndef MAYBE_UNUSED_ATTRIBUTE
-#  define MAYBE_UNUSED_ATTRIBUTE maybe_unused_attribute
-#endif
 
 #ifndef __has_cpp_attribute && !defined(nodiscard_msg)
 #  define nodiscard_msg(_Msg)
@@ -337,10 +307,6 @@ base_disable_warning_msvc(4067)
 #  define nodiscard_msg(_Msg)
 #endif
 
-#endif
-
-#ifndef NODISCARD_MSG
-#  define NODISCARD_MSG nodiscard_msg
 #endif
 
 #ifndef __has_cpp_attribute
@@ -375,14 +341,6 @@ base_disable_warning_msvc(4067)
 
 #endif
 
-
-#ifndef NODISCARD_CTOR
-#  define NODISCARD_CTOR nodiscard_ctor
-#endif
-
-#ifndef NODISCARD_CTOR_MSG
-#  define NODISCARD_CTOR_MSG nodiscard_ctor_msg
-#endif
 
 #ifndef unused
 #  define unused(x)                             ((void)(x))
@@ -536,14 +494,6 @@ base_disable_warning_msvc(4067)
 // functions are in native code objects that the compiler cannot analyze. In the absence of the noalias attribute, the
 // compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
 // unanalyzable routines may modify those arrays.
-
-#if defined(OS_WIN) && (defined(base_cpp_msvc) || defined(CPP_CLANG))
-#  define DECLARE_NOALIAS __declspec(noalias)
-#elif defined(CPP_GNU)
-#  define DECLARE_NOALIAS __attribute__((const))
-#else 
-#  define DECLARE_NOALIAS 
-#endif
 
 #ifndef SIZEOF_TO_BITS
 #  define SIZEOF_TO_BITS(_Type) (sizeof(_Type) * 8)
