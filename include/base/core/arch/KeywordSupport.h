@@ -2,107 +2,166 @@
 
 #include <base/core/arch/CompilerDetection.h>
 
-WARNING_DISABLE_MSVC(4067)
+
+base_disable_warning_msvc(4067)
+
+// #define base_use_protected_visibility
 
 #ifdef __cplusplus 
 
-#ifndef OUTOFLINE_TEMPLATE
-#  define OUTOFLINE_TEMPLATE
-#endif
 
-#ifdef __cpp_conditional_explicit
-    #define IMPLICIT explicit(false)
-#else
-    #define IMPLICIT
-#endif
+#if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#  include <stdnoreturn.h> 
+#endif // defined(base_cpp_msvc) || defined(base_cpp_clang)
 
-#ifdef PROCESSOR_X86_32
-#  if defined(CPP_GNU)
-#    define FASTCALL __attribute__((regparm(3)))
-#  elif defined(CPP_MSVC)
-#    define FASTCALL __fastcall
+#ifdef __cpp_conditional_explicit 
+#  if !defined(base_implicit)
+#    define base_implicit explicit(false)
 #  else
-#    define FASTCALL
-#  endif
-#else
-#  define FASTCALL
-#endif
+#    define base_implicit
+#  endif // base_implicit
+#endif // __cpp_conditional_explicit
+
+
+#if !defined(base_fastcall)
+#  if defined(PROCESSOR_X86_32)
+#    if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#      define base_fastcall __attribute__((regparm(3)))
+#    elif defined(base_cpp_msvc)
+#      define base_fastcall __fastcall
+#    else
+#      define base_fastcall
+#    endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
+#  else
+#    define base_fastcall
+#  endif // PROCESSOR_X86_32
+#endif // base_fastcall
+
 
 #if __has_cpp_attribute(clang::fallthrough)
-#    define FALLTHROUGH() [[clang::fallthrough]]
+#    define base_fallthrough() [[clang::fallthrough]]
 #elif __has_cpp_attribute(gnu::fallthrough)
-#    define FALLTHROUGH() [[gnu::fallthrough]]
+#    define base_fallthrough() [[gnu::fallthrough]]
 #elif __has_cpp_attribute(fallthrough)
-#  define FALLTHROUGH() [[fallthrough]]
-#endif
+#  define base_fallthrough() [[fallthrough]]
+#endif // __has_cpp_attribute(clang::fallthrough) || __has_cpp_attribute(gnu::fallthrough) || __has_cpp_attribute(fallthrough)
 
-#ifndef FALLTHROUGH
-#  ifdef CPP_GNU
-#    define FALLTHROUGH() __attribute__((fallthrough))
+
+#if !defined(base_fallthrough)
+#  if defined(base_cpp_gnu)
+#    define base_fallthrough() __attribute__((base_fallthrough))
 #  else
-#    define FALLTHROUGH() (void)0
-#  endif
-#endif
+#    define base_fallthrough() (void)0
+#  endif // base_cpp_gnu
+#endif // base_fallthrough
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
 
-#ifndef STDCALL
-#  define STDCALL       __stdcall
-#endif
+#if defined(base_cpp_msvc) || defined(base_cpp_clang)
 
-#ifndef __CDECL
-#  define __CDECL       __cdecl
-#endif
+#if !defined(base_stdcall)
+#  define base_stdcall      __stdcall
+#endif // base_stdcall
 
-#elif defined(CPP_GNU)
+#if !defined(base_cdecl)
+#  define base_cdecl        __cdecl
+#endif // base_cdecl
 
-#ifndef STDCALL
-#  define STDCALL       __attribute__((__stdcall__))
-#endif
+#elif defined(base_cpp_gnu)
 
-#ifndef __CDECL
-#  define __CDECL       __attribute__((__cdecl__))
-#endif
+#if !defined(base_stdcall)
+#  define base_stdcall      __attribute__((__stdcall__))
+#endif // base_stdcall
+
+#if !defined(base_cdecl)
+#  define base_cdecl       __attribute__((__cdecl__))
+#endif // base_cdecl
 
 #else 
 
-#ifndef STDCALL
-#  define STDCALL      
-#endif
+#if !defined(base_stdcall)
+#  define base_stdcall      
+#endif // base_stdcall
 
-#ifndef __CDECL
-#  define __CDECL       
-#endif 
+#if !defined(base_cdecl)
+#  define base_cdecl       
+#endif // base_cdecl
 
-#endif
+#endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
 
-#ifndef NORETURN
-#  define NORETURN
-#endif
 
-#ifndef DECL_EXPORT
-#  define DECL_EXPORT
-#endif
+#if !defined(base_noreturn)
+#  if defined(base_cpp_gnu)
+#    define base_noreturn        __attribute__((__noreturn__))
+#  elif defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_noreturn       __declspec(noreturn)
+#  else 
+#    define base_noreturn       
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
+#endif // base_noreturn
 
-#ifndef DECL_EXPORT_OVERRIDABLE
-#  define DECL_EXPORT_OVERRIDABLE DECL_EXPORT
-#endif
 
-#ifndef DECL_IMPORT
-#  define DECL_IMPORT
-#endif
+#if !defined(base_decl_export)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_decl_export            __declspec(dllexport)
+#  elif defined(base_cpp_gnu)
+#    if defined(base_os_windows)
+#      define base_decl_export          __declspec(dllexport)
+#    else
+#      if defined(base_use_protected_visibility)
+#         define base_decl_export         __attribute__((visibility("protected")))
+#      else
+#         define base_decl_export         __attribute__((visibility("default")))
+#      endif // base_use_protected_visibility
+#    endif // base_os_windows
+#  else
+#    define base_decl_export    
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang)
+#endif // base_decl_export
 
-#ifndef DECL_HIDDEN
-#  define DECL_HIDDEN
-#endif
 
-#ifndef DECL_UNUSED
-#  define DECL_UNUSED
-#endif
+#if !defined(base_decl_export_overridable)
+#  if defined(base_cpp_msvc)
+#    define base_decl_export_overridable 
+#  elif defined(base_cpp_gnu) && !defined(base_os_windows)
+#    define base_decl_export_overridable __attribute__((visibility("default"), weak)) 
+#  else
+#    define base_decl_export_overridable
+#  endif // defined(base_cpp_msvc) || (defined(base_cpp_gnu) && !defined(base_os_windows))
+#endif // !defined(base_decl_export_overridable)
 
-#ifndef DECL_UNUSED_MEMBER
-#  define DECL_UNUSED_MEMBER
-#endif
+
+#if !defined(base_decl_import)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_decl_import        __declspec(dllimport)
+#  elif defined(base_cpp_gnu)
+#    define base_decl_import        __attribute__((visibility("default")))
+#  else
+#    define base_decl_import
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
+#endif // base_decl_import
+
+
+#if !defined(base_decl_hidden)
+#  if defined(base_cpp_gnu)
+#    define base_decl_hidden                __attribute__((visibility("hidden")))
+#  elif defined(base_cpp_clang)
+#    define base_decl_hidden                __attribute__((__visibility__("hidden")))
+#  else
+#    define base_decl_hidden                
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // base_decl_hidden
+
+
+#if !defined(base_decl_unused)
+#  if defined(base_cpp_gnu)
+#    define base_decl_unused     __attribute__((__unused__))
+#  elif defined(base_cpp_clang)
+#    define base_decl_unused     __attribute__((unused))
+#  else
+#    define base_decl_unused    
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // base_decl_unused
+
 
 #ifndef FUNC_INFO
 #  define FUNC_INFO __FILE__ ":" stringify(__LINE__)
@@ -148,7 +207,7 @@ WARNING_DISABLE_MSVC(4067)
 
 #endif
 
-#ifdef CPP_MSVC
+#ifdef base_cpp_msvc
 
 #ifndef never_inline
 #  define never_inline          __declspec(noinline)
@@ -347,7 +406,7 @@ WARNING_DISABLE_MSVC(4067)
 #  define UNREACHABLE()                         __builtin_unreachable()
 #endif
 
-#elif defined(CPP_MSVC)
+#elif defined(base_cpp_msvc)
 
 #ifndef LIKELY
 #  define LIKELY(p)                             (!!(p))
@@ -387,7 +446,7 @@ WARNING_DISABLE_MSVC(4067)
 #  define DECLARE_MALLOCLIKE NODISCARD
 #endif
 
-#if defined(CPP_MSVC) && !defined(declare_memory_allocator)
+#if defined(base_cpp_msvc) && !defined(declare_memory_allocator)
 #  define declare_memory_allocator      __declspec(allocator)
 #elif defined (CPP_GNU) && !defined(declare_memory_allocator)
 #  if CPP_GNU > 310
@@ -442,7 +501,7 @@ WARNING_DISABLE_MSVC(4067)
 #endif
 
 #ifndef base_restrict
-#  if defined(CPP_MSVC)
+#  if defined(base_cpp_msvc)
 #    define base_restrict  __declspec(restrict)
 #  elif defined(CPP_GNU) || defined (CPP_CLANG)
 #    define base_restrict  __restrict__ 
@@ -463,7 +522,7 @@ WARNING_DISABLE_MSVC(4067)
 #  define CLANG_CONSTEXPR_CXX20 clang_constexpr_cxx20
 #endif
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+#if defined(OS_WIN) && defined(base_cpp_msvc)
 #  define BASE_GUARDOVERFLOW __declspec(guard(overflow))
 #else
 #  define BASE_GUARDOVERFLOW 
@@ -478,7 +537,7 @@ WARNING_DISABLE_MSVC(4067)
 // compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
 // unanalyzable routines may modify those arrays.
 
-#if defined(OS_WIN) && (defined(CPP_MSVC) || defined(CPP_CLANG))
+#if defined(OS_WIN) && (defined(base_cpp_msvc) || defined(CPP_CLANG))
 #  define DECLARE_NOALIAS __declspec(noalias)
 #elif defined(CPP_GNU)
 #  define DECLARE_NOALIAS __attribute__((const))
@@ -498,7 +557,7 @@ WARNING_DISABLE_MSVC(4067)
     || defined(PROCESSOR_ARM) \
     || (PROCESSOR_ARM == 8) // x64 ARM
 
-#  if defined(OS_WIN) && defined(CPP_MSVC)
+#  if defined(OS_WIN) && defined(base_cpp_msvc)
       #define BASE_UNALIGNED __unaligned
 #  else
       #define BASE_UNALIGNED
@@ -508,7 +567,7 @@ WARNING_DISABLE_MSVC(4067)
 #  define BASE_UNALIGNED
 #endif
 
-#ifdef CPP_MSVC
+#ifdef base_cpp_msvc
 
 #  ifndef BASE_MSVC_COMSTEXPR
 #    ifdef _MSVC_CONSTEXPR_ATTRIBUTE
@@ -589,73 +648,73 @@ WARNING_DISABLE_MSVC(4067)
 #endif
 
 #if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED)
-#    define BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(size) __attribute__((__may_alias__, __aligned__(size)))
-#endif
-#else 
-#  define BASE_ATTRIBUTE_MAY_ALIAS_ALIGNED(size) 
-#endif
+#  if !defined(base_attribute_may_alias_aligned)
+#    define base_attribute_may_alias_aligned(size) __attribute__((__may_alias__, __aligned__(size)))
+#  endif // base_attribute_may_alias_aligned
+#else // !defined(CPP_GNU) && !defined(CPP_CLANG)
+#  define base_attribute_may_alias_aligned(size) 
+#endif // base_attribute_may_alias_aligned
 
 
 // Exceptions 
 
-#ifndef BASE_TRY_BEGIN
-#  define BASE_TRY_BEGIN try {
-#endif
+#ifndef base_try_begin
+#  define base_try_begin try {
+#endif // base_try_begin
 
-#ifndef BASE_CATCH
-#  define BASE_CATCH(x) \
+#ifndef base_catch
+#  define base_catch(x) \
     }             \
     catch (x) {
-#endif
+#endif // base_catch
 
-#ifndef BASE_CATCH_ALL
-#  define BASE_CATCH_ALL \
+#ifndef base_catch_all
+#  define base_catch_all \
     }              \
     catch (...) {
-#endif
+#endif // base_catch_all
 
-#ifndef BASE_CATCH_END 
-#  define BASE_CATCH_END } 
-#endif
+#ifndef base_catch_end 
+#  define base_catch_end } 
+#endif // base_catch_end
 
-#ifndef BASE_RERAISE
-#  define BASE_RERAISE    throw
-#endif
+#ifndef base_reraise
+#  define base_reraise    throw
+#endif // base_reraise
 
-#ifndef BASE_THROW
-#  define BASE_THROW(...) throw(__VA_ARGS__)
-#endif
+#ifndef base_throw
+#  define base_throw(...) throw(__VA_ARGS__)
+#endif // base_throw
 
 
-#ifndef BASE_ASM_EXTERN
+#ifndef base_asm_extern
 #  if defined(__cplusplus)
-#    define BASE_ASM_EXTERN extern "C"
+#    define base_asm_extern extern "C"
 #  else 
-#    define BASE_ASM_EXTERN extern
-#  endif
-#endif
+#    define base_asm_extern extern
+#  endif // __cplusplus
+#endif // base_asm_extern
 
 // Warnings
 
-#ifndef NODISCARD_RETURN_RAW_PTR
-#  define NODISCARD_RETURN_RAW_PTR \
-        NODISCARD_MSG("This function allocates memory and returns a raw pointer. " \
+#ifndef base_nodiscard_return_raw_ptr
+#  define base_nodiscard_return_raw_ptr \
+        base_nodiscard_msg("This function allocates memory and returns a raw pointer. " \
             "Discarding the return value will cause a memory leak.")
-#endif
+#endif // base_nodiscard_return_raw_ptr
 
-#ifndef NODISCARD_THREAD_CTOR
-#  define NODISCARD_THREAD_CTOR \
-    NODISCARD_CTOR_MSG("Creating a thread object without assigning it to a variable " \
+#ifndef base_nodiscard_thread_ctor
+#  define base_nodiscard_thread_ctor \
+    base_nodiscard_ctor_msg("Creating a thread object without assigning it to a variable " \
         "may lead to unexpected behavior and resource leaks. Ensure " \
         "the thread is properly managed.")
-#endif
+#endif // base_nodiscard_thread_ctor
 
-#ifndef NODISCARD_REMOVE_ALGORITHM
-#  define NODISCARD_REMOVE_ALGORITHM \
-        NODISCARD_MSG("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
+#ifndef base_nodiscard_remove_algorithm
+#  define base_nodiscard_remove_algorithm \
+        base_nodiscard_msg("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
             "that should be kept. You need to call container.erase(result, container.end()) afterwards. " \
             "In C++20, 'std::erase' and 'std::erase_if' are simpler replacements for these two steps.")
-#endif
+#endif // base_nodiscard_remove_algorithm
 
 #endif // __cplusplus

@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/utility/Assert.h>
-#include <src/core/memory/PointerConversion.h>
+#include <base/core/memory/PointerConversion.h>
 
 
 __BASE_NAMESPACE_BEGIN

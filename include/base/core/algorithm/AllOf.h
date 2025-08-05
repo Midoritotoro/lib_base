@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN

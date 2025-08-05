@@ -2,42 +2,43 @@
 
 #include <base/core/arch/Platform.h>
 
-#ifdef CPP_MSVC_ONLY
+#if defined(base_cpp_msvc_only)
 // MSVC defines _YIELD_PROCESSOR()(_mm_pause) in <xatomic.h>
 // Compiler sometimes recognizes _mm_pause as intrinsic
-#  ifdef __cplusplus
+#  if defined(__cplusplus)
 #    include <atomic>
 extern "C"
-#  endif
-void _mm_pause(void);
-#endif
+#  endif // defined(__cplusplus)
+  void _mm_pause(void);
+#endif // defined(base_cpp_msvc_only)
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
-#ifdef CPP_GNU
+#if defined(base_cpp_gnu)
     __attribute__((artificial))
 #endif
-        always_inline void YieldCpu(void);
 
-    void YieldCpu(void)
-#ifdef __cplusplus
+always_inline void YieldCpu(void);
+
+void YieldCpu(void)
+#if defined(__cplusplus)
         noexcept
-#endif
+#endif // defined(__cplusplus)
     {
 #if __has_builtin(__yield)
         __yield();
 
-#elif defined(_YIELD_PROCESSOR) && defined(CPP_MSVC)
+#elif defined(_YIELD_PROCESSOR) && defined(base_cpp_msvc)
         _YIELD_PROCESSOR();
 
 #elif __has_builtin(__builtin_ia32_pause)
         __builtin_ia32_pause();
 
-#elif defined(PROCESSOR_X86) && defined(CPP_GNU)
+#elif defined(PROCESSOR_X86) && defined(base_cpp_gnu)
         // GCC < 10 don`t have __has_builtin()
         __builtin_ia32_pause();
 
-#elif defined(PROCESSOR_X86) && defined(CPP_MSVC)
+#elif defined(PROCESSOR_X86) && defined(base_cpp_msvc)
         _mm_pause();
 
 #elif defined(PROCESSOR_X86)
@@ -46,7 +47,7 @@ __BASE_ARCH_NAMESPACE_BEGIN
 #elif __has_builtin(__builtin_arm_yield)
         __builtin_arm_yield();
 
-#elif defined(PROCESSOR_ARM) && PROCESSOR_ARM >= 7 && defined(CPP_GNU)
+#elif defined(PROCESSOR_ARM) && PROCESSOR_ARM >= 7 && defined(base_cpp_gnu)
         asm("yield");        
 
 #elif defined(PROCESSOR_RISCV)

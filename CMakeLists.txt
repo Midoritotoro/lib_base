@@ -1,13 +1,5 @@
 ﻿cmake_minimum_required (VERSION 3.29 FATAL_ERROR)
 
-include(CMakeForceCompiler)
-
-set(CMAKE_C_COMPILER_ID GNU)
-set(CMAKE_CXX_COMPILER_ID GNU)
-set(CMAKE_C_COMPILER "D:\\Libraries\\win64\\msys64\\mingw64\\bin\\gcc.exe")
-set(CMAKE_CXX_COMPILER "D:\\Libraries\\win64\\msys64\\mingw64\\bin\\gcc.exe")
-
-
 project ("lib_base"
     VERSION 1.0.0
     DESCRIPTION "..."
@@ -65,7 +57,7 @@ set(LIB_BASE_ENABLE_ZLIB OFF)
 set(LIB_BASE_TOP_LEVEL_DIR CACHE STRING ${CMAKE_CURRENT_LIST_DIR})
 
 set(PRIVATE_SOURCES
-    src/core/utility/Math.cpp
+    src/core/math/Math.cpp
     src/core/utility/TFunctions.cpp
 
     src/core/system/AutoRunUtils.cpp
@@ -196,33 +188,6 @@ set(PRIVATE_SOURCES
 
       src/core/logging/LoggingCategory.cpp
       src/core/logging/LoggingRegistry.cpp
-
-      
-
-    src/core/string/crt/wcs/BaseWcscmp.cpp
-    src/core/string/crt/wcs/BaseWcslen.cpp
-
-
-
-    src/core/string/crt/wcs/BaseWcsstr.cpp
-
-    src/core/string/crt/wcs/BaseWcsstrn.cpp
-
-
-    src/core/string/crt/c32/BaseC32cmp.cpp
-
-    src/core/string/crt/c32/BaseC32len.cpp
-
-    src/core/string/crt/c32/BaseC32str.cpp
-
-    src/core/string/crt/c32/BaseC32strn.cpp
-
-    src/core/string/crt/cs/BaseStrstrn.cpp
-    src/core/string/crt/cs/BaseStrstr.cpp
-
-    src/core/string/crt/cs/BaseStrcmp.cpp
-
-    src/core/string/crt/cs/BaseStrlen.cpp
 )
 
 set(PRIVATE_HEADERS
@@ -249,8 +214,8 @@ set(PRIVATE_HEADERS
 
     src/core/utility/simd/SimdAlgorithm.h
 
-    src/core/utility/algorithm/AlgorithmDebug.h
-    src/core/utility/algorithm/IteratorWrap.h
+    src/core/algorithm/AlgorithmDebug.h
+    src/core/algorithm/IteratorWrap.h
 
     src/core/memory/crt/BaseMemcpySimd.h
 

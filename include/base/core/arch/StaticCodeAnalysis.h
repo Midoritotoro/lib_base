@@ -4,11 +4,11 @@
 #include <base/core/arch/SystemDetection.h>
 
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+#if defined(base_os_windows) && defined(base_cpp_msvc)
     #include <sal.h>
-#endif
+#endif // defined(base_os_windows) && defined(base_cpp_msvc)
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+#if defined(base_os_windows) && defined(base_cpp_msvc)
     #ifndef _SAL2_In_reads_bytes_
         #define _SAL2_In_reads_bytes_		        _In_reads_bytes_
     #endif
@@ -63,4 +63,4 @@
     #define _SAL2_Out_opt_
     #define _SAL2_In_opt_
     #define _SAL2_In_z_						
-#endif
+#endif // defined(base_os_windows) && defined(base_cpp_msvc)

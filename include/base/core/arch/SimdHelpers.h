@@ -15,12 +15,12 @@
 #include <intrin.h>
 #endif
 
-#ifndef LIB_BASE_USE_COMPILER_ALIGNMENT 
-#  define LIB_BASE_USE_COMPILER_ALIGNMENT
+#ifndef lib_base_use_compiler_alignment 
+#  define lib_base_use_compiler_alignment
 #endif
 
-#define __LIB_BASE_ENABLE_IMPL(feature) (((1/LIB_BASE_ENABLE_##feature) == 1))
-#define LIB_BASE_ENABLE(feature) __LIB_BASE_ENABLE_IMPL(feature)
+#define __lib_base_enable_impl(feature) (((1/lib_base_enable_##feature) == 1))
+#define lib_base_enable(feature) __lib_base_enable_impl(feature)
 
 #if defined(PROCESSOR_X86) && defined(CPP_MSVC)
 
@@ -61,141 +61,93 @@
 #  endif
 # endif
 
+
 #if defined(PROCESSOR_X86) && defined(__SSE2__)
 #  include <emmintrin.h>
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_sse2 1
+#  define lib_base_enable_sse2 1
 #else
-#  define LIB_BASE_ENABLE_sse2 -1
-#endif
+#  define lib_base_enable_sse2 -1
+#endif // defined(PROCESSOR_X86) && defined(__SSE2__)
+
 
 #if defined(PROCESSOR_X86) && defined(__SSE3__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_sse3 1
+#  define lib_base_enable_sse3 1
 #else
-#  define LIB_BASE_ENABLE_sse3 -1
-#endif
+#  define lib_base_enable_sse3 -1
+#endif // defined(PROCESSOR_X86) && defined(__SSE3__)
+
 
 #if defined(PROCESSOR_X86) && defined(__SSSE3__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_ssse3 1
+#  define lib_base_enable_ssse3 1
 #else
-#  define LIB_BASE_ENABLE_ssse3 -1
-#endif
+#  define lib_base_enable_ssse3 -1
+#endif // defined(PROCESSOR_X86) && defined(__SSSE3__)
+
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_1__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_sse4_1 1
+#  define lib_base_enable_sse4_1 1
 #else
-#  define LIB_BASE_ENABLE_sse4_1 -1
-#endif
+#  define lib_base_enable_sse4_1 -1
+#endif // defined(PROCESSOR_X86) && defined(__SSE4_1__)
+
 
 #if defined(PROCESSOR_X86) && defined(__SSE4_2__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_sse4_2 1
+#  define lib_base_enable_sse4_2 1
 #else
-#  define LIB_BASE_ENABLE_sse4_2 -1
-#endif
+#  define lib_base_enable_sse4_2 -1
+#endif // defined(PROCESSOR_X86) && defined(__SSE4_2__)
+
 
 #if defined(PROCESSOR_X86) && defined(__AVX__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_avx 1
+#  define lib_base_enable_avx 1
 #else
-#  define LIB_BASE_ENABLE_avx -1
-#endif
+#  define lib_base_enable_avx -1
+#endif // defined(PROCESSOR_X86) && defined(__AVX__)
+
 
 #if defined(PROCESSOR_X86) && defined(__AVX2__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
-#  define LIB_BASE_ENABLE_avx2 1
+#  define lib_base_enable_avx2 1
 #else
-#  define LIB_BASE_ENABLE_avx2 -1
-#endif
+#  define lib_base_enable_avx2 -1
+#endif // defined(PROCESSOR_X86) && defined(__AVX2__)
 
-#ifdef PROCESSOR_X86
-#if LIB_BASE_ENABLE(sse2) || LIB_BASE_ENABLE(sse3)											\
-	|| LIB_BASE_ENABLE(ssse3) || LIB_BASE_ENABLE(sse4_1) || LIB_BASE_ENABLE(sse4_2)			\
-	|| LIB_BASE_ENABLE(avx) || LIB_BASE_ENABLE(avx2)										
-#  if defined (LIB_BASE_USE_COMPILER_ALIGNMENT)
-#    if defined(CPP_GNU) || defined(CPP_CLANG)
-#      define SIMD_ALIGNAS(size)	__attribute__((aligned(size)))
-#	 elif defined(CPP_MSVC)
-#	   define SIMD_ALIGNAS(size)	__declspec(align(size))
+
+#if defined(PROCESSOR_X86)
+#if lib_base_enable(sse2) || lib_base_enable(sse3)											\
+	|| lib_base_enable(ssse3) || lib_base_enable(sse4_1) || lib_base_enable(sse4_2)			\
+	|| lib_base_enable(avx) || lib_base_enable(avx2)										
+#  if defined (lib_base_use_compiler_alignment)
+#    if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#      define base_simd_alignas(size)	__attribute__((aligned(size)))
+#	 elif defined(base_cpp_msvc)
+#	   define base_simd_alignas(size)	__declspec(align(size))
 #    else
-#      define SIMD_ALIGNAS			alignas
+#      define base_simd_alignas			alignas
 #    endif
 #  else
-#    define SIMD_ALIGNAS	 		alignas
-#  endif
-#endif
-#endif
+#    define base_simd_alignas	 		alignas
+#  endif // defined (lib_base_use_compiler_alignment)
+#endif // lib_base_enable(sse2) || lib_base_enable(sse3) || lib_base_enable(ssse3) || lib_base_enable(sse4_1) 
+	   // || lib_base_enable(sse4_2) || lib_base_enable(avx) || lib_base_enable(avx2)	
+#endif // defined(PROCESSOR_X86)
 
-#ifndef VECTORCALL
-	#define VECTORCALL
-#endif
 
-#ifdef LIB_BASE_ENABLE_sse4_2
-#  ifndef BASE_SIMD_SSE4_2_ALIGNMENT
-#    define BASE_SIMD_SSE4_2_ALIGNMENT	sizeof(__m128i)
-#  endif
-#else 
-#  define BASE_SIMD_SSE4_2_ALIGNMENT	0
+#if !defined(base_vectorcall)
+#  define base_vectorcall
+#endif // base_vectorcall
+
+#if !defined(lib_base_has_simd_support)
+#  define lib_base_has_simd_support 0
 #endif
 
-#ifdef LIB_BASE_ENABLE_sse4_1
-#  ifndef BASE_SIMD_SSE4_1_ALIGNMENT
-#    define BASE_SIMD_SSE4_1_ALIGNMENT	sizeof(__m128i)
-#  endif
-#else 
-#  define BASE_SIMD_SSE4_1_ALIGNMENT	0
-#endif
-
-#ifdef LIB_BASE_ENABLE_ssse3
-#  ifndef BASE_SIMD_SSSE3_ALIGNMENT
-#    define BASE_SIMD_SSSE3_ALIGNMENT	sizeof(__m128i)
-#  endif
-#else 
-#  define BASE_SIMD_SSSE3_ALIGNMENT		0
-#endif
-
-#ifdef LIB_BASE_ENABLE_sse2
-#  ifndef BASE_SIMD_SSE2_ALIGNMENT
-#    define BASE_SIMD_SSE2_ALIGNMENT	sizeof(__m128i)
-#  endif
-#else 
-#  define BASE_SIMD_SSE2_ALIGNMENT		0
-#endif
-
-#ifdef LIB_BASE_ENABLE_avx
-#  ifndef BASE_SIMD_AVX_ALIGNMENT
-#    define BASE_SIMD_AVX_ALIGNMENT		sizeof(__m256i)
-#  endif
-#else 
-#  define BASE_SIMD_AVX_ALIGNMENT		0
-#endif
-
-#ifdef LIB_BASE_ENABLE_avx2
-#  ifndef BASE_SIMD_AVX2_ALIGNMENT
-#    define BASE_SIMD_AVX2_ALIGNMENT	sizeof(__m256i)
-#  endif
-#else 
-#  define BASE_SIMD_AVX2_ALIGNMENT		0
-#endif
-
-#ifdef LIB_BASE_ENABLE_avx512
-#  ifndef BASE_SIMD_AVX512_ALIGNMENT
-#    define BASE_SIMD_AVX512_ALIGNMENT	sizeof(__m512i)
-#  endif
-#else 
-#  define BASE_SIMD_AVX512_ALIGNMENT	0
-#endif
-
-#ifndef LIB_BASE_HAS_SIMD_SUPPORT
-#  define LIB_BASE_HAS_SIMD_SUPPORT 0
-#endif
-
-#define MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT	BASE_SIMD_SSE2_ALIGNMENT
-
-#if LIB_BASE_HAS_SIMD_SUPPORT
+#if lib_base_has_simd_support
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
@@ -213,10 +165,10 @@ using zmmfloat  = __m512;
 
 // Size limit (in bytes) before switching to non-temporal/streaming loads & stores
 // Applies to: memmove, memset, and memcpy
-#ifndef BASE_SIMD_CACHE_SIZE_LIMIT
-#define BASE_SIMD_CACHE_SIZE_LIMIT 3*1024*1024 // 3 MB
-#endif // BASE_SIMD_CACHE_SIZE_LIMIT
+#if !defined(base_simd_cache_size_limit)
+#  define base_simd_cache_size_limit 3*1024*1024 // 3 MB
+#endif // base_simd_cache_size_limit
 
 __BASE_ARCH_NAMESPACE_END
 
-#endif
+#endif // lib_base_has_simd_support

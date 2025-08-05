@@ -1,83 +1,82 @@
 #pragma once
 
 #if defined(__APPLE__) && (defined(__GNUC__) || defined(__xlC__) || defined(__xlc__))
-#  define OS_APPLE
+#  define base_os_apple
 #  if defined(TARGET_OS_MAC) && TARGET_OS_MAC
-#    define OS_DARWIN
-#    define OS_BSD4
+#    define base_os_darwin
+#    define base_os_bsd4
 #    if defined(OS_IPHONE) && TARGET_OS_IPHONE
 #    else
-#      define OS_MAC
+#      define base_os_mac
 #    endif
 #  endif
 #elif defined(__CYGWIN__)
-#  define OS_CYGWIN
+#  define base_os_cygwin
 #elif !defined(SAG_COM) && (!defined(WINAPI_FAMILY) || WINAPI_FAMILY==WINAPI_FAMILY_DESKTOP_APP) && (defined(WIN64) || defined(_WIN64) || defined(__WIN64__))
-#  define OS_WIN32
-#  define OS_WIN64
+#  define base_os_win32
+#  define base_os_win64
 #elif !defined(SAG_COM) && (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__))
-#    define OS_WIN32
+#  define base_os_win32
 #elif defined(__linux__) || defined(__linux)
-#  define OS_LINUX
+#  define base_os_linux
 
 #elif defined(__Lynx__)
-#  define OS_LYNX
+#  define base_os_lynx
 
 #elif defined(__GNU__)
-#  define OS_HURD
+#  define base_os_hurd
 
 #elif defined(__FreeBSD__)
-#  define OS_FREEBSD
+#  define base_os_freebsd
 
 #elif defined(__NetBSD__)
-#  define OS_NETBSD
+#  define base_os_netbsd
 
 #elif defined(__OpenBSD__)
-#  define OS_OPENBSD
+#  define base_os_openbsd
 
 #elif defined(__DragonFly__)
-#  define OS_DRAGONFLY
+#  define base_os_dragonfly
 
 #elif defined(__linux__)
-#  define OS_LINUX
+#  define base_os_linux
 
 #elif defined(__native_client__)
-#  define OS_NACL
+#  define base_os_nacl
 
 #elif defined(__EMSCRIPTEN__)
-#  define OS_EMSCRIPTEN
+#  define base_os_emscripten
 
 #elif defined(__rtems__)
-#  define OS_RTEMS
+#  define base_os_rtems
 
 #elif defined(__Fuchsia__)
-#  define OS_FUCHSIA
+#  define base_os_fuchsia
 
 #elif defined (__SVR4) && defined (__sun)
-#  define OS_SOLARIS
+#  define base_os_solaris
 
 #elif defined(__QNX__)
-#  define OS_QNX
+#  define base_os_qnx
 
 #elif defined(__MVS__)
-#  define OS_ZOS
+#  define base_os_zos
 
 #elif defined(__hexagon__)
-#  define OS_QURT
+#  define base_os_qurt
 
-#endif
 #else
 #  error ""
 #endif
 
-#if defined(OS_WIN32) || defined(OS_WIN64)
-#  define OS_WINDOWS
-#  define OS_WIN
+#if defined(base_os_win32) || defined(base_os_win64)
+#  define base_os_windows
+#  define base_os_win
 #endif
 
-#if defined(OS_WIN)
-#  undef OS_UNIX
-#elif !defined(OS_UNIX)
-#  define OS_UNIX
+#if defined(base_os_windows)
+#  undef base_os_unix
+#elif !defined(base_os_unix)
+#  define base_os_unix
 #endif
 

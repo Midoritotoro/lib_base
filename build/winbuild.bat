@@ -12,51 +12,51 @@ echo ParentDirectory=%ParentDirectory%
 set CMAKE_BINARY_DIR="%ParentDirectory%\out\build"
 set CMAKE_SOURCE_DIR="%ParentDirectory%"
 
-@REM :pythonExistanceCheck
-@REM   echo Checking for Python 3+ existance...
-@REM   :: where python >nul 2>&1
+ :pythonExistanceCheck
+   echo Checking for Python 3+ existance...
+   :: where python >nul 2>&1
 
-@REM   :: if errorlevel 1 (
-@REM   ::    goto errorNoPython
-@REM   :: )
+   :: if errorlevel 1 (
+   ::    goto errorNoPython
+   :: )
 
-@REM   if not exist "%PYTHON_INSTALL_PATH%" (
-@REM     goto errorNoPython
-@REM   )
+   if not exist "%PYTHON_INSTALL_PATH%" (
+     goto errorNoPython
+   )
 
-@REM   echo Python was found.
-@REM   goto startPackagesInstallation
+   echo Python was found.
+   goto startPackagesInstallation
 
-@REM :errorNoPython
-@REM   echo.
-@REM   echo Python is not installed.
+ :errorNoPython
+   echo.
+   echo Python is not installed.
   
-@REM   echo Attempting to install python...
-@REM   goto :tryToInstallPython
+   echo Attempting to install python...
+   goto :tryToInstallPython
 
-@REM :tryToInstallPython
-@REM     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
+ :tryToInstallPython
+     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPython.ps1" -Verb RunAs
    
-@REM     if exist "%PYTHON_INSTALL_PATH%" (
-@REM         echo Python installation successful.
-@REM         goto startPackagesInstallation
-@REM         python -m "%ParentDirectory%\build\packagesInstaller" %*
-@REM     )
+     if exist "%PYTHON_INSTALL_PATH%" (
+         echo Python installation successful.
+         goto startPackagesInstallation
+         python -m "%ParentDirectory%\build\packagesInstaller" %*
+     )
     
-@REM     echo Python installation failed. Stopping the build. 
-@REM     goto eof
+     echo Python installation failed. Stopping the build. 
+     goto eof
 
-@REM :checkOptionsValidity
-@REM     echo Checking validity of the given build options.
-@REM     python ValidateBuildOptions.py
+ :checkOptionsValidity
+     echo Checking validity of the given build options.
+     python ValidateBuildOptions.py
 
-@REM :startPackagesInstallation
-@REM     pushd ..
-@REM     set upper_path=%CD%
-@REM     popd
+ :startPackagesInstallation
+     pushd ..
+     set upper_path=%CD%
+     popd
 
-@REM     echo Installing Python packages...
-@REM     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPackagesInstallerRequirements.ps1" -Verb Runas
+     echo Installing Python packages...
+     PowerShell -NoProfile -ExecutionPolicy Bypass -File "%ParentDirectory%\build\powershell\InstallPackagesInstallerRequirements.ps1" -Verb Runas
 
 :tryToBuildLibrary
     if not exist "%CMAKE_BINARY_DIR%" (

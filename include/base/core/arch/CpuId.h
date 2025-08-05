@@ -5,7 +5,9 @@
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
-#if defined(CPP_GNU) && !defined(BaseGCCCpuIdCall)
+
+#if defined(base_cpp_gnu)
+#  if !defined(BaseGCCCpuIdCall)
 // gcc won't allow us to clobber ebx since its used to store the got. so we need to
 // lie to gcc and backup/restore ebx without declaring it as clobbered.
 #  define BaseGCCCpuIdCall(eax, ebx, ecx, edx, op)      \
@@ -16,16 +18,20 @@ __BASE_ARCH_NAMESPACE_BEGIN
         : "=a"(eax), "=r"(ebx), "=c"(ecx), "=d"(edx)    \
         : "a"(op)                                       \                           
     : "cc")
-#endif
+#  endif // BaseGCCCpuIdCall
+#endif // base_cpp_gnu
+
 
 DECLARE_NOALIAS inline void CpuId(
     int32 op,
-    int32& eax, int32& ebx,
-    int32& ecx, int32& edx)
+    int32& eax,
+    int32& ebx,
+    int32& ecx,
+    int32& edx)
 {
-#if defined(CPP_GNU)
+#if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(eax, ebx, ecx, edx, op);
-#elif defined(WIN32)
+#elif defined(base_os_win32)
     int regs[4];
     __cpuid(regs, op);
 
@@ -34,18 +40,18 @@ DECLARE_NOALIAS inline void CpuId(
 
     ecx = regs[2];
     edx = regs[3];
-#endif
+#endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
 DECLARE_NOALIAS inline void CpuId(
     int32* data,
     int32 op)
 {
-#if defined(CPP_GNU)
+#if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(data, data + 4, data + 8, data + 12, op);
-#elif defined(WIN32)
+#elif defined(base_os_win32)
     __cpuid(data, op);
-#endif
+#endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
 DECLARE_NOALIAS inline void CpuIdExtended(
@@ -53,21 +59,23 @@ DECLARE_NOALIAS inline void CpuIdExtended(
     int32 op,
     int32 ex)
 {
-#if defined(CPP_GNU)
+#if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(data, data + 4, data + 8, data + 12, op);
-#elif defined(WIN32)
+#elif defined(base_os_win32)
     __cpuidex(data, op, ex);
-#endif
+#endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
 DECLARE_NOALIAS inline void CpuIdExtended(int32 op,
-    int32& eax, int32& ebx,
-    int32& ecx, int32& edx,
+    int32& eax,
+    int32& ebx,
+    int32& ecx,
+    int32& edx,
     int32 ex)
 {
-#if defined(CPP_GNU)
+#if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(eax, ebx, ecx, edx, op);
-#elif defined(WIN32)
+#elif defined(base_os_win32)
     int regs[4];
     __cpuidex(regs, op, ex);
 
@@ -76,7 +84,8 @@ DECLARE_NOALIAS inline void CpuIdExtended(int32 op,
 
     ecx = regs[2];
     edx = regs[3];
-#endif
+#endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
+
 
 __BASE_ARCH_NAMESPACE_END
