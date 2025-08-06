@@ -92,10 +92,6 @@
 #  define base_typeof(expr)    __typeof__(expr)
 #  define base_decl_deprecated __attribute__ ((__deprecated__))
 
-#  define base_likely(expr)    __builtin_expect(!!(expr), true)
-
-#  define base_unlikely(expr)  __builtin_expect(!!(expr), false)
-
 
 # else 
 # endif

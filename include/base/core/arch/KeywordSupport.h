@@ -5,6 +5,8 @@
 
 // Clang attributes
 // https://clang.llvm.org/docs/AttributeReference.html#always-inline-force-inline
+// Clang builtins
+// https://clang.llvm.org/docs/LanguageExtensions.html
 
 // Msvc attributes
 // https://learn.microsoft.com/en-us/cpp/cpp/declspec?view=msvc-170
@@ -187,6 +189,13 @@ base_disable_warning_msvc(4067)
 #  if defined(base_cpp_gnu) || defined(base_cpp_clang)
 #    define base_decl_const_function __attribute__((const))
 #  elif defined(base_cpp_msvc)
+// The "noalias" attribute tells the compiler optimizer that pointers going into these hand-vectorized algorithms
+// won't be stored beyond the lifetime of the function, and that the function will only reference arrays denoted by
+// those pointers. The optimizer also assumes in that case that a pointer parameter is not returned to the caller via
+// the return value, so functions using "noalias" must usually return void. This attribute is valuable because these
+// functions are in native code objects that the compiler cannot analyze. In the absence of the noalias attribute, the
+// compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
+// unanalyzable routines may modify those arrays.
 #    define base_decl_const_function __declspec(noalias)
 #  else
 #    define base_decl_const_function
@@ -282,389 +291,310 @@ base_disable_warning_msvc(4067)
 #endif // !defined(base_unlikely_attribute)
 
 
-#ifndef __has_cpp_attribute && !defined(maybe_unused_attribute)
-#  define maybe_unused_attribute
-#elif __has_cpp_attribute(maybe_unused) >= 201603L && !defined(maybe_unused_attribute)
-#  define maybe_unused_attribute   [[maybe_unused]]
-#else
-
-#ifndef maybe_unused_attribute
-#  define maybe_unused_attribute
-#endif
-
-#endif
+#if !defined(base_maybe_unused_attribute)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(maybe_unused) >= 201603L
+#    define base_maybe_unused_attribute     [[maybe_unused]]
+#  elif defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_maybe_unused_attribute     __attribute__(unused)
+#  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(maybe_unused) >= 201603L
+#endif // !defined(base_maybe_unused_attribute)
 
 
-#ifndef __has_cpp_attribute && !defined(nodiscard_msg)
-#  define nodiscard_msg(_Msg)
-#elif __has_cpp_attribute(nodiscard) >= 201907L && !defined(nodiscard_msg)
-#  define nodiscard_msg(_Msg) [[nodiscard(_Msg)]]
-#elif __has_cpp_attribute(nodiscard) >= 201603L && !defined(nodiscard_msg)
-#  define nodiscard_msg(_Msg) [[nodiscard]]
-#else
-
-#ifndef nodiscard_msg
-#  define nodiscard_msg(_Msg)
-#endif
-
-#endif
-
-#ifndef __has_cpp_attribute
-
-#ifndef nodiscard_ctor
-#  define nodiscard_ctor
-#endif
-
-#ifndef nodiscard_ctor_msg
-#  define nodiscard_ctor_msg(_Msg)
-#endif
-
-#elif __has_cpp_attribute(nodiscard) >= 201907L
-
-#ifndef nodiscard_ctor
-#  define nodiscard_ctor           NODISCARD
-#endif
-
-#ifndef nodiscard_ctor_msg
-#  define nodiscard_ctor_msg(_Msg) NODISCARD_MSG(_Msg)
-#endif
-
-#else
-
-#ifndef nodiscard_ctor
-#  define nodiscard_ctor
-#endif 
-
-#ifndef nodiscard_ctor_msg
-#  define nodiscard_ctor_msg(_Msg)
-#endif 
-
-#endif
-
-
-#ifndef unused
-#  define unused(x)                             ((void)(x))
-#endif 
-
-#ifndef UNUSED
-#  define UNUSED                                unused
-#endif
-
-#if defined (CPP_GNU) || defined (CPP_CLANG)
-
-#ifndef LIKELY
-#  define LIKELY(p)                             __builtin_expect(!!(p), 1)
-#endif
-
-#ifndef UNLIKELY
-#  define UNLIKELY(p)                           __builtin_expect(!!(p), 0)
-#endif
-
-#ifndef UNREACHABLE
-#  define UNREACHABLE()                         __builtin_unreachable()
-#endif
-
-#elif defined(base_cpp_msvc)
-
-#ifndef LIKELY
-#  define LIKELY(p)                             (!!(p))
-#endif
-
-#ifndef UNLIKELY
-#  define UNLIKELY(p)                           (!!(p))
-#endif
-
-#ifndef UNREACHABLE
-#  define UNREACHABLE()                         (__assume(0))
-#endif
-
-#else
-
-#ifndef LIKELY
-#  define LIKELY(p)                             (!!(p))
-#endif
-
-#ifndef UNLIKELY
-#  define UNLIKELY(p)                           (!!(p))
-#endif
-
-#ifndef UNREACHABLE
-#  define UNREACHABLE()                         ((void)0)
-#endif
-
-#endif
-
-#if __has_cpp_attribute(gnu::malloc)
-#  if HAS_NODISCARD
-#    define DECLARE_MALLOCLIKE [[nodiscard, gnu::malloc]]
+#if !defined(base_nodiscard_with_warning)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
+#    define base_nodiscard_with_warning(message)    [[nodiscard(message)]]
+#  elif defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201603L
+#    define base_nodiscard_with_warning(message)    base_nodiscard
 #  else
-#    define DECLARE_MALLOCLIKE [[gnu::malloc]]
-#  endif
-#else
-#  define DECLARE_MALLOCLIKE NODISCARD
-#endif
+#    define base_nodiscard_with_warning(message)
+#  endif //     defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L 
+         //  || defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201603L
+#endif // !defined(base_nodiscard_with_warning)
 
-#if defined(base_cpp_msvc) && !defined(declare_memory_allocator)
-#  define declare_memory_allocator      __declspec(allocator)
-#elif defined (CPP_GNU) && !defined(declare_memory_allocator)
-#  if CPP_GNU > 310
-#    define declare_memory_allocator    __attribute__((malloc))
-#  endif
-#else 
 
-#ifndef declare_memory_allocator
-#  define declare_memory_allocator
-#endif 
-
-#endif
-
-#ifndef DECLARE_MEMORY_ALLOCATOR
-#  define DECLARE_MEMORY_ALLOCATOR declare_memory_allocator
-#endif
-
-#ifndef BASE_HAS_CXX17
-#  if __cplusplus >= 201703L
-#    define BASE_HAS_CXX17 1
+#if !defined(base_nodiscard_constructor)
+// https://open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1771r1.pdf
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
+#    define base_nodiscard_constructor base_nodiscard
 #  else
-#    define BASE_HAS_CXX17 0
-#  endif
-#endif
+#    define base_nodiscard_constructor
+#  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
+#endif // !defined(base_nodiscard_constructor)
 
-#ifndef BASE_HAS_CXX20
-#  if BASE_HAS_CXX17 && __cplusplus >= 202002L
-#    define BASE_HAS_CXX20 1
+
+#if !defined(base_nodiscard_constructor_with_warning)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
+#    define base_nodiscard_constructor_with_warning(message) base_nodiscard_with_warning(message)
 #  else
-#    define BASE_HAS_CXX20 0
-#  endif
-#endif
+#    define base_nodiscard_constructor_with_warning(message) 
+#  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
+#endif // !defined(base_nodiscard_constructor_with_warning)
 
-#ifndef BASE_HAS_CXX23
-#  if BASE_HAS_CXX20 && __cplusplus > 202002L
-#    define BASE_HAS_CXX23 1
+
+#if !defined(base_unused)
+#  define base_unused(variable) ((void)(variable))
+#endif // !defined(base_unused)
+
+
+#if !defined(base_likely)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_likely(expression) __builtin_expect(!!(expression), true)
+#  elif defined(base_cpp_msvc) && defined(__has_cpp_attribute) && __has_cpp_attribute(likely) >= 201803L
+#    define base_likely(expression)                     \
+       (                                                \
+         ([](bool value){                               \
+           switch (value) {                             \
+             [[unlikely]] case true: return true;       \
+             [[likely]] case false: return false;       \
+         }                                              \
+       })(expression))
 #  else
-#    define BASE_HAS_CXX23 0
-#  endif
-#endif
+#    define base_likely(expression) (!!(expression))
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // !defined(base_likely)
 
-#ifndef constexpr_cxx20
-#  if BASE_HAS_CXX20
-#    define constexpr_cxx20 constexpr
+
+#if !defined(base_unlikely)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_unlikely(expression) __builtin_expect(!!(expression), false)
+#  elif defined(base_cpp_msvc) && defined(__has_cpp_attribute) && __has_cpp_attribute(unlikely) >= 201803L
+#    define base_unlikely(expression)                   \
+       (                                                \
+         ([](bool value){                               \
+           switch (value) {                             \
+             [[likely]] case true: return true;         \
+             [[unlikely]] case false: return false;     \
+         }                                              \
+       })(expression))
 #  else
-#    define constexpr_cxx20 
-#  endif
-#endif
-
-#ifndef CONSTEXPR_CXX20
-#  define CONSTEXPR_CXX20 constexpr_cxx20
-#endif
-
-#ifndef base_restrict
-#  if defined(base_cpp_msvc)
-#    define base_restrict  __declspec(restrict)
-#  elif defined(CPP_GNU) || defined (CPP_CLANG)
-#    define base_restrict  __restrict__ 
-#  endif 
-#endif
-
-#ifndef BASE_RESTRICT
-#  define BASE_RESTRICT base_restrict
-#endif
-
-#ifdef CPP_CLANG
-#  define clang_constexpr_cxx20 constexpr_cxx20
-#else
-#  define clang_constexpr_cxx20 
-#endif
-
-#ifndef CLANG_CONSTEXPR_CXX20
-#  define CLANG_CONSTEXPR_CXX20 clang_constexpr_cxx20
-#endif
-
-#if defined(OS_WIN) && defined(base_cpp_msvc)
-#  define BASE_GUARDOVERFLOW __declspec(guard(overflow))
-#else
-#  define BASE_GUARDOVERFLOW 
-#endif
+#    define base_unlikely(expression) (!!(expression))
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang)
+#endif // !defined(base_unlikely)
 
 
-// The "noalias" attribute tells the compiler optimizer that pointers going into these hand-vectorized algorithms
-// won't be stored beyond the lifetime of the function, and that the function will only reference arrays denoted by
-// those pointers. The optimizer also assumes in that case that a pointer parameter is not returned to the caller via
-// the return value, so functions using "noalias" must usually return void. This attribute is valuable because these
-// functions are in native code objects that the compiler cannot analyze. In the absence of the noalias attribute, the
-// compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
-// unanalyzable routines may modify those arrays.
-
-#ifndef SIZEOF_TO_BITS
-#  define SIZEOF_TO_BITS(_Type) (sizeof(_Type) * 8)
-#endif 
-
-#ifndef sizeof_to_bits
-#  define sizeof_to_bits        SIZEOF_TO_BITS
-#endif
-
-#if defined(PROCESSOR_X86_64) \
-    || defined(PROCESSOR_ARM) \
-    || (PROCESSOR_ARM == 8) // x64 ARM
-
-#  if defined(OS_WIN) && defined(base_cpp_msvc)
-      #define BASE_UNALIGNED __unaligned
+#if !defined(base_unreachable)
+#  if defined(base_cpp_gnu) || defined(base_cpp_clang)
+#    define base_unreachable() __builtin_unreachable()
+#  elif defined(base_cpp_msvc)
+#    define base_unreachable() (__assume(0))
 #  else
-      #define BASE_UNALIGNED
-#  endif
+#    define base_unreachable() ((void)0)
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang) || defined(base_cpp_msvc)
+#endif // !defined(base_unreachable)
 
-#else 
-#  define BASE_UNALIGNED
-#endif
 
-#ifdef base_cpp_msvc
+#if !defined(base_restrict)
+#  if defined(base_cpp_msvc) || defined (base_cpp_clang)
+#    define base_restrict   __declspec(restrict)
+#  elif defined(base_cpp_gnu)
+#    define base_restrict   __restrict  
+#  endif // defined(base_cpp_msvc) || defined (base_cpp_clang) || defined(base_cpp_gnu)
+#endif // !defined(base_restrict)
 
-#  ifndef BASE_MSVC_COMSTEXPR
-#    ifdef _MSVC_CONSTEXPR_ATTRIBUTE
-#      define BASE_MSVC_COMSTEXPR [[msvc::constexpr]]
+
+#if !defined(base_declare_malloc_like)
+#  if defined(__has_cpp_attribute) && __has_cpp_attribute(gnu::malloc)
+#    if base_has_nodiscard
+#      define base_declare_malloc_like [[nodiscard, gnu::malloc]]
 #    else
-#      define BASE_MSVC_COMSTEXPR
-#    endif
-#  endif
-
-#else 
-
-#  define BASE_MSVC_COMSTEXPR 
-
-#endif
-
-#ifdef CPP_MSVC 
-
-#  define BASE_DECLARE_GPU      restrict(amp,cpu)
-#  define BASE_DECLARE_GPU_ONLY restrict(amp)
-#  define BASE_DECLARE_CPU_ONLY restrict(cpu)
-
-#else 
-
-#  define BASE_DECLARE_GPU     
-#  define BASE_DECLARE_GPU_ONLY 
-#  define BASE_DECLARE_CPU_ONLY
-
-#endif
-
-/* GCC */
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-
-#  ifndef BASE_ATTRIBUTE_MAY_ALIAS
-#    define BASE_ATTRIBUTE_MAY_ALIAS __attribute__((__may_alias__))
-#  endif
-
-#  ifndef BASE_ATTRIBUTE_ALIGNED
-#    define BASE_ATTRIBUTE_ALIGNED(size) __attribute__((aligned(size)))
-#  endif
-
-#  ifndef BASE_ATTRIBUTE_VECTOR_SIZE
-#    define BASE_ATTRIBUTE_VECTOR_SIZE(size) __attribute__((__vector_size__(size)))
-#  endif
-
-#endif // !defined(CPP_GNU) && !defined(CPP_CLANG)
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__))
-#endif
-#else 
-#  define BASE_ATTRIBUTE_VECTOR_SIZE_MAY_ALIAS(size) 
-#endif
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) __attribute__((__vector_size__(size), __aligned__(size)))
-#endif
-#else 
-#  define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED(size) 
-#endif
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS(size) __attribute__((__vector_size__(size), __may_alias__, __aligned__(size)))
-#endif
-#else 
-#  define BASE_ATTRIBUTE_VECTOR_SIZE_ALIGNED_MAY_ALIAS(size) 
-#endif
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS)
-#    define BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(size, align) __attribute__((__vector_size__(size), __may_alias__, __aligned__(align)))
-#endif
-#else 
-#  define BASE_ATTRIBUTE_VECTOR_SIZE_DIFFERENT_ALIGNED_MAY_ALIAS(size, align) 
-#endif
-
-#if defined(CPP_GNU) || defined(CPP_CLANG)
-#  if !defined(base_attribute_may_alias_aligned)
-#    define base_attribute_may_alias_aligned(size) __attribute__((__may_alias__, __aligned__(size)))
-#  endif // base_attribute_may_alias_aligned
-#else // !defined(CPP_GNU) && !defined(CPP_CLANG)
-#  define base_attribute_may_alias_aligned(size) 
-#endif // base_attribute_may_alias_aligned
+#      define base_declare_malloc_like [[gnu::malloc]]
+#    endif // base_has_nodiscard
+#  else
+#    define base_declare_malloc_like base_nodiscard base_restrict
+#  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(gnu::malloc)
+#endif // !defined(base_declare_malloc_like)
 
 
-// Exceptions 
-
-#ifndef base_try_begin
-#  define base_try_begin try {
-#endif // base_try_begin
-
-#ifndef base_catch
-#  define base_catch(x) \
-    }             \
-    catch (x) {
-#endif // base_catch
-
-#ifndef base_catch_all
-#  define base_catch_all \
-    }              \
-    catch (...) {
-#endif // base_catch_all
-
-#ifndef base_catch_end 
-#  define base_catch_end } 
-#endif // base_catch_end
-
-#ifndef base_reraise
-#  define base_reraise    throw
-#endif // base_reraise
-
-#ifndef base_throw
-#  define base_throw(...) throw(__VA_ARGS__)
-#endif // base_throw
+#if !defined(base_declare_memory_allocator)
+#  if defined(base_cpp_msvc) || defined(base_cpp_clang)
+#    define base_declare_memory_allocator       __declspec(allocator)
+#  elif defined(base_cpp_gnu) && base_cpp_gnu > 310
+#    define base_declare_memory_allocator       __attribute__((malloc))
+#  else
+#    define base_declare_memory_allocator
+#  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || (defined(base_cpp_gnu) && base_cpp_gnu > 310)
+#endif // !defined(base_declare_memory_allocator)
 
 
-#ifndef base_asm_extern
+#if !defined(base_has_cxx11)
+#  if __cplusplus >= 201103L
+#    define base_has_cxx11 1
+#  else
+#    define base_has_cxx11 0
+#  endif // __cplusplus >= 201103L
+#endif // !defined(base_has_cxx11)
+
+
+#if !defined(base_has_cxx14)
+#  if __cplusplus >= 201402L
+#    define base_has_cxx14 1
+#  else
+#    define base_has_cxx14 0
+#  endif // __cplusplus >= 201402L
+#endif // !defined(base_has_cxx14)
+
+
+#if !defined(base_has_cxx17)
+#  if __cplusplus >= 201703L
+#    define base_has_cxx17 1
+#  else
+#    define base_has_cxx17 0
+#  endif // __cplusplus >= 201703L
+#endif // !defined(base_has_cxx17)
+
+
+#if !defined(base_has_cxx20)
+#  if base_has_cxx17 && __cplusplus >= 202002L
+#    define base_has_cxx20 1
+#  else
+#    define base_has_cxx20 0
+#  endif // base_has_cxx17 && __cplusplus >= 202002L
+#endif // !defined(base_has_cxx20)
+
+
+#if !defined(base_has_cxx23)
+#  if base_has_cxx20 && __cplusplus > 202002L
+#    define base_has_cxx23 1
+#  else
+#    define base_has_cxx23 0
+#  endif // base_has_cxx20 && __cplusplus > 202002L
+#endif // !defined(base_has_cxx23)
+
+
+#if !defined(base_constexpr_cxx20)
+#  if base_has_cxx20
+#    define base_constexpr_cxx20 constexpr
+#  else
+#    define base_constexpr_cxx20 inline
+#  endif // base_has_cxx20
+#endif // !defined(base_constexpr_cxx20)
+
+
+#if !defined(base_clang_constexpr_cxx20)
+#  if defined(base_cpp_clang)
+#    define base_clang_constexpr_cxx20 constexpr_cxx20
+#  else
+#    define base_clang_constexpr_cxx20 
+#  endif // defined(base_cpp_clang)
+#endif // !defined(base_clang_constexpr_cxx20)
+
+
+#if !defined(base_guard_integer_overflow)
+#  if defined(base_os_windows) && defined(base_cpp_msvc)
+#    define base_guard_integer_overflow __declspec(guard(overflow))
+#  else
+#    define base_guard_integer_overflow 
+#  endif // defined(base_os_windows) && defined(base_cpp_msvc)
+#endif // !defined(base_guard_integer_overflow)
+
+
+#if !defined(base_sizeof_in_bits)
+#  define base_sizeof_in_bits(type) (sizeof(type) * 8)
+#endif // !defined(base_sizeof_in_bits)
+
+
+#if !defined(base_unaligned)
+#  if defined(PROCESSOR_X86_64) || defined(PROCESSOR_ARM) || (PROCESSOR_ARM == 8) // x64 ARM
+#    if defined(base_os_windows) && defined(base_cpp_msvc)
+#      define base_unaligned __unaligned
+#    else
+#      define base_unaligned
+#    endif // defined(base_os_windows) && defined(base_cpp_msvc)
+#  else 
+#    define base_unaligned
+#  endif // defined(PROCESSOR_X86_64) || defined(PROCESSOR_ARM) || (PROCESSOR_ARM == 8)
+#endif // !defined(base_unaligned)
+
+
+#if !defined(base_msvc_constexpr)
+#  if defined(base_cpp_msvc) && defined(_MSVC_CONSTEXPR_ATTRIBUTE)
+#    define base_msvc_constexpr [[msvc::constexpr]]
+#  else
+#    define base_msvc_constexpr
+#  endif // defined(base_cpp_msvc) && defined(_MSVC_CONSTEXPR_ATTRIBUTE)
+#endif // !defined(base_msvc_constexpr)
+
+
+#if !defined(base_declare_cpu_only)
+#  if defined(base_cpp_msvc)
+#    define base_declare_cpu_only restrict(cpu)
+#  else
+#    define base_declare_cpu_only
+#  endif // defined(base_cpp_msvc)
+#endif // !defined(base_declare_cpu_only)
+
+
+#if !defined(base_declare_gpu_only)
+#  if defined(base_cpp_msvc)
+#    define base_declare_gpu_only restrict(amp)
+#  else
+#    define base_declare_gpu_only
+#  endif // defined(base_cpp_msvc)
+#endif // !defined(base_declare_gpu_only)
+
+
+#if !defined(base_declare_gpu)
+#  if defined(base_cpp_msvc)
+#    define base_declare_gpu restrict(amp,cpu)
+#  else
+#    define base_declare_gpu
+#  endif // defined(base_cpp_msvc)
+#endif // !defined(base_declare_gpu)
+
+
+#if !defined(base_type_may_alias)
+#  if (defined(base_cpp_gnu) && base_cpp_gnu < 480) || defined(base_cpp_clang)
+#    define base_type_may_alias __attribute__((__may_alias__))
+#  else
+#    define base_type_may_alias
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_clang) 
+#endif // !defined(base_type_may_alias)
+
+
+#if !defined(base_aligned_type)
+#  if defined(base_cpp_gnu)
+#    define base_aligned_type(alignment) __attribute__((aligned(alignment)))
+#  elif defined(base_cpp_msvc) || defined(base_cpp_clang) 
+#    define base_aligned_type(alignment) __declspec(align(alignment))
+#  elif base_has_cxx11
+#    define base_aligned_type(alignment) alignas(alignment)
+#  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang) || base_has_cxx11
+#endif // !defined(base_aligned_type)
+
+
+#if !defined(base_asm_extern)
 #  if defined(__cplusplus)
 #    define base_asm_extern extern "C"
 #  else 
 #    define base_asm_extern extern
 #  endif // __cplusplus
-#endif // base_asm_extern
+#endif // !defined(base_asm_extern)
+
 
 // Warnings
 
-#ifndef base_nodiscard_return_raw_ptr
-#  define base_nodiscard_return_raw_ptr \
-        base_nodiscard_msg("This function allocates memory and returns a raw pointer. " \
-            "Discarding the return value will cause a memory leak.")
-#endif // base_nodiscard_return_raw_ptr
 
-#ifndef base_nodiscard_thread_ctor
-#  define base_nodiscard_thread_ctor \
-    base_nodiscard_ctor_msg("Creating a thread object without assigning it to a variable " \
+#if !defined(base_nodiscard_return_raw_ptr)
+#  define base_nodiscard_return_raw_ptr \
+        base_nodiscard_with_warning("This function allocates memory and returns a raw pointer. " \
+            "Discarding the return value will cause a memory leak.")
+#endif // !defined(base_nodiscard_return_raw_ptr)
+
+
+#if !defined(base_nodiscard_thread_constructor)
+#  define base_nodiscard_thread_constructor \
+    base_nodiscard_constructor_with_warning("Creating a thread object without assigning it to a variable " \
         "may lead to unexpected behavior and resource leaks. Ensure " \
         "the thread is properly managed.")
-#endif // base_nodiscard_thread_ctor
+#endif // !defined(base_nodiscard_thread_constructor)
 
-#ifndef base_nodiscard_remove_algorithm
+
+#if !defined(base_nodiscard_remove_algorithm)
 #  define base_nodiscard_remove_algorithm \
-        base_nodiscard_msg("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
+        base_nodiscard_with_warning("The 'remove' and 'remove_if' algorithms return the iterator past the last element " \
             "that should be kept. You need to call container.erase(result, container.end()) afterwards. " \
             "In C++20, 'std::erase' and 'std::erase_if' are simpler replacements for these two steps.")
-#endif // base_nodiscard_remove_algorithm
+#endif // !defined(base_nodiscard_remove_algorithm)
+
 
 #endif // __cplusplus
