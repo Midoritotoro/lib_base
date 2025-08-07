@@ -22,7 +22,7 @@
 #define __lib_base_enable_impl(feature) (((1/lib_base_enable_##feature) == 1))
 #define lib_base_enable(feature) __lib_base_enable_impl(feature)
 
-#if defined(PROCESSOR_X86) && defined(CPP_MSVC)
+#if defined(PROCESSOR_X86) && defined(base_cpp_msvc)
 
 #  if (defined(_M_X64) || _M_IX86_FP >= 2)
 #    define __SSE__ 1
@@ -42,9 +42,6 @@
 #      define __AVX__                       1
 #    endif
 
-#  endif
-#  ifdef __SSE2__
-#    define VECTORCALL __vectorcall
 #  endif
 #  ifdef __AVX2__
 // MSVC defines __AVX2__ with /arch:AVX2
@@ -117,31 +114,6 @@
 #else
 #  define lib_base_enable_avx2 -1
 #endif // defined(PROCESSOR_X86) && defined(__AVX2__)
-
-
-#if defined(PROCESSOR_X86)
-#if lib_base_enable(sse2) || lib_base_enable(sse3)											\
-	|| lib_base_enable(ssse3) || lib_base_enable(sse4_1) || lib_base_enable(sse4_2)			\
-	|| lib_base_enable(avx) || lib_base_enable(avx2)										
-#  if defined (lib_base_use_compiler_alignment)
-#    if defined(base_cpp_gnu) || defined(base_cpp_clang)
-#      define base_simd_alignas(size)	__attribute__((aligned(size)))
-#	 elif defined(base_cpp_msvc)
-#	   define base_simd_alignas(size)	__declspec(align(size))
-#    else
-#      define base_simd_alignas			alignas
-#    endif
-#  else
-#    define base_simd_alignas	 		alignas
-#  endif // defined (lib_base_use_compiler_alignment)
-#endif // lib_base_enable(sse2) || lib_base_enable(sse3) || lib_base_enable(ssse3) || lib_base_enable(sse4_1) 
-	   // || lib_base_enable(sse4_2) || lib_base_enable(avx) || lib_base_enable(avx2)	
-#endif // defined(PROCESSOR_X86)
-
-
-#if !defined(base_vectorcall)
-#  define base_vectorcall
-#endif // base_vectorcall
 
 #if !defined(lib_base_has_simd_support)
 #  define lib_base_has_simd_support 0

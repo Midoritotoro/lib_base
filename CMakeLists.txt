@@ -289,6 +289,26 @@ set(PRIVATE_HEADERS
 )
 
 set(PUBLIC_HEADERS 
+    include/base/core/compatibility/BranchPrediction.h
+    include/base/core/compatibility/CxxVersionDetection.h
+
+    include/base/core/compatibility/Warnings.h
+    include/base/core/compatibility/CallingConventions.h
+
+    include/base/core/compatibility/CompilerVisibility.h
+    include/base/core/compatibility/MsvcSpecificMacros.h
+
+    include/base/core/compatibility/FunctionAttributes.h
+    include/base/core/compatibility/AlignmentMacros.h
+
+    include/base/core/compatibility/UnreachableCode.h
+    include/base/core/compatibility/MemoryMacros.h
+    
+    include/base/core/compatibility/Inline.h
+    include/base/core/compatibility/Nodiscard.h
+
+    include/base/core/compatibility/Compatibility.h
+
     include/base/core/utility/Assert.h
     include/base/core/utility/NotNull.h
 
