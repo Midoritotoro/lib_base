@@ -56,6 +56,7 @@ nunit-*.xml
 dlldata.c
 
 .vscode/
+.vscode
 
 .vs/
 build/packagesInstaller/venv

@@ -31,4 +31,7 @@
 #include <base/core/compatibility/UnreachableCode.h>
 #include <base/core/compatibility/Warnings.h>
 
+#include <base/core/compatibility/CompilerDetection.h>
+#include <base/core/compatibility/LanguageFeatures.h>
+
 base_disable_warning_msvc(4067)

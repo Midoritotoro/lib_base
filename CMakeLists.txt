@@ -307,8 +307,11 @@ set(PUBLIC_HEADERS
     include/base/core/compatibility/Inline.h
     include/base/core/compatibility/Nodiscard.h
 
-    include/base/core/compatibility/Compatibility.h
+    include/base/core/compatibility/CompilerDetection.h
+    include/base/core/compatibility/LanguageFeatures.h
 
+    include/base/core/compatibility/Compatibility.h
+    
     include/base/core/utility/Assert.h
     include/base/core/utility/NotNull.h
 
@@ -357,9 +360,7 @@ set(PUBLIC_HEADERS
 
     include/base/core/Types.h
     include/base/core/arch/SimdHelpers.h
-
     include/base/core/arch/SystemDetection.h
-    include/base/core/arch/CompilerDetection.h
 
     include/base/core/io/WindowsFileEngine.h
     include/base/core/io/UnixFileEngine.h
@@ -410,7 +411,6 @@ set(PUBLIC_HEADERS
     include/base/core/arch/YieldCpu.h
     include/base/core/thread/ThreadsConfig.h
 
-    include/base/core/arch/KeywordSupport.h
     include/base/core/thread/MutexLocker.h
 
     include/base/core/thread/WindowsThreadPrivate.h
