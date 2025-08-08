@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -8,7 +8,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_>
-CONSTEXPR_CXX20 _ForwardIterator2_ swapRanges(
+base_constexpr_cxx20 _ForwardIterator2_ swapRanges(
 	const _ForwardIterator1_	firstIterator1,
 	const _ForwardIterator1_	lastIterator1,
 	_ForwardIterator2_			firstIterator2)

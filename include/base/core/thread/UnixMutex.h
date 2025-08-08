@@ -2,7 +2,7 @@
 
 #include <base/core/thread/AbstractMutex.h>
 
-#if defined(OS_LINUX) || defined(OS_MAC)
+#if defined(base_os_linux) || defined(base_os_mac)
 
 __BASE_THREAD_NAMESPACE_BEGIN
 
@@ -12,10 +12,10 @@ public:
 	UnixMutex(Thread* thread);
 	~UnixMutex();
 
-	[[nodiscard]] bool lock() override;
-	[[nodiscard]] bool unlock() override;
+	base_nodiscard bool lock() override;
+	base_nodiscard bool unlock() override;
 
-	[[nodiscard]] bool isLocked() const noexcept override;
+	base_nodiscard bool isLocked() const noexcept override;
 };
 
 __BASE_THREAD_NAMESPACE_END

@@ -107,7 +107,7 @@ class StringConverterTest {
     }
 
 public:
-    static NODISCARD bool ConvertString() {
+    static base_nodiscard bool ConvertString() {
         string::StringConversionResult<_ToChar_> result;
         static constexpr auto textArray = FixedArray<_FromChar_, stringAlignedSize>{};
 

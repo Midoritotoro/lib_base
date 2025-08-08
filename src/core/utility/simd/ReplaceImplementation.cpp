@@ -3,12 +3,12 @@
 #include <base/core/arch/Platform.h>
 #include <src/core/utility/simd/SimdTailMask.h>
 
-#include <src/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryUtility.h>
 
 __BASE_NAMESPACE_BEGIN
 
 
-void STDCALL Replace(
+void base_stdcall Replace(
     void*           _First,
     void* const     _Last,
     const uint32    _OldValue,
@@ -19,7 +19,7 @@ void STDCALL Replace(
             *current = _NewValue;
 }
 
-DECLARE_NOALIAS void STDCALL ReplaceAvx32Bit(
+base_declare_const_function void base_stdcall ReplaceAvx32Bit(
     void*           _First, 
     void* const     _Last, 
     const uint32    _OldValue, 
@@ -61,13 +61,13 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx32Bit(
     _mm256_zeroupper();
 }
 
-DECLARE_NOALIAS void STDCALL ReplaceAvx64Bit(
+base_declare_const_function void base_stdcall ReplaceAvx64Bit(
     void*           _First, 
     void* const     _Last, 
     const uint64    _OldValue, 
     const uint64    _NewValue) noexcept 
 {
-#if defined(OS_WIN64) || !defined(CPP_MSVC)
+#if defined(base_os_win64) || !defined(base_cpp_msvc)
     const __m256i comparand = _mm256_broadcastq_epi64(
         _mm_cvtsi64_si128(_OldValue));
     const __m256i replacement = _mm256_broadcastq_epi64(
@@ -112,7 +112,7 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx64Bit(
     _mm256_zeroupper();
 }
 
-DECLARE_NOALIAS void STDCALL ReplaceAvx512_32Bit(
+base_declare_const_function void base_stdcall ReplaceAvx512_32Bit(
     void*           _First,
     void* const     _Last,
     const uint32    _OldValue,
@@ -152,13 +152,13 @@ DECLARE_NOALIAS void STDCALL ReplaceAvx512_32Bit(
     }
 }
 
-DECLARE_NOALIAS void STDCALL ReplaceAvx512_64Bit(
+base_declare_const_function void base_stdcall ReplaceAvx512_64Bit(
     void*           _First,
     void* const     _Last,
     const uint64    _OldValue,
     const uint64    _NewValue) noexcept
 {
-#if defined(OS_WIN64) || !defined(CPP_MSVC)
+#if defined(base_os_win64) || !defined(base_cpp_msvc)
     const auto comparand = _mm512_broadcastd_epi32(
         _mm_cvtsi64_si128(_OldValue));
     const auto replacement = _mm512_broadcastd_epi32(

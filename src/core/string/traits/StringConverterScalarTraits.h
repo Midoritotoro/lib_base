@@ -13,7 +13,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD StringConversionResult<_ToChar_> convertString(
+	static base_nodiscard StringConversionResult<_ToChar_> convertString(
 		const StringConversionParameters<_FromChar_, _ToChar_>& parameters) noexcept
 	{
 		AssertUnreachable();

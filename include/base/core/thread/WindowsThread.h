@@ -3,7 +3,7 @@
 #include <base/core/thread/AbstractThread.h>
 #include <base/core/thread/MutexLocker.h>
 
-#ifdef OS_WIN
+#ifdef base_os_windows
 
 #include <base/core/thread/AtomicInteger.h>
 #include <base/core/thread/WindowsThreadPrivate.h>

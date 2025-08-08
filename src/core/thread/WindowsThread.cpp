@@ -1,6 +1,6 @@
 #include <base/core/thread/WindowsThread.h>
 
-#ifdef OS_WIN
+#ifdef base_os_windows
 
 #include <src/core/thread/ThreadsData.h>
 #include <base/core/thread/ThreadsConfig.h>
@@ -25,7 +25,7 @@ void WindowsThread::setPriority(Priority priority) {
     int prio = WinPriorityFromInternal(priority);
     _priority = priority;
 
-    ThreadsAssert(_handle.handle() != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", unused(0));
+    ThreadsAssert(_handle.handle() != nullptr, "base::threads::WindowsThread::setPriority: Не удалось установить приоритет для потока с дескриптором nullptr. ", base_unused(0));
 
     if (!SetThreadPriority(_handle.handle(), prio))
         printf("base::Thread::setPriority: Не удалось установить приоритет потока\n");
@@ -84,7 +84,7 @@ int WindowsThread::HardwareConcurrency() noexcept {
 }
 
 void WindowsThread::join() {
-    ThreadsAssert(joinable() != false, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", unused(0));
+    ThreadsAssert(joinable() != false, "base::threads::WindowsThread: Попытка вызвать join для несуществующего потока. ", base_unused(0));
 
     checkWaitForSingleObject(
         WaitForSingleObject(
@@ -98,7 +98,7 @@ void WindowsThread::terminate() {
     _isRunning = false;
 
     const auto result = WindowsThreadPrivate::TerminateImplementation(&_handle);
-    ThreadsAssert(result != 0, "base::threads::WindowsThread: Ошибка при попытке убить поток. ", unused(0));
+    ThreadsAssert(result != 0, "base::threads::WindowsThread: Ошибка при попытке убить поток. ", base_unused(0));
 }
 
 void WindowsThread::close() {
@@ -110,7 +110,7 @@ void WindowsThread::close() {
 }
 
 void WindowsThread::checkWaitForSingleObject(DWORD waitForSingleObjectResult) {
-    ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", unused(0));
+    ThreadsAssert(waitForSingleObjectResult != WAIT_FAILED, "base::threads::WindowsThread::join: Ошибка при ожидании выполнения потока", base_unused(0));
 }
      
 int WindowsThread::WinPriorityFromInternal(Priority _Priority) {

@@ -45,7 +45,7 @@ constexpr PocmaValues ChoosePocma_v =
 
 
 template <class _Allocator_>
-CONSTEXPR_CXX20 inline void POCCA(
+base_constexpr_cxx20 inline void POCCA(
     _Allocator_&        left, 
     const _Allocator_&  right) noexcept 
 {
@@ -54,7 +54,7 @@ CONSTEXPR_CXX20 inline void POCCA(
 }
 
 template <class _Allocator_>
-CONSTEXPR_CXX20 inline void POCMA(
+base_constexpr_cxx20 inline void POCMA(
     _Allocator_& left,
     _Allocator_& right) noexcept
 { 
@@ -64,7 +64,7 @@ CONSTEXPR_CXX20 inline void POCMA(
 }
 
 template <class _Allocator_>
-CONSTEXPR_CXX20 inline void POCS(
+base_constexpr_cxx20 inline void POCS(
     _Allocator_& left,
     _Allocator_& right) noexcept
 {

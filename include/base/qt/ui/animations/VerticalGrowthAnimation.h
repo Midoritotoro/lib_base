@@ -26,8 +26,8 @@ public:
 	void restart();
 	void restartAfterFinished();
 
-	[[nodiscard]] bool animating() const noexcept;
-	[[nodiscard]] QRectF rect() const noexcept;
+	base_nodiscard bool animating() const noexcept;
+	base_nodiscard QRectF rect() const noexcept;
 private:
 	double _targetHeight = 0;
 	mutable QRectF _rect;

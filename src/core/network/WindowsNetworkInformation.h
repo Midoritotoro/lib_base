@@ -2,7 +2,7 @@
 
 #include <src/core/network/NetworkParameters.h>
 
-#if defined(OS_WIN) 
+#if defined(base_os_windows) 
 
 __BASE_IO_NAMESPACE_BEGIN
 class WindowsSmartHandle;
@@ -16,15 +16,15 @@ public:
 	static void scanAvailableNetworks() noexcept;
 	static void enumerateNetworks(NetworksList& outputNetworkParameters) noexcept;
 private:
-	static NODISCARD bool_t wlanOpen(io::WindowsSmartHandle* pHandle) noexcept;
-	static NODISCARD bool_t wlanEnumInterfaces(handle_t handle) noexcept;
+	static base_nodiscard bool_t wlanOpen(io::WindowsSmartHandle* pHandle) noexcept;
+	static base_nodiscard bool_t wlanEnumInterfaces(handle_t handle) noexcept;
 
-	static NODISCARD dword_t WlanCloseHandleWrap(handle_t handle) noexcept;
+	static base_nodiscard dword_t WlanCloseHandleWrap(handle_t handle) noexcept;
 
-	static NODISCARD Dot11AuthenticationAlgorithm AuthenticationAlgorithmFromWinApi(
+	static base_nodiscard Dot11AuthenticationAlgorithm AuthenticationAlgorithmFromWinApi(
 		WinApiDot11AuthAlgorithm_t winApiAuthAlgorithm) noexcept;
 
-	static NODISCARD Dot11CipherAlgorithm CipherAlgorithmFromWinApi(
+	static base_nodiscard Dot11CipherAlgorithm CipherAlgorithmFromWinApi(
 		WinApiDot11CipherAlgorithm_t winApiCipherAlgorithm) noexcept;
 };
 

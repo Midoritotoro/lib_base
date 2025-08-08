@@ -3,17 +3,17 @@
 #include <base/core/utility/TypeTraits.h>
 #include <base/core/utility/Execution.h>
 
-#ifdef CPP_MSVC
+#ifdef base_cpp_msvc
     #include <xutility>
 #endif
 
 __BASE_NAMESPACE_BEGIN
 
 template <class _Iterator_>
-NODISCARD constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
+base_nodiscard constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
     if constexpr (std::is_pointer_v<std::decay_t<_Iterator_>>)
         return (iterator + 0);
-#ifdef CPP_MSVC
+#ifdef base_cpp_msvc
     // For debugging
     else if constexpr (std::_Unwrappable_v<_Iterator_>)
         return static_cast<_Iterator_&&>(iterator)._Unwrapped();

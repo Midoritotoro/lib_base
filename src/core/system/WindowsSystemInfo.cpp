@@ -1,7 +1,7 @@
 #include <base/core/system/WindowsSystemInfo.h>
 
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 __BASE_SYSTEM_NAMESPACE_BEGIN
 

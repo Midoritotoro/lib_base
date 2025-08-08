@@ -24,7 +24,7 @@ bool Char::isPrint(char32_t ucs4) noexcept
     return !(FLAG(_GetProp(ucs4)->category) & test);
 }
 
-bool FASTCALL Char::isSpace_helper(char32_t ucs4) noexcept
+bool base_fastcall Char::isSpace_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
@@ -78,7 +78,7 @@ bool Char::isSymbol(char32_t ucs4) noexcept
 }
 
 
-bool FASTCALL Char::isLetter_helper(char32_t ucs4) noexcept
+bool base_fastcall Char::isLetter_helper(char32_t ucs4) noexcept
 {
     
     if (ucs4 > LastValidCodePoint)
@@ -94,7 +94,7 @@ bool FASTCALL Char::isLetter_helper(char32_t ucs4) noexcept
 }
 
 
-bool FASTCALL Char::isNumber_helper(char32_t ucs4) noexcept
+bool base_fastcall Char::isNumber_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
@@ -107,7 +107,7 @@ bool FASTCALL Char::isNumber_helper(char32_t ucs4) noexcept
 }
 
 
-bool FASTCALL Char::isLetterOrNumber_helper(char32_t ucs4) noexcept
+bool base_fastcall Char::isLetterOrNumber_helper(char32_t ucs4) noexcept
 {
     if (ucs4 > LastValidCodePoint)
         return false;
@@ -169,7 +169,7 @@ static constexpr uint32 Hangul_NCount = Hangul_VCount * Hangul_TCount;
 static constexpr uint32 Hangul_SCount = Hangul_LCount * Hangul_NCount;
 
 // buffer has to have a length of 3. It's needed for Hangul decomposition
-static const Char* FASTCALL decompositionHelper(
+static const Char* base_fastcall decompositionHelper(
     char32_t ucs4, sizetype* length, Char::Decomposition* tag, Char* buffer)
 {
     if (ucs4 >= Hangul_SBase && ucs4 < Hangul_SBase + Hangul_SCount) {
@@ -239,7 +239,7 @@ static auto fullConvertCase(char32_t uc, Case which) noexcept
 }
 
 template <typename T>
-DECL_CONST_FUNCTION static inline T convertCase_helper(T uc, Case which) noexcept
+static inline T convertCase_helper(T uc, Case which) noexcept
 {
     const auto fold = _GetProp(uc)->cases[which];
 

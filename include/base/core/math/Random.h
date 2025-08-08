@@ -24,7 +24,7 @@ class Random {
 	};
 public: 
 	template <typename T>
-	static inline NODISCARD T randomNumber(
+	static inline base_nodiscard T randomNumber(
 		T from,
 		T to)
 	{

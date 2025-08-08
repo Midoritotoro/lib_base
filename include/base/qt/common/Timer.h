@@ -28,8 +28,8 @@ public:
 	void cancel();
 	static void Adjust();
 
-	NODISCARD bool isActive() const noexcept;
-	NODISCARD Time::time_t remainingTime() const noexcept;
+	base_nodiscard bool isActive() const noexcept;
+	base_nodiscard Time::time_t remainingTime() const noexcept;
 protected:
 	void timerEvent(QTimerEvent* e) override;
 private:

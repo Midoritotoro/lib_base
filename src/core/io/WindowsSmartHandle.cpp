@@ -1,6 +1,6 @@
 #include <base/core/io/WindowsSmartHandle.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 __BASE_IO_NAMESPACE_BEGIN
 

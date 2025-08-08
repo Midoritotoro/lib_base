@@ -10,75 +10,75 @@
 
 __BASE_IO_NAMESPACE_BEGIN
 
-#ifdef OS_WIN
+#if defined(base_os_windows)
 
 class WindowsFileInfo {
 public:
     WindowsFileInfo(const std::string& file);
 
-    NODISCARD bool exists() const;
-    static NODISCARD bool exists(const std::string& file);
+    base_nodiscard bool exists() const;
+    static base_nodiscard bool exists(const std::string& file);
 
     void refresh();
 
-    NODISCARD std::string filePath() const;
+    base_nodiscard std::string filePath() const;
 
-    NODISCARD std::string absoluteFilePath() const;
-    NODISCARD std::string canonicalFilePath() const;
+    base_nodiscard std::string absoluteFilePath() const;
+    base_nodiscard std::string canonicalFilePath() const;
 
-    NODISCARD std::string fileName() const;
-    NODISCARD std::string baseName() const;
+    base_nodiscard std::string fileName() const;
+    base_nodiscard std::string baseName() const;
 
-    NODISCARD std::string completeBaseName() const;
-    NODISCARD std::string suffix() const;
+    base_nodiscard std::string completeBaseName() const;
+    base_nodiscard std::string suffix() const;
 
-    NODISCARD std::string bundleName() const;
-    NODISCARD std::string completeSuffix() const;
+    base_nodiscard std::string bundleName() const;
+    base_nodiscard std::string completeSuffix() const;
 
-    NODISCARD std::string path() const;
+    base_nodiscard std::string path() const;
 
-    NODISCARD std::string absolutePath() const;
-    NODISCARD std::string canonicalPath() const;
+    base_nodiscard std::string absolutePath() const;
+    base_nodiscard std::string canonicalPath() const;
 
-    NODISCARD Directory dir() const;
-    NODISCARD Directory absoluteDir() const;
+    base_nodiscard Directory dir() const;
+    base_nodiscard Directory absoluteDir() const;
 
-    NODISCARD bool isReadable() const;
-    NODISCARD bool isWritable() const;
+    base_nodiscard bool isReadable() const;
+    base_nodiscard bool isWritable() const;
 
-    NODISCARD bool isExecutable() const;
+    base_nodiscard bool isExecutable() const;
 
-    NODISCARD bool isHidden() const;
-    NODISCARD bool isNativePath() const;
+    base_nodiscard bool isHidden() const;
+    base_nodiscard bool isNativePath() const;
 
-    NODISCARD bool isRelative() const;
-    NODISCARD bool isAbsolute() const;
+    base_nodiscard bool isRelative() const;
+    base_nodiscard bool isAbsolute() const;
 
-    NODISCARD bool makeAbsolute();
+    base_nodiscard bool makeAbsolute();
 
-    NODISCARD bool isFile() const;
+    base_nodiscard bool isFile() const;
 
-    NODISCARD bool isDir() const;
-    NODISCARD bool isSymLink() const;
+    base_nodiscard bool isDir() const;
+    base_nodiscard bool isSymLink() const;
 
-    NODISCARD bool isSymbolicLink() const;
-    NODISCARD bool isShortcut() const;
+    base_nodiscard bool isSymbolicLink() const;
+    base_nodiscard bool isShortcut() const;
 
-    NODISCARD bool isAlias() const;
-    NODISCARD bool isJunction() const;
+    base_nodiscard bool isAlias() const;
+    base_nodiscard bool isJunction() const;
 
-    NODISCARD bool isRoot() const;
-    NODISCARD bool isBundle() const;
+    base_nodiscard bool isRoot() const;
+    base_nodiscard bool isBundle() const;
 
-    NODISCARD int64 size() const;
+    base_nodiscard int64 size() const;
 private:
     using PathHeadTail = std::pair<std::string, std::string>;
     using PathParts    = std::tuple<std::string, std::string, std::string>;
 
-    NODISCARD PathParts
+    base_nodiscard PathParts
         splitRoot(const std::string& path) const;
 
-    NODISCARD PathHeadTail
+    base_nodiscard PathHeadTail
         splitPath(const std::string& path) const;
 
     std::string _path = "";

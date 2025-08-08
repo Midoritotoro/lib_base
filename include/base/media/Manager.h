@@ -36,8 +36,8 @@ public:
 
 	Q_INVOKABLE void cleanUp();
 
-	[[nodiscard]] Time::time_t duration() const noexcept;
-	[[nodiscard]] Time::time_t position() const noexcept;
+	base_nodiscard Time::time_t duration() const noexcept;
+	base_nodiscard Time::time_t position() const noexcept;
 
 	Q_INVOKABLE void pause();
 	Q_INVOKABLE void play();
@@ -48,8 +48,8 @@ public:
 	void setVideo(std::unique_ptr<ffmpeg::video::FrameGenerator>&& generator, const QSize& size = QSize());
 	void setAudio(std::unique_ptr<ffmpeg::audio::AudioReader>&& audio);
 
-	[[nodiscard]] bool hasVideo() const noexcept;
-	[[nodiscard]] bool hasAudio() const noexcept;
+	base_nodiscard bool hasVideo() const noexcept;
+	base_nodiscard bool hasAudio() const noexcept;
 
 	Q_INVOKABLE void rewind(Time::time_t position);
 	Q_INVOKABLE void setSpeed(float speed);

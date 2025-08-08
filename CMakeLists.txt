@@ -249,8 +249,6 @@ set(PRIVATE_HEADERS
     src/core/string/StringConversionOptions.h
     src/core/string/StringConversionOptions.h
 
-    src/core/utility/simd/SimdVectorType.h
-
     src/core/utility/simd/SimdHelpers.h
 
     src/core/string/traits/StringConverterAvxTraits.h

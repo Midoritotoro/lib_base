@@ -6,7 +6,7 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <>
-DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::None>(
+base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::None>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept
@@ -15,7 +15,7 @@ DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::None>(
 }
 
 template <>
-DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::SSE>(
+base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::SSE>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept
@@ -24,7 +24,7 @@ DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::SSE>(
 }
 
 template <>
-DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::AVX>(
+base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::AVX>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept
@@ -33,7 +33,7 @@ DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::AVX>(
 }
 
 template <>
-DECLARE_NOALIAS NODISCARD void* BaseMemcpyOptimized<arch::CpuFeature::AVX512F>(
+base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::AVX512F>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/simd/SimdAlgorithm.h>
 
 #include <base/core/utility/Execution.h>
@@ -9,7 +9,7 @@ __BASE_NAMESPACE_BEGIN
 
 template <class _BidirectionalIterator_>
 // reverse elements in [firstIterator, lastIterator)
-CONSTEXPR_CXX20 void reverse(
+base_constexpr_cxx20 void reverse(
     const _BidirectionalIterator_ firstIterator,
     const _BidirectionalIterator_ lastIterator)
 {

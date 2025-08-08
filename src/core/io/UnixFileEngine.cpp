@@ -1,6 +1,6 @@
 #include <base/core/io/UnixFileEngine.h>
 
-#if defined(OS_MAC) || defined(OS_LINUX)
+#if defined(base_os_mac) || defined(base_os_linux)
 
 __BASE_IO_NAMESPACE_BEGIN
 

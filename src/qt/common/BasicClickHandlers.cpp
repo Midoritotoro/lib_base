@@ -23,7 +23,7 @@ namespace {
 			Subset
 		};
 
-		static constexpr NODISCARD CutResult mid(
+		static constexpr base_nodiscard CutResult mid(
 			qsizetype originalLength,
 			qsizetype* _position,
 			qsizetype* _length)
@@ -61,7 +61,7 @@ namespace {
 		}
 	} // namespace details
 
-	NODISCARD inline QStringView StringViewMid(
+	base_nodiscard inline QStringView StringViewMid(
 		QStringView view,
 		qsizetype pos,
 		qsizetype n = -1) {

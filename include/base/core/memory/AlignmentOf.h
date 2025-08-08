@@ -4,7 +4,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-#if defined(CPP_MSVC)
+#if defined(base_cpp_msvc)
 
 template <class _Type_>
 struct offset_value {
@@ -21,7 +21,7 @@ struct AlignmentOf :
             - (sizeof(_Type_) << 1)> 
 {};
 
-#elif defined(CPP_GNU)
+#elif defined(base_cpp_gnu)
 
 template <class _Type_>
 struct AlignmentOf: 
@@ -30,7 +30,7 @@ struct AlignmentOf:
         __alignof__(_Type_)> 
 {};
 
-#elif defined(CPP_CLANG)
+#elif defined(base_cpp_clang)
 
 template <class _Type_>
 struct AlignmentOf:

@@ -1,9 +1,9 @@
 #include <base/core/io/Directory.h> 
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 	#include <base/core/io/WindowsDirectory.h> 
 	using PlatformDirectoryImplementation = base::io::WindowsDirectory;
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 	#include <base/core/io/UnixDirectory.h> 
 	using PlatformDirectoryImplementation = base::io::UnixDirectory;
 #endif

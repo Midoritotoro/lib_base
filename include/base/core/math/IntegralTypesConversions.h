@@ -5,7 +5,7 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
-constexpr inline NODISCARD _Type_ MinimumIntegralLimit() noexcept {
+constexpr inline base_nodiscard _Type_ MinimumIntegralLimit() noexcept {
 	// same as (numeric_limits<_Ty>::min)(), less throughput cost
 	static_assert(std::is_integral_v<_Type_>);
 
@@ -17,7 +17,7 @@ constexpr inline NODISCARD _Type_ MinimumIntegralLimit() noexcept {
 }
 
 template <class _Type_>
-constexpr inline NODISCARD _Type_ MaximumIntegralLimit() noexcept { 
+constexpr inline base_nodiscard _Type_ MaximumIntegralLimit() noexcept { 
 	// same as (numeric_limits<_Ty>::max)(), less throughput cost
 	static_assert(std::is_integral_v<_Type_>);
 
@@ -36,7 +36,7 @@ template <
 		std::is_integral_v<_TypeFrom_>
 		&& std::is_integral_v<_TypeTo_>
 		&& !std::is_same_v<_TypeFrom_, _TypeTo_>>>
-constexpr inline NODISCARD bool ConvertIntegral(
+constexpr inline base_nodiscard bool ConvertIntegral(
 	const _TypeFrom_	_From,
 	_TypeTo_&			_To) noexcept
 {

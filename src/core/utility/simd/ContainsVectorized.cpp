@@ -6,15 +6,15 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 #include <src/core/utility/simd/traits/SimdFindTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
- always_inline NODISCARD bool ContainsScalar(
+ base_always_inline base_nodiscard bool ContainsScalar(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_    value) noexcept
@@ -29,7 +29,7 @@ template <class _Type_>
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD bool ContainsSSE2(
+ base_always_inline base_nodiscard bool ContainsSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -63,7 +63,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD bool ContainsAVX(
+ base_always_inline base_nodiscard bool ContainsAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -117,7 +117,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD bool ContainsAVX512(
+ base_always_inline base_nodiscard bool ContainsAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -166,7 +166,7 @@ template <
     return false;
 }
 
-DECLARE_NOALIAS  NODISCARD bool ContainsVectorized8Bit(
+base_declare_const_function  base_nodiscard bool ContainsVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -181,7 +181,7 @@ DECLARE_NOALIAS  NODISCARD bool ContainsVectorized8Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD bool ContainsVectorized16Bit(
+base_declare_const_function  base_nodiscard bool ContainsVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -196,7 +196,7 @@ DECLARE_NOALIAS  NODISCARD bool ContainsVectorized16Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD bool ContainsVectorized32Bit(
+base_declare_const_function  base_nodiscard bool ContainsVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -211,7 +211,7 @@ DECLARE_NOALIAS  NODISCARD bool ContainsVectorized32Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD bool ContainsVectorized64Bit(
+base_declare_const_function  base_nodiscard bool ContainsVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -227,7 +227,7 @@ DECLARE_NOALIAS  NODISCARD bool ContainsVectorized64Bit(
 }
 
 template <class _Type_>
-DECLARE_NOALIAS  NODISCARD bool ContainsVectorized(
+base_declare_const_function  base_nodiscard bool ContainsVectorized(
     const void* firstPointer,
     const void* lastPointer,
     const _Type_& value) noexcept

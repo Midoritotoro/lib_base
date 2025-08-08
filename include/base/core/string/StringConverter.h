@@ -18,7 +18,7 @@ class StringConverter {
 		typename _FromChar_,
 		typename _ToChar_>
 	// Is data loss possible when converting from _FromChar_ to _ToChar_
-	static constexpr NODISCARD bool maybeNarrowingConversion() noexcept {
+	static constexpr base_nodiscard bool maybeNarrowingConversion() noexcept {
 		return (MaximumIntegralLimit<_FromChar_>() < MaximumIntegralLimit<_ToChar_>());
 	}
 public:
@@ -29,7 +29,7 @@ public:
 		typename = std::enable_if_t<
 			IsCompatibleCharType<_FromChar_>::value &&
 			IsCompatibleCharType<_ToChar_>::value>>
-	static NODISCARD StringConversionResult<_ToChar_> convertString(
+	static base_nodiscard StringConversionResult<_ToChar_> convertString(
 		const _FromChar_* const string,
 		const size_t			length,
 		_ToChar_				replacementCharacter = _ToChar_('?'))
@@ -84,7 +84,7 @@ private:
 		class _FromChar_,
 		class _ToChar_,
 		class _StringConverterTraits_>
-	static NODISCARD StringConversionResult<_ToChar_> convertStringImplementation(
+	static base_nodiscard StringConversionResult<_ToChar_> convertStringImplementation(
 		const _FromChar_* const string,
 		const size_t			stringLength,	
 		_ToChar_*				outputString,

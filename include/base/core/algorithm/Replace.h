@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -8,7 +8,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _ForwardIterator_,
 	class _Type_>
-CONSTEXPR_CXX20 void replace(
+base_constexpr_cxx20 void replace(
 	const _ForwardIterator_ firstIterator,
 	const _ForwardIterator_ lastIterator,
 	const _Type_&			oldValue,
@@ -36,7 +36,7 @@ template <
 	class _ForwardIterator_,
 	class _Predicate_,
 	class _Type_>
-CONSTEXPR_CXX20 void replaceIf(
+base_constexpr_cxx20 void replaceIf(
 	const _ForwardIterator_ firstIterator,
 	const _ForwardIterator_ lastIterator,
 	_Predicate_				predicate,

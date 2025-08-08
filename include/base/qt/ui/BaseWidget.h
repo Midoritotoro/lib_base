@@ -21,7 +21,7 @@ __BASE_QT_UI_NAMESPACE_BEGIN
 class BaseQWidgetHelper;
 
 namespace {
-	NODISCARD std::vector<QPointer<QWidget>>
+	base_nodiscard std::vector<QPointer<QWidget>>
 		GetChildWidgets(not_null<QWidget*> widget)
 	{
 		const auto& children = widget->children();
@@ -137,27 +137,27 @@ public:
 		}();
 	}
 
-	NODISCARD QRect rectNoMargins() {
+	base_nodiscard QRect rectNoMargins() {
 		return rect().marginsRemoved(getMargins());
 	};
 
-	NODISCARD QSize sizeNoMargins() {
+	base_nodiscard QSize sizeNoMargins() {
 		return rectNoMargins().size();
 	}
 
-	NODISCARD int heightNoMargins() {
+	base_nodiscard int heightNoMargins() {
 		return rectNoMargins().height();
 	}
 
-	NODISCARD int widthNoMargins() {
+	base_nodiscard int widthNoMargins() {
 		return rectNoMargins().width();
 	}
 
-	virtual NODISCARD QRect visibleArea() {
+	virtual base_nodiscard QRect visibleArea() {
 		return QRect();
 	}
 
-	virtual NODISCARD QRect hiddenArea() {
+	virtual base_nodiscard QRect hiddenArea() {
 		return QRect();
 	}
 };
@@ -181,11 +181,11 @@ protected:
 public:
 	using Parent::Parent;
 
-	NODISCARD QRect visibleArea() {
+	base_nodiscard QRect visibleArea() {
 		return Parent::visibleRegion().boundingRect();
 	}
 
-	NODISCARD QRect hiddenArea() {
+	base_nodiscard QRect hiddenArea() {
 		const auto selfRect = Parent::rect();
 		const auto selfVisibleRect = visibleArea();
 
@@ -213,7 +213,7 @@ public:
 			Parent::update();
 	};
 
-	virtual NODISCARD const SelfStyle* style()  {
+	virtual base_nodiscard const SelfStyle* style()  {
 		return _style;
 	};
 protected:

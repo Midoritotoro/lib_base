@@ -288,7 +288,7 @@ struct frame_t
 };
 
 //void DecoderDeviceRelease(decoder_device* device);
-//[[nodiscard]] void* VideoContextGetPrivate(
+//base_nodiscard void* VideoContextGetPrivate(
 //	video_context* vctx,
 //	enum video_context_type type);
 //
@@ -299,10 +299,10 @@ struct frame_t
 //
 //void VideoFormatClean(video_format_t* p_src);
 
-NODISCARD bool VideoFormatIsSameChroma(
+base_nodiscard bool VideoFormatIsSameChroma(
 	const video_format_t* f1,
 	const video_format_t* f2);
-NODISCARD bool VideoFormatIsSimilar(
+base_nodiscard bool VideoFormatIsSimilar(
 	const video_format_t* f1,
 	const video_format_t* f2);
 //

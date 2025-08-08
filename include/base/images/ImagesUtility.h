@@ -6,17 +6,17 @@
 __BASE_IMAGES_NAMESPACE_BEGIN
 
 #ifdef LIB_BASE_ENABLE_QT 
-	NODISCARD int GetChannelsCountByFormat(const QImage& image);
-	NODISCARD int GetChannelsCountByBytes(const QImage& image);
+	base_nodiscard int GetChannelsCountByFormat(const QImage& image);
+	base_nodiscard int GetChannelsCountByBytes(const QImage& image);
 #endif
 
-NODISCARD bool IsJpeg(const char* ext);
-NODISCARD bool IsPng(const char* ext);
+base_nodiscard bool IsJpeg(const char* ext);
+base_nodiscard bool IsPng(const char* ext);
 
-NODISCARD bool IsBmp(const char* ext);
-NODISCARD bool IsFormatSupported(const char* format);
+base_nodiscard bool IsBmp(const char* ext);
+base_nodiscard bool IsFormatSupported(const char* format);
 
-NODISCARD bool IsFormatsEqual(
+base_nodiscard bool IsFormatsEqual(
 	const char* firstFormat,
 	const char* secondFormat);
 

@@ -3,7 +3,7 @@
 #include <base/core/utility/TypeTraits.h>
 #include <base/core/thread/AtomicInteger.h>
 
-#include <base/core/utility/OverflowCheck.h>
+#include <base/core/math/OverflowCheck.h>
 #include <src/core/string/BasicStringUtility.h>
 
 __BASE_STRING_NAMESPACE_BEGIN

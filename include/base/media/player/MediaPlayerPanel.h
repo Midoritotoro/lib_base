@@ -36,8 +36,8 @@ public:
 		int mediaDuration);
 	void updateStateWidget(VideoStateWidget::State state);
 
-	NODISCARD EnhancedSlider* playbackSlider() const noexcept;
-	NODISCARD SpeedController* speedController() const noexcept;
+	base_nodiscard EnhancedSlider* playbackSlider() const noexcept;
+	base_nodiscard SpeedController* speedController() const noexcept;
 
 	void setVideoSliderMaximum(int value);
 	void setVolume(int value);

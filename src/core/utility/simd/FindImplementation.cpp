@@ -6,15 +6,15 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 #include <src/core/utility/simd/traits/SimdFindTraits.h>
 
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
- always_inline NODISCARD const void* FindScalar(
+ base_always_inline base_nodiscard const void* FindScalar(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_    value) noexcept
@@ -29,7 +29,7 @@ template <class _Type_>
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD const void* FindSSE2(
+ base_always_inline base_nodiscard const void* FindSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -62,7 +62,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD const void* FindAVX(
+ base_always_inline base_nodiscard const void* FindAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -122,7 +122,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- always_inline NODISCARD const void* FindAVX512(
+ base_always_inline base_nodiscard const void* FindAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -177,7 +177,7 @@ template <
     }
 }
 
-DECLARE_NOALIAS NODISCARD const void* FindVectorized8Bit(
+base_declare_const_function base_nodiscard const void* FindVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -192,7 +192,7 @@ DECLARE_NOALIAS NODISCARD const void* FindVectorized8Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD const void* FindVectorized16Bit(
+base_declare_const_function  base_nodiscard const void* FindVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -207,7 +207,7 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized16Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD const void* FindVectorized32Bit(
+base_declare_const_function  base_nodiscard const void* FindVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -222,7 +222,7 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized32Bit(
     return FindScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS  NODISCARD const void* FindVectorized64Bit(
+base_declare_const_function  base_nodiscard const void* FindVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -238,7 +238,7 @@ DECLARE_NOALIAS  NODISCARD const void* FindVectorized64Bit(
 }
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept

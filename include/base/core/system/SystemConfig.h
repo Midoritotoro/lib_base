@@ -6,7 +6,7 @@
 #include <base/core/utility/Flags.h>
 #include <base/core/arch/StaticCodeAnalysis.h>
 
-#ifdef OS_WIN
+#ifdef base_os_windows
     #include <base/core/system/Windows.h>
 #endif
 

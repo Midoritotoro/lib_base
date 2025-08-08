@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <src/core/memory/AllocatorUtility.h>
-#include <src/core/memory/FillMemsetSafety.h>
+#include <base/core/memory/AllocatorUtility.h>
+#include <base/core/memory/FillMemsetSafety.h>
 
-#include <src/core/memory/ToAddress.h>
+#include <base/core/memory/ToAddress.h>
 #include <src/core/memory/UninitializedBackout.h>
 
 #include <cstring>
@@ -34,7 +34,7 @@ void MemsetZero(
         count * sizeof(IteratorValueType<_ContiguousIterator_>));
 }
 
-inline NODISCARD bool MemoryFill(
+inline base_nodiscard bool MemoryFill(
     void*       destinationPointer,
     const int   value,
     size_t      size) noexcept
@@ -45,7 +45,7 @@ inline NODISCARD bool MemoryFill(
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
-CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedFillCount(
+base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedFillCount(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorSizeType<_Allocator_>          count,
     const AllocatorValueType<_Allocator_>&  value,
@@ -54,18 +54,18 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
     using _ValueType_ = AllocatorValueType<_Allocator_>;
 
     if constexpr (IsFillMemsetSafe<_ValueType_*, _ValueType_>) {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (!is_constant_evaluated())
-#endif // BASE_HAS_CXX20
+#endif // base_has_cxx20
         {
             FillMemset(UnFancy(firstPointer), value, static_cast<size_t>(count));
             return firstPointer + count;
         }
     }
     else if constexpr (IsFillZeroMemsetSafe<_ValueType_*, _ValueType_>) {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (!is_constant_evaluated())
-#endif // BASE_HAS_CXX20
+#endif // base_has_cxx20
         {
             if (IsAllBitsZero(value)) {
                 MemsetZero(UnFancy(firstPointer), static_cast<size_t>(count));
@@ -84,7 +84,7 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
-CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedFill(
+base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedFill(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorPointerType<_Allocator_>       lastPointer,
     const AllocatorValueType<_Allocator_>&  value,

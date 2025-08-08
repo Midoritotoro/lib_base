@@ -1,8 +1,8 @@
 #pragma once 
 
-#include <base/core/arch/KeywordSupport.h>
+#include <base/core/compatibility/CxxVersionDetection.h>
 
-#if BASE_HAS_CXX20
+#if base_has_cxx20
 
     #include <ranges>
     #include <concepts>

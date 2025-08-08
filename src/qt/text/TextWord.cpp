@@ -54,7 +54,7 @@ namespace base::qt::text {
 		_rpadding += padding;
 	}
 
-	[[nodiscard]] inline uint16 CountPosition(Words::const_iterator i) {
+	base_nodiscard inline uint16 CountPosition(Words::const_iterator i) {
 		return i->position();
 	}
 } // namespace base::qt::text

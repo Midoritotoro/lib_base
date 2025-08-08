@@ -6,9 +6,9 @@ namespace base::system {
     enum Endian {
         BigEndian,
         LittleEndian
-#  if BYTE_ORDER == BIG_ENDIAN
+#  if base_byte_order == base_big_endian
         , ByteOrder = BigEndian
-#  elif BYTE_ORDER == LITTLE_ENDIAN
+#  elif base_byte_order == base_little_endian
         , ByteOrder = LittleEndian
 #  else
 #    error "Undefined byte order"
@@ -30,6 +30,6 @@ namespace base::system {
         }
 
 
-        static NODISCARD int GetCpuCount();
+        static base_nodiscard int GetCpuCount();
 	};
 } // namespace base::system

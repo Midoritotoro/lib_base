@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -9,7 +9,7 @@ template <
 	class _Iterator_,
 	class _OutputIterator_,
 	class _Function_>
-CONSTEXPR_CXX20 _OutputIterator_ transform(
+base_constexpr_cxx20 _OutputIterator_ transform(
 	const _Iterator_	firstIterator,
 	const _Iterator_	lastIterator,
 	_OutputIterator_	destinationIterator,
@@ -39,7 +39,7 @@ template <
 	class _Iterator2_,
 	class _OutputIterator_,
 	class _Function_>
-CONSTEXPR_CXX20 _OutputIterator_ transform(
+base_constexpr_cxx20 _OutputIterator_ transform(
 	const _Iterator1_	firstIterator1,
 	const _Iterator1_	lastIterator1,
 	const _Iterator2_	firstIterator2,

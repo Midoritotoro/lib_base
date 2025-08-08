@@ -20,14 +20,14 @@ __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_BEGIN
 namespace {
 	constexpr auto kMaxArea = 1920 * 1080 * 4;
 
-	[[nodiscard]] QByteArray ReadFile(const QString& filepath) {
+	base_nodiscard QByteArray ReadFile(const QString& filepath) {
 		auto file = QFile(filepath);
 		return file.open(QIODevice::ReadOnly)
 			? file.readAll()
 			: QByteArray();
 	}
 
-	[[nodiscard]] QByteArray ReadFile(const QString& filepath, int bytes) {
+	base_nodiscard QByteArray ReadFile(const QString& filepath, int bytes) {
 		auto file = QFile(filepath);
 		return file.open(QIODevice::ReadOnly)
 			? file.read(bytes)

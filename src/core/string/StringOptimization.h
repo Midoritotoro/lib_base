@@ -1,12 +1,12 @@
 #pragma once 
 
-#include <base/core/arch/KeywordSupport.h>
+#include <base/core/compatibility/Compatibility.h>
 #include <base/core/BaseNamespace.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
 namespace stringSimd {
-	// Auto-selecting the most efficient option: AVX512 > AVX2 > SSE42 > Scalar
+	// Auto-selecting the most efficient supported option: AVX512 > AVX2 > SSE42 > Scalar
 	struct OptimizationEnable
 	{};
 

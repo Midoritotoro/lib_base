@@ -1,10 +1,6 @@
 #pragma once
 
-#include <base/core/arch/SystemDetection.h>
-#include <base/core/arch/CompilerDetection.h>
-
-#include <base/core/arch/KeywordSupport.h>
-#include <base/core/BaseNamespace.h>
+#include <base/core/compatibility/Compatibility.h>
 
 #include <vector>
 #include <base/core/Types.h>
@@ -22,7 +18,7 @@
 #define __lib_base_enable_impl(feature) (((1/lib_base_enable_##feature) == 1))
 #define lib_base_enable(feature) __lib_base_enable_impl(feature)
 
-#if defined(PROCESSOR_X86) && defined(base_cpp_msvc)
+#if defined(base_processor_x86) && defined(base_cpp_msvc)
 
 #  if (defined(_M_X64) || _M_IX86_FP >= 2)
 #    define __SSE__ 1
@@ -59,7 +55,7 @@
 # endif
 
 
-#if defined(PROCESSOR_X86) && defined(__SSE2__)
+#if defined(base_processor_x86) && defined(__SSE2__)
 #  include <emmintrin.h>
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_sse2 1
@@ -68,7 +64,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__SSE2__)
 
 
-#if defined(PROCESSOR_X86) && defined(__SSE3__)
+#if defined(base_processor_x86) && defined(__SSE3__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_sse3 1
 #else
@@ -76,7 +72,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__SSE3__)
 
 
-#if defined(PROCESSOR_X86) && defined(__SSSE3__)
+#if defined(base_processor_x86) && defined(__SSSE3__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_ssse3 1
 #else
@@ -84,7 +80,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__SSSE3__)
 
 
-#if defined(PROCESSOR_X86) && defined(__SSE4_1__)
+#if defined(base_processor_x86) && defined(__SSE4_1__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_sse4_1 1
 #else
@@ -92,7 +88,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__SSE4_1__)
 
 
-#if defined(PROCESSOR_X86) && defined(__SSE4_2__)
+#if defined(base_processor_x86) && defined(__SSE4_2__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_sse4_2 1
 #else
@@ -100,7 +96,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__SSE4_2__)
 
 
-#if defined(PROCESSOR_X86) && defined(__AVX__)
+#if defined(base_processor_x86) && defined(__AVX__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_avx 1
 #else
@@ -108,7 +104,7 @@
 #endif // defined(PROCESSOR_X86) && defined(__AVX__)
 
 
-#if defined(PROCESSOR_X86) && defined(__AVX2__)
+#if defined(base_processor_x86) && defined(__AVX2__)
 #  define LIB_BASE_HAS_SIMD_SUPPORT 1
 #  define lib_base_enable_avx2 1
 #else

@@ -9,13 +9,13 @@ __BASE_IO_NAMESPACE_BEGIN
 
 class Compressor {
 public:
-    static [[nodiscard]] int Compress(
+    static base_nodiscard int Compress(
         Bytef* dest,
         unsigned long* destLen,
         const Bytef* source,
         unsigned long sourceLen);
 
-    static [[nodiscard]] int Decompress(
+    static base_nodiscard int Decompress(
         Bytef* dest,
         unsigned long* destLen,
         const Bytef* source,

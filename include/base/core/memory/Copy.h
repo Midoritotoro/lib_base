@@ -2,15 +2,15 @@
 
 #include <base/core/utility/TypeTraits.h>
 
-#include <src/core/memory/IteratorCategory.h>
-#include <src/core/memory/AllocatorUtility.h>
+#include <base/core/memory/IteratorCategory.h>
+#include <base/core/memory/AllocatorUtility.h>
 
 #include <src/core/memory/UninitializedBackout.h>
-#include <src/core/memory/PointerConversion.h>
+#include <base/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-inline NODISCARD bool MemoryCopy(
+inline base_nodiscard bool MemoryCopy(
     void*       destinationPointer,
     const void* sourcePointer,
     size_t      sourceLength) noexcept
@@ -24,7 +24,7 @@ inline NODISCARD bool MemoryCopy(
 template <
     class _InputIterator_,
     class _OutIterator_>
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+inline base_nodiscard base_constexpr_cxx20 bool MemoryMove(
     _InputIterator_ _First,
     sizetype        _Size,
     _OutIterator_   _Destination) noexcept
@@ -41,7 +41,7 @@ inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
 template <
     class _InputIterator_,
     class _OutIterator_> 
-inline NODISCARD CONSTEXPR_CXX20 bool MemoryMove(
+inline base_nodiscard base_constexpr_cxx20 bool MemoryMove(
     _InputIterator_ _First,
     _InputIterator_ _Last,
     _OutIterator_   _Destination) noexcept
@@ -65,19 +65,19 @@ template <
     class _SizeType_,
     class _OutIterator_>
 // copy _First + [0, _Count) to _Dest + [0, _Count), returning _Dest + _Count
-CONSTEXPR_CXX20 inline NODISCARD _OutIterator_ MemoryCopyCountUnchecked(
+base_constexpr_cxx20 inline base_nodiscard _OutIterator_ MemoryCopyCountUnchecked(
     _InputIterator_ firstIterator, 
     _SizeType_      count, 
     _OutIterator_   destinationIterator)
 {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
     static_assert(is_nonbool_integral_v<_SizeType_>);
-#endif // BASE_HAS_CXX20
+#endif // base_has_cxx20
 
     if constexpr (IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (is_constant_evaluated() == false)
-#endif
+#endif // base_has_cxx20
             return MemoryCopyMemmoveCount(
                 std::move(firstIterator), 
                 static_cast<size_t>(count), 
@@ -108,7 +108,7 @@ struct CopyResult {
 template <
     class _InputIterator_,
     class _OutIterator_> 
-NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
+base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     _InputIterator_ inputFirstIterator,
     _InputIterator_ inputLastIterator,
     _OutIterator_   outFirstIterator,
@@ -147,7 +147,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
 template <
     class _InputIterator_,
     class _OutIterator_>
-NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
+base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     _InputIterator_ inputFirstIterator,
     _OutIterator_   outFirstIterator,
     const sizetype  countObjects) noexcept
@@ -179,7 +179,7 @@ NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
 template <
     class _InputIterator_,
     class _OutIterator_>
-NODISCARD inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
+base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     _InputIterator_ inputFirstIterator,
     _OutIterator_   outFirstIterator,
     const sizetype  countBytes) noexcept
@@ -216,7 +216,7 @@ template <
     class _Sentinel_, 
     class _Allocator_>
 // copy [_First, _Last) to raw _Destination, using _Allocator
-CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedCopy(
+base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedCopy(
     _InputIterator_                     firstIterator,
     _Sentinel_                          lastSentinel, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -228,9 +228,9 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
         _InputIterator_, _Sentinel_, _ValuePointer_>::BitcopyConstructible;
 
     if constexpr (canMemmove) {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (!is_constant_evaluated())
-#endif // BASE_HAS_CXX20
+#endif // base_has_cxx20
         {
             if constexpr (std::is_same_v<_InputIterator_, _Sentinel_>) {
                 MemoryMove(
@@ -263,7 +263,7 @@ template <
     class _InputIterator_,
     class _Allocator_>
 // Copy _First + [0, _Count) to raw _Dest, using _Allocator
-CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> UninitializedCopyCount(
+base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedCopyCount(
     _InputIterator_                     firstIterator, 
     sizetype                            count, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -276,9 +276,9 @@ CONSTEXPR_CXX20 inline NODISCARD AllocatorPointerType<_Allocator_> Uninitialized
             _InputIterator_, _PointerToValue_>::BitcopyConstructible>::value;
 
     if constexpr (canMemove) {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (!is_constant_evaluated())
-#endif // BASE_HAS_CXX20
+#endif // base_has_cxx20
         {
             MemoryMove(firstIterator, count, UnFancy(destinationPointer));
             destinationPointer += count;
@@ -299,7 +299,7 @@ template <
     class _InputIterator_, 
     class _NoThrowForwardIterator_>
 // copy [firstIterator, lastIterator) to raw [destinationIterator, ...)
-CONSTEXPR_CXX20 inline NODISCARD _NoThrowForwardIterator_ UninitializedCopyUnchecked(
+base_constexpr_cxx20 inline base_nodiscard _NoThrowForwardIterator_ UninitializedCopyUnchecked(
     _InputIterator_             firstIterator,
     const _InputIterator_       lastIterator,
     _NoThrowForwardIterator_    destinationIterator)

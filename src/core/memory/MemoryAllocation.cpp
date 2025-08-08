@@ -1,20 +1,20 @@
 #include <base/core/memory/MemoryAllocation.h>
-#include <base/core/utility/OverflowCheck.h>
+#include <base/core/math/OverflowCheck.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <src/core/memory/Alignment.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/memory/Alignment.h>
 
 
 static inline constexpr std::atomic<base::uint32> MaximumAllocationSize = UINT_MAX;
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-CLANG_CONSTEXPR_CXX20 inline uint32 MaximumMemoryAllocationSize() noexcept {
+base_clang_constexpr_cxx20 inline uint32 MaximumMemoryAllocationSize() noexcept {
     return thread::AtomicOperations<uint32>::loadRelaxed(MaximumAllocationSize);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* Allocate(sizetype bytes) 
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* Allocate(sizetype bytes)
 {
     void* pointer = nullptr;
 
@@ -32,8 +32,8 @@ CLANG_CONSTEXPR_CXX20 void* Allocate(sizetype bytes)
 
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* AllocateAligned(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* AllocateAligned(
     sizetype bytes,
     sizetype alignment)
 {
@@ -57,8 +57,8 @@ CLANG_CONSTEXPR_CXX20 void* AllocateAligned(
     return pointer;
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* AllocateZeros(sizetype bytes)
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* AllocateZeros(sizetype bytes)
 {
     void* pointer = Allocate(bytes);
 
@@ -68,8 +68,8 @@ CLANG_CONSTEXPR_CXX20 void* AllocateZeros(sizetype bytes)
     return pointer;
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR 
-CLANG_CONSTEXPR_CXX20 void* AllocateArray(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* AllocateArray(
     sizetype numberOfElements,
     sizetype singleElementSize)
 {
@@ -81,8 +81,8 @@ CLANG_CONSTEXPR_CXX20 void* AllocateArray(
     return Allocate(result);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* AllocateArrayAligned(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* AllocateArrayAligned(
     sizetype numberOfElements,
     sizetype singleElementSize,
     sizetype alignment)
@@ -95,8 +95,8 @@ CLANG_CONSTEXPR_CXX20 void* AllocateArrayAligned(
     return AllocateAligned(result, alignment);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR 
-CLANG_CONSTEXPR_CXX20 void* ReAllocate(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* ReAllocate(
     void*       pointer,
     sizetype    bytes)
 {
@@ -109,8 +109,8 @@ CLANG_CONSTEXPR_CXX20 void* ReAllocate(
 }
 
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR 
-CLANG_CONSTEXPR_CXX20 void* ReAllocateAligned(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* ReAllocateAligned(
     void*       pointer,
     sizetype    bytes,
     sizetype    alignment)
@@ -125,8 +125,8 @@ CLANG_CONSTEXPR_CXX20 void* ReAllocateAligned(
         alignment);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* ReallocateArray(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* ReallocateArray(
     void*       pointer,
     sizetype    numberOfElements,
     sizetype    singleElementSize)
@@ -139,8 +139,8 @@ CLANG_CONSTEXPR_CXX20 void* ReallocateArray(
     return ReAllocate(pointer, result);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR 
-CLANG_CONSTEXPR_CXX20 void* ReallocateArrayAligned(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* ReallocateArrayAligned(
     void*       pointer,
     sizetype    numberOfElements,
     sizetype    singleElementSize,
@@ -155,8 +155,8 @@ CLANG_CONSTEXPR_CXX20 void* ReallocateArrayAligned(
         pointer, result, alignment);
 }
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR 
-CLANG_CONSTEXPR_CXX20 void* ReallocateFast(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* ReallocateFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize)
@@ -188,8 +188,7 @@ CLANG_CONSTEXPR_CXX20 void* ReallocateFast(
     return pointer;
 }
 
-NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 
-void FreeNull(void* pointer) 
+base_clang_constexpr_cxx20 void FreeNull(void* pointer) 
 {
     //void* value = nullptr;
 
@@ -201,8 +200,7 @@ void FreeNull(void* pointer)
     free(pointer);
 }
 
-NODISCARD_RETURN_RAW_PTR CLANG_CONSTEXPR_CXX20 
-void FreeNullAligned(void* pointer) 
+base_clang_constexpr_cxx20 void FreeNullAligned(void* pointer) 
 {
     //void* value = nullptr;
 
@@ -213,7 +211,7 @@ void FreeNullAligned(void* pointer)
     aligned_free(pointer);
 }
 
-CLANG_CONSTEXPR_CXX20 void AllocateFast(
+base_clang_constexpr_cxx20 void AllocateFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize,
@@ -256,7 +254,7 @@ CLANG_CONSTEXPR_CXX20 void AllocateFast(
     *size = minimumSize;
 }
 
-CLANG_CONSTEXPR_CXX20 void AllocateZerosFast(
+base_clang_constexpr_cxx20 void AllocateZerosFast(
     void*       pointer,
     uint32*     size,
     sizetype    minimumSize)
@@ -266,8 +264,8 @@ CLANG_CONSTEXPR_CXX20 void AllocateZerosFast(
 }
 
 
-NODISCARD_RETURN_RAW_PTR DECLARE_MEMORY_ALLOCATOR
-CLANG_CONSTEXPR_CXX20 void* MemoryDuplicate(
+base_nodiscard_return_raw_ptr base_declare_memory_allocator
+base_clang_constexpr_cxx20 void* MemoryDuplicate(
     const void* pointer,
     sizetype    size)
 {

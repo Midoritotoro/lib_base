@@ -5,10 +5,10 @@
 
 #include <base/core/utility/TypeTraits.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 	#include <base/core/thread/WindowsThread.h>
 	using ThreadPlatformImplementation = base::thread::WindowsThread;
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 	#include <base/core/thread/UnixThread.h>
 	using ThreadPlatformImplementation = base::thread::UnixThread;
 #endif
@@ -18,16 +18,16 @@ __BASE_THREAD_NAMESPACE_BEGIN
 
 class Thread final {
 public:
-	NODISCARD_THREAD_CTOR Thread() noexcept;
-	NODISCARD_THREAD_CTOR Thread(const Thread& other) noexcept;
+	base_nodiscard_thread_constructor Thread() noexcept;
+	base_nodiscard_thread_constructor Thread(const Thread& other) noexcept;
 
-	NODISCARD_THREAD_CTOR Thread(Thread&& rOther) noexcept;
+	base_nodiscard_thread_constructor Thread(Thread&& rOther) noexcept;
 
 
 	template <
 		class Function,
 		class ... Args>
-	NODISCARD_THREAD_CTOR Thread(
+	base_nodiscard_thread_constructor Thread(
 		Function&& _routine,
 		Args&& ... args)
 	{
@@ -41,7 +41,7 @@ public:
 		class Owner,
 		class Method,
 		class ... Args>
-	NODISCARD_THREAD_CTOR Thread(
+	base_nodiscard_thread_constructor Thread(
 		Owner* _owner,
 		Method&& _routine,
 		Args&& ... args)
@@ -62,13 +62,13 @@ public:
 	~Thread();
 
 	void setPriority(AbstractThread::Priority priority);
-	NODISCARD AbstractThread::Priority priority() const noexcept;
+	base_nodiscard AbstractThread::Priority priority() const noexcept;
 
 	void setTerminateOnClose(bool terminateOnClose);
-	NODISCARD bool terminateOnClose() const noexcept;
+	base_nodiscard bool terminateOnClose() const noexcept;
 
-	NODISCARD bool isFinished() const noexcept;
-	NODISCARD bool isRunning() const noexcept;
+	base_nodiscard bool isFinished() const noexcept;
+	base_nodiscard bool isRunning() const noexcept;
 
 	void waitMs(int ms);
 	void waitS(int sec);
@@ -110,10 +110,10 @@ public:
 		);
 	}
 
-	NODISCARD ThreadPlatformImplementation* impl() const noexcept;
+	base_nodiscard ThreadPlatformImplementation* impl() const noexcept;
 		
-	static NODISCARD int getIdealThreadCount() noexcept;
-	static NODISCARD Thread* currentThread() noexcept;
+	static base_nodiscard int getIdealThreadCount() noexcept;
+	static base_nodiscard Thread* currentThread() noexcept;
 private:
 	friend class ThreadsData;
 	std::unique_ptr<ThreadPlatformImplementation> _impl = nullptr;

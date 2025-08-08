@@ -18,7 +18,7 @@ __BASE_ARCH_NAMESPACE_BEGIN
     __attribute__((artificial))
 #endif
 
-always_inline void YieldCpu(void);
+base_always_inline void YieldCpu(void);
 
 void YieldCpu(void)
 #if defined(__cplusplus)
@@ -34,23 +34,23 @@ void YieldCpu(void)
 #elif __has_builtin(__builtin_ia32_pause)
         __builtin_ia32_pause();
 
-#elif defined(PROCESSOR_X86) && defined(base_cpp_gnu)
+#elif defined(base_processor_x86) && defined(base_cpp_gnu)
         // GCC < 10 don`t have __has_builtin()
         __builtin_ia32_pause();
 
-#elif defined(PROCESSOR_X86) && defined(base_cpp_msvc)
+#elif defined(base_processor_x86) && defined(base_cpp_msvc)
         _mm_pause();
 
-#elif defined(PROCESSOR_X86)
+#elif defined(base_processor_x86)
         asm("pause");
 
 #elif __has_builtin(__builtin_arm_yield)
         __builtin_arm_yield();
 
-#elif defined(PROCESSOR_ARM) && PROCESSOR_ARM >= 7 && defined(base_cpp_gnu)
+#elif defined(base_processor_arm) && base_processor_arm >= 7 && defined(base_cpp_gnu)
         asm("yield");        
 
-#elif defined(PROCESSOR_RISCV)
+#elif defined(base_processor_riscv)
         asm(".word 0x0100000f");        // a.k.a. "pause"
 
 #endif

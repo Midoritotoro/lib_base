@@ -4,7 +4,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD always_inline bool alwaysTrue(
+base_declare_const_function base_nodiscard base_always_inline bool alwaysTrue(
     const char*,
     const char*) noexcept
 {
@@ -12,7 +12,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool alwaysTrue(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp1(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp1(
     const char* first,
     const char* second) noexcept 
 {
@@ -20,7 +20,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp1(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp2(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp2(
     const char* first,
     const char* second) noexcept 
 {
@@ -31,7 +31,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp2(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp3(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp3(
     const char* first, 
     const char* second) noexcept 
 {
@@ -42,7 +42,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp3(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp4(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp4(
     const char* first,
     const char* second) noexcept 
 {
@@ -53,7 +53,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp4(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp5(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp5(
     const char* first, 
     const char* second) noexcept 
 {
@@ -64,7 +64,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp5(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp6(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp6(
     const char* first, 
     const char* second) noexcept 
 {
@@ -75,7 +75,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp6(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp7(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp7(
     const char* first, 
     const char* second) noexcept
 {
@@ -86,7 +86,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp7(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp8(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp8(
     const char* first,
     const char* second) noexcept
 {
@@ -97,7 +97,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp8(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp9(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp9(
     const char* first,
     const char* second) noexcept
 {
@@ -108,7 +108,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp9(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp10(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp10(
     const char* first, 
     const char* second) noexcept 
 {
@@ -122,7 +122,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp10(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp11(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp11(
     const char* first,
     const char* second) noexcept 
 {
@@ -136,7 +136,7 @@ DECLARE_NOALIAS NODISCARD always_inline bool memcmp11(
 }
 
 
-DECLARE_NOALIAS NODISCARD always_inline bool memcmp12(
+base_declare_const_function base_nodiscard base_always_inline bool memcmp12(
     const char* first,
     const char* second) noexcept
 {

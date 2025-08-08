@@ -5,8 +5,8 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 #include <src/core/utility/simd/traits/SimdFindTraits.h>
 
@@ -14,7 +14,7 @@ __BASE_NAMESPACE_BEGIN
 
 
 template <class _Type_>
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastScalar(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastScalar(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -25,7 +25,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastScalar(
 template <
     class _Traits_,
     class _Type_>
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialSse2(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialSse2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -73,7 +73,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialSse2(
 template <
     class _Traits_,
     class _Type_>
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialAvx(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -136,7 +136,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx(
 template <
     class _Traits_,
     class _Type_>
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialAvx512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -195,7 +195,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivialAvx512(
     return FindLastTrivialAvx<_Traits_>(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial8Bit(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -213,7 +213,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial8Bit(
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial16Bit(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -231,7 +231,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial16Bit(
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial32Bit(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -249,7 +249,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial32Bit(
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial64Bit(
+base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -268,7 +268,7 @@ DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial64Bit(
 }
 
 template <class _Type_>
-CONSTEXPR_CXX20 DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastVectorized(
+base_constexpr_cxx20 base_declare_const_function base_nodiscard const void* base_stdcall FindLastVectorized(
     const void*     firstPointer,
     const void*     lastPointer, 
     const _Type_&   value) noexcept 

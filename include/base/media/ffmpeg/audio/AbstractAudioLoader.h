@@ -22,11 +22,11 @@ namespace base::media::ffmpeg::audio {
 
 		virtual void dropFramesTill(int64_t samples) {
 		}
-		[[nodiscard]] virtual int64_t startReadingQueuedFrames(float newSpeed) {
+		base_nodiscard virtual int64_t startReadingQueuedFrames(float newSpeed) {
 			return 0;
 		}
 
-		[[nodiscard]] int bytesPerBuffer();
+		base_nodiscard int bytesPerBuffer();
 
 		enum class ReadError {
 			Other,
@@ -57,7 +57,7 @@ namespace base::media::ffmpeg::audio {
 		void dropDecodedSamples();
 
 	protected:
-		[[nodiscard]] virtual ReadResult readMore() = 0;
+		base_nodiscard virtual ReadResult readMore() = 0;
 
 		bool _access = false;
 		QByteArray _data;

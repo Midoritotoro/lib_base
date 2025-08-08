@@ -1,10 +1,10 @@
 #pragma once 
 
-#include <src/core/memory/AddressOf.h>
+#include <base/core/memory/AddressOf.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-#if BASE_HAS_CXX20
+#if base_has_cxx20
 	template <
 		class		_Type_,
 		class...	_Types_>
@@ -30,12 +30,12 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 template <
     class		_Type_, 
     class...	_Types_>
-CONSTEXPR_CXX20 inline void ConstructInPlace(
+base_constexpr_cxx20 inline void ConstructInPlace(
     _Type_&         object, 
     _Types_&&...    args) noexcept(
         std::is_nothrow_constructible_v<_Type_, _Types_...>) 
 {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
     if (is_constant_evaluated())
         ConstructAt(AddressOf(object), std::forward<_Types_>(args)...);
     else

@@ -7,38 +7,38 @@ __BASE_NAMESPACE_BEGIN
 
 class CountTraits64Bit : public FindTraits64Bit {
 public:
-    static NODISCARD __m512i SubstractAvx512(
+    static base_nodiscard __m512i SubstractAvx512(
         const __m512i left,
         const __m512i right) noexcept;
-    static NODISCARD __m256i SubstractAvx(
+    static base_nodiscard __m256i SubstractAvx(
         const __m256i left,
         const __m256i right) noexcept;
-    static NODISCARD __m128i SubstractSse(
+    static base_nodiscard __m128i SubstractSse(
         const __m128i left,
         const __m128i right) noexcept;
 
-    static NODISCARD std::size_t ReduceAvx512(const __m512i value) noexcept;
-    static NODISCARD std::size_t ReduceAvx(const __m256i value) noexcept;
-    static NODISCARD std::size_t ReduceSse(const __m128i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx512(const __m512i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx(const __m256i value) noexcept;
+    static base_nodiscard std::size_t ReduceSse(const __m128i value) noexcept;
 };
 
 class CountTraits32Bit : public FindTraits32Bit {
 public:
     inline static constexpr size_t maxCount = 0x1FFF'FFFF;
 
-    static NODISCARD __m512i SubstractAvx512(
+    static base_nodiscard __m512i SubstractAvx512(
         const __m512i left,
         const __m512i right) noexcept;
-    static NODISCARD __m256i SubstractAvx(
+    static base_nodiscard __m256i SubstractAvx(
         const __m256i left,
         const __m256i right) noexcept;
-    static NODISCARD __m128i SubstractSse(
+    static base_nodiscard __m128i SubstractSse(
         const __m128i left,
         const __m128i right) noexcept;
 
-    static NODISCARD std::size_t ReduceAvx512(const __m512i value) noexcept;
-    static NODISCARD std::size_t ReduceAvx(const __m256i value) noexcept;
-    static NODISCARD std::size_t ReduceSse(const __m128i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx512(const __m512i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx(const __m256i value) noexcept;
+    static base_nodiscard std::size_t ReduceSse(const __m128i value) noexcept;
 };
 
 class CountTraits16Bit : public FindTraits16Bit {
@@ -48,19 +48,19 @@ public:
 
     static constexpr size_t maxCount = 0x7FFF;
 
-    static NODISCARD __m512i SubstractAvx512(
+    static base_nodiscard __m512i SubstractAvx512(
         const __m512i left,
         const __m512i right) noexcept;
-    static NODISCARD __m256i SubstractAvx(
+    static base_nodiscard __m256i SubstractAvx(
         const __m256i left,
         const __m256i right) noexcept;
-    static NODISCARD __m128i SubstractSse(
+    static base_nodiscard __m128i SubstractSse(
         const __m128i left,
         const __m128i right) noexcept;
 
-    static NODISCARD std::size_t ReduceAvx512(const __m512i value) noexcept;
-    static NODISCARD std::size_t ReduceAvx(const __m256i value) noexcept;
-    static NODISCARD std::size_t ReduceSse(const __m128i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx512(const __m512i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx(const __m256i value) noexcept;
+    static base_nodiscard std::size_t ReduceSse(const __m128i value) noexcept;
 };
 
 class CountTraits8Bit : public FindTraits8Bit {
@@ -76,19 +76,19 @@ public:
 
     static constexpr size_t maxCount = 0xFF;
 
-    static NODISCARD __m512i SubstractAvx512(
+    static base_nodiscard __m512i SubstractAvx512(
         const __m512i left,
         const __m512i right) noexcept;
-    static NODISCARD __m256i SubstractAvx(
+    static base_nodiscard __m256i SubstractAvx(
         const __m256i left,
         const __m256i right) noexcept;
-    static NODISCARD __m128i SubstractSse(
+    static base_nodiscard __m128i SubstractSse(
         const __m128i left,
         const __m128i right) noexcept;
 
-    static NODISCARD std::size_t ReduceAvx512(const __m512i value) noexcept;
-    static NODISCARD std::size_t ReduceAvx(const __m256i value) noexcept;
-    static NODISCARD std::size_t ReduceSse(const __m128i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx512(const __m512i value) noexcept;
+    static base_nodiscard std::size_t ReduceAvx(const __m256i value) noexcept;
+    static base_nodiscard std::size_t ReduceSse(const __m128i value) noexcept;
 };
 
 __BASE_NAMESPACE_END

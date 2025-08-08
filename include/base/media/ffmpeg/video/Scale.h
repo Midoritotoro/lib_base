@@ -31,8 +31,8 @@ class FrameScaler {
     int openScaler(filter_t* p_filter);
     void closeScaler(filter_t* p_filter);
 
-    NODISCARD int initScaler(filter_t* p_filter);
-    NODISCARD Frame* filter(
+    base_nodiscard int initScaler(filter_t* p_filter);
+    base_nodiscard Frame* filter(
         filter_t* p_filter,
         Frame* p_pic);
 
@@ -50,7 +50,7 @@ class FrameScaler {
     void fixParameters(
         enum AVPixelFormat* pi_fmt,
         bool* pb_has_a, fourcc_t fmt);
-    NODISCARD int getParameters(
+    base_nodiscard int getParameters(
         ScalerConfiguration* p_cfg,
         const video_format_t* p_fmti,
         const video_format_t* p_fmto,

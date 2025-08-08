@@ -3,6 +3,9 @@
 #include <base/core/arch/ProcessorFeatures.h>
 #include <src/core/utility/simd/MinMax.h>
 
+#include <base/core/arch/SimdHelpers.h>
+
+
 __BASE_NAMESPACE_BEGIN
 
 namespace SSE2 {
@@ -23,48 +26,48 @@ namespace SSE2 {
 
         NumberTraits8Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
         static SimdType Increment(SimdType _Idx);
         static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current, 
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::xmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -84,48 +87,48 @@ namespace SSE2 {
 
         NumberTraits16Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
         static SimdType Increment(SimdType _Idx);
         static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current, 
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::xmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -145,48 +148,48 @@ namespace SSE2 {
 
         NumberTraits32Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
         static SimdType Increment(SimdType _Idx);
         static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current, 
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
 
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::xmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -206,52 +209,52 @@ namespace SSE2 {
 
         NumberTraits64Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
         static SimdType Increment(SimdType _Idx);
         static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
 
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current, 
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm_undefined_si128()) noexcept;
 
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static UnsignedType GetVPos(
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static UnsignedType GetVPos(
             const SimdType _Idx,
             const unsigned long _H_pos) noexcept;
 
-        NODISCARD static arch::xmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::xmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static arch::xmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 } // namespace SSE2
 

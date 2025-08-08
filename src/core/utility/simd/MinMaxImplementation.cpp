@@ -16,7 +16,7 @@ template <
     bool _Sign_,
     typename _Integer_,
     typename = std::enable_if_t<IsValidIntegerType<_Integer_>>>
-inline DECLARE_NOALIAS void __CDECL MaximumIntegerImplementation(
+inline base_declare_const_function void base_cdecl MaximumIntegerImplementation(
     const void* _Start,
     const void* _End,
     _Integer_* _Out)
@@ -95,7 +95,7 @@ template <
     bool _Sign_,
     typename _Integer_,
     typename = std::enable_if_t<IsValidIntegerType<_Integer_>>>
-inline DECLARE_NOALIAS void __CDECL MinimumIntegerImplementation(
+inline base_declare_const_function void base_cdecl MinimumIntegerImplementation(
     const void* _Start,
     const void* _End,
     _Integer_* _Out)
@@ -170,7 +170,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumIntegerImplementation(
 }
 
 
-DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
+base_declare_const_function void base_cdecl MinimumElement8Bit(
     const void* _Start,
     const void* _End,
     int8* _Out)
@@ -186,7 +186,7 @@ DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
             SSE2::NumberTraits8Bit, true>(_Start, _End, _Out);
 }
 
-DECLARE_NOALIAS void __CDECL MinimumElement8BitUnsigned(
+base_declare_const_function void base_cdecl MinimumElement8BitUnsigned(
     const void* _Start,
     const void* _End,
     uint8* _Out)
@@ -203,7 +203,7 @@ DECLARE_NOALIAS void __CDECL MinimumElement8BitUnsigned(
 }
 
 
-inline DECLARE_NOALIAS void __CDECL MinimumElement16Bit(
+inline base_declare_const_function void base_cdecl MinimumElement16Bit(
     const void* _Start,
     const void* _End,
     int16* _Out)
@@ -219,7 +219,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement16Bit(
         SSE2::NumberTraits16Bit, true>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MinimumElement32Bit(
+inline base_declare_const_function void base_cdecl MinimumElement32Bit(
     const void* _Start,
     const void* _End,
     int32* _Out)
@@ -235,7 +235,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement32Bit(
         SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MinimumElement64Bit(
+inline base_declare_const_function void base_cdecl MinimumElement64Bit(
     const void* _Start,
     const void* _End,
     int64* _Out)
@@ -253,7 +253,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement64Bit(
 
 
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement8Bit(
+inline base_declare_const_function void base_cdecl MaximumElement8Bit(
     const void* _Start,
     const void* _End,
     int8* _Out)
@@ -269,7 +269,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement8Bit(
         SSE2::NumberTraits8Bit, true>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement16Bit(
+inline base_declare_const_function void base_cdecl MaximumElement16Bit(
     const void* _Start,
     const void* _End,
     int16* _Out)
@@ -285,7 +285,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement16Bit(
         SSE2::NumberTraits16Bit, true>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
+inline base_declare_const_function void base_cdecl MaximumElement32Bit(
     const void* _Start,
     const void* _End,
     int32* _Out)
@@ -301,7 +301,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
         SSE2::NumberTraits32Bit, true>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement64Bit(
+inline base_declare_const_function void base_cdecl MaximumElement64Bit(
     const void* _Start,
     const void* _End,
     int64* _Out)
@@ -318,7 +318,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement64Bit(
 }
 
 // -------------------------------------------------------------
-inline DECLARE_NOALIAS void __CDECL MinimumElement16BitUnsigned(
+inline base_declare_const_function void base_cdecl MinimumElement16BitUnsigned(
     const void* _Start,
     const void* _End,
     uint16* _Out)
@@ -334,7 +334,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement16BitUnsigned(
         SSE2::NumberTraits16Bit, false>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MinimumElement32BitUnsigned(
+inline base_declare_const_function void base_cdecl MinimumElement32BitUnsigned(
     const void* _Start,
     const void* _End,
     uint32* _Out)
@@ -350,7 +350,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement32BitUnsigned(
         SSE2::NumberTraits32Bit, false>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MinimumElement64BitUnsigned(
+inline base_declare_const_function void base_cdecl MinimumElement64BitUnsigned(
     const void* _Start,
     const void* _End,
     uint64* _Out)
@@ -366,7 +366,7 @@ inline DECLARE_NOALIAS void __CDECL MinimumElement64BitUnsigned(
         SSE2::NumberTraits64Bit, false>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement8BitUnsigned(
+inline base_declare_const_function void base_cdecl MaximumElement8BitUnsigned(
     const void* _Start,
     const void* _End,
     uint8* _Out)
@@ -382,7 +382,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement8BitUnsigned(
         SSE2::NumberTraits8Bit, false>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement16BitUnsigned(
+inline base_declare_const_function void base_cdecl MaximumElement16BitUnsigned(
     const void* _Start,
     const void* _End,
     uint16* _Out)
@@ -398,7 +398,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement16BitUnsigned(
         SSE2::NumberTraits16Bit, false>(_Start, _End, _Out);
 }
 
-inline DECLARE_NOALIAS void __CDECL MaximumElement32BitUnsigned(
+inline base_declare_const_function void base_cdecl MaximumElement32BitUnsigned(
     const void* _Start,
     const void* _End,
     uint32* _Out)
@@ -414,7 +414,7 @@ inline DECLARE_NOALIAS void __CDECL MaximumElement32BitUnsigned(
         SSE2::NumberTraits32Bit, false>(_Start, _End, _Out);
 }
 
-DECLARE_NOALIAS void __CDECL MaximumElement64BitUnsigned(
+base_declare_const_function void base_cdecl MaximumElement64BitUnsigned(
     const void* _Start,
     const void* _End,
     uint64* _Out)

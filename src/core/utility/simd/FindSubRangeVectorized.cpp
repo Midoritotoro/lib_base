@@ -5,13 +5,13 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
 
-DECLARE_NOALIAS NODISCARD const void* FindSubRange8Bit(
+base_declare_const_function base_nodiscard const void* FindSubRange8Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -20,7 +20,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange8Bit(
     return nullptr;
 }
 
-DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
+base_declare_const_function base_nodiscard const void* FindSubRange16Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -29,7 +29,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
     return nullptr;
 }
 
-DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
+base_declare_const_function base_nodiscard const void* FindSubRange32Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -38,7 +38,7 @@ DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
     return nullptr;
 }
 
-DECLARE_NOALIAS NODISCARD const void* FindSubRange64Bit(
+base_declare_const_function base_nodiscard const void* FindSubRange64Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,

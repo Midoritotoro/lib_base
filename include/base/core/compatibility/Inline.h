@@ -1,15 +1,15 @@
 #pragma once 
 
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/CompilerDetection.h>
 
 
 #if !defined(base_never_inline)
 #  if defined(base_cpp_msvc) || defined(base_cpp_clang)
-#     define never_inline __declspec(noinline)
+#     define base_never_inline __declspec(noinline)
 #  elif defined(base_cpp_gnu) 
-#    define never_inline __attribute__((noinline))
+#    define base_never_inline __attribute__((noinline))
 #  else 
-#    define never_inline 
+#    define base_never_inline 
 #  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)
 #endif // !defined(base_never_inline)
 
@@ -18,7 +18,7 @@
 #  if defined(base_cpp_msvc) || defined(base_cpp_clang)
 #    define base_always_inline __forceinline
 #  elif defined(base_cpp_gnu)
-#    define base_always_inline inline __attribute__((always_inline))
+#    define base_always_inline inline __attribute__((base_always_inline))
 #  else 
 #    define base_always_inline inline
 #  endif // defined(base_cpp_msvc) || defined(base_cpp_clang) || defined(base_cpp_gnu)

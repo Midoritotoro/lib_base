@@ -6,7 +6,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _ContiguousIterator_>
 // Tries to get the difference between contiguous iterators
-inline NODISCARD CONSTEXPR_CXX20 sizetype IteratorsDifference(
+inline base_nodiscard base_constexpr_cxx20 sizetype IteratorsDifference(
     _ContiguousIterator_ firstIterator,
     _ContiguousIterator_ lastIterator) noexcept
 {

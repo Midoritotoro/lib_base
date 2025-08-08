@@ -5,12 +5,12 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable8BitSse2(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -43,7 +43,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitSse2(
             static_cast<uchar*>(lastPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable8BitAvx(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -83,7 +83,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx(
         return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable8BitAvx512(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -122,7 +122,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable8BitAvx512(
 // =======================================================================================
 
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable16BitSse2(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -155,7 +155,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitSse2(
             static_cast<ushort*>(lastPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable16BitAvx(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -195,7 +195,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx(
         return ReverseTriviallySwappable8BitSse2(firstPointer, lastPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable16BitAvx512(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -234,7 +234,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable16BitAvx512(
 
 // ==================================================================
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable32BitSse2(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -268,7 +268,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitSse2(
             static_cast<uint32*>(lastPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable32BitAvx(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -302,7 +302,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx(
         return ReverseTriviallySwappable32BitSse2(firstPointer, lastPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable32BitAvx512(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -337,7 +337,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable32BitAvx512(
 
 // ====================================================================================================
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable64BitSse2(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -369,7 +369,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitSse2(
             static_cast<uint64*>(lastPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable64BitAvx(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -401,7 +401,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx(
         return ReverseTriviallySwappable64BitSse2(firstPointer, lastPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallySwappable64BitAvx512(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -433,7 +433,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallySwappable64BitAvx512(
 
 
 
-DECLARE_NOALIAS NODISCARD void ReverseVectorized8Bit(
+base_declare_const_function base_nodiscard void ReverseVectorized8Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -449,7 +449,7 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized8Bit(
         static_cast<uchar*>(lastPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseVectorized16Bit(
+base_declare_const_function base_nodiscard void ReverseVectorized16Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -465,7 +465,7 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized16Bit(
         static_cast<ushort*>(lastPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseVectorized32Bit(
+base_declare_const_function base_nodiscard void ReverseVectorized32Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -481,7 +481,7 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized32Bit(
         static_cast<uint32*>(lastPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseVectorized64Bit(
+base_declare_const_function base_nodiscard void ReverseVectorized64Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -499,7 +499,7 @@ DECLARE_NOALIAS NODISCARD void ReverseVectorized64Bit(
 
 
 template <size_t typeSizeInBytes>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseVectorized(
     void* firstPointer,
     void* lastPointer) noexcept
 {

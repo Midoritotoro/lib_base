@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <base/core/arch/CpuFeature.h>
-#include <src/core/utility/simd/SimdVectorType.h>
 
 __BASE_ARCH_NAMESPACE_BEGIN
 

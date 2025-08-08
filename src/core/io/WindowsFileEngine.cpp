@@ -1,6 +1,6 @@
 #include <base/core/io/WindowsFileEngine.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 #include <base/core/io/WindowsSmartHandle.h>
 #include <base/core/system/SystemTools.h>

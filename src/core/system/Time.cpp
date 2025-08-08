@@ -3,7 +3,7 @@
 #include <atomic>
 #include <limits>
 
-WARNING_DISABLE_MSVC(4996)
+base_disable_warning_msvc(4996)
 
 __BASE_TIME_NAMESPACE_BEGIN
 

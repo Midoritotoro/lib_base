@@ -12,24 +12,24 @@ __BASE_QT_TEXT_NAMESPACE_BEGIN
 
 using Blocks = std::vector<Block>;
 
-[[nodiscard]] style::font WithFlags(
+base_nodiscard style::font WithFlags(
 	const style::font& font,
 	TextBlockFlags flags,
 	style::FontFlags fontFlags = 0) ;
 
-[[nodiscard]] Qt::LayoutDirection UnpackParagraphDirection(
+base_nodiscard Qt::LayoutDirection UnpackParagraphDirection(
 	bool ltr,
 	bool rtl);
 
 class AbstractBlock {
 public:
-	[[nodiscard]] uint16 position() const;
-	[[nodiscard]] TextBlockType type() const;
-	[[nodiscard]] TextBlockFlags flags() const;
+	base_nodiscard uint16 position() const;
+	base_nodiscard TextBlockType type() const;
+	base_nodiscard TextBlockFlags flags() const;
 
-	[[nodiscard]] int objectWidth() const;
-	[[nodiscard]] uint16 colorIndex() const;
-	[[nodiscard]] uint16 linkIndex() const;
+	base_nodiscard int objectWidth() const;
+	base_nodiscard uint16 colorIndex() const;
+	base_nodiscard uint16 linkIndex() const;
 
 	void setLinkIndex(uint16 index);
 protected:
@@ -50,14 +50,14 @@ public:
 	void setQuoteIndex(uint16 index) {
 		_quoteIndex = index;
 	}
-	[[nodiscard]] uint16 quoteIndex() const {
+	base_nodiscard uint16 quoteIndex() const {
 		return _quoteIndex;
 	}
 	void setParagraphDirection(Qt::LayoutDirection direction) {
 		_paragraphLTR = (direction == Qt::LeftToRight);
 		_paragraphRTL = (direction == Qt::RightToLeft);
 	}
-	[[nodiscard]] Qt::LayoutDirection paragraphDirection() const {
+	base_nodiscard Qt::LayoutDirection paragraphDirection() const {
 		return UnpackParagraphDirection(_paragraphLTR, _paragraphRTL);
 	}
 
@@ -78,8 +78,8 @@ class SkipBlock final : public AbstractBlock {
 public:
 	SkipBlock(BlockDescriptor descriptor, int width, int height);
 
-	[[nodiscard]] int width() const;
-	[[nodiscard]] int height() const;
+	base_nodiscard int width() const;
+	base_nodiscard int height() const;
 
 private:
 	int _width = 0;
@@ -94,33 +94,33 @@ public:
 	Block& operator=(Block&& other);
 	~Block();
 
-	[[nodiscard]] static Block Newline(
+	base_nodiscard static Block Newline(
 		BlockDescriptor descriptor,
 		uint16 quoteIndex);
-	[[nodiscard]] static Block Text(BlockDescriptor descriptor);
-	[[nodiscard]] static Block Skip(
+	base_nodiscard static Block Text(BlockDescriptor descriptor);
+	base_nodiscard static Block Skip(
 		BlockDescriptor descriptor,
 		int width,
 		int height);
 
 	template <typename FinalBlock>
-	[[nodiscard]] FinalBlock& unsafe() {
+	base_nodiscard FinalBlock& unsafe() {
 		return *reinterpret_cast<FinalBlock*>(&_data);
 	}
 
 	template <typename FinalBlock>
-	[[nodiscard]] const FinalBlock& unsafe() const {
+	base_nodiscard const FinalBlock& unsafe() const {
 		return *reinterpret_cast<const FinalBlock*>(&_data);
 	}
 
-	[[nodiscard]] AbstractBlock* get();
-	[[nodiscard]] const AbstractBlock* get() const;
+	base_nodiscard AbstractBlock* get();
+	base_nodiscard const AbstractBlock* get() const;
 
-	[[nodiscard]] AbstractBlock* operator->();
-	[[nodiscard]] const AbstractBlock* operator->() const;
+	base_nodiscard AbstractBlock* operator->();
+	base_nodiscard const AbstractBlock* operator->() const;
 
-	[[nodiscard]] AbstractBlock& operator*();
-	[[nodiscard]] const AbstractBlock& operator*() const;
+	base_nodiscard AbstractBlock& operator*();
+	base_nodiscard const AbstractBlock& operator*() const;
 
 private:
 	struct Tag {
@@ -130,7 +130,7 @@ private:
 	}
 
 	template <typename FinalType, typename ...Args>
-	[[nodiscard]] static Block New(Args &&...args) {
+	base_nodiscard static Block New(Args &&...args) {
 		auto result = Block(Tag{});
 		result.emplace<FinalType>(std::forward<Args>(args)...);
 		return result;
@@ -151,15 +151,15 @@ private:
 	std::aligned_storage_t<sizeof(SkipBlock), alignof(void*)> _data;
 };
 
-[[nodiscard]] inline uint16 CountPosition(Blocks::const_iterator i) {
+base_nodiscard inline uint16 CountPosition(Blocks::const_iterator i) {
 	return (*i)->position();
 }
 
-[[nodiscard]] int CountBlockHeight(
+base_nodiscard int CountBlockHeight(
 	const AbstractBlock* block,
 	const style::font& font);
 
-[[nodiscard]] inline bool IsMono(TextBlockFlags flags) {
+base_nodiscard inline bool IsMono(TextBlockFlags flags) {
 	return (flags & TextBlockFlag::Pre) || (flags & TextBlockFlag::Code);
 }
 

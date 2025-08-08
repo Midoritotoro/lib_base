@@ -5,12 +5,12 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD std::size_t CountSubRange8Bit(
+base_declare_const_function base_nodiscard std::size_t CountSubRange8Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -19,7 +19,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange8Bit(
     return 0;
 }
 
-DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
+base_declare_const_function base_nodiscard std::size_t CountSubRange16Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -28,7 +28,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
     return 0;
 }
 
-DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
+base_declare_const_function base_nodiscard std::size_t CountSubRange32Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -37,7 +37,7 @@ DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
     return 0;
 }
 
-DECLARE_NOALIAS NODISCARD std::size_t CountSubRange64Bit(
+base_declare_const_function base_nodiscard std::size_t CountSubRange64Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,

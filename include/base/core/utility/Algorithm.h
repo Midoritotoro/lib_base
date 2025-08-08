@@ -1,10 +1,13 @@
 ﻿#pragma once
 
-#if defined(OS_WIN) && defined(CPP_MSVC) && !defined(__GNUC__) && !defined(__clang__)
+#include <base/core/compatibility/CompilerDetection.h>
+#include <base/core/arch/SystemDetection.h>
+
+#if defined(base_os_windows) && defined(base_cpp_msvc) && !defined(base_cpp_gnu) && !defined(base_cpp_clang)
 #include <__msvc_iter_core.hpp>
 #endif
 
-#if BASE_HAS_CXX20
+#if base_has_cxx20
 	#include <ranges>
 #endif
 
@@ -52,7 +55,7 @@ template<typename I, typename S, typename T,
 	indirectly_binary_invocable<Op, T*, ::std::projected<I, P>>&&
 	::std::assignable_from<T&, ::std::indirect_result_t<Op&,
 	T*, ::std::projected<I, P>>>
-always_inline [[nodiscard]] T accumulate(
+base_always_inline base_nodiscard T accumulate(
 	I first,
 	S last,
 	T init,
@@ -71,7 +74,7 @@ indirectly_binary_invocable<Op, T*,
 	::std::assignable_from<T&, ::std::indirect_result_t<Op&, T*,
 	::std::projected<iterator_t<Rng>, P>>>
 
-always_inline [[nodiscard]] T accumulate(
+base_always_inline base_nodiscard T accumulate(
 	Rng&& rng,
 	T init,
 	Op op = Op{},
@@ -82,30 +85,30 @@ always_inline [[nodiscard]] T accumulate(
 }
 
 template <typename T>
-always_inline void accumulateMax(T& a, const T& b) {
+base_always_inline void accumulateMax(T& a, const T& b) {
 	if (a < b)
 		a = b;
 }
 
 template <typename T>
-always_inline void accumulateMin(T& a, const T& b) {
+base_always_inline void accumulateMin(T& a, const T& b) {
 	if (a > b)
 		a = b;
 }
 
 template <typename T>
-always_inline [[nodiscard]] T&& take(T& value) {
+base_always_inline base_nodiscard T&& take(T& value) {
 	return ::std::exchange(value, T{});
 }
 
-#if defined(OS_WIN)
-	[[nodiscard]] bool IsWindowsGreaterThen(int version);
-	[[nodiscard]] bool SetAutoRunKey(
+#if defined(base_os_windows)
+	base_nodiscard bool IsWindowsGreaterThen(int version);
+	base_nodiscard bool SetAutoRunKey(
 		const ::std::wstring& path,
 		const ::std::wstring& key);
 
 	#define MINIMUM_WINDOWS_VERSION		NTDDI_WIN10
 	#define IS_MINIMUM_WINDOWS_VERSION	IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
-#endif // OS_WIN
+#endif // base_os_windows
 
 __BASE_NAMESPACE_END

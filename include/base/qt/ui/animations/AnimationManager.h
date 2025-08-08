@@ -19,7 +19,7 @@ public:
 	void start(not_null<AnimationBase*> animation);
 	void stop();
 
-	[[nodiscard]] bool animating() const noexcept;
+	base_nodiscard bool animating() const noexcept;
 private:
 	void update();
 	void adjustCombined(not_null<CombinedGrowthAnimation*> animation);

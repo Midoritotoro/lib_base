@@ -1,9 +1,11 @@
 #pragma once 
 
 #include <base/core/arch/ProcessorFeatures.h>
-#include <src/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryUtility.h>
 
 #include <src/core/utility/simd/MinMax.h>
+#include <base/core/arch/SimdHelpers.h>
+
 
 __BASE_NAMESPACE_BEGIN
 
@@ -25,48 +27,48 @@ namespace AVX512 {
 
         NumberTraits8Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
-        NODISCARD static SimdType Increment(SimdType _Idx);
-        NODISCARD static SimdType Decrement(SimdType _Idx);
+        base_nodiscard static SimdType Increment(SimdType _Idx);
+        base_nodiscard static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current,
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::zmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -86,48 +88,48 @@ namespace AVX512 {
 
         NumberTraits16Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
-        NODISCARD static SimdType Increment(SimdType _Idx);
-        NODISCARD static SimdType Decrement(SimdType _Idx);
+        base_nodiscard static SimdType Increment(SimdType _Idx);
+        base_nodiscard static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
          template <class _Functor_>
-         NODISCARD static SimdType HorizontalFunc(
+         base_nodiscard static SimdType HorizontalFunc(
              const SimdType current,
              _Functor_      functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::zmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -147,48 +149,48 @@ namespace AVX512 {
 
         NumberTraits32Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
-        NODISCARD static SimdType Increment(SimdType _Idx);
-        NODISCARD static SimdType Decrement(SimdType _Idx);
+        base_nodiscard static SimdType Increment(SimdType _Idx);
+        base_nodiscard static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
         template <class _Functor_>
-        NODISCARD static SimdType HorizontalFunc(
+        base_nodiscard static SimdType HorizontalFunc(
             const SimdType  current,
             _Functor_       functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static arch::zmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -208,52 +210,52 @@ namespace AVX512 {
 
         NumberTraits64Bit() noexcept = default;
 
-        NODISCARD static SimdType SignCorrection(
+        base_nodiscard static SimdType SignCorrection(
             const SimdType _Val,
             const bool _Sign);
 
-        NODISCARD static SimdType Increment(SimdType _Idx);
-        NODISCARD static SimdType Decrement(SimdType _Idx);
+        base_nodiscard static SimdType Increment(SimdType _Idx);
+        base_nodiscard static SimdType Decrement(SimdType _Idx);
 
-        NODISCARD static SimdType Add(
+        base_nodiscard static SimdType Add(
             SimdType _FirstVector,
             SimdType _SecondVector);
-        NODISCARD static SimdType Load(const void* _Start);
+        base_nodiscard static SimdType Load(const void* _Start);
 
-        NODISCARD static SimdType Minimum(
+        base_nodiscard static SimdType Minimum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MinimumUnsigned(
+        base_nodiscard static SimdType MinimumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
-        NODISCARD static SimdType Maximum(
+        base_nodiscard static SimdType Maximum(
             const SimdType _First,
             const SimdType _Second,
             SimdType = _mm512_undefined_epi32()) noexcept;
-        NODISCARD static SimdType MaximumUnsigned(
+        base_nodiscard static SimdType MaximumUnsigned(
             const SimdType _First,
             const SimdType _Second) noexcept;
 
          template <class _Functor_>
-         NODISCARD static SimdType HorizontalFunc(
+         base_nodiscard static SimdType HorizontalFunc(
              const SimdType current, 
              _Functor_      functor) noexcept;
 
-        NODISCARD static SimdType HorizontalMinimum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMinimumUnsigned(const SimdType current) noexcept;
 
-        NODISCARD static SimdType HorizontalMaximum(const SimdType current) noexcept;
-        NODISCARD static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximum(const SimdType current) noexcept;
+        base_nodiscard static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
         
-        NODISCARD static SignedType GetAny(const SimdType current) noexcept;
-        NODISCARD static UnsignedType GetVPos(
+        base_nodiscard static SignedType GetAny(const SimdType current) noexcept;
+        base_nodiscard static UnsignedType GetVPos(
             const SimdType _Idx,
             const unsigned long _H_pos) noexcept;
 
-        NODISCARD static arch::zmmdouble ToDouble(SimdType _Vector);
-        NODISCARD static arch::zmmfloat ToFloat(SimdType _Vector);
+        base_nodiscard static arch::zmmdouble ToDouble(SimdType _Vector);
+        base_nodiscard static arch::zmmfloat ToFloat(SimdType _Vector);
     };
 } // namespace AVX512
 

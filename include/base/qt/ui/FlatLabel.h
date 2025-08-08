@@ -42,34 +42,34 @@ public:
 
 	FlatLabel(QWidget* parent = nullptr);
 
-	NODISCARD QSize sizeHint() const override;
-	NODISCARD QSize minimumSizeHint() const override;
+	base_nodiscard QSize sizeHint() const override;
+	base_nodiscard QSize minimumSizeHint() const override;
 
-	NODISCARD int textMaxWidth() const noexcept;
-	NODISCARD bool hasLinks() const noexcept;
+	base_nodiscard int textMaxWidth() const noexcept;
+	base_nodiscard bool hasLinks() const noexcept;
 
-	NODISCARD int fullHeight() const noexcept;
+	base_nodiscard int fullHeight() const noexcept;
 
 	void setText(const QString& text);
-	NODISCARD const text::String& text() const noexcept;
+	base_nodiscard const text::String& text() const noexcept;
 
 	void setSelectable(bool selectable);
-	NODISCARD bool selectable() const noexcept;
+	base_nodiscard bool selectable() const noexcept;
 
 	void setDoubleClickSelectsParagraph(bool doubleClickSelectsParagraph);
-	NODISCARD bool doubleClickSelectsParagraph() const noexcept;
+	base_nodiscard bool doubleClickSelectsParagraph() const noexcept;
 
 	void setBreakEverywhere(bool breakEverywhere);
-	NODISCARD bool breakEverywhere() const noexcept;
+	base_nodiscard bool breakEverywhere() const noexcept;
 
 	void setOpacity(float opacity);
-	NODISCARD float opacity() const noexcept;
+	base_nodiscard float opacity() const noexcept;
 
 	void setTextAlignment(Qt::Alignment alignment);
-	NODISCARD Qt::Alignment alignment() const noexcept;
+	base_nodiscard Qt::Alignment alignment() const noexcept;
 
 	void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
-	NODISCARD style::CornersRoundMode cornerRoundMode() const noexcept;
+	base_nodiscard style::CornersRoundMode cornerRoundMode() const noexcept;
 
 	void setStyle(
 		const SelfStyle* style,
@@ -92,8 +92,8 @@ public:
 
 	QMargins getMargins() const override;
 
-	NODISCARD int verticalMargins() const override;
-	NODISCARD int horizontalMargins() const override;
+	base_nodiscard int verticalMargins() const override;
+	base_nodiscard int horizontalMargins() const override;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -123,8 +123,8 @@ private:
 		ContextMenuReason reason);
 	void fillContextMenu(ContextMenuRequest request);
 
-	NODISCARD int countTextWidth() const noexcept;
-	NODISCARD int countTextHeight(int textWidth);
+	base_nodiscard int countTextWidth() const noexcept;
+	base_nodiscard int countTextHeight(int textWidth);
 
 	void refreshSize();
 	void refreshCursor(bool uponSymbol);

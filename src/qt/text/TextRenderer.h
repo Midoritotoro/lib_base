@@ -21,7 +21,7 @@ struct FixedRange {
 	QFixed from;
 	QFixed till;
 
-	[[nodiscard]] bool empty() const {
+	base_nodiscard bool empty() const {
 		return (till <= from);
 	}
 };
@@ -36,10 +36,10 @@ namespace {
 
 } // namespace
 
-[[nodiscard]] FixedRange Intersected(FixedRange a, FixedRange b);
-[[nodiscard]] bool Intersects(FixedRange a, FixedRange b);
-[[nodiscard]] FixedRange United(FixedRange a, FixedRange b);
-[[nodiscard]] bool Distinct(FixedRange a, FixedRange b);
+base_nodiscard FixedRange Intersected(FixedRange a, FixedRange b);
+base_nodiscard bool Intersects(FixedRange a, FixedRange b);
+base_nodiscard FixedRange United(FixedRange a, FixedRange b);
+base_nodiscard bool Distinct(FixedRange a, FixedRange b);
 
 
 class Renderer final {
@@ -48,7 +48,7 @@ public:
 	~Renderer();
 
 	void draw(QPainter& p, const PaintContext& context);
-	[[nodiscard]] TextState getState(
+	base_nodiscard TextState getState(
 		QPoint point,
 		GeometryDescriptor geometry,
 		StateRequest request);
@@ -56,7 +56,7 @@ private:
 	static constexpr auto kSpoilersRectsSize = 512;
 	struct BidiControl;
 
-	[[nodiscard]] Time::time_t now() const;
+	base_nodiscard Time::time_t now() const;
 
 	void initParagraphBidi();
 	void initNextParagraph(
@@ -73,7 +73,7 @@ private:
 		uint16 lineEnd,
 		Blocks::const_iterator blocksEnd);
 
-	[[nodiscard]] FixedRange findSelectTextRange(
+	base_nodiscard FixedRange findSelectTextRange(
 		const QScriptItem& si,
 		int itemStart,
 		int itemEnd,
@@ -88,7 +88,7 @@ private:
 	void applyBlockProperties(
 		QTextEngine& e,
 		not_null<const AbstractBlock*> block);
-	[[nodiscard]] common::ClickHandlerPtr lookupLink(
+	base_nodiscard common::ClickHandlerPtr lookupLink(
 		const AbstractBlock* block) const;
 
 	void fillRectsFromRanges();
@@ -98,7 +98,7 @@ private:
 
 	void composeHighlightPath();
 
-	[[nodiscard]] const AbstractBlock* markBlockForElisionGetEnd(
+	base_nodiscard const AbstractBlock* markBlockForElisionGetEnd(
 		int blockIndex);
 	void setElideBidi(int elideStart);
 

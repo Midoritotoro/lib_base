@@ -2,7 +2,7 @@
 
 #include <base/core/arch/Platform.h>
 
-#if defined(OS_LINUX) || defined(OS_MAC) 
+#if defined(base_os_linux) || defined(base_os_mac) 
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 

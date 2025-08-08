@@ -4,7 +4,7 @@
 __BASE_QT_COMMON_NAMESPACE_BEGIN
 
 namespace {
-	[[nodiscard]] QObject* TimersAdjuster() {
+	base_nodiscard QObject* TimersAdjuster() {
 		static QObject adjuster;
 		return &adjuster;
 	}

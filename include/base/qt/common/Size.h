@@ -13,14 +13,14 @@
 
 __BASE_QT_COMMON_NAMESPACE_BEGIN
 
-NODISCARD inline QSize TextSize(
+base_nodiscard inline QSize TextSize(
 	const QString& text,
 	const QFontMetrics& metrics)
 {
 	return metrics.size(0, text);
 }
 
-NODISCARD inline QSize TextSize(
+base_nodiscard inline QSize TextSize(
 	const QString& text,
 	const QFont& font)
 {
@@ -29,7 +29,7 @@ NODISCARD inline QSize TextSize(
 		: TextSize(text, QFontMetrics(font));
 }
 
-NODISCARD inline QSize GetMinimumSizeWithAspectRatio(
+base_nodiscard inline QSize GetMinimumSizeWithAspectRatio(
 	const QSize& imageSize,
 	int targetWidth)
 {
@@ -39,7 +39,7 @@ NODISCARD inline QSize GetMinimumSizeWithAspectRatio(
 		imageSize.height() / imageSize.width());
 }
 
-NODISCARD inline bool PartiallyEqual(
+base_nodiscard inline bool PartiallyEqual(
 	const QSize& first,
 	const QSize& second,
 	int maxDifference)
@@ -55,15 +55,15 @@ NODISCARD inline bool PartiallyEqual(
 	return (widthDifference + heightDifference) <= maxDifference;
 }
 
-NODISCARD inline int FontHeight(const QFont& font) {
+base_nodiscard inline int FontHeight(const QFont& font) {
 	return QFontMetrics(font).height();
 }
 
-NODISCARD inline QSize ScreenResolution() {
+base_nodiscard inline QSize ScreenResolution() {
 	return QApplication::primaryScreen()->availableGeometry().size();
 }
 
-NODISCARD inline int ScreenRefreshRate() {
+base_nodiscard inline int ScreenRefreshRate() {
 	return QApplication::primaryScreen()->refreshRate();
 }
 

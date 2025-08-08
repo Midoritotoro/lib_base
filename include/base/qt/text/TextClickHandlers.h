@@ -10,7 +10,7 @@ class PreClickHandler final : public common::ClickHandler {
 public:
 	PreClickHandler(not_null<String*> text, uint16 offset, uint16 length);
 
-	NODISCARD not_null<String*> text() const;
+	base_nodiscard not_null<String*> text() const;
 	void setText(not_null<String*> text);
 
 	void onClick(common::ClickContext context) const override;
@@ -26,7 +26,7 @@ class BlockquoteClickHandler final : public common::ClickHandler {
 public:
 	BlockquoteClickHandler(not_null<String*> text, int quoteIndex);
 
-	NODISCARD not_null<String*> text() const;
+	base_nodiscard not_null<String*> text() const;
 	void setText(not_null<String*> text);
 
 	void onClick(common::ClickContext context) const override;

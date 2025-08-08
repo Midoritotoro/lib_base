@@ -1,19 +1,19 @@
 #include <src/core/utility/simd/SimdAlgorithm.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryUtility.h>
 
 __BASE_NAMESPACE_BEGIN
 
 
-DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableScalar(
+base_declare_const_function base_always_inline void base_cdecl SwapRangesTriviallySwappableScalar(
     void* firstPointer1,
     void* lastPointer1,
     void* firstPointer2) noexcept
 {
     const auto length = memory::ByteLength(firstPointer1, lastPointer1);
 
-#if defined(PROCESSOR_X86_64)
+#if defined(base_processor_x86_64)
     constexpr size_t mask8 = ~((static_cast<size_t>(1) << 3) - 1);
 
     if (length >= 8) {
@@ -31,7 +31,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableScalar(
             memory::AdvanceBytes(firstPointer2, 8);
         } while (firstPointer1 != stopAt);
     }
-#elif defined(PROCESSOR_X86)
+#elif defined(base_processor_x86)
     constexpr size_t mask4 = ~((static_cast<size_t>(1) << 2) - 1);
     const auto length = memory::ByteLength(firstPointer1, lastPointer1);
 
@@ -64,7 +64,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableScalar(
     }
 }
 
-DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableSse2(
+base_declare_const_function base_always_inline void base_cdecl SwapRangesTriviallySwappableSse2(
     void* firstPointer1,
     void* lastPointer1,
     void* firstPointer2) noexcept
@@ -91,7 +91,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableSse2(
     SwapRangesTriviallySwappableScalar(firstPointer1, lastPointer1, firstPointer2);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx(
+base_declare_const_function base_always_inline void base_cdecl SwapRangesTriviallySwappableAvx(
     void* firstPointer1,
     void* lastPointer1,
     void* firstPointer2) noexcept
@@ -120,7 +120,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx(
     SwapRangesTriviallySwappableSse2(firstPointer1, lastPointer1, firstPointer2);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx512(
+base_declare_const_function base_always_inline void base_cdecl SwapRangesTriviallySwappableAvx512(
     void* firstPointer1,
     void* lastPointer1,
     void* firstPointer2) noexcept
@@ -147,7 +147,7 @@ DECLARE_NOALIAS always_inline void __CDECL SwapRangesTriviallySwappableAvx512(
     SwapRangesTriviallySwappableAvx(firstPointer1, lastPointer1, firstPointer2);
 }
 
-DECLARE_NOALIAS void __CDECL SwapRangesTriviallySwappable(
+base_declare_const_function void base_cdecl SwapRangesTriviallySwappable(
     void* firstPointer1,
     void* lastPointer1,
     void* firstPointer2) noexcept

@@ -1,13 +1,13 @@
 ﻿#pragma once  
 
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/Warnings.h>
 
 #include <cstdlib>
 #include <cassert>
 
 #include <iostream>
 
-WARNING_DISABLE_MSVC(6011)
+base_disable_warning_msvc(6011);
 
 struct staticlocale {
 	staticlocale() {
@@ -20,7 +20,7 @@ static staticlocale lc;
 static inline void fail(
 	const char* message,
 	const char* file,
-	int line)
+	int			line)
 {
 	printf("Error: %s in File \"%s\", Line: %d\n", message, file, line);
 
@@ -33,16 +33,15 @@ static inline void fail(
 	std::terminate();
 }
 
-static inline constexpr NODISCARD
-	const char* extract_basename(
-		const char* path,
-		size_t size)
-	{
-		while (size != 0 && path[size - 1] != '/' && path[size - 1] != '\\')
-			--size;
+static const char* extract_basename(
+	const char* path,
+	size_t size)
+{
+	while (size != 0 && path[size - 1] != '/' && path[size - 1] != '\\')
+		--size;
 
-		return path + size;
-	}
+	return path + size;
+}
 
 #define ReturnOnFailure(message, file, line, retval) \
 	do { \
@@ -53,12 +52,12 @@ static inline constexpr NODISCARD
 	
 
 #define AssertValidationCondition(condition, message, file, line)\
-	((UNLIKELY(!((condition))))\
+	((base_unlikely(!((condition))))\
 		? fail(message, file, line)\
 		: void(0))
 
 #define AssertValidationConditionWithRet(condition, message, file, line, retval)\
-	if ((UNLIKELY(!(condition)))) \
+	if ((base_unlikely(!(condition)))) \
 		ReturnOnFailure(message, file, line, retval)
 
 #define SOURCE_FILE_BASENAME (extract_basename(\

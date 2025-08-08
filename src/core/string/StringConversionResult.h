@@ -28,23 +28,23 @@ public:
 	~StringConversionResult() noexcept 
 	{}
 
-	constexpr inline NODISCARD bool isNull() const noexcept {
+	constexpr inline base_nodiscard bool isNull() const noexcept {
 		return (_dataStart == nullptr || _dataLength == 0);
 	}
 
-	constexpr inline NODISCARD _Char_* data() noexcept {
+	constexpr inline base_nodiscard _Char_* data() noexcept {
 		return _dataStart;
 	}
 
-	constexpr inline NODISCARD size_t length() const noexcept {
+	constexpr inline base_nodiscard size_t length() const noexcept {
 		return _dataLength;
 	}
 
-	constexpr inline NODISCARD size_t size() const noexcept {
+	constexpr inline base_nodiscard size_t size() const noexcept {
 		return _dataLength;
 	}
 
-	constexpr inline NODISCARD bool isNarrowingConversion() const noexcept {
+	constexpr inline base_nodiscard bool isNarrowingConversion() const noexcept {
 		return _isNarrowingConversion;
 	}
 

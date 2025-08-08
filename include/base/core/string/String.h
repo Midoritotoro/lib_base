@@ -12,14 +12,14 @@ __BASE_STRING_NAMESPACE_BEGIN
 
 class StringView;
 
-NODISCARD CONSTEXPR_CXX20 auto Char::fromUcs4(char32_t c) noexcept
+base_nodiscard base_constexpr_cxx20 auto Char::fromUcs4(char32_t c) noexcept
 {
 	struct R {
 		char16_t chars[2];
-		//NODISCARD CONSTEXPR_CXX20 operator BasicString<char16_t, CharTraits<char16_t>, std::allocator<char16_t>>() const noexcept { return { begin(), end() }; }
-		NODISCARD CONSTEXPR_CXX20 sizetype size() const noexcept { return chars[1] ? 2 : 1; }
-		NODISCARD CONSTEXPR_CXX20 const char16_t* begin() const noexcept { return chars; }
-		NODISCARD CONSTEXPR_CXX20 const char16_t* end() const noexcept { return begin() + size(); }
+		//base_nodiscard base_constexpr_cxx20 operator BasicString<char16_t, CharTraits<char16_t>, std::allocator<char16_t>>() const noexcept { return { begin(), end() }; }
+		base_nodiscard base_constexpr_cxx20 sizetype size() const noexcept { return chars[1] ? 2 : 1; }
+		base_nodiscard base_constexpr_cxx20 const char16_t* begin() const noexcept { return chars; }
+		base_nodiscard base_constexpr_cxx20 const char16_t* end() const noexcept { return begin() + size(); }
 	};
 	return requiresSurrogates(c) ? R{ {Char::highSurrogate(c),
 									  Char::lowSurrogate(c)} } :

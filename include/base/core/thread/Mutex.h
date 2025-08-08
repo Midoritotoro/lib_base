@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/thread/AbstractMutex.h>
-
+#include <base/core/utility/NotNull.h>
 
 __BASE_THREAD_NAMESPACE_BEGIN
 
@@ -13,12 +13,12 @@ public:
 	~Mutex();
 
 	void setUnlockOnDelete(bool unlockOnDel);
-	NODISCARD bool unlockOnDelete() const noexcept;
+	base_nodiscard bool unlockOnDelete() const noexcept;
 
-	NODISCARD bool lock();
-	NODISCARD bool unlock();
+	base_nodiscard bool lock();
+	base_nodiscard bool unlock();
 
-	NODISCARD bool isLocked() const noexcept;
+	base_nodiscard bool isLocked() const noexcept;
 private:
 	AbstractMutex* _impl;
 };

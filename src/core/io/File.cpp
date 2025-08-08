@@ -3,10 +3,10 @@
 #include <base/core/system/SystemTools.h>
 
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 	#include <base/core/io/WindowsFileEngine.h>
 	using FileEngine = base::io::WindowsFileEngine;
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 	#include <base/core/io/UnixFileEngine.h>
 	using FileEngine = base::io::UnixFileEngine;
 #endif

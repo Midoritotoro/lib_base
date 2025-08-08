@@ -21,7 +21,7 @@ public:
 	void restart();
 	void restartAfterFinished();
 
-	[[nodiscard]] bool animating() const noexcept;
+	base_nodiscard bool animating() const noexcept;
 private: 
 	float _opacityFrom = 1.f;
 	float _opacityTo = 1.f;

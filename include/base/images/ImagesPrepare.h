@@ -6,18 +6,18 @@
 
 __BASE_IMAGES_NAMESPACE_BEGIN
 
-NODISCARD bool IsRgbNull(Rgb rgb);
+base_nodiscard bool IsRgbNull(Rgb rgb);
 
 #ifdef LIB_BASE_ENABLE_QT
 
-NODISCARD QPixmap PixmapFast(QImage&& image);
-NODISCARD QImage Opaque(QImage&& image);
+base_nodiscard QPixmap PixmapFast(QImage&& image);
+base_nodiscard QImage Opaque(QImage&& image);
 
-NODISCARD QImage Prepare(
+base_nodiscard QImage Prepare(
 	const QImage& image,
 	double _scale);
 
-NODISCARD QImage Prepare(
+base_nodiscard QImage Prepare(
 	QImage image,
 	const QSize& _outer);
 

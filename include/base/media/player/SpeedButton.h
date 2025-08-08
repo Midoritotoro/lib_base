@@ -21,7 +21,7 @@ private:
 public:
 	SpeedButtonOverlay(QWidget* parent = nullptr);
 
-	NODISCARD float speed() const noexcept;
+	base_nodiscard float speed() const noexcept;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void resizeEvent(QResizeEvent* event) override;

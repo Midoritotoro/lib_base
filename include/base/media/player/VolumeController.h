@@ -15,7 +15,7 @@ class VolumeController : public QPushButton
 public:
 	VolumeController(QWidget* parent = nullptr);
 
-	NODISCARD bool isSpeakerOn() const noexcept;
+	base_nodiscard bool isSpeakerOn() const noexcept;
 
 	void setSpeakerEnabled(bool enabled);
 	void setVolume(int volume);

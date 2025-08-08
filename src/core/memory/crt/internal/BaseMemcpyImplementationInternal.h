@@ -8,7 +8,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #ifndef __BASE_DEFINE_DEFAULT_MEMCPY
 #define __BASE_DEFINE_DEFAULT_MEMCPY(...)                           \
     template <sizetype byteCount, bool aligned>                     \
-    static DECLARE_NOALIAS NODISCARD inline void* Memcpy(           \
+    static base_declare_const_function base_nodiscard inline void* Memcpy(           \
         void*               destination,                            \
         const void* const   source,                                 \
         sizetype            size) noexcept                          \
@@ -24,7 +24,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #ifndef __BASE_DEFINE_MEMCPY
 #define __BASE_DEFINE_MEMCPY(bytesCount, aligned, copyType, copyCommand)            \
     template <>                                                                     \
-    static DECLARE_NOALIAS NODISCARD inline void* Memcpy<bytesCount, aligned>(      \
+    static base_declare_const_function base_nodiscard inline void* Memcpy<bytesCount, aligned>(      \
         void*               destination,                                            \
         const void* const   source,                                                 \
         sizetype            size) noexcept                                          \
@@ -53,7 +53,7 @@ template <>
 class BaseMemcpyImplementationInternal<arch::CpuFeature::None> {
 public:
 
-#if defined(PROCESSOR_X86_64)
+#if defined(base_processor_x86_64)
     __BASE_DEFINE_DEFAULT_MEMCPY(1, 2, 4, 8)
 #else 
     __BASE_DEFINE_DEFAULT_MEMCPY(1, 2, 4)
@@ -63,7 +63,7 @@ public:
     __BASE_DEFINE_MEMCPY(2, false, char, BASE_ECHO(*dest++ == *src++;));
     __BASE_DEFINE_MEMCPY(4, false, char, BASE_ECHO(*dest++ == *src++;));
 
-#if defined(PROCESSOR_X86_64)
+#if defined(base_processor_x86_64)
     __BASE_DEFINE_MEMCPY(8, false, char, BASE_ECHO(*dest++ == *src++;));
 #endif
 };

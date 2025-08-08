@@ -7,7 +7,7 @@
     #include <bit>
 #endif
 
-#ifdef CPP_MSVC
+#if defined(base_cpp_msvc)
     #include <intrin.h>
 #endif
 
@@ -40,7 +40,7 @@ inline void DeleteAll(
 }
 
 template <typename _Type_>
-NODISCARD _Type_ ClearLeftMostSet(const _Type_ value) {
+base_nodiscard _Type_ ClearLeftMostSet(const _Type_ value) {
     DebugAssert(value != _Type_{});
     return value & (value - 1);
 }
@@ -51,7 +51,7 @@ inline void DeleteAll(const Container& c)
     DeleteAll(c.begin(), c.end());
 }
 
-DECL_CONST_FUNCTION constexpr uint PopulationCount(uint32 v) noexcept
+constexpr uint PopulationCount(uint32 v) noexcept
 {
     // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
     return (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
@@ -59,18 +59,18 @@ DECL_CONST_FUNCTION constexpr uint PopulationCount(uint32 v) noexcept
         (((v >> 24) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 }
 
-DECL_CONST_FUNCTION constexpr uint PopulationCount(uint8 v) noexcept
+constexpr uint PopulationCount(uint8 v) noexcept
 {
     return (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 }
 
-DECL_CONST_FUNCTION constexpr uint PopulationCount(uint16 v) noexcept
+constexpr uint PopulationCount(uint16 v) noexcept
 {
     return (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
         (((v >> 12) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 }
 
-DECL_CONST_FUNCTION constexpr uint32 PopulationCount(uint64 v) noexcept
+constexpr uint32 PopulationCount(uint64 v) noexcept
 {
     return (((v) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
         (((v >> 12) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f +
@@ -80,7 +80,7 @@ DECL_CONST_FUNCTION constexpr uint32 PopulationCount(uint64 v) noexcept
         (((v >> 60) & 0xfff) * UINT64_CAST(0x1001001001001) & UINT64_CAST(0x84210842108421)) % 0x1f;
 }
 
-DECL_CONST_FUNCTION constexpr uint PopulationCount(long unsigned int v) noexcept
+constexpr uint PopulationCount(long unsigned int v) noexcept
 {
     return PopulationCount(static_cast<uint64>(v));
 }
@@ -220,7 +220,7 @@ constexpr uint32 CountLeadingZeroBits(unsigned long v) noexcept
     return CountLeadingZeroBits(IntegerForSizeof<long>::Unsigned(v));
 }
 
-static always_inline uint32 __BitScanReverse(unsigned v) noexcept
+static base_always_inline uint32 __BitScanReverse(unsigned v) noexcept
 {
     uint32 result = CountLeadingZeroBits(v);
 

@@ -7,18 +7,22 @@
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
+#if defined(base_os_windows)
+
 using pWlanAvailableNetworkList_t		= std::unique_ptr<wlanAvailableNetworksList_t, WlanAvailableNetworksListDeleter>;
 using pWlanInterfaceInformationList_t	= std::unique_ptr<wlanInterfaceInformationList_t, WlanInterfaceInformationListDeleter>;
+
+#endif
 
 #ifndef BASE_DOT11_SSID_MAX_LENGTH
 #  define BASE_DOT11_SSID_MAX_LENGTH 32   
 #endif
 
 struct Dot11SSID {
-	CONSTEXPR_CXX20 Dot11SSID(uchar* array, uint64 length) noexcept;
+	base_constexpr_cxx20 Dot11SSID(uchar* array, uint64 length) noexcept;
 
-	CONSTEXPR_CXX20 ~Dot11SSID() = default;
-	CONSTEXPR_CXX20 Dot11SSID()  = default;
+	base_constexpr_cxx20 ~Dot11SSID() = default;
+	base_constexpr_cxx20 Dot11SSID()  = default;
 
 	uint64 ssidLength = 0;
 	uchar ssid[BASE_DOT11_SSID_MAX_LENGTH];
@@ -50,10 +54,10 @@ struct NetworkStateInformation {
 
 class NetworkParameters {
 public:
-	CONSTEXPR_CXX20 NetworkParameters() noexcept = default;
-	CONSTEXPR_CXX20 ~NetworkParameters() noexcept = default;
+	base_constexpr_cxx20 NetworkParameters() noexcept = default;
+	base_constexpr_cxx20 ~NetworkParameters() noexcept = default;
 
-	CONSTEXPR_CXX20 NetworkParameters(
+	base_constexpr_cxx20 NetworkParameters(
 		uint32							quality,
 		std::wstring					profileName,
 		NetworkStateInformation			information,
@@ -62,32 +66,32 @@ public:
 		Dot11SSID						ssid
 	) noexcept;
 
-	CONSTEXPR_CXX20 void setConnectionQuality(uint32 quality) noexcept;
-	CONSTEXPR_CXX20 NODISCARD uint32 connectionQuality() const noexcept;
+	base_constexpr_cxx20 void setConnectionQuality(uint32 quality) noexcept;
+	base_constexpr_cxx20 base_nodiscard uint32 connectionQuality() const noexcept;
 
-	CONSTEXPR_CXX20 void setNetworkConnectable(bool networkConnectable) noexcept;
-	CONSTEXPR_CXX20 NODISCARD bool isNetworkConnectable() const noexcept;
+	base_constexpr_cxx20 void setNetworkConnectable(bool networkConnectable) noexcept;
+	base_constexpr_cxx20 base_nodiscard bool isNetworkConnectable() const noexcept;
 
-	CONSTEXPR_CXX20 void setNetworkCurrentlyConnected(bool networkCurrentlyConnected) noexcept;
-	CONSTEXPR_CXX20 NODISCARD bool isNetworkCurrentlyConnected() const noexcept;
+	base_constexpr_cxx20 void setNetworkCurrentlyConnected(bool networkCurrentlyConnected) noexcept;
+	base_constexpr_cxx20 base_nodiscard bool isNetworkCurrentlyConnected() const noexcept;
 
-	CONSTEXPR_CXX20 void setSecurityEnabled(bool securityEnabled) noexcept;
-	CONSTEXPR_CXX20 NODISCARD bool isSecurityEnabled() const noexcept;
+	base_constexpr_cxx20 void setSecurityEnabled(bool securityEnabled) noexcept;
+	base_constexpr_cxx20 base_nodiscard bool isSecurityEnabled() const noexcept;
 
-	CONSTEXPR_CXX20 void setHaveProfile(bool value) noexcept;
-	CONSTEXPR_CXX20 NODISCARD bool haveProfile() const noexcept;
+	base_constexpr_cxx20 void setHaveProfile(bool value) noexcept;
+	base_constexpr_cxx20 base_nodiscard bool haveProfile() const noexcept;
 
-	CONSTEXPR_CXX20 void setNetworkProfileName(std::wstring profileName) noexcept;
-	CONSTEXPR_CXX20 NODISCARD std::wstring networkProfileName() noexcept;
+	base_constexpr_cxx20 void setNetworkProfileName(std::wstring profileName) noexcept;
+	base_constexpr_cxx20 base_nodiscard std::wstring networkProfileName() noexcept;
 
-	CONSTEXPR_CXX20 void setDefaultAuthenticationAlgorithm(Dot11AuthenticationAlgorithm algorithm) noexcept;
-	CONSTEXPR_CXX20 NODISCARD Dot11AuthenticationAlgorithm defaultAuthenticationAlgorithm() const noexcept;
+	base_constexpr_cxx20 void setDefaultAuthenticationAlgorithm(Dot11AuthenticationAlgorithm algorithm) noexcept;
+	base_constexpr_cxx20 base_nodiscard Dot11AuthenticationAlgorithm defaultAuthenticationAlgorithm() const noexcept;
 
-	CONSTEXPR_CXX20 void setDefaultCipherAlgorithm(Dot11CipherAlgorithm algorithm) noexcept;
-	CONSTEXPR_CXX20 NODISCARD Dot11CipherAlgorithm defaultCipherAlgorithm() const noexcept;
+	base_constexpr_cxx20 void setDefaultCipherAlgorithm(Dot11CipherAlgorithm algorithm) noexcept;
+	base_constexpr_cxx20 base_nodiscard Dot11CipherAlgorithm defaultCipherAlgorithm() const noexcept;
 
-	CONSTEXPR_CXX20 void setDot11Ssid(Dot11SSID ssid) noexcept;
-	CONSTEXPR_CXX20 NODISCARD Dot11SSID dot11Ssid() const noexcept;
+	base_constexpr_cxx20 void setDot11Ssid(Dot11SSID ssid) noexcept;
+	base_constexpr_cxx20 base_nodiscard Dot11SSID dot11Ssid() const noexcept;
 private:
 	// From 0 to 100
 	uint32 _connectionQuality = 0;
@@ -111,8 +115,8 @@ private:
 using NetworksList = std::vector<NetworkParameters>;
 
 
-CONSTEXPR_CXX20 Dot11SSID::Dot11SSID(uchar* array, uint64 length) noexcept {
-#if BASE_HAS_CXX20
+base_constexpr_cxx20 Dot11SSID::Dot11SSID(uchar* array, uint64 length) noexcept {
+#if base_has_cxx20
 	if (is_constant_evaluated())
 		for (auto i = 0; i < length; ++i)
 			ssid[i] = array[i];
@@ -135,7 +139,7 @@ constexpr NetworkStateInformation::NetworkStateInformation(
 	_haveProfile(haveProfile)
 {}
 
-CONSTEXPR_CXX20 NetworkParameters::NetworkParameters(
+base_constexpr_cxx20 NetworkParameters::NetworkParameters(
 	uint32							quality,
 	std::wstring					profileName,
 	NetworkStateInformation			information,
@@ -151,75 +155,75 @@ CONSTEXPR_CXX20 NetworkParameters::NetworkParameters(
 	_dot11Ssid(ssid)
 {}
 
-CONSTEXPR_CXX20 void NetworkParameters::setConnectionQuality(uint32 quality) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setConnectionQuality(uint32 quality) noexcept {
 	_connectionQuality = quality;
 }
 
-CONSTEXPR_CXX20 NODISCARD uint32 NetworkParameters::connectionQuality() const noexcept {
+base_constexpr_cxx20 base_nodiscard uint32 NetworkParameters::connectionQuality() const noexcept {
 	return _connectionQuality;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setNetworkConnectable(bool networkConnectable) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setNetworkConnectable(bool networkConnectable) noexcept {
 	_networkStateInformation._networkConnectable = networkConnectable;
 }
 
-CONSTEXPR_CXX20 NODISCARD bool NetworkParameters::isNetworkConnectable() const noexcept {
+base_constexpr_cxx20 base_nodiscard bool NetworkParameters::isNetworkConnectable() const noexcept {
 	return _networkStateInformation._networkConnectable;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setNetworkCurrentlyConnected(bool networkCurrentlyConnected) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setNetworkCurrentlyConnected(bool networkCurrentlyConnected) noexcept {
 	_networkStateInformation._networkCurrentlyConnected = networkCurrentlyConnected;
 }
 
-CONSTEXPR_CXX20 NODISCARD bool NetworkParameters::isNetworkCurrentlyConnected() const noexcept {
+base_constexpr_cxx20 base_nodiscard bool NetworkParameters::isNetworkCurrentlyConnected() const noexcept {
 	return _networkStateInformation._networkCurrentlyConnected;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setSecurityEnabled(bool securityEnabled) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setSecurityEnabled(bool securityEnabled) noexcept {
 	_networkStateInformation._securityEnabled = securityEnabled;
 }
 
-CONSTEXPR_CXX20 NODISCARD bool NetworkParameters::isSecurityEnabled() const noexcept {
+base_constexpr_cxx20 base_nodiscard bool NetworkParameters::isSecurityEnabled() const noexcept {
 	return _networkStateInformation._securityEnabled;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setHaveProfile(bool value) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setHaveProfile(bool value) noexcept {
 	_networkStateInformation._haveProfile = value;
 }
 
-CONSTEXPR_CXX20 NODISCARD bool NetworkParameters::haveProfile() const noexcept {
+base_constexpr_cxx20 base_nodiscard bool NetworkParameters::haveProfile() const noexcept {
 	return _networkStateInformation._haveProfile;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setNetworkProfileName(std::wstring profileName) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setNetworkProfileName(std::wstring profileName) noexcept {
 	_networkProfileName = profileName;
 }
 
-CONSTEXPR_CXX20 NODISCARD std::wstring NetworkParameters::networkProfileName() noexcept {
+base_constexpr_cxx20 base_nodiscard std::wstring NetworkParameters::networkProfileName() noexcept {
 	return _networkProfileName;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setDefaultAuthenticationAlgorithm(Dot11AuthenticationAlgorithm algorithm) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setDefaultAuthenticationAlgorithm(Dot11AuthenticationAlgorithm algorithm) noexcept {
 	_defaultAuthenticationAlgorithm = algorithm;
 }
 
-CONSTEXPR_CXX20 NODISCARD Dot11AuthenticationAlgorithm NetworkParameters::defaultAuthenticationAlgorithm() const noexcept {
+base_constexpr_cxx20 base_nodiscard Dot11AuthenticationAlgorithm NetworkParameters::defaultAuthenticationAlgorithm() const noexcept {
 	return _defaultAuthenticationAlgorithm;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setDefaultCipherAlgorithm(Dot11CipherAlgorithm algorithm) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setDefaultCipherAlgorithm(Dot11CipherAlgorithm algorithm) noexcept {
 	_defaultCipherAlgorithm = algorithm;
 }
 
-CONSTEXPR_CXX20 NODISCARD Dot11CipherAlgorithm NetworkParameters::defaultCipherAlgorithm() const noexcept {
+base_constexpr_cxx20 base_nodiscard Dot11CipherAlgorithm NetworkParameters::defaultCipherAlgorithm() const noexcept {
 	return _defaultCipherAlgorithm;
 }
 
-CONSTEXPR_CXX20 void NetworkParameters::setDot11Ssid(Dot11SSID ssid) noexcept {
+base_constexpr_cxx20 void NetworkParameters::setDot11Ssid(Dot11SSID ssid) noexcept {
 	_dot11Ssid = ssid;
 }
 
-CONSTEXPR_CXX20 NODISCARD Dot11SSID NetworkParameters::dot11Ssid() const noexcept {
+base_constexpr_cxx20 base_nodiscard Dot11SSID NetworkParameters::dot11Ssid() const noexcept {
 	return _dot11Ssid;
 }
 

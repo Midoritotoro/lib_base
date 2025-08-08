@@ -6,6 +6,8 @@
 #include <optional>
 #include <variant>
 
+#include <base/core/compatibility/Warnings.h>
+
 __BASE_NAMESPACE_BEGIN
 
 using namespace ::std::ranges;
@@ -123,19 +125,29 @@ template <template <typename...> class Op, typename...Args>
 constexpr inline bool is_detected_v = is_detected<Op, Args...>::value;
 
 namespace _detail {
-	WARNING_PUSH
-		WARNING_DISABLE_GCC("-Wold-style-cast")
-		WARNING_DISABLE_CLANG("-Wold-style-cast")
-		template <typename From, typename To>
-	using is_virtual_base_conversion_test = decltype(
-		(To*)std::declval<From*>()
-		);
-	WARNING_POP
+	base_warning_push
 
-		template <typename Base, typename Derived, typename = void>
-	struct is_virtual_base_of : std::false_type {};
+	base_disable_warning_gcc("-Wold-style-cast");
+	base_disable_warning_clang("-Wold-style-cast");
 
-	template <typename Base, typename Derived>
+	template <
+		typename From,
+		typename To>
+	using is_virtual_base_conversion_test = decltype((To*)std::declval<From*>());
+
+	base_warning_push
+
+	template <
+		typename Base, 
+		typename Derived, 
+		typename = void>
+	struct is_virtual_base_of:
+		std::false_type
+	{};
+
+	template <
+		typename Base,
+		typename Derived>
 	struct is_virtual_base_of <
 		Base, Derived,
 		std::enable_if_t <
@@ -152,7 +164,9 @@ namespace _detail {
 	> : std::true_type{};
 }
 
-template <typename Base, typename Derived>
+template <
+	typename Base,
+	typename Derived>
 using is_virtual_base_of = _detail::is_virtual_base_of<
 	std::remove_cv_t<Base>, 
 	std::remove_cv_t<Derived>>;
@@ -544,7 +558,7 @@ struct UnwrapEnum<_Element_, false> {
 template <class _Element_>
 using unwrap_enum_t = typename UnwrapEnum<_Element_>::type;
 
-#if BASE_HAS_CXX20
+#if base_has_cxx20
 
 	template <class _Iterator_>
 	using IteratorReferenceType		= std::iter_reference_t<_Iterator_>;
@@ -588,7 +602,7 @@ struct MaximumObjects:
         ~static_cast<std::size_t>(0) / sizeof(_Type_)> 
 {};
 
-#if defined(OS_WIN) && defined(CPP_MSVC)
+#if defined(base_os_windows) && defined(base_cpp_msvc)
     template <
         typename _Type_,
         class   _Allocator_>
@@ -606,7 +620,7 @@ template <
     typename    _Type_,
     class       _Allocator_>
 constexpr bool IsNoThrowMoveConstructible =
-    #if defined(OS_WIN) && defined(CPP_MSVC)
+    #if defined(base_os_windows) && defined(base_cpp_msvc)
 		    std::conjunction_v<
 			    std::is_nothrow_move_constructible<_Type_>,
 			    std::_Uses_default_construct<_Allocator_, _Type_*, _Type_>>;
@@ -619,7 +633,7 @@ template <
     class       _Allocator_,
     class ...   _Args_>
 constexpr bool IsNoThrowMoveConstructibleArgs =
-    #if defined(OS_WIN) && defined(CPP_MSVC)
+    #if defined(base_os_windows) && defined(base_cpp_msvc)
 		    std::conjunction_v<
 			    std::is_nothrow_move_constructible<_Type_>,
 			    std::_Uses_default_construct<_Allocator_, _Type_*, _Args_...>>;
@@ -643,7 +657,7 @@ constexpr bool IsPointerAddressConvertible = std::is_void_v<_Source_>
     ;
 
 namespace HasADLSwapDetail {
-#if defined(CPP_CLANG) || defined(__EDG__)
+#if defined(base_cpp_clang) || defined(__EDG__)
 	void swap() = delete; // Block unqualified name lookup
 #else
 	void swap();
@@ -687,7 +701,7 @@ template <
 	class _Ty,
 	class... _Types>
 constexpr bool IsAnyOf_v = // true if and only if _Ty is in _Types
-#if BASE_HAS_CXX17
+#if base_has_cxx17
     (std::is_same_v<_Ty, _Types> || ...);
 #else
     std::disjunction_v<std::is_same<_Ty, _Types>...>;

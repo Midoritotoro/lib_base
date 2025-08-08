@@ -7,7 +7,7 @@
 #include <base/core/arch/ProcessorDetection.h>
 #include <base/core/BaseNamespace.h>
 
-#include <base/core/arch/KeywordSupport.h>
+#include <base/core/compatibility/Compatibility.h>
 
 #include <functional>
 #include <base/core/utility/NotNull.h>
@@ -53,8 +53,8 @@ template <>         struct IntegerForSize<8> { typedef uint64 Unsigned; typedef 
 
 template <class T>  struct IntegerForSizeof : IntegerForSize<sizeof(T)> { };
 
-using registerint   = IntegerForSize<PROCESSOR_WORDSIZE>::Signed;
-using registeruint  = IntegerForSize<PROCESSOR_WORDSIZE>::Unsigned;
+using registerint   = IntegerForSize<base_processor_wordsize>::Signed;
+using registeruint  = IntegerForSize<base_processor_wordsize>::Unsigned;
 
 using uintptr       = IntegerForSizeof<void*>::Unsigned;
 using ptrdiff       = IntegerForSizeof<void*>::Signed;

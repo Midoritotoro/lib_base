@@ -70,7 +70,7 @@ void* TDelete(
 }
 
 // $NetBSD: tfind.c,v 1.7 2012/06/25 22:32:45 abs Exp $
-[[nodiscard]] void* TFind(
+base_nodiscard void* TFind(
     const void* vkey,
     void* const* vrootp,
     int (*compar)(const void*,
@@ -98,7 +98,7 @@ void* TDelete(
 }
 
 // $NetBSD: tsearch.c,v 1.7 2012/06/25 22:32:45 abs Exp $
-[[nodiscard]] void* TSearch(
+base_nodiscard void* TSearch(
     const void* vkey,
     void** vrootp,
     int (*compar)(const void*,

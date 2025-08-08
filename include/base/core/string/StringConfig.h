@@ -4,13 +4,13 @@
 #include <string>
 
 
-WARNING_DISABLE_MSVC(4005)
+base_disable_warning_msvc(4005)
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
     #include <base/core/system/Windows.h>
     #include <winnt.h>
     
-    #if !defined(PROCESSOR_X86_32)
+    #if !defined(base_processor_x86_32)
         #ifndef UNICODE
             #define UNICODE
         #endif
@@ -28,7 +28,7 @@ WARNING_DISABLE_MSVC(4005)
 
 __BASE_STRING_NAMESPACE_BEGIN
 
-#if defined(OS_WIN) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
+#if defined(base_os_windows) && defined(LIB_BASE_ENABLE_WINDOWS_UNICODE)
     using NativeString      =   std::wstring;
     using NativeStringView  =   std::wstring_view;
     using NativeChar        =   wchar_t;

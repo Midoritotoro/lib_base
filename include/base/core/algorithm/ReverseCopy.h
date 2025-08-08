@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -8,7 +8,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _BidirectionalIterator_,
 	class _OutputIterator_>
-CONSTEXPR_CXX20 _OutputIterator_ reverseCopy(
+base_constexpr_cxx20 _OutputIterator_ reverseCopy(
 	_BidirectionalIterator_ firstIterator,
 	_BidirectionalIterator_ lastIterator,
 	_OutputIterator_		destinationIterator)

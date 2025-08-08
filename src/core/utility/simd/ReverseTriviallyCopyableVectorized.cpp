@@ -5,12 +5,12 @@
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
-#include <base/core/utility/Math.h>
+#include <base/core/memory/MemoryUtility.h>
+#include <base/core/math/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable8BitSse2(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -42,7 +42,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitSse2(
             static_cast<uchar*>(destinationPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable8BitAvx(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -77,7 +77,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitAvx(
             firstPointer, lastPointer, destinationPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable8BitAvx512(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -113,7 +113,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable8BitAvx512(
 // =======================================================================================
 
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable16BitSse2(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -144,7 +144,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitSse2(
             static_cast<ushort*>(destinationPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable16BitAvx(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -179,7 +179,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitAvx(
             firstPointer, lastPointer, destinationPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable16BitAvx512(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -214,7 +214,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable16BitAvx512(
 
 // ==================================================================
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable32BitSse2(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -245,7 +245,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitSse2(
             static_cast<uint32*>(destinationPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable32BitAvx(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -276,7 +276,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitAvx(
             firstPointer, lastPointer, destinationPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable32BitAvx512(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -308,7 +308,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable32BitAvx512(
 
 // ====================================================================================================
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitSse2(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable64BitSse2(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -337,7 +337,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitSse2(
             static_cast<uint64*>(destinationPointer));
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitAvx(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable64BitAvx(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -366,7 +366,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitAvx(
             firstPointer, lastPointer, destinationPointer);
 }
 
-DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitAvx512(
+base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyCopyable64BitAvx512(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -394,7 +394,7 @@ DECLARE_NOALIAS always_inline void __CDECL ReverseTriviallyCopyable64BitAvx512(
 }
 
 
-DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized8Bit(
+base_declare_const_function base_nodiscard void ReverseCopyVectorized8Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -412,7 +412,7 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized8Bit(
         static_cast<uchar*>(destinationPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized16Bit(
+base_declare_const_function base_nodiscard void ReverseCopyVectorized16Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -430,7 +430,7 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized16Bit(
         static_cast<ushort*>(destinationPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized32Bit(
+base_declare_const_function base_nodiscard void ReverseCopyVectorized32Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -448,7 +448,7 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized32Bit(
         static_cast<uint32*>(destinationPointer));
 }
 
-DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized64Bit(
+base_declare_const_function base_nodiscard void ReverseCopyVectorized64Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -468,7 +468,7 @@ DECLARE_NOALIAS NODISCARD void ReverseCopyVectorized64Bit(
 
 
 template <size_t typeSizeInBytes>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseCopyVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseCopyVectorized(
     void* firstPointer,
     void* lastPointer,
     void*       destinationPointer) noexcept

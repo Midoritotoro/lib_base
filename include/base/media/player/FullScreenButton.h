@@ -19,7 +19,7 @@ public:
 
 	FullScreenButton(QWidget* parent = nullptr);
 
-	NODISCARD State state() const noexcept;
+	base_nodiscard State state() const noexcept;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

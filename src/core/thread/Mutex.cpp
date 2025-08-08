@@ -2,10 +2,10 @@
 
 #include <base/core/thread/Thread.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 	#include <base/core/thread/WindowsMutex.h>
 	using PlatformMutexImplementation = base::thread::WindowsMutex;
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 	#include <base/core/thread/UnixMutex.h>
 	using PlatformMutexImplementation = base::thread::UnixMutex;
 #endif

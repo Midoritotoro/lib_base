@@ -20,58 +20,58 @@ public:
 	using reference			= const typename _Vector::reference;
 	using const_reference	= reference;
 
-	inline constexpr NODISCARD_CTOR VectorConstIterator() noexcept = default;
+	inline constexpr base_nodiscard_constructor VectorConstIterator() noexcept = default;
 
-	inline CONSTEXPR_CXX20 NODISCARD_CTOR VectorConstIterator(const _Vector* vector) :
+	inline base_constexpr_cxx20 base_nodiscard_constructor VectorConstIterator(const _Vector* vector) :
 		_currentElement(vector->data())
 	{}
 
-	inline CONSTEXPR_CXX20 NODISCARD_CTOR VectorConstIterator(const VectorConstIterator& other) :
+	inline base_constexpr_cxx20 base_nodiscard_constructor VectorConstIterator(const VectorConstIterator& other) :
 		_currentElement(other._currentElement)
 	{}
 
-	inline CONSTEXPR_CXX20 ~VectorConstIterator() {
+	inline base_constexpr_cxx20 ~VectorConstIterator() {
 
 	}
 
-	CONSTEXPR_CXX20 const_reference operator*() const noexcept {
+	base_constexpr_cxx20 const_reference operator*() const noexcept {
 		return *_currentElement;
 	}
 
-	CONSTEXPR_CXX20 const_pointer operator->() const noexcept {
+	base_constexpr_cxx20 const_pointer operator->() const noexcept {
 		return _currentElement;
 	}
 
-	CONSTEXPR_CXX20 VectorConstIterator& operator--() noexcept {
+	base_constexpr_cxx20 VectorConstIterator& operator--() noexcept {
 		--_currentElement;
 		return *this;
 	}
 
-	CONSTEXPR_CXX20 VectorConstIterator operator--(int) noexcept {
+	base_constexpr_cxx20 VectorConstIterator operator--(int) noexcept {
 		VectorConstIterator temp = *this;
 		--*this;
 
 		return temp;
 	}
 
-	CONSTEXPR_CXX20 VectorConstIterator& operator++() noexcept {
+	base_constexpr_cxx20 VectorConstIterator& operator++() noexcept {
 		++_currentElement;
 		return *this;
 	}
 
-	CONSTEXPR_CXX20 VectorConstIterator operator++(int) noexcept {
+	base_constexpr_cxx20 VectorConstIterator operator++(int) noexcept {
 		VectorConstIterator temp = *this;
 		++*this;
 
 		return temp;
 	}
 
-	CONSTEXPR_CXX20 VectorConstIterator& operator+=(const size_type _Off) noexcept {
+	base_constexpr_cxx20 VectorConstIterator& operator+=(const size_type _Off) noexcept {
 		_currentElement += _Off;
 		return *this;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD VectorConstIterator
+	base_constexpr_cxx20 base_nodiscard VectorConstIterator
 		operator+(const size_type offset) const noexcept
 	{
 		VectorConstIterator temp = *this;
@@ -80,7 +80,7 @@ public:
 		return temp;
 	}
 
-	friend CONSTEXPR_CXX20 NODISCARD
+	friend base_constexpr_cxx20 base_nodiscard
 		VectorConstIterator operator+(
 			VectorConstIterator next,
 			const size_type offset) noexcept
@@ -89,58 +89,58 @@ public:
 		return next;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD VectorConstIterator& operator-=(const size_type offset) noexcept {
+	base_constexpr_cxx20 base_nodiscard VectorConstIterator& operator-=(const size_type offset) noexcept {
 		return *this += -offset;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD VectorConstIterator operator-(const size_type offset) const noexcept {
+	base_constexpr_cxx20 base_nodiscard VectorConstIterator operator-(const size_type offset) const noexcept {
 		VectorConstIterator temp = *this;
 		temp -= offset;
 
 		return temp;
 	}
 
-	CONSTEXPR_CXX20 NODISCARD size_type operator-(const VectorConstIterator& _Right) const noexcept {
+	base_constexpr_cxx20 base_nodiscard size_type operator-(const VectorConstIterator& _Right) const noexcept {
 		return static_cast<size_type>(_currentElement - _Right._currentElement);
 	}
 
-	CONSTEXPR_CXX20 NODISCARD reference operator[](const size_type _Off) const noexcept {
+	base_constexpr_cxx20 base_nodiscard reference operator[](const size_type _Off) const noexcept {
 		return *(*this + _Off);
 	}
 
 #if BASE_HAS_CXX20
-	CONSTEXPR_CXX20 NODISCARD auto /*std::strong_ordering*/
+	base_constexpr_cxx20 base_nodiscard auto /*std::strong_ordering*/
 		operator<=>(const VectorConstIterator& other) const noexcept
 	{
 		return (_currentElement <=> other._currentElement);
 	}
 #endif
 
-	CONSTEXPR_CXX20 VectorConstIterator& operator=(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 VectorConstIterator& operator=(const VectorConstIterator& other) const noexcept {
 		_currentElement = other._currentElement;
 	}
 
-	CONSTEXPR_CXX20 bool operator==(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator==(const VectorConstIterator& other) const noexcept {
 		return (_currentElement == other._currentElement);
 	}
 
-	CONSTEXPR_CXX20 bool operator!=(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator!=(const VectorConstIterator& other) const noexcept {
 		return !(*this == other);
 	}
 
-	CONSTEXPR_CXX20 bool operator<(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator<(const VectorConstIterator& other) const noexcept {
 		return (_currentElement < other._currentElement);
 	}
 
-	CONSTEXPR_CXX20 bool operator>(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator>(const VectorConstIterator& other) const noexcept {
 		return !(*this < other);
 	}
 
-	CONSTEXPR_CXX20 bool operator<=(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator<=(const VectorConstIterator& other) const noexcept {
 		return (_currentElement <= other._currentElement);
 	}
 
-	CONSTEXPR_CXX20 bool operator>=(const VectorConstIterator& other) const noexcept {
+	base_constexpr_cxx20 bool operator>=(const VectorConstIterator& other) const noexcept {
 		return !(*this <= other);
 	}
 private:

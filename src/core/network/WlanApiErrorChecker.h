@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/SystemDetection.h>
-#include <base/core/arch/KeywordSupport.h>
+#include <base/core/compatibility/Compatibility.h>
 
 #include <base/core/BaseNamespace.h>
 

@@ -8,10 +8,10 @@ __BASE_MEDIA_FFMPEG_NAMESPACE_BEGIN
 
 class ThumbnailGenerator {
 public:
-	NODISCARD static QImage generate(
+	base_nodiscard static QImage generate(
 		const QString& path,
 		media::Quality quality = media::Quality::Medium);
-	NODISCARD static QSize resolution(const QString& path);
+	base_nodiscard static QSize resolution(const QString& path);
 };
 
 __BASE_MEDIA_FFMPEG_NAMESPACE_END

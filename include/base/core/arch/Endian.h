@@ -7,7 +7,7 @@
 
 __BASE_ARCH_NAMESPACE_BEGIN
 
-template <typename T> always_inline void ToUnaligned(const T src, void* dest)
+template <typename T> base_always_inline void ToUnaligned(const T src, void* dest)
 {
     const size_t size = sizeof(T);
 #if __has_builtin(__builtin_memcpy)
@@ -18,7 +18,7 @@ template <typename T> always_inline void ToUnaligned(const T src, void* dest)
         (dest, &src, size);
 }
 
-template <typename T> always_inline T FromUnaligned(const void* src)
+template <typename T> base_always_inline T FromUnaligned(const void* src)
 {
     T dest;
     const size_t size = sizeof(T);
@@ -110,7 +110,7 @@ template<> void* bswap<4>(const void* source, sizetype count, void* dest) noexce
 template<> void* bswap<8>(const void* source, sizetype count, void* dest) noexcept;
 
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if base_byte_order == base_big_endian
 template <typename T> inline constexpr T ToBigEndian(T source)
 {
     return source;
@@ -162,7 +162,7 @@ template <typename T> inline void FromLittleEndian(const void* source, sizetype 
     bswap<sizeof(T)>(source, count, dest);
 }
 
-#else // LITTLE_ENDIAN
+#else // base_little_endian
 
 template <typename T> inline constexpr T ToBigEndian(T source)
 {

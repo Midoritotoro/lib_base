@@ -43,18 +43,18 @@ public:
 	AvErrorWrap(int code = 0) : _code(code) {
 	}
 
-	[[nodiscard]] bool failed() const {
+	base_nodiscard bool failed() const {
 		return (_code < 0);
 	}
-	[[nodiscard]] explicit operator bool() const {
+	base_nodiscard explicit operator bool() const {
 		return failed();
 	}
 
-	[[nodiscard]] int code() const {
+	base_nodiscard int code() const {
 		return _code;
 	}
 
-	[[nodiscard]] std::string text() const {
+	base_nodiscard std::string text() const {
 		char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
 		return std::string(av_make_error_string(
 			string,
@@ -83,19 +83,19 @@ public:
 		release();
 	}
 
-	[[nodiscard]] AVPacket& fields() {
+	base_nodiscard AVPacket& fields() {
 		if (!_data)
 			_data = av_packet_alloc();
 		return *_data;
 	}
 
-	[[nodiscard]] const AVPacket& fields() const {
+	base_nodiscard const AVPacket& fields() const {
 		if (!_data)
 			_data = av_packet_alloc();
 		return *_data;
 	}
 
-	[[nodiscard]] bool empty() const {
+	base_nodiscard bool empty() const {
 		return !_data || !fields().data;
 	}
 
@@ -166,7 +166,7 @@ using SwscalePointer = std::unique_ptr<SwsContext, SwscaleDeleter>;
 using SwresamplePointer = std::unique_ptr<SwrContext, SwresampleDeleter>;
 
 
-[[nodiscard]] IOPointer MakeIOPointer(
+base_nodiscard IOPointer MakeIOPointer(
 	void* opaque,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
 #if DA_FFMPEG_CONST_WRITE_CALLBACK
@@ -176,7 +176,7 @@ using SwresamplePointer = std::unique_ptr<SwrContext, SwresampleDeleter>;
 #endif
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
-[[nodiscard]] IOPointer MakeIOPointer(
+base_nodiscard IOPointer MakeIOPointer(
 	void* opaque,
 	unsigned char* buffer,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
@@ -188,7 +188,7 @@ using SwresamplePointer = std::unique_ptr<SwrContext, SwresampleDeleter>;
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
 
-[[nodiscard]] FormatPointer MakeFormatPointer(
+base_nodiscard FormatPointer MakeFormatPointer(
 	void* opaque,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
 #if DA_FFMPEG_CONST_WRITE_CALLBACK
@@ -199,19 +199,19 @@ using SwresamplePointer = std::unique_ptr<SwrContext, SwresampleDeleter>;
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
 
-[[nodiscard]] FormatPointer MakeFormatPointer(const QString& path);
-[[nodiscard]] FormatPointer MakeFormatPointer(IOPointer* ioPointer);
+base_nodiscard FormatPointer MakeFormatPointer(const QString& path);
+base_nodiscard FormatPointer MakeFormatPointer(IOPointer* ioPointer);
 
-[[nodiscard]] CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
+base_nodiscard CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
 
-[[nodiscard]] FramePointer MakeFramePointer();
-[[nodiscard]] FramePointer DuplicateFramePointer(AVFrame* frame);
+base_nodiscard FramePointer MakeFramePointer();
+base_nodiscard FramePointer DuplicateFramePointer(AVFrame* frame);
 
-[[nodiscard]] bool FrameHasData(AVFrame* frame);
+base_nodiscard bool FrameHasData(AVFrame* frame);
 void ClearFrameMemory(AVFrame* frame);
 
 
-[[nodiscard]] SwscalePointer MakeSwscalePointer(
+base_nodiscard SwscalePointer MakeSwscalePointer(
 	QSize srcSize,
 	int srcFormat,
 	QSize dstSize,
@@ -219,14 +219,14 @@ void ClearFrameMemory(AVFrame* frame);
 	SwscalePointer* existing = nullptr,
 	int flags = 0);
 
-[[nodiscard]] SwscalePointer MakeSwscalePointer(
+base_nodiscard SwscalePointer MakeSwscalePointer(
 	AVFrame* frame,
 	QSize resize,
 	SwscalePointer* existing = nullptr,
 	int flags = 0);
 
 
-[[nodiscard]] SwresamplePointer MakeSwresamplePointer(
+base_nodiscard SwresamplePointer MakeSwresamplePointer(
 #if DA_FFMPEG_NEW_CHANNEL_LAYOUT
 	AVChannelLayout* srcLayout,
 #else // DA_FFMPEG_NEW_CHANNEL_LAYOUT
@@ -243,15 +243,15 @@ void ClearFrameMemory(AVFrame* frame);
 	int dstRate,
 	SwresamplePointer* existing = nullptr);
 
-[[nodiscard]] CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
+base_nodiscard CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
 
-[[nodiscard]] FramePointer MakeFramePointer();
-[[nodiscard]] FramePointer DuplicateFramePointer(AVFrame* frame);
+base_nodiscard FramePointer MakeFramePointer();
+base_nodiscard FramePointer DuplicateFramePointer(AVFrame* frame);
 
-[[nodiscard]] bool FrameHasData(AVFrame* frame);
+base_nodiscard bool FrameHasData(AVFrame* frame);
 void ClearFrameMemory(AVFrame* frame);
 
-[[nodiscard]] const AVCodec* FindDecoder(AVCodecContext* context);
+base_nodiscard const AVCodec* FindDecoder(AVCodecContext* context);
 
 struct EnqueuedFrame {
 	int64_t position = 0;

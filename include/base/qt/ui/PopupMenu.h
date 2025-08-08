@@ -30,22 +30,22 @@ public:
 		const style::MenuAction* actionStyle = style::defaultActionStyle);
 	~PopupMenu();
 
-	[[nodiscard]] QSize sizeHint() const override;
-	[[nodiscard]] QSize minimumSizeHint() const override;
+	base_nodiscard QSize sizeHint() const override;
+	base_nodiscard QSize minimumSizeHint() const override;
 
 	void addAction(
 		const QString& title,
 		Fn<void()> callback,
 		const style::icon* icon = nullptr);
-	[[nodiscard]] Action* action(int index) const;
+	base_nodiscard Action* action(int index) const;
 
 	void setOpacity(float opacity);
-	[[nodiscard]] float opacity() const noexcept;
+	base_nodiscard float opacity() const noexcept;
 
 	void setDeleteOnHide(bool deleteOnHide);
-	[[nodiscard]] bool deleteOnHide() const noexcept;
+	base_nodiscard bool deleteOnHide() const noexcept;
 
-	[[nodiscard]] bool empty() const noexcept;
+	base_nodiscard bool empty() const noexcept;
 	void popup(const QPoint& point);
 
 	void hideMenu(bool animated = true);

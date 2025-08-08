@@ -37,8 +37,8 @@ struct Properties {
     ushort script : 8;
 };
 
-const Properties* FASTCALL properties(char32_t ucs4) noexcept;
-const Properties* FASTCALL properties(char16_t ucs2) noexcept;
+const Properties* base_fastcall properties(char32_t ucs4) noexcept;
+const Properties* base_fastcall properties(char16_t ucs2) noexcept;
 
 static_assert(sizeof(Properties) == 20);
 
@@ -136,43 +136,43 @@ enum class IdnaStatus : unsigned int {
     Deviation
 };
 
-GraphemeBreakClass FASTCALL graphemeBreakClass(char32_t ucs4) noexcept;
+GraphemeBreakClass base_fastcall graphemeBreakClass(char32_t ucs4) noexcept;
 inline GraphemeBreakClass graphemeBreakClass(Char ch) noexcept
 {
     return graphemeBreakClass(ch.unicode());
 }
 
-WordBreakClass FASTCALL wordBreakClass(char32_t ucs4) noexcept;
+WordBreakClass base_fastcall wordBreakClass(char32_t ucs4) noexcept;
 inline WordBreakClass wordBreakClass(Char ch) noexcept
 {
     return wordBreakClass(ch.unicode());
 }
 
-SentenceBreakClass FASTCALL sentenceBreakClass(char32_t ucs4) noexcept;
+SentenceBreakClass base_fastcall sentenceBreakClass(char32_t ucs4) noexcept;
 inline SentenceBreakClass sentenceBreakClass(Char ch) noexcept
 {
     return sentenceBreakClass(ch.unicode());
 }
 
-LineBreakClass FASTCALL lineBreakClass(char32_t ucs4) noexcept;
+LineBreakClass base_fastcall lineBreakClass(char32_t ucs4) noexcept;
 inline LineBreakClass lineBreakClass(Char ch) noexcept
 {
     return lineBreakClass(ch.unicode());
 }
 
-IdnaStatus FASTCALL idnaStatus(char32_t ucs4) noexcept;
+IdnaStatus base_fastcall idnaStatus(char32_t ucs4) noexcept;
 inline IdnaStatus idnaStatus(Char ch) noexcept
 {
     return idnaStatus(ch.unicode());
 }
 
-//QStringView FASTCALL idnaMapping(char32_t usc4) noexcept;
+//QStringView base_fastcall idnaMapping(char32_t usc4) noexcept;
 //inline QStringView idnaMapping(QChar ch) noexcept
 //{
 //    return idnaMapping(ch.unicode());
 //}
 
-EastAsianWidth FASTCALL eastAsianWidth(char32_t ucs4) noexcept;
+EastAsianWidth base_fastcall eastAsianWidth(char32_t ucs4) noexcept;
 inline EastAsianWidth eastAsianWidth(Char ch) noexcept
 {
     return eastAsianWidth(ch.unicode());

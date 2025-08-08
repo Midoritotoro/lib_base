@@ -97,11 +97,11 @@ inline const TextPalette defaultTextPalette = TextPalette{
 	.linkAlwaysActive = true
 };
 
-NODISCARD const QString& SystemFontTag();
+base_nodiscard const QString& SystemFontTag();
 void SetCustomFont(const QString& font);
 
-NODISCARD QString CustomFont();
-NODISCARD const FontResolveResult* FindAdjustResult(const QFont& font);
+base_nodiscard QString CustomFont();
+base_nodiscard const FontResolveResult* FindAdjustResult(const QFont& font);
 
 __BASE_QT_STYLE_NAMESPACE_END
 
@@ -133,11 +133,11 @@ namespace internal {
 			FontFlags flags,
 			int family);
 
-		NODISCARD FontData* operator->() const;
-		NODISCARD FontData* get() const;
+		base_nodiscard FontData* operator->() const;
+		base_nodiscard FontData* get() const;
 
-		NODISCARD operator bool() const;
-		NODISCARD operator const QFont& () const;
+		base_nodiscard operator bool() const;
+		base_nodiscard operator const QFont& () const;
 	private:
 		FontData* _data = nullptr;
 
@@ -162,29 +162,29 @@ namespace internal {
 
 	class FontData {
 	public:
-		NODISCARD int width(const QString& text) const;
-		NODISCARD int width(
+		base_nodiscard int width(const QString& text) const;
+		base_nodiscard int width(
 			const QString& text,
 			int from,
 			int to) const;
-		NODISCARD int width(QChar ch) const;
+		base_nodiscard int width(QChar ch) const;
 
-		NODISCARD QString elided(
+		base_nodiscard QString elided(
 			const QString& str,
 			int width,
 			Qt::TextElideMode mode = Qt::ElideRight) const;
 
-		NODISCARD Font bold(bool set = true) const;
-		NODISCARD Font italic(bool set = true) const;
-		NODISCARD Font underline(bool set = true) const;
+		base_nodiscard Font bold(bool set = true) const;
+		base_nodiscard Font italic(bool set = true) const;
+		base_nodiscard Font underline(bool set = true) const;
 
-		NODISCARD Font strikeout(bool set = true) const;
-		NODISCARD Font semibold(bool set = true) const;
-		NODISCARD Font monospace(bool set = true) const;
+		base_nodiscard Font strikeout(bool set = true) const;
+		base_nodiscard Font semibold(bool set = true) const;
+		base_nodiscard Font monospace(bool set = true) const;
 
-		NODISCARD int size() const;
-		NODISCARD FontFlags flags() const;
-		NODISCARD int family() const;
+		base_nodiscard int size() const;
+		base_nodiscard FontFlags flags() const;
+		base_nodiscard int family() const;
 
 		QFont f;
 
@@ -196,7 +196,7 @@ namespace internal {
 
 		int elidew = 0;
 	private:
-		NODISCARD Font otherFlagsFont(FontFlag flag, bool set) const;
+		base_nodiscard Font otherFlagsFont(FontFlag flag, bool set) const;
 		FontData(const FontResolveResult& data, FontVariants* modified);
 
 		QFontMetricsF _m;
@@ -211,8 +211,8 @@ namespace internal {
 		friend struct ResolvedFont;
 	};
 
-	NODISCARD bool operator==(const Font& a, const Font& b);
-	NODISCARD bool operator!=(const Font& a, const Font& b);
+	base_nodiscard bool operator==(const Font& a, const Font& b);
+	base_nodiscard bool operator!=(const Font& a, const Font& b);
 
 	class OwnedFont final {
 	public:
@@ -221,9 +221,9 @@ namespace internal {
 
 		OwnedFont& operator=(const OwnedFont& other);
 
-		NODISCARD const Font& font() const;
-		NODISCARD FontData* operator->() const;
-		NODISCARD FontData* get() const;
+		base_nodiscard const Font& font() const;
+		base_nodiscard FontData* operator->() const;
+		base_nodiscard FontData* get() const;
 	private:
 		FontData _data;
 		Font _font;

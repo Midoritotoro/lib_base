@@ -17,7 +17,7 @@ inline constexpr auto kPixelBytesSize = 4;
 inline constexpr auto kAlignImageBy = 64;
 
 void AlignedImageBufferCleanupHandler(void* data);
-NODISCARD bool IsAlignedImage(const QImage& image);
+base_nodiscard bool IsAlignedImage(const QImage& image);
 
 void UnPremultiplyLine(
 	uchar* dst,
@@ -33,10 +33,10 @@ void UnPremultiply(
 	const QImage& src);
 void PremultiplyInplace(QImage& image);
 
-NODISCARD bool GoodStorageForFrame(
+base_nodiscard bool GoodStorageForFrame(
 	const QImage& storage,
 	QSize size);
-NODISCARD QImage CreateFrameStorage(QSize size);
+base_nodiscard QImage CreateFrameStorage(QSize size);
 
 __BASE_IMAGES_NAMESPACE_END
 

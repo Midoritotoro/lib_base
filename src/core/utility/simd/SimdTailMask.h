@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-#include <base/core/utility/Math.h>
+#include <base/core/math/Math.h>
 
 __BASE_NAMESPACE_BEGIN
 
@@ -14,7 +14,7 @@ __BASE_NAMESPACE_BEGIN
 #define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64    (0x38)
 #define AVX512_BYTE_ALIGNED_TAIL_MASK_UINT32    (0x30)
 
-NODISCARD __m256i inline Avx2TailMask32(const std::size_t countInDwords) noexcept {
+base_nodiscard __m256i inline Avx2TailMask32(const std::size_t countInDwords) noexcept {
     // countInDwords must be within [0, 8].
     static constexpr unsigned int tailMasks[16] = {
         ~0u, ~0u, ~0u, ~0u, ~0u, ~0u, ~0u, ~0u, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -23,7 +23,7 @@ NODISCARD __m256i inline Avx2TailMask32(const std::size_t countInDwords) noexcep
             tailMasks + (8 - countInDwords)));
 }
 
-constexpr NODISCARD __mmask16 always_inline Avx512TailMask64(const std::size_t countInQWords) noexcept {
+constexpr base_nodiscard __mmask16 base_always_inline Avx512TailMask64(const std::size_t countInQWords) noexcept {
     // countInQWords must be within [0, 8].
     return (1ULL << countInQWords) - 1;
 }

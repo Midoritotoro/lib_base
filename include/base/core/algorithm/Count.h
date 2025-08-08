@@ -2,8 +2,8 @@
 
 #include <base/core/async/Concurrent.h>
 
-#include <src/core/utility/algorithm/IteratorWrap.h>
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/IteratorWrap.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 
 #include <base/core/utility/Execution.h>
 
@@ -12,7 +12,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _Iterator_,
 	class _Predicate_>
-NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> countIf(
+base_nodiscard base_constexpr_cxx20 IteratorDifferenceType<_Iterator_> countIf(
 	_Iterator_	firstIterator,
 	_Iterator_	lastIterator,
 	_Predicate_ predicate) noexcept
@@ -31,7 +31,7 @@ template <
 	class _ForwardIterator_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD IteratorDifferenceType<_ForwardIterator_> countIf(
+base_nodiscard IteratorDifferenceType<_ForwardIterator_> countIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,
@@ -50,7 +50,7 @@ NODISCARD IteratorDifferenceType<_ForwardIterator_> countIf(
 template <
 	class _Iterator_,
 	class _Type_>
-NODISCARD CONSTEXPR_CXX20 IteratorDifferenceType<_Iterator_> count(
+base_nodiscard base_constexpr_cxx20 IteratorDifferenceType<_Iterator_> count(
 	const _Iterator_	firstIterator,
 	const _Iterator_	lastIterator,
 	const _Type_&		value) noexcept
@@ -69,7 +69,7 @@ template <
 	class _ForwardIterator_,
 	class _Type_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD IteratorDifferenceType<_ForwardIterator_> count(
+base_nodiscard IteratorDifferenceType<_ForwardIterator_> count(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,

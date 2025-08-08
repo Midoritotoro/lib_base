@@ -1,6 +1,5 @@
 #pragma once 
 
-#include <base/core/arch/CompilerDetection.h>
 #include <xutility>
 
 

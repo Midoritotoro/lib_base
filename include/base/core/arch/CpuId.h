@@ -22,12 +22,12 @@ __BASE_ARCH_NAMESPACE_BEGIN
 #endif // base_cpp_gnu
 
 
-DECLARE_NOALIAS inline void CpuId(
+base_always_inline void CpuId(
     int32 op,
     int32& eax,
     int32& ebx,
     int32& ecx,
-    int32& edx)
+    int32& edx) noexcept
 {
 #if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(eax, ebx, ecx, edx, op);
@@ -43,9 +43,9 @@ DECLARE_NOALIAS inline void CpuId(
 #endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
-DECLARE_NOALIAS inline void CpuId(
+base_always_inline void CpuId(
     int32* data,
-    int32 op)
+    int32 op) noexcept
 {
 #if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(data, data + 4, data + 8, data + 12, op);
@@ -54,10 +54,10 @@ DECLARE_NOALIAS inline void CpuId(
 #endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
-DECLARE_NOALIAS inline void CpuIdExtended(
+base_always_inline void CpuIdExtended(
     int32* data,
     int32 op,
-    int32 ex)
+    int32 ex) noexcept
 {
 #if defined(base_cpp_gnu)
     BaseGCCCpuIdCall(data, data + 4, data + 8, data + 12, op);
@@ -66,7 +66,8 @@ DECLARE_NOALIAS inline void CpuIdExtended(
 #endif // defined(base_cpp_gnu) || defined(base_os_win32)
 }
 
-DECLARE_NOALIAS inline void CpuIdExtended(int32 op,
+inline void CpuIdExtended(
+    int32 op,
     int32& eax,
     int32& ebx,
     int32& ecx,

@@ -18,23 +18,23 @@ namespace details {
 
 	void init();
 
-	[[nodiscard]] innerTime_t currentValue();
-	[[nodiscard]] time_t convert(innerTime_t value);
+	base_nodiscard innerTime_t currentValue();
+	base_nodiscard time_t convert(innerTime_t value);
 
-	[[nodiscard]] innerProfile_t currentProfileValue();
-	[[nodiscard]] profileTime_t convertProfile(innerProfile_t);
+	base_nodiscard innerProfile_t currentProfileValue();
+	base_nodiscard profileTime_t convertProfile(innerProfile_t);
 
 } // namespace details
 
-[[nodiscard]] time_t now();
-[[nodiscard]] profileTime_t profile();
+base_nodiscard time_t now();
+base_nodiscard profileTime_t profile();
 
 bool adjustTime();
 
-[[nodiscard]] std::string formattedUnixTime(int64_t unixTime);
+base_nodiscard std::string formattedUnixTime(int64_t unixTime);
 
-[[nodiscard]] int minutes(int64_t unixTime);
-[[nodiscard]] int hours(int64_t unixTime);
-[[nodiscard]] int seconds(int64_t unixTime);
+base_nodiscard int minutes(int64_t unixTime);
+base_nodiscard int hours(int64_t unixTime);
+base_nodiscard int seconds(int64_t unixTime);
 
 __BASE_TIME_NAMESPACE_END

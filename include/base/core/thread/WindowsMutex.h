@@ -2,7 +2,7 @@
 
 #include <base/core/thread/AbstractMutex.h>
 
-#ifdef OS_WIN
+#ifdef base_os_windows
 
 #include <base/core/io/WindowsSmartHandle.h>
 

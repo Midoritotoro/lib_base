@@ -7,14 +7,14 @@
 
 __BASE_QT_NAMESPACE_BEGIN
 
-NODISCARD inline QByteArray operator""_q(
+base_nodiscard inline QByteArray operator""_q(
 	const char* data,
 	std::size_t size)
 {
 	return QByteArray::fromRawData(data, size);
 }
 
-NODISCARD inline QString operator""_q(
+base_nodiscard inline QString operator""_q(
 	const char16_t* data,
 	std::size_t size) 
 {

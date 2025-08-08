@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
 #include <base/core/utility/Execution.h>
@@ -11,7 +11,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _Iterator_,
 	class _Type_>
-NODISCARD CONSTEXPR_CXX20 _Iterator_ find(
+base_nodiscard base_constexpr_cxx20 _Iterator_ find(
 	_Iterator_			firstIterator,
 	const _Iterator_	lastIterator,
 	const _Type_&		value)
@@ -24,7 +24,7 @@ template <
 	class _ForwardIterator_,
 	class _Type_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD _ForwardIterator_ find(
+base_nodiscard _ForwardIterator_ find(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,
@@ -37,7 +37,7 @@ template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
 	class _Predicate_>
-NODISCARD CONSTEXPR_CXX20 _ForwardIterator1_ findFirstOf(
+base_nodiscard base_constexpr_cxx20 _ForwardIterator1_ findFirstOf(
 	_ForwardIterator1_			firstIterator1,
 	const _ForwardIterator1_	lastIterator1,
 	const _ForwardIterator2_	firstIterator2,
@@ -50,7 +50,7 @@ NODISCARD CONSTEXPR_CXX20 _ForwardIterator1_ findFirstOf(
 template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_>
-NODISCARD CONSTEXPR_CXX20 _ForwardIterator1_ findFirstOf(
+base_nodiscard base_constexpr_cxx20 _ForwardIterator1_ findFirstOf(
 	const _ForwardIterator1_ firstIterator1,
 	const _ForwardIterator1_ lastIterator1,
 	const _ForwardIterator2_ firstIterator2,
@@ -65,7 +65,7 @@ template <
 	class _ForwardIterator2_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD _ForwardIterator1_ findFirstOf(
+base_nodiscard _ForwardIterator1_ findFirstOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator1_	firstIterator1,
 	_ForwardIterator1_	lastIterator1,
@@ -81,7 +81,7 @@ template <
 	class _ForwardIterator1_,
 	class _ForwardIterator2_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD _ForwardIterator1_ findFirstOf(
+base_nodiscard _ForwardIterator1_ findFirstOf(
 	_ExecutionPolicy_&&			executionPolicy,
 	const _ForwardIterator1_	firstIterator1,
 	const _ForwardIterator1_	lastIterator1,
@@ -96,7 +96,7 @@ template <
 	class _ForwardIterator_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD _ForwardIterator_ findIf(
+base_nodiscard _ForwardIterator_ findIf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,
@@ -108,7 +108,7 @@ NODISCARD _ForwardIterator_ findIf(
 template <
 	class _Iterator_,
 	class _Predicate_>
-NODISCARD CONSTEXPR_CXX20 _Iterator_ findIfNot(
+base_nodiscard base_constexpr_cxx20 _Iterator_ findIfNot(
 	_Iterator_			firstIterator,
 	const _Iterator_	lastIterator,
 	_Predicate_			predicate)
@@ -121,7 +121,7 @@ template <
 	class _ForwardIterator_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD _ForwardIterator_ findIfNot(
+base_nodiscard _ForwardIterator_ findIfNot(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,

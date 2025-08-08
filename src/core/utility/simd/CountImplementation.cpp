@@ -3,7 +3,7 @@
 #include <base/core/arch/Platform.h>
 #include <base/core/arch/ProcessorFeatures.h>
 
-#include <src/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryUtility.h>
 #include <src/core/utility/simd/SimdAlgorithmSafety.h>
 
 #include <src/core/utility/simd/traits/SimdCountTraits.h>
@@ -15,7 +15,7 @@ __BASE_NAMESPACE_BEGIN
 
 
 template <class _Type_>
-CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
+base_constexpr_cxx20 inline base_nodiscard std::size_t CountScalar(
     const void*         _First,
     const void* const   _Last,
     const _Type_        _Value)
@@ -32,7 +32,7 @@ CONSTEXPR_CXX20 inline NODISCARD std::size_t CountScalar(
 template <
     class _Traits_,
     class _Type_>
-inline NODISCARD std::size_t CountSSE42(
+inline base_nodiscard std::size_t CountSSE42(
     const void*         _First,
     const void* const   _Last,
     const _Type_       _Value) noexcept
@@ -84,7 +84,7 @@ inline NODISCARD std::size_t CountSSE42(
 template <
     class _Traits_,
     class _Type_>
-inline NODISCARD std::size_t CountAVX(
+inline base_nodiscard std::size_t CountAVX(
     const void*         _First, 
     const void* const   _Last,
     const _Type_        _Val) noexcept
@@ -157,7 +157,7 @@ inline NODISCARD std::size_t CountAVX(
 template <
     class _Traits_,
     class _Type_>
-inline NODISCARD std::size_t CountAVX512(
+inline base_nodiscard std::size_t CountAVX512(
     const void*         _First,
     const void* const   _Last,
     const _Type_        _Value) 
@@ -220,7 +220,7 @@ inline NODISCARD std::size_t CountAVX512(
     }
 }
 
-DECLARE_NOALIAS inline NODISCARD std::size_t Count8Bit(
+base_declare_const_function inline base_nodiscard std::size_t Count8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -236,7 +236,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count8Bit(
 }
 
 
-DECLARE_NOALIAS inline NODISCARD std::size_t Count16Bit(
+base_declare_const_function inline base_nodiscard std::size_t Count16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -251,7 +251,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count16Bit(
     return CountScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS inline NODISCARD std::size_t Count32Bit(
+base_declare_const_function inline base_nodiscard std::size_t Count32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -266,7 +266,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count32Bit(
     return CountScalar(firstPointer, lastPointer, value);
 }
 
-DECLARE_NOALIAS inline NODISCARD std::size_t Count64Bit(
+base_declare_const_function inline base_nodiscard std::size_t Count64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -282,7 +282,7 @@ DECLARE_NOALIAS inline NODISCARD std::size_t Count64Bit(
 }
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 inline NODISCARD std::size_t CountVectorized(
+base_declare_const_function base_constexpr_cxx20 inline base_nodiscard std::size_t CountVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept

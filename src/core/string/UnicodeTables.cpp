@@ -10361,7 +10361,7 @@ static constexpr Properties uc_properties[] = {
     { 12, 0, 0, 0, -1, 0, 2, 0, 0,  { {0, 0}, {0, 0}, {0, 0}, {0, 0} }, 0, 0, 12, 0, 0, 0 }
 };
 
-DECL_CONST_FUNCTION static inline const Properties* _GetProp(char32_t ucs4) noexcept
+static inline const Properties* _GetProp(char32_t ucs4) noexcept
 {
     Assert(ucs4 <= Char::LastValidCodePoint);
     if (ucs4 < 0x11000)
@@ -10371,47 +10371,47 @@ DECL_CONST_FUNCTION static inline const Properties* _GetProp(char32_t ucs4) noex
         + uc_property_trie[uc_property_trie[((ucs4 - 0x11000) >> 8) + 0x880] + (ucs4 & 0xff)];
 }
 
-DECL_CONST_FUNCTION static inline const Properties* _GetProp(char16_t ucs2) noexcept
+static inline const Properties* _GetProp(char16_t ucs2) noexcept
 {
     return uc_properties + uc_property_trie[uc_property_trie[ucs2 >> 5] + (ucs2 & 0x1f)];
 }
 
-DECL_CONST_FUNCTION const Properties* FASTCALL properties(char32_t ucs4) noexcept
+const Properties* base_fastcall properties(char32_t ucs4) noexcept
 {
     return _GetProp(ucs4);
 }
 
-DECL_CONST_FUNCTION const Properties* FASTCALL properties(char16_t ucs2) noexcept
+const Properties* base_fastcall properties(char16_t ucs2) noexcept
 {
     return _GetProp(ucs2);
 }
 
-GraphemeBreakClass FASTCALL graphemeBreakClass(char32_t ucs4) noexcept
+GraphemeBreakClass base_fastcall graphemeBreakClass(char32_t ucs4) noexcept
 {
     return static_cast<GraphemeBreakClass>(_GetProp(ucs4)->graphemeBreakClass);
 }
 
-WordBreakClass FASTCALL wordBreakClass(char32_t ucs4) noexcept
+WordBreakClass base_fastcall wordBreakClass(char32_t ucs4) noexcept
 {
     return static_cast<WordBreakClass>(_GetProp(ucs4)->wordBreakClass);
 }
 
-SentenceBreakClass FASTCALL sentenceBreakClass(char32_t ucs4) noexcept
+SentenceBreakClass base_fastcall sentenceBreakClass(char32_t ucs4) noexcept
 {
     return static_cast<SentenceBreakClass>(_GetProp(ucs4)->sentenceBreakClass);
 }
 
-LineBreakClass FASTCALL lineBreakClass(char32_t ucs4) noexcept
+LineBreakClass base_fastcall lineBreakClass(char32_t ucs4) noexcept
 {
     return static_cast<LineBreakClass>(_GetProp(ucs4)->lineBreakClass);
 }
 
-IdnaStatus FASTCALL idnaStatus(char32_t ucs4) noexcept
+IdnaStatus base_fastcall idnaStatus(char32_t ucs4) noexcept
 {
     return static_cast<IdnaStatus>(_GetProp(ucs4)->idnaStatus);
 }
 
-EastAsianWidth FASTCALL eastAsianWidth(char32_t ucs4) noexcept
+EastAsianWidth base_fastcall eastAsianWidth(char32_t ucs4) noexcept
 {
     return static_cast<EastAsianWidth>(_GetProp(ucs4)->eastAsianWidth);
 }
@@ -21223,14 +21223,14 @@ static constexpr IdnaMapEntry idnaMap[] = {
     { 0x2fa1d, 2, { 0xd869, 0xde00 } },
 };
 
-//StringView FASTCALL idnaMapping(char32_t ucs4) noexcept
+//StringView base_fastcall idnaMapping(char32_t ucs4) noexcept
 //{
 //    auto i = std::lower_bound(std::begin(idnaMap), std::end(idnaMap), ucs4,
 //        [](const auto& p, char32_t c) { return p.codePoint < c; });
 //    if (i == std::end(idnaMap) || i->codePoint != ucs4)
 //        return {};
 //
-//    return QStringView(i->size > 2 ? idnaMappingData + i->ucs[0] : i->ucs, i->size);
+//    return std::string_view(i->size > 2 ? idnaMappingData + i->ucs[0] : i->ucs, i->size);
 //}
 
 __BASE_STRING_NAMESPACE_END

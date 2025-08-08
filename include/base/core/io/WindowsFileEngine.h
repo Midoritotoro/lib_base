@@ -4,7 +4,7 @@
 #include <base/core/io/WindowsSmartHandle.h>
 
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 __BASE_IO_NAMESPACE_BEGIN
 
@@ -18,11 +18,11 @@ class WindowsFileEngine final:
 		virtual ~WindowsFileEngine();
 
 		void setFileName(const std::string& path) override;
-		NODISCARD bool isOpened() const noexcept override;
+		base_nodiscard bool isOpened() const noexcept override;
 
-		NODISCARD std::string path() const noexcept override;
+		base_nodiscard std::string path() const noexcept override;
 
-		static NODISCARD bool exists(const std::string& path);
+		static base_nodiscard bool exists(const std::string& path);
 
 		static void find(
 			const std::string& path,
@@ -37,43 +37,43 @@ class WindowsFileEngine final:
 
 		void close() override;
 
-		NODISCARD std::string absolutePathFromDescriptor(FILE* descriptor) override;
+		base_nodiscard std::string absolutePathFromDescriptor(FILE* descriptor) override;
 
-		NODISCARD bool open(
+		base_nodiscard bool open(
 			const std::string& path,
 			FileOpenModes mode) override;
-		NODISCARD bool open(
+		base_nodiscard bool open(
 			const std::string& path,
 			int mode) override;
 
-		NODISCARD bool rename(const std::string& newFileName) override;
+		base_nodiscard bool rename(const std::string& newFileName) override;
 		static bool rename(
 			const std::string& oldFileName,
 			const std::string& newFileName);
 
-		NODISCARD bool rewind(int64 position) override;
-		NODISCARD bool rewind(FilePositions position) override;
+		base_nodiscard bool rewind(int64 position) override;
+		base_nodiscard bool rewind(FilePositions position) override;
 
 		void remove() override;
 		static void remove(const std::string& path);
 
-		static NODISCARD bool write(
+		static base_nodiscard bool write(
 			const std::string& path,
 			const char* inBuffer,
 			sizetype sizeInBytes);
 
-		NODISCARD ReadResult read(sizetype sizeInBytes) override;
-		NODISCARD ReadResult readAll() override;
+		base_nodiscard ReadResult read(sizetype sizeInBytes) override;
+		base_nodiscard ReadResult readAll() override;
 
-		static NODISCARD sizetype fileSize(const std::string& path);
-		NODISCARD sizetype fileSize() const noexcept;
+		static base_nodiscard sizetype fileSize(const std::string& path);
+		base_nodiscard sizetype fileSize() const noexcept;
 	private:
 		enum ReadType : uchar {
 			Value,
 			All
 		};
 
-		NODISCARD bool read(
+		base_nodiscard bool read(
 			ReadType type,
 			ReadResult* outBuffer,
 			sizetype sizeInBytes = 0);

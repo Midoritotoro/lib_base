@@ -1,7 +1,7 @@
 #include <src/core/network/WindowsNetworkInformation.h>
 #include <base/core/io/WindowsSmartHandle.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 #include <wlanapi.h>
 

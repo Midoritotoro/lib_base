@@ -1,7 +1,7 @@
 #include <base/core/thread/WindowsMutex.h>
 
 
-#ifdef OS_WIN
+#ifdef base_os_windows
 
 #include <base/core/thread/ThreadsConfig.h>
 

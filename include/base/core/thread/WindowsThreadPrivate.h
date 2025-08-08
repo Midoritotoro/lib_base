@@ -2,15 +2,15 @@
 
 #include <base/core/thread/ThreadsConfig.h>
 
-#ifdef OS_WIN 
+#ifdef base_os_windows 
 
 #include <base/core/thread/AtomicInteger.h>
 
 
-#if defined(CPP_MSVC) && !defined(_DLL)
+#if defined(base_cpp_msvc) && !defined(_DLL)
     #include <process.h> // Для _beginthreadex и _endthreadex
 #else
-    WARNING_DISABLE_MSVC(6258) // Использование TerminateThread не разрешает правильную очистку потока.
+    base_disable_warning_msvc(6258) // Использование TerminateThread не разрешает правильную очистку потока.
 #endif
 
 
@@ -26,8 +26,8 @@ public:
     template <
         class _Tuple,
         size_t... _Indices>
-    static NODISCARD uint
-        STDCALL Invoke(void* _RawVals) noexcept
+    static base_nodiscard uint32
+        base_stdcall Invoke(void* _RawVals) noexcept
     {
         const std::unique_ptr<_Tuple>
             _FnVals(static_cast<_Tuple*>(_RawVals));
@@ -37,7 +37,7 @@ public:
         std::invoke(std::move(
             std::get<_Indices>(_Tup))...);
 
-#if defined(CPP_MSVC) && !defined(_DLL)
+#if defined(base_cpp_msvc) && !defined(_DLL)
         _Cnd_do_broadcast_at_thread_exit();
 #endif
 
@@ -47,7 +47,7 @@ public:
     template <
         class _Tuple,
         size_t... _Indices>
-    static NODISCARD constexpr
+    static base_nodiscard constexpr
         auto GetInvoke(std::index_sequence<_Indices...>) noexcept 
     {
         return &Invoke<_Tuple, _Indices...>;
@@ -58,7 +58,7 @@ public:
         class...    Args,
         class       IdType = sizetype,
         class = std::enable_if<IsValidIdType<IdType>>>
-    static void STDCALL StartImplementation(
+    static void base_stdcall StartImplementation(
         AtomicInteger<IdType>*  _PThreadId,
         io::WindowsSmartHandle* _PHandle,
         Function&&              _Routine,
@@ -77,7 +77,7 @@ public:
 
         IdType threadId;
 
-#if defined(CPP_MSVC) && !defined(_DLL)
+#if defined(base_cpp_msvc) && !defined(_DLL)
         // -MT или -MTd 
 
         *_PHandle = (HANDLE)reinterpret_cast<void*>(
@@ -109,17 +109,17 @@ public:
         }
     }
 
-    static NODISCARD DWORD GetThreadExitCode(const io::WindowsSmartHandle& handle) {
+    static base_nodiscard DWORD GetThreadExitCode(const io::WindowsSmartHandle& handle) {
         DWORD exitCode = 0;
         GetExitCodeThread(handle.handle(), &exitCode);
 
         return exitCode;
     }
 
-    static void STDCALL CloseImplementation(
+    static void base_stdcall CloseImplementation(
         io::WindowsSmartHandle* _PHandle) noexcept
     {
-#if defined(CPP_MSVC) && !defined(_DLL)
+#if defined(base_cpp_msvc) && !defined(_DLL)
         // -MT или -MTd 
         _endthreadex(GetThreadExitCode(_PHandle->handle()));
 
@@ -131,11 +131,11 @@ public:
 #endif
     }   
 
-    static NODISCARD DWORD 
-        STDCALL TerminateImplementation(
+    static base_nodiscard DWORD 
+        base_stdcall TerminateImplementation(
             io::WindowsSmartHandle* _PHandle) noexcept
     {
-#if defined(CPP_MSVC) && !defined(_DLL)
+#if defined(base_cpp_msvc) && !defined(_DLL)
         // -MT или -MTd 
 
         CloseImplementation(_PHandle);

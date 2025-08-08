@@ -2,15 +2,15 @@
 
 #include <base/core/arch/Platform.h>
 
-#if defined(OS_WIN) 
+#if defined(base_os_windows) 
 #  include <wlanapi.h>
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 
 #endif
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
   using wlanInterfaceInformationList_t	= WLAN_INTERFACE_INFO_LIST;
   using wlanInterfaceInformation_t		= WLAN_INTERFACE_INFO;
@@ -18,7 +18,7 @@ __BASE_NETWORK_NAMESPACE_BEGIN
   using wlanAvailableNetworksList_t		= WLAN_AVAILABLE_NETWORK_LIST;
   using wlanAvailableNetwork_t			= WLAN_AVAILABLE_NETWORK;
 
-#elif defined(OS_MAC) || defined(OS_LINUX) 
+#elif defined(base_os_mac) || defined(base_os_linux) 
 
 #endif
 

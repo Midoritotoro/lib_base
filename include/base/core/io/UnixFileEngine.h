@@ -2,7 +2,7 @@
 
 #include <base/core/arch/Platform.h>
 
-#if defined(OS_MAC) || defined(OS_LINUX)
+#if defined(base_os_mac) || defined(base_os_linux)
 
 #include <base/core/io/AbstractFileEngine.h>
 
@@ -26,12 +26,12 @@ public:
 	void setFileName(const std::string& path) override;
 	void setFileDescriptor(not_null<FILE*> file) override;
 
-	[[nodiscard]] bool isOpened() const noexcept override;
+	base_nodiscard bool isOpened() const noexcept override;
 
-	[[nodiscard]] FILE* fileDescriptor() const noexcept override;
-	[[nodiscard]] std::string path() const noexcept override;
+	base_nodiscard FILE* fileDescriptor() const noexcept override;
+	base_nodiscard std::string path() const noexcept override;
 
-	static [[nodiscard]] bool exists(const std::string& path);
+	static base_nodiscard bool exists(const std::string& path);
 
 	static void find(
 		const base_string& path,
@@ -46,31 +46,31 @@ public:
 
 	void close() override;
 
-	[[nodiscard]] std::string absolutePathFromDescriptor(FILE* descriptor) override;
+	base_nodiscard std::string absolutePathFromDescriptor(FILE* descriptor) override;
 
-	[[nodiscard]] bool open(
+	base_nodiscard bool open(
 		const std::string& path,
 		FileOpenModes mode) override;
-	[[nodiscard]] bool open(
+	base_nodiscard bool open(
 		const std::string& path,
 		const char* mode) override;
 
-	[[nodiscard]] bool rename(const std::string& newFileName) override;
-	[[nodiscard]] bool rename(
+	base_nodiscard bool rename(const std::string& newFileName) override;
+	base_nodiscard bool rename(
 		const std::string& oldFileName,
 		const std::string& newFileName) override;
 
-	[[nodiscard]] bool rewind(sizetype position) override;
-	[[nodiscard]] bool rewind(FilePositions position) override;
+	base_nodiscard bool rewind(sizetype position) override;
+	base_nodiscard bool rewind(FilePositions position) override;
 
-	[[nodiscard]] void remove() override;
-	[[nodiscard]] void remove(const std::string& path) override;
+	base_nodiscard void remove() override;
+	base_nodiscard void remove(const std::string& path) override;
 
-	[[nodiscard]] sizetype read(
+	base_nodiscard sizetype read(
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes) override;
 
-	[[nodiscard]] sizetype fileSize() const noexcept override;
+	base_nodiscard sizetype fileSize() const noexcept override;
 private:
 	FILE* _desc = nullptr;
 	std::string _path = "";

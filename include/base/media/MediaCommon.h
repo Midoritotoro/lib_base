@@ -25,18 +25,18 @@ enum class Quality : uchar {
 	Ultra = 0x08,
 };
 
-NODISCARD int QualityToSwscaleFlags(Quality quality);
-NODISCARD Type detectMediaType(const QString& path);
+base_nodiscard int QualityToSwscaleFlags(Quality quality);
+base_nodiscard Type detectMediaType(const QString& path);
 	
-NODISCARD QPixmap FindPreviewInCache(const QString& key);
-NODISCARD QSize MediaResolution(
+base_nodiscard QPixmap FindPreviewInCache(const QString& key);
+base_nodiscard QSize MediaResolution(
 	const QString&	path,
 	Type			type = Type::Unknown);
 
-NODISCARD QPixmap MediaPreview(
+base_nodiscard QPixmap MediaPreview(
 	const QString&	path,
 	Quality			quality = Quality::Medium);
-NODISCARD QPixmap GenerateThumbnail(
+base_nodiscard QPixmap GenerateThumbnail(
 	const QString&	path,
 	const QSize&	targetSize,
 	Quality			quality = Quality::Medium);

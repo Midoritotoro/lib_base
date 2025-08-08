@@ -17,7 +17,7 @@ public:
 		ImageData* data,
 		const char* format) override;
 
-	NODISCARD const char* format() const noexcept override;
+	base_nodiscard const char* format() const noexcept override;
 private:
 
 };

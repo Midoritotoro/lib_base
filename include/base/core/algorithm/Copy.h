@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
-#include <src/core/utility/algorithm/IteratorWrap.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/IteratorWrap.h>
 
-#include <src/core/memory/CopyBackward.h>
+#include <base/core/memory/CopyBackward.h>
 #include <src/core/utility/simd/SimdAlgorithm.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -12,7 +12,7 @@ template <
 	class _Iterator_,
 	class _OutputIterator_,
 	class _Predicate_>
-CONSTEXPR_CXX20 _OutputIterator_ copyIf(
+base_constexpr_cxx20 _OutputIterator_ copyIf(
 	_Iterator_			firstIterator,
 	_Iterator_			lastIterator,
 	_OutputIterator_	destinationIterator,
@@ -50,7 +50,7 @@ _ForwardIterator2_ copyIf(
 template <
 	class _BidirectionalIterator1_,
 	class _BidirectionalIterator2_>
-CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
+base_constexpr_cxx20 _BidirectionalIterator2_ copyBackward(
 	_BidirectionalIterator1_ firstIterator,
 	_BidirectionalIterator1_ lastIterator,
 	_BidirectionalIterator2_ destinationIterator)
@@ -68,7 +68,7 @@ CONSTEXPR_CXX20 _BidirectionalIterator2_ copyBackward(
 template <
 	class _BidirectionalIterator_,
 	class _OutputIterator_>
-CONSTEXPR_CXX20 _OutputIterator_ reverseCopy(
+base_constexpr_cxx20 _OutputIterator_ reverseCopy(
 	_BidirectionalIterator_ firstIterator,
 	_BidirectionalIterator_ lastIterator,
 	_OutputIterator_ destinationIterator)

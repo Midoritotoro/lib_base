@@ -2,7 +2,7 @@
 
 #include <base/core/system/SystemInfo.h>
 
-#include <base/core/utility/OverflowCheck.h>
+#include <base/core/math/OverflowCheck.h>
 #include <src/core/string/StringOptimization.h>
 
 #include <src/core/string/StringStorageRefCount.h>

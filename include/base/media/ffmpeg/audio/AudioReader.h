@@ -10,7 +10,7 @@ namespace base::media::ffmpeg::audio {
 
 		bool open(Time::time_t positionMs, float speed = 1.) override;
 
-		[[nodiscard]] Time::time_t position() const noexcept;
+		base_nodiscard Time::time_t position() const noexcept;
 
 		~AudioReader();
 

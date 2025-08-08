@@ -1,12 +1,12 @@
 #pragma once 
 
-#include <src/core/memory/Destroy.h>
+#include <base/core/memory/Destroy.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Allocator_>
 // Deallocates the range [start, end)
-CONSTEXPR_CXX20 inline void DeallocateRange(
+base_constexpr_cxx20 inline void DeallocateRange(
     AllocatorPointerType<_Allocator_>   pointerStart,
     AllocatorPointerType<_Allocator_>   pointerEnd,
     _Allocator_&                        allocator) noexcept
@@ -22,7 +22,7 @@ CONSTEXPR_CXX20 inline void DeallocateRange(
 
 template <class _Allocator_>
 // Deallocates the range [pointerStart, pointerStart + _Offset)
-CONSTEXPR_CXX20 inline void DeallocateRangeCount(
+base_constexpr_cxx20 inline void DeallocateRangeCount(
     AllocatorPointerType<_Allocator_>   pointerStart,
     AllocatorSizeType<_Allocator_>      elementsCount,
     _Allocator_&                        allocator) noexcept
@@ -39,7 +39,7 @@ CONSTEXPR_CXX20 inline void DeallocateRangeCount(
 
 template <class _Allocator_>
 // Deallocates the range [pointerStart, pointerStart + _BytesCount)
-CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
+base_constexpr_cxx20 inline void DeallocateRangeBytes(
     AllocatorPointerType<_Allocator_>&  pointerStart,
     AllocatorSizeType<_Allocator_>      bytesCount,
     _Allocator_&                        allocator) noexcept
@@ -55,7 +55,7 @@ CONSTEXPR_CXX20 inline void DeallocateRangeBytes(
 
 template <class _Allocator_>
 // Destroys the range [pointerStart, pointerCurrent), then deletes the range [pointerStart, pointerEnd)
-CONSTEXPR_CXX20 inline void DeallocateUsedRange(
+base_constexpr_cxx20 inline void DeallocateUsedRange(
     AllocatorPointerType<_Allocator_>   pointerStart,
     AllocatorPointerType<_Allocator_>   pointerEnd,
     AllocatorPointerType<_Allocator_>   pointerCurrent,
@@ -75,7 +75,7 @@ CONSTEXPR_CXX20 inline void DeallocateUsedRange(
 
 template <class _Allocator_>
 // Deallocates the range [pointerStart, pointerEnd) and sets pointerStart and pointerEnd to nullptr
-CONSTEXPR_CXX20 inline void FreeRange(
+base_constexpr_cxx20 inline void FreeRange(
     AllocatorPointerType<_Allocator_>&  pointerStart,
     AllocatorPointerType<_Allocator_>&  pointerEnd,
     _Allocator_&                        allocator) noexcept
@@ -88,7 +88,7 @@ CONSTEXPR_CXX20 inline void FreeRange(
 
 template <class _Allocator_>
 // Deallocates the range [pointerStart, pointerStart + _Offset) and sets pointerStart to nullptr
-CONSTEXPR_CXX20 inline void FreeRangeCount(
+base_constexpr_cxx20 inline void FreeRangeCount(
     AllocatorPointerType<_Allocator_>&  pointerStart,
     AllocatorSizeType<_Allocator_>      elementsCount,
     _Allocator_&                        allocator) noexcept
@@ -99,7 +99,7 @@ CONSTEXPR_CXX20 inline void FreeRangeCount(
 
 template <class _Allocator_>
 // Deallocates the range [pointerStart, pointerStart + _BytesCount) and sets pointerStart to nullptr
-CONSTEXPR_CXX20 inline void FreeRangeBytes(
+base_constexpr_cxx20 inline void FreeRangeBytes(
     AllocatorPointerType<_Allocator_>&  pointerStart,
     AllocatorSizeType<_Allocator_>      bytesCount,
     _Allocator_&                        allocator) noexcept
@@ -113,7 +113,7 @@ CONSTEXPR_CXX20 inline void FreeRangeBytes(
 template <class _Allocator_>
 // Destroys the range [pointerStart, pointerCurrent)
 // Then deletes the range [pointerStart, pointerEnd) and sets pointerStart, pointerCurrent and pointerEnd to nullptr
-CONSTEXPR_CXX20 inline void FreeUsedRange(
+base_constexpr_cxx20 inline void FreeUsedRange(
     AllocatorPointerType<_Allocator_>&  pointerStart,
     AllocatorPointerType<_Allocator_>&  pointerEnd,
     AllocatorPointerType<_Allocator_>&  pointerCurrent,

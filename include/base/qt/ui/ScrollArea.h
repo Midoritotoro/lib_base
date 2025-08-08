@@ -14,10 +14,10 @@ public:
 	InnerWidget(QWidget* parent = nullptr);
 
 	void setOpacity(double opacity);
-	[[nodiscard]] double opacity() const noexcept;
+	base_nodiscard double opacity() const noexcept;
 
 	void setBackgroundColor(const QColor& color);
-	[[nodiscard]] QColor backgroundColor() const noexcept;
+	base_nodiscard QColor backgroundColor() const noexcept;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 private:
@@ -36,7 +36,7 @@ public:
 	bool focusNextPrevChild(bool next) override;
 	void setOpacity(double opacity);
 
-	[[nodiscard]] int computeScrollTo(int toTop, int toBottom);
+	base_nodiscard int computeScrollTo(int toTop, int toBottom);
 
 	void scrollToY(int toTop, int toBottom = -1);
 	void scrolled();
@@ -48,14 +48,14 @@ public:
 	void addItem(QWidget* item, Qt::Alignment align = Qt::AlignLeft | Qt::AlignTop);
 
 	void setWidget(InnerWidget* widget);
-	[[nodiscard]] InnerWidget* widget() const noexcept;
+	base_nodiscard InnerWidget* widget() const noexcept;
 protected:
 	bool viewportEvent(QEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;
 
 	void paintEvent(QPaintEvent* event) override;
 private:
-	[[nodiscard]] int itemsHeight() const;
+	base_nodiscard int itemsHeight() const;
 	bool _disabled = false;
 
 	int _verticalValue;

@@ -1,7 +1,7 @@
 #pragma once 
 
-#include <src/core/memory/IteratorCategory.h>
-#include <src/core/memory/PointerConversion.h>
+#include <base/core/memory/IteratorCategory.h>
+#include <base/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -45,15 +45,15 @@ template <
     class _BidirectionalIterator1_,
     class _BidirectionalIterator2_>
 // copy [_First, _Last) backwards to [..., _Dest)
-NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
+base_nodiscard base_constexpr_cxx20 _BidirectionalIterator2_ CopyBackwardUnchecked(
     _BidirectionalIterator1_ firstIterator, 
     _BidirectionalIterator1_ lastIterator, 
     _BidirectionalIterator2_ destinationIterator) 
 {
     if constexpr (IteratorCopyCategory<_BidirectionalIterator1_, _BidirectionalIterator2_>::BitcopyAssignable) {
-#if BASE_HAS_CXX20
+#if base_has_cxx20
         if (is_constant_evaluated() == false)
-#endif
+#endif // base_has_cxx20
         {
             return CopyBackwardMemmove(
                 firstIterator, lastIterator,
@@ -70,7 +70,7 @@ NODISCARD CONSTEXPR_CXX20 _BidirectionalIterator2_ CopyBackwardUnchecked(
 template <
     class _Iterator1_, 
     class _Iterator2_>
-CONSTEXPR_CXX20 void RewindIterator(
+base_constexpr_cxx20 void RewindIterator(
     _Iterator1_&    iterator,
     _Iterator2_&&   iteratorTo)
 {

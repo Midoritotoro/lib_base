@@ -74,13 +74,13 @@ namespace internal {
 		std::map<uint32, std::unique_ptr<ResolvedFont>> FontsByKey;
 		std::map<uint64, uint32> QtFontsKeys;
 
-		[[nodiscard]] uint32 FontKey(int size, FontFlags flags, int family) {
+		base_nodiscard uint32 FontKey(int size, FontFlags flags, int family) {
 			return (uint32(family) << 18)
 				| (uint32(size) << 6)
 				| uint32(flags.value());
 		}
 
-		[[nodiscard]] uint64 QtFontKey(const QFont& font) {
+		base_nodiscard uint64 QtFontKey(const QFont& font) {
 			static auto Families = std::map<QString, int>();
 
 			const auto family = font.family();
@@ -112,12 +112,12 @@ namespace internal {
 			return true;
 		}
 
-		[[nodiscard]] QString SystemMonospaceFont() {
+		base_nodiscard QString SystemMonospaceFont() {
 			const auto type = QFontDatabase::FixedFont;
 			return QFontDatabase::systemFont(type).family();
 		}
 
-		[[nodiscard]] QString ManualMonospaceFont() {
+		base_nodiscard QString ManualMonospaceFont() {
 			const auto kTryFirst = std::initializer_list<QString>{
 				u"Cascadia Mono"_q,
 				u"Consolas"_q,
@@ -134,7 +134,7 @@ namespace internal {
 			return QString();
 		}
 
-		[[nodiscard]] QString MonospaceFont() {
+		base_nodiscard QString MonospaceFont() {
 			static const auto family = [&]() -> QString {
 				const auto manual = ManualMonospaceFont();
 				const auto system = SystemMonospaceFont();
@@ -151,7 +151,7 @@ namespace internal {
 			double ascent = 0.;
 			double height = 0.;
 		};
-		[[nodiscard]] Metrics ComputeMetrics(QFont font, bool adjust) {
+		base_nodiscard Metrics ComputeMetrics(QFont font, bool adjust) {
 			constexpr auto kMaxSizeShift = 8;
 
 			const auto startSize = font.pixelSize();
@@ -278,7 +278,7 @@ namespace internal {
 			}
 		}
 
-		[[nodiscard]] FontResolveResult ResolveFont(
+		base_nodiscard FontResolveResult ResolveFont(
 			const QString& family,
 			FontFlags flags,
 			int size)

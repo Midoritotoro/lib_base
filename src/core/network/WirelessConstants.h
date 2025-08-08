@@ -2,7 +2,7 @@
 
 #include <base/core/arch/Platform.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 #  include <wlantypes.h>
 #else
 
@@ -19,18 +19,18 @@ enum Dot11AuthenticationAlgorithm {
     AuthenticationAlgorithmRSNA = 6,
     AuthenticationAlgorithmRSNA_PSK = 7,
     AuthenticationAlgorithmWPA3 = 8,               // means WPA3 Enterprise 192 bits
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 #if (NTDDI_VERSION >= NTDDI_WIN10_FE)
     AuthenticationAlgorithmWPA3_ENT_192 = AuthenticationAlgorithmWPA3,
 #endif
 #endif
     AuthenticationAlgorithmWPA3_SAE = 9,
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 #if (NTDDI_VERSION >= NTDDI_WIN10_VB)
     AuthenticationAlgorithmOWE = 10,
 #endif
 #endif
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 #if (NTDDI_VERSION >= NTDDI_WIN10_FE)
     AuthenticationAlgorithmWPA3_ENT = 11,
 #endif
@@ -59,7 +59,7 @@ enum Dot11CipherAlgorithm {
     CipherAlgorithmIHV_END = 0xffffffff
 };
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
     using WinApiDot11CipherAlgorithm_t = DOT11_CIPHER_ALGORITHM;
     using WinApiDot11AuthAlgorithm_t = DOT11_AUTH_ALGORITHM;
 #endif

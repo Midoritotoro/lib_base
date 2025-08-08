@@ -27,31 +27,31 @@ namespace base::qt::ui::effects {
             const QPainterPath& _clipPath);
 
         void setSourceOpacity(double _opacity);
-        [[nodiscard]] double sourceOpacity() const;
+        base_nodiscard double sourceOpacity() const;
 
         void setBlurOpacity(double _opacity);
-        [[nodiscard]] double blurOpacity() const;
+        base_nodiscard double blurOpacity() const;
 
         void setBackgroundBrush(const QBrush& _brush);
-        [[nodiscard]] QBrush backgroundBrush() const;
+        base_nodiscard QBrush backgroundBrush() const;
 
         void setBlurMethod(BlurMethod _method);
-        [[nodiscard]] BlurMethod blurMethod() const;
+        base_nodiscard BlurMethod blurMethod() const;
 
         void setRegion(const QRegion& _sourceRegion);
-        [[nodiscard]] const QRegion& region() const;
+        base_nodiscard const QRegion& region() const;
 
         void setBlurRadius(int _radius);
-        [[nodiscard]] int blurRadius() const;
+        base_nodiscard int blurRadius() const;
 
         void setDownsampleFactor(double _factor);
-        [[nodiscard]] double downsampleFactor() const;
+        base_nodiscard double downsampleFactor() const;
 
         void setMaxThreadCount(int _nthreads);
-        [[nodiscard]] int maxThreadCount() const;
+        base_nodiscard int maxThreadCount() const;
 
         void setCoordinateSystem(Qt::CoordinateSystem _system);
-        [[nodiscard]] Qt::CoordinateSystem coordinateSystem() const;
+        base_nodiscard Qt::CoordinateSystem coordinateSystem() const;
     protected:
         void draw(QPainter* _painter) override;
 

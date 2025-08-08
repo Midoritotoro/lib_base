@@ -5,7 +5,7 @@
 
 #include <base/core/utility/ClassHelperMacros.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 __BASE_NAMESPACE_BEGIN
 
@@ -26,14 +26,14 @@ public:
 	~WindowsSmartHandle();
 
 	void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
-	NODISCARD Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
+	base_nodiscard Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
 
 	void forceDelete();
 
-	NODISCARD bool isValid() const noexcept;
+	base_nodiscard bool isValid() const noexcept;
 
 	void setAutoDelete(bool autoDelete);
-	NODISCARD bool autoDelete() const noexcept;
+	base_nodiscard bool autoDelete() const noexcept;
 
 	WindowsSmartHandle& operator=(HANDLE handle);
 	bool operator==(HANDLE handle);
@@ -42,10 +42,10 @@ public:
 		not_null<HANDLE> handle, 
 		bool autoDeletePrevious = true);
 
-	NODISCARD HANDLE handle() const noexcept;
-	NODISCARD HANDLE constHandle() const noexcept;
+	base_nodiscard HANDLE handle() const noexcept;
+	base_nodiscard HANDLE constHandle() const noexcept;
 
-	NODISCARD HANDLE handle() noexcept;
+	base_nodiscard HANDLE handle() noexcept;
 
 	DISABLE_COPY(WindowsSmartHandle);
 private:

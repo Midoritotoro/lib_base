@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -8,7 +8,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _Iterator_,
 	class _Predicate_>
-NODISCARD CONSTEXPR_CXX20 bool noneOf(
+base_nodiscard base_constexpr_cxx20 bool noneOf(
 	const _Iterator_	firstIterator,
 	const _Iterator_	lastIterator,
 	_Predicate_			predicate)
@@ -27,7 +27,7 @@ template <
 	class _ForwardIterator_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-NODISCARD bool noneOf(
+base_nodiscard bool noneOf(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,

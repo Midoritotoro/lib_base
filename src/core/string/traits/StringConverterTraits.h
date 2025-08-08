@@ -3,7 +3,7 @@
 #include <src/core/string/StringConversionParameters.h>
 
 #include <src/core/string/StringConversionResult.h>
-#include <src/core/memory/MemoryUtility.h>
+#include <base/core/memory/MemoryUtility.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 

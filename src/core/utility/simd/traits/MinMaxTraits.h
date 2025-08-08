@@ -5,6 +5,7 @@
 #endif // !defined(_DEBUG)
 
 #include <base/core/utility/TypeTraits.h>
+#include <base/core/arch/SimdHelpers.h>
 
 __BASE_NAMESPACE_BEGIN
 

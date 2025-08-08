@@ -1,9 +1,9 @@
 #include <src/core/thread/ThreadsData.h>
 #include <base/core/thread/Thread.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 	#include <base/core/thread/WindowsThread.h>
-#elif defined(OS_MAC) || defined(OS_LINUX)
+#elif defined(base_os_mac) || defined(base_os_linux)
 	#include <base/core/thread/UnixThread.h>
 #endif
 
@@ -17,7 +17,7 @@ namespace {
 	static std::vector<Thread*> _threads;
 }
 
-#ifdef OS_WIN
+#ifdef base_os_windows
 
 Thread* ThreadsData::threadById(sizetype id) {
 	/*for (sizetype i = 0; i < _threads.size(); ++i)

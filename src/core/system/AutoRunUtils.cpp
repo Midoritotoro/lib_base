@@ -1,6 +1,6 @@
 ﻿#include <base/core/utility/Algorithm.h>
 
-#if defined(OS_WIN)
+#if defined(base_os_windows)
 
 #include <PathCch.h>
 #include <tchar.h>

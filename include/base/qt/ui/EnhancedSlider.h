@@ -34,7 +34,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
-    NODISCARD int64_t mousePositionToSliderVal(const QPoint& pos);
+    base_nodiscard int64_t mousePositionToSliderVal(const QPoint& pos);
 };
 
 __BASE_QT_UI_NAMESPACE_END

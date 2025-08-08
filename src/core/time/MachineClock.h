@@ -1,13 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <base/core/compatibility/Compatibility.h>
 
-#include <base/core/arch/CompilerDetection.h>
-#include <base/core/arch/SystemDetection.h>
-
-#include <base/core/arch/KeywordSupport.h>
-
-#if defined(OS_MAC)
+#if defined(base_os_mac)
 #include <mach/mach_time.h>
 #endif
 // For MSVC, we want to use '_asm rdtsc' when possible (since it works
@@ -17,25 +13,25 @@
 // declarations of some other intrinsics, breaking compilation.
 // Therefore, we simply declare __rdtsc ourselves. See also
 // http://connect.microsoft.com/VisualStudio/feedback/details/262047
-#if defined(CPP_MSVC) && !defined(_M_IX86) && !defined(_M_ARM64) && !defined(_M_ARM64EC)
+#if defined(base_cpp_msvc) && !defined(_M_IX86) && !defined(_M_ARM64) && !defined(_M_ARM64EC)
 extern "C" uint64_t __rdtsc();
 #pragma intrinsic(__rdtsc)
 #endif
 
-#if !defined(OS_WIN) || defined(OS_MINGW)
+#if !defined(base_os_windows) || defined(base_os_mingw)
 #include <sys/time.h>
 #include <time.h>
 #endif
 
-#ifdef OS_EMSCRIPTEN
+#ifdef base_os_emscripten
 #include <emscripten.h>
 #endif
 
 __BASE_NAMESPACE_BEGIN
  
 // Return the number of cycles since power-on.  Thread-safe.
-inline always_inline int64 Now() {
-#if defined(OS_MAC)
+inline base_always_inline int64 Now() {
+#if defined(base_os_mac)
             // this goes at the top because we need ALL Macs, regardless of
             // architecture, to return the number of "mach time units" that
             // have passed since startup.  See sysinfo.cc where
@@ -46,11 +42,11 @@ inline always_inline int64 Now() {
             // counter pauses; it does not continue counting, nor does it
             // reset to zero.
             return static_cast<int64_t>(mach_absolute_time());
-#elif defined(OS_EMSCRIPTEN)
+#elif defined(base_os_emscripten)
             // this goes above x86-specific code because old versions of Emscripten
             // define __x86_64__, although they have nothing to do with it.
             return static_cast<int64_t>(emscripten_get_now() * 1e+6);
-#elif defined(PROCESSOR_X86_32)
+#elif defined(base_processor_x86_32)
             int64_t ret;
             __asm__ volatile("rdtsc" : "=A"(ret));
             return ret;
@@ -84,21 +80,21 @@ inline always_inline int64 Now() {
             int64_t itc;
             asm("mov %0 = ar.itc" : "=r"(itc));
             return itc;
-#elif defined(CPP_MSVC) && defined(_M_IX86)
+#elif defined(base_cpp_msvc) && defined(_M_IX86)
             // Older MSVC compilers (like 7.x) don't seem to support the
             // __rdtsc intrinsic properly, so I prefer to use _asm instead
             // when I know it will work.  Otherwise, I'll use __rdtsc and hope
             // the code is being compiled with a non-ancient compiler.
             _asm rdtsc
-#elif defined(CPP_MSVC) && (defined(_M_ARM64) || defined(_M_ARM64EC))
+#elif defined(base_cpp_msvc) && (defined(_M_ARM64) || defined(_M_ARM64EC))
             // See // https://docs.microsoft.com/en-us/cpp/intrinsics/arm64-intrinsics
             // and https://reviews.llvm.org/D53115
             int64_t virtual_timer_value;
             virtual_timer_value = _ReadStatusReg(ARM64_CNTVCT);
             return virtual_timer_value;
-#elif defined(CPP_MSVC)
+#elif defined(base_cpp_msvc)
             return __rdtsc();
-#elif defined(OS_NACL)
+#elif defined(base_os_nacl)
             // Native Client validator on x86/x86-64 allows RDTSC instructions,
             // and this case is handled above. Native Client validator on ARM
             // rejects MRC instructions (used in the ARM-specific sequence below),

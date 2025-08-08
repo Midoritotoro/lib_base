@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/utility/TypeTraits.h>
-#include <base/core/utility/OverflowCheck.h>
+#include <base/core/math/OverflowCheck.h>
 
 
 __BASE_STRING_NAMESPACE_BEGIN

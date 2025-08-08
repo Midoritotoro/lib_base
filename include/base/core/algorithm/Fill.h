@@ -1,10 +1,10 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
-#include <src/core/utility/algorithm/IteratorWrap.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/IteratorWrap.h>
 
-#include <src/core/memory/FillMemsetSafety.h>
-#include <src/core/memory/Fill.h>
+#include <base/core/memory/FillMemsetSafety.h>
+#include <base/core/memory/Fill.h>
 
 #include <base/core/utility/Execution.h>
 #include <src/core/memory/IteratorsDifference.h>
@@ -14,7 +14,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _ForwardIterator_,
 	class _Type_>
-CONSTEXPR_CXX20 void fill(
+base_constexpr_cxx20 void fill(
 	_ForwardIterator_	firstIterator,
 	_ForwardIterator_	lastIterator,
 	const _Type_&		value) noexcept
@@ -65,7 +65,7 @@ template <
 	class _OutputIterator_,
 	class _DifferenceType_,
 	class _Type_>
-CONSTEXPR_CXX20 _OutputIterator_ fillN(
+base_constexpr_cxx20 _OutputIterator_ fillN(
 	_OutputIterator_		destinationIterator,
 	const _DifferenceType_	count,
 	const _Type_&			value) noexcept

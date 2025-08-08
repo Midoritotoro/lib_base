@@ -1,6 +1,6 @@
 #include <base/core/thread/MutexLocker.h>
 
-WARNING_DISABLE_MSVC(6031) // Пропуск возвращаемого значения
+base_disable_warning_msvc(6031) // Пропуск возвращаемого значения
 
 
 __BASE_THREAD_NAMESPACE_BEGIN

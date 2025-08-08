@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/CompilerDetection.h>
 
 
 #if !defined(base_msvc_constexpr)

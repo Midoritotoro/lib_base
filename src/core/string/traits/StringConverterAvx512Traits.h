@@ -16,7 +16,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static NODISCARD StringConversionResult<_ToChar_> convertString(
+	static base_nodiscard StringConversionResult<_ToChar_> convertString(
 		StringConversionParameters<_FromChar_, _ToChar_> parameters) noexcept
 	{
 		AssertUnreachable();
@@ -24,7 +24,7 @@ public:
 	}
 
 	template <>
-	static NODISCARD StringConversionResult<wchar_t> convertString<char, wchar_t>(
+	static base_nodiscard StringConversionResult<wchar_t> convertString<char, wchar_t>(
 		 StringConversionParameters<char, wchar_t> parameters) noexcept
 	{
 		const size_t alignedBytes = (parameters.stringLength * sizeof(char)) & ~size_t(0x3F);
@@ -74,7 +74,7 @@ public:
 	}
 
 //	template <>
-//	static NODISCARD StringConversionResult<char> convertString<wchar_t, char>(
+//	static base_nodiscard StringConversionResult<char> convertString<wchar_t, char>(
 //		StringConversionParameters<wchar_t, char, CpuFeature::AVX512>& parameters)
 //	{
 //		__baseInitConversionParameters(wchar_t, 64);
@@ -157,7 +157,7 @@ public:
 //
 //#if __cpp_lib_char8_t
 //	template <>
-//	static NODISCARD StringConversionResult<char8_t> convertString<char, char8_t>(
+//	static base_nodiscard StringConversionResult<char8_t> convertString<char, char8_t>(
 //		const StringConversionParameters<char, char8_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //		__baseInitConversionParameters(char, 64);
@@ -176,33 +176,19 @@ public:
 //#endif
 //
 //	template <>
-//	static NODISCARD StringConversionResult<char16_t> convertString<char, char16_t>(
+//	static base_nodiscard StringConversionResult<char16_t> convertString<char, char16_t>(
 //		const StringConversionParameters<char, wchar_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //
 //	}
 //
 //	template <>
-//	static NODISCARD StringConversionResult<char32_t> convertString<char, char32_t>(
+//	static base_nodiscard StringConversionResult<char32_t> convertString<char, char32_t>(
 //		const StringConversionParameters<char, wchar_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //
 //	}
 
-private:
-	using WCharAvx512MaskIntegerType = std::conditional_t<sizeof(wchar_t) == 2,
-		uint32,
-		std::conditional_t<sizeof(wchar_t) == 4, uint16, void>>;
-
-	template <size_t conversionToLimit>
-	static constexpr NODISCARD base_vec512i_t wcharAvx512LessThenCompareVector() noexcept {
-		if constexpr (sizeof(wchar_t) == 2)
-			return base_constexpr_mm512_set1_epu16(
-				static_cast<uint16>(conversionToLimit));
-		else if constexpr (sizeof(wchar_t) == 4)
-			return base_constexpr_mm512_set1_epu32(
-				static_cast<uint32>(conversionToLimit));
-	}
 };
 
 __BASE_STRING_NAMESPACE_END

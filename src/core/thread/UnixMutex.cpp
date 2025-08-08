@@ -1,6 +1,6 @@
 #include <base/core/thread/UnixMutex.h>
 
-#if defined(OS_MAC) || defined(OS_LINUX)
+#if defined(base_os_mac) || defined(base_os_linux)
 
 __BASE_THREAD_NAMESPACE_BEGIN
 

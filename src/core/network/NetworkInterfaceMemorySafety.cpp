@@ -2,25 +2,19 @@
 
 __BASE_NETWORK_NAMESPACE_BEGIN
 
+#if defined(base_os_windows)
 
 void WlanInterfaceInformationListDeleter::operator()(wlanInterfaceInformationList_t* wlanInterfaceInformationList) noexcept {
-#if defined(OS_WIN)
 	if (wlanInterfaceInformationList != nullptr)
 		WlanFreeMemory(wlanInterfaceInformationList);
-#else
-
-#endif
 }
 
 
 void WlanAvailableNetworksListDeleter::operator()(wlanAvailableNetworksList_t* wlanAvailableNetworksList) noexcept {
-#if defined(OS_WIN)
 	if (wlanAvailableNetworksList != nullptr)
 		WlanFreeMemory(wlanAvailableNetworksList);
-#else
-
-#endif
 }
 
+#endif
 
 __BASE_NETWORK_NAMESPACE_END

@@ -15,78 +15,78 @@ extern "C" {
     // compiler has to assume that the denoted arrays are "globally address taken", and that any later calls to
     // unanalyzable routines may modify those arrays.
 
-    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable8Bit(
+    base_declare_const_function void base_cdecl ReverseTriviallySwappable8Bit(
         const void* _First,
         const void* _Last,
         void* _Dest) noexcept;
-    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable16Bit(
-        const void* _First,
-        const void* _Last,
-        void* _Dest) noexcept;
-
-    // ================================================================================
-
-    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable32Bit(
-        const void* _First,
-        const void* _Last,
-        void* _Dest) noexcept;
-    DECLARE_NOALIAS void __CDECL ReverseTriviallySwappable64Bit(
+    base_declare_const_function void base_cdecl ReverseTriviallySwappable16Bit(
         const void* _First,
         const void* _Last,
         void* _Dest) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable8Bit(
+    base_declare_const_function void base_cdecl ReverseTriviallySwappable32Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+    base_declare_const_function void base_cdecl ReverseTriviallySwappable64Bit(
+        const void* _First,
+        const void* _Last,
+        void* _Dest) noexcept;
+
+    // ================================================================================
+
+    base_declare_const_function void base_cdecl ReverseCopyTriviallyCopyable8Bit(
         const void* _First, 
         const void* _Last, 
         void*       _Dest) noexcept;
-    DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable16Bit(
+    base_declare_const_function void base_cdecl ReverseCopyTriviallyCopyable16Bit(
         const void* _First,
         const void* _Last,
         void*       _Dest) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable32Bit(
+    base_declare_const_function void base_cdecl ReverseCopyTriviallyCopyable32Bit(
         const void* _First, 
         const void* _Last, 
         void*       _Dest) noexcept;
-    DECLARE_NOALIAS void __CDECL ReverseCopyTriviallyCopyable64Bit(
+    base_declare_const_function void base_cdecl ReverseCopyTriviallyCopyable64Bit(
         const void* _First, 
         const void* _Last, 
         void*       _Dest) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial8Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial8Bit(
         const void* _First, 
         const void* _Last,
         uint8       _Val) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial16Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial16Bit(
         const void* _First, 
         const void* _Last, 
         uint16      _Val) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial32Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial32Bit(
         const void* _First, 
         const void* _Last, 
         uint32      _Val) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindLastTrivial64Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial64Bit(
         const void* _First, 
         const void* _Last, 
         uint64      _Val) noexcept;
     
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindFirstOfTrivial8Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial8Bit(
         const void* _First1, 
         const void* _Last1,
         const void* _First2,
         const void* _Last2) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindFirstOfTrivial16Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial16Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
@@ -94,12 +94,12 @@ extern "C" {
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindFirstOfTrivial32Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial32Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
         const void* _Last2) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* STDCALL FindFirstOfTrivial64Bit(
+    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial64Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
@@ -107,12 +107,12 @@ extern "C" {
 
     // ==================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* FindSubRange8Bit(
+    base_declare_const_function base_nodiscard const void* FindSubRange8Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* FindSubRange16Bit(
+    base_declare_const_function base_nodiscard const void* FindSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -120,156 +120,156 @@ extern "C" {
 
     // ==================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* FindSubRange32Bit(
+    base_declare_const_function base_nodiscard const void* FindSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* FindSubRange64Bit(
+    base_declare_const_function base_nodiscard const void* FindSubRange64Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
 
-    DECLARE_NOALIAS void __CDECL MinimumElement8Bit(
+    base_declare_const_function void base_cdecl MinimumElement8Bit(
         const void* _Start,
         const void* _End,
         int8*       _Out);
-    DECLARE_NOALIAS void __CDECL MinimumElement8BitUnsigned(
+    base_declare_const_function void base_cdecl MinimumElement8BitUnsigned(
         const void* _Start,
         const void* _End,
         uint8*      _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MinimumElement16Bit(
+    base_declare_const_function void base_cdecl MinimumElement16Bit(
         const void* _Start,
         const void* _End,
         int16*      _Out);
-    DECLARE_NOALIAS void __CDECL MinimumElement16BitUnsigned(
+    base_declare_const_function void base_cdecl MinimumElement16BitUnsigned(
         const void* _Start,
         const void* _End,
         uint16*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MinimumElement32Bit(
+    base_declare_const_function void base_cdecl MinimumElement32Bit(
         const void* _Start,
         const void* _End,
         int32*      _Out);
-    DECLARE_NOALIAS void __CDECL MinimumElement32BitUnsigned(
+    base_declare_const_function void base_cdecl MinimumElement32BitUnsigned(
         const void* _Start,
         const void* _End,
         uint32*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MinimumElement64Bit(
+    base_declare_const_function void base_cdecl MinimumElement64Bit(
         const void* _Start,
         const void* _End,
         int64*      _Out);
-    DECLARE_NOALIAS void __CDECL MinimumElement64BitUnsigned(
+    base_declare_const_function void base_cdecl MinimumElement64BitUnsigned(
         const void* _Start,
         const void* _End,
         uint64*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MaximumElement8Bit(
+    base_declare_const_function void base_cdecl MaximumElement8Bit(
         const void* _Start,
         const void* _End,
         int8*       _Out);
-    DECLARE_NOALIAS void __CDECL MaximumElement8BitUnsigned(
+    base_declare_const_function void base_cdecl MaximumElement8BitUnsigned(
         const void* _Start,
         const void* _End,
         uint8*      _Out);
             
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MaximumElement16Bit(
+    base_declare_const_function void base_cdecl MaximumElement16Bit(
         const void* _Start,
         const void* _End,
         int16*      _Out);
-    DECLARE_NOALIAS void __CDECL MaximumElement16BitUnsigned(
+    base_declare_const_function void base_cdecl MaximumElement16BitUnsigned(
         const void* _Start,
         const void* _End,
         uint16*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MaximumElement32Bit(
+    base_declare_const_function void base_cdecl MaximumElement32Bit(
         const void* _Start,
         const void* _End,
         int32*      _Out);
-    DECLARE_NOALIAS void __CDECL MaximumElement32BitUnsigned(
+    base_declare_const_function void base_cdecl MaximumElement32BitUnsigned(
         const void* _Start,
         const void* _End,
         uint32*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL MaximumElement64Bit(
+    base_declare_const_function void base_cdecl MaximumElement64Bit(
         const void* _Start,
         const void* _End,
         int64*      _Out);
-    DECLARE_NOALIAS void __CDECL MaximumElement64BitUnsigned(
+    base_declare_const_function void base_cdecl MaximumElement64BitUnsigned(
         const void* _Start,
         const void* _End,
         uint64*     _Out);
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD MinMaxInt8Bit STDCALL MinimumAndMaximumElement8Bit(
+    base_declare_const_function base_nodiscard MinMaxInt8Bit base_stdcall MinimumAndMaximumElement8Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    DECLARE_NOALIAS NODISCARD MinMaxUInt8Bit STDCALL MinimumAndMaximumElement8BitUnsigned(
+    base_declare_const_function base_nodiscard MinMaxUInt8Bit base_stdcall MinimumAndMaximumElement8BitUnsigned(
         const void* _First,
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD MinMaxInt16Bit STDCALL MinimumAndMaximumElement16Bit(
+    base_declare_const_function base_nodiscard MinMaxInt16Bit base_stdcall MinimumAndMaximumElement16Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    DECLARE_NOALIAS NODISCARD MinMaxUInt16Bit STDCALL MinimumAndMaximumElement16BitUnsigned(
+    base_declare_const_function base_nodiscard MinMaxUInt16Bit base_stdcall MinimumAndMaximumElement16BitUnsigned(
         const void* _First,
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD MinMaxInt32Bit STDCALL MinimumAndMaximumElement32Bit(
+    base_declare_const_function base_nodiscard MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    DECLARE_NOALIAS NODISCARD MinMaxInt32Bit STDCALL MinimumAndMaximumElement32BitUnsigned(
-        const void* _First, 
-        const void* _Last) noexcept;
-
-    // ================================================================================
-
-    DECLARE_NOALIAS NODISCARD MinMaxInt64Bit STDCALL MinimumAndMaximumElement64Bit(
-        const void* _First, 
-        const void* _Last) noexcept;
-    DECLARE_NOALIAS NODISCARD MinMaxInt64Bit STDCALL MinimumAndMaximumElement64BitUnsigned(
+    base_declare_const_function base_nodiscard MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32BitUnsigned(
         const void* _First, 
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD MinMaxFloat STDCALL MinimumAndMaximumElementFloat(
+    base_declare_const_function base_nodiscard MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    DECLARE_NOALIAS NODISCARD MinMaxDouble STDCALL MinimumAndMaximumElementDouble(
+    base_declare_const_function base_nodiscard MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64BitUnsigned(
         const void* _First, 
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS void STDCALL Replace32Bit(
+    base_declare_const_function base_nodiscard MinMaxFloat base_stdcall MinimumAndMaximumElementFloat(
+        const void* _First, 
+        const void* _Last) noexcept;
+    base_declare_const_function base_nodiscard MinMaxDouble base_stdcall MinimumAndMaximumElementDouble(
+        const void* _First, 
+        const void* _Last) noexcept;
+
+    // ================================================================================
+
+    base_declare_const_function void base_stdcall Replace32Bit(
         void*       _First,
         void*       _Last,
         uint32_t    _OldValue,
         uint32_t    _New_val) noexcept;
-    DECLARE_NOALIAS void STDCALL Replace64Bit(
+    base_declare_const_function void base_stdcall Replace64Bit(
         void* _First, 
         void* _Last,
         uint64_t _Old_val,
@@ -277,7 +277,7 @@ extern "C" {
 
     // ================================================================================
 
-    DECLARE_NOALIAS void __CDECL SwapRangesTriviallySwappable(
+    base_declare_const_function void base_cdecl SwapRangesTriviallySwappable(
         void* firstPointer1,
         void* lastPointer1,
         void* firstPointer2) noexcept;
@@ -285,47 +285,34 @@ extern "C" {
     // ================================================================================
 
 
-    DECLARE_NOALIAS NODISCARD std::size_t Count8Bit(
+    base_declare_const_function base_nodiscard std::size_t Count8Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint8       value) noexcept;
-    DECLARE_NOALIAS NODISCARD std::size_t Count16Bit(
+    base_declare_const_function base_nodiscard std::size_t Count16Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint16      value) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD std::size_t Count32Bit(
+    base_declare_const_function base_nodiscard std::size_t Count32Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint32      value) noexcept;
-    DECLARE_NOALIAS NODISCARD std::size_t Count64Bit(
+    base_declare_const_function base_nodiscard std::size_t Count64Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint64      value) noexcept;
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange8Bit(
+    base_declare_const_function base_nodiscard std::size_t CountSubRange8Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange16Bit(
-        const void* firstMainRangePointer,
-        const void* lastMainRangePointer,
-        const void* firstSubRangePointer,
-        const void* lastSubRangePointer) noexcept;
-
-    // ================================================================================
-
-    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange32Bit(
-        const void* firstMainRangePointer,
-        const void* lastMainRangePointer,
-        const void* firstSubRangePointer,
-        const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD std::size_t CountSubRange64Bit(
+    base_declare_const_function base_nodiscard std::size_t CountSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -333,12 +320,25 @@ extern "C" {
 
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange8Bit(
+    base_declare_const_function base_nodiscard std::size_t CountSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange16Bit(
+    base_declare_const_function base_nodiscard std::size_t CountSubRange64Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+
+    // ================================================================================
+
+    base_declare_const_function base_nodiscard const void* FindLastSubRange8Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    base_declare_const_function base_nodiscard const void* FindLastSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -346,12 +346,12 @@ extern "C" {
     
     // ================================================================================
 
-    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange32Bit(
+    base_declare_const_function base_nodiscard const void* FindLastSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    DECLARE_NOALIAS NODISCARD const void* FindLastSubRange64Bit(
+    base_declare_const_function base_nodiscard const void* FindLastSubRange64Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -359,61 +359,61 @@ extern "C" {
 } // extern "C"
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard std::size_t CountVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD std::size_t CountSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard std::size_t CountSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindLastVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* FindLastSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindLastSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ContainsVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
 template <class _Type_>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ContainsSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ContainsSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <size_t typeSizeInBytes>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseVectorized(
     void* firstPointer,
     void* lastPointer) noexcept;
 
 template <size_t typeSizeInBytes>
-DECLARE_NOALIAS CONSTEXPR_CXX20 NODISCARD const void* ReverseCopyVectorized(
+base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseCopyVectorized(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept;

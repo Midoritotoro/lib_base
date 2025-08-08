@@ -11,7 +11,7 @@
 
 
 namespace base::qt::ui {
-	//[[nodiscard]] std::vector<QPointer<QWidget>>
+	//base_nodiscard std::vector<QPointer<QWidget>>
 	//	GetChildWidgets(not_null<QWidget*> widget)
 	//{
 	//	const auto& children = widget->children();

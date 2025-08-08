@@ -32,12 +32,12 @@ public:
 
 	void setMedia(const QString& path);
 
-	NODISCARD int getVideoControlsHeight() const noexcept;
+	base_nodiscard int getVideoControlsHeight() const noexcept;
 
-	NODISCARD QSize occupiedMediaSpace() const noexcept;
-	NODISCARD QPoint mediaPosition() const noexcept;
+	base_nodiscard QSize occupiedMediaSpace() const noexcept;
+	base_nodiscard QPoint mediaPosition() const noexcept;
 
-	NODISCARD Manager::State playbackState() const noexcept;
+	base_nodiscard Manager::State playbackState() const noexcept;
 
 	void setFullScreen();
 	void setNormal();

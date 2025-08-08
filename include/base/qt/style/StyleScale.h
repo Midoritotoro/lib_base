@@ -12,14 +12,14 @@ inline constexpr auto kScaleMin = 50;
 inline constexpr auto kScaleMax = 300;
 inline constexpr auto kScaleDefault = 100;
 
-NODISCARD int DevicePixelRatio();
+base_nodiscard int DevicePixelRatio();
 void SetDevicePixelRatio(int ratio);
 
-NODISCARD int Scale();
+base_nodiscard int Scale();
 void SetScale(int scale);
 
 template <typename T>
-NODISCARD inline T ConvertScale(T value, int scale) {
+base_nodiscard inline T ConvertScale(T value, int scale) {
 	if (value < 0.)
 		return -ConvertScale(-value, scale);
 
@@ -30,7 +30,7 @@ NODISCARD inline T ConvertScale(T value, int scale) {
 }
 
 template <typename T>
-NODISCARD inline T ConvertScale(T value) {
+base_nodiscard inline T ConvertScale(T value) {
 	return ConvertScale(value, Scale());
 }
 

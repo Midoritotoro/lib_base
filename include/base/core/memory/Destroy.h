@@ -5,10 +5,10 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Type_>
-CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& object) noexcept;
+base_constexpr_cxx20 inline void DestroyInPlace(_Type_& object) noexcept;
 
 template <class _Allocator_>
-CONSTEXPR_CXX20 inline void DestroyRange(
+base_constexpr_cxx20 inline void DestroyRange(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorConstPointerType<_Allocator_>  lastPointer,
     _Allocator_&                            allocator) noexcept 
@@ -21,7 +21,7 @@ CONSTEXPR_CXX20 inline void DestroyRange(
 template <
     class _NoThrowForwardIterator_,
     class _NoThrowSentinel_>
-CONSTEXPR_CXX20 inline void DestroyRange(
+base_constexpr_cxx20 inline void DestroyRange(
     _NoThrowForwardIterator_    firstIterator,
     const _NoThrowSentinel_     lastSentinel) noexcept
 {
@@ -31,7 +31,7 @@ CONSTEXPR_CXX20 inline void DestroyRange(
 }
 
 template <class _Type_>
-CONSTEXPR_CXX20 inline void DestroyInPlace(_Type_& object) noexcept {
+base_constexpr_cxx20 inline void DestroyInPlace(_Type_& object) noexcept {
     if constexpr (std::is_array_v<_Type_>)
         DestroyRange(object, object + std::extent_v<_Type_>);
     else

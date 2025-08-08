@@ -29,11 +29,11 @@ public:
 		bool findStreamInfo = true,
 		bool createCodec = true);
 
-	NODISCARD Frame renderNext(
+	base_nodiscard Frame renderNext(
 		QSize size,
 		Qt::AspectRatioMode mode,
 		bool fullScreen = false);
-	NODISCARD Frame renderCurrent(
+	base_nodiscard Frame renderCurrent(
 		QSize size,
 		Qt::AspectRatioMode mode,
 		bool fullScreen = false);
@@ -41,12 +41,12 @@ public:
 	void setSpeed(float speed);
 	void rewind(Time::time_t positionMs);
 
-	NODISCARD QSize resolution() const;
+	base_nodiscard QSize resolution() const;
 
-	NODISCARD Time::time_t duration() const noexcept;
-	NODISCARD Time::time_t position() const noexcept;
+	base_nodiscard Time::time_t duration() const noexcept;
+	base_nodiscard Time::time_t position() const noexcept;
 
-	NODISCARD Time::time_t frameDelay() const noexcept;
+	base_nodiscard Time::time_t frameDelay() const noexcept;
 private:
 	struct ReadFrame {
 		FramePointer frame = nullptr;
@@ -57,21 +57,21 @@ private:
 	void readNextFrame();
 	void resolveNextFrameTiming();
 
-	NODISCARD static int Read(void* opaque,
+	base_nodiscard static int Read(void* opaque,
 		uint8_t* buffer,
 		int bufferSize);
-	NODISCARD static int64_t Seek(void* opaque,
+	base_nodiscard static int64_t Seek(void* opaque,
 		int64_t offset,
 		int whence);
 
-	NODISCARD int read(
+	base_nodiscard int read(
 		uint8_t* buffer,
 		int bufferSize);
-	NODISCARD int64_t seek(
+	base_nodiscard int64_t seek(
 		int64_t offset,
 		int whence);
 
-	NODISCARD QSize recountMaximumFrameSize(const QSize& targetSize);
+	base_nodiscard QSize recountMaximumFrameSize(const QSize& targetSize);
 
 	FormatPointer _format = nullptr;
 	CodecPointer _codec = nullptr;

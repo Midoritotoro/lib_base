@@ -11,47 +11,47 @@ __BASE_QT_STYLE_NAMESPACE_BEGIN
 
 class BaseStyleParameters {
 public:
-	virtual NODISCARD float opacity() const noexcept {
+	virtual base_nodiscard float opacity() const noexcept {
 		return _opacity;
 	}
 
-	virtual NODISCARD bool hasAnimation() const noexcept {
+	virtual base_nodiscard bool hasAnimation() const noexcept {
 		return _hasAnimation;
 	}
 
-	virtual NODISCARD int minimumWidth() const noexcept {
+	virtual base_nodiscard int minimumWidth() const noexcept {
 		return _minimumWidth;
 	}
 
-	virtual NODISCARD int minimumHeight() const noexcept {
+	virtual base_nodiscard int minimumHeight() const noexcept {
 		return _minimumHeight;
 	}
 
-	virtual NODISCARD int maximumWidth() const noexcept {
+	virtual base_nodiscard int maximumWidth() const noexcept {
 		return _maximumWidth;
 	}
 
-	virtual NODISCARD int maximumHeight() const noexcept {
+	virtual base_nodiscard int maximumHeight() const noexcept {
 		return _maximumHeight;
 	}
 
-	virtual NODISCARD color backgroundColor() const noexcept {
+	virtual base_nodiscard color backgroundColor() const noexcept {
 		return _backgroundColor;
 	}
 
-	virtual NODISCARD margins widgetMargins() const noexcept {
+	virtual base_nodiscard margins widgetMargins() const noexcept {
 		return _margins;
 	}
 
-	virtual NODISCARD int borderRadius() const noexcept {
+	virtual base_nodiscard int borderRadius() const noexcept {
 		return _borderRadius;
 	}
 
-	virtual NODISCARD int borderWidth() const noexcept {
+	virtual base_nodiscard int borderWidth() const noexcept {
 		return _borderWidth;
 	}
 
-	virtual NODISCARD color borderColor() const noexcept {
+	virtual base_nodiscard color borderColor() const noexcept {
 		return _borderColor;
 	}
 

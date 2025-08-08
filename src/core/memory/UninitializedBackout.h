@@ -1,9 +1,9 @@
 #pragma once 
 
-#include <src/core/memory/AllocatorUtility.h>
-#include <src/core/memory/PointerConversion.h>
+#include <base/core/memory/AllocatorUtility.h>
+#include <base/core/memory/PointerConversion.h>
 
-#include <src/core/memory/Destroy.h>
+#include <base/core/memory/Destroy.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -12,7 +12,7 @@ template <class _Allocator_>
 struct UninitializedBackout {
     using pointer = AllocatorPointerType<_Allocator_>;
 
-    CONSTEXPR_CXX20 inline UninitializedBackout(
+    base_constexpr_cxx20 inline UninitializedBackout(
         pointer         destinationPointer, 
         _Allocator_&    allocator
     ) :
@@ -24,13 +24,13 @@ struct UninitializedBackout {
     UninitializedBackout(const UninitializedBackout&) = delete;
     UninitializedBackout& operator=(const UninitializedBackout&) = delete;
 
-    CONSTEXPR_CXX20 ~UninitializedBackout() {
+    base_constexpr_cxx20 ~UninitializedBackout() {
         DestroyRange(_firstPointer, _lastPointer, _allocator);
     }
 
     template <class... _Types_>
     // construct a new element at *_lastPointer and increment
-    CONSTEXPR_CXX20 inline void emplaceBack(_Types_&&... values) noexcept(noexcept(
+    base_constexpr_cxx20 inline void emplaceBack(_Types_&&... values) noexcept(noexcept(
         std::allocator_traits<_Allocator_>::construct(
             _allocator, UnFancy(_lastPointer),
             std::forward<_Types_>(values)...)))

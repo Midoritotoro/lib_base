@@ -30,8 +30,8 @@ inline constexpr auto lineWidth = 1;
 
 void initStyles();
 
-NODISCARD QString SliderStyle();
-NODISCARD QString ScrollAreaStyle();
+base_nodiscard QString SliderStyle();
+base_nodiscard QString ScrollAreaStyle();
 
 struct StyleSize {
 	int maximumWidth = 0;

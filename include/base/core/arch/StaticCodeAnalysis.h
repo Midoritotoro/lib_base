@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/CompilerDetection.h>
 #include <base/core/arch/SystemDetection.h>
 
 

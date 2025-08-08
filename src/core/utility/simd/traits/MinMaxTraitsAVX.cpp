@@ -3,11 +3,11 @@
 __BASE_NAMESPACE_BEGIN
 
 namespace AVX {
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::SignCorrection(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
-        SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][32] = {
+        base_aligned_type(32) static constexpr UnsignedType _Sign_corrections[2][32] = {
             {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
             0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
             0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
@@ -15,26 +15,26 @@ namespace AVX {
         return _mm256_sub_epi8(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::Increment(SimdType _Idx) {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Increment(SimdType _Idx) {
         return _mm256_add_epi8(_Idx, _mm256_set1_epi8(1));
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::Decrement(SimdType _Idx) {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Decrement(SimdType _Idx) {
         return _mm256_sub_epi8(_Idx, _mm256_set1_epi8(1));
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::Add(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm256_add_epi8(_FirstVector, _SecondVector);
     }
 
-    NODISCARD NumberTraits8Bit::SimdType Load(const void* _Start) {
+    base_nodiscard NumberTraits8Bit::SimdType Load(const void* _Start) {
         return _mm256_loadu_epi8(_Start);
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::Minimum(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -42,7 +42,7 @@ namespace AVX {
         return _mm256_min_epi8(_First, _Second);
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::Maximum(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -50,14 +50,14 @@ namespace AVX {
         return _mm256_max_epi8(_First, _Second);
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::MinimumUnsigned(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm256_min_epu8(_First, _Second);
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::MaximumUnsigned(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -66,7 +66,7 @@ namespace AVX {
 
 
     template <class _Functor_>
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalFunc(
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalFunc(
         const SimdType  current, 
         _Functor_       functor) noexcept 
     {
@@ -74,7 +74,7 @@ namespace AVX {
         return _H_min_val;
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -83,7 +83,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [](
             SimdType firstValue,
             SimdType secondValue)
@@ -92,7 +92,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [](
             SimdType firstValue,
             SimdType secondValue) 
@@ -101,7 +101,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [](
             SimdType firstValue, 
             SimdType secondValue)
@@ -110,15 +110,15 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits8Bit::SignedType NumberTraits8Bit::GetAny(const SimdType current) noexcept {
+    base_nodiscard NumberTraits8Bit::SignedType NumberTraits8Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD arch::ymmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
+    base_nodiscard arch::ymmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD arch::ymmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
+    base_nodiscard arch::ymmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -128,36 +128,36 @@ namespace AVX {
     // ===============================================================================
 
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::SignCorrection(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
-        SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][16] = {
+        base_aligned_type(32)  static constexpr UnsignedType _Sign_corrections[2][16] = {
             {0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF,
                 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF, 0x7FFF }, {} };
         return _mm256_sub_epi16(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Increment(SimdType _Idx) {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Increment(SimdType _Idx) {
         return _mm256_add_epi16(_Idx, _mm256_set1_epi16(1));
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Decrement(SimdType _Idx) {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Decrement(SimdType _Idx) {
         return _mm256_sub_epi16(_Idx, _mm256_set1_epi16(1));
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Add(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm256_add_epi16(_FirstVector, _SecondVector);
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Load(const void* _Start) {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Load(const void* _Start) {
         return _mm256_loadu_epi16(_Start);
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Minimum(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -165,7 +165,7 @@ namespace AVX {
         return _mm256_min_epi16(_First, _Second);
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::Maximum(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -173,14 +173,14 @@ namespace AVX {
         return _mm256_max_epi16(_First, _Second);
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::MinimumUnsigned(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm256_min_epu16(_First, _Second);
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::MaximumUnsigned(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -189,7 +189,7 @@ namespace AVX {
 
 
     template <class _Functor_>
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalFunc(
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalFunc(
         const SimdType  current, 
         _Functor_       functor) noexcept
     {
@@ -211,7 +211,7 @@ namespace AVX {
         return horizontalMinimumValues;
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -220,7 +220,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue)
@@ -229,7 +229,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -238,7 +238,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [](
             SimdType firstValue, 
             SimdType secondValue) 
@@ -247,15 +247,15 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits16Bit::SignedType NumberTraits16Bit::GetAny(const SimdType current) noexcept {
+    base_nodiscard NumberTraits16Bit::SignedType NumberTraits16Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD arch::ymmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
+    base_nodiscard arch::ymmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD arch::ymmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
+    base_nodiscard arch::ymmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -265,11 +265,11 @@ namespace AVX {
     // ===============================================================================
 
     
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::SignCorrection(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
-        SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][8] = {
+        base_aligned_type(32) static constexpr UnsignedType _Sign_corrections[2][8] = {
             {0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF,
                 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF}, {} };
         return _mm256_sub_epi32(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
@@ -283,18 +283,18 @@ namespace AVX {
         return _mm256_sub_epi32(_Idx, _mm256_set1_epi32(1));
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::Add(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm256_add_epi32(_FirstVector, _SecondVector);
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::Load(const void* _Start) {
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Load(const void* _Start) {
         return _mm256_loadu_epi32(_Start);
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::Minimum(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -302,7 +302,7 @@ namespace AVX {
         return _mm256_min_epi32(_First, _Second);
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::Maximum(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -310,14 +310,14 @@ namespace AVX {
         return _mm256_max_epi32(_First, _Second);
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::MinimumUnsigned(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm256_min_epu32(_First, _Second);
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::MaximumUnsigned(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -326,7 +326,7 @@ namespace AVX {
 
 
     template <class _Functor_>
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalFunc(
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalFunc(
         const SimdType  current,
         _Functor_       functor) noexcept 
     {
@@ -341,7 +341,7 @@ namespace AVX {
         return horizontalMinimumValues;
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -350,7 +350,7 @@ namespace AVX {
          });
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -359,7 +359,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue)
@@ -368,7 +368,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -377,15 +377,15 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits32Bit::SignedType NumberTraits32Bit::GetAny(const SimdType current) noexcept {
+    base_nodiscard NumberTraits32Bit::SignedType NumberTraits32Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-    NODISCARD arch::ymmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
+    base_nodiscard arch::ymmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD arch::ymmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
+    base_nodiscard arch::ymmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 
@@ -395,35 +395,35 @@ namespace AVX {
     // ===============================================================================
 
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::SignCorrection(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
-        SIMD_ALIGNAS(MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT) static constexpr UnsignedType _Sign_corrections[2][4] = {
+        base_aligned_type(32) static constexpr UnsignedType _Sign_corrections[2][4] = {
             {0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF}, {} };
         return _mm256_sub_epi64(_Val, _mm256_load_si256(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Increment(SimdType _Idx) {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Increment(SimdType _Idx) {
         return _mm256_add_epi64(_Idx, _mm256_set1_epi64x(1));
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Decrement(SimdType _Idx) {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Decrement(SimdType _Idx) {
         return _mm256_sub_epi64(_Idx, _mm256_set1_epi64x(1));
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Add(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm256_add_epi64(_FirstVector, _SecondVector);
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Load(const void* _Start) {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Load(const void* _Start) {
         return _mm256_loadu_epi64(_Start);
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Minimum(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -431,7 +431,7 @@ namespace AVX {
         return _mm256_min_epi64(_First, _Second);
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::Maximum(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -439,14 +439,14 @@ namespace AVX {
         return _mm256_max_epi64(_First, _Second);
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::MinimumUnsigned(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm256_min_epu64(_First, _Second);
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::MaximumUnsigned(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -454,7 +454,7 @@ namespace AVX {
     }
 
     template <class _Functor_>
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalFunc(
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalFunc(
         const SimdType  current, 
         _Functor_       functor) noexcept 
     {
@@ -473,7 +473,7 @@ namespace AVX {
         return horizontalMinimumValues;
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -482,7 +482,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximum(const SimdType current) noexcept {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -491,7 +491,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue) 
@@ -500,7 +500,7 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue)
@@ -509,11 +509,11 @@ namespace AVX {
         });
     }
 
-    NODISCARD NumberTraits64Bit::SignedType NumberTraits64Bit::GetAny(const SimdType current) noexcept {
+    base_nodiscard NumberTraits64Bit::SignedType NumberTraits64Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(GetVPos(current, 0));
     }
 
-    NODISCARD NumberTraits64Bit::UnsignedType NumberTraits64Bit::GetVPos(
+    base_nodiscard NumberTraits64Bit::UnsignedType NumberTraits64Bit::GetVPos(
         const SimdType      _Idx,
         const unsigned long _H_pos) noexcept
     {
@@ -523,11 +523,11 @@ namespace AVX {
         return _Array[_H_pos >> 3];
     }
 
-    NODISCARD arch::ymmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
+    base_nodiscard arch::ymmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
         return _mm256_castsi256_pd(_Vector);
     }
 
-    NODISCARD arch::ymmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
+    base_nodiscard arch::ymmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
         return _mm256_castsi256_ps(_Vector);
     }
 } // namespace AVX

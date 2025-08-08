@@ -19,15 +19,15 @@ public:
 
 	Word(uint16 position, int newlineBlockIndex);
 
-	[[nodiscard]] bool newline() const;
-	[[nodiscard]] int newlineBlockIndex() const;
-	[[nodiscard]] bool unfinished() const;
+	base_nodiscard bool newline() const;
+	base_nodiscard int newlineBlockIndex() const;
+	base_nodiscard bool unfinished() const;
 
-	[[nodiscard]] uint16 position() const;
-	[[nodiscard]] QFixed f_rbearing() const;
-	[[nodiscard]] QFixed f_width() const;
+	base_nodiscard uint16 position() const;
+	base_nodiscard QFixed f_rbearing() const;
+	base_nodiscard QFixed f_width() const;
 
-	[[nodiscard]] QFixed f_rpadding() const;
+	base_nodiscard QFixed f_rpadding() const;
 	void add_rpadding(QFixed padding);
 private:
 	uint16 _position = 0;
@@ -46,6 +46,6 @@ private:
 	};
 };
 
-[[nodiscard]] uint16 CountPosition(Words::const_iterator iterator);
+base_nodiscard uint16 CountPosition(Words::const_iterator iterator);
 
 __BASE_QT_TEXT_NAMESPACE_END

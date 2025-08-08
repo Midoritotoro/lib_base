@@ -29,11 +29,11 @@ public:
 		_y = y;
 	}
 
-	constexpr inline NODISCARD Integer x() const noexcept {
+	constexpr inline base_nodiscard Integer x() const noexcept {
 		return _x;
 	}
 
-	constexpr inline NODISCARD Integer y() const noexcept {
+	constexpr inline base_nodiscard Integer y() const noexcept {
 		return _y;
 	}
 private:
@@ -64,11 +64,11 @@ public:
 		_height = height;
 	}
 
-	constexpr inline NODISCARD Integer width() const noexcept {
+	constexpr inline base_nodiscard Integer width() const noexcept {
 		return _width;
 	}
 
-	constexpr inline NODISCARD Integer height() const noexcept {
+	constexpr inline base_nodiscard Integer height() const noexcept {
 		return _height;
 	}
 private:
@@ -117,11 +117,11 @@ public:
 		_pointLeftXY = Point<IntegerPoint>(x, y);
 	}
 
-	constexpr inline NODISCARD Size<IntegerSize> size() const noexcept {
+	constexpr inline base_nodiscard Size<IntegerSize> size() const noexcept {
 		return _size;
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> point() const noexcept {
+	constexpr inline base_nodiscard Point<IntegerPoint> point() const noexcept {
 		return _pointLeftXY;
 	}
 
@@ -133,53 +133,53 @@ public:
 		_size.setHeight(height);
 	}
 
-	constexpr inline NODISCARD bool isNull() const noexcept
+	constexpr inline base_nodiscard bool isNull() const noexcept
 	{
 		return 
 			_pointRightXY.x() == _pointLeftXY.x() - 1 
 			&& _pointRightXY.y() == _pointLeftXY.y() - 1;
 	}
 
-	constexpr inline NODISCARD bool isEmpty() const noexcept
+	constexpr inline base_nodiscard bool isEmpty() const noexcept
 	{
 		return 
 			_pointLeftXY.x() > _pointRightXY.x() 
 			| _pointLeftXY.y() > _pointRightXY.y();
 	}
 
-	constexpr inline NODISCARD bool isValid() const noexcept
+	constexpr inline base_nodiscard bool isValid() const noexcept
 	{
 		return 
 			_pointLeftXY.x() <= _pointRightXY.x() 
 			&& _pointLeftXY.y() <= _pointRightXY.y();
 	}
 
-	constexpr inline NODISCARD int left() const noexcept
+	constexpr inline base_nodiscard int left() const noexcept
 	{
 		return _pointLeftXY.x();
 	}
 
-	constexpr inline NODISCARD int top() const noexcept
+	constexpr inline base_nodiscard int top() const noexcept
 	{
 		return _pointLeftXY.y();
 	}
 
-	constexpr inline NODISCARD int right() const noexcept
+	constexpr inline base_nodiscard int right() const noexcept
 	{
 		return _pointRightXY.x();
 	}
 
-	constexpr inline NODISCARD int bottom() const noexcept
+	constexpr inline base_nodiscard int bottom() const noexcept
 	{
 		return _pointRightXY.y();
 	}
 
-	constexpr inline NODISCARD int x() const noexcept
+	constexpr inline base_nodiscard int x() const noexcept
 	{
 		return _pointLeftXY.x();
 	}
 
-	constexpr inline NODISCARD int y() const noexcept
+	constexpr inline base_nodiscard int y() const noexcept
 	{
 		return _pointLeftXY.y();
 	}
@@ -238,39 +238,39 @@ public:
 		_pointLeftXY.setY(ay);
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> topLeft() const noexcept
+	constexpr inline base_nodiscard Point<IntegerPoint> topLeft() const noexcept
 	{
 		return _pointLeftXY;
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> bottomRight() const noexcept
+	constexpr inline base_nodiscard Point<IntegerPoint> bottomRight() const noexcept
 	{
 		return _pointRightXY;
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> topRight() const noexcept
+	constexpr inline base_nodiscard Point<IntegerPoint> topRight() const noexcept
 	{
 		return Point<IntegerPoint>(_pointRightXY.x(), _pointLeftXY.y());
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> bottomLeft() const noexcept
+	constexpr inline base_nodiscard Point<IntegerPoint> bottomLeft() const noexcept
 	{
 		return Point<IntegerPoint>(_pointLeftXY.x(), _pointRightXY.y());
 	}
 
-	constexpr inline NODISCARD Point<IntegerPoint> center() const noexcept
+	constexpr inline base_nodiscard Point<IntegerPoint> center() const noexcept
 	{
 		return Point<IntegerPoint>(
 			IntegerPoint((int64(_pointLeftXY.x()) + _pointRightXY.x()) / 2),
 			IntegerPoint((int64(_pointLeftXY.y()) + _pointRightXY.y()) / 2));
 	}
 
-	constexpr inline NODISCARD int width() const noexcept
+	constexpr inline base_nodiscard int width() const noexcept
 	{
 		return _pointRightXY.x() - _pointLeftXY.x() + 1;
 	}
 
-	constexpr inline NODISCARD int height() const noexcept
+	constexpr inline base_nodiscard int height() const noexcept
 	{
 		return _pointRightXY.y() - _pointLeftXY.y() + 1;
 	}

@@ -1,12 +1,12 @@
 #pragma once 
 
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/Compatibility.h>
 #include <base/core/arch/SystemDetection.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-#if defined(CPP_GNU)
-#  if CPP_GNU > 430
+#if defined(base_cpp_gnu)
+#  if base_cpp_gnu > 430
 #    define ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
 #  else
 #    define ALLOC_SIZE(...)
@@ -15,33 +15,29 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #    define ALLOC_SIZE(...) 
 #endif
 
-#if defined(OS_WIN) && !defined(aligned_malloc)
+#if defined(base_os_windows) && !defined(aligned_malloc)
 #  define aligned_malloc		                _aligned_malloc
 #elif !defined(aligned_malloc)
 #  define aligned_malloc(size, alignment)		malloc(size)
 #endif
 
-#if defined(OS_WIN) && !defined(aligned_realloc)
+#if defined(base_os_windows) && !defined(aligned_realloc)
 #  define aligned_realloc                       _aligned_realloc
 #elif !defined(aligned_realloc)
 #  define aligned_realloc(block, size, align)   realloc(block, size)
 #endif
 
-#if defined (OS_WIN) && !defined(aligned_free)
+#if defined (base_os_windows) && !defined(aligned_free)
 #  define aligned_free(ptr)                     _aligned_free(ptr)
 #elif !defined(aligned_free)
 #  define aligned_free(ptr)                     free(ptr)
 #endif
 
-#ifndef MEMORY_DEFAULT_ALIGNMENT
-#  define MEMORY_DEFAULT_ALIGNMENT MINIMUM_ACCEPTABLE_SIMD_ALIGNMENT
-#endif
-
-// NODISCARD bool IsAlignment(std::size_t value) noexcept {
+// base_nodiscard bool IsAlignment(std::size_t value) noexcept {
 //     return (value > 0) && ((value & (value - 1)) == 0);
 // }
 
-// NODISCARD bool isAligned(
+// base_nodiscard bool isAligned(
 //     const void* pointer,
 //     std::size_t alignment) noexcept
 // {

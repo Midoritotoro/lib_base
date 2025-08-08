@@ -13,7 +13,7 @@ struct TextWithEntities {
 	QString text;
 	EntitiesInText entities;
 
-	[[nodiscard]] bool empty() const;
+	base_nodiscard bool empty() const;
 	void reserve(int size, int entitiesCount = 0);
 
 	TextWithEntities& append(TextWithEntities&& other);
@@ -23,7 +23,7 @@ struct TextWithEntities {
 	TextWithEntities& append(QLatin1String other);
 	TextWithEntities& append(QChar other);
 
-	[[nodiscard]] static TextWithEntities Simple(const QString& simple);
+	base_nodiscard static TextWithEntities Simple(const QString& simple);
 
 	friend inline auto operator<=>(
 		const TextWithEntities&,
@@ -37,18 +37,18 @@ struct TextForMimeData {
 	QString expanded;
 	TextWithEntities rich;
 
-	[[nodiscard]] bool empty() const;
+	base_nodiscard bool empty() const;
 	void reserve(int size, int entitiesCount = 0);
 
-	[[nodiscard]] TextForMimeData& append(TextForMimeData&& other);
-	[[nodiscard]] TextForMimeData& append(TextWithEntities&& other);
-	[[nodiscard]] TextForMimeData& append(const QString& other);
+	base_nodiscard TextForMimeData& append(TextForMimeData&& other);
+	base_nodiscard TextForMimeData& append(TextWithEntities&& other);
+	base_nodiscard TextForMimeData& append(const QString& other);
 
-	[[nodiscard]] TextForMimeData& append(QLatin1String other);
-	[[nodiscard]] TextForMimeData& append(QChar other);
+	base_nodiscard TextForMimeData& append(QLatin1String other);
+	base_nodiscard TextForMimeData& append(QChar other);
 
-	[[nodiscard]] static TextForMimeData Rich(TextWithEntities&& rich);
-	[[nodiscard]] static TextForMimeData Simple(const QString& simple);
+	base_nodiscard static TextForMimeData Rich(TextWithEntities&& rich);
+	base_nodiscard static TextForMimeData Simple(const QString& simple);
 };
 
 class EntityInText {
@@ -59,15 +59,15 @@ public:
 		int length,
 		const QString& data = QString());
 
-	static [[nodiscard]] int FirstMonospaceOffset(
+	static base_nodiscard int FirstMonospaceOffset(
 		const EntitiesInText& entities,
 		int textLength);
 
-	[[nodiscard]] EntityType type() const;
-	[[nodiscard]] int offset() const;
+	base_nodiscard EntityType type() const;
+	base_nodiscard int offset() const;
 
-	[[nodiscard]] int length() const;
-	[[nodiscard]] QString data() const;
+	base_nodiscard int length() const;
+	base_nodiscard QString data() const;
 
 	void extendToLeft(int extent);
 	void shrinkFromRight(int shrink);

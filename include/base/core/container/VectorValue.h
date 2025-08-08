@@ -18,10 +18,10 @@ public:
 	using reference			= value_type&;
 	using const_reference	= const value_type&;
 
-	CONSTEXPR_CXX20 inline VectorValue() noexcept
+	base_constexpr_cxx20 inline VectorValue() noexcept
 	{}
 
-	CONSTEXPR_CXX20 inline VectorValue(
+	base_constexpr_cxx20 inline VectorValue(
 		pointer start, 
 		pointer end,
 		pointer current) noexcept
@@ -31,13 +31,13 @@ public:
 		_current(_current) 
 	{}
 
-	CONSTEXPR_CXX20 inline void swap(VectorValue& other) noexcept {
+	base_constexpr_cxx20 inline void swap(VectorValue& other) noexcept {
 		std::swap(_start, other._start);
 		std::swap(_end, other._end);
 		std::swap(_current, other._current);
 	}
 
-	CONSTEXPR_CXX20 inline void takeContents(VectorValue& other) noexcept {
+	base_constexpr_cxx20 inline void takeContents(VectorValue& other) noexcept {
 		_start = other._start;
 		_end = other._end;
 		_current = other._current;

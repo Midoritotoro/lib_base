@@ -1,6 +1,6 @@
 #pragma once
 
-#include <src/core/utility/algorithm/AlgorithmDebug.h>
+#include <src/core/algorithm/AlgorithmDebug.h>
 #include <base/core/utility/Execution.h>
 
 __BASE_NAMESPACE_BEGIN
@@ -8,7 +8,7 @@ __BASE_NAMESPACE_BEGIN
 template <
 	class _RandomAccessIterator_,
 	class _Predicate_>
-CONSTEXPR_CXX20 void sort(
+base_constexpr_cxx20 void sort(
 	const _RandomAccessIterator_	firstIterator,
 	const _RandomAccessIterator_	lastIterator,
 	_Predicate_						predicate)
@@ -17,7 +17,7 @@ CONSTEXPR_CXX20 void sort(
 }
 
 template <class _RandomAccessIterator_>
-CONSTEXPR_CXX20 void sort(
+base_constexpr_cxx20 void sort(
 	const _RandomAccessIterator_ firstIterator,
 	const _RandomAccessIterator_ lastIterator)
 {

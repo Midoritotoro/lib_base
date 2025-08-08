@@ -18,11 +18,11 @@ public:
 
     using SelfAtomicOperations = AtomicOperations<Integer>;
 
-    NODISCARD Integer loadRelaxed() const noexcept {
+    base_nodiscard Integer loadRelaxed() const noexcept {
         return SelfAtomicOperations::loadRelaxed(_atomic);
     }
 
-    NODISCARD Integer loadSequentiallyConsistent() const noexcept {
+    base_nodiscard Integer loadSequentiallyConsistent() const noexcept {
         return SelfAtomicOperations::loadSequentiallyConsistent(_atomic);
     }
 
@@ -30,7 +30,7 @@ public:
         SelfAtomicOperations::storeRelaxed(_atomic, newValue);
     }
 
-    NODISCARD Integer loadAcquire() const noexcept { 
+    base_nodiscard Integer loadAcquire() const noexcept { 
         return SelfAtomicOperations::loadAcquire(_atomic);
     }
 
@@ -49,39 +49,39 @@ public:
         return newValue; 
     }
 
-    static constexpr NODISCARD 
+    static constexpr base_nodiscard 
         bool isReferenceCountingNative() noexcept 
     {
         return SelfAtomicOperations::isReferenceCountingNative(); 
     }
 
-    static constexpr NODISCARD 
+    static constexpr base_nodiscard 
         bool isReferenceCountingWaitFree() noexcept 
     { 
         return SelfAtomicOperations::isReferenceCountingWaitFree();
     }
 
-    NODISCARD bool ref() noexcept { 
+    base_nodiscard bool ref() noexcept { 
         return SelfAtomicOperations::ref(_atomic);
     }
 
-    NODISCARD bool deref() noexcept {
+    base_nodiscard bool deref() noexcept {
         return SelfAtomicOperations::deref(_atomic); 
     }
 
-    static constexpr NODISCARD
+    static constexpr base_nodiscard
         bool isTestAndSetNative() noexcept 
     {
         return SelfAtomicOperations::isTestAndSetNative();
     }
 
-    static constexpr NODISCARD 
+    static constexpr base_nodiscard 
         bool isTestAndSetWaitFree() noexcept
     { 
         return SelfAtomicOperations::isTestAndSetWaitFree(); 
     }
 
-    NODISCARD bool testAndSetRelaxed(
+    base_nodiscard bool testAndSetRelaxed(
         Integer expectedValue, 
         Integer newValue) noexcept
     {
@@ -89,7 +89,7 @@ public:
             _atomic, expectedValue, newValue);
     }
 
-    NODISCARD bool testAndSetAcquire(
+    base_nodiscard bool testAndSetAcquire(
         Integer expectedValue, 
         Integer newValue) noexcept
     {
@@ -97,7 +97,7 @@ public:
             _atomic, expectedValue, newValue);
     }
 
-    NODISCARD bool testAndSetRelease(
+    base_nodiscard bool testAndSetRelease(
         Integer expectedValue, 
         Integer newValue) noexcept
     {
@@ -105,7 +105,7 @@ public:
             _atomic, expectedValue, newValue);
     }
 
-    NODISCARD bool testAndSetOrdered(
+    base_nodiscard bool testAndSetOrdered(
         Integer expectedValue, 
         Integer newValue) noexcept
     {
@@ -113,7 +113,7 @@ public:
             _atomic, expectedValue, newValue);
     }
 
-    NODISCARD bool testAndSetRelaxed(
+    base_nodiscard bool testAndSetRelaxed(
         Integer expectedValue,
         Integer newValue,
         Integer& currentValue) noexcept
@@ -122,7 +122,7 @@ public:
             _atomic, expectedValue, newValue, &currentValue);
     }
 
-    NODISCARD bool testAndSetAcquire(
+    base_nodiscard bool testAndSetAcquire(
         Integer expectedValue,
         Integer newValue,
         Integer& currentValue) noexcept
@@ -131,7 +131,7 @@ public:
             _atomic, expectedValue, newValue, &currentValue);
     }
 
-    NODISCARD bool testAndSetRelease(
+    base_nodiscard bool testAndSetRelease(
         Integer expectedValue, 
         Integer newValue, 
         Integer& currentValue) noexcept
@@ -140,7 +140,7 @@ public:
             _atomic, expectedValue, newValue, &currentValue);
     }
 
-    NODISCARD bool testAndSetOrdered(
+    base_nodiscard bool testAndSetOrdered(
         Integer expectedValue, 
         Integer newValue, 
         Integer& currentValue) noexcept
@@ -149,146 +149,146 @@ public:
             _atomic, expectedValue, newValue, &currentValue);
     }
 
-    static constexpr NODISCARD
+    static constexpr base_nodiscard
         bool isFetchAndStoreNative() noexcept
     {
         return SelfAtomicOperations::isFetchAndStoreNative();
     }
 
-    static constexpr NODISCARD
+    static constexpr base_nodiscard
         bool isFetchAndStoreWaitFree() noexcept 
     {
         return SelfAtomicOperations::isFetchAndStoreWaitFree(); 
     }
 
-    NODISCARD Integer fetchAndStoreRelaxed(Integer newValue) noexcept {
+    base_nodiscard Integer fetchAndStoreRelaxed(Integer newValue) noexcept {
         return SelfAtomicOperations::fetchAndStoreRelaxed(
             _atomic, newValue);
     }
 
-    NODISCARD Integer fetchAndStoreAcquire(Integer newValue) noexcept {
+    base_nodiscard Integer fetchAndStoreAcquire(Integer newValue) noexcept {
         return SelfAtomicOperations::fetchAndStoreAcquire(
             _atomic, newValue);
     }
 
-    NODISCARD Integer fetchAndStoreRelease(Integer newValue) noexcept {
+    base_nodiscard Integer fetchAndStoreRelease(Integer newValue) noexcept {
         return SelfAtomicOperations::fetchAndStoreRelease(
             _atomic, newValue);
     }
 
-    NODISCARD Integer fetchAndStoreOrdered(Integer newValue) noexcept {
+    base_nodiscard Integer fetchAndStoreOrdered(Integer newValue) noexcept {
         return SelfAtomicOperations::fetchAndStoreOrdered(
             _atomic, newValue);
     }
 
-    static constexpr NODISCARD 
+    static constexpr base_nodiscard 
         bool isFetchAndAddNative() noexcept
     {
         return SelfAtomicOperations::isFetchAndAddNative(); 
     }
 
-    static constexpr NODISCARD 
+    static constexpr base_nodiscard 
         bool isFetchAndAddWaitFree() noexcept 
     {
         return SelfAtomicOperations::isFetchAndAddWaitFree(); 
     }
 
-    NODISCARD Integer fetchAndAddRelaxed(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAddRelaxed(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAddRelaxed(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAddAcquire(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAddAcquire(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAddAcquire(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAddRelease(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAddRelease(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAddRelease(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAddOrdered(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAddOrdered(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAddOrdered(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndSubRelaxed(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndSubRelaxed(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndSubRelaxed(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndSubAcquire(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndSubAcquire(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndSubAcquire(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndSubRelease(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndSubRelease(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndSubRelease(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndSubOrdered(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndSubOrdered(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndSubOrdered(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAndRelaxed(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAndRelaxed(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAndRelaxed(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAndAcquire(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAndAcquire(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAndAcquire(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAndRelease(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAndRelease(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAndRelease(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndAndOrdered(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndAndOrdered(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndAndOrdered(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndOrRelaxed(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndOrRelaxed(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndOrRelaxed(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndOrAcquire(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndOrAcquire(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndOrAcquire(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndOrRelease(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndOrRelease(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndOrRelease(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndOrOrdered(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndOrOrdered(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndOrOrdered(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndXorRelaxed(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndXorRelaxed(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndXorRelaxed(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndXorAcquire(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndXorAcquire(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndXorAcquire(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndXorRelease(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndXorRelease(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndXorRelease(
             _atomic, valueToAdd);
     }
 
-    NODISCARD Integer fetchAndXorOrdered(Integer valueToAdd) noexcept {
+    base_nodiscard Integer fetchAndXorOrdered(Integer valueToAdd) noexcept {
         return SelfAtomicOperations::fetchAndXorOrdered(
             _atomic, valueToAdd);
     }

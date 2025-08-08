@@ -6,7 +6,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-DECLARE_NOALIAS NODISCARD void* __CDECL __base_memcpy(
+base_declare_const_function base_nodiscard void* base_cdecl __base_memcpy(
     void*               destination,
     const void* const   source,
     size_t              size) noexcept

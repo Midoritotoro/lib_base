@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdio>
-#include <base/core/arch/CompilerDetection.h>
+#include <base/core/compatibility/Compatibility.h>
 
 #include <iostream>
 
