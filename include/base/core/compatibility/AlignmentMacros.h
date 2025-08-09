@@ -23,7 +23,7 @@
 #  if defined(base_cpp_gnu)
 #    define base_aligned_type(alignment) __attribute__((aligned(alignment)))
 #  elif defined(base_cpp_msvc) || defined(base_cpp_clang) 
-#    define base_aligned_type(alignment) __declspec(align(alignment))
+#    define base_aligned_type(alignment) //__declspec(align(alignment))
 #  elif base_has_cxx11
 #    define base_aligned_type(alignment) alignas(alignment)
 #  endif // defined(base_cpp_gnu) || defined(base_cpp_msvc) || defined(base_cpp_clang) || base_has_cxx11

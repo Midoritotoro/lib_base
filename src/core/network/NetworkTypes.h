@@ -3,6 +3,7 @@
 #include <base/core/arch/Platform.h>
 
 #if defined(base_os_windows) 
+#  include <windows.h>
 #  include <wlanapi.h>
 #elif defined(base_os_mac) || defined(base_os_linux)
 

@@ -102,6 +102,7 @@ base_always_inline base_nodiscard T&& take(T& value) {
 }
 
 #if defined(base_os_windows)
+	#include <string>
 	base_nodiscard bool IsWindowsGreaterThen(int version);
 	base_nodiscard bool SetAutoRunKey(
 		const ::std::wstring& path,

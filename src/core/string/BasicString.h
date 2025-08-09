@@ -14,8 +14,6 @@
 #include <src/core/utility/simd/SimdAlgorithm.h>
 #include <base/core/string/StringConverter.h>
 
-#include <src/core/utility/simd/SimdVectorType.h>
-
 
 base_disable_warning_msvc(4834)
 base_disable_warning_msvc(4002)
@@ -277,7 +275,7 @@ public:
 	// =======================================================================================
 
 	// increase capacity to newCapacity (without geometric growth)
-	base_constexpr_cxx20 inline void reserve(BASE_GUARDOVERFLOW SizeType newCapacity);
+	base_constexpr_cxx20 inline void reserve(SizeType newCapacity);
 
 	base_constexpr_cxx20 inline void shrinkToFit();
 

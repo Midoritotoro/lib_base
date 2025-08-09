@@ -8,9 +8,10 @@
 
 
 #if defined(base_cpp_msvc) && !defined(_DLL)
-    #include <process.h> // Для _beginthreadex и _endthreadex
+#  include <windows.h>
+#  include <process.h> // Для _beginthreadex и _endthreadex
 #else
-    base_disable_warning_msvc(6258) // Использование TerminateThread не разрешает правильную очистку потока.
+  base_disable_warning_msvc(6258) // Использование TerminateThread не разрешает правильную очистку потока.
 #endif
 
 

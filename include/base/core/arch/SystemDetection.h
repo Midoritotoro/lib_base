@@ -80,3 +80,7 @@
 #  define base_os_unix
 #endif
 
+
+#if defined(base_os_windows)
+#  include <windows.h>
+#endif // defined(base_os_windows)

@@ -284,7 +284,7 @@ public:
 
 	base_constexpr_cxx20 inline base_nodiscard Iterator insert(
 		ConstIterator where, 
-		BASE_GUARDOVERFLOW const SizeType count, 
+		const SizeType count, 
 		const ValueType& value);
 
 	base_constexpr_cxx20 inline Iterator insert(
@@ -292,7 +292,7 @@ public:
 		std::initializer_list<ValueType> initializerList);
 
 	base_constexpr_cxx20 inline void assign(
-		BASE_GUARDOVERFLOW const SizeType newSize,
+		const SizeType newSize,
 		const ValueType& value);
 
 	template <class _InputIterator_>
@@ -313,7 +313,7 @@ public:
 
 	base_constexpr_cxx20 inline void reverse() noexcept;
 
-	base_constexpr_cxx20 inline void removeAt(BASE_GUARDOVERFLOW const SizeType index) noexcept;
+	base_constexpr_cxx20 inline void removeAt(const SizeType index) noexcept;
 
 	base_constexpr_cxx20 inline void clear();
 
@@ -339,7 +339,7 @@ public:
 		const SizeType size,
 		const_reference _Fill);
 	base_constexpr_cxx20 inline base_nodiscard bool resize(
-		BASE_GUARDOVERFLOW const SizeType newCapacity);
+		const SizeType newCapacity);
 
 	base_constexpr_cxx20 inline void fill(const_reference _Fill);
 
@@ -3450,7 +3450,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::clearAndReserveGeometricGrowth(BASE_GUARDOVERFLOW const SizeType newSize) { 
+base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::clearAndReserveGeometricGrowth(const SizeType newSize) { 
 	if (newSize == 0)
 		return;
 
