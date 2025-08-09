@@ -5,6 +5,8 @@
 
 // Warnings
 
+#define base_do_pragma(text)                      _Pragma(#text)
+
 #if defined(base_cpp_msvc) && !defined(base_cpp_clang)
 #  undef base_do_pragma
 #endif // defined(base_cpp_msvc) && !defined(base_cpp_clang)
@@ -48,18 +50,18 @@
 
 #if !defined(base_disable_warning_clang)
 #  if defined(base_cpp_clang)
-#    define base_disable_warning_clang(number) base_do_pragma(clang diagnostic ignored text)
+#    define base_disable_warning_clang(text) base_do_pragma(clang diagnostic ignored text)
 #  else
-#    define base_disable_warning_clang(number)
+#    define base_disable_warning_clang(text)
 #  endif // defined(base_cpp_msvc) && !defined(base_cpp_clang)
 #endif // !defined(base_disable_warning_clang)
 
 
 #if !defined(base_disable_warning_gcc)
 #  if defined(base_cpp_gnu) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
-#    define base_disable_warning_gcc(number) base_do_pragma(GCC diagnostic ignored text)
+#    define base_disable_warning_gcc(text) base_do_pragma(GCC diagnostic ignored text)
 #  else
-#    define base_disable_warning_gcc(number) 
+#    define base_disable_warning_gcc(text) 
 #  endif // defined(base_cpp_msvc) && !defined(base_cpp_clang)
 #endif // !defined(base_disable_warning_gcc)
 

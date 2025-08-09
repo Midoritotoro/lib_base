@@ -7,6 +7,8 @@
 
 #include <base/core/string/StringConfig.h>
 
+#include <io.h> // for _get_osfhandle
+
 #define WIN_EXTENDED_PATH_KEY			"\\?"
 #define WIN_EXTENDED_PATH_KEY_SIZE		3
 
@@ -353,7 +355,7 @@ ReadResult WindowsFileEngine::read(sizetype sizeInBytes)
 
 	ReadResult result = {};
 
-	UNUSED(read(ReadType::Value, &result, 
+	base_unused(read(ReadType::Value, &result, 
 		std::min(fileSize(), sizeInBytes)));
 
 	return result;
@@ -368,7 +370,7 @@ ReadResult WindowsFileEngine::readAll()
 		.sizeInBytes = 0
 	};
 
-	UNUSED(read(ReadType::All, &result));
+	base_unused(read(ReadType::All, &result));
 
 	return result;
 }

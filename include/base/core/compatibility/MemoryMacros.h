@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/compatibility/CompilerDetection.h>
+#include <base/core/compatibility/Nodiscard.h>
 
 
 #if !defined(base_restrict)

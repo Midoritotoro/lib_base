@@ -55,7 +55,7 @@ template<typename I, typename S, typename T,
 	indirectly_binary_invocable<Op, T*, ::std::projected<I, P>>&&
 	::std::assignable_from<T&, ::std::indirect_result_t<Op&,
 	T*, ::std::projected<I, P>>>
-base_always_inline base_nodiscard T accumulate(
+T accumulate(
 	I first,
 	S last,
 	T init,
@@ -74,7 +74,7 @@ indirectly_binary_invocable<Op, T*,
 	::std::assignable_from<T&, ::std::indirect_result_t<Op&, T*,
 	::std::projected<iterator_t<Rng>, P>>>
 
-base_always_inline base_nodiscard T accumulate(
+T accumulate(
 	Rng&& rng,
 	T init,
 	Op op = Op{},
@@ -85,31 +85,31 @@ base_always_inline base_nodiscard T accumulate(
 }
 
 template <typename T>
-base_always_inline void accumulateMax(T& a, const T& b) {
+void accumulateMax(T& a, const T& b) {
 	if (a < b)
 		a = b;
 }
 
 template <typename T>
-base_always_inline void accumulateMin(T& a, const T& b) {
+void accumulateMin(T& a, const T& b) {
 	if (a > b)
 		a = b;
 }
 
 template <typename T>
-base_always_inline base_nodiscard T&& take(T& value) {
+T&& take(T& value) {
 	return ::std::exchange(value, T{});
 }
 
-#if defined(base_os_windows)
-	#include <string>
-	base_nodiscard bool IsWindowsGreaterThen(int version);
-	base_nodiscard bool SetAutoRunKey(
-		const ::std::wstring& path,
-		const ::std::wstring& key);
-
-	#define MINIMUM_WINDOWS_VERSION		NTDDI_WIN10
-	#define IS_MINIMUM_WINDOWS_VERSION	IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
-#endif // base_os_windows
+//#if defined(base_os_windows)
+//	#include <string>
+//	base_nodiscard bool IsWindowsGreaterThen(int version);
+//	base_nodiscard bool SetAutoRunKey(
+//		const ::std::wstring& path,
+//		const ::std::wstring& key);
+//
+//	#define MINIMUM_WINDOWS_VERSION		NTDDI_WIN10
+//	#define IS_MINIMUM_WINDOWS_VERSION	IsWindowsGreaterThen(MINIMUM_WINDOWS_VERSION)
+//#endif // base_os_windows
 
 __BASE_NAMESPACE_END

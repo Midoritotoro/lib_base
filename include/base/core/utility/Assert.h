@@ -1,6 +1,7 @@
 ﻿#pragma once  
 
 #include <base/core/compatibility/Warnings.h>
+#include <base/core/compatibility/BranchPrediction.h>
 
 #include <cstdlib>
 #include <cassert>

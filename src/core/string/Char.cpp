@@ -223,7 +223,7 @@ static auto fullConvertCase(char32_t uc, Case which) noexcept
     const auto fold = _GetProp(uc)->cases[which];
     const auto caseDiff = fold.diff;
 
-    if (UNLIKELY(fold.special)) {
+    if (base_unlikely(fold.special)) {
         const auto* specialCase = specialCaseMap + caseDiff;
         auto length = *specialCase++;
         while (length--)
@@ -243,7 +243,7 @@ static inline T convertCase_helper(T uc, Case which) noexcept
 {
     const auto fold = _GetProp(uc)->cases[which];
 
-    if (UNLIKELY(fold.special)) {
+    if (base_unlikely(fold.special)) {
         const ushort* specialCase = specialCaseMap + fold.diff;
         // so far, there are no special cases beyond BMP (guaranteed by the qunicodetables generator)
         return *specialCase == 1 ? specialCase[1] : uc;

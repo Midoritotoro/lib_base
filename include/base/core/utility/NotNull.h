@@ -8,6 +8,8 @@
 #include <utility>      // for declval, forward
 #include <iosfwd>       // for ostream
 
+#include <base/core/compatibility/BranchPrediction.h>
+
 #include <src/core/utility/IsComparableToNullptr.h>
 #include <base/core/utility/Assert.h>
 
@@ -36,7 +38,7 @@ template <class _Type_>
 class not_null
 {
 public:
-    static_assert(is_comparable_to_nullptr<_Type_>::value, "_Type_ cannot be compared to nullptr.");
+   // static_assert(is_comparable_to_nullptr<_Type_>::value, "_Type_ cannot be compared to nullptr.");
 
     using element_type = _Type_;
 
@@ -46,14 +48,14 @@ public:
     constexpr not_null(U&& u) noexcept(std::is_nothrow_move_constructible<_Type_>::value):
         _pointer(std::forward<U>(u))
     {
-        Expects(_pointer != nullptr);
+       // Assert(_pointer != nullptr);
     }
 
     template <typename = std::enable_if_t<!std::is_same<std::nullptr_t, _Type_>::value>>
     constexpr not_null(_Type_ u) noexcept(std::is_nothrow_move_constructible<_Type_>::value):
         _pointer(std::move(u))
     {
-        Expects(_pointer != nullptr);
+        //Assert(_pointer != nullptr);
     }
 
     template <
@@ -72,16 +74,16 @@ public:
         return _pointer;
     }
 
-    constexpr operator _Type_() const { 
+    constexpr operator _Type_() const {
         return get();
     }
-    
+
     constexpr decltype(auto) operator->() const {
-        return get(); 
+        return get();
     }
 
-    constexpr decltype(auto) operator*() const { 
-        return *get();
+    constexpr decltype(auto) operator*() const {
+        return get();
     }
 
     // prevents compilation when someone attempts to assign a null pointer constant

@@ -289,7 +289,7 @@ base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> Uni
 
     UninitializedBackout<_Allocator_> backout { destinationPointer, allocator };
 
-    for (; count != 0; ++firstIterator, unused(--count))
+    for (; count != 0; ++firstIterator, base_unused(--count))
         backout.emplaceBack(*firstIterator);
 
     return backout.release();

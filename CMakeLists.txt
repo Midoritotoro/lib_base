@@ -577,8 +577,8 @@ target_include_directories(lib_base
 )
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)
-    set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
 set_target_properties(

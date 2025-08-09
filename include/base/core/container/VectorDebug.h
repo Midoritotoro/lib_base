@@ -13,7 +13,7 @@
     DebugAssertReturn(_Cond, _Message, _RetVal)
 #else
 #  define _VECTOR_DEBUG_ASSERT_LOG_(_Cond, _RetVal, _Message)					\
-	UNUSED(_RetVal);															\
+	base_unused(_RetVal);															\
 	DebugAssert(_Cond, _Message)												
 #endif
 
@@ -115,7 +115,7 @@
 
 #  ifndef _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
 #    define _VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_ \
-	BASE_DEPRECATED_WARNING(						\
+	base_deprecated_warning(						\
 		"base::container::Vector::pushFront: Using the pushFront method is inefficient in terms of performance")
 #endif
 

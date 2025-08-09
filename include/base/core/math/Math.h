@@ -263,7 +263,7 @@ constexpr auto saturate(From x)
     static_assert(std::is_integral_v<To>);
     static_assert(std::is_integral_v<From>);
 
-    MAYBE_UNUSED_ATTRIBUTE
+    base_maybe_unused_attribute
     constexpr auto Lo = (std::numeric_limits<To>::min)();
     constexpr auto Hi = (std::numeric_limits<To>::max)();
 

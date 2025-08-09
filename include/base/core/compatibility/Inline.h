@@ -16,7 +16,7 @@
 
 #if !defined(base_always_inline)
 #  if defined(base_cpp_msvc) || defined(base_cpp_clang)
-#    define base_always_inline //__forceinline
+#    define base_always_inline __forceinline
 #  elif defined(base_cpp_gnu)
 #    define base_always_inline inline __attribute__((base_always_inline))
 #  else 

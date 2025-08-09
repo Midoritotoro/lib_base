@@ -5,6 +5,7 @@
 #ifdef base_os_windows 
 
 #include <base/core/thread/AtomicInteger.h>
+#include <base/core/io/WindowsSmartHandle.h>
 
 
 #if defined(base_cpp_msvc) && !defined(_DLL)
@@ -99,8 +100,8 @@ public:
         _PThreadId->storeSequentiallyConsistent(threadId);
 #endif
 
-        if (LIKELY(_PHandle->handle() != nullptr))
-            unused(decayCopied.release()); // The ownership has been transferred to the thread
+        if (base_likely(_PHandle->handle() != nullptr))
+            base_unused(decayCopied.release()); // The ownership has been transferred to the thread
         else { 
             // Failed to create a thread
             _PThreadId->storeSequentiallyConsistent(0);

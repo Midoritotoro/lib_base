@@ -1392,7 +1392,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimization_>::push_front(ValueType&& element) {
-	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_
+	_VECTOR_PUSH_FRONT_INEFFICIENT_WARNING_;
 	emplaceFront(std::move(element));
 }
 

@@ -57,7 +57,7 @@
 
 #if defined(base_processor_x86) && defined(__SSE2__)
 #  include <emmintrin.h>
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_sse2 1
 #else
 #  define lib_base_enable_sse2 -1
@@ -65,7 +65,7 @@
 
 
 #if defined(base_processor_x86) && defined(__SSE3__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_sse3 1
 #else
 #  define lib_base_enable_sse3 -1
@@ -73,7 +73,7 @@
 
 
 #if defined(base_processor_x86) && defined(__SSSE3__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_ssse3 1
 #else
 #  define lib_base_enable_ssse3 -1
@@ -81,7 +81,7 @@
 
 
 #if defined(base_processor_x86) && defined(__SSE4_1__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_sse4_1 1
 #else
 #  define lib_base_enable_sse4_1 -1
@@ -89,7 +89,7 @@
 
 
 #if defined(base_processor_x86) && defined(__SSE4_2__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_sse4_2 1
 #else
 #  define lib_base_enable_sse4_2 -1
@@ -97,7 +97,7 @@
 
 
 #if defined(base_processor_x86) && defined(__AVX__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_avx 1
 #else
 #  define lib_base_enable_avx -1
@@ -105,7 +105,7 @@
 
 
 #if defined(base_processor_x86) && defined(__AVX2__)
-#  define LIB_BASE_HAS_SIMD_SUPPORT 1
+#  define lib_base_has_simd_support 1
 #  define lib_base_enable_avx2 1
 #else
 #  define lib_base_enable_avx2 -1

@@ -59,12 +59,12 @@ public:
     __BASE_DEFINE_DEFAULT_MEMCPY(1, 2, 4)
 #endif 
 
-    __BASE_DEFINE_MEMCPY(1, false, char, BASE_ECHO(*dest++ == *src++;));
-    __BASE_DEFINE_MEMCPY(2, false, char, BASE_ECHO(*dest++ == *src++;));
-    __BASE_DEFINE_MEMCPY(4, false, char, BASE_ECHO(*dest++ == *src++;));
+    __BASE_DEFINE_MEMCPY(1, false, char, BASE_ECHO(*dest++ = *src++;));
+    __BASE_DEFINE_MEMCPY(2, false, char, BASE_ECHO(*dest++ = *src++;));
+    __BASE_DEFINE_MEMCPY(4, false, char, BASE_ECHO(*dest++ = *src++;));
 
 #if defined(base_processor_x86_64)
-    __BASE_DEFINE_MEMCPY(8, false, char, BASE_ECHO(*dest++ == *src++;));
+    __BASE_DEFINE_MEMCPY(8, false, char, BASE_ECHO(*dest++ = *src++;));
 #endif
 };
 

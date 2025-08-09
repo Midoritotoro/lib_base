@@ -34,4 +34,6 @@
 #include <base/core/compatibility/CompilerDetection.h>
 #include <base/core/compatibility/LanguageFeatures.h>
 
+#include <cstddef>
+
 base_disable_warning_msvc(4067)
