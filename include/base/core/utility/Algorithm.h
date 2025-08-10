@@ -73,15 +73,14 @@ indirectly_binary_invocable<Op, T*,
 	::std::projected<iterator_t<Rng>, P>>&&
 	::std::assignable_from<T&, ::std::indirect_result_t<Op&, T*,
 	::std::projected<iterator_t<Rng>, P>>>
-
 T accumulate(
 	Rng&& rng,
 	T init,
 	Op op = Op{},
 	P proj = P{})
 {
-	return (*this)(::std::ranges::begin(rng), ::std::ranges::end(rng),
-		::std::move(init), ::std::move(op), ::std::move(proj));
+	return std::accumulate(::std::ranges::begin(rng), ::std::ranges::end(rng),
+		::std::move(init), ::std::move(op));
 }
 
 template <typename T>
