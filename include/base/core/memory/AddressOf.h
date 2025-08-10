@@ -15,13 +15,13 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 template <class _Type_>
 #if __has_builtin(__builtin_addressof)
 
-base_nodiscard base_constexpr_addressof base_always_inline _Type_* AddressOf(_Type_& value) noexcept {
+  base_constexpr_addressof base_always_inline _Type_* AddressOf(_Type_& value) noexcept {
     return __builtin_addressof(value);
 }
 
 #else
 
-base_nodiscard base_constexpr_addressof base_always_inline _Type_* AddressOf(_Type_& value) noexcept {
+  base_constexpr_addressof base_always_inline _Type_* AddressOf(_Type_& value) noexcept {
     return std::addressof(value);
 }
 

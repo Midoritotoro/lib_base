@@ -150,7 +150,7 @@ public:
         return Char{c}; 
     }
 
-    base_nodiscard base_constexpr_cxx20 static auto fromUcs4(char32_t c) noexcept;
+      base_constexpr_cxx20 static auto fromUcs4(char32_t c) noexcept;
 
     inline Category category() const noexcept { 
         return Char::category(ucs);

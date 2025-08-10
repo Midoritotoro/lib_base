@@ -39,14 +39,14 @@ namespace base::media::ffmpeg::audio {
 
 	protected:
 		bool initUsingContext(AVCodecContext* context, float speed);
-		base_nodiscard ReadResult readFromReadyContext(
+		  ReadResult readFromReadyContext(
 			AVCodecContext* context);
 
-		base_nodiscard ReadResult replaceFrameAndRead(FramePointer frame);
+		  ReadResult replaceFrameAndRead(FramePointer frame);
 
 	private:
-		base_nodiscard ReadResult readFromReadyFrame();
-		base_nodiscard ReadResult readOrBufferForFilter(
+		  ReadResult readFromReadyFrame();
+		  ReadResult readOrBufferForFilter(
 			AVFrame* frame,
 			int64_t samplesOverride);
 		bool frameHasDesiredFormat(AVFrame* frame) const;
@@ -61,7 +61,7 @@ namespace base::media::ffmpeg::audio {
 			AVFrame* frame,
 			int64_t samples = 0);
 		void enqueueFramesFinished();
-		base_nodiscard auto fillFrameFromQueued()
+		  auto fillFrameFromQueued()
 			-> std::variant<EnqueuedFrame*, ReadError>;
 
 		FramePointer _frame;

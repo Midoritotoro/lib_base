@@ -52,23 +52,23 @@ public:
         _secondValue(std::forward<_Other2>(secondValue)...)
     {}
 
-    inline constexpr base_nodiscard _Type1_& first() noexcept {
+    inline constexpr   _Type1_& first() noexcept {
         return *this;
     }
 
-    inline constexpr base_nodiscard const _Type1_& first() const noexcept {
+    inline constexpr   const _Type1_& first() const noexcept {
         return *this;
     }
 
-    inline constexpr base_nodiscard _Type2_& second() noexcept {
+    inline constexpr   _Type2_& second() noexcept {
         return _secondValue;
     }
 
-    inline constexpr base_nodiscard const _Type2_& second() const noexcept {
+    inline constexpr   const _Type2_& second() const noexcept {
         return _secondValue;
     }
 
-    inline constexpr base_nodiscard void swap(
+    inline constexpr   void swap(
         CompressedPair<_Type1_, _Type2_>& other) noexcept
     {
         // Ќе имеет смысла трогать пустое значение типа _Type1_
@@ -114,23 +114,23 @@ public:
     {}
 
 
-    inline constexpr base_nodiscard _Type1_& first() noexcept {
+    inline constexpr   _Type1_& first() noexcept {
         return _firstValue;
     }
 
-    inline constexpr base_nodiscard const _Type1_& first() const noexcept {
+    inline constexpr   const _Type1_& first() const noexcept {
         return _firstValue;
     }
 
-    inline constexpr base_nodiscard _Type2_& second() noexcept {
+    inline constexpr   _Type2_& second() noexcept {
         return _secondValue;
     }
 
-    inline constexpr base_nodiscard const _Type2_& second() const noexcept {
+    inline constexpr   const _Type2_& second() const noexcept {
         return _secondValue;
     }
 
-    inline constexpr base_nodiscard void swap(
+    inline constexpr   void swap(
         CompressedPair<_Type1_, _Type2_, false>& other) noexcept
     {
         std::swap(_firstValue, other._firstValue);

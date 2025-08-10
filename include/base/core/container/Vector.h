@@ -128,11 +128,11 @@ public:
 		const ValueType& _Fill) noexcept;
 	base_constexpr_cxx20 inline Vector(Vector&& rOther) noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard allocator_type& get_allocator() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard const allocator_type& get_allocator() const noexcept;
+	base_constexpr_cxx20 inline   allocator_type& get_allocator() noexcept;
+	base_constexpr_cxx20 inline   const allocator_type& get_allocator() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard allocator_type& getAllocator() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard const allocator_type& getAllocator() const noexcept;
+	base_constexpr_cxx20 inline   allocator_type& getAllocator() noexcept;
+	base_constexpr_cxx20 inline   const allocator_type& getAllocator() const noexcept;
 
 	base_constexpr_cxx20 inline Vector& operator=(Vector&& _Right) noexcept(
 		memory::ChoosePocma_v<allocator_type> != memory::PocmaValues::NoPropagateAllocators);
@@ -180,49 +180,49 @@ public:
 		Vector, _ComparedElementType_> operator>=(const Vector& other) const noexcept(
 			noexcept(std::declval<Vector<_ComparedElementType_>>() < other));
 
-	base_constexpr_cxx20 inline base_nodiscard Reference at(const SizeType offset) noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ValueType at(const SizeType index) const noexcept;
+	base_constexpr_cxx20 inline   Reference at(const SizeType offset) noexcept;
+	base_constexpr_cxx20 inline   ValueType at(const SizeType index) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType count() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType size() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType length() const noexcept;
+	base_constexpr_cxx20 inline   SizeType count() const noexcept;
+	base_constexpr_cxx20 inline   SizeType size() const noexcept;
+	base_constexpr_cxx20 inline   SizeType length() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType capacity() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType unusedCapacity() const noexcept;
+	base_constexpr_cxx20 inline   SizeType capacity() const noexcept;
+	base_constexpr_cxx20 inline   SizeType unusedCapacity() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool isEmpty() const noexcept;
+	base_constexpr_cxx20 inline   bool isEmpty() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard Pointer data() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstPointer data() const noexcept;
+	base_constexpr_cxx20 inline   Pointer data() noexcept;
+	base_constexpr_cxx20 inline   ConstPointer data() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstPointer constData() const noexcept;
+	base_constexpr_cxx20 inline   ConstPointer constData() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator begin() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator begin() const noexcept;
+	base_constexpr_cxx20 inline   Iterator begin() noexcept;
+	base_constexpr_cxx20 inline   ConstIterator begin() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator cbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator constBegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator cbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator constBegin() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator end() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator end() const noexcept;
+	base_constexpr_cxx20 inline   Iterator end() noexcept;
+	base_constexpr_cxx20 inline   ConstIterator end() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator cend() const;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator constEnd() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator cend() const;
+	base_constexpr_cxx20 inline   ConstIterator constEnd() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator rbegin() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator rend() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator rbegin() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator rend() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator rbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator rend() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator rbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator rend() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator crbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator crend() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator crbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator crend() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ValueType front() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard Reference front() noexcept;
+	base_constexpr_cxx20 inline   ValueType front() const noexcept;
+	base_constexpr_cxx20 inline   Reference front() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ValueType back() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard Reference back() noexcept;
+	base_constexpr_cxx20 inline   ValueType back() const noexcept;
+	base_constexpr_cxx20 inline   Reference back() noexcept;
 	
 	base_constexpr_cxx20 inline void push_back(const ValueType& element);
 	base_constexpr_cxx20 inline void push_back(Vector&& other);
@@ -249,40 +249,40 @@ public:
 	base_constexpr_cxx20 inline void pushBack(ValueType&& element);
 
 	template <class ... _Valty_>
-	base_constexpr_cxx20 inline base_nodiscard Reference emplaceBack(_Valty_&&... _Val);
+	base_constexpr_cxx20 inline   Reference emplaceBack(_Valty_&&... _Val);
 
 	template <class ... _Args_>
-	base_constexpr_cxx20 inline base_nodiscard Reference emplace_back(_Args_&&... args);
+	base_constexpr_cxx20 inline   Reference emplace_back(_Args_&&... args);
 
 	template <class ... _Args_>
-	base_constexpr_cxx20 inline base_nodiscard Reference emplaceFront(_Args_&&... _Val);
+	base_constexpr_cxx20 inline   Reference emplaceFront(_Args_&&... _Val);
 
 	template <class ... _Args_>
-	base_constexpr_cxx20 inline base_nodiscard Reference emplace_front(_Args_&&... args);
+	base_constexpr_cxx20 inline   Reference emplace_front(_Args_&&... args);
 
 	template <class... _Valty_>
-	base_constexpr_cxx20 inline base_nodiscard Iterator emplace(
+	base_constexpr_cxx20 inline   Iterator emplace(
 		ConstIterator where, 
 		_Valty_&&... value);
 
 	template <class... _Valty_>
-	base_constexpr_cxx20 inline base_nodiscard Iterator emplace(
+	base_constexpr_cxx20 inline   Iterator emplace(
 		SizeType where,
 		_Valty_&&... value);
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator insert(
+	base_constexpr_cxx20 inline   Iterator insert(
 		SizeType index,
 		const_reference element);
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator insert(
+	base_constexpr_cxx20 inline   Iterator insert(
 		ConstIterator where, 
 		const ValueType& value);
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator insert(
+	base_constexpr_cxx20 inline   Iterator insert(
 		ConstIterator where,
 		ValueType&& value);
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator insert(
+	base_constexpr_cxx20 inline   Iterator insert(
 		ConstIterator where, 
 		const SizeType count, 
 		const ValueType& value);
@@ -303,13 +303,13 @@ public:
 	base_constexpr_cxx20 inline void assign(
 		const std::initializer_list<ValueType> initializerList);
 
-	base_constexpr_cxx20 inline base_nodiscard ValueType pop() noexcept;
+	base_constexpr_cxx20 inline   ValueType pop() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ValueType popBack() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ValueType pop_back() noexcept;
+	base_constexpr_cxx20 inline   ValueType popBack() noexcept;
+	base_constexpr_cxx20 inline   ValueType pop_back() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ValueType pop_front() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ValueType popFront() noexcept;
+	base_constexpr_cxx20 inline   ValueType pop_front() noexcept;
+	base_constexpr_cxx20 inline   ValueType popFront() noexcept;
 
 	base_constexpr_cxx20 inline void reverse() noexcept;
 
@@ -319,14 +319,14 @@ public:
 
 	// Deletes the specified elements from the container
 	// Moves the elements of the vector that follow the part being deleted to the place of the elements being deleted
-	base_constexpr_cxx20 inline base_nodiscard Iterator erase(
+	base_constexpr_cxx20 inline   Iterator erase(
 		ConstIterator first,
 		ConstIterator last) noexcept(
 			std::is_nothrow_move_assignable_v<ValueType>);
 
 	// Deletes the specified element from the container
 	// Moves the elements of the vector that follow the part being deleted to the place of the element being deleted
-	base_constexpr_cxx20 inline base_nodiscard Iterator erase(ConstIterator it) noexcept(
+	base_constexpr_cxx20 inline   Iterator erase(ConstIterator it) noexcept(
 		std::is_nothrow_move_assignable_v<ValueType>);
 
 	// increase capacity to newCapacity (without geometric growth)
@@ -335,53 +335,53 @@ public:
 	base_constexpr_cxx20 inline void shrinkToFit();
 	base_constexpr_cxx20 inline void shrink_to_fit();
 
-	base_constexpr_cxx20	inline base_nodiscard  bool resize(
+	base_constexpr_cxx20	inline    bool resize(
 		const SizeType size,
 		const_reference _Fill);
-	base_constexpr_cxx20 inline base_nodiscard bool resize(
+	base_constexpr_cxx20 inline   bool resize(
 		const SizeType newCapacity);
 
 	base_constexpr_cxx20 inline void fill(const_reference _Fill);
 
-	base_constexpr_cxx20 inline base_nodiscard size_type count(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard size_type count(const Vector& subVector) const noexcept;
+	base_constexpr_cxx20 inline   size_type count(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   size_type count(const Vector& subVector) const noexcept;
 
 	template <typename _Predicate_>
-	base_constexpr_cxx20 inline base_nodiscard size_type count_if(_Predicate_ predicate) const noexcept;
+	base_constexpr_cxx20 inline   size_type count_if(_Predicate_ predicate) const noexcept;
 
 	template <typename _Predicate_>
-	base_constexpr_cxx20 inline base_nodiscard size_type countIf(_Predicate_ predicate) const noexcept;
+	base_constexpr_cxx20 inline   size_type countIf(_Predicate_ predicate) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool contains(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool contains(const Vector& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool contains(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool contains(const Vector& subVector) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool startsWith(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool startsWith(const Vector& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool startsWith(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool startsWith(const Vector& subVector) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool endsWith(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool endsWith(const Vector& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool endsWith(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool endsWith(const Vector& subVector) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType indexOf(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType lastIndexOf(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   SizeType indexOf(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   SizeType lastIndexOf(const ValueType& element) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType find(const ValueType& element) const noexcept;
-
-	template <typename _Predicate_>
-	base_constexpr_cxx20 inline base_nodiscard SizeType find_if(_Predicate_ predicate) const noexcept;
+	base_constexpr_cxx20 inline   SizeType find(const ValueType& element) const noexcept;
 
 	template <typename _Predicate_>
-	base_constexpr_cxx20 inline base_nodiscard SizeType findIf(_Predicate_ predicate) const noexcept;
+	base_constexpr_cxx20 inline   SizeType find_if(_Predicate_ predicate) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard Vector	sliced(
+	template <typename _Predicate_>
+	base_constexpr_cxx20 inline   SizeType findIf(_Predicate_ predicate) const noexcept;
+
+	base_constexpr_cxx20 inline   Vector	sliced(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard Vector	sliced(SizeType positionFrom) const noexcept;
+	base_constexpr_cxx20 inline   Vector	sliced(SizeType positionFrom) const noexcept;
 
 	// The same as sliced, but returns a non-owning slice of the vector without copying data.
-	base_constexpr_cxx20 inline base_nodiscard Vector	view(
+	base_constexpr_cxx20 inline   Vector	view(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard Vector	view(SizeType positionFrom) const noexcept;
+	base_constexpr_cxx20 inline   Vector	view(SizeType positionFrom) const noexcept;
 
 	base_constexpr_cxx20 inline void replace(
 		SizeType 			positionFrom,
@@ -441,26 +441,26 @@ public:
 	template <typename _Predicate_>
 	base_constexpr_cxx20 inline void removeIf(_Predicate_ pred);	
 
-	base_constexpr_cxx20 inline base_nodiscard bool removeOne(const ValueType& element);
+	base_constexpr_cxx20 inline   bool removeOne(const ValueType& element);
 
 	base_constexpr_cxx20 inline void take(
 		const pointer	newVectorStart,
 		const SizeType	newVectorSize,
 		const SizeType	newVectorCapacity);
 
-	base_constexpr_cxx20 inline base_nodiscard Vector makeView(const std::vector< _Element_>& other);
-	base_constexpr_cxx20 inline base_nodiscard Vector makeView(const Vector& other);
+	base_constexpr_cxx20 inline   Vector makeView(const std::vector< _Element_>& other);
+	base_constexpr_cxx20 inline   Vector makeView(const Vector& other);
 
-	constexpr inline base_nodiscard sizetype max_size() const noexcept;
-	constexpr inline base_nodiscard sizetype maxSize() const noexcept;
+	constexpr inline   sizetype max_size() const noexcept;
+	constexpr inline   sizetype maxSize() const noexcept;
 private: 
 	base_constexpr_cxx20 inline Vector(
 		const pointer _First,
 		const pointer _Current,
 		const pointer _Last) noexcept; // For view method
 
-	constexpr inline base_nodiscard SizeType calculateGrowth(SizeType newSize) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool resizeReallocate(SizeType newCapacity) noexcept;
+	constexpr inline   SizeType calculateGrowth(SizeType newSize) const noexcept;
+	base_constexpr_cxx20 inline   bool resizeReallocate(SizeType newCapacity) noexcept;
 
 	template <class... _Valty_>
 	base_constexpr_cxx20 inline void emplaceBackWithUnusedCapacity(_Valty_&&... _Val);
@@ -475,7 +475,7 @@ private:
 		_Valty_&&...	_Val);
 
 	template <typename _Type_ = ValueType>
-	base_constexpr_cxx20 inline base_nodiscard bool elementsCompare(
+	base_constexpr_cxx20 inline   bool elementsCompare(
 		const Vector<_Type_>& other) const noexcept;
 
 	template <class _Iterator_>
@@ -705,7 +705,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::getAllocator() noexcept
 {
 	return _pair.first();
@@ -715,7 +715,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+base_constexpr_cxx20 inline   const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::getAllocator() const noexcept
 {
 	return _pair.first();
@@ -725,7 +725,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::get_allocator() noexcept
 {
 	return _pair.first();
@@ -735,7 +735,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
+base_constexpr_cxx20 inline   const Vector<_Element_, _Allocator_, _SimdOptimization_>::allocator_type&
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::get_allocator() const noexcept
 {
 	return _pair.first();
@@ -970,7 +970,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::at(const SizeType offset) noexcept 
 {
 #ifdef _DEBUG
@@ -991,7 +991,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::at(const SizeType index) const noexcept
 {
 	return at(index);
@@ -1001,7 +1001,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::size() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1012,7 +1012,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::count() const noexcept
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1023,7 +1023,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::length() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1034,7 +1034,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::capacity() const noexcept
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1045,7 +1045,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::unusedCapacity() const noexcept
 {
 	return (capacity() - size());
@@ -1055,7 +1055,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>::isEmpty() const noexcept {
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>::isEmpty() const noexcept {
 	return (length() == 0);
 }
 
@@ -1063,7 +1063,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Pointer 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Pointer 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::data() noexcept 
 {
 	auto& pairValue = _pair._secondValue;
@@ -1074,7 +1074,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::data() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1085,7 +1085,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstPointer 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constData() const noexcept 
 {
 	const auto& pairValue = _pair._secondValue;
@@ -1096,7 +1096,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::begin() noexcept
 {
 	return Iterator(this);
@@ -1106,7 +1106,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::begin() const noexcept
 {
 	return ConstIterator(this);
@@ -1116,7 +1116,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::cbegin() const noexcept
 {
 	return ConstIterator(this);
@@ -1126,7 +1126,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constBegin() const noexcept
 {
 	return ConstIterator(this);
@@ -1136,7 +1136,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::end() noexcept 
 {
 	return Iterator(this) + size();
@@ -1146,7 +1146,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::end() const noexcept
 {
 	return ConstIterator(this) + size();
@@ -1156,7 +1156,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::cend() const 
 {
 	return ConstIterator(this) + size();
@@ -1166,7 +1166,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstIterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constEnd() const noexcept
 {
 	return ConstIterator(this) + size();
@@ -1176,7 +1176,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::rbegin() noexcept 
 {
 	return ReverseIterator(begin());
@@ -1186,7 +1186,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::rend() noexcept 
 {
 	return ReverseIterator(end());
@@ -1196,7 +1196,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::rbegin() const noexcept
 {
 	return ConstReverseIterator(begin());
@@ -1206,7 +1206,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::rend() const noexcept
 {
 	return ConstReverseIterator(end());
@@ -1216,7 +1216,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::crbegin() const noexcept
 {
 	return ConstReverseIterator(begin());
@@ -1226,7 +1226,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ConstReverseIterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::crend() const noexcept 
 {
 	return ConstReverseIterator(end());
@@ -1236,7 +1236,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::front() const noexcept
 {
 	return at(0);
@@ -1246,7 +1246,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::front() noexcept 
 {
 	return at(0);
@@ -1256,7 +1256,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::back() const noexcept 
 {
 	return at(size() - 1);
@@ -1266,7 +1266,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::back() noexcept
 {
 	return at(size() - 1);
@@ -1449,7 +1449,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class ... _Args_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace_back(_Args_&&... args)
 {
 	emplaceBack(std::forward<_Args_>(args)...);
@@ -1461,7 +1461,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class ... _Args_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceFront(_Args_&&... _Val) 
 {
 	auto& pairValue		= _pair._secondValue;
@@ -1511,7 +1511,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class ... _Args_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace_front(_Args_&&... args) 
 {
 	return emplaceFront(std::forward<_Args_>(args)...);
@@ -1522,7 +1522,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class... _Valty_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace(
 		ConstIterator where,
 		_Valty_&&... value)
@@ -1535,7 +1535,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class... _Valty_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplace(
 		SizeType where,
 		_Valty_&&... value)
@@ -1547,7 +1547,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator where,
 		const ValueType& value)
@@ -1570,7 +1570,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator where,
 		ValueType&& value)
@@ -1595,7 +1595,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		ConstIterator 		where,
 		const SizeType 		count,
@@ -1687,7 +1687,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop() noexcept 
 {
 	const auto value = back();
@@ -1700,7 +1700,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::popBack() noexcept 
 {
 	return pop();
@@ -1710,7 +1710,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop_back() noexcept
 {
 	return pop();
@@ -1720,7 +1720,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::pop_front() noexcept
 {
 	const auto value = front();
@@ -1733,7 +1733,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::popFront() noexcept
 {
 	return pop_front();
@@ -1806,7 +1806,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::erase(
 		ConstIterator first,
 		ConstIterator last) noexcept(
@@ -1829,7 +1829,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::erase(ConstIterator it) noexcept(
 		std::is_nothrow_move_assignable_v<ValueType>)
 {
@@ -1893,7 +1893,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(
 	SizeType size,
 	const_reference _Fill)
 {
@@ -1924,7 +1924,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(SizeType newCapacity)
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resize(SizeType newCapacity)
 {
 	const auto growth			= calculateGrowth(newCapacity);
 	const auto isEnoughMemory	= resizeReallocate(growth);
@@ -1936,7 +1936,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Iterator
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::insert(
 		SizeType index,
 		const_reference element)
@@ -1949,7 +1949,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::count(const ValueType& element) const noexcept 
 {
 	SizeType _Count = 0;
@@ -1968,7 +1968,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::count(const Vector& subVector) const noexcept
 {
 	SizeType _Count = 0;
@@ -2000,7 +2000,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _Predicate_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::count_if(_Predicate_ predicate) const noexcept
 {
 	SizeType _Count = 0;
@@ -2020,7 +2020,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _Predicate_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::countIf(_Predicate_ predicate) const noexcept
 {
 	return count_if(predicate);
@@ -2030,7 +2030,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool 
+base_constexpr_cxx20 inline   bool 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::contains(const ValueType& element) const noexcept 
 {
 	for (SizeType i = 0; i < size(); ++i) {
@@ -2047,7 +2047,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool 
+base_constexpr_cxx20 inline   bool 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::contains(const Vector& subVector) const noexcept 
 {
 	const auto subVectorSize	= subVector.size();
@@ -2074,7 +2074,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::startsWith(const ValueType& element) const noexcept 
 {
 	const auto& firstElement = first();
@@ -2085,7 +2085,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::startsWith(const Vector& subVector) const noexcept
 {
 	const auto otherSize = subVector.size();
@@ -2108,7 +2108,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::endsWith(const ValueType& element) const noexcept 
 {
 	const auto& lastElement = last();
@@ -2119,7 +2119,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::endsWith(const Vector& subVector) const noexcept 
 {
 	const auto otherSize = subVector.size();
@@ -2142,7 +2142,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::indexOf(const ValueType& element) const noexcept
 {
 	return find(element);
@@ -2152,7 +2152,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::lastIndexOf(const ValueType& element) const noexcept 
 {
 	for (SizeType i = size() - 1; i >= 0; --i) {
@@ -2169,7 +2169,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::find(const ValueType& element) const noexcept 
 {
 	for (SizeType i = 0; i < size(); ++i) {
@@ -2187,7 +2187,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _Predicate_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::find_if(_Predicate_ predicate) const noexcept
 {
 	for (SizeType i = 0; i < size(); ++i) 
@@ -2202,7 +2202,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _Predicate_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::findIf(_Predicate_ predicate) const noexcept
 {
 	return find_if(predicate);
@@ -2212,7 +2212,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>	
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>	
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::sliced(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept
@@ -2248,7 +2248,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_> 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_> 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::sliced(SizeType positionFrom) const noexcept 
 {
 	const auto _Size = size();
@@ -2278,7 +2278,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::view(
 		SizeType positionFrom,
 		SizeType elementsCount) const noexcept
@@ -2305,7 +2305,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_> 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_> 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::view(SizeType positionFrom) const noexcept
 {
 	const auto _Size = size();
@@ -2636,7 +2636,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::removeOne(const ValueType& element)
 {
 	for (SizeType i = 0; i < size(); ++i) {
@@ -2683,7 +2683,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_> 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_> 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const std::vector<_Element_>& other)
 {
 	const auto _Size 	= other.size();
@@ -2702,7 +2702,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const Vector& other) {
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_> Vector<_Element_, _Allocator_, _SimdOptimization_>::makeView(const Vector& other) {
 	const auto _Size 	= other.size();
 	pointer& otherStart = other._pair._secondValue._start;
 
@@ -2719,7 +2719,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-constexpr inline base_nodiscard sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::max_size() const noexcept {
+constexpr inline   sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::max_size() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
 
@@ -2727,7 +2727,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-constexpr inline base_nodiscard sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::maxSize() const noexcept {
+constexpr inline   sizetype Vector<_Element_, _Allocator_, _SimdOptimization_>::maxSize() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
 
@@ -2735,7 +2735,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-constexpr inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
+constexpr inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::SizeType 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::calculateGrowth(SizeType newSize) const noexcept
 {
 	const auto oldCapacity	= capacity();
@@ -2756,7 +2756,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resizeReallocate(SizeType newCapacity) noexcept {
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>::resizeReallocate(SizeType newCapacity) noexcept {
 	const auto oldCapacity = capacity();
 
 	if (oldCapacity == newCapacity)
@@ -2796,7 +2796,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <class ..._Valty_>
-base_constexpr_cxx20 inline base_nodiscard Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
+base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::Reference 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::emplaceBack(_Valty_&&... _Val)
 {
 	auto& pairValue		= _pair._secondValue;
@@ -2874,7 +2874,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _Type_>
-base_constexpr_cxx20 inline base_nodiscard bool Vector<_Element_, _Allocator_, _SimdOptimization_>::elementsCompare(
+base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>::elementsCompare(
 	const Vector<_Type_>& other) const noexcept
 {
 	for (SizeType _Current = 0; _Current < size(); ++_Current) {

@@ -13,12 +13,12 @@ public:
 	~Mutex();
 
 	void setUnlockOnDelete(bool unlockOnDel);
-	base_nodiscard bool unlockOnDelete() const noexcept;
+	  bool unlockOnDelete() const noexcept;
 
-	base_nodiscard bool lock();
-	base_nodiscard bool unlock();
+	  bool lock();
+	  bool unlock();
 
-	base_nodiscard bool isLocked() const noexcept;
+	  bool isLocked() const noexcept;
 private:
 	AbstractMutex* _impl;
 };

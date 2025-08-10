@@ -5,7 +5,7 @@
 __BASE_MEMORY_NAMESPACE_BEGIN
 
 template <class _Type_>
-base_constexpr_cxx20 base_nodiscard inline bool IsAllBitsZero(const _Type_& value) {
+base_constexpr_cxx20   inline bool IsAllBitsZero(const _Type_& value) {
     static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
 
     if constexpr (std::is_same_v<_Type_, std::nullptr_t>)

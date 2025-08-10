@@ -14,7 +14,7 @@ public:
 
 	~MutexLocker();
 
-	base_nodiscard bool isLocked() const noexcept;
+	  bool isLocked() const noexcept;
 private:
 	enum {
 		PlatformMutex,

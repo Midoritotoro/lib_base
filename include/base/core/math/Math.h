@@ -19,11 +19,11 @@ struct rational_t {
     unsigned den;
 };
 
-base_nodiscard int64_t GCD(
+  int64_t GCD(
 	int64_t a,
 	int64_t b);
 
-base_nodiscard int64_t LCM(
+  int64_t LCM(
 	int64_t a,
 	int64_t b);
 
@@ -31,9 +31,9 @@ bool UnsignedReduce(
 	unsigned* pi_dst_nom, unsigned* pi_dst_den,
 	uint64_t i_nom, uint64_t i_den, uint64_t i_max);
 
-base_nodiscard double SafeRound(double value);
+  double SafeRound(double value);
 
-inline base_nodiscard 
+inline   
     double FastSin(double x)
 {
     int si = int(x * (0.5 * SINE_TABLE_SIZE / M_PI));
@@ -48,7 +48,7 @@ inline base_nodiscard
         (sineTable[ci] - 0.5 * sineTable[si] * d) * d;
 }
 
-inline base_nodiscard
+inline  
     double FastCos(double x)
 {
     int ci = int(x * (0.5 * SINE_TABLE_SIZE / M_PI));
@@ -63,19 +63,19 @@ inline base_nodiscard
         (sineTable[ci] + 0.5 * sineTable[si] * d) * d;
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     float DegreesToRadians(float degrees)
 {
     return degrees * float(M_PI / 180);
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     double DegreesToRadians(double degrees)
 {
     return degrees * (M_PI / 180);
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     long double DegreesToRadians(long double degrees)
 {
     return degrees * (M_PI / 180);
@@ -83,31 +83,31 @@ constexpr inline base_nodiscard
 
 template <typename T, 
     std::enable_if_t<std::is_integral_v<T>, bool> = true>
-constexpr inline base_nodiscard 
+constexpr inline   
     double DegreesToRadians(T degrees)
 {
     return DegreesToRadians(static_cast<double>(degrees));
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     float RadiansToDegrees(float radians)
 {
     return radians * float(180 / M_PI);
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     double RadiansToDegrees(double radians)
 {
     return radians * (180 / M_PI);
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     long double RadiansToDegrees(long double radians)
 {
     return radians * (180 / M_PI);
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint32 ConstexprNextPowerOfTwo(uint32 v)
 {
     v |= v >> 1;
@@ -122,7 +122,7 @@ constexpr inline base_nodiscard
     return v;
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint64 ConstexprNextPowerOfTwo(uint64 v)
 {
     v |= v >> 1;
@@ -138,19 +138,19 @@ constexpr inline base_nodiscard
     return v;
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint32 ConstexprNextPowerOfTwo(int32 v)
 {
     return ConstexprNextPowerOfTwo(uint32(v));
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint64 ConstexprNextPowerOfTwo(int64 v)
 {
     return ConstexprNextPowerOfTwo(uint64(v));
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint32 NextPowerOfTwo(uint32 v)
 {
     Assert(static_cast<int32>(v) >= 0); // There is a next power of two
@@ -165,7 +165,7 @@ constexpr inline base_nodiscard
 #endif
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     uint64 NextPowerOfTwo(uint64 v)
 {
     Assert(static_cast<int64>(v) >= 0); // There is a next power of two
@@ -180,31 +180,31 @@ constexpr inline base_nodiscard
 #endif
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     uint32 NextPowerOfTwo(int32 v) 
 {
     return NextPowerOfTwo(uint32(v));
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     uint64 NextPowerOfTwo(int64 v)
 {
     return NextPowerOfTwo(uint64(v));
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     ulong NextPowerOfTwo(ulong v)
 {
     return NextPowerOfTwo(IntegerForSizeof<long>::Unsigned(v));
 }
 
-constexpr inline base_nodiscard 
+constexpr inline   
     ulong NextPowerOfTwo(long v)
 {
     return NextPowerOfTwo(IntegerForSizeof<long>::Unsigned(v));
 }
 
-constexpr inline base_nodiscard
+constexpr inline  
     float FastInverseSqrt(float x) 
 {
     int i = *(int*)&x;
@@ -217,7 +217,7 @@ constexpr inline base_nodiscard
 }
 
 template<typename T, typename Cmp = std::less<>>
-base_nodiscard constexpr bool points_into_range(
+  constexpr bool points_into_range(
     const T * p,
     const T * b, 
     const T * e,
@@ -227,7 +227,7 @@ base_nodiscard constexpr bool points_into_range(
 }
 
 template <typename C, typename T>
-base_nodiscard constexpr bool points_into_range(
+  constexpr bool points_into_range(
     const T& p,
     const C& c) noexcept
 {
@@ -236,23 +236,23 @@ base_nodiscard constexpr bool points_into_range(
         std::data(c) + std::distance(std::begin(c), std::end(c)));
 }
 
-base_always_inline base_nodiscard uint64 BytesToDoubleWordsCount(const uint64 bytes) noexcept {
+base_always_inline   uint64 BytesToDoubleWordsCount(const uint64 bytes) noexcept {
     return (bytes >> 2);
 }
 
-base_always_inline base_nodiscard uint64 BytesToQuadWordsCount(const uint64 bytes) noexcept {
+base_always_inline   uint64 BytesToQuadWordsCount(const uint64 bytes) noexcept {
     return (bytes >> 3);
 }
 
-base_always_inline base_nodiscard uint64 BytesToXmmWordsCount(const uint64 bytes) noexcept {
+base_always_inline   uint64 BytesToXmmWordsCount(const uint64 bytes) noexcept {
     return (bytes >> 4);
 }
 
-base_always_inline base_nodiscard uint64 BytesToYmmWordsCount(const uint64 bytes) noexcept {
+base_always_inline   uint64 BytesToYmmWordsCount(const uint64 bytes) noexcept {
     return (bytes >> 5);
 }
 
-base_always_inline base_nodiscard uint64 BytesToZmmWordsCount(const uint64 bytes) noexcept {
+base_always_inline   uint64 BytesToZmmWordsCount(const uint64 bytes) noexcept {
     return (bytes >> 6);
 }
 

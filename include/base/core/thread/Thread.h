@@ -18,16 +18,16 @@ __BASE_THREAD_NAMESPACE_BEGIN
 
 class Thread final {
 public:
-	base_nodiscard_thread_constructor Thread() noexcept;
-	base_nodiscard_thread_constructor Thread(const Thread& other) noexcept;
+	 _thread_constructor Thread() noexcept;
+	 _thread_constructor Thread(const Thread& other) noexcept;
 
-	base_nodiscard_thread_constructor Thread(Thread&& rOther) noexcept;
+	 _thread_constructor Thread(Thread&& rOther) noexcept;
 
 
 	template <
 		class Function,
 		class ... Args>
-	base_nodiscard_thread_constructor Thread(
+	 _thread_constructor Thread(
 		Function&& _routine,
 		Args&& ... args)
 	{
@@ -41,7 +41,7 @@ public:
 		class Owner,
 		class Method,
 		class ... Args>
-	base_nodiscard_thread_constructor Thread(
+	 _thread_constructor Thread(
 		Owner* _owner,
 		Method&& _routine,
 		Args&& ... args)
@@ -62,13 +62,13 @@ public:
 	~Thread();
 
 	void setPriority(AbstractThread::Priority priority);
-	base_nodiscard AbstractThread::Priority priority() const noexcept;
+	  AbstractThread::Priority priority() const noexcept;
 
 	void setTerminateOnClose(bool terminateOnClose);
-	base_nodiscard bool terminateOnClose() const noexcept;
+	  bool terminateOnClose() const noexcept;
 
-	base_nodiscard bool isFinished() const noexcept;
-	base_nodiscard bool isRunning() const noexcept;
+	  bool isFinished() const noexcept;
+	  bool isRunning() const noexcept;
 
 	void waitMs(int ms);
 	void waitS(int sec);
@@ -110,10 +110,10 @@ public:
 		);
 	}
 
-	base_nodiscard ThreadPlatformImplementation* impl() const noexcept;
+	  ThreadPlatformImplementation* impl() const noexcept;
 		
-	static base_nodiscard int getIdealThreadCount() noexcept;
-	static base_nodiscard Thread* currentThread() noexcept;
+	static   int getIdealThreadCount() noexcept;
+	static   Thread* currentThread() noexcept;
 private:
 	friend class ThreadsData;
 	std::unique_ptr<ThreadPlatformImplementation> _impl = nullptr;

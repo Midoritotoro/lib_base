@@ -8,7 +8,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(
 	BASE_ECHO(
 		template <arch::CpuFeature feature>
-base_declare_const_function base_nodiscard void* BaseMemcpyOptimized(
+base_declare_const_function   void* BaseMemcpyOptimized(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept
@@ -19,25 +19,25 @@ base_declare_const_function base_nodiscard void* BaseMemcpyOptimized(
 )
 
 template <>
-base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::None>(
+base_declare_const_function   void* BaseMemcpyOptimized<arch::CpuFeature::None>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept;
 
 template <>
-base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::SSE>(
+base_declare_const_function   void* BaseMemcpyOptimized<arch::CpuFeature::SSE>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept;
 
 template <>
-base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::AVX>(
+base_declare_const_function   void* BaseMemcpyOptimized<arch::CpuFeature::AVX>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept;
 
 template <>
-base_declare_const_function base_nodiscard void* BaseMemcpyOptimized<arch::CpuFeature::AVX512F>(
+base_declare_const_function   void* BaseMemcpyOptimized<arch::CpuFeature::AVX512F>(
 	void*				destination,
 	const void* const   source,
 	sizetype            size) noexcept;

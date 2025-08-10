@@ -8,7 +8,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #ifndef __BASE_DEFINE_DEFAULT_MEMCPY
 #define __BASE_DEFINE_DEFAULT_MEMCPY(...)                           \
     template <sizetype byteCount, bool aligned>                     \
-    static base_declare_const_function base_nodiscard inline void* Memcpy(           \
+    static base_declare_const_function   inline void* Memcpy(           \
         void*               destination,                            \
         const void* const   source,                                 \
         sizetype            size) noexcept                          \
@@ -24,7 +24,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #ifndef __BASE_DEFINE_MEMCPY
 #define __BASE_DEFINE_MEMCPY(bytesCount, aligned, copyType, copyCommand)            \
     template <>                                                                     \
-    static base_declare_const_function base_nodiscard inline void* Memcpy<bytesCount, aligned>(      \
+    static base_declare_const_function   inline void* Memcpy<bytesCount, aligned>(      \
         void*               destination,                                            \
         const void* const   source,                                                 \
         sizetype            size) noexcept                                          \

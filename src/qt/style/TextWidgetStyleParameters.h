@@ -6,23 +6,23 @@ __BASE_QT_STYLE_NAMESPACE_BEGIN
 class TextWidgetStyleParameters :
 	public TitleWidgetStyleParameters
 {
-	virtual base_nodiscard bool linkUnderLine() const noexcept {
+	virtual   bool linkUnderLine() const noexcept {
 		return _linkUnderLine;
 	}
 
-	virtual base_nodiscard QuoteStyle quoteStyle() const noexcept {
+	virtual   QuoteStyle quoteStyle() const noexcept {
 		return _blockQuote;
 	}
 
-	virtual base_nodiscard QPoint headerPosition() const noexcept {
+	virtual   QPoint headerPosition() const noexcept {
 		return _blockQuote.headerPosition;
 	}
 
-	virtual base_nodiscard int outlineShift() const noexcept {
+	virtual   int outlineShift() const noexcept {
 		return _blockQuote.outlineShift;
 	}
 
-	virtual base_nodiscard int quoteRadius() const noexcept {
+	virtual   int quoteRadius() const noexcept {
 		return _blockQuote.radius;
 	}
 

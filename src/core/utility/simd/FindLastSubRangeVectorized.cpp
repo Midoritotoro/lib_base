@@ -11,7 +11,7 @@
 __BASE_NAMESPACE_BEGIN
 
 
-base_declare_const_function base_nodiscard const void* FindLastSubRange8Bit(
+base_declare_const_function   const void* FindLastSubRange8Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -20,7 +20,7 @@ base_declare_const_function base_nodiscard const void* FindLastSubRange8Bit(
     return nullptr;
 }
 
-base_declare_const_function base_nodiscard const void* FindLastSubRange16Bit(
+base_declare_const_function   const void* FindLastSubRange16Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -29,7 +29,7 @@ base_declare_const_function base_nodiscard const void* FindLastSubRange16Bit(
     return nullptr;
 }
 
-base_declare_const_function base_nodiscard const void* FindLastSubRange32Bit(
+base_declare_const_function   const void* FindLastSubRange32Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -38,7 +38,7 @@ base_declare_const_function base_nodiscard const void* FindLastSubRange32Bit(
     return nullptr;
 }
 
-base_declare_const_function base_nodiscard const void* FindLastSubRange64Bit(
+base_declare_const_function   const void* FindLastSubRange64Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,

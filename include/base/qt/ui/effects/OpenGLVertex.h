@@ -24,12 +24,12 @@ namespace base::qt::ui::effects {
 		}
 
 		static constexpr inline
-			base_nodiscard int positionOffset() {
+			  int positionOffset() {
 			return offsetof(Vertex, m_position);
 		}
 
 		static constexpr inline
-			base_nodiscard int stride() {
+			  int stride() {
 			return sizeof(Vertex);
 		}
 

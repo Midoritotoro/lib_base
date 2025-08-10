@@ -394,7 +394,7 @@ base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyC
 }
 
 
-base_declare_const_function base_nodiscard void ReverseCopyVectorized8Bit(
+base_declare_const_function   void ReverseCopyVectorized8Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -412,7 +412,7 @@ base_declare_const_function base_nodiscard void ReverseCopyVectorized8Bit(
         static_cast<uchar*>(destinationPointer));
 }
 
-base_declare_const_function base_nodiscard void ReverseCopyVectorized16Bit(
+base_declare_const_function   void ReverseCopyVectorized16Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -430,7 +430,7 @@ base_declare_const_function base_nodiscard void ReverseCopyVectorized16Bit(
         static_cast<ushort*>(destinationPointer));
 }
 
-base_declare_const_function base_nodiscard void ReverseCopyVectorized32Bit(
+base_declare_const_function   void ReverseCopyVectorized32Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -448,7 +448,7 @@ base_declare_const_function base_nodiscard void ReverseCopyVectorized32Bit(
         static_cast<uint32*>(destinationPointer));
 }
 
-base_declare_const_function base_nodiscard void ReverseCopyVectorized64Bit(
+base_declare_const_function   void ReverseCopyVectorized64Bit(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept
@@ -468,7 +468,7 @@ base_declare_const_function base_nodiscard void ReverseCopyVectorized64Bit(
 
 
 template <size_t typeSizeInBytes>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseCopyVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* ReverseCopyVectorized(
     void* firstPointer,
     void* lastPointer,
     void*       destinationPointer) noexcept

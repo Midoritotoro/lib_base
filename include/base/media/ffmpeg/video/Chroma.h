@@ -29,15 +29,15 @@ public:
         unsigned pixel_bits;        /* Number of bits actually used bits per pixel for a plane */
     };
 
-    base_nodiscard static int GetChroma(
+      static int GetChroma(
         video_format_t* fmt,
         enum AVPixelFormat i_ffmpeg_chroma);
 
-    base_nodiscard static enum AVPixelFormat FindFfmpegChroma(
+      static enum AVPixelFormat FindFfmpegChroma(
         fourcc_t fourcc,
         bool* uv_flipped);
 
-    base_nodiscard static const ChromaDescription*
+      static const ChromaDescription*
         FourccGetChromaDescription(fourcc_t i_fourcc);
 };
 

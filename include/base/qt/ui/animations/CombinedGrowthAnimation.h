@@ -41,8 +41,8 @@ public:
 	void restart();
 	void restartAfterFinished();
 
-	base_nodiscard bool animating() const noexcept;
-	base_nodiscard QRectF rect() const noexcept;
+	  bool animating() const noexcept;
+	  QRectF rect() const noexcept;
 private:
 	mutable QRectF _rect;
 

@@ -10,7 +10,7 @@
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
-inline base_nodiscard bool MemoryCopy(
+inline   bool MemoryCopy(
     void*       destinationPointer,
     const void* sourcePointer,
     size_t      sourceLength) noexcept
@@ -24,7 +24,7 @@ inline base_nodiscard bool MemoryCopy(
 template <
     class _InputIterator_,
     class _OutIterator_>
-inline base_nodiscard base_constexpr_cxx20 bool MemoryMove(
+inline   base_constexpr_cxx20 bool MemoryMove(
     _InputIterator_ _First,
     sizetype        _Size,
     _OutIterator_   _Destination) noexcept
@@ -41,7 +41,7 @@ inline base_nodiscard base_constexpr_cxx20 bool MemoryMove(
 template <
     class _InputIterator_,
     class _OutIterator_> 
-inline base_nodiscard base_constexpr_cxx20 bool MemoryMove(
+inline   base_constexpr_cxx20 bool MemoryMove(
     _InputIterator_ _First,
     _InputIterator_ _Last,
     _OutIterator_   _Destination) noexcept
@@ -65,7 +65,7 @@ template <
     class _SizeType_,
     class _OutIterator_>
 // copy _First + [0, _Count) to _Dest + [0, _Count), returning _Dest + _Count
-base_constexpr_cxx20 inline base_nodiscard _OutIterator_ MemoryCopyCountUnchecked(
+base_constexpr_cxx20 inline   _OutIterator_ MemoryCopyCountUnchecked(
     _InputIterator_ firstIterator, 
     _SizeType_      count, 
     _OutIterator_   destinationIterator)
@@ -108,7 +108,7 @@ struct CopyResult {
 template <
     class _InputIterator_,
     class _OutIterator_> 
-base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
+  inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommon(
     _InputIterator_ inputFirstIterator,
     _InputIterator_ inputLastIterator,
     _OutIterator_   outFirstIterator,
@@ -147,7 +147,7 @@ base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCommo
 template <
     class _InputIterator_,
     class _OutIterator_>
-base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
+  inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount(
     _InputIterator_ inputFirstIterator,
     _OutIterator_   outFirstIterator,
     const sizetype  countObjects) noexcept
@@ -179,7 +179,7 @@ base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyCount
 template <
     class _InputIterator_,
     class _OutIterator_>
-base_nodiscard inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
+  inline CopyResult<_InputIterator_, _OutIterator_> MemoryCopyBytes(
     _InputIterator_ inputFirstIterator,
     _OutIterator_   outFirstIterator,
     const sizetype  countBytes) noexcept
@@ -216,7 +216,7 @@ template <
     class _Sentinel_, 
     class _Allocator_>
 // copy [_First, _Last) to raw _Destination, using _Allocator
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedCopy(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedCopy(
     _InputIterator_                     firstIterator,
     _Sentinel_                          lastSentinel, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -263,7 +263,7 @@ template <
     class _InputIterator_,
     class _Allocator_>
 // Copy _First + [0, _Count) to raw _Dest, using _Allocator
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedCopyCount(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedCopyCount(
     _InputIterator_                     firstIterator, 
     sizetype                            count, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -299,7 +299,7 @@ template <
     class _InputIterator_, 
     class _NoThrowForwardIterator_>
 // copy [firstIterator, lastIterator) to raw [destinationIterator, ...)
-base_constexpr_cxx20 inline base_nodiscard _NoThrowForwardIterator_ UninitializedCopyUnchecked(
+base_constexpr_cxx20 inline   _NoThrowForwardIterator_ UninitializedCopyUnchecked(
     _InputIterator_             firstIterator,
     const _InputIterator_       lastIterator,
     _NoThrowForwardIterator_    destinationIterator)

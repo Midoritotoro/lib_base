@@ -49,56 +49,56 @@ public:
 	void resize(int32 width, int32 height);
 	void resize(Size<int32> size);
 
-	static base_nodiscard std::vector<const char*> supportedFormats() noexcept;
+	static   std::vector<const char*> supportedFormats() noexcept;
 
 	//!
 	//! \brief
 	//! \param quality - качество декомпрессии jpeg изображения (от 5 до 100)
 	void setJpegQuality(ushort quality);
-	base_nodiscard ushort jpegQuality() const noexcept;
+	  ushort jpegQuality() const noexcept;
 
 	//!
 	//! \brief
 	//! \param format - jpg(jpeg), png, bmp
 	void convertToFormat(const char* format);
-	base_nodiscard const char* format() const noexcept;
+	  const char* format() const noexcept;
 
 	void setFilter(Filter filter);
-	base_nodiscard Filter filter() const noexcept;
+	  Filter filter() const noexcept;
 
-	base_nodiscard bool hasFilter() const noexcept;
+	  bool hasFilter() const noexcept;
 
 	void save(const char* path);
-	base_nodiscard Image convertToColorSpace(ColorSpace space) const;
+	  Image convertToColorSpace(ColorSpace space) const;
 
-	base_nodiscard Rect<int32> rect() const noexcept;
-	base_nodiscard Size<int32> size() const noexcept;
+	  Rect<int32> rect() const noexcept;
+	  Size<int32> size() const noexcept;
 
-	base_nodiscard int32 width() const noexcept;
-	base_nodiscard int32 height() const noexcept;
+	  int32 width() const noexcept;
+	  int32 height() const noexcept;
 
-	base_nodiscard int32 bytesPerLine() const noexcept;
+	  int32 bytesPerLine() const noexcept;
 
-	base_nodiscard uchar* bytesData();
-	base_nodiscard ImageData* data_ptr();
+	  uchar* bytesData();
+	  ImageData* data_ptr();
 
-	base_nodiscard uchar* scanLine(int i);
-	base_nodiscard const uchar* scanLine(int i) const;
+	  uchar* scanLine(int i);
+	  const uchar* scanLine(int i) const;
 
-	base_nodiscard bool isNull() const noexcept;
-	base_nodiscard Rgb pixel(int x, int y) const;
+	  bool isNull() const noexcept;
+	  Rgb pixel(int x, int y) const;
 
-	base_nodiscard int32 depth() const noexcept;
-	base_nodiscard ushort channels() const noexcept;
+	  int32 depth() const noexcept;
+	  ushort channels() const noexcept;
 
-	base_nodiscard int32 sizeInBytes() const noexcept;
-	base_nodiscard sizetype dataLength() const noexcept;
+	  int32 sizeInBytes() const noexcept;
+	  sizetype dataLength() const noexcept;
 
-	base_nodiscard int32 bitsPerChannel() const noexcept;
-	base_nodiscard ColorSpace colorSpace() const noexcept;
+	  int32 bitsPerChannel() const noexcept;
+	  ColorSpace colorSpace() const noexcept;
 
-	base_nodiscard bool hasPath() const noexcept;
-	base_nodiscard const char* path() const noexcept;
+	  bool hasPath() const noexcept;
+	  const char* path() const noexcept;
 private:
 	bool isEqual(const Image& other) const;
 

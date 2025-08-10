@@ -10,7 +10,7 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Iterator_>
-base_nodiscard constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
+  constexpr decltype(auto) UnwrapIterator(_Iterator_&& iterator) {
     if constexpr (std::is_pointer_v<std::decay_t<_Iterator_>>)
         return (iterator + 0);
 #ifdef base_cpp_msvc

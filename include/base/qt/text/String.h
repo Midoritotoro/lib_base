@@ -61,21 +61,21 @@ public:
 
 	~String() = default;
 
-	base_nodiscard int countWidth(
+	  int countWidth(
 		int width,
 		bool breakEverywhere = false) const;
-	base_nodiscard int countHeight(
+	  int countHeight(
 		int width,
 		bool breakEverywhere = false) const;
 
-	base_nodiscard DimensionsResult countDimensions(
+	  DimensionsResult countDimensions(
 		GeometryDescriptor geometry) const;
-	base_nodiscard DimensionsResult countDimensions(
+	  DimensionsResult countDimensions(
 		GeometryDescriptor geometry,
 		DimensionsRequest request) const;
 
-	base_nodiscard std::vector<int> countLineWidths(int width) const;
-	base_nodiscard std::vector<int> countLineWidths(
+	  std::vector<int> countLineWidths(int width) const;
+	  std::vector<int> countLineWidths(
 		int width,
 		LineWidthsOptions options) const;
 
@@ -92,48 +92,48 @@ public:
 		_minHeight = height;
 	}
 
-	base_nodiscard bool hasLinks() const;
+	  bool hasLinks() const;
 	void setLink(uint16 index, const common::ClickHandlerPtr& lnk);
 
-	base_nodiscard bool hasCollapsedBlockquots() const;
-	base_nodiscard bool blockquoteCollapsed(int index) const;
-	base_nodiscard bool blockquoteExpanded(int index) const;
+	  bool hasCollapsedBlockquots() const;
+	  bool blockquoteCollapsed(int index) const;
+	  bool blockquoteExpanded(int index) const;
 	void setBlockquoteExpanded(int index, bool expanded);
 	void setBlockquoteExpandCallback(
 		Fn<void(int index, bool expanded)> callback);
 
-	base_nodiscard bool hasSkipBlock() const;
+	  bool hasSkipBlock() const;
 	bool updateSkipBlock(int width, int height);
 	bool removeSkipBlock();
 
-	base_nodiscard int maxWidth() const {
+	  int maxWidth() const {
 		return _maxWidth;
 	}
-	base_nodiscard int minHeight() const {
+	  int minHeight() const {
 		return _minHeight;
 	}
 
-	base_nodiscard bool isFullSelection(TextSelection selection) const;
-	base_nodiscard int countMaxMonospaceWidth() const;
+	  bool isFullSelection(TextSelection selection) const;
+	  int countMaxMonospaceWidth() const;
 
 	void draw(
 		QPainter& painter,
 		const PaintContext& context) const;
 
-	base_nodiscard bool isEmpty() const;
-	base_nodiscard int length() const {
+	  bool isEmpty() const;
+	  int length() const {
 		return _text.size();
 	}
 
-	base_nodiscard QString toQString() const;
-	base_nodiscard QString toString(
+	  QString toQString() const;
+	  QString toString(
 		TextSelection selection = AllTextSelection) const;
-	base_nodiscard TextWithEntities toTextWithEntities(
+	  TextWithEntities toTextWithEntities(
 		TextSelection selection = AllTextSelection) const;
-	base_nodiscard TextForMimeData toTextForMimeData(
+	  TextForMimeData toTextForMimeData(
 		TextSelection selection = AllTextSelection) const;
 
-	base_nodiscard int lineHeight() const;
+	  int lineHeight() const;
 
 	TextSelection adjustSelection(
 		TextSelection selection,
@@ -142,23 +142,23 @@ public:
 		bool initial,
 		Qt::LayoutDirection optionsDirection = Qt::LayoutDirectionAuto);
 
-	base_nodiscard const std::vector<Modification>& modifications() const;
+	  const std::vector<Modification>& modifications() const;
 
-	base_nodiscard TextState getState(
+	  TextState getState(
 		QPoint point,
 		int width,
 		StateRequest request) const;
-	base_nodiscard TextState getStateLeft(
+	  TextState getStateLeft(
 		QPoint point,
 		int width,
 		int outerw,
 		StateRequest request) const;
 
-	base_nodiscard TextState getStateElided(
+	  TextState getStateElided(
 		QPoint point,
 		int width,
 		StateRequestElided request) const;
-	base_nodiscard TextState getStateElidedLeft(
+	  TextState getStateElidedLeft(
 		QPoint point,
 		int width,
 		int outerw,
@@ -186,29 +186,29 @@ private:
 
 	};
 
-	base_nodiscard not_null<ExtendedData*> ensureExtended();
-	base_nodiscard not_null<QuotesData*> ensureQuotes();
+	  not_null<ExtendedData*> ensureExtended();
+	  not_null<QuotesData*> ensureQuotes();
 
-	base_nodiscard uint16 blockPosition(
+	  uint16 blockPosition(
 		std::vector<Block>::const_iterator i,
 		int fullLengthOverride = -1) const;
-	base_nodiscard uint16 blockEnd(
+	  uint16 blockEnd(
 		std::vector<Block>::const_iterator i,
 		int fullLengthOverride = -1) const;
-	base_nodiscard uint16 blockLength(
+	  uint16 blockLength(
 		std::vector<Block>::const_iterator i,
 		int fullLengthOverride = -1) const;
 
-	base_nodiscard QuoteDetails* quoteByIndex(int index) const;
-	base_nodiscard const style::QuoteStyle& quoteStyle(
+	  QuoteDetails* quoteByIndex(int index) const;
+	  const style::QuoteStyle& quoteStyle(
 		not_null<QuoteDetails*> quote) const;
-	base_nodiscard QMargins quotePadding(QuoteDetails* quote) const;
-	base_nodiscard int quoteMinWidth(QuoteDetails* quote) const;
-	base_nodiscard const QString& quoteHeaderText(QuoteDetails* quote) const;
+	  QMargins quotePadding(QuoteDetails* quote) const;
+	  int quoteMinWidth(QuoteDetails* quote) const;
+	  const QString& quoteHeaderText(QuoteDetails* quote) const;
 
-	base_nodiscard int quoteLinesLimit(QuoteDetails* quote) const;
+	  int quoteLinesLimit(QuoteDetails* quote) const;
 
-	base_nodiscard int quoteIndex(const AbstractBlock* block) const;
+	  int quoteIndex(const AbstractBlock* block) const;
 
 	template <
 		typename AppendPartCallback,
@@ -235,7 +235,7 @@ private:
 	void insertModifications(int position, int delta);
 	void removeModificationsAfter(int size);
 
-	base_nodiscard TextForMimeData toText(
+	  TextForMimeData toText(
 		TextSelection selection,
 		bool composeExpanded,
 		bool composeEntities) const;

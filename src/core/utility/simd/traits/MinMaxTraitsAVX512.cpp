@@ -3,7 +3,7 @@
 __BASE_NAMESPACE_BEGIN
 
 namespace AVX512 {
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::SignCorrection(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
@@ -19,26 +19,26 @@ namespace AVX512 {
         return _mm512_sub_epi8(_Val, _mm512_load_si512(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Increment(SimdType _Idx) {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Increment(SimdType _Idx) {
         return _mm512_add_epi8(_Idx, _mm512_set1_epi8(1));
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Decrement(SimdType _Idx) {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Decrement(SimdType _Idx) {
         return _mm512_sub_epi8(_Idx, _mm512_set1_epi8(1));
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Add(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm512_add_epi8(_FirstVector, _SecondVector);
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Load(const void* _Start) {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Load(const void* _Start) {
         return _mm512_loadu_epi8(_Start);
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Minimum(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -46,7 +46,7 @@ namespace AVX512 {
         return _mm512_min_epi8(_First, _Second);
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::Maximum(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -54,14 +54,14 @@ namespace AVX512 {
         return _mm512_max_epi8(_First, _Second);
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::MinimumUnsigned(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm512_min_epu8(_First, _Second);
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::MaximumUnsigned(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -69,7 +69,7 @@ namespace AVX512 {
     }
 
     template <class _Functor_>
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalFunc(
+      NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalFunc(
         const SimdType  current,
         _Functor_       functor) noexcept
     {
@@ -90,7 +90,7 @@ namespace AVX512 {
         return horizontalMinimumValues;
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimum(const SimdType current) noexcept {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -99,7 +99,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximum(const SimdType current) noexcept {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -108,7 +108,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -117,7 +117,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+      NumberTraits8Bit::SimdType NumberTraits8Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -126,15 +126,15 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits8Bit::SignedType NumberTraits8Bit::GetAny(const SimdType current) noexcept {
+      NumberTraits8Bit::SignedType NumberTraits8Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    base_nodiscard arch::zmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
+      arch::zmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    base_nodiscard arch::zmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
+      arch::zmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -144,7 +144,7 @@ namespace AVX512 {
     // ===========================================================
 
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::SignCorrection(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
@@ -156,26 +156,26 @@ namespace AVX512 {
         return _mm512_sub_epi16(_Val, _mm512_load_si512(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Increment(SimdType _Idx) {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Increment(SimdType _Idx) {
         return _mm512_add_epi16(_Idx, _mm512_set1_epi16(1));
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Decrement(SimdType _Idx) {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Decrement(SimdType _Idx) {
         return _mm512_sub_epi16(_Idx, _mm512_set1_epi16(1));
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Add(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm512_add_epi16(_FirstVector, _SecondVector);
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Load(const void* _Start) {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Load(const void* _Start) {
         return _mm512_loadu_epi16(_Start);
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Minimum(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -183,7 +183,7 @@ namespace AVX512 {
         return _mm512_min_epi16(_First, _Second);
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::Maximum(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -191,14 +191,14 @@ namespace AVX512 {
         return _mm512_max_epi16(_First, _Second);
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::MinimumUnsigned(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm512_min_epu16(_First, _Second);
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::MaximumUnsigned(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -206,7 +206,7 @@ namespace AVX512 {
     }
 
     template <class _Functor_>
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalFunc(
+      NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalFunc(
         const SimdType  current,
         _Functor_       functor) noexcept 
     {
@@ -214,7 +214,7 @@ namespace AVX512 {
         return horizontalMinimumValues;
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimum(const SimdType current) noexcept {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -223,7 +223,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximum(const SimdType current) noexcept {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -232,7 +232,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -241,7 +241,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+      NumberTraits16Bit::SimdType NumberTraits16Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue)
@@ -250,15 +250,15 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits16Bit::SignedType NumberTraits16Bit::GetAny(const SimdType current) noexcept {
+      NumberTraits16Bit::SignedType NumberTraits16Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    base_nodiscard arch::zmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
+      arch::zmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    base_nodiscard arch::zmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
+      arch::zmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -268,7 +268,7 @@ namespace AVX512 {
     // ===========================================================
 
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::SignCorrection(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
@@ -280,26 +280,26 @@ namespace AVX512 {
         return _mm512_sub_epi32(_Val, _mm512_load_si512(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Increment(SimdType _Idx) {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Increment(SimdType _Idx) {
         return _mm512_add_epi32(_Idx, _mm512_set1_epi32(1));
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Decrement(SimdType _Idx) {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Decrement(SimdType _Idx) {
         return _mm512_sub_epi32(_Idx, _mm512_set1_epi32(1));
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Add(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm512_add_epi32(_FirstVector, _SecondVector);
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Load(const void* _Start) {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Load(const void* _Start) {
         return _mm512_loadu_epi32(_Start);
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Minimum(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -307,7 +307,7 @@ namespace AVX512 {
         return _mm512_min_epi32(_First, _Second);
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::Maximum(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -315,14 +315,14 @@ namespace AVX512 {
         return _mm512_max_epi32(_First, _Second);
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::MinimumUnsigned(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm512_min_epu32(_First, _Second);
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::MaximumUnsigned(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -330,7 +330,7 @@ namespace AVX512 {
     }
 
     template <class _Functor_>
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalFunc(
+      NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalFunc(
         const SimdType  current,
         _Functor_       functor) noexcept
     {
@@ -338,7 +338,7 @@ namespace AVX512 {
         return horizontalMinimumValues;
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimum(const SimdType current) noexcept {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -347,7 +347,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximum(const SimdType current) noexcept {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue) 
@@ -356,7 +356,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -365,7 +365,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+      NumberTraits32Bit::SimdType NumberTraits32Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue) 
@@ -374,15 +374,15 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits32Bit::SignedType NumberTraits32Bit::GetAny(const SimdType current) noexcept {
+      NumberTraits32Bit::SignedType NumberTraits32Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm512_cvtsi512_si32(current));
     }
 
-    base_nodiscard arch::zmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
+      arch::zmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    base_nodiscard arch::zmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
+      arch::zmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 
@@ -392,7 +392,7 @@ namespace AVX512 {
     // ===========================================================
 
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::SignCorrection(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::SignCorrection(
         const SimdType _Val,
         const bool _Sign)
     {
@@ -402,26 +402,26 @@ namespace AVX512 {
         return _mm512_sub_epi64(_Val, _mm512_load_si512(reinterpret_cast<const SimdType*>(_Sign_corrections[_Sign])));
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Increment(SimdType _Idx) {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Increment(SimdType _Idx) {
         return _mm512_add_epi64(_Idx, _mm512_set1_epi64(1));
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Decrement(SimdType _Idx) {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Decrement(SimdType _Idx) {
         return _mm512_sub_epi64(_Idx, _mm512_set1_epi64(1));
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Add(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Add(
         SimdType _FirstVector,
         SimdType _SecondVector)
     {
         return _mm512_add_epi64(_FirstVector, _SecondVector);
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Load(const void* _Start) {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Load(const void* _Start) {
         return _mm512_loadu_epi64(_Start);
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Minimum(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Minimum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -429,7 +429,7 @@ namespace AVX512 {
         return _mm512_min_epi64(_First, _Second);
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::Maximum(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::Maximum(
         const SimdType _First,
         const SimdType _Second,
         SimdType) noexcept
@@ -437,14 +437,14 @@ namespace AVX512 {
         return _mm512_max_epi64(_First, _Second);
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::MinimumUnsigned(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::MinimumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
         return _mm512_min_epu64(_First, _Second);
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::MaximumUnsigned(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::MaximumUnsigned(
         const SimdType _First,
         const SimdType _Second) noexcept
     {
@@ -452,7 +452,7 @@ namespace AVX512 {
     }
 
     template <class _Functor_>
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalFunc(
+      NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalFunc(
         const SimdType  current, 
         _Functor_       functor) noexcept 
     {
@@ -460,7 +460,7 @@ namespace AVX512 {
         return horizontalMinimumValues;
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimum(const SimdType current) noexcept {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -469,7 +469,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximum(const SimdType current) noexcept {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximum(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue, 
             SimdType secondValue) 
@@ -478,7 +478,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMinimumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue) 
@@ -487,7 +487,7 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
+      NumberTraits64Bit::SimdType NumberTraits64Bit::HorizontalMaximumUnsigned(const SimdType current) noexcept {
         return HorizontalFunc(current, [] (
             SimdType firstValue,
             SimdType secondValue) 
@@ -496,11 +496,11 @@ namespace AVX512 {
         });
     }
 
-    base_nodiscard NumberTraits64Bit::SignedType NumberTraits64Bit::GetAny(const SimdType current) noexcept {
+      NumberTraits64Bit::SignedType NumberTraits64Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(GetVPos(current, 0));
     }
 
-    base_nodiscard NumberTraits64Bit::UnsignedType NumberTraits64Bit::GetVPos(
+      NumberTraits64Bit::UnsignedType NumberTraits64Bit::GetVPos(
         const SimdType _Idx,
         const unsigned long _H_pos) noexcept
     {
@@ -509,11 +509,11 @@ namespace AVX512 {
         return _Array[_H_pos >> 3];
     }
 
-    base_nodiscard arch::zmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
+      arch::zmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
         return _mm512_castsi512_pd(_Vector);
     }
 
-    base_nodiscard arch::zmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
+      arch::zmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
         return _mm512_castsi512_ps(_Vector);
     }
 } // namespace AVX512

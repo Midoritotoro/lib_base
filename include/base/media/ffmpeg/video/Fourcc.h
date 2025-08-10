@@ -16,32 +16,32 @@ enum es_format_category_e {
 	DATA_ES,
 };
 
-base_nodiscard int FourccCmp(
+  int FourccCmp(
 	const void* key,
 	const void* ent);
 
-base_nodiscard fourcc_t FourccLookup(
+  fourcc_t FourccLookup(
 	fourcc_t fourcc,
 	const char** dsc,
 	const struct fourcc_mapping* mapv, size_t mapc,
 	const struct fourcc_desc* dscv, size_t dscc);
 
-base_nodiscard fourcc_t FourccLookupVideo(
+  fourcc_t FourccLookupVideo(
 	fourcc_t fourcc,
 	const char** dsc);
 
-base_nodiscard fourcc_t FourccLookupAudio(
+  fourcc_t FourccLookupAudio(
 	fourcc_t fourcc,
 	const char** dsc);
-base_nodiscard fourcc_t FourccLookupSpu(
+  fourcc_t FourccLookupSpu(
 	fourcc_t fourcc,
 	const char** dsc);
 
-base_nodiscard fourcc_t FourccLookupCat(
+  fourcc_t FourccLookupCat(
 	fourcc_t fourcc,
 	const char** dsc,
 	int cat);
-base_nodiscard fourcc_t FourccGetCodec(int cat, fourcc_t fourcc);
+  fourcc_t FourccGetCodec(int cat, fourcc_t fourcc);
 
 
 __BASE_MEDIA_FFMPEG_VIDEO_NAMESPACE_END

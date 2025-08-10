@@ -17,15 +17,15 @@ public:
 
 	void setDirectoryName(const std::string& path) override;
 
-	base_nodiscard std::string directoryName() const noexcept override;
-	base_nodiscard std::string absolutePath() const noexcept override;
+	  std::string directoryName() const noexcept override;
+	  std::string absolutePath() const noexcept override;
 
 	static void mkdir(const std::string& path);
 
-	base_nodiscard static bool exists(const std::string& path) noexcept;
-	base_nodiscard bool exists() const noexcept override;
+	  static bool exists(const std::string& path) noexcept;
+	  bool exists() const noexcept override;
 
-	base_nodiscard int64 size() const noexcept override;
+	  int64 size() const noexcept override;
 private:
 	std::string _path;
 };

@@ -8,14 +8,14 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 //  онвертирует "модный" указатель в стандартный. 
 // ћодными указател€ми считаютс€ типы с переопределенным оператором -> и *
 template <class _PointerLikeType_>
-base_constexpr_addressof base_nodiscard base_always_inline decltype(auto)
+base_constexpr_addressof   base_always_inline decltype(auto)
     UnFancy(_PointerLikeType_ pointerLike) noexcept 
 { 
     return AddressOf(*pointerLike);
 }
 
 template <class _PointerLikeType_>
-base_constexpr_addressof base_nodiscard base_always_inline _PointerLikeType_*
+base_constexpr_addressof   base_always_inline _PointerLikeType_*
     UnFancy(_PointerLikeType_* pointerLike) noexcept
 {
     return pointerLike;
@@ -23,7 +23,7 @@ base_constexpr_addressof base_nodiscard base_always_inline _PointerLikeType_*
 
 //  онвертаци€ из потенциально нулевого модного указател€ в стандартный
 template <class _PossiblyNullPointerLikeType_>
-base_constexpr_addressof base_nodiscard base_always_inline decltype(auto)
+base_constexpr_addressof   base_always_inline decltype(auto)
     UnfancyMaybeNull(
         _PossiblyNullPointerLikeType_ possiblyNullPointerLike) noexcept
 {
@@ -33,7 +33,7 @@ base_constexpr_addressof base_nodiscard base_always_inline decltype(auto)
 }
 
 template <class _PossiblyNullPointerLikeType_>
-base_constexpr_addressof base_nodiscard base_always_inline _PossiblyNullPointerLikeType_*
+base_constexpr_addressof   base_always_inline _PossiblyNullPointerLikeType_*
     UnfancyMaybeNull(
         _PossiblyNullPointerLikeType_* possiblyNullPointerLike) noexcept
 {
@@ -41,7 +41,7 @@ base_constexpr_addressof base_nodiscard base_always_inline _PossiblyNullPointerL
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline char*
+  base_always_inline char*
     UnCheckedToChar(_Type_ pointer) noexcept
 {
     return const_cast<char*>(
@@ -49,7 +49,7 @@ base_nodiscard base_always_inline char*
 }
 
 template <typename _Type_> 
-base_nodiscard base_always_inline
+  base_always_inline
     const char* UnCheckedToConstChar(_Type_ pointer) noexcept
 {
     return const_cast<const char*>(
@@ -57,7 +57,7 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
     char* CheckedToChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAdress = ToAddress(pointerLike);
@@ -65,7 +65,7 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
     const char* CheckedToConstChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAddress = ToAddress(pointerLike);
@@ -73,7 +73,7 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline wchar_t*
+  base_always_inline wchar_t*
     UnCheckedToWChar(_Type_ pointer) noexcept
 {
     return const_cast<wchar_t*>(
@@ -81,7 +81,7 @@ base_nodiscard base_always_inline wchar_t*
 }
 
 template <typename _Type_> 
-base_nodiscard base_always_inline
+  base_always_inline
     const wchar_t* UnCheckedToConstWChar(_Type_ pointer) noexcept
 {
     return const_cast<const wchar_t*>(
@@ -89,14 +89,14 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline wchar_t* CheckedToWChar(_Type_ pointerLike) noexcept
+  base_always_inline wchar_t* CheckedToWChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAdress = ToAddress(pointerLike);
     return UnCheckedToWChar(pointerLikeAdress);
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
     const wchar_t* CheckedToConstWChar(_Type_ pointerLike) noexcept
 {
     const auto pointerLikeAddress = ToAddress(pointerLike);
@@ -104,7 +104,7 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard inline
+  inline
 unsigned char*
     UnCheckedToUnsignedChar(
         _Type_ pointer) noexcept
@@ -115,7 +115,7 @@ unsigned char*
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
 const unsigned char* 
     UnCheckedToConstUnsignedChar(
         _Type_ pointer) noexcept
@@ -126,7 +126,7 @@ const unsigned char*
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
     unsigned char* CheckedToUnsignedChar(
         _Type_ pointerLike) noexcept
 {
@@ -135,7 +135,7 @@ base_nodiscard base_always_inline
 }
 
 template <typename _Type_>
-base_nodiscard base_always_inline
+  base_always_inline
 const unsigned char* 
     CheckedToConstUnsignedChar(
         _Type_ pointerLike) noexcept

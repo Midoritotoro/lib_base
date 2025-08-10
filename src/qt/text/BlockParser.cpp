@@ -57,7 +57,7 @@ namespace {
 	}
 	
 
-	base_nodiscard TextWithEntities PrepareRichFromRich(
+	  TextWithEntities PrepareRichFromRich(
 		const TextWithEntities& text,
 		const TextParseOptions& options) 
 	{
@@ -110,14 +110,14 @@ namespace {
 	}
 
 	// Tilde fix in OpenSans.
-	base_nodiscard bool ComputeCheckTilde(const style::TextStyle& st) {
+	  bool ComputeCheckTilde(const style::TextStyle& st) {
 		const auto& font = st._font;
 		return (font->size() * style::DevicePixelRatio() == 13)
 			&& (font->flags() == 0)
 			&& (font->f.family() == QLatin1String("Open Sans"));
 	}
 
-	base_nodiscard bool IsDiacriticAllowedAfter(QChar ch) {
+	  bool IsDiacriticAllowedAfter(QChar ch) {
 		const auto code = ch.unicode();
 		const auto category = ch.category();
 		return (code > 32)

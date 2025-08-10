@@ -18,7 +18,7 @@ FullScreenButton::FullScreenButton(QWidget* parent) :
 	setCursor(Qt::PointingHandCursor);
 }
 
-base_nodiscard FullScreenButton::State FullScreenButton::state() const noexcept {
+  FullScreenButton::State FullScreenButton::state() const noexcept {
 	return _state;
 }
 

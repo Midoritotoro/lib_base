@@ -42,7 +42,7 @@ struct TextWithTags {
 	QString text;
 	Tags tags;
 
-	base_nodiscard bool empty() const {
+	  bool empty() const {
 		return text.isEmpty();
 	}
 
@@ -54,25 +54,25 @@ struct TextWithTags {
 		const TextWithTags&) = default;
 };
 
-base_nodiscard Qt::LayoutDirection Direction(
+  Qt::LayoutDirection Direction(
 	const QString& str,
 	int from,
 	int to);
 
-base_nodiscard bool IsParagraphSeparator(QChar ch);
-base_nodiscard bool IsWordSeparator(QChar ch);
+  bool IsParagraphSeparator(QChar ch);
+  bool IsWordSeparator(QChar ch);
 
-base_nodiscard bool IsSpace(QChar ch);
-base_nodiscard bool IsNewline(QChar ch);
+  bool IsSpace(QChar ch);
+  bool IsNewline(QChar ch);
 
-base_nodiscard bool IsBad(QChar ch);
-base_nodiscard bool IsTrimmed(QChar ch);
+  bool IsBad(QChar ch);
+  bool IsTrimmed(QChar ch);
 
-base_nodiscard bool IsDiacritic(QChar ch);
-base_nodiscard bool IsMentionLink(QStringView link);
+  bool IsDiacritic(QChar ch);
+  bool IsMentionLink(QStringView link);
 
-base_nodiscard bool IsSeparateTag(QStringView tag);
-base_nodiscard bool IsValidMarkdownLink(QStringView link);
+  bool IsSeparateTag(QStringView tag);
+  bool IsValidMarkdownLink(QStringView link);
 
 namespace details {
 	struct ContainerImplHelper {
@@ -83,7 +83,7 @@ namespace details {
 			Subset 
 		};
 
-		base_nodiscard static constexpr CutResult mid(
+		  static constexpr CutResult mid(
 			qsizetype originalLength,
 			qsizetype* _position,
 			qsizetype* _length);
@@ -102,61 +102,61 @@ struct ToUpperType {
 
 inline constexpr auto Upper = details::ToUpperType{};
 
-base_nodiscard TextWithEntities WithSingleEntity(
+  TextWithEntities WithSingleEntity(
 	const QString& text,
 	EntityType type,
 	const QString& data = QString());
 
-base_nodiscard TextWithEntities Bold(const QString& text);
-base_nodiscard TextWithEntities Semibold(const QString& text);
-base_nodiscard TextWithEntities Italic(const QString& text);
-base_nodiscard TextWithEntities Link(
+  TextWithEntities Bold(const QString& text);
+  TextWithEntities Semibold(const QString& text);
+  TextWithEntities Italic(const QString& text);
+  TextWithEntities Link(
 	const QString& text,
 	const QString& url = u"internal:action"_q);
 
-base_nodiscard TextWithEntities Link(const QString& text, int index);
-base_nodiscard TextWithEntities Link(
+  TextWithEntities Link(const QString& text, int index);
+  TextWithEntities Link(
 	TextWithEntities text,
 	const QString& url = u"internal:action"_q);
-base_nodiscard TextWithEntities Link(TextWithEntities text, int index);
+  TextWithEntities Link(TextWithEntities text, int index);
 
-base_nodiscard TextWithEntities Colorized(
+  TextWithEntities Colorized(
 	const QString& text,
 	int index = 0);
-base_nodiscard TextWithEntities Colorized(
+  TextWithEntities Colorized(
 	TextWithEntities text,
 	int index = 0);
 
-base_nodiscard TextWithEntities Wrapped(
+  TextWithEntities Wrapped(
 	TextWithEntities text,
 	EntityType type,
 	const QString& data = QString());
 
-base_nodiscard TextWithEntities RichLangValue(const QString& text);
-base_nodiscard TextWithEntities WithEntities(const QString& text);
+  TextWithEntities RichLangValue(const QString& text);
+  TextWithEntities WithEntities(const QString& text);
 
-base_nodiscard QString TagsMimeType();
-base_nodiscard QString TagsTextMimeType();
+  QString TagsMimeType();
+  QString TagsTextMimeType();
 
-base_nodiscard QString MentionEntityData(QStringView link);
-base_nodiscard QList<QStringView> SplitTags(QStringView tag);
+  QString MentionEntityData(QStringView link);
+  QList<QStringView> SplitTags(QStringView tag);
 
-base_nodiscard QString JoinTag(const QList<QStringView>& list);
-base_nodiscard QString TagWithRemoved(const QString& tag, const QString& removed);
-base_nodiscard QString TagWithAdded(const QString& tag, const QString& added);
+  QString JoinTag(const QList<QStringView>& list);
+  QString TagWithRemoved(const QString& tag, const QString& removed);
+  QString TagWithAdded(const QString& tag, const QString& added);
 
-base_nodiscard EntitiesInText ConvertTextTagsToEntities(const TextWithTags::Tags& tags);
+  EntitiesInText ConvertTextTagsToEntities(const TextWithTags::Tags& tags);
 
-base_nodiscard QString ExpandCustomLinks(const TextWithTags& text);
-base_nodiscard QStringView StringViewMid(
+  QString ExpandCustomLinks(const TextWithTags& text);
+  QStringView StringViewMid(
 	QStringView view,
 	qsizetype pos,
 	qsizetype n = -1);
 
-base_nodiscard QByteArray SerializeTags(const TextWithTags::Tags& tags);
+  QByteArray SerializeTags(const TextWithTags::Tags& tags);
 
 
-base_nodiscard TextWithTags::Tags ConvertEntitiesToTextTags(
+  TextWithTags::Tags ConvertEntitiesToTextTags(
 	const EntitiesInText& entities);
 
 std::unique_ptr<QMimeData> MimeDataFromText(

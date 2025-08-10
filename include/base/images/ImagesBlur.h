@@ -7,12 +7,12 @@ __BASE_IMAGES_NAMESPACE_BEGIN
 inline constexpr auto kDefaultBoxSize = 3;
 
 #ifdef LIB_BASE_ENABLE_QT
-base_nodiscard QImage boxBlurImage(
+  QImage boxBlurImage(
 	const QImage& image,
 	const QRect& rect,
 	int radius);
 
-base_nodiscard QImage boxBlurImage(
+  QImage boxBlurImage(
 	const QImage& image,
 	int radius);
 #endif
@@ -75,11 +75,11 @@ void HorizontalBlur(
     const int h, const int c, const int r);
 
 #ifdef LIB_BASE_ENABLE_QT
-base_nodiscard QImage RgbBlur(
+  QImage RgbBlur(
 	QImage&& image,
 	bool ignoreAlpha = true);
 
-base_nodiscard QImage stackBlurImage(
+  QImage stackBlurImage(
 	const QImage& image,
 	int radius,
 	int threadCount = 1);

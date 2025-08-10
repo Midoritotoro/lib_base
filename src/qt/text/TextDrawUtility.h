@@ -5,7 +5,7 @@
 
 __BASE_QT_TEXT_NAMESPACE_BEGIN
 
-base_nodiscard GeometryDescriptor SimpleGeometry(
+  GeometryDescriptor SimpleGeometry(
 	int availableWidth,
 	int elisionLines,
 	int elisionRemoveFromEnd,

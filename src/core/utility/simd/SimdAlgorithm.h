@@ -59,34 +59,34 @@ extern "C" {
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial8Bit(
+    base_declare_const_function   const void* base_stdcall FindLastTrivial8Bit(
         const void* _First, 
         const void* _Last,
         uint8       _Val) noexcept;
-    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial16Bit(
+    base_declare_const_function   const void* base_stdcall FindLastTrivial16Bit(
         const void* _First, 
         const void* _Last, 
         uint16      _Val) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial32Bit(
+    base_declare_const_function   const void* base_stdcall FindLastTrivial32Bit(
         const void* _First, 
         const void* _Last, 
         uint32      _Val) noexcept;
-    base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial64Bit(
+    base_declare_const_function   const void* base_stdcall FindLastTrivial64Bit(
         const void* _First, 
         const void* _Last, 
         uint64      _Val) noexcept;
     
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial8Bit(
+    base_declare_const_function   const void* base_stdcall FindFirstOfTrivial8Bit(
         const void* _First1, 
         const void* _Last1,
         const void* _First2,
         const void* _Last2) noexcept;
-    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial16Bit(
+    base_declare_const_function   const void* base_stdcall FindFirstOfTrivial16Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
@@ -94,12 +94,12 @@ extern "C" {
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial32Bit(
+    base_declare_const_function   const void* base_stdcall FindFirstOfTrivial32Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
         const void* _Last2) noexcept;
-    base_declare_const_function base_nodiscard const void* base_stdcall FindFirstOfTrivial64Bit(
+    base_declare_const_function   const void* base_stdcall FindFirstOfTrivial64Bit(
         const void* _First1,
         const void* _Last1, 
         const void* _First2, 
@@ -107,12 +107,12 @@ extern "C" {
 
     // ==================================================================================
 
-    base_declare_const_function base_nodiscard const void* FindSubRange8Bit(
+    base_declare_const_function   const void* FindSubRange8Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard const void* FindSubRange16Bit(
+    base_declare_const_function   const void* FindSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -120,12 +120,12 @@ extern "C" {
 
     // ==================================================================================
 
-    base_declare_const_function base_nodiscard const void* FindSubRange32Bit(
+    base_declare_const_function   const void* FindSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard const void* FindSubRange64Bit(
+    base_declare_const_function   const void* FindSubRange64Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -219,46 +219,46 @@ extern "C" {
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard MinMaxInt8Bit base_stdcall MinimumAndMaximumElement8Bit(
+    base_declare_const_function   MinMaxInt8Bit base_stdcall MinimumAndMaximumElement8Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    base_declare_const_function base_nodiscard MinMaxUInt8Bit base_stdcall MinimumAndMaximumElement8BitUnsigned(
+    base_declare_const_function   MinMaxUInt8Bit base_stdcall MinimumAndMaximumElement8BitUnsigned(
         const void* _First,
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard MinMaxInt16Bit base_stdcall MinimumAndMaximumElement16Bit(
+    base_declare_const_function   MinMaxInt16Bit base_stdcall MinimumAndMaximumElement16Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    base_declare_const_function base_nodiscard MinMaxUInt16Bit base_stdcall MinimumAndMaximumElement16BitUnsigned(
+    base_declare_const_function   MinMaxUInt16Bit base_stdcall MinimumAndMaximumElement16BitUnsigned(
         const void* _First,
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32Bit(
+    base_declare_const_function   MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    base_declare_const_function base_nodiscard MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32BitUnsigned(
-        const void* _First, 
-        const void* _Last) noexcept;
-
-    // ================================================================================
-
-    base_declare_const_function base_nodiscard MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64Bit(
-        const void* _First, 
-        const void* _Last) noexcept;
-    base_declare_const_function base_nodiscard MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64BitUnsigned(
+    base_declare_const_function   MinMaxInt32Bit base_stdcall MinimumAndMaximumElement32BitUnsigned(
         const void* _First, 
         const void* _Last) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard MinMaxFloat base_stdcall MinimumAndMaximumElementFloat(
+    base_declare_const_function   MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64Bit(
         const void* _First, 
         const void* _Last) noexcept;
-    base_declare_const_function base_nodiscard MinMaxDouble base_stdcall MinimumAndMaximumElementDouble(
+    base_declare_const_function   MinMaxInt64Bit base_stdcall MinimumAndMaximumElement64BitUnsigned(
+        const void* _First, 
+        const void* _Last) noexcept;
+
+    // ================================================================================
+
+    base_declare_const_function   MinMaxFloat base_stdcall MinimumAndMaximumElementFloat(
+        const void* _First, 
+        const void* _Last) noexcept;
+    base_declare_const_function   MinMaxDouble base_stdcall MinimumAndMaximumElementDouble(
         const void* _First, 
         const void* _Last) noexcept;
 
@@ -285,47 +285,34 @@ extern "C" {
     // ================================================================================
 
 
-    base_declare_const_function base_nodiscard std::size_t Count8Bit(
+    base_declare_const_function   std::size_t Count8Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint8       value) noexcept;
-    base_declare_const_function base_nodiscard std::size_t Count16Bit(
+    base_declare_const_function   std::size_t Count16Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint16      value) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard std::size_t Count32Bit(
+    base_declare_const_function   std::size_t Count32Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint32      value) noexcept;
-    base_declare_const_function base_nodiscard std::size_t Count64Bit(
+    base_declare_const_function   std::size_t Count64Bit(
         const void* firstPointer,
         const void* lastPointer,
         uint64      value) noexcept;
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard std::size_t CountSubRange8Bit(
+    base_declare_const_function   std::size_t CountSubRange8Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard std::size_t CountSubRange16Bit(
-        const void* firstMainRangePointer,
-        const void* lastMainRangePointer,
-        const void* firstSubRangePointer,
-        const void* lastSubRangePointer) noexcept;
-
-    // ================================================================================
-
-    base_declare_const_function base_nodiscard std::size_t CountSubRange32Bit(
-        const void* firstMainRangePointer,
-        const void* lastMainRangePointer,
-        const void* firstSubRangePointer,
-        const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard std::size_t CountSubRange64Bit(
+    base_declare_const_function   std::size_t CountSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -333,12 +320,25 @@ extern "C" {
 
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* FindLastSubRange8Bit(
+    base_declare_const_function   std::size_t CountSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard const void* FindLastSubRange16Bit(
+    base_declare_const_function   std::size_t CountSubRange64Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+
+    // ================================================================================
+
+    base_declare_const_function   const void* FindLastSubRange8Bit(
+        const void* firstMainRangePointer,
+        const void* lastMainRangePointer,
+        const void* firstSubRangePointer,
+        const void* lastSubRangePointer) noexcept;
+    base_declare_const_function   const void* FindLastSubRange16Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -346,12 +346,12 @@ extern "C" {
     
     // ================================================================================
 
-    base_declare_const_function base_nodiscard const void* FindLastSubRange32Bit(
+    base_declare_const_function   const void* FindLastSubRange32Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
         const void* lastSubRangePointer) noexcept;
-    base_declare_const_function base_nodiscard const void* FindLastSubRange64Bit(
+    base_declare_const_function   const void* FindLastSubRange64Bit(
         const void* firstMainRangePointer,
         const void* lastMainRangePointer,
         const void* firstSubRangePointer,
@@ -359,61 +359,61 @@ extern "C" {
 } // extern "C"
 
 template <class _Type_>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* FindVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* FindSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard std::size_t CountVectorized(
+base_declare_const_function base_constexpr_cxx20   std::size_t CountVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-base_declare_const_function base_constexpr_cxx20 base_nodiscard std::size_t CountSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20   std::size_t CountSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindLastVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* FindLastVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* FindLastSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* FindLastSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <class _Type_>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ContainsVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* ContainsVectorized(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_&   value) noexcept;
 
 template <class _Type_>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ContainsSubRangeVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* ContainsSubRangeVectorized(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
     const void* lastSubRangePointer) noexcept;
 
 template <size_t typeSizeInBytes>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* ReverseVectorized(
     void* firstPointer,
     void* lastPointer) noexcept;
 
 template <size_t typeSizeInBytes>
-base_declare_const_function base_constexpr_cxx20 base_nodiscard const void* ReverseCopyVectorized(
+base_declare_const_function base_constexpr_cxx20   const void* ReverseCopyVectorized(
     void* firstPointer,
     void* lastPointer,
     void* destinationPointer) noexcept;

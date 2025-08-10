@@ -985,7 +985,7 @@ public:
 		const QUnicodeTables::Properties* properties = nullptr;
 		bool surrogate = false;
 	};
-	base_nodiscard Info infoAt(int i) const {
+	  Info infoAt(int i) const {
 		if (_currentBlock != _startInBlocks
 			&& (*_currentBlock)->position() > _offsetInBlocks + i) {
 			_currentBlock = _startInBlocks;

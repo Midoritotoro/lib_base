@@ -20,7 +20,7 @@
 namespace {
 	inline constexpr auto kPanelBottomIndent = 5;
 
-	base_nodiscard QByteArray ReadFile(const QString& filepath) {
+	  QByteArray ReadFile(const QString& filepath) {
 		auto file = QFile(filepath);
 		return file.open(QIODevice::ReadOnly)
 			? file.readAll()

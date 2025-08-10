@@ -191,7 +191,7 @@ namespace base::qt::text {
 			void remove(EntityType type) {
 				mask &= ~(1 << int(type));
 			}
-			base_nodiscard bool has(EntityType type) const {
+			  bool has(EntityType type) const {
 				return (mask & (1 << int(type)));
 			}
 		};

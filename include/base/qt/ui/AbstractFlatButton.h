@@ -30,23 +30,23 @@ namespace flatButton {
     inline constexpr QSize badgeSize = { 12, 12 };
     inline constexpr QSize menuButtonSize = { 14, 14 };
 
-    base_nodiscard QFont badgeFont();
+      QFont badgeFont();
 
-    base_nodiscard QString bageText(qint64 value);
-    base_nodiscard QString bageText(quint64 value);
+      QString bageText(qint64 value);
+      QString bageText(quint64 value);
 
-    base_nodiscard QString bageText(const QString& value);
-    base_nodiscard QString bageText(const QChar value);
+      QString bageText(const QString& value);
+      QString bageText(const QChar value);
 
-    base_nodiscard bool hasBadge(const QVariant& value);
+      bool hasBadge(const QVariant& value);
 
-	base_nodiscard constexpr int spacing() noexcept;
-	base_nodiscard const int spacing(const QSize& textSize) noexcept;
+	  constexpr int spacing() noexcept;
+	  const int spacing(const QSize& textSize) noexcept;
 
-	base_nodiscard QSize buttonMinSize(Qt::ToolButtonStyle buttonStyle) noexcept;
+	  QSize buttonMinSize(Qt::ToolButtonStyle buttonStyle) noexcept;
        
-	base_nodiscard QColor buttonColor(const QPalette& palette, QStyle::State state) noexcept;
-	base_nodiscard QColor iconColor(QStyle::State state);
+	  QColor buttonColor(const QPalette& palette, QStyle::State state) noexcept;
+	  QColor iconColor(QStyle::State state);
 } // namespace flatButton
 
 __BASE_QT_STYLE_NAMESPACE_END
@@ -62,35 +62,35 @@ public:
 	AbstractFlatButton(QWidget* parent = nullptr);
 
 	void setFitToText(bool fit);
-	base_nodiscard bool fitToText();
+	  bool fitToText();
 
 	void setText(const QString& text);
-	base_nodiscard QString text() const noexcept;
+	  QString text() const noexcept;
 
 	void setStyle(
 		const SelfStyle* style,
 		bool repaint = true) override;
 
 	void setOpacity(float opacity);
-	base_nodiscard float opacity() const noexcept;
+	  float opacity() const noexcept;
 
 	void setIconSize(const QSize& size);
 	void setIcon(const QIcon& _icon);
 
 	void setBadgeValue(const QVariant& value);
-	base_nodiscard QVariant badgeValue() const;
+	  QVariant badgeValue() const;
 
 	void setAutoRaise(bool on);
-	base_nodiscard bool autoRaise() const;
+	  bool autoRaise() const;
 
-	base_nodiscard QSize sizeHint() const override;
-	base_nodiscard QSize minimumSizeHint() const override;
+	  QSize sizeHint() const override;
+	  QSize minimumSizeHint() const override;
 
 	void setToolButtonStyle(Qt::ToolButtonStyle style);
-	base_nodiscard Qt::ToolButtonStyle buttonStyle() const noexcept;
+	  Qt::ToolButtonStyle buttonStyle() const noexcept;
 
-	base_nodiscard bool hasIcon() const noexcept;
-	base_nodiscard bool hasText() const noexcept;
+	  bool hasIcon() const noexcept;
+	  bool hasText() const noexcept;
 protected:
 	bool event(QEvent* _event) override = 0;
 	void mousePressEvent(QMouseEvent* _event) override = 0;
@@ -115,9 +115,9 @@ protected:
 		const QStyleOptionComplex& option,
 		const QString& text) = 0;
 
-	base_nodiscard QRect iconRect() const noexcept;
-	base_nodiscard QRect textRect(const QRect& iconRect) const noexcept;
-	base_nodiscard QRect badgeRect(const QRect& iconRect) const noexcept;
+	  QRect iconRect() const noexcept;
+	  QRect textRect(const QRect& iconRect) const noexcept;
+	  QRect badgeRect(const QRect& iconRect) const noexcept;
 private:
 	QString _text;
 

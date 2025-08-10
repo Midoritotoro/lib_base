@@ -28,7 +28,7 @@ public:
     template <
         class _Tuple,
         size_t... _Indices>
-    static base_nodiscard uint32
+    static   uint32
         base_stdcall Invoke(void* _RawVals) noexcept
     {
         const std::unique_ptr<_Tuple>
@@ -49,7 +49,7 @@ public:
     template <
         class _Tuple,
         size_t... _Indices>
-    static base_nodiscard constexpr
+    static   constexpr
         auto GetInvoke(std::index_sequence<_Indices...>) noexcept 
     {
         return &Invoke<_Tuple, _Indices...>;
@@ -111,7 +111,7 @@ public:
         }
     }
 
-    static base_nodiscard DWORD GetThreadExitCode(const io::WindowsSmartHandle& handle) {
+    static   DWORD GetThreadExitCode(const io::WindowsSmartHandle& handle) {
         DWORD exitCode = 0;
         GetExitCodeThread(handle.handle(), &exitCode);
 
@@ -133,7 +133,7 @@ public:
 #endif
     }   
 
-    static base_nodiscard DWORD 
+    static   DWORD 
         base_stdcall TerminateImplementation(
             io::WindowsSmartHandle* _PHandle) noexcept
     {

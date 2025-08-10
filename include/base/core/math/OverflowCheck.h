@@ -7,7 +7,7 @@
 __BASE_NAMESPACE_BEGIN
 
 base_always_inline static
-base_nodiscard bool UnsignedAddOverflow(
+  bool UnsignedAddOverflow(
     unsigned a,
     unsigned b,
     unsigned* res)
@@ -20,7 +20,7 @@ base_nodiscard bool UnsignedAddOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool UnsignedLongAddOverflow(
     unsigned long a,
     unsigned long b,
@@ -34,7 +34,7 @@ bool UnsignedLongAddOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool UnsignedLongLongAddOverflow(
     unsigned long long a,
     unsigned long long b,
@@ -48,7 +48,7 @@ bool UnsignedLongLongAddOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool SignedAddOverflow(
     int a,
     int b,
@@ -62,7 +62,7 @@ bool SignedAddOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool SizetypeAddOverflow(
     sizetype a,
     sizetype b,
@@ -76,7 +76,7 @@ bool SizetypeAddOverflow(
 #include <numeric>
 #endif
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool UnsignedMultiplyOverflow(
     unsigned a,
     unsigned b,
@@ -90,7 +90,7 @@ bool UnsignedMultiplyOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool UnsignedLongMultiplyOverflow(
     unsigned long a,
     unsigned long b,
@@ -104,7 +104,7 @@ bool UnsignedLongMultiplyOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool UnsignedLongLongMultiplyOverflow(
     unsigned long long a,
     unsigned long long b,
@@ -118,7 +118,7 @@ bool UnsignedLongLongMultiplyOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool SignedMultiplyOverflow(
     int a,
     int b,
@@ -132,7 +132,7 @@ bool SignedMultiplyOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool SignedMultiplyOverflow(
     int64 a,
     int64 b,
@@ -146,7 +146,7 @@ bool SignedMultiplyOverflow(
 #endif
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool MultiplyOverflow(
     unsigned a,
     unsigned b,
@@ -155,7 +155,7 @@ bool MultiplyOverflow(
     return UnsignedMultiplyOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool MultiplyOverflow(
     unsigned long a,
     unsigned long b,
@@ -164,7 +164,7 @@ bool MultiplyOverflow(
     return UnsignedLongMultiplyOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool MultiplyOverflow(
     unsigned long long a,
     unsigned long long b,
@@ -173,7 +173,7 @@ bool MultiplyOverflow(
     return UnsignedLongLongMultiplyOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool MultiplyOverflow(
     int a,
     int b,
@@ -183,7 +183,7 @@ bool MultiplyOverflow(
 }
 
 base_always_inline static
-base_nodiscard
+ 
 bool MultiplyOverflow(
     int64 a,
     int64 b,
@@ -192,7 +192,7 @@ bool MultiplyOverflow(
     return SignedMultiplyOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool AdditionOverflow(
     int a,
     int b,
@@ -201,7 +201,7 @@ bool AdditionOverflow(
     return SignedAddOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool AdditionOverflow(
     unsigned a,
     unsigned b,
@@ -210,7 +210,7 @@ bool AdditionOverflow(
     return UnsignedAddOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool AdditionOverflow(
     unsigned long a,
     unsigned long b,
@@ -219,7 +219,7 @@ bool AdditionOverflow(
     return UnsignedLongAddOverflow(a, b, res);
 }
 
-base_always_inline static base_nodiscard
+base_always_inline static  
 bool AdditionOverflow(
     unsigned long long a,
     unsigned long long b,
@@ -228,7 +228,7 @@ bool AdditionOverflow(
     return UnsignedLongLongAddOverflow(a, b, res);
 }
 
-inline base_nodiscard
+inline  
 void* MemoryAllocate(size_t count, size_t size)
 {
     return MultiplyOverflow(count, size, &size)
@@ -240,7 +240,7 @@ template <
     typename _Integer_,
     std::enable_if_t<std::is_integral_v<_Integer_>>>
 base_always_inline static
-base_nodiscard constexpr
+  constexpr
 bool AnyMultiplyOverflow(
     _Integer_ a,
     _Integer_ b,

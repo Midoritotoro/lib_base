@@ -9,7 +9,7 @@ template <
 	class _ForwardIteratorHaystack_, 
 	class _ForwardIteratorPattern_,
 	class _Predicate_>
-base_nodiscard base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
+  base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
 	_ForwardIteratorHaystack_		firstHaystack,
 	_ForwardIteratorHaystack_		lastHaystack,
 	const _ForwardIteratorPattern_	firstPattern,
@@ -25,7 +25,7 @@ template <
 	class _ForwardIteratorPattern_,
 	class _Predicate_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-base_nodiscard _ForwardIteratorHaystack_ search(
+  _ForwardIteratorHaystack_ search(
 	_ExecutionPolicy_&&			executionPolicy,
 	_ForwardIteratorHaystack_	firstHaystack,
 	_ForwardIteratorHaystack_	lastHaystack,
@@ -39,7 +39,7 @@ base_nodiscard _ForwardIteratorHaystack_ search(
 template <
 	class _ForwardIteratorHaystack_, 
 	class _ForwardIteratorPattern_>
-base_nodiscard base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
+  base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
 	const _ForwardIteratorHaystack_ firstHaystack,
 	const _ForwardIteratorHaystack_ lastHaystack,
 	const _ForwardIteratorPattern_	firstPattern,
@@ -53,7 +53,7 @@ template <
 	class _ForwardIteratorHaystack_,
 	class _ForwardIteratorPattern_,
 	EnableIfExecutionPolicy<_ExecutionPolicy_> = 0>
-base_nodiscard _ForwardIteratorHaystack_ search(
+  _ForwardIteratorHaystack_ search(
 	_ExecutionPolicy_&&				executionPolicy,
 	const _ForwardIteratorHaystack_ firstHaystack, 
 	const _ForwardIteratorHaystack_ lastHaystack,
@@ -66,7 +66,7 @@ base_nodiscard _ForwardIteratorHaystack_ search(
 template <
 	class _ForwardIteratorHaystack_, 
 	class _Searcher_>
-base_nodiscard base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
+  base_constexpr_cxx20 _ForwardIteratorHaystack_ search(
 	const _ForwardIteratorHaystack_ firstHaystack,
 	const _ForwardIteratorHaystack_ lastHaystack,
 	const _Searcher_&				searcher)
@@ -79,7 +79,7 @@ template <
 	class _Difference_,
 	class _Type_,
 	class _Predicate_>
-base_nodiscard base_constexpr_cxx20 _ForwardIterator_ searchN(
+  base_constexpr_cxx20 _ForwardIterator_ searchN(
 	const _ForwardIterator_ firstIterator,
 	_ForwardIterator_		lastIterator,
 	const _Difference_		countRaw,
@@ -95,7 +95,7 @@ template <
 	class _Difference_,
 	class _Type_,
 	class _Predicate_>
-base_nodiscard _ForwardIterator_ searchN(
+  _ForwardIterator_ searchN(
 	_ExecutionPolicy_&& executionPolicy,
 	_ForwardIterator_	firstIterator, 
 	_ForwardIterator_	lastIterator,
@@ -110,7 +110,7 @@ template <
 	class _ForwardIterator_,
 	class _Difference_, 
 	class _Type_>
-base_nodiscard base_constexpr_cxx20 _ForwardIterator_ searchN(
+  base_constexpr_cxx20 _ForwardIterator_ searchN(
 	const _ForwardIterator_ firstIterator,
 	const _ForwardIterator_ lastIterator,
 	const _Difference_		count, 
@@ -124,7 +124,7 @@ template <
 	class _ForwardIterator_, 
 	class _Difference_, 
 	class _Type_>
-base_nodiscard _ForwardIterator_ searchN(
+  _ForwardIterator_ searchN(
 	_ExecutionPolicy_&&		executionPolicy, 
 	const _ForwardIterator_ firstIterator,
 	const _ForwardIterator_ lastIterator,

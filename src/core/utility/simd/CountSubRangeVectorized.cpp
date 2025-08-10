@@ -10,7 +10,7 @@
 
 __BASE_NAMESPACE_BEGIN
 
-base_declare_const_function base_nodiscard std::size_t CountSubRange8Bit(
+base_declare_const_function   std::size_t CountSubRange8Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -19,7 +19,7 @@ base_declare_const_function base_nodiscard std::size_t CountSubRange8Bit(
     return 0;
 }
 
-base_declare_const_function base_nodiscard std::size_t CountSubRange16Bit(
+base_declare_const_function   std::size_t CountSubRange16Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -28,7 +28,7 @@ base_declare_const_function base_nodiscard std::size_t CountSubRange16Bit(
     return 0;
 }
 
-base_declare_const_function base_nodiscard std::size_t CountSubRange32Bit(
+base_declare_const_function   std::size_t CountSubRange32Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,
@@ -37,7 +37,7 @@ base_declare_const_function base_nodiscard std::size_t CountSubRange32Bit(
     return 0;
 }
 
-base_declare_const_function base_nodiscard std::size_t CountSubRange64Bit(
+base_declare_const_function   std::size_t CountSubRange64Bit(
     const void* firstMainRangePointer,
     const void* lastMainRangePointer,
     const void* firstSubRangePointer,

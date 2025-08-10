@@ -41,7 +41,7 @@ namespace base::media::ffmpeg::audio {
 			int channels);
 #endif // !DA_FFMPEG_NEW_CHANNEL_LAYOUT
 
-		base_nodiscard int64_t startedAtSample() const {
+		  int64_t startedAtSample() const {
 			return _startedAtSample;
 		}
 

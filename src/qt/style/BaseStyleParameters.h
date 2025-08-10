@@ -11,47 +11,47 @@ __BASE_QT_STYLE_NAMESPACE_BEGIN
 
 class BaseStyleParameters {
 public:
-	virtual base_nodiscard float opacity() const noexcept {
+	virtual   float opacity() const noexcept {
 		return _opacity;
 	}
 
-	virtual base_nodiscard bool hasAnimation() const noexcept {
+	virtual   bool hasAnimation() const noexcept {
 		return _hasAnimation;
 	}
 
-	virtual base_nodiscard int minimumWidth() const noexcept {
+	virtual   int minimumWidth() const noexcept {
 		return _minimumWidth;
 	}
 
-	virtual base_nodiscard int minimumHeight() const noexcept {
+	virtual   int minimumHeight() const noexcept {
 		return _minimumHeight;
 	}
 
-	virtual base_nodiscard int maximumWidth() const noexcept {
+	virtual   int maximumWidth() const noexcept {
 		return _maximumWidth;
 	}
 
-	virtual base_nodiscard int maximumHeight() const noexcept {
+	virtual   int maximumHeight() const noexcept {
 		return _maximumHeight;
 	}
 
-	virtual base_nodiscard color backgroundColor() const noexcept {
+	virtual   color backgroundColor() const noexcept {
 		return _backgroundColor;
 	}
 
-	virtual base_nodiscard margins widgetMargins() const noexcept {
+	virtual   margins widgetMargins() const noexcept {
 		return _margins;
 	}
 
-	virtual base_nodiscard int borderRadius() const noexcept {
+	virtual   int borderRadius() const noexcept {
 		return _borderRadius;
 	}
 
-	virtual base_nodiscard int borderWidth() const noexcept {
+	virtual   int borderWidth() const noexcept {
 		return _borderWidth;
 	}
 
-	virtual base_nodiscard color borderColor() const noexcept {
+	virtual   color borderColor() const noexcept {
 		return _borderColor;
 	}
 

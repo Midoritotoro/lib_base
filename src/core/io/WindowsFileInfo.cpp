@@ -21,11 +21,11 @@ __BASE_IO_NAMESPACE_BEGIN
 #ifdef base_os_windows 
 
 
-static constexpr base_nodiscard bool IsSlash(const char* ch) {
+static constexpr   bool IsSlash(const char* ch) {
     return ch == "/" || ch == "\\";
 }
 
-static constexpr base_nodiscard bool IsValidIterator(size_t iter) {
+static constexpr   bool IsValidIterator(size_t iter) {
     return (iter != std::string::npos);
 }
 

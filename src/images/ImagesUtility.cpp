@@ -37,7 +37,7 @@ __BASE_IMAGES_NAMESPACE_BEGIN
 		return -1;
 	}
 
-	base_nodiscard int GetChannelsCountByBytes(const QImage& image) {
+	  int GetChannelsCountByBytes(const QImage& image) {
 		const auto width = image.width();
 		const auto bytesPerLine = image.bytesPerLine();
 

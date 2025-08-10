@@ -34,7 +34,7 @@ void MemsetZero(
         count * sizeof(IteratorValueType<_ContiguousIterator_>));
 }
 
-inline base_nodiscard bool MemoryFill(
+inline   bool MemoryFill(
     void*       destinationPointer,
     const int   value,
     size_t      size) noexcept
@@ -45,7 +45,7 @@ inline base_nodiscard bool MemoryFill(
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedFillCount(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedFillCount(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorSizeType<_Allocator_>          count,
     const AllocatorValueType<_Allocator_>&  value,
@@ -84,7 +84,7 @@ base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> Uni
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedFill(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedFill(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorPointerType<_Allocator_>       lastPointer,
     const AllocatorValueType<_Allocator_>&  value,

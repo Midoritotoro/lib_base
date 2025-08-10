@@ -40,7 +40,7 @@ inline void DeleteAll(
 }
 
 template <typename _Type_>
-base_nodiscard _Type_ ClearLeftMostSet(const _Type_ value) {
+  _Type_ ClearLeftMostSet(const _Type_ value) {
     DebugAssert(value != _Type_{});
     return value & (value - 1);
 }

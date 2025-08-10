@@ -26,10 +26,10 @@ namespace base::qt::ui::effects {
         GLBlurFunctions();
         ~GLBlurFunctions();
 
-        base_nodiscard QImage blurImage_DualKawase(QImage imageToBlur, int offset, int iterations);
+          QImage blurImage_DualKawase(QImage imageToBlur, int offset, int iterations);
 
-        base_nodiscard float getGPUTime();
-        base_nodiscard float getCPUTime();
+          float getGPUTime();
+          float getCPUTime();
     private:
         void renderToFBO(
             QOpenGLFramebufferObject* targetFBO,

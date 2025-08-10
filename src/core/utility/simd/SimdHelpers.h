@@ -3,7 +3,7 @@
 
 __BASE_NAMESPACE_BEGIN
 
-base_declare_const_function base_always_inline base_nodiscard __mmask16 ZeroByteMask(const __m512i vector) noexcept {
+base_declare_const_function base_always_inline   __mmask16 ZeroByteMask(const __m512i vector) noexcept {
     const auto vector01     = _mm512_set1_epi8(0x01);
     const auto vector80     = _mm512_set1_epi8(int8(0x80));
 
@@ -14,15 +14,15 @@ base_declare_const_function base_always_inline base_nodiscard __mmask16 ZeroByte
     return _mm512_test_epi32_mask(tempVector1, tempVector1);
 }
 
-base_declare_const_function base_always_inline base_nodiscard bool IsXmmZero(__m128i xmmRegister) noexcept {
+base_declare_const_function base_always_inline   bool IsXmmZero(__m128i xmmRegister) noexcept {
 	return _mm_movemask_epi8(_mm_cmpeq_epi64(xmmRegister, _mm_setzero_si128())) == 0xFFFFFFFFFFFFFFFF;
 }
 
-base_declare_const_function base_always_inline base_nodiscard bool IsYmmZero(__m256i ymmRegister) noexcept {
+base_declare_const_function base_always_inline   bool IsYmmZero(__m256i ymmRegister) noexcept {
 	return _mm256_cmpeq_epi64_mask(ymmRegister, _mm256_setzero_si256()) == 0xFFFFFFFFFFFFFFFF;
 }
 
-base_declare_const_function base_always_inline base_nodiscard bool IsZmmZero(__m512i zmmRegister) noexcept {
+base_declare_const_function base_always_inline   bool IsZmmZero(__m512i zmmRegister) noexcept {
 	return _mm512_cmpeq_epi64_mask(zmmRegister, _mm512_setzero_si512()) == 0xFFFFFFFFFFFFFFFF;
 }
 

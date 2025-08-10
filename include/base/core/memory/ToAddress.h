@@ -13,13 +13,13 @@ concept HasToAdress = requires(const _Type_ & value) {
 };
 
 template <class _Type_>
-base_nodiscard constexpr _Type_* ToAddress(_Type_* const value) noexcept {
+  constexpr _Type_* ToAddress(_Type_* const value) noexcept {
     static_assert(!std::is_function_v<_Type_>, "N4950 [pointer.conversion]/1: Mandates: T is not a function type.");
     return value;
 }
 
 template <class _Pointer_>
-base_nodiscard constexpr auto ToAddress(const _Pointer_& value) noexcept {
+  constexpr auto ToAddress(const _Pointer_& value) noexcept {
     if constexpr (HasToAdress<_Pointer_>)
         return std::pointer_traits<_Pointer_>::to_address(value);
     else

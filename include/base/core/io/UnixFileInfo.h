@@ -11,61 +11,61 @@ class UnixFileInfo {
 public:
     UnixFileInfo(const std::string& file);
 
-    base_nodiscard bool exists() const;
-    static base_nodiscard bool exists(const std::string& file);
+      bool exists() const;
+    static   bool exists(const std::string& file);
 
     void refresh();
 
-    base_nodiscard std::string filePath() const;
+      std::string filePath() const;
 
-    base_nodiscard std::string absoluteFilePath() const;
-    base_nodiscard std::string canonicalFilePath() const;
+      std::string absoluteFilePath() const;
+      std::string canonicalFilePath() const;
 
-    base_nodiscard std::string fileName() const;
-    base_nodiscard std::string baseName() const;
+      std::string fileName() const;
+      std::string baseName() const;
 
-    base_nodiscard std::string completeBaseName() const;
-    base_nodiscard std::string suffix() const;
+      std::string completeBaseName() const;
+      std::string suffix() const;
 
-    base_nodiscard std::string bundleName() const;
-    base_nodiscard std::string completeSuffix() const;
+      std::string bundleName() const;
+      std::string completeSuffix() const;
 
-    base_nodiscard std::string path() const;
+      std::string path() const;
 
-    base_nodiscard std::string absolutePath() const;
-    base_nodiscard std::string canonicalPath() const;
+      std::string absolutePath() const;
+      std::string canonicalPath() const;
 
-    base_nodiscard QDir dir() const;
-    base_nodiscard QDir absoluteDir() const;
+      QDir dir() const;
+      QDir absoluteDir() const;
 
-    base_nodiscard bool isReadable() const;
-    base_nodiscard bool isWritable() const;
+      bool isReadable() const;
+      bool isWritable() const;
 
-    base_nodiscard bool isExecutable() const;
+      bool isExecutable() const;
 
-    base_nodiscard bool isHidden() const;
-    base_nodiscard bool isNativePath() const;
+      bool isHidden() const;
+      bool isNativePath() const;
 
-    base_nodiscard bool isRelative() const;
-    base_nodiscard inline bool isAbsolute() const { return !isRelative(); }
+      bool isRelative() const;
+      inline bool isAbsolute() const { return !isRelative(); }
 
-    base_nodiscard bool makeAbsolute();
+      bool makeAbsolute();
 
-    base_nodiscard bool isFile() const;
+      bool isFile() const;
 
-    base_nodiscard bool isDir() const;
-    base_nodiscard bool isSymLink() const;
+      bool isDir() const;
+      bool isSymLink() const;
 
-    base_nodiscard bool isSymbolicLink() const;
-    base_nodiscard bool isShortcut() const;
+      bool isSymbolicLink() const;
+      bool isShortcut() const;
 
-    base_nodiscard bool isAlias() const;
-    base_nodiscard bool isJunction() const;
+      bool isAlias() const;
+      bool isJunction() const;
 
-    base_nodiscard bool isRoot() const;
-    base_nodiscard bool isBundle() const;
+      bool isRoot() const;
+      bool isBundle() const;
 
-    base_nodiscard int64 size() const;
+      int64 size() const;
 };
 
 #endif 

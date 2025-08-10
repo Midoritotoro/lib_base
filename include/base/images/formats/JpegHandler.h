@@ -20,7 +20,7 @@ public:
 		ImageData* data,
 		const char* format) override;
 
-	virtual base_nodiscard const char* format() const noexcept;
+	virtual   const char* format() const noexcept;
 };
 
 __BASE_IMAGES_NAMESPACE_END

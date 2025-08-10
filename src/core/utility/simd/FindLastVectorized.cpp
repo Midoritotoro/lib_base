@@ -14,7 +14,7 @@ __BASE_NAMESPACE_BEGIN
 
 
 template <class _Type_>
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastScalar(
+base_declare_const_function   const void* base_stdcall FindLastScalar(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -25,7 +25,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastScal
 template <
     class _Traits_,
     class _Type_>
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialSse2(
+base_declare_const_function   const void* base_stdcall FindLastTrivialSse2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -73,7 +73,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
 template <
     class _Traits_,
     class _Type_>
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialAvx(
+base_declare_const_function   const void* base_stdcall FindLastTrivialAvx(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -136,7 +136,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
 template <
     class _Traits_,
     class _Type_>
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivialAvx512(
+base_declare_const_function   const void* base_stdcall FindLastTrivialAvx512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -195,7 +195,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
     return FindLastTrivialAvx<_Traits_>(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial8Bit(
+base_declare_const_function   const void* base_stdcall FindLastTrivial8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -213,7 +213,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial16Bit(
+base_declare_const_function   const void* base_stdcall FindLastTrivial16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -231,7 +231,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial32Bit(
+base_declare_const_function   const void* base_stdcall FindLastTrivial32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -249,7 +249,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
     return FindLastScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function base_nodiscard const void* base_stdcall FindLastTrivial64Bit(
+base_declare_const_function   const void* base_stdcall FindLastTrivial64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -268,7 +268,7 @@ base_declare_const_function base_nodiscard const void* base_stdcall FindLastTriv
 }
 
 template <class _Type_>
-base_constexpr_cxx20 base_declare_const_function base_nodiscard const void* base_stdcall FindLastVectorized(
+base_constexpr_cxx20 base_declare_const_function   const void* base_stdcall FindLastVectorized(
     const void*     firstPointer,
     const void*     lastPointer, 
     const _Type_&   value) noexcept 

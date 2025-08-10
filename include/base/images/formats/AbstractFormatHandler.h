@@ -18,7 +18,7 @@ public:
 		ImageData* data, 
 		const char* format) = 0;
 
-	virtual base_nodiscard const char* format() const noexcept { return "Unknown"; }
+	virtual   const char* format() const noexcept { return "Unknown"; }
 };
 
 __BASE_IMAGES_NAMESPACE_END

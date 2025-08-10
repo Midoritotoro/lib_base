@@ -15,15 +15,15 @@ struct HwAccelDescriptor {
 	AVPixelFormat format = AV_PIX_FMT_NONE;
 };
 
-base_nodiscard bool InitHw(
+  bool InitHw(
 	AVCodecContext* context,
 	AVHWDeviceType type);
 
-base_nodiscard enum AVPixelFormat GetHwFormat(
+  enum AVPixelFormat GetHwFormat(
 	AVCodecContext* context,
 	const enum AVPixelFormat* formats);
 
 template <AVPixelFormat Required>
-base_nodiscard enum AVPixelFormat GetFormatImplementation(
+  enum AVPixelFormat GetFormatImplementation(
 	AVCodecContext* ctx,
 	const enum AVPixelFormat* pix_fmts);

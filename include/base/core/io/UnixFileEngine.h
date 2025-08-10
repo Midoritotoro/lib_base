@@ -26,12 +26,12 @@ public:
 	void setFileName(const std::string& path) override;
 	void setFileDescriptor(not_null<FILE*> file) override;
 
-	base_nodiscard bool isOpened() const noexcept override;
+	  bool isOpened() const noexcept override;
 
-	base_nodiscard FILE* fileDescriptor() const noexcept override;
-	base_nodiscard std::string path() const noexcept override;
+	  FILE* fileDescriptor() const noexcept override;
+	  std::string path() const noexcept override;
 
-	static base_nodiscard bool exists(const std::string& path);
+	static   bool exists(const std::string& path);
 
 	static void find(
 		const base_string& path,
@@ -46,31 +46,31 @@ public:
 
 	void close() override;
 
-	base_nodiscard std::string absolutePathFromDescriptor(FILE* descriptor) override;
+	  std::string absolutePathFromDescriptor(FILE* descriptor) override;
 
-	base_nodiscard bool open(
+	  bool open(
 		const std::string& path,
 		FileOpenModes mode) override;
-	base_nodiscard bool open(
+	  bool open(
 		const std::string& path,
 		const char* mode) override;
 
-	base_nodiscard bool rename(const std::string& newFileName) override;
-	base_nodiscard bool rename(
+	  bool rename(const std::string& newFileName) override;
+	  bool rename(
 		const std::string& oldFileName,
 		const std::string& newFileName) override;
 
-	base_nodiscard bool rewind(sizetype position) override;
-	base_nodiscard bool rewind(FilePositions position) override;
+	  bool rewind(sizetype position) override;
+	  bool rewind(FilePositions position) override;
 
-	base_nodiscard void remove() override;
-	base_nodiscard void remove(const std::string& path) override;
+	  void remove() override;
+	  void remove(const std::string& path) override;
 
-	base_nodiscard sizetype read(
+	  sizetype read(
 		_SAL2_Out_writes_bytes_(sizeInBytes) void* outBuffer,
 		_SAL2_In_ sizetype sizeInBytes) override;
 
-	base_nodiscard sizetype fileSize() const noexcept override;
+	  sizetype fileSize() const noexcept override;
 private:
 	FILE* _desc = nullptr;
 	std::string _path = "";

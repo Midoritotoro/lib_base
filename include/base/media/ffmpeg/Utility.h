@@ -43,18 +43,18 @@ public:
 	AvErrorWrap(int code = 0) : _code(code) {
 	}
 
-	base_nodiscard bool failed() const {
+	  bool failed() const {
 		return (_code < 0);
 	}
-	base_nodiscard explicit operator bool() const {
+	  explicit operator bool() const {
 		return failed();
 	}
 
-	base_nodiscard int code() const {
+	  int code() const {
 		return _code;
 	}
 
-	base_nodiscard std::string text() const {
+	  std::string text() const {
 		char string[AV_ERROR_MAX_STRING_SIZE] = { 0 };
 		return std::string(av_make_error_string(
 			string,
@@ -83,19 +83,19 @@ public:
 		release();
 	}
 
-	base_nodiscard AVPacket& fields() {
+	  AVPacket& fields() {
 		if (!_data)
 			_data = av_packet_alloc();
 		return *_data;
 	}
 
-	base_nodiscard const AVPacket& fields() const {
+	  const AVPacket& fields() const {
 		if (!_data)
 			_data = av_packet_alloc();
 		return *_data;
 	}
 
-	base_nodiscard bool empty() const {
+	  bool empty() const {
 		return !_data || !fields().data;
 	}
 
@@ -166,7 +166,7 @@ using SwscalePointer = std::unique_ptr<SwsContext, SwscaleDeleter>;
 using SwresamplePointer = std::unique_ptr<SwrContext, SwresampleDeleter>;
 
 
-base_nodiscard IOPointer MakeIOPointer(
+  IOPointer MakeIOPointer(
 	void* opaque,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
 #if DA_FFMPEG_CONST_WRITE_CALLBACK
@@ -176,7 +176,7 @@ base_nodiscard IOPointer MakeIOPointer(
 #endif
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
-base_nodiscard IOPointer MakeIOPointer(
+  IOPointer MakeIOPointer(
 	void* opaque,
 	unsigned char* buffer,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
@@ -188,7 +188,7 @@ base_nodiscard IOPointer MakeIOPointer(
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
 
-base_nodiscard FormatPointer MakeFormatPointer(
+  FormatPointer MakeFormatPointer(
 	void* opaque,
 	int(*read)(void* opaque, uint8_t* buffer, int bufferSize),
 #if DA_FFMPEG_CONST_WRITE_CALLBACK
@@ -199,19 +199,19 @@ base_nodiscard FormatPointer MakeFormatPointer(
 	int64_t(*seek)(void* opaque, int64_t offset, int whence));
 
 
-base_nodiscard FormatPointer MakeFormatPointer(const QString& path);
-base_nodiscard FormatPointer MakeFormatPointer(IOPointer* ioPointer);
+  FormatPointer MakeFormatPointer(const QString& path);
+  FormatPointer MakeFormatPointer(IOPointer* ioPointer);
 
-base_nodiscard CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
+  CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
 
-base_nodiscard FramePointer MakeFramePointer();
-base_nodiscard FramePointer DuplicateFramePointer(AVFrame* frame);
+  FramePointer MakeFramePointer();
+  FramePointer DuplicateFramePointer(AVFrame* frame);
 
-base_nodiscard bool FrameHasData(AVFrame* frame);
+  bool FrameHasData(AVFrame* frame);
 void ClearFrameMemory(AVFrame* frame);
 
 
-base_nodiscard SwscalePointer MakeSwscalePointer(
+  SwscalePointer MakeSwscalePointer(
 	QSize srcSize,
 	int srcFormat,
 	QSize dstSize,
@@ -219,14 +219,14 @@ base_nodiscard SwscalePointer MakeSwscalePointer(
 	SwscalePointer* existing = nullptr,
 	int flags = 0);
 
-base_nodiscard SwscalePointer MakeSwscalePointer(
+  SwscalePointer MakeSwscalePointer(
 	AVFrame* frame,
 	QSize resize,
 	SwscalePointer* existing = nullptr,
 	int flags = 0);
 
 
-base_nodiscard SwresamplePointer MakeSwresamplePointer(
+  SwresamplePointer MakeSwresamplePointer(
 #if DA_FFMPEG_NEW_CHANNEL_LAYOUT
 	AVChannelLayout* srcLayout,
 #else // DA_FFMPEG_NEW_CHANNEL_LAYOUT
@@ -243,15 +243,15 @@ base_nodiscard SwresamplePointer MakeSwresamplePointer(
 	int dstRate,
 	SwresamplePointer* existing = nullptr);
 
-base_nodiscard CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
+  CodecPointer MakeCodecPointer(CodecDescriptor descriptor);
 
-base_nodiscard FramePointer MakeFramePointer();
-base_nodiscard FramePointer DuplicateFramePointer(AVFrame* frame);
+  FramePointer MakeFramePointer();
+  FramePointer DuplicateFramePointer(AVFrame* frame);
 
-base_nodiscard bool FrameHasData(AVFrame* frame);
+  bool FrameHasData(AVFrame* frame);
 void ClearFrameMemory(AVFrame* frame);
 
-base_nodiscard const AVCodec* FindDecoder(AVCodecContext* context);
+  const AVCodec* FindDecoder(AVCodecContext* context);
 
 struct EnqueuedFrame {
 	int64_t position = 0;

@@ -14,7 +14,7 @@
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>
- base_always_inline base_nodiscard bool ContainsScalar(
+ base_always_inline   bool ContainsScalar(
     const void*     firstPointer,
     const void*     lastPointer,
     const _Type_    value) noexcept
@@ -29,7 +29,7 @@ template <class _Type_>
 template <
     class _Traits_,
     class _Type_>
- base_always_inline base_nodiscard bool ContainsSSE2(
+ base_always_inline   bool ContainsSSE2(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -63,7 +63,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- base_always_inline base_nodiscard bool ContainsAVX(
+ base_always_inline   bool ContainsAVX(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -117,7 +117,7 @@ template <
 template <
     class _Traits_,
     class _Type_>
- base_always_inline base_nodiscard bool ContainsAVX512(
+ base_always_inline   bool ContainsAVX512(
     const void* firstPointer,
     const void* lastPointer,
     _Type_      value) noexcept
@@ -166,7 +166,7 @@ template <
     return false;
 }
 
-base_declare_const_function  base_nodiscard bool ContainsVectorized8Bit(
+base_declare_const_function    bool ContainsVectorized8Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint8       value) noexcept
@@ -181,7 +181,7 @@ base_declare_const_function  base_nodiscard bool ContainsVectorized8Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function  base_nodiscard bool ContainsVectorized16Bit(
+base_declare_const_function    bool ContainsVectorized16Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint16      value) noexcept
@@ -196,7 +196,7 @@ base_declare_const_function  base_nodiscard bool ContainsVectorized16Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function  base_nodiscard bool ContainsVectorized32Bit(
+base_declare_const_function    bool ContainsVectorized32Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint32      value) noexcept
@@ -211,7 +211,7 @@ base_declare_const_function  base_nodiscard bool ContainsVectorized32Bit(
     return ContainsScalar(firstPointer, lastPointer, value);
 }
 
-base_declare_const_function  base_nodiscard bool ContainsVectorized64Bit(
+base_declare_const_function    bool ContainsVectorized64Bit(
     const void* firstPointer,
     const void* lastPointer,
     uint64      value) noexcept
@@ -227,7 +227,7 @@ base_declare_const_function  base_nodiscard bool ContainsVectorized64Bit(
 }
 
 template <class _Type_>
-base_declare_const_function  base_nodiscard bool ContainsVectorized(
+base_declare_const_function    bool ContainsVectorized(
     const void* firstPointer,
     const void* lastPointer,
     const _Type_& value) noexcept

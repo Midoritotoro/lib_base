@@ -19,12 +19,12 @@ public:
 
 	using reference			= const value_type&;
 
-	inline base_constexpr_cxx20 base_nodiscard_constructor StringConstIterator(const _String* str) :
+	inline base_constexpr_cxx20  _constructor StringConstIterator(const _String* str) :
 		_container(str),
 		_currentChar(str->data())
 	{}
 
-	inline base_constexpr_cxx20 base_nodiscard_constructor StringConstIterator(const StringConstIterator& other) :
+	inline base_constexpr_cxx20  _constructor StringConstIterator(const StringConstIterator& other) :
 		_container(other._container),
 		_currentChar(other._currentChar)
 	{}
@@ -83,7 +83,7 @@ public:
 		return *this;
 	}
 
-	base_constexpr_cxx20 base_nodiscard StringConstIterator
+	base_constexpr_cxx20   StringConstIterator
 		operator+(const size_type offset) const noexcept
 	{
 		StringConstIterator temp = *this;
@@ -92,7 +92,7 @@ public:
 		return temp;
 	}
 
-	friend base_constexpr_cxx20 base_nodiscard
+	friend base_constexpr_cxx20  
 		StringConstIterator operator+(
 			const size_type offset,
 			StringConstIterator next) noexcept
@@ -101,28 +101,28 @@ public:
 		return next;
 	}
 
-	base_constexpr_cxx20 base_nodiscard StringConstIterator& operator-=(const size_type offset) noexcept {
+	base_constexpr_cxx20   StringConstIterator& operator-=(const size_type offset) noexcept {
 		return *this += -offset;
 	}
 
-	base_constexpr_cxx20 base_nodiscard StringConstIterator operator-(const size_type offset) const noexcept {
+	base_constexpr_cxx20   StringConstIterator operator-(const size_type offset) const noexcept {
 		StringConstIterator temp = *this;
 		temp -= offset;
 
 		return temp;
 	}
 
-	base_constexpr_cxx20 base_nodiscard size_type operator-(const StringConstIterator& _Right) const noexcept {
+	base_constexpr_cxx20   size_type operator-(const StringConstIterator& _Right) const noexcept {
 		compareStrings(_Right);
 		return static_cast<size_type>(_currentChar - _Right._currentChar);
 	}
 
-	base_constexpr_cxx20 base_nodiscard reference operator[](const size_type _Off) const noexcept {
+	base_constexpr_cxx20   reference operator[](const size_type _Off) const noexcept {
 		return *(*this + _Off);
 	}
 
 #if BASE_HAS_CXX20
-	base_constexpr_cxx20 base_nodiscard auto /*std::strong_ordering*/
+	base_constexpr_cxx20   auto /*std::strong_ordering*/
 		operator<=>(const StringConstIterator& other) const noexcept
 	{
 		compareStrings(other);
@@ -170,7 +170,7 @@ private:
 	}
 
 	// false if out of range
-	inline base_constexpr_cxx20 base_nodiscard
+	inline base_constexpr_cxx20  
 		bool checkOffset(size_type offset) const noexcept
 	{
 		const auto containerDataStart = _container->data();
@@ -181,7 +181,7 @@ private:
 	}
 
 	// false if out of range
-	inline base_constexpr_cxx20 base_nodiscard
+	inline base_constexpr_cxx20  
 		bool checkOffsetExclusive(size_type offset) const noexcept
 	{
 		const auto containerDataStart = _container->data();

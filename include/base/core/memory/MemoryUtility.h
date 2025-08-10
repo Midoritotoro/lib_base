@@ -29,7 +29,7 @@ constexpr void ReverseCopyTail(
         *_Destination++ = *--_Last;
 }
 
-base_nodiscard base_always_inline std::size_t ByteLength(
+  base_always_inline std::size_t ByteLength(
     const void* _First,
     const void* _Last) noexcept
 {

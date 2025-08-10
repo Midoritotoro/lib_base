@@ -9,11 +9,11 @@ __BASE_QT_STYLE_NAMESPACE_BEGIN
 class TitleWidgetStyleParameters :
 	public BaseStyleParameters
 {
-	virtual base_nodiscard font textFont() const noexcept {
+	virtual   font textFont() const noexcept {
 		return _font;
 	}
 
-	virtual base_nodiscard int lineHeight() const noexcept {
+	virtual   int lineHeight() const noexcept {
 		return _lineHeight;
 	}
 

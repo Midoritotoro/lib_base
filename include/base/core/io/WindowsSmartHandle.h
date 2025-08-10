@@ -26,14 +26,14 @@ public:
 	~WindowsSmartHandle();
 
 	void setDeleteCallback(Fn<BOOL(HANDLE)> deleteCallback);
-	base_nodiscard Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
+	  Fn<BOOL(HANDLE)> deleteCallback() const noexcept;
 
 	void forceDelete();
 
-	base_nodiscard bool isValid() const noexcept;
+	  bool isValid() const noexcept;
 
 	void setAutoDelete(bool autoDelete);
-	base_nodiscard bool autoDelete() const noexcept;
+	  bool autoDelete() const noexcept;
 
 	WindowsSmartHandle& operator=(HANDLE handle);
 	bool operator==(HANDLE handle);
@@ -42,10 +42,10 @@ public:
 		not_null<HANDLE> handle, 
 		bool autoDeletePrevious = true);
 
-	base_nodiscard HANDLE handle() const noexcept;
-	base_nodiscard HANDLE constHandle() const noexcept;
+	  HANDLE handle() const noexcept;
+	  HANDLE constHandle() const noexcept;
 
-	base_nodiscard HANDLE handle() noexcept;
+	  HANDLE handle() noexcept;
 
 	DISABLE_COPY(WindowsSmartHandle);
 private:

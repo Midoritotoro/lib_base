@@ -20,7 +20,7 @@ public:
     VideoStateWidget(QWidget* parent = nullptr);
 
     void setState(State state);
-    base_nodiscard State state() const noexcept;
+      State state() const noexcept;
 protected:
     void paintEvent(QPaintEvent* event) override;
 private:

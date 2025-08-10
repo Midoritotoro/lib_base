@@ -8,7 +8,7 @@ template <
     class _InputIterator_,
     class _OutIterator_>
 // move [_First, _Last) to [_Dest, ...)
-base_constexpr_cxx20 inline base_nodiscard _OutIterator_ MoveUnChecked(
+base_constexpr_cxx20 inline   _OutIterator_ MoveUnChecked(
     _InputIterator_ firstIterator,
     _InputIterator_ lastIterator,
     _OutIterator_   destinationIterator)
@@ -30,7 +30,7 @@ template <
     class _InputIterator_, 
     class _Allocator_>
 // move [_First, _Last) to raw _Dest, using _Al
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedMove(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMove(
     _InputIterator_                     firstIterator,
     _InputIterator_                     lastIterator, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -60,7 +60,7 @@ template <
     class _InputIterator_, 
     class _Allocator_>
 // move [_First, _First + _Count) to raw _Destination, using _Allocator
-base_constexpr_cxx20 inline base_nodiscard AllocatorPointerType<_Allocator_> UninitializedMoveCount(
+base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMoveCount(
     const _InputIterator_               firstIterator,
     const sizetype                      count, 
     AllocatorPointerType<_Allocator_>   destinationPointer,

@@ -64,7 +64,7 @@ std::vector<std::string>
 }
 
 std::string UnixFileEngine::absolutePathFromDescriptor(FILE* descriptor) {
-	static const char* err = "base::system::AbsolutePathFromDescriptor: Не удается извлечь путь из нулевого дескриптора файла. ";
+	static const char* err = "base::system::AbsolutePathFromDescriptor: пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. ";
 	SystemAssert(descriptor != nullptr, err, "");
 
 	int fd = _fileno(descriptor);

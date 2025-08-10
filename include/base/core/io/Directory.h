@@ -12,15 +12,15 @@ public:
 
 	void setDirectoryName(const std::string& path);
 
-	base_nodiscard std::string directoryName() const noexcept;
-	base_nodiscard std::string absolutePath() const noexcept;
+	  std::string directoryName() const noexcept;
+	  std::string absolutePath() const noexcept;
 
 	static void mkdir(const std::string& path);
 
-	base_nodiscard static bool exists(const std::string& path) noexcept;
-	base_nodiscard bool exists() const noexcept;
+	  static bool exists(const std::string& path) noexcept;
+	  bool exists() const noexcept;
 
-	base_nodiscard int64 size() const noexcept;
+	  int64 size() const noexcept;
 private:
 	AbstractDirectory* _private = nullptr;
 };

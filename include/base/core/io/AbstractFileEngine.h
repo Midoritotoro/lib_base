@@ -17,27 +17,27 @@ public:
 
 	virtual void close() = 0;
 
-	virtual base_nodiscard std::string path() const noexcept = 0;
-	virtual base_nodiscard bool isOpened() const noexcept = 0;
+	virtual std::string path() const noexcept = 0;
+	virtual bool isOpened() const noexcept = 0;
 
-	virtual base_nodiscard std::string absolutePathFromDescriptor(FILE* descriptor) = 0;
+	virtual std::string absolutePathFromDescriptor(FILE* descriptor) = 0;
 
-	virtual base_nodiscard bool open(
+	virtual bool open(
 		const std::string& path,
 		FileOpenModes mode) = 0;
-	virtual base_nodiscard bool open(
+	virtual bool open(
 		const std::string& path,
 		int mode) = 0;
 
-	virtual base_nodiscard bool rename(const std::string& newFileName) = 0;
+	virtual bool rename(const std::string& newFileName) = 0;
 
-	virtual base_nodiscard bool rewind(int64 position) = 0;
-	virtual base_nodiscard bool rewind(FilePositions position) = 0;
+	virtual bool rewind(int64 position) = 0;
+	virtual bool rewind(FilePositions position) = 0;
 
 	virtual void remove() = 0;
 
-	virtual base_nodiscard ReadResult read(sizetype sizeInBytes) = 0;
-	virtual base_nodiscard ReadResult readAll() = 0;
+	virtual ReadResult read(sizetype sizeInBytes) = 0;
+	virtual ReadResult readAll() = 0;
 };
 
 __BASE_IO_NAMESPACE_END

@@ -31,7 +31,7 @@ public:
 	void setupFromFormat(const video_format_t* fmt);
 	void newFrameFromFormat(const video_format_t* fmt);
 
-	base_nodiscard static Frame* FrameNew(
+	  static Frame* FrameNew(
 		fourcc_t i_chroma, int i_width,
 		int i_height, int i_sar_num,
 		int i_sar_den);

@@ -174,8 +174,8 @@ public:
 	//								 Assignment Operators
 	// =======================================================================================
 
-	base_nodiscard ValueType& operator[](const SizeType index) noexcept;
-	base_nodiscard const ValueType& operator[](const SizeType index) const noexcept;
+	  ValueType& operator[](const SizeType index) noexcept;
+	  const ValueType& operator[](const SizeType index) const noexcept;
 
 	base_constexpr_cxx20 BasicString& operator=(std::initializer_list<ValueType> initializerList);
 	base_constexpr_cxx20 BasicString& operator+=(std::initializer_list<ValueType> initializerList);
@@ -185,26 +185,26 @@ public:
 	//							Accessors and Element Access
 	// =======================================================================================
 
-	base_nodiscard ValueType at(const SizeType index) const noexcept;
-	base_nodiscard inline Reference at(const SizeType offset) noexcept;
+	  ValueType at(const SizeType index) const noexcept;
+	  inline Reference at(const SizeType offset) noexcept;
 
-	base_constexpr_cxx20 base_nodiscard inline ValueType front() const noexcept;
-	base_constexpr_cxx20 base_nodiscard inline Reference front() noexcept;
+	base_constexpr_cxx20   inline ValueType front() const noexcept;
+	base_constexpr_cxx20   inline Reference front() noexcept;
 
-	base_constexpr_cxx20 base_nodiscard inline ValueType back() const noexcept;
-	base_constexpr_cxx20 base_nodiscard inline Reference back() noexcept;
+	base_constexpr_cxx20   inline ValueType back() const noexcept;
+	base_constexpr_cxx20   inline Reference back() noexcept;
 
-	base_constexpr_cxx20 base_nodiscard ValueType* data() noexcept;
-	base_constexpr_cxx20 base_nodiscard inline ConstPointer data() const noexcept;
-	base_constexpr_cxx20 base_nodiscard const ValueType* constData() const noexcept;
+	base_constexpr_cxx20   ValueType* data() noexcept;
+	base_constexpr_cxx20   inline ConstPointer data() const noexcept;
+	base_constexpr_cxx20   const ValueType* constData() const noexcept;
 
-	base_constexpr_cxx20 base_nodiscard inline ValueType& first();
-	base_constexpr_cxx20 base_nodiscard inline const ValueType& first() const noexcept;
-	base_constexpr_cxx20 base_nodiscard inline const ValueType& constFirst() const noexcept;
+	base_constexpr_cxx20   inline ValueType& first();
+	base_constexpr_cxx20   inline const ValueType& first() const noexcept;
+	base_constexpr_cxx20   inline const ValueType& constFirst() const noexcept;
 
-	base_constexpr_cxx20 base_nodiscard inline ValueType& last();
-	base_constexpr_cxx20 base_nodiscard inline const ValueType& last() const noexcept;
-	base_constexpr_cxx20 base_nodiscard inline const ValueType& constLast() const noexcept;
+	base_constexpr_cxx20   inline ValueType& last();
+	base_constexpr_cxx20   inline const ValueType& last() const noexcept;
+	base_constexpr_cxx20   inline const ValueType& constLast() const noexcept;
 
 	base_constexpr_cxx20 inline ConstPointer c_str() const noexcept;
 	base_constexpr_cxx20 inline Pointer c_str() noexcept;
@@ -214,61 +214,61 @@ public:
 	//										Iterators
 	// =======================================================================================
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator begin() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator begin() const noexcept;
+	base_constexpr_cxx20 inline   Iterator begin() noexcept;
+	base_constexpr_cxx20 inline   ConstIterator begin() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator cbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator constBegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator cbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator constBegin() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard Iterator end() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator end() const noexcept;
+	base_constexpr_cxx20 inline   Iterator end() noexcept;
+	base_constexpr_cxx20 inline   ConstIterator end() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator cend() const;
-	base_constexpr_cxx20 inline base_nodiscard ConstIterator constEnd() const noexcept;
+	base_constexpr_cxx20 inline   ConstIterator cend() const;
+	base_constexpr_cxx20 inline   ConstIterator constEnd() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator rbegin() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator rend() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator rbegin() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator rend() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator rbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator rend() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator rbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator rend() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator crbegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator crend() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator crbegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator crend() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator reversedBegin() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ReverseIterator reversedEnd() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator reversedBegin() noexcept;
+	base_constexpr_cxx20 inline   ReverseIterator reversedEnd() noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator reversedBegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator reversedEnd() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator reversedBegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator reversedEnd() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator constReversedBegin() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard ConstReverseIterator constReversedEnd() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator constReversedBegin() const noexcept;
+	base_constexpr_cxx20 inline   ConstReverseIterator constReversedEnd() const noexcept;
 
 
 	// =======================================================================================
 	//									Capacity and Size
 	// =======================================================================================
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType count() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType size() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType length() const noexcept;
+	base_constexpr_cxx20 inline   SizeType count() const noexcept;
+	base_constexpr_cxx20 inline   SizeType size() const noexcept;
+	base_constexpr_cxx20 inline   SizeType length() const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard SizeType capacity() const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard SizeType unusedCapacity() const noexcept;
+	base_constexpr_cxx20 inline   SizeType capacity() const noexcept;
+	base_constexpr_cxx20 inline   SizeType unusedCapacity() const noexcept;
 	
-	base_constexpr_cxx20 base_nodiscard bool isEmpty() const noexcept;
-	base_constexpr_cxx20 base_nodiscard bool isNull() const noexcept;
+	base_constexpr_cxx20   bool isEmpty() const noexcept;
+	base_constexpr_cxx20   bool isNull() const noexcept;
 
 	// =======================================================================================
 	//										Allocator
 	// =======================================================================================
 
 
-	base_constexpr_cxx20 inline base_nodiscard allocator_type& getAllocator() noexcept;
-	base_constexpr_cxx20 inline base_nodiscard const allocator_type& getAllocator() const noexcept;
+	base_constexpr_cxx20 inline   allocator_type& getAllocator() noexcept;
+	base_constexpr_cxx20 inline   const allocator_type& getAllocator() const noexcept;
 
 	
-	constexpr inline base_nodiscard sizetype maxSize() const noexcept;
+	constexpr inline   sizetype maxSize() const noexcept;
 
 	// =======================================================================================
 	//										Modifiers
@@ -286,10 +286,10 @@ public:
 
 	void clear();
 
-	base_constexpr_cxx20 base_nodiscard Iterator erase(
+	base_constexpr_cxx20   Iterator erase(
 		ConstIterator first,
 		ConstIterator last);
-	base_constexpr_cxx20 base_nodiscard Iterator erase(ConstIterator it);
+	base_constexpr_cxx20   Iterator erase(ConstIterator it);
 
 	// =======================================================================================
 	//							Push/Pop and Appending/Prepending
@@ -331,10 +331,10 @@ public:
 		SizeType			length);
 	base_constexpr_cxx20 inline BasicString& pushBack(const BasicString& string);
 
-	base_constexpr_cxx20 base_nodiscard ValueType pop() noexcept;
+	base_constexpr_cxx20   ValueType pop() noexcept;
 
-	base_constexpr_cxx20 base_nodiscard ValueType popBack() noexcept;
-	base_constexpr_cxx20 base_nodiscard ValueType popFront() noexcept;
+	base_constexpr_cxx20   ValueType popBack() noexcept;
+	base_constexpr_cxx20   ValueType popFront() noexcept;
 
 	// =======================================================================================
 	//										Swap
@@ -353,17 +353,17 @@ public:
 	//									Type Conversion
 	// =======================================================================================
 
-	base_nodiscard NativeString toNativeString() const noexcept;
+	  NativeString toNativeString() const noexcept;
 
-	base_nodiscard std::wstring toStdWString() const noexcept;
-	base_nodiscard std::string toStdString() const noexcept;
+	  std::wstring toStdWString() const noexcept;
+	  std::string toStdString() const noexcept;
 
 #if __cpp_lib_char8_t
-	base_nodiscard std::u8string toStdUTF8String() const noexcept;
+	  std::u8string toStdUTF8String() const noexcept;
 #endif
 
-	base_nodiscard std::u16string toStdUTF16String() const noexcept;
-	base_nodiscard std::u32string toStdUTF32String() const noexcept;
+	  std::u16string toStdUTF16String() const noexcept;
+	  std::u32string toStdUTF32String() const noexcept;
 
 	// =======================================================================================
 	//				String Operations (Search, Find, Replace, Remove, etc.)
@@ -371,47 +371,47 @@ public:
 
 	base_constexpr_cxx20 inline void reverse() noexcept;
 
-	base_nodiscard SizeType indexOf(
+	  SizeType indexOf(
 		ValueType ch,
 		SizeType from = 0, 
 		CaseSensitivity cs = CaseSensitive) const;
-	base_nodiscard SizeType indexOf(
+	  SizeType indexOf(
 		const BasicString& string,
 		SizeType from = 0, 
 		CaseSensitivity cs = CaseSensitive) const;
 
-	base_nodiscard SizeType lastIndexOf(
+	  SizeType lastIndexOf(
 		ValueType c,
 		CaseSensitivity cs = CaseSensitive) const noexcept;
-	base_nodiscard SizeType lastIndexOf(
+	  SizeType lastIndexOf(
 		ValueType c,
 		SizeType from, 
 		CaseSensitivity cs = CaseSensitive) const;
 
-	base_nodiscard SizeType lastIndexOf(
+	  SizeType lastIndexOf(
 		const BasicString& string,
 		CaseSensitivity cs = CaseSensitive) const;
-	base_nodiscard SizeType lastIndexOf(
+	  SizeType lastIndexOf(
 		const BasicString& string,
 		SizeType from,
 		CaseSensitivity cs = CaseSensitive) const;
 
 
-	base_nodiscard bool contains(
+	  bool contains(
 		ValueType ch,
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
-	base_nodiscard bool contains(
+	  bool contains(
 		const BasicString& string,
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
 
-	base_nodiscard SizeType count(
+	  SizeType count(
 		ValueType ch,
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
-	base_nodiscard SizeType count(
+	  SizeType count(
 		const BasicString& string,
 		CaseSensitivity caseSensitivity = CaseSensitive) const;
 
-	base_nodiscard BasicString& fill(
+	  BasicString& fill(
 		ValueType ch,
 		SizeType size = -1);
 
@@ -467,25 +467,25 @@ public:
 		const BasicString& after,
 		CaseSensitivity caseSensitivity = CaseSensitive);
 
-	base_nodiscard StringList split(
+	  StringList split(
 		const BasicString& sep,
 		SplitBehavior behavior = KeepEmptyParts,
 		CaseSensitivity cs = CaseSensitive) const;
 
-	base_nodiscard StringList split(
+	  StringList split(
 		ValueType sep,
 		SplitBehavior behavior = KeepEmptyParts,
 		CaseSensitivity caseSensibity = CaseSensitive) const;
 
 
-	base_constexpr_cxx20 inline base_nodiscard bool contains(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool contains(const BasicString& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool contains(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool contains(const BasicString& subVector) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool startsWith(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool startsWith(const BasicString& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool startsWith(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool startsWith(const BasicString& subVector) const noexcept;
 
-	base_constexpr_cxx20 inline base_nodiscard bool endsWith(const ValueType& element) const noexcept;
-	base_constexpr_cxx20 inline base_nodiscard bool endsWith(const BasicString& subVector) const noexcept;
+	base_constexpr_cxx20 inline   bool endsWith(const ValueType& element) const noexcept;
+	base_constexpr_cxx20 inline   bool endsWith(const BasicString& subVector) const noexcept;
 
 	base_constexpr_cxx20 inline void removeAll(const ValueType& element);
 
@@ -608,8 +608,8 @@ public:
 
 	int compare(const ValueType* string) const;
 
-	base_nodiscard container::Vector<SizeType> findAll(const BasicString& string) const noexcept;
-	base_nodiscard container::Vector<SizeType> findAll(ValueType ch) const noexcept;
+	  container::Vector<SizeType> findAll(const BasicString& string) const noexcept;
+	  container::Vector<SizeType> findAll(ValueType ch) const noexcept;
 
 	SizeType findFirstOf(
 		const BasicString&	string,
@@ -677,10 +677,10 @@ public:
 
 	BASE_FUNCTION_ALIAS_SPEC(base_constexpr_cxx20 inline, shrink_to_fit, shrinkToFit)
 
-	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline base_nodiscard, get_allocator, noexcept, getAllocator)
-	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline base_nodiscard, get_allocator, const noexcept, getAllocator)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline  , get_allocator, noexcept, getAllocator)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline  , get_allocator, const noexcept, getAllocator)
 
-	BASE_FUNCTION_ALIAS_SPEC_QUAL(constexpr inline base_nodiscard, max_size, const noexcept, maxSize)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(constexpr inline  , max_size, const noexcept, maxSize)
 
 	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_first_of, const, findFirstOf)
 	BASE_FUNCTION_ALIAS_SPEC_QUAL(inline, find_last_of, const, findLastOf)
@@ -691,8 +691,8 @@ public:
 	BASE_FUNCTION_ALIAS_SPEC(base_constexpr_cxx20 inline, push_front, pushFront)
 	BASE_FUNCTION_ALIAS_SPEC(base_constexpr_cxx20 inline, push_back, pushBack)
 
-	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline base_nodiscard, pop_back, noexcept, popBack)
-	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline base_nodiscard, pop_front, noexcept, popFront)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline  , pop_back, noexcept, popBack)
+	BASE_FUNCTION_ALIAS_SPEC_QUAL(base_constexpr_cxx20 inline  , pop_front, noexcept, popFront)
 private:
 	_Storage_ _storage;
 };
@@ -802,13 +802,13 @@ base_constexpr_cxx20 __BASE_BS::BasicString(std::basic_string<_CharType_, std::c
 
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::ValueType& __BASE_BS::operator[](const SizeType index) noexcept 
+  __BASE_BS::ValueType& __BASE_BS::operator[](const SizeType index) noexcept 
 {
 	return at(index);
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard const __BASE_BS::ValueType&  __BASE_BS::operator[](const SizeType index) const noexcept
+  const __BASE_BS::ValueType&  __BASE_BS::operator[](const SizeType index) const noexcept
 {
 	return at(index);
 }
@@ -831,13 +831,13 @@ base_constexpr_cxx20 __BASE_BS& __BASE_BS::operator+=(std::initializer_list<Valu
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::ValueType __BASE_BS::at(const SizeType index) const noexcept
+  __BASE_BS::ValueType __BASE_BS::at(const SizeType index) const noexcept
 {
 	return at(index);
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard inline __BASE_BS::Reference __BASE_BS::at(const SizeType index) noexcept 
+  inline __BASE_BS::Reference __BASE_BS::at(const SizeType index) noexcept 
 {
 	DebugAssertLog(_storage.data() != nullptr, "base:string::BasicString::at: Data is nullptr");
 	DebugAssertLog(index >= 0 && index < size(), "base::string::BasicString::at: Index out of range");
@@ -846,19 +846,19 @@ base_nodiscard inline __BASE_BS::Reference __BASE_BS::at(const SizeType index) n
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType* __BASE_BS::data() noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType* __BASE_BS::data() noexcept
 {
 	return _storage.data();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard const __BASE_BS::ValueType* __BASE_BS::constData() const noexcept 
+base_constexpr_cxx20   const __BASE_BS::ValueType* __BASE_BS::constData() const noexcept 
 {
 	return _storage.data();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard const __BASE_BS::ValueType* __BASE_BS::data() const noexcept 
+base_constexpr_cxx20   const __BASE_BS::ValueType* __BASE_BS::data() const noexcept 
 {
 	return _storage.data();
 }
@@ -916,25 +916,25 @@ base_constexpr_cxx20 inline __BASE_BS::Pointer __BASE_BS::c_str() noexcept
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::front() const noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType __BASE_BS::front() const noexcept
 {
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType& __BASE_BS::front() noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType& __BASE_BS::front() noexcept
 {
 	return at(0);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::back() const noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType __BASE_BS::back() const noexcept
 {
 	return at(size() - 1);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType& __BASE_BS::back() noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType& __BASE_BS::back() noexcept
 {
 	return at(size() - 1);
 }
@@ -1031,37 +1031,37 @@ base_constexpr_cxx20 __BASE_BS::ConstReverseIterator __BASE_BS::crend() const no
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ReverseIterator __BASE_BS::reversedBegin() noexcept
+base_constexpr_cxx20 inline   __BASE_BS::ReverseIterator __BASE_BS::reversedBegin() noexcept
 {
 	return ReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ReverseIterator __BASE_BS::reversedEnd() noexcept 
+base_constexpr_cxx20 inline   __BASE_BS::ReverseIterator __BASE_BS::reversedEnd() noexcept 
 {
 	return ReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ConstReverseIterator __BASE_BS::reversedBegin() const noexcept
+base_constexpr_cxx20 inline   __BASE_BS::ConstReverseIterator __BASE_BS::reversedBegin() const noexcept
 {
 	return ConstReverseIterator(begin());
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ConstReverseIterator __BASE_BS::reversedEnd() const noexcept 
+base_constexpr_cxx20 inline   __BASE_BS::ConstReverseIterator __BASE_BS::reversedEnd() const noexcept 
 {
 	return ConstReverseIterator(end());
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ConstReverseIterator __BASE_BS::constReversedBegin() const noexcept 
+base_constexpr_cxx20 inline   __BASE_BS::ConstReverseIterator __BASE_BS::constReversedBegin() const noexcept 
 {
 	return crbegin();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ConstReverseIterator __BASE_BS::constReversedEnd() const noexcept 
+base_constexpr_cxx20 inline   __BASE_BS::ConstReverseIterator __BASE_BS::constReversedEnd() const noexcept 
 {
 	return crend();
 }
@@ -1072,42 +1072,42 @@ base_constexpr_cxx20 inline base_nodiscard __BASE_BS::ConstReverseIterator __BAS
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::SizeType __BASE_BS::size() const noexcept
+base_constexpr_cxx20   __BASE_BS::SizeType __BASE_BS::size() const noexcept
 {
 	return _storage.size();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::SizeType __BASE_BS::length() const noexcept
+base_constexpr_cxx20   __BASE_BS::SizeType __BASE_BS::length() const noexcept
 {
 	return _storage.size();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::SizeType __BASE_BS::capacity() const noexcept
+base_constexpr_cxx20   __BASE_BS::SizeType __BASE_BS::capacity() const noexcept
 {
 	return _storage.capacity();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::SizeType __BASE_BS::count() const noexcept 
+base_constexpr_cxx20 inline   __BASE_BS::SizeType __BASE_BS::count() const noexcept 
 {
 	return size();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::SizeType __BASE_BS::unusedCapacity() const noexcept
+base_constexpr_cxx20 inline   __BASE_BS::SizeType __BASE_BS::unusedCapacity() const noexcept
 {
 	return (capacity() - size());
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard bool __BASE_BS::isEmpty() const noexcept {
+base_constexpr_cxx20   bool __BASE_BS::isEmpty() const noexcept {
 	return (size() == 0);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard bool __BASE_BS::isNull() const noexcept {
+base_constexpr_cxx20   bool __BASE_BS::isNull() const noexcept {
 	return (capacity() == 0);
 }
 
@@ -1118,19 +1118,19 @@ base_constexpr_cxx20 base_nodiscard bool __BASE_BS::isNull() const noexcept {
 
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard __BASE_BS::allocator_type& __BASE_BS::getAllocator() noexcept
+base_constexpr_cxx20 inline   __BASE_BS::allocator_type& __BASE_BS::getAllocator() noexcept
 {
 
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard const __BASE_BS::allocator_type& __BASE_BS::getAllocator() const noexcept 
+base_constexpr_cxx20 inline   const __BASE_BS::allocator_type& __BASE_BS::getAllocator() const noexcept 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-constexpr inline base_nodiscard sizetype __BASE_BS::maxSize() const noexcept {
+constexpr inline   sizetype __BASE_BS::maxSize() const noexcept {
 	return static_cast<std::size_t>(-1) / sizeof(ValueType);
 }
 
@@ -1142,7 +1142,7 @@ constexpr inline base_nodiscard sizetype __BASE_BS::maxSize() const noexcept {
 
 __BASE_BS_TEMPLATE
 // It is mainly used in Windows to avoid unnecessary code with a defined UNICODE 
-base_nodiscard NativeString __BASE_BS::toNativeString() const noexcept {
+  NativeString __BASE_BS::toNativeString() const noexcept {
 	if constexpr (std::is_same_v<NativeString, std::string>)
 		return toStdString();
 	else if constexpr (std::is_same_v<NativeString, std::wstring>)
@@ -1152,31 +1152,31 @@ base_nodiscard NativeString __BASE_BS::toNativeString() const noexcept {
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard std::wstring __BASE_BS::toStdWString() const noexcept {
+  std::wstring __BASE_BS::toStdWString() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::wstring>(data());
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard std::string __BASE_BS::toStdString() const noexcept {
+  std::string __BASE_BS::toStdString() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::string>(data());
 }
 
 #if __cpp_lib_char8_t
 
 __BASE_BS_TEMPLATE
-base_nodiscard std::u8string __BASE_BS::toStdUTF8String() const noexcept {
+  std::u8string __BASE_BS::toStdUTF8String() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::u8string>(data());
 }
 
 #endif
 
 __BASE_BS_TEMPLATE
-base_nodiscard std::u16string __BASE_BS::toStdUTF16String() const noexcept {
+  std::u16string __BASE_BS::toStdUTF16String() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::u16string>(data());
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard std::u32string __BASE_BS::toStdUTF32String() const noexcept {
+  std::u32string __BASE_BS::toStdUTF32String() const noexcept {
 	return StringConverter::convertString<BasicStdString, std::u32string>(data());
 }
 
@@ -1224,7 +1224,7 @@ void __BASE_BS::clear() {
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::Iterator __BASE_BS::erase(
+base_constexpr_cxx20   __BASE_BS::Iterator __BASE_BS::erase(
 	ConstIterator first,
 	ConstIterator last)
 {
@@ -1232,7 +1232,7 @@ base_constexpr_cxx20 base_nodiscard __BASE_BS::Iterator __BASE_BS::erase(
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::Iterator
+base_constexpr_cxx20   __BASE_BS::Iterator
 	__BASE_BS::erase(ConstIterator it) 
 {
 
@@ -1280,13 +1280,13 @@ base_constexpr_cxx20 inline __BASE_BS& __BASE_BS::pushBack(BasicString&& other)
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::pop() noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType __BASE_BS::pop() noexcept
 {
 	return popBack();
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::popBack() noexcept 
+base_constexpr_cxx20   __BASE_BS::ValueType __BASE_BS::popBack() noexcept 
 {
 	DebugAssertLog(isEmpty() == false, "base::string::BasicString::popBack: Data is empty");
 
@@ -1297,7 +1297,7 @@ base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::popBack() no
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 base_nodiscard __BASE_BS::ValueType __BASE_BS::popFront() noexcept
+base_constexpr_cxx20   __BASE_BS::ValueType __BASE_BS::popFront() noexcept
 {
 	DebugAssertLog(isEmpty() == false, "base::string::BasicString::popFront: Data is empty");
 
@@ -1359,7 +1359,7 @@ base_constexpr_cxx20 inline void __BASE_BS::swapAt(
 // =======================================================================================
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::indexOf(
+  __BASE_BS::SizeType __BASE_BS::indexOf(
 	ValueType ch,
 	SizeType from,
 	CaseSensitivity cs) const
@@ -1368,7 +1368,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::indexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::indexOf(
+  __BASE_BS::SizeType __BASE_BS::indexOf(
 	const BasicString& string,
 	SizeType from,
 	CaseSensitivity cs) const
@@ -1377,7 +1377,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::indexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+  __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 	ValueType c,
 	CaseSensitivity cs) const noexcept
 {
@@ -1385,7 +1385,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+  __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 	ValueType c,
 	SizeType from,
 	CaseSensitivity cs) const
@@ -1394,7 +1394,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+  __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 	const BasicString& string,
 	CaseSensitivity cs) const
 {
@@ -1402,7 +1402,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
+  __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 	const BasicString& string,
 	SizeType from,
 	CaseSensitivity cs) const
@@ -1411,7 +1411,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::lastIndexOf(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard bool __BASE_BS::contains(
+  bool __BASE_BS::contains(
 	ValueType ch,
 	CaseSensitivity caseSensitivity) const
 {
@@ -1419,7 +1419,7 @@ base_nodiscard bool __BASE_BS::contains(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard bool __BASE_BS::contains(
+  bool __BASE_BS::contains(
 	const BasicString& string,
 	CaseSensitivity caseSensitivity) const
 {
@@ -1427,7 +1427,7 @@ base_nodiscard bool __BASE_BS::contains(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::count(
+  __BASE_BS::SizeType __BASE_BS::count(
 	ValueType ch,
 	CaseSensitivity caseSensitivity) const
 {
@@ -1435,7 +1435,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::count(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::SizeType __BASE_BS::count(
+  __BASE_BS::SizeType __BASE_BS::count(
 	const BasicString& string,
 	CaseSensitivity caseSensitivity) const
 {
@@ -1443,7 +1443,7 @@ base_nodiscard __BASE_BS::SizeType __BASE_BS::count(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS& __BASE_BS::fill(
+  __BASE_BS& __BASE_BS::fill(
 	ValueType ch,
 	SizeType size)
 {	
@@ -1584,7 +1584,7 @@ __BASE_BS& __BASE_BS::replace(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::StringList __BASE_BS::split(
+  __BASE_BS::StringList __BASE_BS::split(
 	const BasicString& sep,
 	SplitBehavior behavior,
 	CaseSensitivity cs) const
@@ -1593,7 +1593,7 @@ base_nodiscard __BASE_BS::StringList __BASE_BS::split(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard __BASE_BS::StringList __BASE_BS::split(
+  __BASE_BS::StringList __BASE_BS::split(
 	ValueType sep,
 	SplitBehavior behavior,
 	CaseSensitivity caseSensibity) const
@@ -1607,26 +1607,26 @@ base_constexpr_cxx20 inline void __BASE_BS::reverse() noexcept {
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::contains(const ValueType& element) const noexcept
+base_constexpr_cxx20 inline   bool __BASE_BS::contains(const ValueType& element) const noexcept
 {
 
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::
+base_constexpr_cxx20 inline   bool __BASE_BS::
 	contains(const BasicString& subString) const noexcept
 {
 
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::startsWith(const ValueType& element) const noexcept
+base_constexpr_cxx20 inline   bool __BASE_BS::startsWith(const ValueType& element) const noexcept
 {
 	return (at(0) == element);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::startsWith(const BasicString& subString) const noexcept
+base_constexpr_cxx20 inline   bool __BASE_BS::startsWith(const BasicString& subString) const noexcept
 {
 	const auto subStringSize = subString.size();
 
@@ -1641,13 +1641,13 @@ base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::startsWith(const Basi
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::endsWith(const ValueType& element) const noexcept 
+base_constexpr_cxx20 inline   bool __BASE_BS::endsWith(const ValueType& element) const noexcept 
 {
 	return (at(size() - 1) == element);
 }
 
 __BASE_BS_TEMPLATE
-base_constexpr_cxx20 inline base_nodiscard bool __BASE_BS::endsWith(const BasicString& subString) const noexcept
+base_constexpr_cxx20 inline   bool __BASE_BS::endsWith(const BasicString& subString) const noexcept
 {
 	const auto subStringSize	= subString.size();
 	const auto mySize			= size();
@@ -1748,14 +1748,14 @@ __BASE_BS::iterator __BASE_BS::insert(
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard container::Vector<typename __BASE_BS::SizeType>
+  container::Vector<typename __BASE_BS::SizeType>
 	__BASE_BS::findAll(const BasicString& string) const noexcept 
 {
 
 }
 
 __BASE_BS_TEMPLATE
-base_nodiscard container::Vector<typename __BASE_BS::SizeType> 
+  container::Vector<typename __BASE_BS::SizeType> 
 	__BASE_BS::findAll(ValueType ch) const noexcept
 {
 

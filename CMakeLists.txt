@@ -594,7 +594,12 @@ set_target_properties(
     OUTPUT_NAME lib_base
 )
 
-target_compile_features(lib_base PUBLIC cxx_std_23)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_features(lib_base PUBLIC cxx_std_23)
+else()
+    add_compile_options(-std=c++23)
+endif()
+
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_DEBUG_TARGET_PROPERTIES "MultiThreaded$<$<CONFIG:Debug>:Debug>") # "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"

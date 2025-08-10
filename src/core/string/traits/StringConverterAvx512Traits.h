@@ -16,7 +16,7 @@ public:
 	template <
 		typename _FromChar_,
 		typename _ToChar_>
-	static base_nodiscard StringConversionResult<_ToChar_> convertString(
+	static   StringConversionResult<_ToChar_> convertString(
 		StringConversionParameters<_FromChar_, _ToChar_> parameters) noexcept
 	{
 		AssertUnreachable();
@@ -24,7 +24,7 @@ public:
 	}
 
 	template <>
-	static base_nodiscard StringConversionResult<wchar_t> convertString<char, wchar_t>(
+	static   StringConversionResult<wchar_t> convertString<char, wchar_t>(
 		 StringConversionParameters<char, wchar_t> parameters) noexcept
 	{
 		const size_t alignedBytes = (parameters.stringLength * sizeof(char)) & ~size_t(0x3F);
@@ -74,7 +74,7 @@ public:
 	}
 
 //	template <>
-//	static base_nodiscard StringConversionResult<char> convertString<wchar_t, char>(
+//	static   StringConversionResult<char> convertString<wchar_t, char>(
 //		StringConversionParameters<wchar_t, char, CpuFeature::AVX512>& parameters)
 //	{
 //		__baseInitConversionParameters(wchar_t, 64);
@@ -157,7 +157,7 @@ public:
 //
 //#if __cpp_lib_char8_t
 //	template <>
-//	static base_nodiscard StringConversionResult<char8_t> convertString<char, char8_t>(
+//	static   StringConversionResult<char8_t> convertString<char, char8_t>(
 //		const StringConversionParameters<char, char8_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //		__baseInitConversionParameters(char, 64);
@@ -176,14 +176,14 @@ public:
 //#endif
 //
 //	template <>
-//	static base_nodiscard StringConversionResult<char16_t> convertString<char, char16_t>(
+//	static   StringConversionResult<char16_t> convertString<char, char16_t>(
 //		const StringConversionParameters<char, wchar_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //
 //	}
 //
 //	template <>
-//	static base_nodiscard StringConversionResult<char32_t> convertString<char, char32_t>(
+//	static   StringConversionResult<char32_t> convertString<char, char32_t>(
 //		const StringConversionParameters<char, wchar_t, CpuFeature::AVX512>& parameters) noexcept
 //	{
 //

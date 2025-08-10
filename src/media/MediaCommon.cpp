@@ -21,7 +21,7 @@ namespace {
 	inline constexpr auto kPreviewPrefix = "_p";
 } // namespace 
 
-base_nodiscard int QualityToSwscaleFlags(Quality quality) {
+  int QualityToSwscaleFlags(Quality quality) {
 	switch (quality) {
 	case Quality::Low:
 		return SWS_POINT;

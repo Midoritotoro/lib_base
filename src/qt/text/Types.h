@@ -33,7 +33,7 @@ __BASE_QT_COMMON_NAMESPACE_END
 __BASE_QT_TEXT_NAMESPACE_BEGIN
 
 namespace {
-	base_nodiscard QImage imageFromColor(
+	  QImage imageFromColor(
 		const QColor& color,
 		const QSize& size)
 	{
@@ -123,11 +123,11 @@ struct TextSelection {
 	constexpr TextSelection(uint16 from, uint16 to) : from(from), to(to) {
 	}
 
-	base_nodiscard constexpr bool empty() const noexcept {
+	  constexpr bool empty() const noexcept {
 		return from == to;
 	}
 
-	base_nodiscard bool isFullSelection(const QString& text) const {
+	  bool isFullSelection(const QString& text) const {
 		return (from == 0) && (to >= text.size());
 	}
 

@@ -38,10 +38,10 @@ private:
 		explicit StartedEntity(TextBlockFlags flags);
 		explicit StartedEntity(uint16 index, Type type);
 
-		base_nodiscard Type type() const;
-		base_nodiscard std::optional<TextBlockFlags> flags() const;
-		base_nodiscard std::optional<uint16> linkIndex() const;
-		base_nodiscard std::optional<uint16> colorIndex() const;
+		  Type type() const;
+		  std::optional<TextBlockFlags> flags() const;
+		  std::optional<uint16> linkIndex() const;
+		  std::optional<uint16> colorIndex() const;
 
 	private:
 		const int _value = 0;

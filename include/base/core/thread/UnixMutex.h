@@ -12,10 +12,10 @@ public:
 	UnixMutex(Thread* thread);
 	~UnixMutex();
 
-	base_nodiscard bool lock() override;
-	base_nodiscard bool unlock() override;
+	  bool lock() override;
+	  bool unlock() override;
 
-	base_nodiscard bool isLocked() const noexcept override;
+	  bool isLocked() const noexcept override;
 };
 
 __BASE_THREAD_NAMESPACE_END

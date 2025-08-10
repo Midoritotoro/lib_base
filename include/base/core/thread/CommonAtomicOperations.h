@@ -10,49 +10,49 @@ public:
     using Type = std::atomic<AtomicType>;
 
     template <typename T> 
-    base_nodiscard static inline T load(const std::atomic<T>& _atomic_value) noexcept
+      static inline T load(const std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_relaxed);
     }
 
     template <typename T>
-    base_nodiscard static inline T load(const volatile std::atomic<T>& _atomic_value) noexcept
+      static inline T load(const volatile std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_relaxed);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadRelaxed(const std::atomic<T>& _atomic_value) noexcept
+      static inline T loadRelaxed(const std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_relaxed);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadRelaxed(const volatile std::atomic<T>& _atomic_value) noexcept
+      static inline T loadRelaxed(const volatile std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_relaxed);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadAcquire(const std::atomic<T>& _atomic_value) noexcept
+      static inline T loadAcquire(const std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_acquire);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadAcquire(const volatile std::atomic<T>& _atomic_value) noexcept
+      static inline T loadAcquire(const volatile std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_acquire);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadSequentiallyConsistent(const std::atomic<T>& _atomic_value) noexcept
+      static inline T loadSequentiallyConsistent(const std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_seq_cst);
     }
 
     template <typename T>
-    base_nodiscard static inline T loadSequentiallyConsistent(const volatile std::atomic<T>& _atomic_value) noexcept
+      static inline T loadSequentiallyConsistent(const volatile std::atomic<T>& _atomic_value) noexcept
     {
         return _atomic_value.load(std::memory_order_seq_cst);
     }
@@ -89,18 +89,18 @@ public:
         _atomic_value.store(newValue, std::memory_order_seq_cst);
     }
 
-    base_nodiscard static inline bool isReferenceCountingNative() noexcept
+      static inline bool isReferenceCountingNative() noexcept
     { 
         return isTestAndSetNative(); 
     }
 
-    base_nodiscard static inline constexpr bool isReferenceCountingWaitFree() noexcept
+      static inline constexpr bool isReferenceCountingWaitFree() noexcept
     {
         return false;
     }
 
     template <typename T>
-    base_nodiscard static inline bool ref(std::atomic<T>& _atomic_value)
+      static inline bool ref(std::atomic<T>& _atomic_value)
     {
         return 
             (_atomic_value.fetch_add(
@@ -108,7 +108,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline bool deref(std::atomic<T>& _atomic_value) noexcept
+      static inline bool deref(std::atomic<T>& _atomic_value) noexcept
     {
         // compare with ref
         return 
@@ -116,18 +116,18 @@ public:
             1, std::memory_order_acq_rel) != T(1));
     }
 
-    base_nodiscard static inline bool isTestAndSetNative() noexcept
+      static inline bool isTestAndSetNative() noexcept
     {
         return AtomicTraits<sizeof(AtomicType)>::isLockFree();
     }
 
-    base_nodiscard static inline constexpr bool isTestAndSetWaitFree() noexcept
+      static inline constexpr bool isTestAndSetWaitFree() noexcept
     { 
         return false;
     }
 
     template <typename T>
-    base_nodiscard static bool testAndSetRelaxed(
+      static bool testAndSetRelaxed(
         std::atomic<T>& _atomic_value,
         T expectedValue, 
         T newValue, 
@@ -144,7 +144,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static bool testAndSetAcquire(
+      static bool testAndSetAcquire(
         std::atomic<T>& _atomic_value,
         T expectedValue, 
         T newValue, 
@@ -161,7 +161,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static bool testAndSetRelease(
+      static bool testAndSetRelease(
         std::atomic<T>& _atomic_value,
         T expectedValue, 
         T newValue, 
@@ -178,7 +178,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static bool testAndSetOrdered(
+      static bool testAndSetOrdered(
         std::atomic<T>& _atomic_value, 
         T expectedValue,
         T newValue,
@@ -194,17 +194,17 @@ public:
         return tmp;
     }
 
-    base_nodiscard static inline bool isFetchAndStoreNative() noexcept {
+      static inline bool isFetchAndStoreNative() noexcept {
         return isTestAndSetNative();
     }
 
-    base_nodiscard static inline constexpr bool isFetchAndStoreWaitFree() noexcept
+      static inline constexpr bool isFetchAndStoreWaitFree() noexcept
     {
         return false; 
     }
 
     template <typename T>
-    base_nodiscard static T fetchAndStoreRelaxed(
+      static T fetchAndStoreRelaxed(
         std::atomic<T>& _atomic_value,
         T newValue) noexcept
     {
@@ -213,7 +213,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static T fetchAndStoreAcquire(
+      static T fetchAndStoreAcquire(
         std::atomic<T>& _atomic_value,
         T newValue) noexcept
     {
@@ -222,7 +222,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static T fetchAndStoreRelease(
+      static T fetchAndStoreRelease(
         std::atomic<T>& _atomic_value, 
         T newValue) noexcept
     {
@@ -231,7 +231,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static T fetchAndStoreOrdered(
+      static T fetchAndStoreOrdered(
         std::atomic<T>& _atomic_value,
         T newValue) noexcept
     {
@@ -239,18 +239,18 @@ public:
             newValue, std::memory_order_acq_rel);
     }
 
-    base_nodiscard static inline bool isFetchAndAddNative() noexcept 
+      static inline bool isFetchAndAddNative() noexcept 
     { 
         return isTestAndSetNative();
     }
 
-    base_nodiscard static inline constexpr bool isFetchAndAddWaitFree() noexcept
+      static inline constexpr bool isFetchAndAddWaitFree() noexcept
     { 
         return false; 
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndAddRelaxed(
+      static inline T fetchAndAddRelaxed(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -258,7 +258,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndAddAcquire(
+      static inline T fetchAndAddAcquire(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -266,7 +266,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndAddRelease(
+      static inline T fetchAndAddRelease(
         std::atomic<T>& _atomic_value,
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -274,7 +274,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndAddOrdered(
+      static inline T fetchAndAddOrdered(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -282,7 +282,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndSubRelaxed(
+      static inline T fetchAndSubRelaxed(
         std::atomic<T>& _atomic_value,
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -290,7 +290,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline base_nodiscard T fetchAndSubAcquire(
+      static inline   T fetchAndSubAcquire(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -298,7 +298,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndSubRelease(
+      static inline T fetchAndSubRelease(
         std::atomic<T>& _atomic_value,
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -306,7 +306,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndSubOrdered(
+      static inline T fetchAndSubOrdered(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -314,7 +314,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndAndRelaxed(
+      static inline T fetchAndAndRelaxed(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -322,7 +322,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndAndAcquire(
+      static inline T fetchAndAndAcquire(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -330,7 +330,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndAndRelease(
+      static inline T fetchAndAndRelease(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -338,7 +338,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndAndOrdered(
+      static inline T fetchAndAndOrdered(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -346,7 +346,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndOrRelaxed(
+      static inline T fetchAndOrRelaxed(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -354,7 +354,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndOrAcquire(
+      static inline T fetchAndOrAcquire(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -362,7 +362,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndOrRelease(
+      static inline T fetchAndOrRelease(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -370,7 +370,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndOrOrdered(
+      static inline T fetchAndOrOrdered(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -378,7 +378,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndXorRelaxed(
+      static inline T fetchAndXorRelaxed(
         std::atomic<T>& _atomic_value,
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -387,7 +387,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndXorAcquire(
+      static inline T fetchAndXorAcquire(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -395,7 +395,7 @@ public:
     }
 
     template <typename T> 
-    base_nodiscard static inline T fetchAndXorRelease(
+      static inline T fetchAndXorRelease(
         std::atomic<T>& _atomic_value, 
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {
@@ -403,7 +403,7 @@ public:
     }
 
     template <typename T>
-    base_nodiscard static inline T fetchAndXorOrdered(
+      static inline T fetchAndXorOrdered(
         std::atomic<T>& _atomic_value,
         typename AtomicAdditiveType<T>::AdditiveT valueToAdd) noexcept
     {

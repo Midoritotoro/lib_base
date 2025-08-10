@@ -61,12 +61,12 @@ __BASE_NAMESPACE_BEGIN
 
 
 //// Branchless minimum function for two signed 32-bit integers.
-//base_nodiscard constexpr base_base_always_inline int32 min(int32 first, int32 second) noexcept {
+//  constexpr base_base_always_inline int32 min(int32 first, int32 second) noexcept {
 //	return second + ((first - second) & (first - second) >> 31); 
 //}
 //
 //// Branchless maximum function for two signed 32-bit integers.
-//base_nodiscard constexpr base_base_always_inline int32 max(int32 first, int32 second) noexcept {
+//  constexpr base_base_always_inline int32 max(int32 first, int32 second) noexcept {
 //	return first - ((first - second) & (first - second) >> 31);
 //}
 

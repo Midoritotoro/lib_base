@@ -33,11 +33,11 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #  define aligned_free(ptr)                     free(ptr)
 #endif
 
-// base_nodiscard bool IsAlignment(std::size_t value) noexcept {
+//   bool IsAlignment(std::size_t value) noexcept {
 //     return (value > 0) && ((value & (value - 1)) == 0);
 // }
 
-// base_nodiscard bool isAligned(
+//   bool isAligned(
 //     const void* pointer,
 //     std::size_t alignment) noexcept
 // {

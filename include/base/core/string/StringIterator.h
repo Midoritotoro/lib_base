@@ -25,7 +25,7 @@ public:
 
     using BaseClass::BaseClass;
 
-    base_nodiscard base_constexpr_cxx20 reference operator*() const noexcept {
+      base_constexpr_cxx20 reference operator*() const noexcept {
         return const_cast<reference>(BaseClass::operator*());
     }
 
@@ -58,14 +58,14 @@ public:
         return *this;
     }
 
-    base_nodiscard base_constexpr_cxx20 StringIterator operator+(const difference_type offset) const noexcept {
+      base_constexpr_cxx20 StringIterator operator+(const difference_type offset) const noexcept {
         StringIterator temp = *this;
         temp += offset;
 
         return temp;
     }
 
-    base_nodiscard friend base_constexpr_cxx20 StringIterator operator+(
+      friend base_constexpr_cxx20 StringIterator operator+(
         const difference_type offset,
         StringIterator next) noexcept
     {
@@ -80,14 +80,14 @@ public:
 
     using BaseClass::operator-;
 
-    base_nodiscard base_constexpr_cxx20 StringIterator operator-(const difference_type offset) const noexcept {
+      base_constexpr_cxx20 StringIterator operator-(const difference_type offset) const noexcept {
         StringIterator temp = *this;
         temp -= offset;
 
         return temp;
     }
 
-    base_nodiscard base_constexpr_cxx20 reference operator[](const difference_type offset) const noexcept {
+      base_constexpr_cxx20 reference operator[](const difference_type offset) const noexcept {
         return const_cast<reference>(BaseClass::operator[](offset));
     }
 };

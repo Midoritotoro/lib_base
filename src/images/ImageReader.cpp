@@ -50,30 +50,30 @@ class ImageReaderPrivate {
 public:
 	//! \return Handler, соответствуюший определенному формату изображения.
 	//! В случае, если не удается определелить формат, изображение повреждено или формат не поддерживается, nullptr
-	base_nodiscard AbstractFormatHandler* createFormatHandler(ImageData* data);
+	  AbstractFormatHandler* createFormatHandler(ImageData* data);
 
 #ifndef LIB_BASE_IMAGES_NO_GIF
-	base_nodiscard bool checkGifHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
+	  bool checkGifHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
 	// 
 #endif
 
 #ifndef LIB_BASE_IMAGES_NO_PNG
-	base_nodiscard bool checkPngHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
+	  bool checkPngHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
 #endif
 
 #ifndef LIB_BASE_IMAGES_NO_JPEG
-	base_nodiscard bool checkJpegHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
+	  bool checkJpegHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
 #endif
 
 #ifndef LIB_BASE_IMAGES_NO_BMP
 	// В bmp формате всегда используется little-endian порядок байт https://ru.wikipedia.org/wiki/BMP
-	base_nodiscard int bmpGet8(ImageContext* s);
-	base_nodiscard int bmpGet16LittleEndian(ImageContext* s);
+	  int bmpGet8(ImageContext* s);
+	  int bmpGet16LittleEndian(ImageContext* s);
 
-	base_nodiscard uint32 bmpGet32LittleEndian(ImageContext* s);
-	base_nodiscard bool bmpTest(ImageContext* s);
+	  uint32 bmpGet32LittleEndian(ImageContext* s);
+	  bool bmpTest(ImageContext* s);
 
-	base_nodiscard bool checkBmpHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
+	  bool checkBmpHeader(_SAL2_In_reads_bytes_(IMAGE_HEADER_SIZE_IN_BYTES) uchar* header);
 #endif
 
 #ifndef LIB_BASE_IMAGES_NO_ICO

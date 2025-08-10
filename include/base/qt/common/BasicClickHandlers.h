@@ -37,7 +37,7 @@ class UrlClickHandler : public TextClickHandler {
 public:
 	UrlClickHandler(const QString& url, bool fullDisplayed = true);
 
-	base_nodiscard QString originalUrl() const {
+	  QString originalUrl() const {
 		return _originalUrl;
 	}
 		 
@@ -58,13 +58,13 @@ public:
 		}
 	}
 
-	base_nodiscard static bool IsEmail(const QString& url) {
+	  static bool IsEmail(const QString& url) {
 		const auto at = url.indexOf('@'), slash = url.indexOf('/');
 		return ((at > 0) && (slash < 0 || slash > at));
 	}
-	base_nodiscard static QString EncodeForOpening(const QString& originalUrl);
-	base_nodiscard static bool IsSuspicious(const QString& url);
-	base_nodiscard static QString ShowEncoded(const QString& url);
+	  static QString EncodeForOpening(const QString& originalUrl);
+	  static bool IsSuspicious(const QString& url);
+	  static QString ShowEncoded(const QString& url);
 
 protected:
 	QString url() const override {
@@ -75,7 +75,7 @@ protected:
 	}
 
 private:
-	base_nodiscard bool isEmail() const {
+	  bool isEmail() const {
 		return IsEmail(_originalUrl);
 	}
 

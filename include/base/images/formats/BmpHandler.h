@@ -18,7 +18,7 @@ public:
 		ImageData* data,
 		const char* format) override;
 
-	base_nodiscard const char* format() const noexcept override;
+	  const char* format() const noexcept override;
 };
 
 __BASE_IMAGES_NAMESPACE_END

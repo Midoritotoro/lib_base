@@ -25,10 +25,10 @@ enum class CornersRoundMode {
 	Bottom
 };
 
-base_nodiscard bool RightToLeft();
+  bool RightToLeft();
 void SetRightToLeft(bool _rightToLeft);
 
-base_nodiscard Qt::LayoutDirection LayoutDirection();
+  Qt::LayoutDirection LayoutDirection();
 
 void RoundCorners(
 	QPainter& painter,

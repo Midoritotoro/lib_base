@@ -9,7 +9,7 @@ void AlignedImageBufferCleanupHandler(void* data) {
 	delete[] buffer;
 }
 
-base_nodiscard bool IsAlignedImage(const QImage& image) {
+  bool IsAlignedImage(const QImage& image) {
 	return !(reinterpret_cast<uintptr_t>(image.bits()) % kAlignImageBy)
 		&& !(image.bytesPerLine() % kAlignImageBy);
 }

@@ -13,13 +13,13 @@ public:
         ch(c) 
     {}
 
-    base_constexpr_cxx20 inline base_nodiscard
+    base_constexpr_cxx20 inline  
         char toChar() const noexcept
     { 
         return ch; 
     }
 
-    base_constexpr_cxx20 inline base_nodiscard
+    base_constexpr_cxx20 inline  
         char16_t unicode() const noexcept
     { 
         return char16_t(uchar(ch));

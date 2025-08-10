@@ -18,11 +18,11 @@ class WindowsFileEngine final:
 		virtual ~WindowsFileEngine();
 
 		void setFileName(const std::string& path) override;
-		base_nodiscard bool isOpened() const noexcept override;
+		  bool isOpened() const noexcept override;
 
-		base_nodiscard std::string path() const noexcept override;
+		  std::string path() const noexcept override;
 
-		static base_nodiscard bool exists(const std::string& path);
+		static   bool exists(const std::string& path);
 
 		static void find(
 			const std::string& path,
@@ -37,43 +37,43 @@ class WindowsFileEngine final:
 
 		void close() override;
 
-		base_nodiscard std::string absolutePathFromDescriptor(FILE* descriptor) override;
+		  std::string absolutePathFromDescriptor(FILE* descriptor) override;
 
-		base_nodiscard bool open(
+		  bool open(
 			const std::string& path,
 			FileOpenModes mode) override;
-		base_nodiscard bool open(
+		  bool open(
 			const std::string& path,
 			int mode) override;
 
-		base_nodiscard bool rename(const std::string& newFileName) override;
+		  bool rename(const std::string& newFileName) override;
 		static bool rename(
 			const std::string& oldFileName,
 			const std::string& newFileName);
 
-		base_nodiscard bool rewind(int64 position) override;
-		base_nodiscard bool rewind(FilePositions position) override;
+		  bool rewind(int64 position) override;
+		  bool rewind(FilePositions position) override;
 
 		void remove() override;
 		static void remove(const std::string& path);
 
-		static base_nodiscard bool write(
+		static   bool write(
 			const std::string& path,
 			const char* inBuffer,
 			sizetype sizeInBytes);
 
-		base_nodiscard ReadResult read(sizetype sizeInBytes) override;
-		base_nodiscard ReadResult readAll() override;
+		  ReadResult read(sizetype sizeInBytes) override;
+		  ReadResult readAll() override;
 
-		static base_nodiscard sizetype fileSize(const std::string& path);
-		base_nodiscard sizetype fileSize() const noexcept;
+		static   sizetype fileSize(const std::string& path);
+		  sizetype fileSize() const noexcept;
 	private:
 		enum ReadType : uchar {
 			Value,
 			All
 		};
 
-		base_nodiscard bool read(
+		  bool read(
 			ReadType type,
 			ReadResult* outBuffer,
 			sizetype sizeInBytes = 0);

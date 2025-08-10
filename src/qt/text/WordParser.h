@@ -79,10 +79,10 @@ private:
 		const unsigned short* logClusters,
 		const QGlyphLayout& glyphs);
 
-	base_nodiscard bool isLineBreak(
+	  bool isLineBreak(
 		const QCharAttributes* attributes,
 		int index) const;
-	base_nodiscard bool isSpaceBreak(
+	  bool isSpaceBreak(
 		const QCharAttributes* attributes,
 		int index) const;
 

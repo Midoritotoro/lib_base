@@ -102,8 +102,8 @@ T&& take(T& value) {
 
 //#if defined(base_os_windows)
 //	#include <string>
-//	base_nodiscard bool IsWindowsGreaterThen(int version);
-//	base_nodiscard bool SetAutoRunKey(
+//	  bool IsWindowsGreaterThen(int version);
+//	  bool SetAutoRunKey(
 //		const ::std::wstring& path,
 //		const ::std::wstring& key);
 //

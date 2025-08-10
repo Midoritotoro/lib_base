@@ -30,6 +30,6 @@ namespace base::system {
         }
 
 
-        static base_nodiscard int GetCpuCount();
+        static   int GetCpuCount();
 	};
 } // namespace base::system

@@ -22,23 +22,23 @@ public:
 		int blockIndexHint = 0,
 		int blockIndexLimit = -1);
 
-	base_nodiscard QTextEngine& wrapped() {
+	  QTextEngine& wrapped() {
 		return _engine;
 	}
 
 	void itemize();
 	std::vector<Block>::const_iterator shapeGetBlock(int item);
 
-	base_nodiscard int blockIndex(int position) const;
+	  int blockIndex(int position) const;
 
 private:
 	void updateFont(not_null<const AbstractBlock*> block);
-	base_nodiscard std::vector<Block>::const_iterator adjustBlock(
+	  std::vector<Block>::const_iterator adjustBlock(
 		int offset) const;
 
-	base_nodiscard int blockPosition(
+	  int blockPosition(
 		std::vector<Block>::const_iterator i) const;
-	base_nodiscard int blockEnd(std::vector<Block>::const_iterator i) const;
+	  int blockEnd(std::vector<Block>::const_iterator i) const;
 
 	const not_null<const String*> _t;
 

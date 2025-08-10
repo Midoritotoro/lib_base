@@ -42,34 +42,34 @@ public:
 
 	FlatLabel(QWidget* parent = nullptr);
 
-	base_nodiscard QSize sizeHint() const override;
-	base_nodiscard QSize minimumSizeHint() const override;
+	  QSize sizeHint() const override;
+	  QSize minimumSizeHint() const override;
 
-	base_nodiscard int textMaxWidth() const noexcept;
-	base_nodiscard bool hasLinks() const noexcept;
+	  int textMaxWidth() const noexcept;
+	  bool hasLinks() const noexcept;
 
-	base_nodiscard int fullHeight() const noexcept;
+	  int fullHeight() const noexcept;
 
 	void setText(const QString& text);
-	base_nodiscard const text::String& text() const noexcept;
+	  const text::String& text() const noexcept;
 
 	void setSelectable(bool selectable);
-	base_nodiscard bool selectable() const noexcept;
+	  bool selectable() const noexcept;
 
 	void setDoubleClickSelectsParagraph(bool doubleClickSelectsParagraph);
-	base_nodiscard bool doubleClickSelectsParagraph() const noexcept;
+	  bool doubleClickSelectsParagraph() const noexcept;
 
 	void setBreakEverywhere(bool breakEverywhere);
-	base_nodiscard bool breakEverywhere() const noexcept;
+	  bool breakEverywhere() const noexcept;
 
 	void setOpacity(float opacity);
-	base_nodiscard float opacity() const noexcept;
+	  float opacity() const noexcept;
 
 	void setTextAlignment(Qt::Alignment alignment);
-	base_nodiscard Qt::Alignment alignment() const noexcept;
+	  Qt::Alignment alignment() const noexcept;
 
 	void setCornerRoundMode(style::CornersRoundMode cornersRoundMode);
-	base_nodiscard style::CornersRoundMode cornerRoundMode() const noexcept;
+	  style::CornersRoundMode cornerRoundMode() const noexcept;
 
 	void setStyle(
 		const SelfStyle* style,
@@ -92,8 +92,8 @@ public:
 
 	QMargins getMargins() const override;
 
-	base_nodiscard int verticalMargins() const override;
-	base_nodiscard int horizontalMargins() const override;
+	  int verticalMargins() const override;
+	  int horizontalMargins() const override;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -123,8 +123,8 @@ private:
 		ContextMenuReason reason);
 	void fillContextMenu(ContextMenuRequest request);
 
-	base_nodiscard int countTextWidth() const noexcept;
-	base_nodiscard int countTextHeight(int textWidth);
+	  int countTextWidth() const noexcept;
+	  int countTextHeight(int textWidth);
 
 	void refreshSize();
 	void refreshCursor(bool uponSymbol);

@@ -45,7 +45,7 @@ template <
     class _BidirectionalIterator1_,
     class _BidirectionalIterator2_>
 // copy [_First, _Last) backwards to [..., _Dest)
-base_nodiscard base_constexpr_cxx20 _BidirectionalIterator2_ CopyBackwardUnchecked(
+  base_constexpr_cxx20 _BidirectionalIterator2_ CopyBackwardUnchecked(
     _BidirectionalIterator1_ firstIterator, 
     _BidirectionalIterator1_ lastIterator, 
     _BidirectionalIterator2_ destinationIterator) 

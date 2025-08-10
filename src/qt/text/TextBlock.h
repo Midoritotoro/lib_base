@@ -12,24 +12,24 @@ __BASE_QT_TEXT_NAMESPACE_BEGIN
 
 using Blocks = std::vector<Block>;
 
-base_nodiscard style::font WithFlags(
+  style::font WithFlags(
 	const style::font& font,
 	TextBlockFlags flags,
 	style::FontFlags fontFlags = 0) ;
 
-base_nodiscard Qt::LayoutDirection UnpackParagraphDirection(
+  Qt::LayoutDirection UnpackParagraphDirection(
 	bool ltr,
 	bool rtl);
 
 class AbstractBlock {
 public:
-	base_nodiscard uint16 position() const;
-	base_nodiscard TextBlockType type() const;
-	base_nodiscard TextBlockFlags flags() const;
+	  uint16 position() const;
+	  TextBlockType type() const;
+	  TextBlockFlags flags() const;
 
-	base_nodiscard int objectWidth() const;
-	base_nodiscard uint16 colorIndex() const;
-	base_nodiscard uint16 linkIndex() const;
+	  int objectWidth() const;
+	  uint16 colorIndex() const;
+	  uint16 linkIndex() const;
 
 	void setLinkIndex(uint16 index);
 protected:
@@ -50,14 +50,14 @@ public:
 	void setQuoteIndex(uint16 index) {
 		_quoteIndex = index;
 	}
-	base_nodiscard uint16 quoteIndex() const {
+	  uint16 quoteIndex() const {
 		return _quoteIndex;
 	}
 	void setParagraphDirection(Qt::LayoutDirection direction) {
 		_paragraphLTR = (direction == Qt::LeftToRight);
 		_paragraphRTL = (direction == Qt::RightToLeft);
 	}
-	base_nodiscard Qt::LayoutDirection paragraphDirection() const {
+	  Qt::LayoutDirection paragraphDirection() const {
 		return UnpackParagraphDirection(_paragraphLTR, _paragraphRTL);
 	}
 
@@ -78,8 +78,8 @@ class SkipBlock final : public AbstractBlock {
 public:
 	SkipBlock(BlockDescriptor descriptor, int width, int height);
 
-	base_nodiscard int width() const;
-	base_nodiscard int height() const;
+	  int width() const;
+	  int height() const;
 
 private:
 	int _width = 0;
@@ -94,33 +94,33 @@ public:
 	Block& operator=(Block&& other);
 	~Block();
 
-	base_nodiscard static Block Newline(
+	  static Block Newline(
 		BlockDescriptor descriptor,
 		uint16 quoteIndex);
-	base_nodiscard static Block Text(BlockDescriptor descriptor);
-	base_nodiscard static Block Skip(
+	  static Block Text(BlockDescriptor descriptor);
+	  static Block Skip(
 		BlockDescriptor descriptor,
 		int width,
 		int height);
 
 	template <typename FinalBlock>
-	base_nodiscard FinalBlock& unsafe() {
+	  FinalBlock& unsafe() {
 		return *reinterpret_cast<FinalBlock*>(&_data);
 	}
 
 	template <typename FinalBlock>
-	base_nodiscard const FinalBlock& unsafe() const {
+	  const FinalBlock& unsafe() const {
 		return *reinterpret_cast<const FinalBlock*>(&_data);
 	}
 
-	base_nodiscard AbstractBlock* get();
-	base_nodiscard const AbstractBlock* get() const;
+	  AbstractBlock* get();
+	  const AbstractBlock* get() const;
 
-	base_nodiscard AbstractBlock* operator->();
-	base_nodiscard const AbstractBlock* operator->() const;
+	  AbstractBlock* operator->();
+	  const AbstractBlock* operator->() const;
 
-	base_nodiscard AbstractBlock& operator*();
-	base_nodiscard const AbstractBlock& operator*() const;
+	  AbstractBlock& operator*();
+	  const AbstractBlock& operator*() const;
 
 private:
 	struct Tag {
@@ -130,7 +130,7 @@ private:
 	}
 
 	template <typename FinalType, typename ...Args>
-	base_nodiscard static Block New(Args &&...args) {
+	  static Block New(Args &&...args) {
 		auto result = Block(Tag{});
 		result.emplace<FinalType>(std::forward<Args>(args)...);
 		return result;
@@ -151,15 +151,15 @@ private:
 	std::aligned_storage_t<sizeof(SkipBlock), alignof(void*)> _data;
 };
 
-base_nodiscard inline uint16 CountPosition(Blocks::const_iterator i) {
+  inline uint16 CountPosition(Blocks::const_iterator i) {
 	return (*i)->position();
 }
 
-base_nodiscard int CountBlockHeight(
+  int CountBlockHeight(
 	const AbstractBlock* block,
 	const style::font& font);
 
-base_nodiscard inline bool IsMono(TextBlockFlags flags) {
+  inline bool IsMono(TextBlockFlags flags) {
 	return (flags & TextBlockFlag::Pre) || (flags & TextBlockFlag::Code);
 }
 

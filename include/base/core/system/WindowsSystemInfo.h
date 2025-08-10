@@ -9,7 +9,7 @@ __BASE_SYSTEM_NAMESPACE_BEGIN
 
 class WindowsSystemInfo {
 public:
-	static base_nodiscard int GetCpuCount();
+	static   int GetCpuCount();
 };
 
 __BASE_SYSTEM_NAMESPACE_END

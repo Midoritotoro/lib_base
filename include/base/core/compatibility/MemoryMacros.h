@@ -21,7 +21,7 @@
 #      define base_declare_malloc_like [[gnu::malloc]]
 #    endif // base_has_nodiscard
 #  else
-#    define base_declare_malloc_like base_nodiscard base_restrict
+#    define base_declare_malloc_like   base_restrict
 #  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(gnu::malloc)
 #endif // !defined(base_declare_malloc_like)
 

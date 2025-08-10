@@ -21,7 +21,7 @@ __BASE_QT_UI_NAMESPACE_BEGIN
 class BaseQWidgetHelper;
 
 namespace {
-	base_nodiscard std::vector<QPointer<QWidget>>
+	  std::vector<QPointer<QWidget>>
 		GetChildWidgets(not_null<QWidget*> widget)
 	{
 		const auto& children = widget->children();
@@ -137,27 +137,27 @@ public:
 		}();
 	}
 
-	base_nodiscard QRect rectNoMargins() {
+	  QRect rectNoMargins() {
 		return rect().marginsRemoved(getMargins());
 	};
 
-	base_nodiscard QSize sizeNoMargins() {
+	  QSize sizeNoMargins() {
 		return rectNoMargins().size();
 	}
 
-	base_nodiscard int heightNoMargins() {
+	  int heightNoMargins() {
 		return rectNoMargins().height();
 	}
 
-	base_nodiscard int widthNoMargins() {
+	  int widthNoMargins() {
 		return rectNoMargins().width();
 	}
 
-	virtual base_nodiscard QRect visibleArea() {
+	virtual   QRect visibleArea() {
 		return QRect();
 	}
 
-	virtual base_nodiscard QRect hiddenArea() {
+	virtual   QRect hiddenArea() {
 		return QRect();
 	}
 };
@@ -181,11 +181,11 @@ protected:
 public:
 	using Parent::Parent;
 
-	base_nodiscard QRect visibleArea() {
+	  QRect visibleArea() {
 		return Parent::visibleRegion().boundingRect();
 	}
 
-	base_nodiscard QRect hiddenArea() {
+	  QRect hiddenArea() {
 		const auto selfRect = Parent::rect();
 		const auto selfVisibleRect = visibleArea();
 
@@ -213,7 +213,7 @@ public:
 			Parent::update();
 	};
 
-	virtual base_nodiscard const SelfStyle* style()  {
+	virtual   const SelfStyle* style()  {
 		return _style;
 	};
 protected:
