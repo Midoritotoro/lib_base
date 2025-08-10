@@ -596,8 +596,6 @@ set_target_properties(
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     target_compile_features(lib_base PUBLIC cxx_std_23)
-else()
-    add_compile_options(-std=c++23)
 endif()
 
 
@@ -669,11 +667,11 @@ if((CMAKE_SYSTEM_PROCESSOR STREQUAL "i686") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL 
 endif()
 
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-O3 -Ot)
+        add_compile_options(-O3 -Ot -std=c++20)
     endif()
 
     target_compile_options(
@@ -686,7 +684,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
             /MP
             /EHsc
-            
+
             /guard:cf
 
             /w15038 
@@ -711,7 +709,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             /Zi
             /Zc:__cplusplus
     )
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(
         lib_base 
         PRIVATE

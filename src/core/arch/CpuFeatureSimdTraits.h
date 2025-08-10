@@ -65,8 +65,8 @@ constexpr bool is_ymm_simd_feature_v = IsYmmSimdFeature<feature>::value;
 template <CpuFeature feature>
 constexpr bool is_zmm_simd_feature_v = IsZmmSimdFeature<feature>::value;
 
-template <class _Type_>
-constexpr bool is_simd_feature_v = IsSimdFeature<_Type_>::value;
+template <CpuFeature feature>
+constexpr bool is_simd_feature_v = IsSimdFeature<feature>::value;
 
 #if !defined(BASE_DECLARE_SIMD_TYPE_SELECTOR)
 #  define BASE_DECLARE_SIMD_TYPE_SELECTOR(selectorName, simdTypeNameXmm, simdTypeNameYmm, simdTypeNameZmm, defaultType)	\
@@ -83,7 +83,7 @@ BASE_DECLARE_SIMD_TYPE_SELECTOR(SimdVectorDoubleType, __m128d, __m256d, __m512d,
 template <CpuFeature feature> 
 struct DowncastSimdFeature {
 	// static_assert(is_xmm_simd_feature_v<feature> || is_ymm_simd_feature_v<feature> || is_zmm_simd_feature_v<feature>, "Invalid feature");
-	static constexpr CpuFeature value = [&] {
+	static constexpr CpuFeature value = [] {
 		if constexpr (is_zmm_simd_feature_v<feature>)
 			return CpuFeature::AVX;
 		else if constexpr (is_ymm_simd_feature_v<feature>)

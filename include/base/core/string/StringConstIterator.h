@@ -19,12 +19,12 @@ public:
 
 	using reference			= const value_type&;
 
-	inline base_constexpr_cxx20  _constructor StringConstIterator(const _String* str) :
+	base_nodiscard_constructor inline base_constexpr_cxx20 StringConstIterator(const _String* str) :
 		_container(str),
 		_currentChar(str->data())
 	{}
 
-	inline base_constexpr_cxx20  _constructor StringConstIterator(const StringConstIterator& other) :
+	base_nodiscard_constructor inline base_constexpr_cxx20 StringConstIterator(const StringConstIterator& other) :
 		_container(other._container),
 		_currentChar(other._currentChar)
 	{}

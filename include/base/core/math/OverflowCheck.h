@@ -55,7 +55,7 @@ bool SignedAddOverflow(
     int* res)
 {
 #if defined(base_cpp_gnu) || defined(base_cpp_clang)
-    return __builtin_uaddll_overflow(a, b, res);
+    return __builtin_uadd_overflow(a, b, res);
 #else
     * res = a + b;
     return (a + b) < a;
@@ -125,7 +125,7 @@ bool SignedMultiplyOverflow(
     int* res)
 {
 #if defined(base_cpp_gnu) || defined(base_cpp_clang)
-    return __builtin_umulll_overflow(a, b, res);
+    return __builtin_umull_overflow(a, b, res);
 #else
     * res = a * b;
     return b > 0 && a > (INT_MAX / b);

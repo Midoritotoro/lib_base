@@ -51,7 +51,7 @@ private:
     void parse(string::StringView pattern);
 };
 
-DECLARE_TYPEINFO(LoggingRule, RELOCATABLE_TYPE);
+// DECLARE_TYPEINFO(LoggingRule, RELOCATABLE_TYPE);
 
 class LoggingSettingsParser
 {

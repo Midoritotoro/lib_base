@@ -20,13 +20,13 @@ public:
 	using reference			= const typename _Vector::reference;
 	using const_reference	= reference;
 
-	inline constexpr  _constructor VectorConstIterator() noexcept = default;
+	base_nodiscard_constructor inline constexpr VectorConstIterator() noexcept = default;
 
-	inline base_constexpr_cxx20  _constructor VectorConstIterator(const _Vector* vector) :
+	base_nodiscard_constructor inline base_constexpr_cxx20 VectorConstIterator(const _Vector* vector) :
 		_currentElement(vector->data())
 	{}
 
-	inline base_constexpr_cxx20  _constructor VectorConstIterator(const VectorConstIterator& other) :
+	base_nodiscard_constructor inline base_constexpr_cxx20 VectorConstIterator(const VectorConstIterator& other) :
 		_currentElement(other._currentElement)
 	{}
 

@@ -433,7 +433,7 @@ base_declare_const_function base_always_inline void base_cdecl ReverseTriviallyS
 
 
 
-base_declare_const_function   void ReverseVectorized8Bit(
+base_declare_const_function void ReverseVectorized8Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -449,7 +449,7 @@ base_declare_const_function   void ReverseVectorized8Bit(
         static_cast<uchar*>(lastPointer));
 }
 
-base_declare_const_function   void ReverseVectorized16Bit(
+base_declare_const_function void ReverseVectorized16Bit(
     void* firstPointer,
     void* lastPointer) noexcept
 {
@@ -499,7 +499,7 @@ base_declare_const_function   void ReverseVectorized64Bit(
 
 
 template <size_t typeSizeInBytes>
-base_declare_const_function base_constexpr_cxx20   const void* ReverseVectorized(
+base_declare_const_function base_constexpr_cxx20 void ReverseVectorized(
     void* firstPointer,
     void* lastPointer) noexcept
 {

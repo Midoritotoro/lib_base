@@ -90,15 +90,15 @@
 #  endif
 
 #  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_
-#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_									((void)0)
+#    define _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_								    ((void)0)
 #  endif
 
 #  ifndef _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_
-#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_								((void)0)
+#    define _VECTOR_NOT_ENOUGH_MEMORY_DEBUG_NO_RET_							    ((void)0)
 #  endif
 
 #  ifndef _VECTOR_TOO_LONG_DEBUG_NO_RET_
-#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_										((void)0)
+#    define _VECTOR_TOO_LONG_DEBUG_NO_RET_									    ((void)0)
 #  endif
 
 #  ifndef _VECTOR_INDEX_OUT_OF_RANGE_DEBUG_NO_RET_
@@ -106,7 +106,7 @@
 #  endif
 
 #  ifndef _VECTOR_DEBUG_ASSERT_LOG_
-#    define _VECTOR_DEBUG_ASSERT_LOG_											((void)0)
+#    define _VECTOR_DEBUG_ASSERT_LOG_(a, b, c)									((void)0)
 #endif
 
 #endif

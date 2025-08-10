@@ -36,7 +36,7 @@
 
 #if !defined(base_clang_constexpr_cxx20)
 #  if defined(base_cpp_clang)
-#    define base_clang_constexpr_cxx20 constexpr_cxx20
+#    define base_clang_constexpr_cxx20 base_constexpr_cxx20
 #  else
 #    define base_clang_constexpr_cxx20 
 #  endif // defined(base_cpp_clang)

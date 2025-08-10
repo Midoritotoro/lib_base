@@ -72,7 +72,6 @@ public: \
 template<> \
 DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
 
-template<typename T> class base::flags;
-template<typename T>
+
 
 DECLARE_TYPEINFO_BODY(base::flags<T>, PRIMITIVE_TYPE);

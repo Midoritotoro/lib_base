@@ -9,13 +9,11 @@
 
 __BASE_NAMESPACE_BEGIN
 
-template <typename _Type_>
-concept IsValidIntegerType = std::is_integral_v<_Type_>;
 
 namespace Scalar {
     template <
         typename Integer,
-        typename = std::enable_if_t<IsValidIntegerType<Integer>>>
+        typename = std::enable_if_t<std::is_integral_v<Integer>>>
     void GetMinimum(
         const void*     _Start,
         const void*     _End,
@@ -32,7 +30,7 @@ namespace Scalar {
 
     template <
         typename Integer,
-        typename = std::enable_if_t<IsValidIntegerType<Integer>>>
+        typename = std::enable_if_t<std::is_integral_v<Integer>>>
     void GetMaximum(
         const void*     _Start,
         const void*     _End,

@@ -36,7 +36,7 @@ public:
 	bool open(FileOpenModes mode);
 
 	bool rename(const std::string& newFileName);
-	static   bool rename(
+	static  bool rename(
 		const std::string& oldFileName, 
 		const std::string& newFileName);
 

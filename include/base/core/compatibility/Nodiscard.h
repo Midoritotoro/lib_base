@@ -15,47 +15,47 @@
 #endif // !defined(base_has_nodiscard)
 
 
-#if !defined( )
+#if !defined(base_nodiscard)
 #  if base_has_nodiscard
-#    define    [[nodiscard]]
+#    define base_nodiscard  [[nodiscard]]
 #  elif defined(base_cpp_gnu)
-#    define    __attribute__((__warn_unused_result__))
+#    define base_nodiscard  __attribute__((__warn_unused_result__))
 #  elif defined(base_cpp_clang)
-#    define    __attribute__(warn_unused_result)
+#    define base_nodiscard  __attribute__(warn_unused_result)
 #  elif defined(base_cpp_msvc)
-#    define    _Check_return_
+#    define base_nodiscard  _Check_return_
 #  else
-#    define  
+#    define base_nodiscard
 #  endif // base_has_nodiscard || defined(base_cpp_gnu) || defined(base_cpp_clang) || defined(base_cpp_msvc)
-#endif // !defined( )
+#endif // !defined(base_nodiscard)
 
 
-#if !defined( _with_warning)
+#if !defined(base_nodiscard_with_warning)
 #  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
-#    define  _with_warning(message)    [[nodiscard(message)]]
+#    define base_nodiscard_with_warning(message)    [[nodiscard(message)]]
 #  elif defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201603L
-#    define  _with_warning(message)     
+#    define base_nodiscard_with_warning(message)    base_nodiscard
 #  else
-#    define  _with_warning(message)
+#    define base_nodiscard_with_warning(message)
 #  endif //     defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L 
 //  || defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201603L
-#endif // !defined( _with_warning)
+#endif // !defined(base_nodiscard_with_warning)
 
 
-#if !defined( _constructor)
+#if !defined(base_nodiscard_constructor)
 // https://open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1771r1.pdf
 #  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
-#    define  _constructor  
+#    define base_nodiscard_constructor base_nodiscard
 #  else
-#    define  _constructor
+#    define base_nodiscard_constructor
 #  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
-#endif // !defined( _constructor)
+#endif // !defined(base_nodiscard_constructor)
 
 
-#if !defined( _constructor_with_warning)
+#if !defined(base_nodiscard_constructor_with_warning)
 #  if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
-#    define  _constructor_with_warning(message)  _with_warning(message)
+#    define base_nodiscard_constructor_with_warning(message) base_nodiscard_with_warning(message)
 #  else
-#    define  _constructor_with_warning(message) 
+#    define base_nodiscard_constructor_with_warning(message) 
 #  endif // defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard) >= 201907L
-#endif // !defined( _constructor_with_warning)
+#endif // !defined(base_nodiscard_constructor_with_warning)

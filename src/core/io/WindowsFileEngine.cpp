@@ -196,9 +196,6 @@ bool WindowsFileEngine::open(
 	else if (mode & FileOpenMode::Append)
 		_mode = FILE_APPEND_DATA;
 
-	else
-		AssertUnreachable();
-
 	return open(path, _mode);
 }
 

@@ -8,7 +8,7 @@ __BASE_MEMORY_NAMESPACE_BEGIN
 #ifndef __BASE_DEFINE_DEFAULT_MEMCPY
 #define __BASE_DEFINE_DEFAULT_MEMCPY(...)                           \
     template <sizetype byteCount, bool aligned>                     \
-    static base_declare_const_function   inline void* Memcpy(           \
+    static base_declare_const_function inline void* Memcpy(         \
         void*               destination,                            \
         const void* const   source,                                 \
         sizetype            size) noexcept                          \
@@ -82,9 +82,9 @@ public:
     __BASE_DEFINE_MEMCPY(256,   false, __m128i, BASE_ECHO(__BASE_REPEAT_N(16,                      _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))
     __BASE_DEFINE_MEMCPY(512,   false, __m128i, BASE_ECHO(__BASE_REPEAT_N(32,                      _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))
     __BASE_DEFINE_MEMCPY(1024,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(64,                      _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))
-    __BASE_DEFINE_MEMCPY(2048,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,   _mm_storeu_si128(dest++, _mm_loadu_si128(src++))))))
-    __BASE_DEFINE_MEMCPY(4096,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,   _mm_storeu_si128(dest++, _mm_loadu_si128(src++))))))
-    __BASE_DEFINE_MEMCPY(8192,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,   _mm_storeu_si128(dest++, _mm_loadu_si128(src++))))))
+    __BASE_DEFINE_MEMCPY(2048,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,  _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))))
+    __BASE_DEFINE_MEMCPY(4096,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,  _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))))
+    __BASE_DEFINE_MEMCPY(8192,  false, __m128i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,  _mm_storeu_si128(dest++, _mm_loadu_si128(src++)))))))
 
     // Aligned
 
@@ -95,9 +95,9 @@ public:
     __BASE_DEFINE_MEMCPY(256,   true, __m128i, BASE_ECHO(__BASE_REPEAT_N(16,                      _mm_store_si128(dest++, _mm_load_si128(src++)))))
     __BASE_DEFINE_MEMCPY(512,   true, __m128i, BASE_ECHO(__BASE_REPEAT_N(32,                      _mm_store_si128(dest++, _mm_load_si128(src++)))))
     __BASE_DEFINE_MEMCPY(1024,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(64,                      _mm_store_si128(dest++, _mm_load_si128(src++)))))
-    __BASE_DEFINE_MEMCPY(2048,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,   _mm_store_si128(dest++, _mm_load_si128(src++))))))
-    __BASE_DEFINE_MEMCPY(4096,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,   _mm_store_si128(dest++, _mm_load_si128(src++))))))
-    __BASE_DEFINE_MEMCPY(8192,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,   _mm_store_si128(dest++, _mm_load_si128(src++))))))
+    __BASE_DEFINE_MEMCPY(2048,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,  _mm_store_si128(dest++, _mm_load_si128(src++)))))))
+    __BASE_DEFINE_MEMCPY(4096,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,  _mm_store_si128(dest++, _mm_load_si128(src++)))))))
+    __BASE_DEFINE_MEMCPY(8192,  true, __m128i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,  _mm_store_si128(dest++, _mm_load_si128(src++)))))))
 };
 
 template <>
@@ -114,9 +114,9 @@ public:
     __BASE_DEFINE_MEMCPY(512,   false, __m256i, BASE_ECHO(__BASE_REPEAT_N(16,                      _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))
     __BASE_DEFINE_MEMCPY(1024,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(32,                      _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))
     __BASE_DEFINE_MEMCPY(2048,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(64,                      _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))
-    __BASE_DEFINE_MEMCPY(4096,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++))))))
-    __BASE_DEFINE_MEMCPY(8192,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++))))))
-    __BASE_DEFINE_MEMCPY(16384, false, __m256i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++))))))
+    __BASE_DEFINE_MEMCPY(4096,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))))
+    __BASE_DEFINE_MEMCPY(8192,  false, __m256i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))))
+    __BASE_DEFINE_MEMCPY(16384, false, __m256i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,   _mm256_storeu_si256(dest++, _mm256_lddqu_si256(src++)))))))
 
     // Aligned
 
@@ -127,9 +127,9 @@ public:
     __BASE_DEFINE_MEMCPY(512,   true, __m256i, BASE_ECHO(__BASE_REPEAT_N(16,                        _mm256_store_si256(dest++, _mm256_load_si256(src++)))))
     __BASE_DEFINE_MEMCPY(1024,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(32,                        _mm256_store_si256(dest++, _mm256_load_si256(src++)))))
     __BASE_DEFINE_MEMCPY(2048,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(64,                        _mm256_store_si256(dest++, _mm256_load_si256(src++)))))
-    __BASE_DEFINE_MEMCPY(4096,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++))))))
-    __BASE_DEFINE_MEMCPY(8192,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++))))))
-    __BASE_DEFINE_MEMCPY(16384, true, __m256i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++))))))
+    __BASE_DEFINE_MEMCPY(4096,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++)))))))
+    __BASE_DEFINE_MEMCPY(8192,  true, __m256i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++)))))))
+    __BASE_DEFINE_MEMCPY(16384, true, __m256i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,     _mm256_store_si256(dest++, _mm256_load_si256(src++)))))))
 };
 
 template <> 
@@ -146,9 +146,9 @@ public:
     __BASE_DEFINE_MEMCPY(1024,  false, __m512i, BASE_ECHO(__BASE_REPEAT_N(16,                      _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))
     __BASE_DEFINE_MEMCPY(2048,  false, __m512i, BASE_ECHO(__BASE_REPEAT_N(32,                      _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))
     __BASE_DEFINE_MEMCPY(4096,  false, __m512i, BASE_ECHO(__BASE_REPEAT_N(64,                      _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))
-    __BASE_DEFINE_MEMCPY(8192,  false, __m512i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++))))))
-    __BASE_DEFINE_MEMCPY(16384, false, __m512i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++))))))
-    __BASE_DEFINE_MEMCPY(32768, false, __m512i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++))))))
+    __BASE_DEFINE_MEMCPY(8192,  false, __m512i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))))
+    __BASE_DEFINE_MEMCPY(16384, false, __m512i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))))
+    __BASE_DEFINE_MEMCPY(32768, false, __m512i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,   _mm512_storeu_si512(dest++, _mm512_loadu_si512(src++)))))))
 
     // Aligned
 
@@ -159,9 +159,9 @@ public:
     __BASE_DEFINE_MEMCPY(1024,  true, __m512i, BASE_ECHO(__BASE_REPEAT_N(16,                      _mm512_store_si512(dest++, _mm512_load_si512(src++)))))
     __BASE_DEFINE_MEMCPY(2048,  true, __m512i, BASE_ECHO(__BASE_REPEAT_N(32,                      _mm512_store_si512(dest++, _mm512_load_si512(src++)))))
     __BASE_DEFINE_MEMCPY(4096,  true, __m512i, BASE_ECHO(__BASE_REPEAT_N(64,                      _mm512_store_si512(dest++, _mm512_load_si512(src++)))))
-    __BASE_DEFINE_MEMCPY(8192,  true, __m512i, BASE_ECHO(__BASE_REPEAT_N(2, __BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++))))))
-    __BASE_DEFINE_MEMCPY(16384, true, __m512i, BASE_ECHO(__BASE_REPEAT_N(4, __BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++))))))
-    __BASE_DEFINE_MEMCPY(32768, true, __m512i, BASE_ECHO(__BASE_REPEAT_N(8, __BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++))))))
+    __BASE_DEFINE_MEMCPY(8192,  true, __m512i, BASE_ECHO(__BASE_REPEAT_N(2, (__BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++)))))))
+    __BASE_DEFINE_MEMCPY(16384, true, __m512i, BASE_ECHO(__BASE_REPEAT_N(4, (__BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++)))))))
+    __BASE_DEFINE_MEMCPY(32768, true, __m512i, BASE_ECHO(__BASE_REPEAT_N(8, (__BASE_REPEAT_N(64,   _mm512_store_si512(dest++, _mm512_load_si512(src++)))))))
 };
 
 

@@ -15,7 +15,7 @@ template <
     class _Traits_,
     bool _Sign_,
     typename _Integer_,
-    typename = std::enable_if_t<IsValidIntegerType<_Integer_>>>
+    typename = std::enable_if_t<std::is_integral_v<_Integer_>>>
 inline base_declare_const_function void base_cdecl MaximumIntegerImplementation(
     const void* _Start,
     const void* _End,
@@ -94,7 +94,7 @@ template <
     class _Traits_,
     bool _Sign_,
     typename _Integer_,
-    typename = std::enable_if_t<IsValidIntegerType<_Integer_>>>
+    typename = std::enable_if_t<std::is_integral_v<_Integer_>>>
 inline base_declare_const_function void base_cdecl MinimumIntegerImplementation(
     const void* _Start,
     const void* _End,

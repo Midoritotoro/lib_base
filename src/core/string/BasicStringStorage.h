@@ -310,7 +310,7 @@ public:
 
     bool isShared() const {
         return category() == Category::isLarge
-            && RefCounted::refs(_mediumLarge._data) > 1;
+            && RefCounted<_Char_>::refs(_mediumLarge._data) > 1;
     }
 
     void initAny(
@@ -519,7 +519,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::unsh
     Assert(category() == Category::isLarge);
     size_t effectiveCapacity = std::max(minCapacity, _mediumLarge.capacity());
 
-    auto const newRC = RefCounted::create(&effectiveCapacity);
+    auto const newRC = RefCounted<_Char_>::create(&effectiveCapacity);
     // If this fails, someone placed the wrong capacity in an
     // fbstring.
 
@@ -541,7 +541,7 @@ template <
 _Char_* BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::mutableDataLarge() {
     Assert(category() == Category::isLarge);
 
-    if (RefCounted::refs(_mediumLarge._data) > 1) // Ensure unique.
+    if (RefCounted<_Char_>::refs(_mediumLarge._data) > 1) // Ensure unique.
         unshare();
   
     return _mediumLarge._data;
@@ -649,7 +649,7 @@ void BasicStringStorage<_Char_, _SimdOptimization_, _StorageOptimization_>::rese
             Category::isMedium);
     } else {
         // large
-        auto const newRC = RefCounted::create(&minCapacity);
+        auto const newRC = RefCounted<_Char_>::create(&minCapacity);
         auto const size = smallSize();
 
         // Also copies terminator.

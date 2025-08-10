@@ -81,7 +81,7 @@ static const char* extract_basename(
 
 
 #define Assert(condition) AssertLog((condition), "\"" #condition "\"")
-#define AssertUnreachable() Assert(!"unreachable", UNREACHABLE())
+#define AssertUnreachable() Assert(false)
 
 
 #define StaticAssert(cond) static_assert(bool(cond), stringify(cond))

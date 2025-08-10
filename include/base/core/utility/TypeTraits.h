@@ -7,7 +7,7 @@
 #include <variant>
 
 #include <base/core/compatibility/Warnings.h>
-// __cplusplus
+
 __BASE_NAMESPACE_BEGIN
 
 using namespace ::std::ranges;

@@ -18,16 +18,16 @@ __BASE_THREAD_NAMESPACE_BEGIN
 
 class Thread final {
 public:
-	 _thread_constructor Thread() noexcept;
-	 _thread_constructor Thread(const Thread& other) noexcept;
+	 base_nodiscard_thread_constructor Thread() noexcept;
+	 base_nodiscard_thread_constructor Thread(const Thread& other) noexcept;
 
-	 _thread_constructor Thread(Thread&& rOther) noexcept;
+	 base_nodiscard_thread_constructor Thread(Thread&& rOther) noexcept;
 
 
 	template <
 		class Function,
 		class ... Args>
-	 _thread_constructor Thread(
+	base_nodiscard_thread_constructor Thread(
 		Function&& _routine,
 		Args&& ... args)
 	{
@@ -41,7 +41,7 @@ public:
 		class Owner,
 		class Method,
 		class ... Args>
-	 _thread_constructor Thread(
+	base_nodiscard_thread_constructor Thread(
 		Owner* _owner,
 		Method&& _routine,
 		Args&& ... args)

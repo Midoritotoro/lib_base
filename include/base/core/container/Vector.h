@@ -812,7 +812,7 @@ base_constexpr_cxx20 Vector<_Element_, _Allocator_, _SimdOptimization_>&
 	FreeAllElements();
 
 	memory::POCMA(_Al, _Right_al);
-	pairValue.takeContents(_Right.pairValue._secondValue);
+	pairValue.takeContents(_Right._pair._secondValue);
 
 	return *this;
 }
@@ -1770,7 +1770,7 @@ base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimizatio
 
 	const auto _Size = static_cast<SizeType>(_Current - _Start);
 
-	_VECTOR_DEBUG_ASSERT_LOG_(index >= 0 && index < _Size, _VECTOR_OUT_OF_RANGE_);
+	_VECTOR_DEBUG_ASSERT_LOG_(index >= 0 && index < _Size, base_unused(0), _VECTOR_OUT_OF_RANGE_);
 	
 	auto& forDestroy = at(index);
 
@@ -1968,7 +1968,7 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
+base_constexpr_cxx20 inline  Vector<_Element_, _Allocator_, _SimdOptimization_>::size_type
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::count(const Vector& subVector) const noexcept
 {
 	SizeType _Count = 0;
@@ -1977,7 +1977,7 @@ base_constexpr_cxx20 inline   Vector<_Element_, _Allocator_, _SimdOptimization_>
 	const auto _Size			= size();
 
 	if (subVectorSize == 0 || subVectorSize > size())
-		return;
+		return 0;
 
 	for (SizeType i = 0; i < _Size; ++i) {
 		SizeType overlaps = 0;
@@ -2085,13 +2085,13 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline  bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::startsWith(const Vector& subVector) const noexcept
 {
 	const auto otherSize = subVector.size();
 	
 	if (otherSize > size())
-		return;
+		return false;
 
 	for (SizeType i = 0; i < otherSize; ++i) {
 		const auto& currentElement		= at(i);
@@ -2119,13 +2119,13 @@ template <
 	typename	_Element_,
 	class		_Allocator_,
 	class		_SimdOptimization_>
-base_constexpr_cxx20 inline   bool Vector<_Element_, _Allocator_, _SimdOptimization_>
+base_constexpr_cxx20 inline bool Vector<_Element_, _Allocator_, _SimdOptimization_>
 	::endsWith(const Vector& subVector) const noexcept 
 {
 	const auto otherSize = subVector.size();
 
 	if (otherSize > size())
-		return;
+		return false;
 
 	for (SizeType i = otherSize - 1; i >= 0; ++i) {
 		const auto& currentElement = at(i);
@@ -2532,7 +2532,7 @@ template <
 base_constexpr_cxx20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::first()
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {},"base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0); 
 }
 
@@ -2543,7 +2543,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::first() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -2554,7 +2554,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constFirst() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -2565,7 +2565,7 @@ template <
 base_constexpr_cxx20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::last()
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -2576,7 +2576,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::last() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -2587,7 +2587,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constLast() const noexcept
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
+	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
