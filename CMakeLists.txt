@@ -6,6 +6,10 @@ project ("lib_base"
     LANGUAGES C CXX)
 
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 20)
+
+
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
        /INCREMENTAL:NO)
 
@@ -584,7 +588,7 @@ endif()
 set_target_properties(
     lib_base PROPERTIES
 
-    CXX_STANDARD 23
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 
     VERSION "${PROJECT_VERSION}"
@@ -671,7 +675,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR (CMAKE_CXX_COMPILER_ID STREQUAL "C
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-O3 -Ot -std=c++20)
+        add_compile_options(-O3 -Ot)
     endif()
 
     target_compile_options(

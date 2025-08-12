@@ -72,6 +72,8 @@ public: \
 template<> \
 DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
 
-
-
+#if defined(base_cpp_msvc)
+template<typename T> class base::flags;
+template<typename T>
+#endif
 DECLARE_TYPEINFO_BODY(base::flags<T>, PRIMITIVE_TYPE);
