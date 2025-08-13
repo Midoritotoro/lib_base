@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/memory/IteratorCategory.h>
+#include <base/core/type_traits/IteratorCategory.h>
 #include <base/core/memory/PointerConversion.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN

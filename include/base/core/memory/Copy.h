@@ -2,7 +2,7 @@
 
 #include <base/core/utility/TypeTraits.h>
 
-#include <base/core/memory/IteratorCategory.h>
+#include <base/core/type_traits/IteratorCategory.h>
 #include <base/core/memory/AllocatorUtility.h>
 
 #include <src/core/memory/UninitializedBackout.h>

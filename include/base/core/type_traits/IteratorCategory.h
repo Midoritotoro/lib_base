@@ -2,7 +2,7 @@
 
 #include <base/core/utility/TypeTraits.h>
 
-__BASE_MEMORY_NAMESPACE_BEGIN
+__BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
 template <
     class _Source_,
@@ -134,4 +134,5 @@ using SentinelCopyCategory = std::conditional_t<
         _InputIterator_, _OutIterator_>,
     FalseTrivialCategory>;
 
-__BASE_MEMORY_NAMESPACE_END
+__BASE_TYPE_TRAITS_NAMESPACE_END
+

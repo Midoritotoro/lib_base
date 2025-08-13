@@ -2,7 +2,7 @@
 
 #include <base/core/utility/TypeTraits.h>
 
-__BASE_MEMORY_NAMESPACE_BEGIN
+__BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
 template <class _Type_>
 base_constexpr_cxx20   inline bool IsAllBitsZero(const _Type_& value) {
@@ -62,4 +62,4 @@ template <
     class _Type_>
 constexpr bool IsFillZeroMemsetSafe<_ForwardIterator_, _Type_, false> = false;
 
-__BASE_MEMORY_NAMESPACE_END
+__BASE_TYPE_TRAITS_NAMESPACE_END

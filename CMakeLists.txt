@@ -489,9 +489,22 @@ set(PUBLIC_HEADERS
     include/base/core/algorithm/Copy.h
 
     include/base/core/algorithm/Count.h
-    include/base/core/algorithm/Find.h
 
-    include/base/core/algorithm/ForEach.h
+    include/base/core/algorithm/find/Find.h
+    include/base/core/algorithm/find/FindIf.h
+
+    include/base/core/algorithm/find/FindIfNot.h
+    include/base/core/algorithm/find/FindFirstOf.h
+
+    include/base/core/algorithm/find/FindLastOf.h
+
+
+    include/base/core/algorithm/batch/ForEach.h
+    include/base/core/algorithm/batch/ForEachN.h
+    
+    include/base/core/algorithm/comparison/LexicographicalCompare.h
+    include/base/core/algorithm/comparison/LexicographicalCompareThreeWay.h
+
     include/base/core/algorithm/PartialSort.h
 
     include/base/core/algorithm/Remove.h
@@ -516,7 +529,10 @@ set(PUBLIC_HEADERS
     include/base/core/memory/Construct.h
 
     include/base/core/memory/Deallocate.h
-    include/base/core/memory/IteratorCategory.h
+    include/base/core/type_traits/IteratorCategory.h
+
+    include/base/core/type_traits/FillMemsetSafety.h
+    include/base/core/type_traits/IsConstantEvaluated.h
 
     include/base/core/memory/ToAddress.h
     include/base/core/memory/Destroy.h

@@ -64,22 +64,6 @@ inline constexpr bool IsValueInitializationBitwiseZero =
 std::is_scalar_v<T> &&
 !std::is_member_object_pointer_v<T>;
 
-#ifdef __cpp_lib_is_constant_evaluated
-using std::is_constant_evaluated;
-#define SUPPORTS_IS_CONSTANT_EVALUATED
-#else
-constexpr bool is_constant_evaluated() noexcept
-{
-#if 0
-return false;
-#elif __has_builtin(__builtin_is_constant_evaluated)
-	# define SUPPORTS_IS_CONSTANT_EVALUATED
-	return __builtin_is_constant_evaluated();
-#else
-	return false;
-#endif
-}
-#endif // __cpp_lib_is_constant_evaluated
 
 #ifdef __cpp_lib_remove_cvref
 using std::remove_cvref;
@@ -706,5 +690,15 @@ constexpr bool IsAnyOf_v = // true if and only if _Ty is in _Types
 #else
     std::disjunction_v<std::is_same<_Ty, _Types>...>;
 #endif
+
+//template <class _Iterator_>
+//constexpr bool isIteratorForwardCxx17 = std::is_convertible_v<memory::IteratorCategory<_Iterator_>, std::forward_iterator_tag>;
+//
+//template <class _Iter>
+//constexpr bool _Is_ranges_fwd_iter_v =
+//#if _HAS_CXX20
+//    forward_iterator<_Iter> ||
+//#endif
+//    _Is_cpp17_fwd_iter_v<_Iter>;
 
 __BASE_NAMESPACE_END

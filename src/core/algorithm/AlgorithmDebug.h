@@ -3,7 +3,6 @@
 #include <base/core/utility/Assert.h>
 #include <base/core/memory/PointerConversion.h>
 
-
 __BASE_NAMESPACE_BEGIN
 
 template <class _Type_>

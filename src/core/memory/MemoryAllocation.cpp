@@ -225,9 +225,7 @@ base_clang_constexpr_cxx20 void AllocateFast(
         return;
     }
 
-    minimumSize = std::min(maximumSize,
-        std::max(minimumSize + minimumSize / 16 + 32,
-            minimumSize));
+    minimumSize = std::min(maximumSize, std::max(minimumSize + minimumSize / 16 + 32, minimumSize));
 
     FreeNull(pointer);
 
@@ -248,8 +246,7 @@ base_clang_constexpr_cxx20 void AllocateZerosFast(
     uint32*     size,
     sizetype    minimumSize)
 {
-    AllocateFast(pointer, size,
-        minimumSize, true);
+    AllocateFast(pointer, size, minimumSize, true);
 }
 
 

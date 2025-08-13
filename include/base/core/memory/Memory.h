@@ -15,8 +15,8 @@
 #include <base/core/memory/Destroy.h>
 #include <base/core/memory/Fill.h>
 
-#include <base/core/memory/FillMemsetSafety.h>
-#include <base/core/memory/IteratorCategory.h>
+#include <base/core/type_traits/FillMemsetSafety.h>
+#include <base/core/type_traits/IteratorCategory.h>
 
 #include <src/core/memory/IteratorsDifference.h>
 #include <base/core/memory/MemoryUtility.h>

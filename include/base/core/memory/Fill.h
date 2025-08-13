@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/memory/AllocatorUtility.h>
-#include <base/core/memory/FillMemsetSafety.h>
+#include <base/core/type_traits/FillMemsetSafety.h>
 
 #include <base/core/memory/ToAddress.h>
 #include <src/core/memory/UninitializedBackout.h>
