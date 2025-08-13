@@ -538,6 +538,7 @@ set(PUBLIC_HEADERS
     include/base/core/type_traits/IsVirtualBaseOf.h
 
     include/base/core/type_traits/IteratorCheck.h
+    include/base/core/type_traits/ContainerComparison.h
 
     include/base/core/memory/ToAddress.h
     include/base/core/memory/Destroy.h
