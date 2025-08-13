@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <base/core/BaseNamespace.h>
+#include <type_traits>
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 

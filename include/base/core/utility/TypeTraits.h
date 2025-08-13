@@ -75,111 +75,7 @@ template <typename T>
 using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 #endif // __cpp_lib_remove_cvref
 
-struct nonesuch {
-	~nonesuch() = delete;
-	nonesuch(const nonesuch&) = delete;
-	void operator=(const nonesuch&) = delete;
-};
 
-namespace _detail {
-	template <
-		typename T,
-		typename Void, 
-		template <typename...> class Op,
-		typename...Args>
-	struct detector {
-		using value_t = std::false_type;
-		using type = T;
-	};
-
-	template <
-		typename T, 
-		template <typename...> class Op,
-		typename...Args>
-	struct detector<T, std::void_t<Op<Args...>>, Op, Args...> {
-		using value_t = std::true_type;
-		using type = Op<Args...>;
-	};
-} // namespace _detail
-
-template <template <typename...> class Op, typename...Args>
-using is_detected = typename _detail::detector<nonesuch, void, Op, Args...>::value_t;
-
-template <template <typename...> class Op, typename...Args>
-constexpr inline bool is_detected_v = is_detected<Op, Args...>::value;
-
-namespace _detail {
-	base_warning_push
-
-	base_disable_warning_gcc("-Wold-style-cast");
-	base_disable_warning_clang("-Wold-style-cast");
-
-	template <
-		typename From,
-		typename To>
-	using is_virtual_base_conversion_test = decltype((To*)std::declval<From*>());
-
-	base_warning_push
-
-	template <
-		typename Base, 
-		typename Derived, 
-		typename = void>
-	struct is_virtual_base_of:
-		std::false_type
-	{};
-
-	template <
-		typename Base,
-		typename Derived>
-	struct is_virtual_base_of <
-		Base, Derived,
-		std::enable_if_t <
-		std::conjunction_v<
-		std::is_base_of<Base, Derived>,
-
-		is_detected<is_virtual_base_conversion_test, Derived, Base>,
-
-		std::negation<
-		is_detected<is_virtual_base_conversion_test, Base, Derived>
-		>
-		>
-		>
-	> : std::true_type{};
-}
-
-template <
-	typename Base,
-	typename Derived>
-using is_virtual_base_of = _detail::is_virtual_base_of<
-	std::remove_cv_t<Base>, 
-	std::remove_cv_t<Derived>>;
-
-template <
-	typename Base,
-	typename Derived>
-constexpr inline bool is_virtual_base_of_v = is_virtual_base_of<Base, Derived>::value;
-
-template <typename Iterator>
-using IfIsInputIterator = typename std::enable_if<
-	std::is_convertible<typename 
-	std::iterator_traits<Iterator>::iterator_category, 
-	std::input_iterator_tag>::value,
-	bool>::type;
-
-template <typename Iterator>
-using IfIsForwardIterator = typename std::enable_if<
-	std::is_convertible<typename 
-	std::iterator_traits<Iterator>::iterator_category,
-	std::forward_iterator_tag>::value,
-	bool>::type;
-
-template <typename Iterator>
-using IfIsNotForwardIterator = typename std::enable_if<
-	!std::is_convertible<typename 
-	std::iterator_traits<Iterator>::iterator_category,
-	std::forward_iterator_tag>::value,
-	bool>::type;
 
 template <
 	typename,
@@ -195,22 +91,6 @@ constexpr bool is_nonbool_integral_v =
 	std::is_integral_v<_Type_> &&
 	!std::is_same_v<std::remove_cv_t<_Type_>, bool>;
 
-template <class _Iterator_>
-constexpr bool IteratorIsContiguous = std::contiguous_iterator<_Iterator_>;
-
-template <
-	class _FirstIterator_,
-	class _SecondIterator_>
-constexpr bool IteratorsAreContiguous = 
-	IteratorIsContiguous<_FirstIterator_> 
-	&& IteratorIsContiguous<_SecondIterator_>;
-
-
-template <class _Iterator_>
-constexpr bool IsIteratorVolatile = 
-	std::is_volatile_v<
-		std::remove_reference_t<
-			std::iter_reference_t<_Iterator_>>>;
 
 
 template <class _Type_>
@@ -657,8 +537,8 @@ namespace HasADLSwapDetail {
 	template <class _Type_>
 	struct HasADLSwap < _Type_, std::void_t<decltype(std::swap(
 		std::declval<_Type_&>(), 
-		std::declval<_Type_&>())) >> : 
-	std::true_type 
+		std::declval<_Type_&>())) >>: 
+			std::true_type 
 	{};
 } // namespace _Has_ADL_swap_detail
 
