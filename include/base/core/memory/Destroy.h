@@ -1,8 +1,24 @@
 #pragma once 
 
 #include <base/core/utility/TypeTraits.h>
+#include <base/core/compatibility/Compatibility.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
+
+#if defined(base_os_windows) && defined(base_cpp_msvc)
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange  = !std::conjunction_v<
+        std::is_trivially_destructible<_Type_>,
+        std::_Uses_default_destroy<_Allocator_, _Type_*>>;
+#else 
+    template <
+        typename _Type_,
+        class   _Allocator_>
+    constexpr bool CanDestroyRange = !std::is_trivially_destructible_v<_Type_>;
+#endif // defined(base_os_windows) && defined(base_cpp_msvc)
+
 
 template <class _Type_>
 base_constexpr_cxx20 inline void DestroyInPlace(_Type_& object) noexcept;

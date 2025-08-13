@@ -6,10 +6,10 @@
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
-struct nonesuch {
-	~nonesuch() = delete;
-	nonesuch(const nonesuch&) = delete;
-	void operator=(const nonesuch&) = delete;
+struct _Nonesuch {
+	~_Nonesuch() = delete;
+	_Nonesuch(const _Nonesuch&) = delete;
+	void operator=(const _Nonesuch&) = delete;
 };
 
 
@@ -43,7 +43,7 @@ template <
 	template <typename...> class	_Op_,
 	typename...						_Args_>
 using is_detected = typename _Detector<
-	nonesuch, void, 
+	_Nonesuch, void,
 	_Op_, _Args_...>::value_t;
 
 template <
