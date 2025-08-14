@@ -117,7 +117,7 @@ using NetworksList = std::vector<NetworkParameters>;
 
 base_constexpr_cxx20 Dot11SSID::Dot11SSID(uchar* array, uint64 length) noexcept {
 #if base_has_cxx20
-	if (is_constant_evaluated())
+	if (base::type_traits::is_constant_evaluated())
 		for (auto i = 0; i < length; ++i)
 			ssid[i] = array[i];
 	else

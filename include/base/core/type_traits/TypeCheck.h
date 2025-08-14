@@ -6,7 +6,7 @@
 #include <base/core/compatibility/CxxVersionDetection.h>
 
 #include <type_traits>
-
+#include <xmemory>
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
@@ -25,7 +25,7 @@ template <typename _Type_>
 inline constexpr bool is_relocatable_v = std::is_trivially_copyable_v<_Type_> && std::is_trivially_destructible_v<_Type_>;
 
 template <typename _Type_>
-inline constexpr bool is_value_initialization_bitwise_zero = std::is_scalar_v<_Type_> && !std::is_member_object_pointer_v<_Type_>;
+inline constexpr bool is_value_initialization_bitwise_zero_v = std::is_scalar_v<_Type_> && !std::is_member_object_pointer_v<_Type_>;
 
 
 #ifdef __cpp_lib_remove_cvref
@@ -64,7 +64,7 @@ template <
     typename    _Type_,
     class       _Allocator_,
     class ...   _Args_>
-constexpr inline bool Is_nothrow_move_constructible_args_v =
+constexpr inline bool is_nothrow_move_constructible_args_v =
 #if defined(base_cpp_msvc)
 	std::conjunction_v<
 		std::is_nothrow_move_constructible<_Type_>,
@@ -92,7 +92,7 @@ constexpr inline bool is_pointer_address_convertible_v = std::is_void_v<_Source_
 template <
 	class		_Ty,
 	class...	_Types>
-constexpr bool is_any_of_v = // true if and only if _Ty is in _Types
+constexpr inline bool is_any_of_v = // true if and only if _Ty is in _Types
 #if base_has_cxx17
     (std::is_same_v<_Ty, _Types> || ...);
 #else

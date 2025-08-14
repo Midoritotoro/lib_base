@@ -2,7 +2,7 @@
 
 #include <base/core/arch/Platform.h>
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/IteratorCheck.h>
 
 
 __BASE_NAMESPACE_BEGIN
@@ -68,13 +68,13 @@ template <
     class _Type_>
 constexpr bool VectorAlgorithmInFindIsSafe =
     // The iterator must be contiguous so we can get raw pointers.
-    IteratorIsContiguous<_Iterator_>
+    base::type_traits::is_iterator_contiguous_v<_Iterator_>
     // The iterator must not be volatile.
-    && !IsIteratorVolatile<_Iterator_>
+    && !base::type_traits::is_iterator_volatile_v<_Iterator_>
     // The type of the value to find must be compatible with the type of the elements.
-    && VectorAlgorithmInFindIsSafeElement<_Type_, IteratorValueType<_Iterator_>>;
+    && VectorAlgorithmInFindIsSafeElement<_Type_, base::type_traits::IteratorValueType<_Iterator_>>;
 
-struct   ZeroUpperOnDeleteAvx {
+struct ZeroUpperOnDeleteAvx {
     ZeroUpperOnDeleteAvx() = default;
 
     ZeroUpperOnDeleteAvx(const ZeroUpperOnDeleteAvx&) = delete;

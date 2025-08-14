@@ -1,8 +1,27 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
+
+template <
+    std::size_t A,
+    std::size_t B>
+struct MinimumSize:
+    std::integral_constant<std::size_t, (A < B) ? A : B>
+{};
+
+template <
+    std::size_t A,
+    std::size_t B>
+struct MaximumSize:
+    std::integral_constant<std::size_t, (A > B) ? A : B>
+{};
+
+template <class _Type_>
+struct MaximumObjects:
+    std::integral_constant<std::size_t, ~static_cast<std::size_t>(0) / sizeof(_Type_)>
+{};
 
 #if defined(base_cpp_msvc)
 

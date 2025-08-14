@@ -1,12 +1,15 @@
 #pragma once
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 #include <base/core/type_traits/IteratorCategory.h>
 #include <base/core/memory/AllocatorUtility.h>
 
 #include <src/core/memory/UninitializedBackout.h>
 #include <base/core/memory/PointerConversion.h>
+
+#include <base/core/type_traits/IsConstantEvaluated.h>
+#include <base/core/type_traits/IntegralProperties.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -15,10 +18,7 @@ inline   bool MemoryCopy(
     const void* sourcePointer,
     size_t      sourceLength) noexcept
 {
-    return (
-        memcpy(destinationPointer,
-            sourcePointer, sourceLength)
-        == destinationPointer);
+    return (memcpy(destinationPointer, sourcePointer, sourceLength) == destinationPointer);
 }
 
 template <
@@ -71,12 +71,12 @@ base_constexpr_cxx20 inline   _OutIterator_ MemoryCopyCountUnchecked(
     _OutIterator_   destinationIterator)
 {
 #if base_has_cxx20
-    static_assert(is_nonbool_integral_v<_SizeType_>);
+    static_assert(base::type_traits::is_nonbool_integral_v<_SizeType_>);
 #endif // base_has_cxx20
 
-    if constexpr (IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
+    if constexpr (base::type_traits::IteratorCopyCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
 #if base_has_cxx20
-        if (is_constant_evaluated() == false)
+        if (base::type_traits::is_constant_evaluated() == false)
 #endif // base_has_cxx20
             return MemoryCopyMemmoveCount(
                 std::move(firstIterator), 
@@ -129,14 +129,14 @@ template <
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(
-            countBytes / sizeof(IteratorValueType<_InputIterator_>));
+        inputFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_InputIterator_>>(
+            countBytes / sizeof(base::type_traits::IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(
-            countBytes / sizeof(IteratorValueType<_OutIterator_>));
+        outFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_OutIterator_>>(
+            countBytes / sizeof(base::type_traits::IteratorValueType<_OutIterator_>));
 
     return CopyResult {
         std::move(inputFirstIterator),
@@ -155,7 +155,7 @@ template <
     auto inputFirstAddress = CheckedToChar(inputFirstIterator);
     auto outFirstAddress   = CheckedToChar(outFirstIterator);
 
-    const auto countBytes = countObjects * sizeof(IteratorValueType<_InputIterator_>);
+    const auto countBytes = countObjects * sizeof(base::type_traits::IteratorValueType<_InputIterator_>);
 
     if (MemoryCopy(outFirstAddress, inputFirstAddress, countBytes) == false)
         return {};
@@ -163,12 +163,12 @@ template <
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(countObjects);
+        inputFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_InputIterator_>>(countObjects);
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(countObjects);
+        outFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_OutIterator_>>(countObjects);
 
     return {
         std::move(inputFirstIterator),
@@ -193,14 +193,14 @@ template <
     if constexpr (std::is_pointer_v<_InputIterator_>)
         inputFirstIterator = reinterpret_cast<_InputIterator_>(inputFirstAddress + countBytes);
     else
-        inputFirstIterator += static_cast<IteratorDifferenceType<_InputIterator_>>(
-            countBytes / sizeof(IteratorValueType<_InputIterator_>));
+        inputFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_InputIterator_>>(
+            countBytes / sizeof(base::type_traits::IteratorValueType<_InputIterator_>));
 
     if constexpr (std::is_pointer_v<_OutIterator_>)
         outFirstIterator = reinterpret_cast<_OutIterator_>(outFirstAddress + countBytes);
     else
-        outFirstIterator += static_cast<IteratorDifferenceType<_OutIterator_>>(
-            countBytes / sizeof(IteratorValueType<_OutIterator_>));
+        outFirstIterator += static_cast<base::type_traits::IteratorDifferenceType<_OutIterator_>>(
+            countBytes / sizeof(base::type_traits::IteratorValueType<_OutIterator_>));
 
     return {
         std::move(inputFirstIterator),
@@ -224,12 +224,12 @@ base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedCop
 {
     using _ValuePointer_ = AllocatorValueType<_Allocator_>*;
 
-    constexpr bool canMemmove = SentinelCopyCategory<
+    constexpr bool canMemmove = base::type_traits::SentinelCopyCategory<
         _InputIterator_, _Sentinel_, _ValuePointer_>::BitcopyConstructible;
 
     if constexpr (canMemmove) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
             if constexpr (std::is_same_v<_InputIterator_, _Sentinel_>) {
@@ -263,7 +263,7 @@ template <
     class _InputIterator_,
     class _Allocator_>
 // Copy _First + [0, _Count) to raw _Dest, using _Allocator
-base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedCopyCount(
+base_constexpr_cxx20 inline AllocatorPointerType<_Allocator_> UninitializedCopyCount(
     _InputIterator_                     firstIterator, 
     sizetype                            count, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -272,12 +272,12 @@ base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedCop
     using _PointerToValue_ = AllocatorValueType<_Allocator_>*;
 
     constexpr bool canMemove = std::bool_constant<
-        IteratorCopyCategory<
+        base::type_traits::IteratorCopyCategory<
             _InputIterator_, _PointerToValue_>::BitcopyConstructible>::value;
 
     if constexpr (canMemove) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
             MemoryMove(firstIterator, count, UnFancy(destinationPointer));
@@ -304,9 +304,9 @@ base_constexpr_cxx20 inline   _NoThrowForwardIterator_ UninitializedCopyUnchecke
     const _InputIterator_       lastIterator,
     _NoThrowForwardIterator_    destinationIterator)
 {
-    if constexpr (IteratorCopyCategory<_InputIterator_, _NoThrowForwardIterator_>::BitcopyConstructible)
-#if BASE_HAS_CXX20
-        if (is_constant_evaluated() == false)
+    if constexpr (base::type_traits::IteratorCopyCategory<_InputIterator_, _NoThrowForwardIterator_>::BitcopyConstructible)
+#if base_has_cxx20
+        if (base::type_traits::is_constant_evaluated() == false)
 #endif
             return MemoryMove(firstIterator, lastIterator, destinationIterator);
 

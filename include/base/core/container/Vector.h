@@ -148,15 +148,15 @@ public:
 	base_constexpr_cxx20 inline ConstReference operator[](const SizeType offset) const noexcept;
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_eq_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_eq_result_container<
 		Vector, _ComparedElementType_> operator==(const Vector& other) const noexcept;
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_eq_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_eq_result_container<
 		Vector, _ComparedElementType_> operator!=(const Vector& other) const noexcept;
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_lt_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 		Vector, _ComparedElementType_> operator<(const Vector& other) const noexcept(
 				noexcept(std::lexicographical_compare<
 					typename Vector<_ComparedElementType_>::const_iterator,
@@ -166,17 +166,17 @@ public:
 				other.begin(), other.end())));
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_lt_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 		Vector, _ComparedElementType_> operator>(const Vector& other) const noexcept(
 				noexcept(other < std::declval<Vector<_ComparedElementType_>>()));
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_lt_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 		Vector, _ComparedElementType_> operator<=(const Vector& other) const noexcept(
 			noexcept(other < std::declval<Vector<_ComparedElementType_>>()));
 
 	template <typename _ComparedElementType_ = ValueType>
-	base_constexpr_cxx20 inline compare_lt_result_container<
+	base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 		Vector, _ComparedElementType_> operator>=(const Vector& other) const noexcept(
 			noexcept(std::declval<Vector<_ComparedElementType_>>() < other));
 
@@ -881,7 +881,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_eq_result_container<
+base_constexpr_cxx20 inline type_traits::compare_eq_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator==(const Vector& other) const noexcept
 {
@@ -900,7 +900,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_eq_result_container<
+base_constexpr_cxx20 inline type_traits::compare_eq_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator!=(const Vector& other) const noexcept
 {
@@ -912,7 +912,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_lt_result_container<
+base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator<(const Vector& other) const noexcept(
 			noexcept(std::lexicographical_compare<
@@ -932,7 +932,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_lt_result_container<
+base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator>(const Vector& other) const noexcept(
 			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
@@ -945,7 +945,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_lt_result_container<
+base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator<=(const Vector& other) const noexcept(
 			noexcept(other < std::declval<Vector<_ComparedElementType_>>()))
@@ -958,7 +958,7 @@ template <
 	class		_Allocator_,
 	class		_SimdOptimization_>
 template <typename _ComparedElementType_>
-base_constexpr_cxx20 inline compare_lt_result_container<
+base_constexpr_cxx20 inline type_traits::compare_lt_result_container<
 	Vector<_Element_, _Allocator_, _SimdOptimization_>, _ComparedElementType_> 
 		Vector<_Element_, _Allocator_, _SimdOptimization_>::operator>=(const Vector& other) const noexcept(
 			noexcept(std::declval<Vector<_ComparedElementType_>>() < other))
@@ -2858,7 +2858,7 @@ base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimizatio
 	_Valty_&&...	_Val)
 {
 	
-	if constexpr (IsNoThrowMoveConstructibleArgs<ValueType, allocator_type, _Valty_...>)
+	if constexpr (base::type_traits::is_nothrow_move_constructible_args_v<ValueType, allocator_type, _Valty_...>)
 		memory::ConstructInPlace(
 			*_Location, std::forward<_Valty_>(_Val)...);
 	else
@@ -3295,7 +3295,7 @@ base_constexpr_cxx20 inline void Vector<_Element_, _Allocator_, _SimdOptimizatio
 
 	if (_Newsize > _OldSize) {
 		bool _Copied = false;
-		if constexpr (memory::IteratorCopyCategory<_Iterator_, pointer>::BitcopyAssignable) {
+		if constexpr (base::type_traits::IteratorCopyCategory<_Iterator_, pointer>::BitcopyAssignable) {
 #if BASE_HAS_CXX20
 			if (!is_constant_evaluated())
 #endif

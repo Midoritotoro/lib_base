@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 #include <base/core/compatibility/Compatibility.h>
 
 __BASE_MEMORY_NAMESPACE_BEGIN
@@ -41,7 +41,7 @@ base_constexpr_cxx20 inline void DestroyRange(
     _NoThrowForwardIterator_    firstIterator,
     const _NoThrowSentinel_     lastSentinel) noexcept
 {
-    if constexpr (std::is_trivially_destructible_v<IteratorValueType<_NoThrowForwardIterator_>> == false)
+    if constexpr (std::is_trivially_destructible_v<base::type_traits::IteratorValueType<_NoThrowForwardIterator_>> == false)
         for (; firstIterator != lastSentinel; ++firstIterator)
             DestroyInPlace(*firstIterator);
 }

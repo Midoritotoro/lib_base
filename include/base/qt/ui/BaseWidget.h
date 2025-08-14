@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/qt/style/StyleCore.h>
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 #include <base/qt/ui/Utility.h>
 #include <base/core/utility/Assert.h>

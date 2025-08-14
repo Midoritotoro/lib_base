@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <base/core/Types.h>
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 
 

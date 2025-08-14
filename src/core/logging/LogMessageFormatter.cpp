@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-#include <base/core/utility/TypeInfo.h>
+#include <base/core/type_traits/TypeInfo.h>
 
 #include <base/core/string/String.h>
 #include <src/core/logging/LoggingCategory.h>

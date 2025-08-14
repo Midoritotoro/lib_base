@@ -45,14 +45,14 @@ template <
     class _BidirectionalIterator1_,
     class _BidirectionalIterator2_>
 // copy [_First, _Last) backwards to [..., _Dest)
-  base_constexpr_cxx20 _BidirectionalIterator2_ CopyBackwardUnchecked(
+base_constexpr_cxx20 _BidirectionalIterator2_ CopyBackwardUnchecked(
     _BidirectionalIterator1_ firstIterator, 
     _BidirectionalIterator1_ lastIterator, 
     _BidirectionalIterator2_ destinationIterator) 
 {
-    if constexpr (IteratorCopyCategory<_BidirectionalIterator1_, _BidirectionalIterator2_>::BitcopyAssignable) {
+    if constexpr (base::type_traits::IteratorCopyCategory<_BidirectionalIterator1_, _BidirectionalIterator2_>::BitcopyAssignable) {
 #if base_has_cxx20
-        if (is_constant_evaluated() == false)
+        if (base::type_traits::is_constant_evaluated() == false)
 #endif // base_has_cxx20
         {
             return CopyBackwardMemmove(

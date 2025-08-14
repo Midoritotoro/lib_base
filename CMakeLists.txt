@@ -7,7 +7,7 @@ project ("lib_base"
 
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
@@ -213,7 +213,6 @@ set(PRIVATE_HEADERS
     
     src/core/utility/simd/traits/MinMaxTraitsSSE2.h
 
-    src/core/utility/simd/SimdAlgorithmSafety.h
     src/core/utility/simd/SimdTailMask.h
 
     src/core/utility/simd/SimdAlgorithm.h
@@ -291,6 +290,8 @@ set(PRIVATE_HEADERS
 )
 
 set(PUBLIC_HEADERS 
+    include/base/core/type_traits/SimdAlgorithmSafety.h
+
     include/base/core/compatibility/BranchPrediction.h
     include/base/core/compatibility/CxxVersionDetection.h
 
@@ -543,6 +544,8 @@ set(PUBLIC_HEADERS
     include/base/core/type_traits/IntegralProperties.h
     include/base/core/type_traits/SwapSafety.h
 
+    include/base/core/type_traits/TypeTraits.h
+
     include/base/core/type_traits/TypeCheck.h
 
     include/base/core/memory/ToAddress.h
@@ -615,7 +618,7 @@ endif()
 set_target_properties(
     lib_base PROPERTIES
 
-    CXX_STANDARD 20
+    CXX_STANDARD 23
     CXX_STANDARD_REQUIRED ON
 
     VERSION "${PROJECT_VERSION}"
@@ -625,9 +628,9 @@ set_target_properties(
     OUTPUT_NAME lib_base
 )
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_features(lib_base PUBLIC cxx_std_23)
-endif()
+#if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+target_compile_features(lib_base PUBLIC cxx_std_23)
+#endif()
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")

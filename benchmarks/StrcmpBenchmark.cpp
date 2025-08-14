@@ -1,5 +1,5 @@
-#include <src/core/string/crt/cs/BaseStrcmp.h>
-#include <src/core/string/crt/BaseAnyStrcmp.h>
+//#include <src/core/string/crt/cs/BaseStrcmp.h>
+//#include <src/core/string/crt/BaseAnyStrcmp.h>
 
 #include <uchar.h>
 #include <wchar.h>
@@ -33,8 +33,8 @@ public:
         static constexpr auto textArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
         static constexpr auto textReversedArray = FixedArray<_Char_, stringAlignedSizeForBenchmark>{};
 
-        while (state.KeepRunning())
-            benchmark::DoNotOptimize(base::string::__base_any_strcmp(textArray.data, textReversedArray.data));
+        //while (state.KeepRunning())
+           // benchmark::DoNotOptimize(base::string::__base_any_strcmp(textArray.data, textReversedArray.data));
     }
 };
 

@@ -154,7 +154,7 @@ struct _Expand_operator_less_than_container<_Type_, true>:
 		std::disjunction<
 			std::is_same<_Type_, typename _Type_::value_type>,
 			_Expand_operator_less_than<typename _Type_::value_type>
-	>, expand_operator_less_than_tuple<_Type_>
+	>, _Expand_operator_less_than_tuple<_Type_>
 > 
 {};
 
@@ -207,12 +207,12 @@ inline constexpr bool is_dereferenceable_v = _Is_dereferenceable<_Type_>::value;
 
 
 template <typename _Type_>
-struct _Has_operator_equal: 
+struct has_operator_equal: 
 	_Expand_operator_equal<_Type_>
 {};
 
 template <typename _Type_>
-inline constexpr bool has_operator_equal_v = _Has_operator_equal<_Type_>::value;
+inline constexpr bool has_operator_equal_v = has_operator_equal<_Type_>::value;
 
 template <
 	typename _Container_,
@@ -221,15 +221,15 @@ using _Has_operator_equal_container =
 	std::disjunction<
 		std::is_base_of<
 			_Container_, _Type_>,
-	_Has_operator_equal<_Type_>>;
+	has_operator_equal<_Type_>>;
 
 template <typename _Type_>
-struct _Has_operator_less_than: 
+struct has_operator_less_than: 
 	_Expand_operator_less_than<_Type_> 
 {};
 
 template <typename _Type_>
-inline constexpr bool has_operator_less_than_v = _Has_operator_less_than<_Type_>::value;
+inline constexpr bool has_operator_less_than_v = has_operator_less_than<_Type_>::value;
 
 
 template <
@@ -239,12 +239,12 @@ using has_operator_less_than_container =
 	std::disjunction<
 		std::is_base_of<
 			_Container_, _Type_>,
-	_Has_operator_less_than<_Type_>>;
+	has_operator_less_than<_Type_>>;
 
 template <typename ... _Type_>
 using compare_eq_result = std::enable_if_t<
 	std::conjunction_v<
-		_Has_operator_equal<_Type_>...>,
+	has_operator_equal<_Type_>...>,
 	bool>;
 
 template <
@@ -259,7 +259,7 @@ using compare_eq_result_container = std::enable_if_t<
 template <typename ... _Type_>
 using compare_lt_result = std::enable_if_t<
 	std::conjunction_v<
-		_Has_operator_less_than<_Type_>...>,
+	has_operator_less_than<_Type_>...>,
 	bool>;
 
 template <
@@ -267,7 +267,7 @@ template <
 	typename ...	_Type_>
 using compare_lt_result_container = std::enable_if_t<
 	std::conjunction_v<
-		_Has_operator_less_than_container<
+		has_operator_less_than_container<
 			_Container_, _Type_>...>,
 	bool>;
 

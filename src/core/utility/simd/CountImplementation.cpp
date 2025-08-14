@@ -4,7 +4,7 @@
 #include <base/core/arch/ProcessorFeatures.h>
 
 #include <base/core/memory/MemoryUtility.h>
-#include <src/core/utility/simd/SimdAlgorithmSafety.h>
+#include <base/core/type_traits/SimdAlgorithmSafety.h>
 
 #include <src/core/utility/simd/traits/SimdCountTraits.h>
 #include <src/core/utility/simd/SimdTailMask.h>

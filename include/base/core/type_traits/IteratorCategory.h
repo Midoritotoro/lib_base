@@ -1,6 +1,9 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeCheck.h>
+#include <base/core/type_traits/IteratorCheck.h>
+
+#include <algorithm>
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
@@ -47,11 +50,11 @@ struct TrivialCategory<
     _SourceReference_, _DestinationReference_>
 {
     static constexpr bool BitcopyConstructible =
-        IsPointerAddressConvertible<_Source_, _Destination_> 
+        is_pointer_address_convertible_v<_Source_, _Destination_> 
         && std::is_trivially_constructible_v<_Destination_*, _SourceReference_>;
 
     static constexpr bool BitcopyAssignable =
-        IsPointerAddressConvertible<_Source_, _Destination_>
+        is_pointer_address_convertible_v<_Source_, _Destination_>
         && std::is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
 };
 
@@ -63,10 +66,11 @@ struct FalseTrivialCategory {
 template <
     class _SourceIterator_, 
     class _DestinationIterator_,
-    bool AreContiguous = IteratorsAreContiguous<
-            _SourceIterator_, _DestinationIterator_> 
-            && !IsIteratorVolatile<_SourceIterator_>
-            && !IsIteratorVolatile<_DestinationIterator_>>
+    bool AreContiguous = 
+        is_iterator_contiguous_v<_SourceIterator_> 
+            && is_iterator_contiguous_v<_DestinationIterator_>
+            && !is_iterator_volatile_v<_SourceIterator_>
+            && !is_iterator_volatile_v<_DestinationIterator_>>
     struct IteratorMoveCategory : 
         TrivialCategory<
             IteratorValueType<_SourceIterator_>, 
@@ -88,10 +92,11 @@ struct IteratorMoveCategory<
 template <
     class _SourceIterator_,
     class _DestinationIterator_,
-    bool AreContiguous = IteratorsAreContiguous<
-    _SourceIterator_, _DestinationIterator_>
-    && !IsIteratorVolatile<_SourceIterator_>
-    && !IsIteratorVolatile<_DestinationIterator_>>
+    bool AreContiguous = 
+        is_iterator_contiguous_v<_SourceIterator_> 
+            && is_iterator_contiguous_v<_DestinationIterator_>
+            && !is_iterator_volatile_v<_SourceIterator_>
+            && !is_iterator_volatile_v<_DestinationIterator_>>
     struct IteratorCopyCategory :
         TrivialCategory <
             IteratorValueType<_SourceIterator_>,
@@ -105,7 +110,7 @@ template <
     class _SourceIterator_,
     class _DestinationIterator_>
 struct IteratorCopyCategory<
-    _SourceIterator_, _DestinationIterator_, false> : 
+    _SourceIterator_, _DestinationIterator_, false>: 
         FalseTrivialCategory
 {};
 
@@ -113,7 +118,7 @@ template <
     class _SourceIterator_,
     class _DestinationIterator_>
 struct IteratorCopyCategory<
-    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false> : 
+    std::move_iterator<_SourceIterator_>, _DestinationIterator_, false>: 
         IteratorMoveCategory<_SourceIterator_, _DestinationIterator_>
 {};
 

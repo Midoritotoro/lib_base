@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/arch/Platform.h>
-#include <src/core/utility/simd/SimdAlgorithmSafety.h>
+#include <base/core/type_traits/SimdAlgorithmSafety.h>
 
 #include <src/core/utility/simd/SimdTailMask.h>
 #include <base/core/arch/ProcessorFeatures.h>

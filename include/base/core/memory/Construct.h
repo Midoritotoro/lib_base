@@ -36,7 +36,7 @@ base_constexpr_cxx20 inline void ConstructInPlace(
         std::is_nothrow_constructible_v<_Type_, _Types_...>) 
 {
 #if base_has_cxx20
-    if (is_constant_evaluated())
+    if (base::type_traits::is_constant_evaluated())
         ConstructAt(AddressOf(object), std::forward<_Types_>(args)...);
     else
 #endif

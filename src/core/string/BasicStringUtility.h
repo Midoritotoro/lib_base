@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 #include <base/core/math/OverflowCheck.h>
 
 
@@ -35,9 +35,9 @@ template <
     class _InputIterator_, 
     class _OutIterator_>
 inline std::pair<_InputIterator_, _OutIterator_> copy_n(
-    _InputIterator_                         b,
-    IteratorDifferenceType<_InputIterator_> n,
-    _OutIterator_                           d)
+    _InputIterator_                                             b,
+    base::type_traits::IteratorDifferenceType<_InputIterator_>  n,
+    _OutIterator_                                               d)
 {
     for (; n != 0; --n, ++b, ++d)
         *d = *b;

@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/string/StringConfig.h>
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 

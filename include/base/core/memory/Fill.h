@@ -18,7 +18,7 @@ void FillMemset(
     const _Type_&               value,
     const size_t                count)
 {
-    IteratorValueType<_ContiguousIterator_> destinationValue = value;
+    base::type_traits::IteratorValueType<_ContiguousIterator_> destinationValue = value;
     memset(
         ToAddress(destinationIterator),
         UnCheckedToUnsignedChar(destinationValue), count);
@@ -31,7 +31,7 @@ void MemsetZero(
 {
     memset(
         ToAddress(destinationIterator), 0,
-        count * sizeof(IteratorValueType<_ContiguousIterator_>));
+        count * sizeof(base::type_traits::IteratorValueType<_ContiguousIterator_>));
 }
 
 inline   bool MemoryFill(
@@ -45,7 +45,7 @@ inline   bool MemoryFill(
 
 template <class _Allocator_>
 // copy _Count copies of _Val to raw _First, using _Al
-base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedFillCount(
+base_constexpr_cxx20 inline AllocatorPointerType<_Allocator_> UninitializedFillCount(
     AllocatorPointerType<_Allocator_>       firstPointer,
     AllocatorSizeType<_Allocator_>          count,
     const AllocatorValueType<_Allocator_>&  value,
@@ -53,21 +53,21 @@ base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedFil
 {
     using _ValueType_ = AllocatorValueType<_Allocator_>;
 
-    if constexpr (IsFillMemsetSafe<_ValueType_*, _ValueType_>) {
+    if constexpr (base::type_traits::IsFillMemsetSafe<_ValueType_*, _ValueType_>) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
             FillMemset(UnFancy(firstPointer), value, static_cast<size_t>(count));
             return firstPointer + count;
         }
     }
-    else if constexpr (IsFillZeroMemsetSafe<_ValueType_*, _ValueType_>) {
+    else if constexpr (base::type_traits::IsFillZeroMemsetSafe<_ValueType_*, _ValueType_>) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
-            if (IsAllBitsZero(value)) {
+            if (base::type_traits::IsAllBitsZero(value)) {
                 MemsetZero(UnFancy(firstPointer), static_cast<size_t>(count));
                 return firstPointer + count;
             }
@@ -110,12 +110,12 @@ void uninitialized_fill(
     auto first        = UnwrapIterator(firstIterator);
     const auto last   = UnwrapIterator(lastIterator);
      
-    if constexpr (IsFillMemsetSafe<_WithoutCvref_, _Type_>) 
+    if constexpr (base::type_traits::IsFillMemsetSafe<_WithoutCvref_, _Type_>)
         return FillMemset(
             first, value,
             static_cast<size_t>(last - first));
 
-    if constexpr (IsFillZeroMemsetSafe<_WithoutCvref_, _Type_>)
+    if constexpr (base::type_traits::IsFillZeroMemsetSafe<_WithoutCvref_, _Type_>)
         if (IsAllBitsZero(value))
             return MemsetZero(first, static_cast<size_t>(last - first));
             

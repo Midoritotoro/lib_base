@@ -12,7 +12,7 @@
 #endif
 
 #include <base/core/utility/Execution.h>
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 //#include <src/core/utility/algorithm/AllOf.h>
 //#include <src/core/utility/algorithm/NoneOf.h>
@@ -47,27 +47,6 @@
 __BASE_NAMESPACE_BEGIN
 
 using namespace ::std::ranges;
-
-template<typename I, typename S, typename T,
-	typename Op = plus, typename P = identity>
-	requires ::std::input_iterator<I>&&
-::std::sentinel_for<S, I>&&
-	indirectly_binary_invocable<Op, T*, ::std::projected<I, P>>&&
-	::std::assignable_from<T&, ::std::indirect_result_t<Op&,
-	T*, ::std::projected<I, P>>>
-T accumulate(
-	I first,
-	S last,
-	T init,
-	Op op = Op{},
-	P proj = P{})
-{
-	for (; first != last; ++first)
-		init = std::invoke(op, init, std::invoke(proj, *first));
-	return init;
-}
-
-
 
 template <typename T>
 void accumulateMax(T& a, const T& b) {

@@ -2,7 +2,7 @@
 
 
 #include <src/core/algorithm/AlgorithmDebug.h>
-#include <src/core/utility/simd/SimdAlgorithmSafety.h>
+#include <base/core/type_traits/SimdAlgorithmSafety.h>
 
 #include <base/core/utility/Execution.h>
 

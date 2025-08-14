@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 __BASE_STRING_NAMESPACE_BEGIN
 
@@ -38,7 +38,7 @@ struct IsCompatibleCharTypeHelper:
 
 template <typename _Char>
 struct IsCompatibleCharType
-	: IsCompatibleCharTypeHelper<remove_cvref_t<_Char>> 
+	: IsCompatibleCharTypeHelper<base::type_traits::remove_cvref_t<_Char>>
 {};
 
 template <typename Pointer>
@@ -53,7 +53,7 @@ struct IsCompatiblePointerHelper<_Char*>
 
 template <typename Pointer>
 struct IsCompatiblePointer
-	: IsCompatiblePointerHelper<remove_cvref_t<Pointer>>
+	: IsCompatiblePointerHelper<base::type_traits::remove_cvref_t<Pointer>>
 {};
 
 template <

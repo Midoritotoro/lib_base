@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeCheck.h>
 #include <base/core/utility/Flags.h>
 
 
@@ -12,8 +12,8 @@ public:
         isPointer [[deprecated("Use std::is_pointer instead")]] = std::is_pointer_v<T>,
         isIntegral [[deprecated("Use std::is_integral instead")]] = std::is_integral_v<T>,
         isComplex = !std::is_trivial_v<T>,
-        isRelocatable = base::IsRelocatable<T>,
-        isValueInitializationBitwiseZero = base::IsValueInitializationBitwiseZero<T>,
+        isRelocatable = base::type_traits::is_relocatable_v<T>,
+        isValueInitializationBitwiseZero = base::type_traits::is_value_initialization_bitwise_zero_v<T>,
     };
 };
 
@@ -57,10 +57,10 @@ class TypeInfo<TYPE > \
 public: \
     enum { \
         isComplex = (((FLAGS) & PRIMITIVE_TYPE) == 0) && !std::is_trivial_v<TYPE>, \
-        isRelocatable = !isComplex || ((FLAGS) & RELOCATABLE_TYPE) || IsRelocatable<TYPE>, \
+        isRelocatable = !isComplex || ((FLAGS) & RELOCATABLE_TYPE) || base::type_traits::is_relocatable_v<TYPE>, \
         isPointer [[deprecated("Use std::is_pointer instead")]] = std::is_pointer_v< TYPE >, \
         isIntegral [[deprecated("Use std::is_integral instead")]] = std::is_integral< TYPE >::value, \
-        isValueInitializationBitwiseZero = IsValueInitializationBitwiseZero<TYPE>, \
+        isValueInitializationBitwiseZero = base::type_traits::is_value_initialization_bitwise_zero_v<TYPE>, \
     }; \
     static_assert(!isRelocatable || \
                   std::is_copy_constructible_v<TYPE > || \

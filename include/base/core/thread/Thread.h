@@ -3,7 +3,7 @@
 #include <base/core/thread/AbstractThread.h>
 #include <base/core/utility/ClassHelperMacros.h>
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 #if defined(base_os_windows)
 	#include <base/core/thread/WindowsThread.h>

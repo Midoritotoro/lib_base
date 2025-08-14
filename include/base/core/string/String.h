@@ -3,7 +3,7 @@
 #include <base/core/string/Char.h>
 
 #include <base/core/string/StringIterator.h>
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 
 #include <vector>
 #include <src/core/string/BasicString.h>

@@ -1,11 +1,14 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
+#include <base/core/compatibility/FunctionAttributes.h>
+
+#include <base/core/type_traits/IntegralProperties.h>
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
 template <class _Type_>
-base_constexpr_cxx20 inline bool IsAllBitsZero(const _Type_& value) {
+bool IsAllBitsZero(const _Type_& value) {
     static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
 
     if constexpr (std::is_same_v<_Type_, std::nullptr_t>)
@@ -18,10 +21,10 @@ base_constexpr_cxx20 inline bool IsAllBitsZero(const _Type_& value) {
 template <
     class _ForwardIterator_,
     class _Type_,
-    bool = IteratorIsContiguous<_ForwardIterator_>>
+    bool = is_iterator_contiguous_v<_ForwardIterator_>>
 constexpr bool IsFillMemsetSafe = std::conjunction_v<
     std::is_scalar<_Type_>,
-    IsCharacterOrByteOrBool<
+    is_character_or_byte_or_bool_v<
         unwrap_enum_t<
             std::remove_reference_t<
                 IteratorReferenceType<_ForwardIterator_>>>>,
@@ -41,7 +44,7 @@ constexpr bool IsFillMemsetSafe<_ForwardIterator_, _Type_, false> = false;
 template <
     class _ForwardIterator_,
     class _Type_,
-    bool = IteratorIsContiguous<_ForwardIterator_>>
+    bool = is_iterator_contiguous_v<_ForwardIterator_>>
 constexpr bool IsFillZeroMemsetSafe =
     std::conjunction_v<
         std::is_scalar<_Type_>, 

@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <base/core/compatibility/CxxVersionDetection.h>
 #include <base/core/compatibility/CompilerDetection.h>
 
 

@@ -8,14 +8,14 @@ template <
     class _InputIterator_,
     class _OutIterator_>
 // move [_First, _Last) to [_Dest, ...)
-base_constexpr_cxx20 inline   _OutIterator_ MoveUnChecked(
+base_constexpr_cxx20 inline _OutIterator_ MoveUnChecked(
     _InputIterator_ firstIterator,
     _InputIterator_ lastIterator,
     _OutIterator_   destinationIterator)
 {
-    if constexpr (IteratorMoveCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
+    if constexpr (base::type_traits::IteratorMoveCategory<_InputIterator_, _OutIterator_>::BitcopyAssignable)
 #if base_has_cxx20
-            if (!is_constant_evaluated())
+            if (!base::type_traits::is_constant_evaluated())
 #endif
                 return MemoryCopyMemmoveCount(firstIterator, lastIterator, destinationIterator);
 
@@ -30,7 +30,7 @@ template <
     class _InputIterator_, 
     class _Allocator_>
 // move [_First, _Last) to raw _Dest, using _Al
-base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMove(
+base_constexpr_cxx20 inline AllocatorPointerType<_Allocator_> UninitializedMove(
     _InputIterator_                     firstIterator,
     _InputIterator_                     lastIterator, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -38,9 +38,9 @@ base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMov
 {
     using _Ptrval = AllocatorValueType<_Allocator_>*;
 
-    if constexpr (IteratorMoveCategory<_InputIterator_, _Ptrval>::BitcopyConstructible) {
+    if constexpr (base::type_traits::IteratorMoveCategory<_InputIterator_, _Ptrval>::BitcopyConstructible) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
             MemoryMove(firstIterator, lastIterator, UnFancy(destinationPointer));
@@ -60,7 +60,7 @@ template <
     class _InputIterator_, 
     class _Allocator_>
 // move [_First, _First + _Count) to raw _Destination, using _Allocator
-base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMoveCount(
+base_constexpr_cxx20 inline AllocatorPointerType<_Allocator_> UninitializedMoveCount(
     const _InputIterator_               firstIterator,
     const sizetype                      count, 
     AllocatorPointerType<_Allocator_>   destinationPointer,
@@ -68,9 +68,9 @@ base_constexpr_cxx20 inline   AllocatorPointerType<_Allocator_> UninitializedMov
 {
     using _Ptrval = AllocatorValueType<_Allocator_>*;
 
-    if constexpr (IteratorMoveCategory<_InputIterator_, _Ptrval>::BitcopyConstructible) {
+    if constexpr (base::type_traits::IteratorMoveCategory<_InputIterator_, _Ptrval>::BitcopyConstructible) {
 #if base_has_cxx20
-        if (!is_constant_evaluated())
+        if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
             MemoryCopyCount(firstIterator, count, UnFancy(destinationPointer));

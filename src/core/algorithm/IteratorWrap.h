@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 #include <base/core/utility/Execution.h>
 
 #ifdef base_cpp_msvc

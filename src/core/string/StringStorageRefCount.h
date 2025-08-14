@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <base/core/utility/TypeTraits.h>
+#include <base/core/type_traits/TypeTraits.h>
 #include <base/core/thread/AtomicInteger.h>
 
 #include <base/core/math/OverflowCheck.h>
