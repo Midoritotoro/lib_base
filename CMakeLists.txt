@@ -358,9 +358,6 @@ set(PUBLIC_HEADERS
     include/base/core/BaseExport.h
     include/base/core/system/SystemTools.h
 
-    include/base/core/utility/TypeTraits.h
- 
-
     include/base/core/Types.h
     include/base/core/arch/SimdHelpers.h
     include/base/core/arch/SystemDetection.h
@@ -385,8 +382,6 @@ set(PUBLIC_HEADERS
 
     include/base/core/utility/ClassHelperMacros.h
     include/base/core/utility/Swap.h
-
-    include/base/core/utility/TypeInfo.h
 
     include/base/core/math/BitMath.h
     include/base/core/math/Random.h
@@ -483,48 +478,27 @@ set(PUBLIC_HEADERS
     include/base/core/logging/MessageLogger.h
     include/base/core/string/StringView.h
 
-    include/base/core/algorithm/AllOf.h
-    include/base/core/algorithm/AnyOf.h
 
-    include/base/core/algorithm/NoneOf.h
-    include/base/core/algorithm/Copy.h
+    include/base/core/algorithm/iterator_based/find/Find.h
+    include/base/core/algorithm/iterator_based/find/FindIf.h
 
-    include/base/core/algorithm/Count.h
+    include/base/core/algorithm/iterator_based/find/FindIfNot.h
+    include/base/core/algorithm/iterator_based/find/FindFirstOf.h
 
-    include/base/core/algorithm/find/Find.h
-    include/base/core/algorithm/find/FindIf.h
-
-    include/base/core/algorithm/find/FindIfNot.h
-    include/base/core/algorithm/find/FindFirstOf.h
-
-    include/base/core/algorithm/find/FindLastOf.h
+    include/base/core/algorithm/iterator_based/find/FindLastOf.h
 
 
-    include/base/core/algorithm/batch/ForEach.h
-    include/base/core/algorithm/batch/ForEachN.h
+    include/base/core/algorithm/iterator_based/batch/ForEach.h
+    include/base/core/algorithm/iterator_based/batch/ForEachN.h
     
-    include/base/core/algorithm/comparison/LexicographicalCompare.h
-    include/base/core/algorithm/comparison/LexicographicalCompareThreeWay.h
+    include/base/core/algorithm/iterator_based/comparison/LexicographicalCompare.h
+    include/base/core/algorithm/iterator_based/comparison/LexicographicalCompareThreeWay.h
 
-    include/base/core/algorithm/PartialSort.h
+    include/base/core/algorithm/iterator_based/copy/CopyIf.h
+    include/base/core/algorithm/iterator_based/copy/CopyBackward.h
+ 
+    include/base/core/algorithm/iterator_based/copy/ReverseCopy.h
 
-    include/base/core/algorithm/Remove.h
-    include/base/core/algorithm/Replace.h
-
-    include/base/core/algorithm/Reverse.h
-    include/base/core/algorithm/Sort.h
-
-    include/base/core/algorithm/SwapRanges.h
-    include/base/core/algorithm/Transform.h
-    
-    include/base/core/algorithm/ReverseCopy.h
-    include/base/core/algorithm/Rotate.h
-
-    include/base/core/algorithm/Fill.h
-    include/base/core/algorithm/Mismatch.h
-
-    include/base/core/algorithm/Search.h
-    include/base/core/algorithm/Move.h
 
     include/base/core/memory/Copy.h
     include/base/core/memory/Construct.h
@@ -617,9 +591,9 @@ endif()
 
 set_target_properties(
     lib_base PROPERTIES
-
-    CXX_STANDARD 23
+    
     CXX_STANDARD_REQUIRED ON
+    CXX_STANDARD 23
 
     VERSION "${PROJECT_VERSION}"
     SOVERSION "${PROJECT_VERSION_MAJOR}"
@@ -628,9 +602,9 @@ set_target_properties(
     OUTPUT_NAME lib_base
 )
 
-#if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-target_compile_features(lib_base PUBLIC cxx_std_23)
-#endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_definitions(lib_base PUBLIC -std:c++23)
+endif()
 
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -705,7 +679,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR (CMAKE_CXX_COMPILER_ID STREQUAL "C
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-O3 -Ot)
+        add_compile_options(-O2 -Ot -std:c++23)
     endif()
 
     target_compile_options(

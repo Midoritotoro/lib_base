@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 project(lib_baseBenchmarks LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if (PROJECT_IS_TOP_LEVEL)
     find_package(lib_base REQUIRED)
 endif()

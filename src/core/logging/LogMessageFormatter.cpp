@@ -113,8 +113,11 @@ private:
 class LoggingCategoryWithEnvironmentOverride : public LoggingCategory
 {
 public:
-    LoggingCategoryWithEnvironmentOverride(const char* category, const char* env)
-        : LoggingCategory(registerOverride(category, env), LogMessageType::InfoMessage)
+    LoggingCategoryWithEnvironmentOverride(
+        const char* category,
+        const char* environment
+    ):
+        LoggingCategory(registerOverride(category, environment), LogMessageType::InfoMessage)
     {}
 
 private:

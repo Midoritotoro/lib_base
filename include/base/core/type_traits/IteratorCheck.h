@@ -53,14 +53,4 @@ template <class _Iterator_>
 constexpr inline bool is_iterator_volatile_v = std::is_volatile_v<std::remove_reference_t<std::iter_reference_t<_Iterator_>>>;
 
 
-//template <class _Iterator_>
-//constexpr bool isIteratorForwardCxx17 = std::is_convertible_v<memory::IteratorCategory<_Iterator_>, std::forward_iterator_tag>;
-//
-//template <class _Iter>
-//constexpr bool _Is_ranges_fwd_iter_v =
-//#if _HAS_CXX20
-//    forward_iterator<_Iter> ||
-//#endif
-//    _Is_cpp17_fwd_iter_v<_Iter>;
-
 __BASE_TYPE_TRAITS_NAMESPACE_END

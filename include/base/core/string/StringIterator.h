@@ -25,7 +25,7 @@ public:
 
     using BaseClass::BaseClass;
 
-      base_constexpr_cxx20 reference operator*() const noexcept {
+    base_constexpr_cxx20 reference operator*() const noexcept {
         return const_cast<reference>(BaseClass::operator*());
     }
 
