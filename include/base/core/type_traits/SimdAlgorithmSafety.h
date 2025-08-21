@@ -5,7 +5,7 @@
 #include <base/core/type_traits/IteratorCheck.h>
 
 
-__BASE_NAMESPACE_BEGIN
+__BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
 template <
     class _Type_,
@@ -85,4 +85,4 @@ struct ZeroUpperOnDeleteAvx {
     }
 };
 
-__BASE_NAMESPACE_END
+__BASE_TYPE_TRAITS_NAMESPACE_END

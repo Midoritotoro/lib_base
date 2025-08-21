@@ -8,6 +8,7 @@ project ("lib_base"
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 set(CMAKE_LINK_ $<IF:$<CONFIG:Debug>, /NODEFAULTLIB:LIBCMT, /DEBUG;/OPT:REF>
@@ -289,7 +290,11 @@ set(PRIVATE_HEADERS
       src/core/time/MachineClock.h
 )
 
-set(PUBLIC_HEADERS 
+set(PUBLIC_HEADERS
+    include/base/core/type_traits/LexicographicalCompareTraits.h
+    include/base/core/type_traits/Ordering.h
+
+    include/base/core/type_traits/FunctionPass.h
     include/base/core/type_traits/SimdAlgorithmSafety.h
 
     include/base/core/compatibility/BranchPrediction.h
@@ -499,6 +504,8 @@ set(PUBLIC_HEADERS
  
     include/base/core/algorithm/iterator_based/copy/ReverseCopy.h
 
+    include/base/core/algorithm/IteratorBased.h
+    include/base/core/algorithm/Ranges.h
 
     include/base/core/memory/Copy.h
     include/base/core/memory/Construct.h
@@ -594,6 +601,7 @@ set_target_properties(
     
     CXX_STANDARD_REQUIRED ON
     CXX_STANDARD 23
+    CXX_EXTENSIONS OFF
 
     VERSION "${PROJECT_VERSION}"
     SOVERSION "${PROJECT_VERSION_MAJOR}"
@@ -602,8 +610,15 @@ set_target_properties(
     OUTPUT_NAME lib_base
 )
 
+# Вывод отладочной информации
+message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "CMAKE_CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
+message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "CMAKE_GENERATOR_TOOLSET: ${CMAKE_GENERATOR_TOOLSET}")
+
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_definitions(lib_base PUBLIC -std:c++23)
+    target_compile_features(lib_base PUBLIC cxx_std_23)
 endif()
 
 
@@ -679,7 +694,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR (CMAKE_CXX_COMPILER_ID STREQUAL "C
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options(-g) 
     elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-O2 -Ot -std:c++23)
+        add_compile_options(-O2 -Ot)
     endif()
 
     target_compile_options(

@@ -16,3 +16,6 @@
 #include <base/core/type_traits/TypeTraits.h>
 
 #include <base/core/type_traits/TypeCheck.h>
+#include <base/core/type_traits/FunctionPass.h>
+
+#include <base/core/type_traits/LexicographicalCompareTraits.h>

@@ -2532,7 +2532,7 @@ template <
 base_constexpr_cxx20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::first()
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {},"base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0); 
 }
 
@@ -2543,7 +2543,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::first() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::first: An attempt to get the first element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::first: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -2554,7 +2554,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constFirst() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::constFirst: An attempt to get the first element of an empty Vector");
 	return at(0);
 }
 
@@ -2565,7 +2565,7 @@ template <
 base_constexpr_cxx20 inline Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::last()
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -2576,7 +2576,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::last() const noexcept 
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::last: An attempt to get the last element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::last: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 
@@ -2587,7 +2587,7 @@ template <
 base_constexpr_cxx20 inline const Vector<_Element_, _Allocator_, _SimdOptimization_>::ValueType& 
 	Vector<_Element_, _Allocator_, _SimdOptimization_>::constLast() const noexcept
 {
-	_VECTOR_DEBUG_ASSERT_LOG_(!isEmpty(), {}, "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
+	DebugAssertLog(!isEmpty(), "base::container::Vector::constLast: An attempt to get the last element of an empty Vector");
 	return at(size() - 1);
 }
 

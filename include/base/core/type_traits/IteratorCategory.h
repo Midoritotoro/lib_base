@@ -30,14 +30,10 @@ struct TrivialCategory {
             && std::is_floating_point_v<UnwrappedDestination>));
 
     static constexpr bool BitcopyConstructible =
-        SameSizeAndCompatible 
-        && std::is_trivially_constructible_v<
-            _Destination_, _SourceReference_>;
+        SameSizeAndCompatible && std::is_trivially_constructible_v<_Destination_, _SourceReference_>;
 
     static constexpr bool BitcopyAssignable =
-        SameSizeAndCompatible 
-        && std::is_trivially_assignable_v<
-            _DestinationReference_, _SourceReference_>;
+        SameSizeAndCompatible && std::is_trivially_assignable_v<_DestinationReference_, _SourceReference_>;
 };
 
 template <
@@ -153,7 +149,7 @@ constexpr bool is_iterator_parallel_v =
 
 #if !defined(__base_require_parallel_iterator)
 #define __base_require_parallel_iterator(_Iterator_) \
-    static_assert(std::is_iterator_parallel_v<_Iterator_>, "Parallel algorithms require forward iterators or stronger.")
+    static_assert(base::type_traits::is_iterator_parallel_v<_Iterator_>, "Parallel algorithms require forward iterators or stronger.")
 #endif // !defined(__base_require_parallel_iterator)
 
 __BASE_TYPE_TRAITS_NAMESPACE_END

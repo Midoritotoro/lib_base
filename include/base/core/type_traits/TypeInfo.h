@@ -3,6 +3,7 @@
 #include <base/core/type_traits/TypeCheck.h>
 #include <base/core/utility/Flags.h>
 
+__BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 
 template <typename T>
 class TypeInfo
@@ -77,3 +78,5 @@ template<typename T> class base::flags;
 template<typename T>
 #endif
 DECLARE_TYPEINFO_BODY(base::flags<T>, PRIMITIVE_TYPE);
+
+__BASE_TYPE_TRAITS_NAMESPACE_END
