@@ -294,6 +294,7 @@ set(PUBLIC_HEADERS
     include/base/core/type_traits/LexicographicalCompareTraits.h
     include/base/core/type_traits/Ordering.h
 
+
     include/base/core/type_traits/FunctionPass.h
     include/base/core/type_traits/SimdAlgorithmSafety.h
 
@@ -499,10 +500,15 @@ set(PUBLIC_HEADERS
     include/base/core/algorithm/iterator_based/comparison/LexicographicalCompare.h
     include/base/core/algorithm/iterator_based/comparison/LexicographicalCompareThreeWay.h
 
+    include/base/core/algorithm/comparison/iterator_based/Mismatch.h
+
+
     include/base/core/algorithm/iterator_based/copy/CopyIf.h
     include/base/core/algorithm/iterator_based/copy/CopyBackward.h
  
     include/base/core/algorithm/iterator_based/copy/ReverseCopy.h
+
+    include/base/core/type_traits/UnwrapEnum.h
 
     include/base/core/algorithm/IteratorBased.h
     include/base/core/algorithm/Ranges.h

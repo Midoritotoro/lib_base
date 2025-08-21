@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <base/core/type_traits/TypeCheck.h>
-#include <base/core/type_traits/IteratorCheck.h>
+#include <base/core/type_traits/UnwrapEnum.h>
 
 #include <algorithm>
 
@@ -135,22 +135,4 @@ using SentinelCopyCategory = std::conditional_t<
         _InputIterator_, _OutIterator_>,
     FalseTrivialCategory>;
 
-
-template <class _Iterator_>
-constexpr bool is_iterator_forward_cxx17_v = std::is_convertible_v<
-    typename std::iterator_traits<_Iterator_>::iterator_category, std::forward_iterator_tag>;
-
-template <class _Iterator_>
-constexpr bool is_iterator_parallel_v =
-#if _HAS_CXX20
-  std::forward_iterator<_Iterator_> ||
-#endif
-  is_iterator_parallel_v<_Iterator_>;
-
-#if !defined(__base_require_parallel_iterator)
-#define __base_require_parallel_iterator(_Iterator_) \
-    static_assert(base::type_traits::is_iterator_parallel_v<_Iterator_>, "Parallel algorithms require forward iterators or stronger.")
-#endif // !defined(__base_require_parallel_iterator)
-
 __BASE_TYPE_TRAITS_NAMESPACE_END
-

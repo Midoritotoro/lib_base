@@ -5,15 +5,14 @@
 
 #include <iostream>
 
-//!
-//! \brief
-//! Проверяет, является ли ptr с названием member членом структуры типа type
-//! \param ptr - Указатель на член структуры (типа member).
-//! \param type - Тип структуры, которая содержит member.
-//! \param member - Имя члена структуры, на который указывает ptr.
-//! 
-#define container_of(ptr, type, member) \
-    ((type *)(((char *)(ptr)) - offsetof(type, member)))
+
+#if __has_builtin(__builtin_offsetof)
+    #define container_of(ptr, type, member) \
+        ((type *)(((char *)(ptr)) - __builtin_offsetof(type, member)))
+#else
+    #define container_of(ptr, type, member) \
+        ((type *)(((char *)(ptr)) - offsetof(type, member)))
+#endif
 
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
