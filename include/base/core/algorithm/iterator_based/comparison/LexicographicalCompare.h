@@ -26,7 +26,8 @@ base_nodiscard base_constexpr_cxx20 bool lexicographical_compare(
 #endif // !defined(NDEBUG)
 
 
-	using _MemcmpFunction_ = type_traits::_Lexicographical_compare_memcmp_classify<_FirstInputIterator_, _SecondInputIterator_, _Function_>;
+	using _MemcmpFunction_ = type_traits::_Lexicographical_compare_memcmp_classify<
+		_FirstInputIterator_, _SecondInputIterator_, _Function_>;
 
 	if constexpr (!std::is_void_v<_MemcmpFunction_>) {
 #if base_has_cxx20
@@ -36,7 +37,7 @@ base_nodiscard base_constexpr_cxx20 bool lexicographical_compare(
 			const auto firstRangeLength		= IteratorsDifference(firstIterator1, lastIterator1);
 			const auto secondRangeLength	= IteratorsDifference(firstIterator2, lastIterator2);
 
-			const size_t minimum = (std::min)(firstRangeLength, secondRangeLength);
+			const auto minimum = (std::min)(firstRangeLength, secondRangeLength);
 
 			const auto first1Pointer = memory::ToAddress(firstIterator1);
 			const auto first2Pointer = memory::ToAddress(firstIterator2);

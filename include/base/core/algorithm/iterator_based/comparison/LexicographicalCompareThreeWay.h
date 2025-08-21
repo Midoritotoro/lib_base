@@ -1,12 +1,11 @@
 #pragma once
 
 #include <src/core/algorithm/AlgorithmDebug.h>
-#include <base/core/utility/Execution.h>
 
-
-__BASE_ALGORITHM_NAMESPACE_BEGIN
 
 #if base_has_cxx20
+
+__BASE_ALGORITHM_NAMESPACE_BEGIN
 
 template <
     class _FirstInputIterator_,
@@ -17,70 +16,70 @@ base_nodiscard constexpr auto lexicographical_compare_three_way(
     const _FirstInputIterator_      lastIterator1,
     const _SecondInputIterator_     firstIterator2,
     const _SecondInputIterator_     lastIterator2,
-    _CompareFunction_               compareFunction) -> decltype(compareFunction(*firstIterator1, *firstIterator2))
+    _CompareFunction_               compareFunction) 
+        -> decltype(compareFunction(*firstIterator1, *firstIterator2))
 {
     static_assert(
-        _Classify_category<decltype(_Comp(*_First1, *_First2))> != _Comparison_category::_Comparison_category_none,
-        "The result of the comparator must have comparison category type (N4988 [alg.three.way]/2).");
+        std::common_comparison_category_t<decltype(
+            compareFunction(*firstIterator1, *firstIterator2))> != void,
+        "The result of the comparator must have comparison category type (N4988 [alg.three.way]/2)."
+    );
 
-    _STD _Adl_verify_range(_First1, _Last1);
-    _STD _Adl_verify_range(_First2, _Last2);
-    auto _UFirst1 = _STD _Get_unwrapped(_First1);
-    const auto _ULast1 = _STD _Get_unwrapped(_Last1);
-    auto _UFirst2 = _STD _Get_unwrapped(_First2);
-    const auto _ULast2 = _STD _Get_unwrapped(_Last2);
+#if !defined(NDEBUG)
+    VerifyRange(firstIterator1, lastIterator1);
+    VerifyRange(firstIterator2, firstIterator2);
+#endif
 
-    using _Memcmp_pred = _Lex_compare_three_way_memcmp_classify<decltype(_UFirst1), decltype(_UFirst2), _Cmp>;
-    if constexpr (!is_void_v<_Memcmp_pred>) {
-        if (!_STD is_constant_evaluated()) {
-            const auto _Num1 = static_cast<size_t>(_ULast1 - _UFirst1);
-            const auto _Num2 = static_cast<size_t>(_ULast2 - _UFirst2);
-            const size_t _Num = (_STD min)(_Num1, _Num2);
-#if _USE_STD_VECTOR_ALGORITHMS
-            const auto _First1_ptr = _STD to_address(_UFirst1);
-            const auto _First2_ptr = _STD to_address(_UFirst2);
-            const size_t _Pos = _Mismatch_vectorized<sizeof(*_First1_ptr)>(_First1_ptr, _First2_ptr, _Num);
-            if (_Pos == _Num1) {
-                return _Pos == _Num2 ? strong_ordering::equal : strong_ordering::less;
-            }
-            else if (_Pos == _Num2) {
-                return strong_ordering::greater;
-            }
+    using _MemcmpFunction_ = type_traits::_Lexicographical_compare_three_way_memcmp_classify<
+        _FirstInputIterator_, _SecondInputIterator_, _CompareFunction_>;
+
+    if constexpr (!std::is_void_v<_MemcmpFunction_>) {
+        if (!type_traits::is_constant_evaluated()) {
+            const auto firstRangeLength     = IteratorsDifference(firstIterator1, lastIterator1);
+            const auto secondRangeLength    = IteratorsDifference(firstIterator2, lastIterator2);
+
+            const auto minimum = (std::min)(firstRangeLength, secondRangeLength);
+
+            const auto first1Pointer = memory::ToAddress(firstIterator1);
+            const auto first2Pointer = memory::ToAddress(firstIterator2);
+
+            const size_t mismatchPosition = 0;
+            // const size_t mismatchPosition = mismatch<sizeof(*first1Pointer)>(first1Pointer, first2Pointer, minimum);
+
+            if (mismatchPosition == firstRangeLength)
+                return mismatchPosition == secondRangeLength
+                    ? std::strong_ordering::equal 
+                    : std::strong_ordering::less;
+            else if (mismatchPosition == secondRangeLength)
+                return std::strong_ordering::greater;
             else {
-                const auto _Val1 = _First1_ptr[_Pos];
-                const auto _Val2 = _First2_ptr[_Pos];
-                __assume(_Val1 != _Val2); // avoid one comparison
-                return _Comp(_Val1, _Val2);
+                const auto firstValue   = first1Pointer[mismatchPosition];
+                const auto secondValue  = first2Pointer[mismatchPosition];
+
+#if defined(base_cpp_msvc)
+                // Avoid one comparison
+                __assume(firstValue != secondValue);
+#endif
+                return compareFunction(firstValue, secondValue);
             }
-#else // ^^^ _USE_STD_VECTOR_ALGORITHMS / !_USE_STD_VECTOR_ALGORITHMS vvv
-            const int _Ans = _STD _Memcmp_count(_UFirst1, _UFirst2, _Num);
-            if (_Ans == 0) {
-                return _Num1 <=> _Num2;
-            }
-            else {
-                return _Memcmp_pred{}(_Ans, 0);
-            }
-#endif // ^^^ !_USE_STD_VECTOR_ALGORITHMS ^^^
         }
     }
 
     for (;;) {
-        if (_UFirst1 == _ULast1) {
-            return _UFirst2 == _ULast2 ? strong_ordering::equal : strong_ordering::less;
-        }
+        if (firstIterator1 == lastIterator1)
+            return firstIterator2 == lastIterator2 
+                ? std::strong_ordering::equal 
+                : std::strong_ordering::less;
 
-        if (_UFirst2 == _ULast2) {
-            return strong_ordering::greater;
-        }
+        if (firstIterator2 == lastIterator2)
+            return std::strong_ordering::greater;
 
-        if (const auto _CmpResult = _Comp(*_UFirst1, *_UFirst2); _CmpResult != 0) {
-            return _CmpResult;
-        }
+        if (const auto compareResult = compareFunction(*firstIterator1, *firstIterator2); compareResult != 0)
+            return compareResult;
 
-        ++_UFirst1;
-        ++_UFirst2;
+        ++firstIterator1;
+        ++firstIterator2;
     }
-}
 }
 
 template <
@@ -92,7 +91,11 @@ base_nodiscard constexpr auto lexicographical_compare_three_way(
     const _SecondInputIterator_ firstIterator2,
     const _SecondInputIterator_ lastIterator2)
 {
-
+    return base::algorithm::lexicographical_compare_three_way(
+        firstIterator1, lastIterator1, 
+        firstIterator2, lastIterator2, 
+        std::compare_three_way{}
+    );
 }
 
 __BASE_ALGORITHM_NAMESPACE_END
