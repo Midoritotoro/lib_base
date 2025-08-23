@@ -4,73 +4,123 @@
 
 __BASE_NAMESPACE_BEGIN
 
-class FindTraits8Bit {
-public:
-    static   __m512i SetAvx512(const uint8 value) noexcept;
-    static   __m256i SetAvx(const uint8 value) noexcept;
-    static   __m128i SetSse(const uint8 value) noexcept;
+BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS(
+    template <arch::CpuFeature feature> class FindTraits,
+    feature,
+    "base::algorithm",
+    arch::CpuFeature::SSE2, arch::CpuFeature::AVX2, arch::CpuFeature::AVX512F
+);
 
-    static   __mmask64 CompareAvx512(
-        const __m512i left,
-        const __m512i right) noexcept;
-    static   __m256i CompareAvx(
-        const __m256i left,
-        const __m256i right) noexcept;
-    static   __m128i CompareSse(
+
+template <>
+class FindTraits<arch::CpuFeature::SSE2> {
+public:
+    base_declare_const_function base_always_inline static __m128i Set(const uint8 value) noexcept {
+        return _mm_shuffle_epi8(_mm_cvtsi32_si128(value), _mm_setzero_si128());
+    }
+
+    base_declare_const_function base_always_inline static __m128i Set(const uint16 value) noexcept {
+        return _mm_set1_epi16(value);
+    }
+
+    base_declare_const_function base_always_inline static __m128i Set(const uint32 value) noexcept {
+        return _mm_set1_epi32(value);
+    }
+
+    base_declare_const_function base_always_inline static __m128i Set(const uint64 value) noexcept {
+        return _mm_set1_epi64x(value);
+    }
+
+    template <size_t singleElementSize>
+    base_declare_const_function base_always_inline static __m128i Compare(
         const __m128i left,
-        const __m128i right) noexcept;
+        const __m128i right) noexcept
+    {
+        static_assert(
+            singleElementSize == 1 || singleElementSize == 2 || singleElementSize == 4 || singleElementSize == 8,
+            "base::algorithm::FindTraits<arch::CpuFeature::AVX2>::Compare: Unsupported element size");
+
+        if      constexpr (singleElementSize == 1) return _mm_cmpeq_epi8(left, right);
+        else if constexpr (singleElementSize == 2) return _mm_cmpeq_epi16(left, right);
+        else if constexpr (singleElementSize == 4) return _mm_cmpeq_epi32(left, right);
+        else if constexpr (singleElementSize == 8) return _mm_cmpeq_epi64(left, right);
+
+        return {};
+    }
 };
 
-class FindTraits16Bit {
+template <>
+class FindTraits<arch::CpuFeature::AVX2> {
 public:
-    static   __m512i SetAvx512(const uint16 value) noexcept;
-    static   __m256i SetAvx(const uint16 value) noexcept;
-    static   __m128i SetSse(const uint16 value) noexcept;
+    base_declare_const_function base_always_inline static __m256i Set(const uint8 value) noexcept {
+        return _mm256_set1_epi8(value);
+    }
 
-    static   __mmask32 CompareAvx512(
-        const __m512i left,
-        const __m512i right) noexcept;
-    static   __m256i CompareAvx(
+    base_declare_const_function base_always_inline static __m256i Set(const uint16 value) noexcept {
+        return _mm256_set1_epi16(value);
+    }
+
+    base_declare_const_function base_always_inline static __m256i Set(const uint32 value) noexcept {
+        return _mm256_set1_epi32(value);
+    }
+
+    base_declare_const_function base_always_inline static __m256i Set(const uint64 value) noexcept {
+        return _mm256_set1_epi64x(value);
+    }
+
+    template <size_t singleElementSize>
+    base_declare_const_function base_always_inline static __m256i Compare(
         const __m256i left,
-        const __m256i right) noexcept;
-    static   __m128i CompareSse(
-        const __m128i left,
-        const __m128i right) noexcept;
+        const __m256i right) noexcept
+    {
+        static_assert(
+            singleElementSize == 1 || singleElementSize == 2 || singleElementSize == 4 || singleElementSize == 8,
+            "base::algorithm::FindTraits<arch::CpuFeature::AVX2>::Compare: Unsupported element size");
+
+        if      constexpr (singleElementSize == 1) return _mm256_cmpeq_epi8(left, right);
+        else if constexpr (singleElementSize == 2) return _mm256_cmpeq_epi16(left, right);
+        else if constexpr (singleElementSize == 4) return _mm256_cmpeq_epi32(left, right);
+        else if constexpr (singleElementSize == 8) return _mm256_cmpeq_epi64(left, right);
+
+        return {};
+    }
 };
 
-class FindTraits32Bit {
+template <>
+class FindTraits<arch::CpuFeature::AVX512F> {
 public:
-    static   __m512i SetAvx512(const uint32 value) noexcept;
-    static   __m256i SetAvx(const uint32 value) noexcept;
-    static   __m128i SetSse(const uint32 value) noexcept;
+    base_declare_const_function base_always_inline static __m512i Set(const uint8 value) noexcept {
+        return _mm512_set1_epi8(value);
+    }
 
-    static   __mmask16 CompareAvx512(
+    base_declare_const_function base_always_inline static __m512i Set(const uint16 value) noexcept {
+        return _mm512_set1_epi16(value);
+    }
+
+    base_declare_const_function base_always_inline static __m512i Set(const uint32 value) noexcept {
+        return _mm512_set1_epi32(value);
+    }
+
+    base_declare_const_function base_always_inline static __m512i Set(const uint64 value) noexcept {
+        return _mm512_set1_epi64(value);
+    }
+
+    template <size_t singleElementSize>
+    base_declare_const_function base_always_inline static auto Compare(
         const __m512i left,
-        const __m512i right) noexcept;
-    static   __m256i CompareAvx(
-        const __m256i left,
-        const __m256i right) noexcept;
-    static   __m128i CompareSse(
-        const __m128i left,
-        const __m128i right) noexcept;
+        const __m512i right) noexcept
+    {
+        static_assert(
+            singleElementSize == 1 || singleElementSize == 2 || singleElementSize == 4 || singleElementSize == 8,
+            "base::algorithm::FindTraits<arch::CpuFeature::AVX512F>::Compare: Unsupported element size");
+
+        if      constexpr (singleElementSize == 1) return _mm512_cmpeq_epi8_mask(left, right);
+        else if constexpr (singleElementSize == 2) return _mm512_cmpeq_epi16_mask(left, right);
+        else if constexpr (singleElementSize == 4) return _mm512_cmpeq_epi32_mask(left, right);
+        else if constexpr (singleElementSize == 8) return _mm512_cmpeq_epi64_mask(left, right);
+
+        return {};
+    }
 };
-
-class FindTraits64Bit {
-public:
-    static   __m512i SetAvx512(const uint64 value) noexcept;
-    static   __m256i SetAvx(const uint64 value) noexcept;
-    static   __m128i SetSse(const uint64 value) noexcept;
-
-    static   __mmask8 CompareAvx512(
-        const __m512i left,
-        const __m512i right) noexcept;
-    static   __m256i CompareAvx(
-        const __m256i left,
-        const __m256i right) noexcept;
-    static   __m128i CompareSse(
-        const __m128i left,
-        const __m128i right) noexcept;
-};
-
 
 __BASE_NAMESPACE_END

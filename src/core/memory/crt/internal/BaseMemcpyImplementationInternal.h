@@ -46,7 +46,8 @@ BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS(
     class BaseMemcpyImplementationInternal,
     feature,
     "base::memory",
-    arch::CpuFeature::None, arch::CpuFeature::SSE, arch::CpuFeature::AVX, arch::CpuFeature::AVX512F
+    arch::CpuFeature::None, arch::CpuFeature::SSE,
+    arch::CpuFeature::AVX, arch::CpuFeature::AVX512F
 );
 
 template <>

@@ -66,8 +66,6 @@ namespace AVX {
           static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::ymmdouble ToDouble(SimdType _Vector);
-          static arch::ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -127,8 +125,6 @@ namespace AVX {
           static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::ymmdouble ToDouble(SimdType _Vector);
-          static arch::ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -189,8 +185,6 @@ namespace AVX {
           static SimdType HorizontalMaximumUnsigned(const SimdType current) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::ymmdouble ToDouble(SimdType _Vector);
-          static arch::ymmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -254,9 +248,6 @@ namespace AVX {
           static UnsignedType GetVPos(
             const SimdType      _Idx,
             const unsigned long _H_pos) noexcept;
-
-          static arch::ymmdouble ToDouble(SimdType _Vector);
-          static arch::ymmfloat ToFloat(SimdType _Vector);
     };
 } // namespace AVX
 

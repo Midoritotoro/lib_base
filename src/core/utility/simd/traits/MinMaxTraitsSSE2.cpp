@@ -30,7 +30,7 @@ namespace SSE2 {
     }
 
       NumberTraits8Bit::SimdType NumberTraits8Bit::Load(const void* _Start) {
-        return _mm_loadu_epi8(_Start);
+        return _mm_lddqu_si128(static_cast<const __m128i*>(_Start));
     }
 
     template <class _Functor_>
@@ -136,15 +136,6 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-      arch::xmmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
-        return _mm_cvtepi32_pd(_Vector);
-    }
-
-      arch::xmmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
-        return _mm_cvtepi32_ps(_Vector);
-    }
-
-
     // ======================================================================== 
     // ======================================================================== 
     // ======================================================================== 
@@ -178,7 +169,7 @@ namespace SSE2 {
     }
 
       NumberTraits16Bit::SimdType NumberTraits16Bit::Load(const void* _Start) {
-        return _mm_loadu_epi16(_Start);
+        return _mm_lddqu_si128(static_cast<const __m128i*>(_Start));
     }
 
     template <class _Functor_>
@@ -278,14 +269,6 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-      arch::xmmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
-        return _mm_cvtepi32_pd(_Vector);
-    }
-
-      arch::xmmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
-        return _mm_cvtepi32_ps(_Vector);
-    }
-
 
     // ======================================================================== 
     // ======================================================================== 
@@ -320,7 +303,7 @@ namespace SSE2 {
     }
 
       NumberTraits32Bit::SimdType NumberTraits32Bit::Load(const void* _Start) {
-        return _mm_loadu_epi32(_Start);
+        return _mm_lddqu_si128(static_cast<const __m128i*>(_Start));
     }
 
     template <class _Functor_>
@@ -413,14 +396,6 @@ namespace SSE2 {
         return static_cast<SignedType>(_mm_cvtsi128_si32(current));
     }
 
-      arch::xmmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
-        return _mm_cvtepi32_pd(_Vector);
-    }
-
-      arch::xmmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
-        return _mm_cvtepi32_ps(_Vector);
-    }
-
 
     // ======================================================================== 
     // ======================================================================== 
@@ -455,7 +430,7 @@ namespace SSE2 {
     }
 
       NumberTraits64Bit::SimdType NumberTraits64Bit::Load(const void* _Start) {
-        return _mm_loadu_epi64(_Start);
+        return _mm_lddqu_si128(static_cast<const __m128i*>(_Start));
     }
 
     template <class _Functor_>
@@ -549,14 +524,6 @@ namespace SSE2 {
         UnsignedType _Array[2];
         _mm_storeu_si128(reinterpret_cast<SimdType*>(&_Array), _Idx);
         return _Array[_H_pos >> 3];
-    }
-
-      arch::xmmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
-        return _mm_cvtepi64_pd(_Vector);
-    }
-
-      arch::xmmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
-        return _mm_cvtepi64_ps(_Vector);
     }
 } // namespace SSE2
 

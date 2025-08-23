@@ -66,8 +66,6 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::xmmdouble ToDouble(SimdType _Vector);
-          static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits16Bit {
@@ -127,8 +125,6 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::xmmdouble ToDouble(SimdType _Vector);
-          static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits32Bit {
@@ -188,8 +184,6 @@ namespace SSE2 {
             const SimdType _Second) noexcept;
 
           static SignedType GetAny(const SimdType current) noexcept;
-          static arch::xmmdouble ToDouble(SimdType _Vector);
-          static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 
     class NumberTraits64Bit {
@@ -252,9 +246,6 @@ namespace SSE2 {
           static UnsignedType GetVPos(
             const SimdType _Idx,
             const unsigned long _H_pos) noexcept;
-
-          static arch::xmmdouble ToDouble(SimdType _Vector);
-          static arch::xmmfloat ToFloat(SimdType _Vector);
     };
 } // namespace SSE2
 

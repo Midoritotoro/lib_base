@@ -37,7 +37,7 @@ __BASE_NAMESPACE_BEGIN
 }
 
   std::size_t CountTraits64Bit::ReduceSse(const __m128i value) noexcept {
-#ifdef base_processor_x86
+#ifdef base_processor_x86_32
     return static_cast<uint32>(
         _mm_cvtsi128_si32(value)) + static_cast<uint32>(
             _mm_extract_epi32(value, 2));

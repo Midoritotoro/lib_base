@@ -114,14 +114,6 @@ namespace AVX {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-      arch::ymmdouble NumberTraits8Bit::ToDouble(SimdType _Vector) {
-        return _mm256_castsi256_pd(_Vector);
-    }
-
-      arch::ymmfloat NumberTraits8Bit::ToFloat(SimdType _Vector) {
-        return _mm256_castsi256_ps(_Vector);
-    }
-
     
     // ===============================================================================
     // ===============================================================================
@@ -251,15 +243,6 @@ namespace AVX {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
     }
 
-      arch::ymmdouble NumberTraits16Bit::ToDouble(SimdType _Vector) {
-        return _mm256_castsi256_pd(_Vector);
-    }
-
-      arch::ymmfloat NumberTraits16Bit::ToFloat(SimdType _Vector) {
-        return _mm256_castsi256_ps(_Vector);
-    }
-
-
     // ===============================================================================
     // ===============================================================================
     // ===============================================================================
@@ -379,14 +362,6 @@ namespace AVX {
 
       NumberTraits32Bit::SignedType NumberTraits32Bit::GetAny(const SimdType current) noexcept {
         return static_cast<SignedType>(_mm256_cvtsi256_si32(current));
-    }
-
-      arch::ymmdouble NumberTraits32Bit::ToDouble(SimdType _Vector) {
-        return _mm256_castsi256_pd(_Vector);
-    }
-
-      arch::ymmfloat NumberTraits32Bit::ToFloat(SimdType _Vector) {
-        return _mm256_castsi256_ps(_Vector);
     }
 
 
@@ -523,13 +498,6 @@ namespace AVX {
         return _Array[_H_pos >> 3];
     }
 
-      arch::ymmdouble NumberTraits64Bit::ToDouble(SimdType _Vector) {
-        return _mm256_castsi256_pd(_Vector);
-    }
-
-      arch::ymmfloat NumberTraits64Bit::ToFloat(SimdType _Vector) {
-        return _mm256_castsi256_ps(_Vector);
-    }
 } // namespace AVX
 
 __BASE_NAMESPACE_END

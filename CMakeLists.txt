@@ -126,7 +126,6 @@ set(PRIVATE_SOURCES
     src/core/utility/simd/MinMaxImplementation.cpp
     src/core/utility/simd/traits/SimdCountTraits.cpp
 
-    src/core/utility/simd/traits/SimdFindTraits.cpp
     src/core/string/UnicodeTables.cpp
 
     src/core/utility/simd/CountImplementation.cpp

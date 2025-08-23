@@ -7,239 +7,191 @@
 #include <base/core/arch/CpuFeature.h>
 
 #include <base/core/arch/ProcessorFeatures.h>
+#include <src/core/utility/simd/traits/SimdFindTraits.h>
+
+#include <src/core/utility/simd/SimdTailMask.h>
 
 
 __BASE_ALGORITHM_NAMESPACE_BEGIN
 
-BASE_DECLARE_CPU_FEATURE_GUARDED_FUNCTION(
-    BASE_ECHO(
-        template <
-            arch::CpuFeature    feature,
-            class               _Traits_,
-            class               _Type_>
-        base_always_inline base_declare_const_function base_constexpr_cxx20 bool Contains(
-            const void*     firstPointer,
-            const void*     lastPointer,
-            const _Type_&   value) noexcept),
+BASE_DECLARE_CPU_FEATURE_GUARDED_CLASS(
+    template <arch::CpuFeature feature>
+    class ContainsAlgorithm,
     feature, "base::algorithm", 
-    arch::CpuFeature::None, arch::CpuFeature::SSE2, arch::CpuFeature::AVX2, arch::CpuFeature::AVX512BW
-)
+    arch::CpuFeature::None, arch::CpuFeature::SSE2,
+    arch::CpuFeature::AVX2, arch::CpuFeature::AVX512BW
+);
 
-template <
-    class _Traits_,
-    class _Type_>
-base_always_inline base_declare_const_function base_constexpr_cxx20 bool Contains<arch::CpuFeature::None>(
-    const void*     firstPointer,
-    const void*     lastPointer,
-    const _Type_&   value) noexcept
-{
-    for (auto current = static_cast<const _Type_*>(firstPointer); current != lastPointer; ++current)
-        if (*current == value)
-            return true;
-
-    return false;
-}
-
-
-template <
-    class _Traits_,
-    class _Type_>
-base_always_inline base_declare_const_function base_constexpr_cxx20 bool Contains<arch::CpuFeature::SSE2>(
-    const void* firstPointer,
-    const void* lastPointer,
-    _Type_      value) noexcept
-{
-    const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
-    const size_t sseSize = sizeInBytes & ~size_t{ 0xF };
-
-    if (sseSize != 0) {
-        const auto comparand = _Traits_::SetSse(value);
-        const void* stopAt = firstPointer;
-
-        memory::AdvanceBytes(stopAt, sseSize);
-
-        do {
-            const auto data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
-            const int bingo = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
-
-            if (bingo != 0)
+template <>
+class ContainsAlgorithm<arch::CpuFeature::None> {
+public:
+    template <
+        class _Traits_,
+        class _Type_>
+    static base_always_inline base_declare_const_function base_constexpr_cxx20 bool call(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept
+    {
+        for (auto current = static_cast<const _Type_*>(firstPointer); current != lastPointer; ++current)
+            if (*current == value)
                 return true;
 
-            memory::AdvanceBytes(firstPointer, 16);
-        } while (firstPointer != stopAt);
+        return false;
     }
+};
 
-    if (firstPointer != lastPointer)
-        return base::algorithm::Contains<arch::CpuFeature::None>(firstPointer, lastPointer, value);
+template <>
+class ContainsAlgorithm<arch::CpuFeature::SSE2> {
+public:
+    template <
+        class _Traits_,
+        class _Type_>
+    static base_always_inline base_declare_const_function base_constexpr_cxx20 bool call(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept
+    {
+        const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
+        const size_t sseSize = sizeInBytes & ~size_t{ 0xF };
 
-    return false;
-}
+        if (sseSize != 0) {
+            const auto comparand = _Traits_::SetSse(value);
+            const void* stopAt = firstPointer;
 
-template <
-    class _Traits_,
-    class _Type_>
-base_always_inline base_declare_const_function base_constexpr_cxx20 bool Contains<arch::CpuFeature::AVX2>(
-    const void* firstPointer,
-    const void* lastPointer,
-    _Type_      value) noexcept
-{
-    const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
-    const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
+            memory::AdvanceBytes(stopAt, sseSize);
 
-    if (avxSize != 0) {
-       ZeroUpperOnDeleteAvx guard;
+            do {
+                const auto data = _mm_loadu_si128(static_cast<const __m128i*>(firstPointer));
+                const int bingo = _mm_movemask_epi8(_Traits_::CompareSse(data, comparand));
 
-        const auto comparand = _Traits_::SetAvx(value);
-        const void* stopAt = firstPointer;
+                if (bingo != 0)
+                    return true;
 
-        memory::AdvanceBytes(stopAt, avxSize);
-
-        do {
-            const auto data = _mm256_loadu_si256(static_cast<const __m256i*>(firstPointer));
-            const int bingo = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
-
-            if (bingo != 0)
-                return true;
-
-            memory::AdvanceBytes(firstPointer, 32);
-        } while (firstPointer != stopAt);
-
-        const size_t avxTailSize = sizeInBytes & AVX_BYTE_ALIGNED_TAIL_MASK_UINT32;
-
-        if (avxTailSize != 0) {
-            const __m256i tailMask = Avx2TailMask32(BytesToDoubleWordsCount(avxTailSize));
-            const __m256i data = _mm256_maskload_epi32(static_cast<const int*>(firstPointer), tailMask);
-
-            const int bingo =
-                _mm256_movemask_epi8(
-                    _mm256_and_si256(
-                        _Traits_::CompareAvx(data, comparand), tailMask));
-
-            if (bingo != 0)
-                return true;
-
-            memory::AdvanceBytes(firstPointer, avxTailSize);
+                memory::AdvanceBytes(firstPointer, 16);
+            } while (firstPointer != stopAt);
         }
 
-        if constexpr (sizeof(_Type_) >= 4)
-            return false;
+        if (firstPointer != lastPointer)
+            return base::algorithm::Contains<arch::CpuFeature::None>(firstPointer, lastPointer, value);
+
+        return false;
     }
+};
 
-    return false;
-}
+template <>
+class ContainsAlgorithm<arch::CpuFeature::AVX2> {
+public:
+    template <
+        class _Traits_,
+        class _Type_>
+    static base_always_inline base_declare_const_function base_constexpr_cxx20 bool call(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept
+    {
+        const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
+        const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
 
+        if (avxSize != 0) {
+            ZeroUpperOnDeleteAvx guard;
 
-template <
-    class _Traits_,
-    class _Type_>
-base_always_inline base_declare_const_function base_constexpr_cxx20 bool Contains<arch::CpuFeature::AVX512BW>(
-    const void* firstPointer,
-    const void* lastPointer,
-    _Type_      value) noexcept
-{
-    const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
-    const std::size_t avx512Size = sizeInBytes & ~std::size_t{ 0x3F };
+            const auto comparand = _Traits_::SetAvx(value);
+            const void* stopAt = firstPointer;
 
-    if (avx512Size != 0) {
-        const auto comparand = _Traits_::SetAvx512(value);
-        const void* stopAt = firstPointer;
+            memory::AdvanceBytes(stopAt, avxSize);
 
-        memory::AdvanceBytes(stopAt, avx512Size);
+            do {
+                const auto data = _mm256_loadu_si256(static_cast<const __m256i*>(firstPointer));
+                const int bingo = _mm256_movemask_epi8(_Traits_::CompareAvx(data, comparand));
 
-        do {
-            const auto data = _mm512_loadu_si512(static_cast<const __m512i*>(firstPointer));
-            const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
+                if (bingo != 0)
+                    return true;
 
-            if (bingo != 0)
-                return true;
+                memory::AdvanceBytes(firstPointer, 32);
+            } while (firstPointer != stopAt);
 
-            memory::AdvanceBytes(firstPointer, 64);
-        } while (firstPointer != stopAt);
+            const size_t avxTailSize = sizeInBytes & AVX_BYTE_ALIGNED_TAIL_MASK_UINT32;
 
-        const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
+            if (avxTailSize != 0) {
+                const __m256i tailMask = Avx2TailMask32(BytesToDoubleWordsCount(avxTailSize));
+                const __m256i data = _mm256_maskload_epi32(static_cast<const int*>(firstPointer), tailMask);
 
-        if (avx512TailSize != 0) {
-            const __mmask16 tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
-            const __m512i data = _mm512_maskz_load_epi32(tailMask, firstPointer);
+                const int bingo =
+                    _mm256_movemask_epi8(
+                        _mm256_and_si256(
+                            _Traits_::CompareAvx(data, comparand), tailMask));
 
-            const __mmask64 bingo =
-                _mm512_movepi8_mask(
-                    _mm512_and_si512(
-                        _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask)));
+                if (bingo != 0)
+                    return true;
 
-            if (bingo != 0)
-                return true;
+                memory::AdvanceBytes(firstPointer, avxTailSize);
+            }
 
-            memory::AdvanceBytes(firstPointer, avx512TailSize);
+            if constexpr (sizeof(_Type_) >= 4)
+                return false;
         }
 
-
-        if constexpr (sizeof(_Type_) >= 4)
-            return false;
+        return false;
     }
+};
 
-    return false;
-}
+template <>
+class ContainsAlgorithm<arch::CpuFeature::AVX512BW> {
+public:
+    template <
+        class _Traits_,
+        class _Type_>
+    static base_always_inline base_declare_const_function base_constexpr_cxx20 bool call(
+        const void*     firstPointer,
+        const void*     lastPointer,
+        const _Type_&   value) noexcept
+    {
+        const auto sizeInBytes = memory::ByteLength(firstPointer, lastPointer);
+        const std::size_t avx512Size = sizeInBytes & ~std::size_t{ 0x3F };
 
-base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized8Bit(
-    const void* firstPointer,
-    const void* lastPointer,
-    uint8       value) noexcept
-{
-    if (arch::ProcessorFeatures::AVX512BW())
-        return Contains<arch::CpuFeature::AVX512BW, FindTraits8Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::AVX())
-        return ContainsAVX<FindTraits8Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::SSE2())
-        return ContainsSSE2<FindTraits8Bit>(firstPointer, lastPointer, value);
+        if (avx512Size != 0) {
+            const auto comparand = _Traits_::SetAvx512(value);
+            const void* stopAt = firstPointer;
 
-    return ContainsScalar(firstPointer, lastPointer, value);
-}
+            memory::AdvanceBytes(stopAt, avx512Size);
 
-base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized16Bit(
-    const void* firstPointer,
-    const void* lastPointer,
-    uint16      value) noexcept
-{
-    if (arch::ProcessorFeatures::AVX512F())
-        return ContainsAVX512<FindTraits16Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::AVX())
-        return ContainsAVX<FindTraits16Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::SSE2())
-        return ContainsSSE2<FindTraits16Bit>(firstPointer, lastPointer, value);
+            do {
+                const auto data = _mm512_loadu_si512(static_cast<const __m512i*>(firstPointer));
+                const unsigned long long bingo = _Traits_::CompareAvx512(data, comparand);
 
-    return ContainsScalar(firstPointer, lastPointer, value);
-}
+                if (bingo != 0)
+                    return true;
 
-base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized32Bit(
-    const void* firstPointer,
-    const void* lastPointer,
-    uint32      value) noexcept
-{
-    if (arch::ProcessorFeatures::AVX512F())
-        return ContainsAVX512<FindTraits32Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::AVX())
-        return ContainsAVX<FindTraits32Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::SSE2())
-        return ContainsSSE2<FindTraits32Bit>(firstPointer, lastPointer, value);
+                memory::AdvanceBytes(firstPointer, 64);
+            } while (firstPointer != stopAt);
 
-    return ContainsScalar(firstPointer, lastPointer, value);
-}
+            const size_t avx512TailSize = sizeInBytes & AVX512_BYTE_ALIGNED_TAIL_MASK_UINT64;
 
-base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized64Bit(
-    const void* firstPointer,
-    const void* lastPointer,
-    uint64      value) noexcept
-{
-    if (arch::ProcessorFeatures::AVX512F())
-        return ContainsAVX512<FindTraits64Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::AVX())
-        return ContainsAVX<FindTraits64Bit>(firstPointer, lastPointer, value);
-    else if (arch::ProcessorFeatures::SSE2())
-        return ContainsSSE2<FindTraits64Bit>(firstPointer, lastPointer, value);
+            if (avx512TailSize != 0) {
+                const __mmask16 tailMask = Avx512TailMask64(BytesToQuadWordsCount(avx512TailSize));
+                const __m512i data = _mm512_maskz_load_epi32(tailMask, firstPointer);
 
-    return ContainsScalar(firstPointer, lastPointer, value);
-}
+                const __mmask64 bingo =
+                    _mm512_movepi8_mask(
+                        _mm512_and_si512(
+                            _mm512_movm_epi16(_Traits_::CompareAvx512(data, comparand)), _mm512_movm_epi32(tailMask)));
+
+                if (bingo != 0)
+                    return true;
+
+                memory::AdvanceBytes(firstPointer, avx512TailSize);
+            }
+
+
+            if constexpr (sizeof(_Type_) >= 4)
+                return false;
+        }
+
+        return false;
+    }
+};
+
 
 template <class _Type_>
 base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized(
@@ -247,6 +199,13 @@ base_declare_const_function base_constexpr_cxx20 bool ContainsVectorized(
     const void* lastPointer,
     const _Type_& value) noexcept
 {
+    if (arch::ProcessorFeatures::AVX512BW())
+        return ContainsAlgorithm<arch::CpuFeature::AVX512BW>::call<FindTraits8Bit, uint8>(firstPointer, lastPointer, value);
+    else if (arch::ProcessorFeatures::AVX2())
+        return ContainsAlgorithm<arch::CpuFeature::AVX2>::call<FindTraits8Bit, uint8>(firstPointer, lastPointer, value);
+    else if (arch::ProcessorFeatures::SSE2())
+        return ContainsAlgorithm<arch::CpuFeature::SSE2>::call<FindTraits8Bit, uint8>(firstPointer, lastPointer, value);
+
     if constexpr (sizeof(_Type_) == 1)
         return ContainsVectorized8Bit(firstPointer, lastPointer, value);
     else if (sizeof(_Type_) == 2)
