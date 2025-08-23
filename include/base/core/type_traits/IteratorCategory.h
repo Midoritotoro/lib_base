@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <base/core/type_traits/TypeCheck.h>
+#include <base/core/type_traits/IteratorCheck.h>
+
 #include <base/core/type_traits/UnwrapEnum.h>
 
 #include <algorithm>

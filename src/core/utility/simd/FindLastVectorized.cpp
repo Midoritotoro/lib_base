@@ -84,7 +84,7 @@ base_declare_const_function   const void* base_stdcall FindLastTrivialAvx(
     const auto avxSize = sizeInBytes & ~size_t{ 0x1F };
 
     if (avxSize != 0) {
-        ZeroUpperOnDeleteAvx guard;
+        type_traits::ZeroUpperOnDeleteAvx guard;
 
         const __m256i comparand = _Traits_::SetAvx(value);
         const void* stopAt     = lastPointer;

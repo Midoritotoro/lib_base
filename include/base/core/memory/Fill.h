@@ -6,7 +6,9 @@
 #include <base/core/memory/ToAddress.h>
 #include <src/core/memory/UninitializedBackout.h>
 
+#include <base/core/memory/FixedMemcmp.h>
 #include <cstring>
+
 
 __BASE_MEMORY_NAMESPACE_BEGIN
 
@@ -67,7 +69,7 @@ base_constexpr_cxx20 inline AllocatorPointerType<_Allocator_> UninitializedFillC
         if (!base::type_traits::is_constant_evaluated())
 #endif // base_has_cxx20
         {
-            if (base::type_traits::IsAllBitsZero(value)) {
+            if (base::memory::IsAllBitsZero(value)) {
                 MemsetZero(UnFancy(firstPointer), static_cast<size_t>(count));
                 return firstPointer + count;
             }

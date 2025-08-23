@@ -71,7 +71,7 @@ base_always_inline const void* FindAVX(
     const std::size_t avxSize = sizeInBytes & ~size_t{ 0x1F };
 
     if (avxSize != 0) {
-        ZeroUpperOnDeleteAvx guard;
+        type_traits::ZeroUpperOnDeleteAvx guard;
 
         const __m256i comparand = _Traits_::SetAvx(value);
         const void* stopAt = firstPointer;

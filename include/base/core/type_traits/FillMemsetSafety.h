@@ -4,30 +4,8 @@
 #include <base/core/compatibility/FunctionAttributes.h>
 
 #include <base/core/type_traits/IntegralProperties.h>
-#include <base/core/memory/FixedMemcmp.h>
 
 __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
-
-template <class _Type_>
-bool IsAllBitsZero(const _Type_& value) {
-    static_assert(std::is_scalar_v<_Type_> && !std::is_member_pointer_v<_Type_>);
-
-    if constexpr (std::is_same_v<_Type_, std::nullptr_t>)
-        return true;
-
-    constexpr auto zero = _Type_{};
-    
-    if      constexpr (sizeof(_Type_) == 8) return memory::memcmp8(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 7) return memory::memcmp7(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 6) return memory::memcmp6(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 5) return memory::memcmp5(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 4) return memory::memcmp4(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 3) return memory::memcmp3(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 2) return memory::memcmp2(&value, &zero);
-    else if constexpr (sizeof(_Type_) == 1) return memory::memcmp1(&value, &zero);
-
-    return memcmp(&value, &zero, sizeof(_Type_)) == 0;
-}
 
 template <
     class _ForwardIterator_,

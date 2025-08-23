@@ -28,8 +28,15 @@ __BASE_TYPE_TRAITS_NAMESPACE_BEGIN
 	using IteratorDifferenceType	= typename std::iterator_traits<_Iterator_>::difference_type;
 #endif
 
+
 template <class _Iterator_>
-constexpr inline bool is_iterator_contiguous_v = std::contiguous_iterator<_Iterator_>;
+constexpr inline bool is_iterator_contiguous_v = 
+#if base_has_cxx20
+	std::contiguous_iterator<_Iterator_>;
+#else 
+	std::is_pointer_v<_Iterator_>;
+#endif // base_has_cxx20
+
 
 template <class _Iterator_>
 constexpr inline bool is_iterator_volatile_v = std::is_volatile_v<std::remove_reference_t<std::iter_reference_t<_Iterator_>>>;

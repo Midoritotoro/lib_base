@@ -418,4 +418,10 @@ base_declare_const_function base_constexpr_cxx20   const void* ReverseCopyVector
     void* lastPointer,
     void* destinationPointer) noexcept;
 
+template <size_t typeSizeInbytes>
+base_declare_const_function base_constexpr_cxx20 size_t MismatchVectorized(
+    const void* const   firstRangeBegin, 
+    const void* const   secondRangeBegin,
+    const size_t        length) noexcept;
+
 __BASE_NAMESPACE_END

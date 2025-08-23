@@ -65,16 +65,16 @@ inline base_declare_const_function void base_cdecl MaximumIntegerImplementation(
                 _CurrentMaximumValues = _Traits_::MaximumUnsigned(_CurrentMaximumValues, _CurrentValues);
         }
         else {
-            // Конец
+            // The end
 
             if constexpr (_Sign_ || _SignCorrection) {
                 const auto _HorizontalMaximum =
-                    _Traits_::HorizontalMaximum(_CurrentMaximumValues); // Отсортированный вектор с максимальным элементом на первой позиции
+                    _Traits_::HorizontalMaximum(_CurrentMaximumValues); // A sorted vector with the maximum element at the first position
                 _MaximumValue = _Traits_::GetAny(_HorizontalMaximum);
             }
             else {
                 const auto _HorizontalMaximum =
-                    _Traits_::HorizontalMaximumUnsigned(_CurrentMaximumValues); // Отсортированный вектор с максимальным элементом на первой позиции
+                    _Traits_::HorizontalMaximumUnsigned(_CurrentMaximumValues); // A sorted vector with the maximum element at the first position
                 _MaximumValue = _Traits_::GetAny(_HorizontalMaximum);
             }
 
@@ -144,16 +144,16 @@ inline base_declare_const_function void base_cdecl MinimumIntegerImplementation(
                 _CurrentMinimumValues = _Traits_::MinimumUnsigned(_CurrentMinimumValues, _CurrentValues);
         }
         else {
-            // Конец
+            // The end
 
             if constexpr (_Sign_ || _SignCorrection) {
                 const auto _HorizontalMinimum =
-                    _Traits_::HorizontalMinimum(_CurrentMinimumValues); // Отсортированный вектор с минимальным элементом на первой позиции
+                    _Traits_::HorizontalMinimum(_CurrentMinimumValues); // A sorted vector with the minimum element at the first position
                 _MinimumValue = _Traits_::GetAny(_HorizontalMinimum);
             }
             else {
                 const auto _HorizontalMinimum =
-                    _Traits_::HorizontalMinimumUnsigned(_CurrentMinimumValues); // Отсортированный вектор с минимальным элементом на первой позиции
+                    _Traits_::HorizontalMinimumUnsigned(_CurrentMinimumValues); // A sorted vector with the minimum element at the first position
                 _MinimumValue = _Traits_::GetAny(_HorizontalMinimum);
             }
 
