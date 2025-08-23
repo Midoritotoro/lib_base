@@ -19,3 +19,4 @@
 #include <base/core/type_traits/FunctionPass.h>
 
 #include <base/core/type_traits/LexicographicalCompareTraits.h>
+#include <base/core/type_traits/CanMemcmpElements.h>

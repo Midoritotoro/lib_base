@@ -25,7 +25,6 @@ base_nodiscard base_constexpr_cxx20 bool lexicographical_compare(
 	VerifyRange(firstIterator2, lastIterator2);
 #endif // !defined(NDEBUG)
 
-
 	using _MemcmpFunction_ = type_traits::_Lexicographical_compare_memcmp_classify<
 		_FirstInputIterator_, _SecondInputIterator_, _Function_>;
 
@@ -42,8 +41,7 @@ base_nodiscard base_constexpr_cxx20 bool lexicographical_compare(
 			const auto first1Pointer = memory::ToAddress(firstIterator1);
 			const auto first2Pointer = memory::ToAddress(firstIterator2);
 
-			const size_t mismatchPosition = 0;
-			// const size_t mismatchPosition = mismatch<sizeof(*first1Pointer)>(first1Pointer, first2Pointer, minimum);
+			const size_t mismatchPosition = std::_Mismatch_vectorized<sizeof(*first1Pointer)>(first1Pointer, first2Pointer, minimum);
 
 			if (mismatchPosition == secondRangeLength)
 				return false;

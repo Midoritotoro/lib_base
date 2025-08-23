@@ -88,6 +88,26 @@ constexpr inline bool is_pointer_address_convertible_v = std::is_void_v<_Source_
 #endif
     ;
 
+template <
+    class _FirstType_, 
+    class _SecondType_,
+    class = void>
+constexpr bool can_compare_with_operator_equal_v = false;
+
+template <
+    class _FirstType_,
+    class _SecondType_>
+constexpr bool can_compare_with_operator_equal_v<
+    _FirstType_, _SecondType_,
+    std::void_t<decltype(declval<_FirstType_&>() == declval<_SecondType_&>())>> = true;
+
+template <
+    class _FirstType_,
+    class _SecondType_>
+constexpr bool is_pointer_address_comparable_v = can_compare_with_operator_equal_v<_FirstType_*, _SecondType_*> && 
+        (is_pointer_address_convertible_v<_FirstType_, _SecondType_> 
+    ||  is_pointer_address_convertible_v<_SecondType_, _FirstType_>);
+
 
 template <
 	class		_Ty,

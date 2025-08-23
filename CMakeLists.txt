@@ -500,7 +500,8 @@ set(PUBLIC_HEADERS
     include/base/core/algorithm/iterator_based/comparison/LexicographicalCompare.h
     include/base/core/algorithm/iterator_based/comparison/LexicographicalCompareThreeWay.h
 
-    include/base/core/algorithm/comparison/iterator_based/Mismatch.h
+    include/base/core/algorithm/iterator_based/comparison/Mismatch.h
+    include/base/core/type_traits/CanMemcmpElements.h
 
 
     include/base/core/algorithm/iterator_based/copy/CopyIf.h
