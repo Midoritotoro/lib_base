@@ -16,7 +16,7 @@ base_constexpr_cxx20 void VerifyRange(
 template <
 	class _Iterator_,
 	class _Sentinel_>
-// check that [_First, _Last) forms an iterator range
+// check that [firstIterator, lastIterator) forms an iterator range
 base_constexpr_cxx20 void VerifyRange(
 	const _Iterator_& firstIterator,
 	const _Sentinel_& lastIterator) noexcept

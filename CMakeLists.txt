@@ -193,9 +193,51 @@ set(PRIVATE_SOURCES
 
       src/core/logging/LoggingCategory.cpp
       src/core/logging/LoggingRegistry.cpp
+
+    src/core/algorithm/vectorized/ContainsRangeVectorized.cpp
+    src/core/algorithm/vectorized/ContainsVectorized.cpp
+
+    src/core/algorithm/vectorized/CountVectorized.cpp
+    src/core/algorithm/vectorized/FindLastRangeVectorized.cpp
+
+    src/core/algorithm/vectorized/FindLastVectorized.cpp
+    src/core/algorithm/vectorized/FindRangeVectorized.cpp
+
+    src/core/algorithm/vectorized/FindVectorized.cpp
+    src/core/algorithm/vectorized/MinMaxVectorized.cpp
+
+    src/core/algorithm/vectorized/MismatchVectorized.cpp
+    src/core/algorithm/vectorized/ReplaceVectorized.cpp
+
+    src/core/algorithm/vectorized/ReverseCopyVectorized.cpp
+    src/core/algorithm/vectorized/ReverseVectorized.cpp
+
+    src/core/algorithm/vectorized/SwapRangesVectorized.cpp
 )
 
 set(PRIVATE_HEADERS
+    src/core/algorithm/vectorized/AvxZeroUpperGuard.h
+
+    src/core/algorithm/vectorized/ContainsRangeVectorized.h
+    src/core/algorithm/vectorized/ContainsVectorized.h
+
+    src/core/algorithm/vectorized/CountVectorized.h
+    src/core/algorithm/vectorized/FindLastRangeVectorized.h
+
+    src/core/algorithm/vectorized/FindLastVectorized.h
+    src/core/algorithm/vectorized/FindRangeVectorized.h
+
+    src/core/algorithm/vectorized/FindVectorized.h
+    src/core/algorithm/vectorized/MinMaxVectorized.h
+
+    src/core/algorithm/vectorized/MismatchVectorized.h
+    src/core/algorithm/vectorized/ReplaceVectorized.h
+
+    src/core/algorithm/vectorized/ReverseCopyVectorized.h
+    src/core/algorithm/vectorized/ReverseVectorized.h
+
+    src/core/algorithm/vectorized/SwapRangesVectorized.h
+
     src/core/arch/CpuFeatureSimdTraits.h
    
     src/core/thread/ThreadsData.h

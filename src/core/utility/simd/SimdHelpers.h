@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <base/core/arch/SimdHelpers.h>
 
 

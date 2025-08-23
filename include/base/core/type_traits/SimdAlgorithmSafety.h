@@ -74,15 +74,4 @@ constexpr bool VectorAlgorithmInFindIsSafe =
     // The type of the value to find must be compatible with the type of the elements.
     && VectorAlgorithmInFindIsSafeElement<_Type_, base::type_traits::IteratorValueType<_Iterator_>>;
 
-struct ZeroUpperOnDeleteAvx {
-    ZeroUpperOnDeleteAvx() = default;
-
-    ZeroUpperOnDeleteAvx(const ZeroUpperOnDeleteAvx&) = delete;
-    ZeroUpperOnDeleteAvx& operator=(const ZeroUpperOnDeleteAvx&) = delete;
-
-    ~ZeroUpperOnDeleteAvx() {
-        _mm256_zeroupper();
-    }
-};
-
 __BASE_TYPE_TRAITS_NAMESPACE_END
