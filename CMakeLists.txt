@@ -124,7 +124,6 @@ set(PRIVATE_SOURCES
     src/core/string/Char.cpp
 
     src/core/utility/simd/MinMaxImplementation.cpp
-    src/core/utility/simd/traits/SimdCountTraits.cpp
 
     src/core/string/UnicodeTables.cpp
 

@@ -1,4 +1,4 @@
-f#include <src/core/utility/simd/SimdAlgorithm.h>
+#include <src/core/utility/simd/SimdAlgorithm.h>
 
 #include <base/core/type_traits/SimdAlgorithmSafety.h>
 
